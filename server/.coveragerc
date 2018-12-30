@@ -1,0 +1,3 @@
+[run]
+source = appraisal
+omit = appraisal/test*
