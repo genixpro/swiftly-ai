@@ -1,13 +1,11 @@
 const Menu = [
     {
         heading: 'Main Navigation',
-        translate: 'sidebar.heading.HEADER'
     },
     {
-        name: 'Single View',
+        name: 'Start an Appraisal',
         path: 'singleview',
-        icon : 'icon-grid',
-        translate: 'sidebar.nav.SINGLEVIEW'
+        icon : 'icon-plus',
     },
     {
         name: 'Menu',

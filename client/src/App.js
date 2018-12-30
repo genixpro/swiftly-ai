@@ -20,7 +20,19 @@ import "./Vendor";
 // Application Styles
 import './styles/bootstrap.scss';
 import './styles/app.scss'
+import axios from 'axios';
 
+axios.defaults.baseURL = "http://localhost:3002/";
+
+axios.interceptors.response.use(function (response) {
+    // Do something with response data
+    return response;
+}, function (error) {
+    console.log(error.toString());
+    alert(error.toString());
+    // Do something with response error
+    return (Promise.reject(error));
+});
 
 class App extends Component {
   render() {

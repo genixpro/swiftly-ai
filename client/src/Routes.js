@@ -6,7 +6,7 @@ import Base from './components/Layout/Base';
 import BasePage from './components/Layout/BasePage';
 // import BaseHorizontal from './components/Layout/BaseHorizontal';
 
-import SingleView from './components/SingleView/SingleView';
+import StartAppraisal from './pages/StartAppraisal';
 import SubMenu from './components/SubMenu/SubMenu';
 
 // List of routes that uses the page layout
@@ -46,10 +46,10 @@ const Routes = ({ location }) => {
                 <CSSTransition key={currentKey} timeout={timeout} classNames={animationName} exit={false}>
                     <div>
                         <Switch location={location}>
-                            <Route path="/singleview" component={SingleView}/>
+                            <Route path="/appraisal/" component={StartAppraisal}/>
                             <Route path="/submenu" component={SubMenu}/>
 
-                            <Redirect to="/singleview"/>
+                            <Redirect to="/appraisal/"/>
                         </Switch>
                     </div>
                 </CSSTransition>
