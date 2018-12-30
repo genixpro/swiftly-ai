@@ -5,9 +5,12 @@ import { TransitionGroup, CSSTransition } from 'react-transition-group';
 import Base from './components/Layout/Base';
 import BasePage from './components/Layout/BasePage';
 // import BaseHorizontal from './components/Layout/BaseHorizontal';
+import history from "./history";
 
 import StartAppraisal from './pages/StartAppraisal';
-import SubMenu from './components/SubMenu/SubMenu';
+import ViewAppraisal from './pages/ViewAppraisal';
+
+// import SubMenu from './components/SubMenu/SubMenu';
 
 // List of routes that uses the page layout
 // listed here to Switch between layouts
@@ -25,7 +28,7 @@ const Routes = ({ location }) => {
     //      'rag-fadeInRight'
     //      'rag-fadeInLeft'
 
-    const animationName = 'rag-fadeIn'
+    const animationName = 'rag-fadeIn';
 
     if(listofPages.indexOf(location.pathname) > -1) {
         return (
@@ -46,8 +49,8 @@ const Routes = ({ location }) => {
                 <CSSTransition key={currentKey} timeout={timeout} classNames={animationName} exit={false}>
                     <div>
                         <Switch location={location}>
-                            <Route path="/appraisal/" component={StartAppraisal}/>
-                            <Route path="/submenu" component={SubMenu}/>
+                            <Route path="/appraisal/:id" component={ViewAppraisal} history={history}/>
+                            <Route path="/appraisal/" component={StartAppraisal} history={history}/>
 
                             <Redirect to="/appraisal/"/>
                         </Switch>

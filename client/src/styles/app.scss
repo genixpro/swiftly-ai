@@ -39,3 +39,9 @@
 @import "app/common/inputs";
 @import "app/common/utils";
 @import "app/common/print";
+
+// Import the styles for specific pages
+@import "pages/StartAppraisal";
+@import "pages/UploadFiles";
+@import "pages/ViewAppraisal";
+

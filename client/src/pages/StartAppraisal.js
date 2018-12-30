@@ -31,7 +31,14 @@ class StartAppraisal extends React.Component {
             city: this.state.city,
             region: this.state.state,
             country: this.state.country
-        })
+        }).then((response) =>
+        {
+            console.log(response.data)
+            const newId = response.data._id;
+
+            this.props.history.push('/appraisal/' + newId);
+
+        });
     }
 
     updateForm(field, event)
