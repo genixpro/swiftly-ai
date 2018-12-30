@@ -17,8 +17,17 @@ const path = require('path');
 const webpack = require('webpack');
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 const rtlcssLoader = path.resolve(__dirname, 'rtlcss-loader.js');
+const RelayCompilerWebpackPlugin = require('relay-compiler-webpack-plugin');
 
 module.exports = (webpackConfig, env, { paths }) => {
+
+    // Add in the relay compiler
+    webpackConfig.plugins = (webpackConfig.plugins || []).concat([
+        new RelayCompilerWebpackPlugin({
+            schema: path.resolve(__dirname, './schema.graphql'), // or schema.json or a GraphQLSchema instance
+            src: path.resolve(__dirname, './src/'),
+        })
+    ]);
 
     // Support for RTL
     /*

@@ -15,7 +15,10 @@ requires = [
     'pyramid_debugtoolbar',
     'waitress',
     'cornice',
-    'pymongo'
+    'pymongo',
+    "graphene-mongo",
+    "mongoengine",
+    "webob_graphql"
 ]
 
 tests_require = [

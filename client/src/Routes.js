@@ -9,6 +9,7 @@ import history from "./history";
 
 import StartAppraisal from './pages/StartAppraisal';
 import ViewAppraisal from './pages/ViewAppraisal';
+import ViewAllAppraisals from './pages/ViewAllAppraisals';
 
 // import SubMenu from './components/SubMenu/SubMenu';
 
@@ -49,8 +50,9 @@ const Routes = ({ location }) => {
                 <CSSTransition key={currentKey} timeout={timeout} classNames={animationName} exit={false}>
                     <div>
                         <Switch location={location}>
+                            <Route path="/appraisal/new" component={StartAppraisal} history={history}/>
                             <Route path="/appraisal/:id" component={ViewAppraisal} history={history}/>
-                            <Route path="/appraisal/" component={StartAppraisal} history={history}/>
+                            <Route path="/appraisal/" component={ViewAllAppraisals} history={history}/>
 
                             <Redirect to="/appraisal/"/>
                         </Switch>

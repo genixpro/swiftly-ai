@@ -4,7 +4,7 @@ const Menu = [
     },
     {
         name: 'Start an Appraisal',
-        path: 'singleview',
+        path: '/appraisal/',
         icon : 'icon-plus',
     },
     {

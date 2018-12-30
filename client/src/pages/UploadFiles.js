@@ -70,6 +70,11 @@ class UploadFiles extends React.Component
                         </Dropzone>
                     </Col>
                 </Row>
+                <Row>
+                    <Col xs={12}>
+                        <h3>View Existing Files</h3>
+                    </Col>
+                </Row>
             </div>
         );
     }
