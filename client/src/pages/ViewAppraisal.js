@@ -7,10 +7,18 @@ import { NavLink as RRNavLink } from 'react-router-dom';
 import { TransitionGroup, CSSTransition } from 'react-transition-group';
 
 import UploadFiles from "./UploadFiles";
+import ViewLeases from "./ViewLeases";
+import ViewLease from "./ViewLease";
 
 class ViewAppraisal extends React.Component
 {
     state = {};
+
+
+    componentDidMount()
+    {
+        console.log(this.props.match);
+    }
 
 
     render() {
@@ -44,7 +52,9 @@ class ViewAppraisal extends React.Component
                             <Card className="card-default">
                                 <CardBody>
                                     <Switch>
-                                        <Route path={`${this.props.match.url}/upload`} exact component={UploadFiles} />
+                                        <Route path={`${this.props.match.path}/upload`} component={UploadFiles} />
+                                        <Route path={`${this.props.match.path}/leases`} component={ViewLeases} />
+                                        <Route path={`${this.props.match.path}/lease/:leaseId`} component={ViewLease} />
                                     </Switch>
                                 </CardBody>
                             </Card>

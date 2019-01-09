@@ -4,8 +4,13 @@ const Menu = [
     },
     {
         name: 'Start an Appraisal',
-        path: '/appraisal/',
+        path: '/appraisal/new',
         icon : 'icon-plus',
+    },
+    {
+        name: 'View Appraisals',
+        path: '/appraisal/',
+        icon : 'icon-menu',
     },
     {
         name: 'Menu',

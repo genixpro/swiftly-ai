@@ -1,6 +1,5 @@
 from cornice.resource import resource
 from pyramid.authorization import Allow, Everyone
-from .schema import Appraisal
 from webob_graphql import serve_graphql_request
 
 
@@ -14,16 +13,10 @@ class AppraisalAPI(object):
     def __acl__(self):
         return [(Allow, Everyone, 'everything')]
 
-    def collection_post(self):
-        context = {'session': self.request.session}
+    def collection_get(self):
+        appraisals = self.appraisalsCollection.find({})
 
-        # Optional, for adding batch query support (used in Apollo-Client)
-        return serve_graphql_request(self.request, Appraisal, batch_enabled=True, context_value=context)
-
-        # return self.appraisalsCollection.find({})
-
-    def get(self):
-        return _USERS.get(int(self.request.matchdict['id']))
+        return {"appraisals": list(appraisals)}
 
     def collection_post(self):
         data = self.request.json_body

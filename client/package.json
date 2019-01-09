@@ -14,8 +14,7 @@
     "build-modernizr": "modernizr -c modernizr-config.json -d src/modernizr.js -u",
     "build-themes": "node-sass-chokidar src/styles/themes -o public/themes -w",
     "lint": "react-scripts lint",
-    "postinstall-heroku": "npm run build",
-    "relay": "relay-compiler --src ./src --schema schema.graphql --extensions js jsx"
+    "postinstall-heroku": "npm run build"
   },
   "eslintConfig": {
     "extends": "react-app"
@@ -71,7 +70,7 @@
     "jquery.flot.tooltip": "github:krzysu/flot.tooltip",
     "js-storage": "1.0.4",
     "jszip": "3.1.5",
-    "loaders.css": "0.1.2",
+    "loaders.css": "^0.1.2",
     "matchmedia": "0.1.2",
     "modernizr": "3.6.0",
     "moment": "2.22.2",
@@ -108,12 +107,13 @@
     "react-toastify": "4.4.3",
     "react-transition-group": "2.5.0",
     "reactstrap": "6.5.0",
-    "recompose": "0.30.0",
+    "recompose": "^0.30.0",
     "relay-compiler": "^1.7.0",
+    "resize-observer-polyfill": "^1.5.1",
     "rtlcss": "2.4.0",
     "screenfull": "3.3.3",
     "simple-line-icons": "2.4.1",
-    "spinkit": "1.2.5",
+    "spinkit": "^1.2.5",
     "sweetalert": "2.1.2",
     "validator": "10.9.0",
     "weather-icons": "github:erikflowers/weather-icons",

@@ -1,21 +1,24 @@
 import React from 'react';
 import { translate, Trans } from 'react-i18next';
 import ContentWrapper from '../components/Layout/ContentWrapper';
-import { Row, Col, Dropdown, DropdownToggle, DropdownMenu, DropdownItem, Card, CardBody, CardHeader, FormGroup, Input } from 'reactstrap';
+import { Row, Col, Dropdown, DropdownToggle, DropdownMenu, DropdownItem, Card, CardBody, CardHeader, FormGroup, Input, Table } from 'reactstrap';
 import axios from 'axios';
-import {QueryRenderer} from 'react-relay';
-import graphql from 'babel-plugin-relay/macro';
-import environment from '../environment';
+import AppraisalList from './components/AppraisalList';
+
 
 class ViewAllAppraisals extends React.Component {
 
     state = {
+        appraisals: []
     };
 
 
     componentDidMount()
     {
-
+        axios.get("/appraisal/").then((response) =>
+        {
+            this.setState({appraisals: response.data.appraisals});
+        });
     }
 
     render() {
@@ -26,30 +29,7 @@ class ViewAllAppraisals extends React.Component {
                 </div>
                 <Row>
                     <div className="col-md-6">
-                        <QueryRenderer
-                            environment={environment}
-                            query={graphql`
-                              query ViewAllAppraisalsQuery {
-                                appraisals {
-                                  id
-                                  name
-                                }
-                              }
-                            `}
-                            variables={{}}
-                            render={({error, props}) => {
-                                if (error) {
-                                    return <div>Error! {error.toString()}</div>;
-                                }
-                                if (!props) {
-                                    return <div>Loading...</div>;
-                                }
-                                return props.appraisals.map((appraisal) =>
-                                {
-                                    return <div>Appraisal ID: {appraisal.id}</div>;
-                                });
-                            }}
-                        />
+                        <AppraisalList appraisals={this.state.appraisals} history={this.props.history}/>
                     </div>
                 </Row>
             </ContentWrapper>

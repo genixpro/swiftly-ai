@@ -5,14 +5,25 @@ import { Row, Col, Dropdown, DropdownToggle, DropdownMenu, DropdownItem, Card, C
 import axios from 'axios';
 import Dropzone from 'react-dropzone';
 import Promise from "bluebird";
+import UploadedFileList from "./components/UploadedFileList"
+import 'loaders.css/loaders.css';
+import 'spinkit/css/spinkit.css';
 
 
 class UploadFiles extends React.Component
 {
-    state = {};
+    state = {
+        files: [],
+        uploading: false
+    };
+
+    componentDidMount()
+    {
+    }
 
     onDrop(files)
     {
+        this.setState({uploading: true});
         const promise = Promise.mapSeries(files, (file) => {
             return new Promise((resolve, reject) => {
                 const data = new FormData();
@@ -20,7 +31,7 @@ class UploadFiles extends React.Component
                 data.set("file", file);
                 const options = {
                     method: 'post',
-                    url: "/appraisal/" + this.props.match.params['id'] + "/upload",
+                    url: "/appraisal/" + this.props.match.params['id'] + "/files",
                     data: data
                 };
 
@@ -40,6 +51,12 @@ class UploadFiles extends React.Component
                 });
                 uploadPromise.catch(() => resolve(null));
             })
+        }).then(() =>
+        {
+            this.setState({uploading: false});
+        }, (err) =>
+        {
+            this.setState({uploading: false});
         });
     }
 
@@ -68,11 +85,26 @@ class UploadFiles extends React.Component
                                 <span>Drop files here or click here to upload</span>
                             </div>
                         </Dropzone>
+                        {
+                            this.state.uploading && <div className="card card-default">
+                                <div className="card-header">Ball Pulse</div>
+                                <div className="card-body loader-demo d-flex align-items-center justify-content-center">
+                                    <div className="ball-pulse">
+                                        <div></div>
+                                        <div></div>
+                                        <div></div>
+                                    </div>
+                                </div>
+                            </div>
+                        }
                     </Col>
                 </Row>
                 <Row>
                     <Col xs={12}>
                         <h3>View Existing Files</h3>
+                    </Col>
+                    <Col xs={12}>
+                        <UploadedFileList appraisalId={this.props.match.params['id']}/>
                     </Col>
                 </Row>
             </div>

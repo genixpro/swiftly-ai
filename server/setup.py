@@ -1,7 +1,7 @@
 import os
 
 from setuptools import setup, find_packages
-
+''
 here = os.path.abspath(os.path.dirname(__file__))
 with open(os.path.join(here, 'README.txt')) as f:
     README = f.read()
@@ -16,9 +16,7 @@ requires = [
     'waitress',
     'cornice',
     'pymongo',
-    "graphene-mongo",
-    "mongoengine",
-    "webob_graphql"
+    'azure-storage'
 ]
 
 tests_require = [
