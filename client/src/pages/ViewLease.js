@@ -27,6 +27,15 @@ class ViewLease extends React.Component
 
     componentDidUpdate()
     {
+
+    }
+
+    saveLeaseData(newLease)
+    {
+        axios.post(`/appraisal/${this.props.match.params.id}/leases/${this.props.match.params.leaseId}`, newLease).then((response) =>
+        {
+            this.setState({lease: newLease})
+        });
     }
 
     render() {
@@ -53,9 +62,9 @@ class ViewLease extends React.Component
                             <Card className="card-default">
                                 <CardBody>
                                     <Switch>
-                                        <Route path={`${this.props.match.url}/raw`} render={() => <ViewLeaseExtractions lease={this.state.lease}/>} lease={this.state.lease} />
-                                        <Route path={`${this.props.match.url}/summary`} render={() => <ViewLeaseSummary lease={this.state.lease}/>} lease={this.state.lease} />
-                                        <Route path={`${this.props.match.url}/report`} render={() => <ViewLeaseReport lease={this.state.lease}/>} lease={this.state.lease} />
+                                        <Route path={`${this.props.match.url}/raw`} render={() => <ViewLeaseExtractions lease={this.state.lease} saveLeaseData={this.saveLeaseData.bind(this)}/>} lease={this.state.lease} />
+                                        <Route path={`${this.props.match.url}/summary`} render={() => <ViewLeaseSummary lease={this.state.lease} saveLeaseData={this.saveLeaseData.bind(this)}/>} lease={this.state.lease} />
+                                        <Route path={`${this.props.match.url}/report`} render={() => <ViewLeaseReport lease={this.state.lease} saveLeaseData={this.saveLeaseData.bind(this)}/>} lease={this.state.lease} />
                                     </Switch>
                                 </CardBody>
                             </Card>

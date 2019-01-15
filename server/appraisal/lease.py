@@ -46,3 +46,19 @@ class LeaseAPI(object):
 
 
 
+
+    def post(self):
+        data = self.request.json_body
+
+        appraisalId = self.request.matchdict['appraisalId']
+        leaseId = self.request.matchdict['id']
+
+        if '_id' in data:
+            del data['_id']
+
+        self.leasesCollection.update_one({"_id": bson.ObjectId(leaseId)}, {"$set": data})
+
+        return {"_id": str(id)}
+
+
+

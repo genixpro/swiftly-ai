@@ -1,7 +1,7 @@
 import React from 'react';
 import { translate, Trans } from 'react-i18next';
 import ContentWrapper from '../components/Layout/ContentWrapper';
-import { Row, Col, Dropdown, DropdownToggle, DropdownMenu, DropdownItem, Card, CardBody, CardHeader, CardText, CardTitle, FormGroup, Input,  Nav, NavItem, NavLink } from 'reactstrap';
+import { Badge, Row, Col, Dropdown, DropdownToggle, DropdownMenu, DropdownItem, Card, CardBody, CardHeader, CardText, CardTitle, FormGroup, Input,  Nav, NavItem, NavLink } from 'reactstrap';
 import axios from 'axios';
 import ResizeObserver from 'resize-observer-polyfill';
 import _ from 'underscore';
@@ -105,8 +105,6 @@ class ViewLeaseExtractions extends React.Component
     onWindowScroll(evt)
     {
         const viewLeaseElement = document.getElementById("view-lease-side-menu");
-        console.log(evt);
-        console.log(viewLeaseElement.getBoundingClientRect().top);
         const menuTop = viewLeaseElement.getBoundingClientRect().top + evt.pageY;
         this.setState({menuScroll: Math.max(evt.pageY - menuTop + 20, 0)})
     }
@@ -203,7 +201,34 @@ class ViewLeaseExtractions extends React.Component
                 wordToken.setState({word: word, selected: false});
             }
         });
+        this.updateExtractedData();
         this.updateCanvas();
+    }
+
+    updateExtractedData()
+    {
+        const extractedData = {};
+
+        Object.values(this.tokens).map((wordToken) =>
+        {
+            const word = wordToken.state.word;
+            if(word.classification !== 'null')
+            {
+                if(!extractedData[word.classification])
+                {
+                    extractedData[word.classification] = "";
+                }
+                extractedData[word.classification] += word.word + " "
+            }
+        });
+        const lease = this.state.lease;
+        lease.extractedData = extractedData;
+        this.setState({lease: lease}, () => this.saveLeaseData());
+    }
+
+    saveLeaseData()
+    {
+        this.props.saveLeaseData(this.state.lease);
     }
 
     render() {
@@ -237,36 +262,43 @@ class ViewLeaseExtractions extends React.Component
                             })
                         }
                     </Col>
-                        <Col xs={3} id="view-lease-side-menu">
-                            <div style={{"margin-top": `${this.state.menuScroll}px`}}>
+                    <Col xs={3} id="view-lease-side-menu">
+                        <div style={{"margin-top": `${this.state.menuScroll}px`}}>
+                            {
+                                LeaseFields.map((group) =>
                                 {
-                                    LeaseFields.map((group) =>
-                                    {
-                                        return <Row>
-                                            <Col xs={12}>
-                                                <Card outline color="primary" className="mb-3">
-                                                    <CardHeader className="text-white bg-primary">{group.name}</CardHeader>
-                                                    <CardBody>
-                                                        <form onSubmit={this.onSubmit}>
-                                                            {group.fields.map((field) =>
-                                                                <FormGroup
-                                                                    className={"view-lease-form-field"}
-                                                                    onMouseEnter={this.onFormHoverStart.bind(this, field.field)}
-                                                                    onMouseLeave={this.onFormHoverEnd.bind(this, field.field)}
-                                                                >
-                                                                    <label className={"view-lease-form-field-title"}>{field.name}</label>
-                                                                    <Input type="text" placeholder={field.placeholder} id={`${field.field}-field`} value={this.state.lease.extractedData[field.field]}/>
-                                                                </FormGroup>)
-                                                            }
-                                                        </form>
-                                                    </CardBody>
-                                                </Card>
-                                            </Col>
-                                        </Row>;
-                                    })
-                                }
-                            </div>
-                        </Col>
+                                    return <Row>
+                                        <Col xs={12}>
+                                            <Card outline color="primary" className="mb-3">
+                                                <CardHeader className="text-white bg-primary">{group.name}</CardHeader>
+                                                <CardBody>
+                                                    <form onSubmit={this.onSubmit}>
+                                                        {group.fields.map((field) =>
+                                                            <FormGroup
+                                                                className={"view-lease-form-field"}
+                                                                onMouseEnter={this.onFormHoverStart.bind(this, field.field)}
+                                                                onMouseLeave={this.onFormHoverEnd.bind(this, field.field)}
+                                                            >
+                                                                <label className={"view-lease-form-field-title"}>{field.name}</label>
+                                                                <div className={"view-lease-form-data"} id={`${field.field}-field`}>
+                                                                    {
+                                                                        this.state.lease.extractedData[field.field] ?
+                                                                            <Badge color="secondary" className={"view-lease-extracted-data"}>
+                                                                                {this.state.lease.extractedData[field.field]}
+                                                                            </Badge> : ""
+                                                                    }
+                                                                </div>
+                                                            </FormGroup>)
+                                                        }
+                                                    </form>
+                                                </CardBody>
+                                            </Card>
+                                        </Col>
+                                    </Row>;
+                                })
+                            }
+                        </div>
+                    </Col>
                 </Row>
                 <ContextMenu id="view-lease-word-menu">
                     {

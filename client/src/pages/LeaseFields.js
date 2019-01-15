@@ -1,17 +1,12 @@
 
 export default [
     {
-        "name": "Basic Information",
+        "name": "Counterparty Information",
         "fields": [
             {
                 "name": "Counterparty Name",
                 "placeholder": "Counterparty",
                 "field": "counterparty_name"
-            },
-            {
-                "name": "Counterparty Address",
-                "placeholder": "Address",
-                "field": "counterparty_address"
             },
             {
                 "name": "Counterparty Address",
@@ -29,9 +24,29 @@ export default [
                 "field": "tenancy_address"
             },
             {
-                "name": "Price Per Square Foot",
-                "placeholder": "PPP ($) ",
-                "field": "price_per_square_foot"
+                "name": "Tenancy Size",
+                "placeholder": "Tenancy Size",
+                "field": "size_square_feet"
+            },
+            {
+                "name": "Tenancy Term",
+                "placeholder": "Tenancy Term",
+                "field": "term"
+            },
+            {
+                "name": "Rent",
+                "placeholder": "Rent (PSF $)",
+                "field": "rent_per_square_foot"
+            },
+            {
+                "name": "Additional Rent Terms",
+                "placeholder": "Additional Rent Terms",
+                "field": "additional_rent_terms"
+            },
+            {
+                "name": "Free Rent",
+                "placeholder": "Free Rent",
+                "field": "free_rent"
             }
         ]
     }
