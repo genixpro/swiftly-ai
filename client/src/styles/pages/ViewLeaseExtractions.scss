@@ -17,21 +17,38 @@
 .view-lease-word
 {
   position: absolute;
+  cursor: pointer;
   background-color: #00000000;
   color: #00000000  ;
   border-radius: 3px;
 }
 
-.view-lease-word:hover
+.view-lease-word:hover, .view-lease-word.selected, .view-lease-word.selected:hover,
+.view-lease-word.classified:hover, .view-lease-word.classified.selected, .view-lease-word.classified.selected:hover
 {
-  position: absolute;
-  cursor: pointer;
   background-color: #0000bbaa;
-  color: #00000000;
-  border-radius: 3px;
+}
+
+.view-lease-word.classified
+{
+  background-color: rgba(0, 0, 255, 0.3);
 }
 
 .lease-image-container
 {
   position: relative;
+}
+
+.view-lease-form-field
+{
+  cursor: pointer;
+}
+
+.view-lease-form-field:hover
+{
+  background: #00000009;
+}
+.view-lease-form-field-title
+{
+  cursor: pointer;
 }

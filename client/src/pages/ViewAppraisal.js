@@ -9,6 +9,7 @@ import { TransitionGroup, CSSTransition } from 'react-transition-group';
 import UploadFiles from "./UploadFiles";
 import ViewLeases from "./ViewLeases";
 import ViewLease from "./ViewLease";
+import ViewFinancialStatements from "./ViewFinancialStatements";
 
 class ViewAppraisal extends React.Component
 {
@@ -39,12 +40,6 @@ class ViewAppraisal extends React.Component
                             <NavItem>
                                 <NavLink to={`${this.props.match.url}/financials`} activeClassName="active" tag={RRNavLink}>Financials</NavLink>
                             </NavItem>
-                            <NavItem>
-                                <NavLink to={`${this.props.match.url}/comparables`} activeClassName="active" tag={RRNavLink}>Comparables</NavLink>
-                            </NavItem>
-                            <NavItem>
-                                <NavLink to={`${this.props.match.url}/report`} activeClassName="active" tag={RRNavLink}>Report</NavLink>
-                            </NavItem>
                         </Nav>
                     </Row>
                     <Row>
@@ -55,6 +50,7 @@ class ViewAppraisal extends React.Component
                                         <Route path={`${this.props.match.path}/upload`} component={UploadFiles} />
                                         <Route path={`${this.props.match.path}/leases`} component={ViewLeases} />
                                         <Route path={`${this.props.match.path}/lease/:leaseId`} component={ViewLease} />
+                                        <Route path={`${this.props.match.path}/financials`} component={ViewFinancialStatements} />
                                     </Switch>
                                 </CardBody>
                             </Card>

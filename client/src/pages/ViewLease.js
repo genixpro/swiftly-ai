@@ -5,6 +5,7 @@ import { Row, Col, Dropdown, DropdownToggle, DropdownMenu, DropdownItem, Card, C
 import axios from 'axios';
 import ViewLeaseExtractions from "./ViewLeaseExtractions";
 import ViewLeaseSummary from "./ViewLeaseSummary";
+import ViewLeaseReport from "./ViewLeaseReport";
 import { NavLink as RRNavLink } from 'react-router-dom';
 import { withRouter, Switch, Route, Redirect } from 'react-router-dom';
 
@@ -38,7 +39,10 @@ class ViewLease extends React.Component
                                 <NavLink to={`${this.props.match.url}/summary`} activeClassName="active" tag={RRNavLink}>Summarized Data</NavLink>
                             </NavItem>
                             <NavItem>
-                                <NavLink to={`${this.props.match.url}/raw`} activeClassName="active" tag={RRNavLink}>View Raw Lease</NavLink>
+                                <NavLink to={`${this.props.match.url}/raw`} activeClassName="active" tag={RRNavLink}>Raw Lease</NavLink>
+                            </NavItem>
+                            <NavItem>
+                                <NavLink to={`${this.props.match.url}/report`} activeClassName="active" tag={RRNavLink}>Report</NavLink>
                             </NavItem>
                         </Nav>
                     </Col>
@@ -51,6 +55,7 @@ class ViewLease extends React.Component
                                     <Switch>
                                         <Route path={`${this.props.match.url}/raw`} render={() => <ViewLeaseExtractions lease={this.state.lease}/>} lease={this.state.lease} />
                                         <Route path={`${this.props.match.url}/summary`} render={() => <ViewLeaseSummary lease={this.state.lease}/>} lease={this.state.lease} />
+                                        <Route path={`${this.props.match.url}/report`} render={() => <ViewLeaseReport lease={this.state.lease}/>} lease={this.state.lease} />
                                     </Switch>
                                 </CardBody>
                             </Card>

@@ -29,7 +29,6 @@ class ViewLeaseExtractions extends React.Component
     componentDidUpdate()
     {
 
-
     }
 
     render() {
@@ -48,19 +47,6 @@ class ViewLeaseExtractions extends React.Component
                                     <FormGroup>
                                         <label>Size</label>
                                         <Input type="text" placeholder="size" id="size-field" value={this.state.lease.extractedData.size}/>
-                                    </FormGroup>
-                                </form>
-                            </CardBody>
-                        </Card>
-                    </Col>
-                    <Col xs={12} md={4}>
-                        <Card outline color="primary" className="mb-3">
-                            <CardHeader className="text-white bg-primary">Financial Information</CardHeader>
-                            <CardBody>
-                                <form>
-                                    <FormGroup>
-                                        <label>Price per square Foot</label>
-                                        <Input type="number" placeholder="PPS ($)"/>
                                     </FormGroup>
                                 </form>
                             </CardBody>
