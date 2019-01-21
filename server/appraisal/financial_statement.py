@@ -14,6 +14,7 @@ class FinancialStatementAPI(object):
     def __init__(self, request, context=None):
         self.request = request
         self.financialStatementsCollection = request.registry.db['financial_statements']
+        self.appraisalsCollection = request.registry.db['appraisals']
 
     def __acl__(self):
         return [(Allow, Everyone, 'everything')]
@@ -56,8 +57,14 @@ class FinancialStatementAPI(object):
 
         self.financialStatementsCollection.update_one({"_id": bson.ObjectId(statementId)}, {"$set": data})
 
+        self.updateStabilizedStatement(appraisalId)
+
         return {"_id": str(id)}
 
+    def updateStabilizedStatement(self, appraisalId):
+        financialStatements = self.financialStatementsCollection.find({"appraisalId": appraisalId})
 
+        statement = financialStatements[0]
 
+        changed = self.appraisalsCollection.update_one({"_id": bson.ObjectId(appraisalId)}, {"$set": {"stabilizedStatement": statement['extractedData']}})
 

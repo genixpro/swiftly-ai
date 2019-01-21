@@ -1,5 +1,6 @@
 from cornice.resource import resource
 from pyramid.authorization import Allow, Everyone
+import bson
 from webob_graphql import serve_graphql_request
 
 
@@ -24,3 +25,11 @@ class AppraisalAPI(object):
 
         id = result.inserted_id
         return {"_id": str(id)}
+
+
+    def get(self):
+        appraisalId = self.request.matchdict['id']
+
+        appraisal = self.appraisalsCollection.find_one({"_id": bson.ObjectId(appraisalId)})
+
+        return {"appraisal": appraisal}

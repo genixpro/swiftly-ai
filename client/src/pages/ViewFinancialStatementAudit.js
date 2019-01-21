@@ -96,7 +96,7 @@ class ViewFinancialStatementAudit extends React.Component
             });
         }
 
-        this.setState({incomeTotal, expenseTotal})
+        this.setState({incomeTotal, expenseTotal});
     }
 
 
@@ -118,6 +118,7 @@ class ViewFinancialStatementAudit extends React.Component
             }
         });
 
+        this.props.saveFinancialStatementData(newFinancialStatement);
         this.setState({financialStatement: newFinancialStatement}, () => this.computeGroupTotals());
     }
 
