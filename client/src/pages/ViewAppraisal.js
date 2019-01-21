@@ -10,6 +10,8 @@ import ViewLease from "./ViewLease";
 import ViewFinancialStatements from "./ViewFinancialStatements";
 import ViewFinancialStatement from "./ViewFinancialStatement";
 import ViewStabilizedStatementValuation from "./ViewStabilizedStatementValuation";
+import ViewComparableSales from "./ViewComparableSales";
+import ViewComparableSale from "./ViewComparableSale";
 
 class ViewAppraisal extends React.Component
 {
@@ -41,6 +43,9 @@ class ViewAppraisal extends React.Component
                                 <NavLink to={`${this.props.match.url}/financial_statements`} activeClassName="active" tag={RRNavLink}>Financials</NavLink>
                             </NavItem>
                             <NavItem>
+                                <NavLink to={`${this.props.match.url}/comparable_sales`} activeClassName="active" tag={RRNavLink}>Comparable Sales</NavLink>
+                            </NavItem>
+                            <NavItem>
                                 <NavLink to={`${this.props.match.url}/stabilized_statement_valuation`} activeClassName="active" tag={RRNavLink}>Stabilized Statement Valuation</NavLink>
                             </NavItem>
                         </Nav>
@@ -56,6 +61,8 @@ class ViewAppraisal extends React.Component
                                         <Route path={`${this.props.match.path}/financial_statements`} component={ViewFinancialStatements} />
                                         <Route path={`${this.props.match.path}/financial_statement/:financialStatementId`} component={ViewFinancialStatement} />
                                         <Route path={`${this.props.match.path}/stabilized_statement_valuation`} component={ViewStabilizedStatementValuation} />
+                                        <Route path={`${this.props.match.path}/comparable_sales`} component={ViewComparableSales} />
+                                        <Route path={`${this.props.match.path}/comparable_sale/:comparableSaleId`} component={ViewComparableSale} />
                                     </Switch>
                                 </CardBody>
                             </Card>

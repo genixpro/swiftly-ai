@@ -17,7 +17,8 @@ requires = [
     'cornice',
     'pymongo',
     'pillow',
-    'azure-storage'
+    'azure-storage',
+    'filetype'
 ]
 
 tests_require = [

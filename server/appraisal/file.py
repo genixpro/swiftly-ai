@@ -13,6 +13,7 @@ from PIL import Image
 import hashlib
 from pprint import pprint
 import concurrent.futures
+import filetype
 
 
 @resource(collection_path='/appraisal/{appraisalId}/files', path='/appraisal/{appraisalId}/files/{id}', renderer='bson', cors_enabled=True, cors_origins="*")
@@ -23,6 +24,7 @@ class FileAPI(object):
         self.filesCollection = request.registry.db['files']
         self.leasesCollection = request.registry.db['leases']
         self.financialStatementsCollection = request.registry.db['financial_statements']
+        self.comparableSalesCollection = request.registry.db['comparable_sales']
 
 
     def __acl__(self):
@@ -51,22 +53,72 @@ class FileAPI(object):
 
         insertResult = self.filesCollection.insert_one(data)
 
-        id = str(insertResult.inserted_id)
+        mimeType = filetype.guess(input_file).mime
 
-        hash = hashlib.sha256()
-        hash.update(input_file)
-        extractedData = {}
-        extractedWords = []
-        with open('appraisal/fake_data.json', 'rt') as file:
-            fakeData = json.load(file)
-            if hash.hexdigest() in fakeData['leases']:
-                extractedData = fakeData['leases'][hash.hexdigest()]['extractedData']
-                extractedWords = fakeData['leases'][hash.hexdigest()]['words']
+        fileId = str(insertResult.inserted_id)
 
-        result = request.registry.azureBlobStorage.create_blob_from_bytes('files', id, input_file)
+        extractedData, extractedWords = self.loadFakeData(input_file)
 
+        result = request.registry.azureBlobStorage.create_blob_from_bytes('files', fileId, input_file)
+
+        if mimeType == 'application/pdf':
+            images, words = self.processPDF(input_file, fileId)
+            result = self.filesCollection.update_one({"_id": insertResult.inserted_id}, {"$set": {"pageCount": len(images), "images": images}})
+        elif mimeType == 'image/png':
+            images, words = self.processImage(input_file, fileId)
+            result = self.filesCollection.update_one({"_id": insertResult.inserted_id}, {"$set": {"pageCount": len(images), "images": images}})
+        else:
+            raise ValueError(f"Unsupported file type provided: {mimeType}")
+
+        if len(extractedWords) > 0:
+            words = extractedWords
+
+        if mimeType == 'image/png':
+            self.comparableSalesCollection.insert_one({
+                "fileId": fileId,
+                "appraisalId": appraisalId,
+                "fileName": input_file_name,
+                "pages": len(images),
+                "words": words,
+                "extractedData": extractedData
+            })
+        elif 'cash' in input_file_name.lower():
+            self.financialStatementsCollection.insert_one({
+                "fileId": fileId,
+                "appraisalId": appraisalId,
+                "fileName": input_file_name,
+                "monthlyRent": 10000,
+                "pages": len(images),
+                "pricePerSquareFoot": 5,
+                "size": 2000,
+                "words": words,
+                "extractedData": extractedData
+            })
+        else:
+            self.leasesCollection.insert_one({
+                "fileId": fileId,
+                "appraisalId": appraisalId,
+                "fileName": input_file_name,
+                "monthlyRent": 10000,
+                "pages": len(images),
+                "pricePerSquareFoot": 5,
+                "size": 2000,
+                "words": words,
+                "extractedData": extractedData
+            })
+
+
+    def processImage(self, imageData, fileId):
+        fileName = fileId + "-image-0.png"
+        result = self.request.registry.azureBlobStorage.create_blob_from_bytes('files', fileName, imageData)
+
+        words = self.extractWordsFromPDFGoogle(imageData, 0)
+
+        return [fileName], words
+
+    def processPDF(self, input_file, fileId):
         with tempfile.TemporaryDirectory() as dir:
-            with tempfile.NamedTemporaryFile('wb', dir=dir, suffix=input_file_name.split(".")[-1]) as tempFile:
+            with tempfile.NamedTemporaryFile('wb', dir=dir, suffix="pdf") as tempFile:
                 tempFile.write(input_file)
 
                 pdfInfo = self.getPDFInfo(os.path.join(dir, tempFile.name))
@@ -74,14 +126,10 @@ class FileAPI(object):
                 imageFutures = []
                 with concurrent.futures.ThreadPoolExecutor(max_workers=8) as pool:
                     for page in range(pdfInfo['pages']):
-                        future = pool.submit(self.renderPDFPage, tempFile.name, page, id)
+                        future = pool.submit(self.renderPDFPage, tempFile.name, page, fileId)
                         imageFutures.append(future)
 
                 images = [future.result()[1] for future in imageFutures]
-
-                print(images)
-
-                result = self.filesCollection.update_one({"_id": insertResult.inserted_id}, {"$set": {"pageCount": pdfInfo['pages'], "images": images}})
 
                 words = []
                 with concurrent.futures.ThreadPoolExecutor(max_workers=4) as executor:
@@ -93,35 +141,21 @@ class FileAPI(object):
                     for future in pageFutures:
                         words = words + future.result()
 
-        if len(extractedWords) > 0:
-            words = extractedWords
+        return images, words
 
-        # if 'lease' in input_file_name.lower():
+    def loadFakeData(self, fileData):
+        hash = hashlib.sha256()
+        hash.update(fileData)
+        extractedData = {}
+        extractedWords = []
+        with open('appraisal/fake_data.json', 'rt') as file:
+            fakeData = json.load(file)
+            if hash.hexdigest() in fakeData['leases']:
+                extractedData = fakeData['leases'][hash.hexdigest()]['extractedData']
+                extractedWords = fakeData['leases'][hash.hexdigest()]['words']
 
-        if 'cash' in input_file_name.lower():
-            self.financialStatementsCollection.insert_one({
-                "fileId": id,
-                "appraisalId": appraisalId,
-                "fileName": input_file_name,
-                "monthlyRent": 10000,
-                "pages": pdfInfo['pages'],
-                "pricePerSquareFoot": 5,
-                "size": 2000,
-                "words": words,
-                "extractedData": extractedData
-            })
-        else:
-            self.leasesCollection.insert_one({
-                "fileId": id,
-                "appraisalId": appraisalId,
-                "fileName": input_file_name,
-                "monthlyRent": 10000,
-                "pages": pdfInfo['pages'],
-                "pricePerSquareFoot": 5,
-                "size": 2000,
-                "words": words,
-                "extractedData": extractedData
-            })
+        return extractedData, extractedWords
+
 
     def getPDFInfo(self, pdfFileName):
         process = subprocess.run(['pdfinfo', pdfFileName], stdout=subprocess.PIPE)
@@ -215,10 +249,10 @@ class FileAPI(object):
             word = {
                 "word": annotation['description'],
                 "page": page,
-                "left": min([vertex['x'] - 3 for vertex in annotation['boundingPoly']['vertices']]) / im.width,
-                "right": max([vertex['x'] + 3 for vertex in annotation['boundingPoly']['vertices']]) / im.width,
-                "top": min([vertex['y'] - 1 for vertex in annotation['boundingPoly']['vertices']]) / im.height,
-                "bottom": max([vertex['y'] + 1 for vertex in annotation['boundingPoly']['vertices']]) / im.height
+                "left": min([vertex.get('x', 0) - 3 for vertex in annotation['boundingPoly']['vertices']]) / im.width,
+                "right": max([vertex.get('x', 0) + 3 for vertex in annotation['boundingPoly']['vertices']]) / im.width,
+                "top": min([vertex.get('y', 0) - 1 for vertex in annotation['boundingPoly']['vertices']]) / im.height,
+                "bottom": max([vertex.get('y', 0) + 1 for vertex in annotation['boundingPoly']['vertices']]) / im.height
             }
 
             if word['word'].lower() in ['example', 'corporation', 'inc.']:

@@ -6,7 +6,7 @@ class ViewLeaseExtractions extends React.Component
 {
     saveDocument(newLease)
     {
-        this.props.saveLease(newLease);
+        this.props.saveLeaseData(newLease);
     }
 
 
