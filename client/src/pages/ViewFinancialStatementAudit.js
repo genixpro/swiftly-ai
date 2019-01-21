@@ -3,6 +3,7 @@ import { Row, Col, Card, CardBody, CardHeader, Table } from 'reactstrap';
 import FinancialStatementFields from "./FinancialStatementFields";
 import _ from 'underscore';
 import NumberFormat from 'react-number-format';
+import AnnotationUtilities from './AnnotationUtilities';
 
 class ViewFinancialStatementAudit extends React.Component
 {
@@ -49,26 +50,6 @@ class ViewFinancialStatementAudit extends React.Component
         
     }
 
-    cleanAmount(text)
-    {
-        let negative = false;
-        if (text.indexOf('(') !== -1 || text.indexOf(')') !== -1)
-        {
-            negative = true;
-        }
-
-        const cleanText = text.replace(/[^0-9.]/g, "");
-        const number = Number(cleanText);
-        if (negative)
-        {
-            return -number;
-        }
-        else
-        {
-            return number;
-        }
-    }
-
     computeGroupTotals()
     {
         let incomeTotal = 0;
@@ -80,7 +61,7 @@ class ViewFinancialStatementAudit extends React.Component
             {
                 if (income.include)
                 {
-                    incomeTotal += this.cleanAmount(income.income_amount);
+                    incomeTotal += AnnotationUtilities.cleanAmount(income.income_amount);
                 }
             });
         }
@@ -91,7 +72,7 @@ class ViewFinancialStatementAudit extends React.Component
             {
                 if (expense.include)
                 {
-                    expenseTotal += this.cleanAmount(expense.expense_amount);
+                    expenseTotal += AnnotationUtilities.cleanAmount(expense.expense_amount);
                 }
             });
         }
@@ -143,7 +124,7 @@ class ViewFinancialStatementAudit extends React.Component
                                         <tbody>
                                         {
                                             this.state.financialStatement.extractedData[this.state.groups['income'].field] && this.state.financialStatement.extractedData[this.state.groups['income'].field].map((item) => {
-                                                return <tr key={item.lineNumber}>
+                                                return <tr key={item.lineNumber} className={`${!item.include ? 'excluded-item' : ''}`}>
                                                     <td className={"name-column"}>
                                                         <span>{item['income_name']}</span>
                                                     </td>
@@ -165,7 +146,13 @@ class ViewFinancialStatementAudit extends React.Component
                                             </td>
                                             <td className={"amount-column"}>
                                                 <span>
-                                                    <NumberFormat value={this.state.incomeTotal} displayType={'text'} thousandSeparator={', '} />
+                                                    <NumberFormat
+                                                        value={this.state.incomeTotal}
+                                                        displayType={'text'}
+                                                        thousandSeparator={', '}
+                                                        decimalScale={2}
+                                                        fixedDecimalScale={true}
+                                                    />
                                                 </span>
                                             </td>
                                             <td />
@@ -193,7 +180,7 @@ class ViewFinancialStatementAudit extends React.Component
                                         <tbody>
                                         {
                                             this.state.financialStatement.extractedData[this.state.groups['expense'].field] && this.state.financialStatement.extractedData[this.state.groups['expense'].field].map((item) => {
-                                                return <tr key={item.lineNumber}>
+                                                return <tr key={item.lineNumber} className={`${!item.include ? 'excluded-item' : ''}`}>
                                                     <td className={"name-column"}>
                                                         <span>{item['expense_name']}</span>
                                                     </td>
@@ -215,7 +202,13 @@ class ViewFinancialStatementAudit extends React.Component
                                             </td>
                                             <td className={"amount-column"}>
                                                 <span>
-                                                    <NumberFormat value={this.state.expenseTotal} displayType={'text'} thousandSeparator={', '} />
+                                                    <NumberFormat
+                                                        value={this.state.expenseTotal}
+                                                        displayType={'text'}
+                                                        thousandSeparator={', '}
+                                                        decimalScale={2}
+                                                        fixedDecimalScale={true}
+                                                    />
                                                 </span>
                                             </td>
                                             <td />
