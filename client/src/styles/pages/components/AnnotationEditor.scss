@@ -1,0 +1,82 @@
+.annotationEditorImage
+{
+  max-width: 100%;
+  pointer-events: none;
+  user-select: none;
+}
+
+.annotation-editor-canvas
+{
+  width: 150%;
+  height: 100%;
+  position: absolute;
+  z-index: 1000;
+  pointer-events: none;
+}
+
+.annotation-editor-word
+{
+  position: absolute;
+  cursor: pointer;
+  background-color: #00000000;
+  color: #00000000  ;
+  border-radius: 3px;
+}
+
+.annotation-editor-word:hover, .annotation-editor-word.selected, .annotation-editor-word.selected:hover,
+.annotation-editor-word.classified:hover, .annotation-editor-word.classified.selected, .annotation-editor-word.classified.selected:hover
+{
+  background-color: #0000bbaa;
+}
+
+.annotation-editor-word.classified
+{
+  background-color: rgba(0, 0, 255, 0.3);
+}
+
+.annotation-editor-image-outer-container
+{
+  overflow: auto;
+}
+
+.annotation-editor-image-inner-container
+{
+  position: relative;
+  width: fit-content;
+}
+
+.annotation-editor-form-field
+{
+  cursor: pointer;
+}
+
+.annotation-editor-form-field:hover
+{
+  background: #00000009;
+}
+.annotation-editor-form-field-title
+{
+  cursor: pointer;
+}
+
+.annotation-editor-extracted-data
+{
+  white-space: normal;
+}
+
+.annotationEditorImageThumbnail
+{
+  cursor: pointer;
+  max-width: 100%;
+}
+
+.extractions-toolbar
+{
+  position: absolute;
+  right: 0;
+  z-index: 1000;
+
+  em {
+    cursor: pointer;
+  }
+}

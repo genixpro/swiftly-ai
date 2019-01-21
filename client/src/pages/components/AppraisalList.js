@@ -1,5 +1,5 @@
 import React from 'react';
-import { Row, Col, Dropdown, DropdownToggle, DropdownMenu, DropdownItem, Card, CardBody, CardHeader, FormGroup, Input, Table } from 'reactstrap';
+import { Table } from 'reactstrap';
 import AppraisalListItem from './AppraisalListItem';
 
 
@@ -19,7 +19,7 @@ class AppraisalList extends React.Component
                 </thead>
                 <tbody>
                 {
-                    this.props.appraisals.map((appraisal) => <AppraisalListItem appraisal={appraisal} history={this.props.history}/>)
+                    this.props.appraisals.map((appraisal) => <AppraisalListItem key={appraisal._id['$oid']} appraisal={appraisal} history={this.props.history}/>)
                 }
                 </tbody>
             </Table>

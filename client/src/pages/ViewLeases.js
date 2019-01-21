@@ -1,10 +1,6 @@
 import React from 'react';
-import { translate, Trans } from 'react-i18next';
-import ContentWrapper from '../components/Layout/ContentWrapper';
-import { Row, Col, Dropdown, DropdownToggle, DropdownMenu, DropdownItem, Card, CardBody, CardHeader, FormGroup, Input,  Nav, NavItem, NavLink } from 'reactstrap';
+import { Row, Col } from 'reactstrap';
 import axios from 'axios';
-import Dropzone from 'react-dropzone';
-import Promise from "bluebird";
 import LeaseList from "./components/LeaseList"
 
 

@@ -1,13 +1,10 @@
 import React from 'react';
-import { translate, Trans } from 'react-i18next';
-import ContentWrapper from '../components/Layout/ContentWrapper';
-import { Row, Col, Dropdown, DropdownToggle, DropdownMenu, DropdownItem, Card, CardBody, CardHeader, CardText, CardTitle, FormGroup, Input,  Nav, NavItem, NavLink } from 'reactstrap';
+import { Row, Col, Card, CardBody,  Nav, NavItem, NavLink } from 'reactstrap';
 import axios from 'axios';
 import ViewLeaseExtractions from "./ViewLeaseExtractions";
-import ViewLeaseSummary from "./ViewLeaseSummary";
 import ViewLeaseReport from "./ViewLeaseReport";
 import { NavLink as RRNavLink } from 'react-router-dom';
-import { withRouter, Switch, Route, Redirect } from 'react-router-dom';
+import { Switch, Route } from 'react-router-dom';
 
 
 class ViewLease extends React.Component
@@ -44,9 +41,9 @@ class ViewLease extends React.Component
                 <Row>
                     <Col xs={12}>
                         <Nav tabs>
-                            <NavItem>
-                                <NavLink to={`${this.props.match.url}/summary`} activeClassName="active" tag={RRNavLink}>Summarized Data</NavLink>
-                            </NavItem>
+                            {/*<NavItem>*/}
+                                {/*<NavLink to={`${this.props.match.url}/summary`} activeClassName="active" tag={RRNavLink}>Summarized Data</NavLink>*/}
+                            {/*</NavItem>*/}
                             <NavItem>
                                 <NavLink to={`${this.props.match.url}/raw`} activeClassName="active" tag={RRNavLink}>Raw Lease</NavLink>
                             </NavItem>
@@ -63,7 +60,7 @@ class ViewLease extends React.Component
                                 <CardBody>
                                     <Switch>
                                         <Route path={`${this.props.match.url}/raw`} render={() => <ViewLeaseExtractions lease={this.state.lease} saveLeaseData={this.saveLeaseData.bind(this)}/>} lease={this.state.lease} />
-                                        <Route path={`${this.props.match.url}/summary`} render={() => <ViewLeaseSummary lease={this.state.lease} saveLeaseData={this.saveLeaseData.bind(this)}/>} lease={this.state.lease} />
+                                        <Route path={`${this.props.match.url}/summary`} render={() => <ViewLeaseReport lease={this.state.lease} saveLeaseData={this.saveLeaseData.bind(this)}/>} lease={this.state.lease} />
                                         <Route path={`${this.props.match.url}/report`} render={() => <ViewLeaseReport lease={this.state.lease} saveLeaseData={this.saveLeaseData.bind(this)}/>} lease={this.state.lease} />
                                     </Switch>
                                 </CardBody>

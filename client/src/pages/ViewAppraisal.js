@@ -1,15 +1,14 @@
 import React from 'react';
-import { translate, Trans } from 'react-i18next';
 import ContentWrapper from '../components/Layout/ContentWrapper';
-import { Row, Col, Dropdown, DropdownToggle, DropdownMenu, DropdownItem, Nav, NavItem, NavLink, Card, CardBody } from 'reactstrap';
-import { withRouter, Switch, Route, Redirect } from 'react-router-dom';
+import { Row, Col, Nav, NavItem, NavLink, Card, CardBody } from 'reactstrap';
+import { Switch, Route } from 'react-router-dom';
 import { NavLink as RRNavLink } from 'react-router-dom';
-import { TransitionGroup, CSSTransition } from 'react-transition-group';
 
 import UploadFiles from "./UploadFiles";
 import ViewLeases from "./ViewLeases";
 import ViewLease from "./ViewLease";
 import ViewFinancialStatements from "./ViewFinancialStatements";
+import ViewFinancialStatement from "./ViewFinancialStatement";
 
 class ViewAppraisal extends React.Component
 {
@@ -18,7 +17,7 @@ class ViewAppraisal extends React.Component
 
     componentDidMount()
     {
-        console.log(this.props.match);
+
     }
 
 
@@ -38,7 +37,7 @@ class ViewAppraisal extends React.Component
                                 <NavLink to={`${this.props.match.url}/leases`} activeClassName="active" tag={RRNavLink}>Leases</NavLink>
                             </NavItem>
                             <NavItem>
-                                <NavLink to={`${this.props.match.url}/financials`} activeClassName="active" tag={RRNavLink}>Financials</NavLink>
+                                <NavLink to={`${this.props.match.url}/financial_statements`} activeClassName="active" tag={RRNavLink}>Financials</NavLink>
                             </NavItem>
                         </Nav>
                     </Row>
@@ -50,7 +49,8 @@ class ViewAppraisal extends React.Component
                                         <Route path={`${this.props.match.path}/upload`} component={UploadFiles} />
                                         <Route path={`${this.props.match.path}/leases`} component={ViewLeases} />
                                         <Route path={`${this.props.match.path}/lease/:leaseId`} component={ViewLease} />
-                                        <Route path={`${this.props.match.path}/financials`} component={ViewFinancialStatements} />
+                                        <Route path={`${this.props.match.path}/financial_statements`} component={ViewFinancialStatements} />
+                                        <Route path={`${this.props.match.path}/financial_statement/:financialStatementId`} component={ViewFinancialStatement} />
                                     </Switch>
                                 </CardBody>
                             </Card>

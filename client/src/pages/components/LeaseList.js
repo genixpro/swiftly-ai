@@ -1,5 +1,5 @@
 import React from 'react';
-import { Row, Col, Dropdown, DropdownToggle, DropdownMenu, DropdownItem, Card, CardBody, CardHeader, FormGroup, Input, Table } from 'reactstrap';
+import { Table } from 'reactstrap';
 import LeaseListItem from './LeaseListItem';
 
 
@@ -18,7 +18,7 @@ class LeaseList extends React.Component
                 </thead>
                 <tbody>
                 {
-                    this.props.leases.map((lease) => <LeaseListItem lease={lease} history={this.props.history} appraisalId={this.props.appraisalId}/>)
+                    this.props.leases.map((lease) => <LeaseListItem key={lease._id['$oid']} lease={lease} history={this.props.history} appraisalId={this.props.appraisalId}/>)
                 }
                 </tbody>
             </Table>

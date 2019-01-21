@@ -1,5 +1,5 @@
 import React from 'react';
-import { Row, Col, Dropdown, DropdownToggle, DropdownMenu, DropdownItem, Card, CardBody, CardHeader, FormGroup, Input, Table } from 'reactstrap';
+import { Table } from 'reactstrap';
 import UploadedFileListItem from './UploadedFileListItem';
 import axios from "axios";
 
@@ -28,7 +28,7 @@ class UploadedFileList extends React.Component
                 </thead>
                 <tbody>
                 {
-                    this.state.files.map((file) => <UploadedFileListItem file={file}/>)
+                    this.state.files.map((file) => <UploadedFileListItem key={file._id['$oid']} file={file}/>)
                 }
                 </tbody>
             </Table>

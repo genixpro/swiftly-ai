@@ -1,5 +1,5 @@
 import React from 'react';
-import { Row, Col, Dropdown, DropdownToggle, DropdownMenu, DropdownItem, Card, CardBody, CardHeader, FormGroup, Input, Table } from 'reactstrap';
+import { Table } from 'reactstrap';
 import FinancialStatementListItem from './FinancialStatementListItem';
 
 
@@ -15,7 +15,7 @@ class FinancialStatementList extends React.Component
                 </thead>
                 <tbody>
                 {
-                    this.props.financialStatements.map((financial_statement) => <FinancialStatementListItem financial_statement={financial_statement} history={this.props.history} appraisalId={this.props.appraisalId}/>)
+                    this.props.financialStatements.map((financial_statement) => <FinancialStatementListItem key={financial_statement._id['$oid']} financialStatement={financial_statement} history={this.props.history} appraisalId={this.props.appraisalId}/>)
                 }
                 </tbody>
             </Table>

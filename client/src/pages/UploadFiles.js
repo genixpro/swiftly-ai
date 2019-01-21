@@ -1,7 +1,5 @@
 import React from 'react';
-import { translate, Trans } from 'react-i18next';
-import ContentWrapper from '../components/Layout/ContentWrapper';
-import { Row, Col, Dropdown, DropdownToggle, DropdownMenu, DropdownItem, Card, CardBody, CardHeader, FormGroup, Input,  Nav, NavItem, NavLink } from 'reactstrap';
+import { Row, Col } from 'reactstrap';
 import axios from 'axios';
 import Dropzone from 'react-dropzone';
 import Promise from "bluebird";
@@ -24,7 +22,7 @@ class UploadFiles extends React.Component
     onDrop(files)
     {
         this.setState({uploading: true});
-        const promise = Promise.mapSeries(files, (file) => {
+        Promise.mapSeries(files, (file) => {
             return new Promise((resolve, reject) => {
                 const data = new FormData();
                 data.set("fileName", file.name);
@@ -84,19 +82,15 @@ class UploadFiles extends React.Component
                                 <br/>
                                 <span>Drop files here or click here to upload</span>
                             </div>
-                        </Dropzone>
-                        {
-                            this.state.uploading && <div className="card card-default">
-                                <div className="card-header">Ball Pulse</div>
-                                <div className="card-body loader-demo d-flex align-items-center justify-content-center">
-                                    <div className="ball-pulse">
+                            {
+                                this.state.uploading &&
+                                    <div className="upload-files-loader ball-pulse">
                                         <div></div>
                                         <div></div>
                                         <div></div>
                                     </div>
-                                </div>
-                            </div>
-                        }
+                            }
+                        </Dropzone>
                     </Col>
                 </Row>
                 <Row>

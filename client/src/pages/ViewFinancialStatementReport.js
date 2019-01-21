@@ -3,12 +3,12 @@ import { Row, Col, Card, CardHeader } from 'reactstrap';
 import LeaseFields from "./LeaseFields";
 
 
-class ViewLeaseReport extends React.Component
+class ViewFinancialStatementReport extends React.Component
 {
     state = {
         width: 0,
         height: 0,
-        lease: {
+        financialStatement: {
             extractedData:{},
             words: []
         }
@@ -16,7 +16,7 @@ class ViewLeaseReport extends React.Component
 
     componentDidMount()
     {
-        this.setState({"lease": this.props.lease});
+        this.setState({"financialStatement": this.props.financialStatement});
     }
 
     componentDidUpdate()
@@ -35,16 +35,16 @@ class ViewLeaseReport extends React.Component
 
                             <table>
                                 <tbody>
+                                {
+                                    LeaseFields.map((group) =>
                                     {
-                                        LeaseFields.map((group) =>
-                                        {
-                                            return group.fields.map((field) =>
-                                                    <tr className={"lease-report-row"} key={field.field}>
-                                                        <td className={"lease-report-variable-name"}>{field.name}</td>
-                                                        <td>{this.state.lease.extractedData[field.field]}</td>
-                                                    </tr>);
-                                        })
-                                    }
+                                        return group.fields.map((field) =>
+                                                <tr className={"lease-report-row"} key={field.field}>
+                                                    <td className={"lease-report-variable-name"}>{field.name}</td>
+                                                    <td>{this.state.financialStatement.extractedData[field.field]}</td>
+                                                </tr>)
+                                    })
+                                }
                                 </tbody>
                             </table>
                         </Card>
@@ -55,4 +55,4 @@ class ViewLeaseReport extends React.Component
     }
 }
 
-export default ViewLeaseReport;
+export default ViewFinancialStatementReport;

@@ -1,11 +1,7 @@
 import React from 'react';
-import { Row, Col, Dropdown, DropdownToggle, DropdownMenu, DropdownItem, Card, CardBody, CardHeader, CardText, CardTitle, FormGroup, Input,  Nav, NavItem, NavLink } from 'reactstrap';
-import axios from 'axios';
-import _ from 'underscore';
-import LeaseFields from '../LeaseFields';
-import { ContextMenu, MenuItem, ContextMenuTrigger, SubMenu } from "react-contextmenu";
+import { ContextMenuTrigger } from "react-contextmenu";
 
-class LeaseExtractionToken extends React.Component
+class AnnotationExtractionToken extends React.Component
 {
     constructor()
     {
@@ -20,6 +16,7 @@ class LeaseExtractionToken extends React.Component
 
     componentDidMount()
     {
+        this.props.tokenRef(this);
         this.setState({
             word: this.props.word,
             wordIndex: this.props.wordIndex
@@ -52,8 +49,8 @@ class LeaseExtractionToken extends React.Component
         const word = this.state.word;
         const wordIndex = this.state.wordIndex;
         return (
-            <ContextMenuTrigger id="view-lease-word-menu" collect={() => {return {wordIndex}} }>
-                <div className={`view-lease-word ${this.state.selected ? 'selected' : ''} ${this.state.word.classification !== "null" ? 'classified' : ''}`}
+            <ContextMenuTrigger id="annotation-editor-word-menu" collect={() => {return {wordIndex}} }>
+                <div className={`annotation-editor-word ${this.state.selected ? 'selected' : ''} ${this.state.word.classification !== "null" ? 'classified' : ''}`}
                      style={{"top": `${word.top*100}%`, "left": `${word.left*100}%`, "width": `${word.right*100 - word.left*100}%`, "height": `${word.bottom*100 - word.top*100}%`}}
                      onMouseEnter={this.onHoverStart.bind(this)}
                      onMouseLeave={this.onHoverEnd.bind(this)}
@@ -66,4 +63,4 @@ class LeaseExtractionToken extends React.Component
     }
 }
 
-export default LeaseExtractionToken;
+export default AnnotationExtractionToken;

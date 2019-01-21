@@ -31,7 +31,7 @@ class FinancialStatementAPI(object):
 
         financial_statement = self.financialStatementsCollection.find_one({"_id": bson.ObjectId(leaseId), "appraisalId": appraisalId})
 
-        return {"financial_statements": financial_statement}
+        return {"financialStatement": financial_statement}
 
     def collection_post(self):
         data = self.request.json_body
@@ -43,6 +43,21 @@ class FinancialStatementAPI(object):
 
         id = result.inserted_id
         return {"_id": str(id)}
+
+
+    def post(self):
+        data = self.request.json_body
+
+        appraisalId = self.request.matchdict['appraisalId']
+        statementId = self.request.matchdict['id']
+
+        if '_id' in data:
+            del data['_id']
+
+        self.financialStatementsCollection.update_one({"_id": bson.ObjectId(statementId)}, {"$set": data})
+
+        return {"_id": str(id)}
+
 
 
 

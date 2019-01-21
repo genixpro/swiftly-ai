@@ -45,23 +45,23 @@ class Header extends Component {
                             { /* Button used to collapse the left sidebar. Only visible on tablet and desktops */ }
                             <TriggerResize>
                                 <ToggleState state="aside-collapsed">
-                                    <a href="" className="nav-link d-none d-md-block d-lg-block d-xl-block">
+                                    <span className="nav-link d-none d-md-block d-lg-block d-xl-block" style={{"cursor": "pointer"}}>
                                         <em className="fas fa-bars"></em>
-                                    </a>
+                                    </span>
                                 </ToggleState>
                             </TriggerResize>
                             { /* Button to show/hide the sidebar on mobile. Visible on mobile only. */ }
                             <ToggleState state="aside-toggled" nopersist={true}>
-                                <a href=""  className="nav-link sidebar-toggle d-md-none">
+                                <span className="nav-link sidebar-toggle d-md-none" style={{"cursor": "pointer"}}>
                                     <em className="fas fa-bars"></em>
-                                </a>
+                                </span>
                             </ToggleState>
                         </li>
                         { /* START User avatar toggle */ }
                         <li className="nav-item d-none d-md-block">
-                            <a  className="nav-link" onClick={ this.toggleUserblock }>
+                            <span  className="nav-link" onClick={ this.toggleUserblock }  style={{"cursor": "pointer"}}>
                                 <em className="icon-user"></em>
-                            </a>
+                            </span>
                         </li>
                         { /* END User avatar toggle */ }
                         { /* START lock screen */ }
@@ -77,9 +77,9 @@ class Header extends Component {
                     <ul className="navbar-nav flex-row">
                         { /* Search icon */ }
                         <li className="nav-item">
-                            <a className="nav-link" href="" data-search-open="">
+                            <span className="nav-link" href="" data-search-open="" style={{"cursor": "pointer"}}>
                                 <em className="icon-magnifier"></em>
-                            </a>
+                            </span>
                         </li>
                         { /* Fullscreen (only desktops) */ }
                         <li className="nav-item d-none d-md-block">
@@ -145,9 +145,9 @@ class Header extends Component {
                         { /* START Offsidebar button */ }
                         <li className="nav-item">
                             <ToggleState state="offsidebar-open" nopersist={true}>
-                                <a className="nav-link" href="">
+                                <span className="nav-link" style={{"cursor": "pointer"}}>
                                     <em className="icon-notebook"></em>
-                                </a>
+                                </span>
                             </ToggleState>
                         </li>
                         { /* END Offsidebar menu */ }

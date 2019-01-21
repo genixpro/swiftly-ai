@@ -16,6 +16,7 @@ requires = [
     'waitress',
     'cornice',
     'pymongo',
+    'pillow',
     'azure-storage'
 ]
 

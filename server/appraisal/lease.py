@@ -21,7 +21,7 @@ class LeaseAPI(object):
     def collection_get(self):
         appraisalId = self.request.matchdict['appraisalId']
 
-        leases = self.leasesCollection.find({"appraisalId": appraisalId})
+        leases = self.leasesCollection.find({"appraisalId": appraisalId}, {"fileName": 1, "extractedData": 1, "pricePerSquareFoot": 1, "size": 1, "monthlyRent": 1})
 
         return {"leases": list(leases)}
 

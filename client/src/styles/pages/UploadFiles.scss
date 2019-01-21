@@ -4,3 +4,15 @@
 {
   cursor: pointer;
 }
+
+
+.upload-files-loader.ball-pulse
+{
+  margin-top: 15px;
+  line-height: 10px;
+}
+
+.upload-files-loader.ball-pulse > div
+{
+  background-color: blue;
+}

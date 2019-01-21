@@ -1,13 +1,5 @@
 import React from 'react';
-import { translate, Trans } from 'react-i18next';
-import ContentWrapper from '../components/Layout/ContentWrapper';
-import { Row, Col, Dropdown, DropdownToggle, DropdownMenu, DropdownItem, Card, CardBody, CardHeader, CardText, CardTitle, FormGroup, Input,  Nav, NavItem, NavLink } from 'reactstrap';
-import axios from 'axios';
-import ResizeObserver from 'resize-observer-polyfill';
-import _ from 'underscore';
-import UploadFiles from "./UploadFiles";
-import ViewLeases from "./ViewLeases";
-import { NavLink as RRNavLink } from 'react-router-dom';
+import { Row, Col, Card, CardBody, CardHeader, FormGroup, Input } from 'reactstrap';
 
 
 class ViewLeaseExtractions extends React.Component
