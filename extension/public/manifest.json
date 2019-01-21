@@ -1,0 +1,17 @@
+{
+  "name": "Appraise.ai",
+  "short_name": "Appraise.ai",
+  "version": "0.1",
+  "description": "Allows you to capture real-estate information for use in an Appraise.ai appraisal easily.",
+  "browser_action": {
+    "default_popup": "index.html",
+    "default_title": "Appraise.ai",
+    "default_icon": "icon.png"
+  },
+  "permissions": [
+    "activeTab",
+    "contextMenus",
+    "http://localhost:3002/"
+  ],
+  "manifest_version": 2
+}
