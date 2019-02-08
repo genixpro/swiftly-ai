@@ -17,9 +17,9 @@ class ViewFinancialStatement extends React.Component
 
     componentDidMount()
     {
-        axios.get(`/appraisal/${this.props.match.params.id}/financial_statements/${this.props.match.params.financialStatementId}`).then((response) =>
+        axios.get(`/appraisal/${this.props.match.params.id}/files/${this.props.match.params.financialStatementId}`).then((response) =>
         {
-            this.setState({financialStatement: response.data.financialStatement})
+            this.setState({financialStatement: response.data.file})
         });
     }
 
@@ -30,7 +30,7 @@ class ViewFinancialStatement extends React.Component
 
     saveFinancialStatementData(newLease)
     {
-        axios.post(`/appraisal/${this.props.match.params.id}/financial_statements/${this.props.match.params.financialStatementId}`, newLease).then((response) =>
+        axios.post(`/appraisal/${this.props.match.params.id}/files/${this.props.match.params.financialStatementId}`, newLease).then((response) =>
         {
             this.setState({financialStatement: newLease})
         });
@@ -51,9 +51,6 @@ class ViewFinancialStatement extends React.Component
                             <NavItem>
                                 <NavLink to={`${this.props.match.url}/audit`} activeClassName="active" tag={RRNavLink}>Audit</NavLink>
                             </NavItem>
-                            <NavItem>
-                                <NavLink to={`${this.props.match.url}/report`} activeClassName="active" tag={RRNavLink}>Report</NavLink>
-                            </NavItem>
                         </Nav>
                     </Col>
                 </Row>
@@ -65,8 +62,8 @@ class ViewFinancialStatement extends React.Component
                                     <Switch>
                                         <Route path={`${this.props.match.url}/raw`} render={() => <ViewFinancialStatementExtractions financialStatement={this.state.financialStatement} saveFinancialStatementData={this.saveFinancialStatementData.bind(this)}/>} financialStatement={this.state.financialStatement} />
                                         <Route path={`${this.props.match.url}/audit`} render={() => <ViewFinancialStatementAudit financialStatement={this.state.financialStatement} saveFinancialStatementData={this.saveFinancialStatementData.bind(this)}/>} financialStatement={this.state.financialStatement} />
-                                        <Route path={`${this.props.match.url}/summary`} render={() => <ViewFinancialStatementReport financialStatement={this.state.financialStatement} saveFinancialStatementData={this.saveFinancialStatementData.bind(this)}/>} financialStatement={this.state.financialStatement} />
-                                        <Route path={`${this.props.match.url}/report`} render={() => <ViewFinancialStatementReport financialStatement={this.state.financialStatement} saveFinancialStatementData={this.saveFinancialStatementData.bind(this)}/>} financialStatement={this.state.financialStatement} />
+                                        <Route path={`${this.props.match.url}/summary`} render={() => <ViewFinancialStatementAudit financialStatement={this.state.financialStatement} saveFinancialStatementData={this.saveFinancialStatementData.bind(this)}/>} financialStatement={this.state.financialStatement} />
+                                        <Route path={`${this.props.match.url}/report`} render={() => <ViewFinancialStatementAudit financialStatement={this.state.financialStatement} saveFinancialStatementData={this.saveFinancialStatementData.bind(this)}/>} financialStatement={this.state.financialStatement} />
                                     </Switch>
                                 </CardBody>
                             </Card>

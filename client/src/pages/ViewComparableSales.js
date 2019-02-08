@@ -12,9 +12,9 @@ class ViewComparableSales extends React.Component
 
     componentDidMount()
     {
-        axios.get(`/appraisal/${this.props.match.params.id}/comparable_sales`).then((response) =>
+        axios.get(`/appraisal/${this.props.match.params.id}/files?type=comparable`).then((response) =>
         {
-            this.setState({comparableSales: response.data.comparableSales})
+            this.setState({comparableSales: response.data.files})
         });
     }
 

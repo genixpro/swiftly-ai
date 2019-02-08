@@ -15,6 +15,7 @@ class AnnotationEditor extends React.Component
             height: 0,
             currentPage: 0,
             document: {
+                _id: {},
                 extractedData:{},
                 words: []
             },
@@ -256,7 +257,11 @@ class AnnotationEditor extends React.Component
             if(word.classification && word.classification !== 'null')
             {
                 const groupInfo = this.getGroupInformation(word.classification);
-                if (groupInfo.multiple)
+                if (!groupInfo)
+                {
+                    // Don't do anything
+                }
+                else if (groupInfo.multiple)
                 {
                     if(!extractedData[groupInfo.field])
                     {
@@ -405,7 +410,7 @@ class AnnotationEditor extends React.Component
                                         <img
                                             alt="Document Preview"
                                             id={`annotation-editor-image-${page}-thumbnail`}
-                                            src={`https://appraisalfiles.blob.core.windows.net/files/${this.state.document.fileId}-image-${page}.png`}
+                                            src={`https://appraisalfiles.blob.core.windows.net/files/${this.state.document._id['$oid']}-image-${page}.png`}
                                             onLoad={this.componentDidUpdate.bind(this)}
                                             onClick={() => this.changePage(page)}
                                             className="annotationEditorImageThumbnail"
@@ -431,7 +436,7 @@ class AnnotationEditor extends React.Component
                                 <img
                                     alt="Document"
                                     id={`annotation-editor-image-${this.state.currentPage}`}
-                                    src={`https://appraisalfiles.blob.core.windows.net/files/${this.state.document.fileId}-image-${this.state.currentPage}.png`}
+                                    src={`https://appraisalfiles.blob.core.windows.net/files/${this.state.document._id['$oid']}-image-${this.state.currentPage}.png`}
                                     onLoad={this.componentDidUpdate.bind(this)}
                                     className="annotationEditorImage"
                                 />

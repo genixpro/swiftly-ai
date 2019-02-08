@@ -18,7 +18,8 @@ requires = [
     'pymongo',
     'pillow',
     'azure-storage',
-    'filetype'
+    'filetype',
+    'python-docx'
 ]
 
 tests_require = [
@@ -53,5 +54,9 @@ setup(
         'paste.app_factory': [
             'main = appraisal:main',
         ],
+        'console_scripts': [
+            'appraisal_train_model = appraisal.bin.train_document_classifier:main',
+            'appraisal_generate_documents = appraisal.bin.generate_documents:main'
+        ]
     },
 )

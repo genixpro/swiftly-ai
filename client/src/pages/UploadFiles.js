@@ -17,6 +17,7 @@ class UploadFiles extends React.Component
 
     componentDidMount()
     {
+
     }
 
     onDrop(files)
@@ -52,6 +53,7 @@ class UploadFiles extends React.Component
         }).then(() =>
         {
             this.setState({uploading: false});
+            this.fileList.refresh();
         }, (err) =>
         {
             this.setState({uploading: false});
@@ -98,7 +100,7 @@ class UploadFiles extends React.Component
                         <h3>View Existing Files</h3>
                     </Col>
                     <Col xs={12}>
-                        <UploadedFileList appraisalId={this.props.match.params['id']}/>
+                        <UploadedFileList appraisalId={this.props.match.params['id']} ref={(obj) => this.fileList = obj}/>
                     </Col>
                 </Row>
             </div>

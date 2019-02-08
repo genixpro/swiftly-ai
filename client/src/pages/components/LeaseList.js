@@ -13,7 +13,7 @@ class LeaseList extends React.Component
                     <th>Name</th>
                     <th>Monthly Rent</th>
                     <th>Size</th>
-                    <th>Price Per Square Foot</th>
+                    <th>Term</th>
                 </tr>
                 </thead>
                 <tbody>

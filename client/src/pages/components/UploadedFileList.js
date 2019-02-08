@@ -11,6 +11,16 @@ class UploadedFileList extends React.Component
 
     componentDidMount()
     {
+        this.refresh();
+
+        if (this.props.ref)
+        {
+            this.props.ref(this);
+        }
+    }
+
+    refresh()
+    {
         axios.get(`/appraisal/${this.props.appraisalId}/files`).then((response) =>
         {
             this.setState({files: response.data.files})
@@ -28,7 +38,7 @@ class UploadedFileList extends React.Component
                 </thead>
                 <tbody>
                 {
-                    this.state.files.map((file) => <UploadedFileListItem key={file._id['$oid']} file={file}/>)
+                    this.state.files.map((file) => <UploadedFileListItem key={file._id['$oid']} file={file} appraisalId={this.props.appraisalId}/>)
                 }
                 </tbody>
             </Table>

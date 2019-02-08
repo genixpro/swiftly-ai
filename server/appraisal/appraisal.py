@@ -33,3 +33,19 @@ class AppraisalAPI(object):
         appraisal = self.appraisalsCollection.find_one({"_id": bson.ObjectId(appraisalId)})
 
         return {"appraisal": appraisal}
+
+
+    def post(self):
+        data = self.request.json_body
+
+        appraisalId = self.request.matchdict['id']
+
+        if '_id' in data:
+            del data['_id']
+
+        self.appraisalsCollection.update_one({"_id": bson.ObjectId(appraisalId)}, {"$set": data})
+
+        return {"_id": str(id)}
+
+
+

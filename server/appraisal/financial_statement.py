@@ -64,7 +64,24 @@ class FinancialStatementAPI(object):
     def updateStabilizedStatement(self, appraisalId):
         financialStatements = self.financialStatementsCollection.find({"appraisalId": appraisalId})
 
-        statement = financialStatements[0]
+        expenses = []
+        incomes = []
 
-        changed = self.appraisalsCollection.update_one({"_id": bson.ObjectId(appraisalId)}, {"$set": {"stabilizedStatement": statement['extractedData']}})
+        for statement in financialStatements:
+            incomes = statement.get('extractedData', {}).get('income', [])
+            expenses = statement.get('extractedData', {}).get('expense', [])
+
+        for income in incomes:
+            if 'include' not in income:
+                income['include'] = True
+        for expense in expenses:
+            if 'include' not in expense:
+                expense['include'] = True
+
+        extractedData = {
+            "income": incomes,
+            "expense": expenses
+        }
+
+        changed = self.appraisalsCollection.update_one({"_id": bson.ObjectId(appraisalId)}, {"$set": {"stabilizedStatement": extractedData}})
 

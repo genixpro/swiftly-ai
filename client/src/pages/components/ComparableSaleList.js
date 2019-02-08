@@ -11,6 +11,8 @@ class ComparableSaleList extends React.Component
                 <thead>
                 <tr>
                     <th>Name</th>
+                    <th>Price Per Square Foot</th>
+                    <th>Capitalization Rate</th>
                 </tr>
                 </thead>
                 <tbody>

@@ -27,6 +27,11 @@ class ViewStabilizedStatementValuation extends React.Component
 
     computeGroupTotals()
     {
+        if (!this.state.appraisal.stabilizedStatement)
+        {
+            return
+        }
+
         let incomeTotal = 0;
         let expenseTotal = 0;
 
@@ -65,7 +70,7 @@ class ViewStabilizedStatementValuation extends React.Component
 
     render() {
         return (
-                this.state.appraisal ?
+             (this.state.appraisal && this.state.appraisal.stabilizedStatement) ?
                     <div id={"view-stabilized-statement"} className={"view-stabilized-statement"}>
                         <Row>
                             <Col xs={12} md={10} lg={8} xl={6}>
