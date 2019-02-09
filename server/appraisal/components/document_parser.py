@@ -13,7 +13,8 @@ from pprint import pprint
 import concurrent.futures
 import filetype
 import time
-
+import numpy
+import math
 
 class DocumentParser:
 
@@ -83,6 +84,7 @@ class DocumentParser:
 
                         words.append(word)
                 self.assignLineNumbersToWords(words)
+                self.assignColumnNumbersToWords(words)
                 words = sorted(words, key=lambda word: (word['page'], word['lineNumber'], word['left']))
         return words
 
@@ -125,6 +127,7 @@ class DocumentParser:
 
             words.append(word)
         self.assignLineNumbersToWords(words)
+        self.assignColumnNumbersToWords(words)
         words = sorted(words, key=lambda word: (word['lineNumber'], word['left']))
         return words
 
@@ -189,9 +192,30 @@ class DocumentParser:
                 word['lineNumber'] = word['line']['lineNumber']
                 del word['line']
 
+    def assignColumnNumbersToWords(self, words):
+        wordsByPage = {}
+        for word in words:
+            if word['page'] not in wordsByPage:
+                wordsByPage[word['page']] = []
+            wordsByPage[word['page']].append(word)
+
+        for page in wordsByPage.keys():
+            averageWordWidth = numpy.mean([word['right'] - word['left'] for word in words])
+            columns = math.ceil(1.0 / averageWordWidth)
+
+            for word in wordsByPage[page]:
+                # Set the column numbers for left and right
+                word['columnLeft'] = math.floor(word['left'] / averageWordWidth)
+                word['columnRight'] = math.floor(word['right'] / averageWordWidth)
+
+    def assignWordIndexesToWords(self, words):
+        for index, word in enumerate(words):
+            word['index'] = index
+
     def processImage(self, imageData, fileId, extractWords=True):
         if extractWords:
             words = self.extractWordsFromPDFGoogle(imageData, 0)
+            self.assignWordIndexesToWords(words)
         else:
             words = []
 
@@ -224,6 +248,8 @@ class DocumentParser:
 
                             for future in pageFutures:
                                 words = words + future.result()
+
+                self.assignWordIndexesToWords(words)
 
         return [future.result() for future in imageFutures], words
 

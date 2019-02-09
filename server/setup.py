@@ -55,8 +55,9 @@ setup(
             'main = appraisal:main',
         ],
         'console_scripts': [
-            'appraisal_train_model = appraisal.bin.train_document_classifier:main',
-            'appraisal_generate_documents = appraisal.bin.generate_documents:main'
+            'appraisal_train_classifier = appraisal.bin.train_document_classifier:main',
+            'appraisal_generate_documents = appraisal.bin.generate_documents:main',
+            'appraisal_train_extractor = appraisal.bin.train_document_extractor:main'
         ]
     },
 )

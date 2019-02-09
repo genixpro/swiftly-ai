@@ -63,8 +63,6 @@ class DocumentGenerator:
 
                 tokenWords[key] = word
 
-        print(tokenWords)
-
         document = docx.Document(pkg_resources.resource_stream('appraisal', f'templates/{template}'))
 
         for paragraph in document.paragraphs:
@@ -114,7 +112,8 @@ class DocumentGenerator:
 
                 if bestWord is not None:
                     bestWord['classification'] = key
-        pprint(words)
+        # pprint(words)
+        return {"words": words}
 
     def removeSymbols(self, text):
         symbols = ".,<>!@#$%^&*(){}[]|\;:'\"/?"
