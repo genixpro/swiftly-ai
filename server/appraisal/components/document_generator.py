@@ -40,11 +40,44 @@ class DocumentGenerator:
     def generateDocument(self, template, templateType):
         fields = self.loadTemplateFields(templateType)
 
-        # First we convert the raw template into words with coordinates. This allows us to identify
+        # First we go through the document, and replace any fields with IDS
+        document = docx.Document(pkg_resources.resource_stream('appraisal', f'templates/{template}'))
+
+        wordFields = {}
+        currentId = 0
+
+        paragraphs = [p for p in document.paragraphs]
+        tables = [t for t in document.tables]
+        for section in document.sections:
+            paragraphs.extend(section.header.paragraphs)
+            paragraphs.extend(section.footer.paragraphs)
+
+            tables.extend(section.header.tables)
+            tables.extend(section.footer.tables)
+
+        for table in tables:
+            for row in table.rows:
+                for cell in row.cells:
+                    paragraphs.extend(cell.paragraphs)
+
+        for paragraph in paragraphs:
+            for run in paragraph.runs:
+                for field in fields:
+                    keyname = f"<<{field}>>"
+
+                    if keyname in run.text:
+                        replacement = f"<<{currentId}>>"
+                        wordFields[currentId] = field
+                        currentId += 1
+
+                        run.text = run.text.replace(keyname, replacement)
+
+        bufferFile = io.BytesIO()
+        document.save(bufferFile)
+
+        # Now we convert the template into words with coordinates. This allows us to identify
         # the location of the template tokens within the original document, in terms of X/Y coordinates.
-        templateStream = pkg_resources.resource_stream('appraisal', f'templates/{template}')
-        templateData = templateStream.read()
-        images, templateWords = self.parser.processDocx(templateData)
+        images, templateWords = self.parser.processDocx(bufferFile.getbuffer())
 
         tokenWords = {}
         for word in templateWords:
@@ -59,22 +92,24 @@ class DocumentGenerator:
                 startIndex = word['word'].find(startString)
                 endIndex = word['word'].find(endString)
 
-                key = word['word'][startIndex+len(startString):endIndex]
+                replacementId = int(word['word'][startIndex+len(startString):endIndex])
+                word['replacementId'] = replacementId
 
-                tokenWords[key] = word
+                tokenWords[replacementId] = word
 
-        document = docx.Document(pkg_resources.resource_stream('appraisal', f'templates/{template}'))
+        # Now go through the document a second time and replace those fields with a random replacement
+        for paragraph in paragraphs:
+            for run in paragraph.runs:
+                while "<<" in run.text and ">>" in run.text:
+                    replacementId = int(run.text[run.text.index('<<')+2:run.text.index(">>")])
 
-        for paragraph in document.paragraphs:
-            for field in fields:
-                keyname = f"<<{field}>>"
+                    keyname = f"<<{replacementId}>>"
 
-                if keyname in paragraph.text:
-                    replacement = random.choice(fields[field])
+                    if keyname in run.text:
+                        replacement = random.choice(fields[wordFields[replacementId]])
+                        run.text = run.text.replace(keyname, replacement)
+                        tokenWords[replacementId]['replacement'] = replacement
 
-                    paragraph.text = paragraph.text.replace(keyname, replacement)
-
-                    tokenWords[field]['replacement'] = replacement
 
         bufferFile = io.BytesIO()
         document.save(bufferFile)
@@ -83,9 +118,8 @@ class DocumentGenerator:
 
         images, words = self.parser.processDocx(data)
 
-        for key in tokenWords:
-            tokenWord = tokenWords[key]
-
+        for replacementId in tokenWords:
+            tokenWord = tokenWords[replacementId]
             replacementWords = tokenWord['replacement'].split()
 
             matchingWords = {
@@ -111,7 +145,7 @@ class DocumentGenerator:
                         bestWord = word
 
                 if bestWord is not None:
-                    bestWord['classification'] = key
+                    bestWord['classification'] = wordFields[replacementId]
         # pprint(words)
         return {"words": words}
 

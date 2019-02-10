@@ -23,6 +23,6 @@ def main():
     db = MongoClient(settings.get('db.uri'))[settings.get('db.name')]
 
     generator = DocumentGenerator()
-    generator.generateDocument("lease1.docx", "lease")
+    generator.generateDocument("financial_statement_1.docx", "financial_statement")
 
 
