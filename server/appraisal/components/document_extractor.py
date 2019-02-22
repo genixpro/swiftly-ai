@@ -3,142 +3,29 @@ import copy
 import tensorflow as tf
 from .document_generator import DocumentGenerator
 import numpy
+import pickle
 import random
+import io
+import concurrent.futures
+import csv
+import multiprocessing
+from .document_extractor_dataset import DocumentExtractorDataset
+
 
 class DocumentExtractor:
     def __init__(self):
-        self.generator = DocumentGenerator()
+        self.dataset = DocumentExtractorDataset()
 
-        self.labels = [
-            'null',
-            'LANDLORD_NAME'
-        ]
+        self.labels = self.dataset.labels
 
         self.maxLength = 250
         self.wordVectorSize = 300
-
-    def prepareDocument(self, file):
-        # load
-        vectors = subprocess.Popen(["fasttext", "print-word-vectors", "crawl-300d-2M-subword.bin"],
-                                   stdin=subprocess.PIPE,
-                                   stdout=subprocess.PIPE,
-                                   stderr=subprocess.PIPE)
-
-        wordVectors = []
-        for word in file['words']:
-            try:
-                vectors.stdin.write(bytes(word['word'] + "\n", 'utf8'))
-                vectors.stdin.flush()
-            except BrokenPipeError:
-                print(vectors.stderr.read())
-            line = vectors.stdout.readline()
-
-            vector = [float(v) for v in line.split()[1:]]
-            wordVectors.append(numpy.array(vector))
-
-        lineSortedWordIndexes = [word['index'] for word in sorted(file['words'], key=lambda word: (word['page'], word['lineNumber'], word['left']))]
-        columnLeftSortedWordIndexes = [word['index'] for word in sorted(file['words'], key=lambda word: (word['columnLeft'], word['lineNumber'], word['left']))]
-        columnRightSortedWordIndexes = [word['index'] for word in sorted(file['words'], key=lambda word: (word['columnRight'], word['lineNumber'], word['left']))]
-
-        vectors.terminate()
-
-        lineSortedReverseWordIndexes = [lineSortedWordIndexes.index(word['index']) for word in file['words']]
-        columnLeftReverseWordIndexes = [columnLeftSortedWordIndexes.index(word['index']) for word in file['words']]
-        columnRightReverseWordIndexes = [columnRightSortedWordIndexes.index(word['index']) for word in file['words']]
-        
-        outputs = []
-        
-        for word in file['words']:
-            oneHotCode = [0] * len(self.labels)
-
-            if 'classification' in word:
-                oneHotCode[self.labels.index(word['classification'])] = 1
-            else:
-                oneHotCode[self.labels.index('null')] = 1
-            outputs.append(oneHotCode)
-        return (
-            wordVectors,
-            lineSortedWordIndexes,
-            lineSortedReverseWordIndexes,
-            columnLeftSortedWordIndexes,
-            columnLeftReverseWordIndexes,
-            columnRightSortedWordIndexes,
-            columnRightReverseWordIndexes,
-            outputs)
-
-
-    def createBatch(self):
-        batchWordVectors = []
-        batchLineSortedWordIndexes = []
-        batchLineSortedReverseWordIndexes = []
-        batchColumnLeftSortedWordIndexes = []
-        batchColumnLeftReverseWordIndexes = []
-        batchColumnRightSortedWordIndexes = []
-        batchColumnRightReverseWordIndexes = []
-        batchOutputs = []
-
-        for n in range(4):
-            file = self.generator.generateDocument("lease1.docx", "lease")
-
-            result = self.prepareDocument(file)
-
-            wordVectors = result[0]
-            lineSortedWordIndexes = result[1]
-            lineSortedReverseWordIndexes = result[2]
-            columnLeftSortedWordIndexes = result[3]
-            columnLeftReverseWordIndexes = result[4]
-            columnRightSortedWordIndexes = result[5]
-            columnRightReverseWordIndexes = result[6]
-            outputs = result[7]
-
-            while len(wordVectors) < self.maxLength:
-                index = len(wordVectors)
-                lineSortedWordIndexes.append(index)
-                lineSortedReverseWordIndexes.append(index)
-                columnLeftSortedWordIndexes.append(index)
-                columnLeftReverseWordIndexes.append(index)
-                columnRightSortedWordIndexes.append(index)
-                columnRightReverseWordIndexes.append(index)
-                wordVectors.append([0] * self.wordVectorSize)
-                outputs.append(self.labels.index("null"))
-
-            if len(wordVectors) > self.maxLength:
-                start = random.randint(0, len(wordVectors) - self.maxLength - 1)
-
-                wordVectors = wordVectors[start:start + self.maxLength]
-                lineSortedWordIndexes = lineSortedWordIndexes[start:start + self.maxLength]
-                lineSortedReverseWordIndexes = lineSortedReverseWordIndexes[start:start + self.maxLength]
-                columnLeftSortedWordIndexes = columnLeftSortedWordIndexes[start:start + self.maxLength]
-                columnLeftReverseWordIndexes = columnLeftReverseWordIndexes[start:start + self.maxLength]
-                columnRightSortedWordIndexes = columnRightSortedWordIndexes[start:start + self.maxLength]
-                columnRightReverseWordIndexes = columnRightReverseWordIndexes[start:start + self.maxLength]
-                outputs = outputs[start:start + self.maxLength]
-
-            batchWordVectors.append(wordVectors)
-            batchLineSortedWordIndexes.append(lineSortedWordIndexes)
-            batchLineSortedReverseWordIndexes.append(lineSortedReverseWordIndexes)
-            batchColumnLeftSortedWordIndexes.append(columnLeftSortedWordIndexes)
-            batchColumnLeftReverseWordIndexes.append(columnLeftReverseWordIndexes)
-            batchColumnRightSortedWordIndexes.append(columnRightSortedWordIndexes)
-            batchColumnRightReverseWordIndexes.append(columnRightReverseWordIndexes)
-            batchOutputs.append(outputs)
-
-        return (
-            numpy.array(batchWordVectors),
-            numpy.array(batchLineSortedWordIndexes),
-            numpy.array(batchLineSortedReverseWordIndexes),
-            numpy.array(batchColumnLeftSortedWordIndexes),
-            numpy.array(batchColumnLeftReverseWordIndexes),
-            numpy.array(batchColumnRightSortedWordIndexes),
-            numpy.array(batchColumnRightReverseWordIndexes),
-            numpy.array(batchOutputs))
-
-
+        self.batchSize = 4
 
     def trainAlgorithm(self, db):
         self.createNetwork()
 
-        learningRate = 0.0001
+        learningRate = 0.001
 
         # Define Training procedure
         global_step = tf.Variable(0, name="global_step", trainable=False)
@@ -152,46 +39,138 @@ class DocumentExtractor:
 
         sess = tf.Session(config=session_conf)
 
+        with concurrent.futures.ProcessPoolExecutor(max_workers=3) as executor:
+            batchFutures = []
+            for n in range(10):
+                batchFutures.append(executor.submit(self.dataset.createBatch, self.batchSize))
+
+            with sess.as_default():
+                self.saver = tf.train.Saver()
+
+                # Initialize all variables
+                sess.run(tf.global_variables_initializer())
+
+                for epoch in range(10):
+                    # Training loop. For each batch...
+                    for batchIndex in range(1000):
+
+                        batchFuture = batchFutures.pop(0)
+                        batchFutures.append(executor.submit(self.dataset.createBatch, self.batchSize))
+
+                        batch = batchFuture.result()
+
+                        wordVectors = batch[0]
+                        lineSortedWordIndexes = batch[1]
+                        lineSortedReverseWordIndexes = batch[2]
+                        columnLeftSortedWordIndexes = batch[3]
+                        columnLeftReverseWordIndexes = batch[4]
+                        columnRightSortedWordIndexes = batch[5]
+                        columnRightReverseWordIndexes = batch[6]
+                        outputs = batch[7]
+
+                        # Train
+                        feed_dict = {
+                            self.inputWordVectors: wordVectors,
+                            self.lineSortedWordIndexesInput: lineSortedWordIndexes,
+                            self.lineSortedReverseIndexesInput: lineSortedReverseWordIndexes,
+                            self.columnLeftSortedWordIndexesInput: columnLeftSortedWordIndexes,
+                            self.columnLeftSortedReverseIndexesInput: columnLeftReverseWordIndexes,
+                            self.columnRightSortedWordIndexesInput: columnRightSortedWordIndexes,
+                            self.columnRightSortedReverseIndexesInput: columnRightReverseWordIndexes,
+                            self.inputY: outputs
+                        }
+
+                        _, step, loss, accuracy, nonNullAccuracy, confusionMatrix = sess.run([train_op, global_step, self.loss, self.accuracy, self.nonNullAccuracy, self.confusionMatrix], feed_dict)
+
+                        print(f"Epoch: {epoch} Batch: {batchIndex} Loss: {loss} Accuracy: {accuracy} Non Null Accuracy: {nonNullAccuracy}")
+
+                        if batchIndex % 10 == 0:
+                            with open("matrix.csv", "wt") as file:
+                                file.write(self.formatConfusionMatrix(confusionMatrix))
+                    self.saver.save(sess, f"models/model-{epoch}.ckpt")
+                self.saver.save(sess, "models/model.ckpt")
+
+    def formatConfusionMatrix(self, matrix):
+        results = []
+
+        for labelIndex, label in enumerate(self.labels):
+            rowTotal = numpy.sum(matrix[labelIndex])
+
+            result = {
+                "actual": label
+            }
+            for labelIndex2, label2 in enumerate(self.labels):
+                if rowTotal == 0:
+                    result[f"predicted {label2}"] = 0
+                else:
+                    result[f"predicted {label2}"] = matrix[labelIndex][labelIndex2] / rowTotal
+            results.append(result)
+
+        buffer = io.StringIO()
+
+        writer = csv.DictWriter(buffer, fieldnames=list(results[0].keys()))
+
+        writer.writeheader()
+        writer.writerows(results)
+
+        return buffer.getvalue()
+
+
+    def loadAlgorithm(self):
+        self.createNetwork()
+
+        session_conf = tf.ConfigProto(
+            # allow_soft_placement=params['allow_soft_placement'],
+            # log_device_placement=params['log_device_placement']
+        )
+
+        sess = tf.Session(config=session_conf)
+
         with sess.as_default():
             # Initialize all variables
-            sess.run(tf.global_variables_initializer())
+            self.saver.restore(sess, "model.ckpt")
 
-            # Training loop. For each batch...
-            for batchIndex in range(100):
-                batch = self.createBatch()
 
-                wordVectors = batch[0]
-                lineSortedWordIndexes = batch[1]
-                lineSortedReverseWordIndexes = batch[2]
-                columnLeftSortedWordIndexes = batch[3]
-                columnLeftReverseWordIndexes = batch[4]
-                columnRightSortedWordIndexes = batch[5]
-                columnRightReverseWordIndexes = batch[6]
-                outputs = batch[7]
+    def predictDocument(self, document):
+        self.loadAlgorithm()
 
-                # Train
-                feed_dict = {
-                    self.inputWordVectors: wordVectors,
-                    self.lineSortedWordIndexesInput: lineSortedWordIndexes,
-                    self.lineSortedReverseIndexesInput: lineSortedReverseWordIndexes,
-                    self.columnLeftSortedWordIndexesInput: columnLeftSortedWordIndexes,
-                    self.columnLeftSortedReverseIndexesInput: columnLeftReverseWordIndexes,
-                    self.columnRightSortedWordIndexesInput: columnRightSortedWordIndexes,
-                    self.columnRightSortedReverseIndexesInput: columnRightReverseWordIndexes,
-                    self.inputY: outputs
-                }
+        data = self.dataset.prepareDocument(document)
 
-                _, step, loss, accuracy = sess.run([train_op, global_step, self.loss, self.accuracy], feed_dict)
+        wordVectors = data[0]
+        lineSortedWordIndexes = data[1]
+        lineSortedReverseWordIndexes = data[2]
+        columnLeftSortedWordIndexes = data[3]
+        columnLeftReverseWordIndexes = data[4]
+        columnRightSortedWordIndexes = data[5]
+        columnRightReverseWordIndexes = data[6]
 
-                print("Loss:", loss)
+        # Train
+        feed_dict = {
+            self.inputWordVectors: wordVectors,
+            self.lineSortedWordIndexesInput: lineSortedWordIndexes,
+            self.lineSortedReverseIndexesInput: lineSortedReverseWordIndexes,
+            self.columnLeftSortedWordIndexesInput: columnLeftSortedWordIndexes,
+            self.columnLeftSortedReverseIndexesInput: columnLeftReverseWordIndexes,
+            self.columnRightSortedWordIndexesInput: columnRightSortedWordIndexes,
+            self.columnRightSortedReverseIndexesInput: columnRightReverseWordIndexes
+        }
 
+        predictions = sess.run([self.predictions], feed_dict)
+
+        for wordIndex in range(len(wordVectors)):
+            prediction = predictions[wordIndex]
+
+            word = document['words']
+
+            word['classification'] = self.labels[prediction]
+        
 
     def createNetwork(self):
-        lstmSize = 100
+        lstmSize = 50
         lstmDropout = 0.5
         denseSize = 100
         denseDropout = 0.5
-        numClasses = 2
+        numClasses = len(self.labels)
 
         # Placeholders for input, output and dropout
         self.inputWordVectors = tf.placeholder(tf.float32, shape=[None, self.maxLength, self.wordVectorSize], name='input_word_vectors')
@@ -210,9 +189,10 @@ class DocumentExtractor:
         # Recurrent Neural Network
         with tf.name_scope("rnn"):
             with tf.name_scope("lineSorted1"), tf.variable_scope("lineSorted1"):
+                inputs = tf.batch_gather(self.inputWordVectors, self.lineSortedWordIndexesInput)
                 lineSortedRnnOutputs, _ = tf.nn.bidirectional_dynamic_rnn(cell_fw=tf.nn.rnn_cell.DropoutWrapper(tf.nn.rnn_cell.LSTMCell(lstmSize), output_keep_prob=lstmDropout),
                                                    cell_bw=tf.nn.rnn_cell.DropoutWrapper(tf.nn.rnn_cell.LSTMCell(lstmSize), output_keep_prob=lstmDropout),
-                                                   inputs=tf.batch_gather(self.inputWordVectors, self.lineSortedWordIndexesInput),
+                                                   inputs=inputs,
                                                    # sequence_length=self.inputLength,
                                                    dtype=tf.float32)
 
@@ -237,12 +217,14 @@ class DocumentExtractor:
 
                 columnRightOutput1 = tf.batch_gather(columnRightRnnOutputs[0] + columnRightRnnOutputs[1], self.columnRightSortedReverseIndexesInput)
 
-            layer1Outputs = tf.concat(values=[lineSortedOutput1, columnLeftOutput1, columnRightOutput1], axis=1)
+            layer1Outputs = tf.concat(values=[lineSortedOutput1, columnLeftOutput1, columnRightOutput1], axis=2)
+            layer1Outputs = tf.layers.batch_normalization(layer1Outputs)
 
             with tf.name_scope("lineSorted2"), tf.variable_scope("lineSorted2"):
+                inputs = tf.batch_gather(layer1Outputs, self.lineSortedWordIndexesInput)
                 lineSortedRnnOutputs, _ = tf.nn.bidirectional_dynamic_rnn(cell_fw=tf.nn.rnn_cell.DropoutWrapper(tf.nn.rnn_cell.LSTMCell(lstmSize), output_keep_prob=lstmDropout),
                                                    cell_bw=tf.nn.rnn_cell.DropoutWrapper(tf.nn.rnn_cell.LSTMCell(lstmSize), output_keep_prob=lstmDropout),
-                                                   inputs=tf.batch_gather(layer1Outputs, self.lineSortedWordIndexesInput),
+                                                   inputs=inputs,
                                                    # sequence_length=self.inputLength,
                                                    dtype=tf.float32)
 
@@ -267,7 +249,7 @@ class DocumentExtractor:
                 columnRightOutput2 = tf.batch_gather(columnRightRnnOutputs[0] + columnRightRnnOutputs[1], self.columnRightSortedReverseIndexesInput)
 
 
-            layer2Outputs = tf.concat(values=[lineSortedOutput2, columnLeftOutput2, columnRightOutput2], axis=1)
+            layer2Outputs = tf.concat(values=[lineSortedOutput2, columnLeftOutput2, columnRightOutput2], axis=2)
 
             batchSize = tf.shape(layer2Outputs)[0]
             reshaped = tf.reshape(layer2Outputs, shape=(batchSize * self.maxLength, lstmSize * 3))
@@ -275,9 +257,9 @@ class DocumentExtractor:
             with tf.name_scope("denseLayers"):
                 batchNormOutput = tf.layers.batch_normalization(reshaped)
 
-                dense1 = tf.layers.dense(tf.layers.dropout(batchNormOutput, rate=denseDropout), denseSize)
+                dense1 = tf.layers.dense(tf.layers.dropout(batchNormOutput, rate=denseDropout), denseSize, activation=tf.nn.relu)
                 batchNorm1 = tf.layers.batch_normalization(dense1)
-                dense2 = tf.layers.dense(tf.layers.dropout(batchNorm1, rate=denseDropout), denseSize)
+                dense2 = tf.layers.dense(tf.layers.dropout(batchNorm1, rate=denseDropout), denseSize, activation=tf.nn.relu)
                 batchNorm2 = tf.layers.batch_normalization(dense2)
                 self.logits = tf.layers.dense(batchNorm2, numClasses)
 
@@ -289,10 +271,27 @@ class DocumentExtractor:
             losses = tf.nn.softmax_cross_entropy_with_logits_v2(logits=self.logits, labels=tf.reshape(self.inputY, shape=[batchSize * self.maxLength, numClasses]))
             self.loss = tf.reduce_mean(losses)
 
+        predictionsFlat = tf.cast(tf.reshape(self.predictions, shape=[batchSize * self.maxLength]), tf.int32)
+        actualFlat = tf.cast(tf.argmax(tf.reshape(self.inputY, shape=[batchSize * self.maxLength, numClasses]), axis=1), tf.int32)
+
         # Accuracy
         with tf.name_scope("accuracy"):
-            correct_predictions = tf.equal(tf.reshape(self.predictions, shape=[batchSize * self.maxLength]), tf.argmax(tf.reshape(self.inputY, shape=[batchSize * self.maxLength, numClasses]), axis=1))
+            correct_predictions = tf.equal(predictionsFlat, actualFlat)
             self.accuracy = tf.reduce_mean(tf.cast(correct_predictions, tf.float32), name="accuracy")
+
+            # Replace class_id_preds with class_id_true for recall here
+            accuracy_mask = tf.cast(tf.equal(predictionsFlat, self.labels.index('null')), tf.int32) * \
+                            tf.cast(tf.equal(actualFlat, self.labels.index('null')), tf.int32)
+
+            accuracy_mask = 1 - accuracy_mask
+
+            class_acc_tensor = tf.cast(tf.equal(actualFlat, predictionsFlat), tf.int32) * accuracy_mask
+            class_acc = tf.reduce_sum(class_acc_tensor) / tf.maximum(tf.reduce_sum(accuracy_mask), 1)
+
+            self.nonNullAccuracy = class_acc
+
+        with tf.name_scope("confusion_matrix"):
+            self.confusionMatrix = tf.confusion_matrix(actualFlat, predictionsFlat)
 
     @staticmethod
     def _get_cell(hidden_size, cell_type):

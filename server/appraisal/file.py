@@ -100,7 +100,7 @@ class FileAPI(object):
         result = request.registry.azureBlobStorage.create_blob_from_bytes('files', fileId, input_file)
 
         if mimeType == 'application/pdf':
-            images, words = self.parser.processPDF(input_file, fileId, extractWords=(len(extractedData) == 0))
+            images, words = self.parser.processPDF(input_file, extractWords=(len(extractedData) == 0))
 
             imageFileNames = []
             for page, imageData in enumerate(images):
@@ -114,6 +114,7 @@ class FileAPI(object):
 
             fileName = fileId + "-image-0.png"
             result = self.request.registry.azureBlobStorage.create_blob_from_bytes('files', fileName, input_file)
+            images = [fileName]
 
             result = self.filesCollection.update_one({"_id": insertResult.inserted_id}, {"$set": {"pageCount": 1, "images": [fileName]}})
         else:
