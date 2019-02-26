@@ -126,9 +126,14 @@ class DocumentGenerator:
                 self.removeSymbols(word): [] for word in replacementWords
             }
 
+            count = 0
             for word in words:
                 if self.removeSymbols(word['word']) in matchingWords:
                     matchingWords[self.removeSymbols(word['word'])].append(word)
+                    count += 1
+
+            # if count == 0:
+            print(matchingWords)
 
             for replacementWord in matchingWords:
                 replacementMatches = matchingWords[replacementWord]
@@ -143,10 +148,14 @@ class DocumentGenerator:
 
                     if bestDistance is None or dist < bestDistance:
                         bestWord = word
+                        bestDistance = dist
 
-                if bestWord is not None:
+                if bestWord is not None and bestDistance < 0.05:
+                    print(bestDistance)
                     bestWord['classification'] = wordFields[replacementId]
-        # pprint(words)
+                else:
+                    print("Error! Missing match for replacement word", replacementWord, " of ", tokenWord, " closest dist ", bestDistance)
+        pprint(words)
         return {"words": words}
 
     def removeSymbols(self, text):

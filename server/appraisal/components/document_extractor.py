@@ -6,6 +6,7 @@ import numpy
 import pickle
 import random
 import io
+from pprint import pprint
 import concurrent.futures
 import csv
 import multiprocessing
@@ -13,47 +14,54 @@ from .document_extractor_dataset import DocumentExtractorDataset
 
 
 class DocumentExtractor:
-    def __init__(self):
+    def __init__(self, db):
         self.dataset = DocumentExtractorDataset()
 
+        self.db = db
+
         self.labels = self.dataset.labels
+        self.modifiers = self.dataset.modifiers
 
-        self.maxLength = 250
         self.wordVectorSize = 300
-        self.batchSize = 4
-
-    def trainAlgorithm(self, db):
-        self.createNetwork()
-
-        learningRate = 0.001
-
-        # Define Training procedure
-        global_step = tf.Variable(0, name="global_step", trainable=False)
-        print(tf.GraphKeys.TRAINABLE_VARIABLES)
-        train_op = tf.train.AdamOptimizer(learningRate).minimize(self.loss, global_step=global_step)
+        self.batchSize = 16
 
         session_conf = tf.ConfigProto(
             # allow_soft_placement=params['allow_soft_placement'],
             # log_device_placement=params['log_device_placement']
         )
 
-        sess = tf.Session(config=session_conf)
+        self.session = tf.Session(config=session_conf)
 
-        with concurrent.futures.ProcessPoolExecutor(max_workers=3) as executor:
-            batchFutures = []
-            for n in range(10):
-                batchFutures.append(executor.submit(self.dataset.createBatch, self.batchSize))
+    def trainAlgorithm(self):
+        self.dataset.loadDataset(self.db)
 
-            with sess.as_default():
-                self.saver = tf.train.Saver()
+        with self.session.as_default():
+            with tf.device('/gpu:0'):
+                self.createNetwork()
+
+            learningRate = 0.001
+
+            # Define Training procedure
+            global_step = tf.Variable(0, name="global_step", trainable=False)
+            print(tf.GraphKeys.TRAINABLE_VARIABLES)
+            train_op = tf.train.AdamOptimizer(learningRate).minimize(self.loss, global_step=global_step)
+
+            with concurrent.futures.ProcessPoolExecutor(max_workers=4) as executor:
+                batchFutures = []
+                for n in range(20):
+                    batchFutures.append(executor.submit(self.dataset.createBatch, self.batchSize))
+
+                for future in batchFutures:
+                    future.result()
+
+                self.createSaver()
 
                 # Initialize all variables
-                sess.run(tf.global_variables_initializer())
+                self.session.run(tf.global_variables_initializer())
 
-                for epoch in range(10):
+                for epoch in range(100):
                     # Training loop. For each batch...
                     for batchIndex in range(1000):
-
                         batchFuture = batchFutures.pop(0)
                         batchFutures.append(executor.submit(self.dataset.createBatch, self.batchSize))
 
@@ -66,7 +74,8 @@ class DocumentExtractor:
                         columnLeftReverseWordIndexes = batch[4]
                         columnRightSortedWordIndexes = batch[5]
                         columnRightReverseWordIndexes = batch[6]
-                        outputs = batch[7]
+                        classificationOutputs = batch[7]
+                        modifierOutputs = batch[8]
 
                         # Train
                         feed_dict = {
@@ -77,18 +86,20 @@ class DocumentExtractor:
                             self.columnLeftSortedReverseIndexesInput: columnLeftReverseWordIndexes,
                             self.columnRightSortedWordIndexesInput: columnRightSortedWordIndexes,
                             self.columnRightSortedReverseIndexesInput: columnRightReverseWordIndexes,
-                            self.inputY: outputs
+                            self.inputClassification: classificationOutputs,
+                            self.inputModifiers: modifierOutputs
                         }
 
-                        _, step, loss, accuracy, nonNullAccuracy, confusionMatrix = sess.run([train_op, global_step, self.loss, self.accuracy, self.nonNullAccuracy, self.confusionMatrix], feed_dict)
+                        _, step, loss, classificationAccuracy, classificationNonNullAccuracy, modifierAccuracy, modifierNonNullAccuracy, confusionMatrix = self.session.run([train_op, global_step, self.loss, self.classificationAccuracy, self.classificationNonNullAccuracy, self.modifierAccuracy, self.modifierNonNullAccuracy, self.confusionMatrix], feed_dict)
 
-                        print(f"Epoch: {epoch} Batch: {batchIndex} Loss: {loss} Accuracy: {accuracy} Non Null Accuracy: {nonNullAccuracy}")
+                        print(f"Epoch: {epoch} Batch: {batchIndex} Loss: {loss} Classification: {classificationAccuracy} Non Null: {classificationNonNullAccuracy} Modifier: {modifierAccuracy} Non Null: {modifierNonNullAccuracy}")
 
                         if batchIndex % 10 == 0:
                             with open("matrix.csv", "wt") as file:
                                 file.write(self.formatConfusionMatrix(confusionMatrix))
-                    self.saver.save(sess, f"models/model-{epoch}.ckpt")
-                self.saver.save(sess, "models/model.ckpt")
+                    self.saver.save(self.session, f"models/model-{epoch}.ckpt")
+                    self.saver.save(self.session, "models/model.ckpt")
+                self.saver.save(self.session, "models/model.ckpt")
 
     def formatConfusionMatrix(self, matrix):
         results = []
@@ -117,32 +128,32 @@ class DocumentExtractor:
 
 
     def loadAlgorithm(self):
-        self.createNetwork()
+        with self.session.as_default():
+            with tf.device('/gpu:0'):
+                self.createNetwork()
 
-        session_conf = tf.ConfigProto(
-            # allow_soft_placement=params['allow_soft_placement'],
-            # log_device_placement=params['log_device_placement']
-        )
+            self.createSaver()
 
-        sess = tf.Session(config=session_conf)
-
-        with sess.as_default():
             # Initialize all variables
-            self.saver.restore(sess, "model.ckpt")
+            self.saver.restore(self.session, "models/model.ckpt")
 
+
+    def createSaver(self):
+        all_variables = tf.get_collection_ref(tf.GraphKeys.GLOBAL_VARIABLES)
+        self.saver = tf.train.Saver(var_list=[v for v in all_variables])
 
     def predictDocument(self, document):
         self.loadAlgorithm()
 
         data = self.dataset.prepareDocument(document)
 
-        wordVectors = data[0]
-        lineSortedWordIndexes = data[1]
-        lineSortedReverseWordIndexes = data[2]
-        columnLeftSortedWordIndexes = data[3]
-        columnLeftReverseWordIndexes = data[4]
-        columnRightSortedWordIndexes = data[5]
-        columnRightReverseWordIndexes = data[6]
+        wordVectors = [data[0]]
+        lineSortedWordIndexes = [data[1]]
+        lineSortedReverseWordIndexes = [data[2]]
+        columnLeftSortedWordIndexes = [data[3]]
+        columnLeftReverseWordIndexes = [data[4]]
+        columnRightSortedWordIndexes = [data[5]]
+        columnRightReverseWordIndexes = [data[6]]
 
         # Train
         feed_dict = {
@@ -155,39 +166,42 @@ class DocumentExtractor:
             self.columnRightSortedReverseIndexesInput: columnRightReverseWordIndexes
         }
 
-        predictions = sess.run([self.predictions], feed_dict)
+        classifications, modifiers = self.session.run([self.classificationPredictions, self.modifierPredictions], feed_dict)
 
-        for wordIndex in range(len(wordVectors)):
-            prediction = predictions[wordIndex]
+        for wordIndex in range(len(wordVectors[0])):
+            prediction = classifications[0][wordIndex]
 
-            word = document['words']
+            word = document['words'][wordIndex]
 
             word['classification'] = self.labels[prediction]
-        
+            word['modifiers'] = [modifier for index, modifier in enumerate(self.modifiers) if modifiers[0][wordIndex][index]]
+
 
     def createNetwork(self):
-        lstmSize = 50
+        lstmSize = 100
         lstmDropout = 0.5
         denseSize = 100
         denseDropout = 0.5
         numClasses = len(self.labels)
+        numModifiers = len(self.modifiers)
 
         # Placeholders for input, output and dropout
-        self.inputWordVectors = tf.placeholder(tf.float32, shape=[None, self.maxLength, self.wordVectorSize], name='input_word_vectors')
+        self.inputWordVectors = tf.placeholder(tf.float32, shape=[None, None, self.wordVectorSize], name='input_word_vectors')
         self.inputLength = tf.placeholder(tf.int32, shape=[None], name='input_length')
-        self.inputY = tf.placeholder(tf.float32, shape=[None, self.maxLength, numClasses], name='input_y')
+        self.inputClassification = tf.placeholder(tf.float32, shape=[None, None, numClasses], name='input_classification')
+        self.inputModifiers = tf.placeholder(tf.float32, shape=[None, None, numModifiers], name='input_modifiers')
 
-        self.lineSortedWordIndexesInput = tf.placeholder(tf.int32, shape=[None, self.maxLength], name='line_sorted_indexes')
-        self.lineSortedReverseIndexesInput = tf.placeholder(tf.int32, shape=[None, self.maxLength], name='line_sorted_reverse_indexes')
+        self.lineSortedWordIndexesInput = tf.placeholder(tf.int32, shape=[None, None], name='line_sorted_indexes')
+        self.lineSortedReverseIndexesInput = tf.placeholder(tf.int32, shape=[None, None], name='line_sorted_reverse_indexes')
 
-        self.columnLeftSortedWordIndexesInput = tf.placeholder(tf.int32, shape=[None, self.maxLength], name='column_left_sorted_indexes')
-        self.columnLeftSortedReverseIndexesInput = tf.placeholder(tf.int32, shape=[None, self.maxLength], name='column_left_sorted_reverse_indexes')
+        self.columnLeftSortedWordIndexesInput = tf.placeholder(tf.int32, shape=[None, None], name='column_left_sorted_indexes')
+        self.columnLeftSortedReverseIndexesInput = tf.placeholder(tf.int32, shape=[None, None], name='column_left_sorted_reverse_indexes')
 
-        self.columnRightSortedWordIndexesInput = tf.placeholder(tf.int32, shape=[None, self.maxLength], name='column_right_sorted_indexes')
-        self.columnRightSortedReverseIndexesInput = tf.placeholder(tf.int32, shape=[None, self.maxLength], name='column_right_sorted_reverse_indexes')
+        self.columnRightSortedWordIndexesInput = tf.placeholder(tf.int32, shape=[None, None], name='column_right_sorted_indexes')
+        self.columnRightSortedReverseIndexesInput = tf.placeholder(tf.int32, shape=[None, None], name='column_right_sorted_reverse_indexes')
 
         # Recurrent Neural Network
-        with tf.name_scope("rnn"):
+        with tf.name_scope("rnn"), tf.variable_scope("rnn", reuse=tf.AUTO_REUSE):
             with tf.name_scope("lineSorted1"), tf.variable_scope("lineSorted1"):
                 inputs = tf.batch_gather(self.inputWordVectors, self.lineSortedWordIndexesInput)
                 lineSortedRnnOutputs, _ = tf.nn.bidirectional_dynamic_rnn(cell_fw=tf.nn.rnn_cell.DropoutWrapper(tf.nn.rnn_cell.LSTMCell(lstmSize), output_keep_prob=lstmDropout),
@@ -252,46 +266,71 @@ class DocumentExtractor:
             layer2Outputs = tf.concat(values=[lineSortedOutput2, columnLeftOutput2, columnRightOutput2], axis=2)
 
             batchSize = tf.shape(layer2Outputs)[0]
-            reshaped = tf.reshape(layer2Outputs, shape=(batchSize * self.maxLength, lstmSize * 3))
+            length = tf.shape(layer2Outputs)[1]
 
-            with tf.name_scope("denseLayers"):
+            reshaped = tf.reshape(layer2Outputs, shape=(batchSize * length, lstmSize * 3))
+
+            with tf.name_scope("denseLayers"), tf.variable_scope("denseLayers"):
                 batchNormOutput = tf.layers.batch_normalization(reshaped)
 
                 dense1 = tf.layers.dense(tf.layers.dropout(batchNormOutput, rate=denseDropout), denseSize, activation=tf.nn.relu)
                 batchNorm1 = tf.layers.batch_normalization(dense1)
                 dense2 = tf.layers.dense(tf.layers.dropout(batchNorm1, rate=denseDropout), denseSize, activation=tf.nn.relu)
                 batchNorm2 = tf.layers.batch_normalization(dense2)
-                self.logits = tf.layers.dense(batchNorm2, numClasses)
+                self.classificationLogits = tf.layers.dense(batchNorm2, numClasses)
+                self.modifierLogits = tf.layers.dense(batchNorm2, numModifiers)
 
-                self.probabilities = tf.reshape(tf.nn.softmax(self.logits), shape=[batchSize, self.maxLength, numClasses])
-                self.predictions = tf.reshape(tf.argmax(self.logits, 1, name="predictions"), shape=[batchSize, self.maxLength])
+                self.classificationProbabilities = tf.reshape(tf.nn.softmax(self.classificationLogits), shape=[batchSize, length, numClasses])
+                self.classificationPredictions = tf.reshape(tf.argmax(self.classificationLogits, 1, name="classificationPredictions"), shape=[batchSize, length])
+
+                self.modifierProbabilities = tf.reshape(tf.nn.sigmoid(self.modifierLogits), shape=[batchSize, length, numModifiers])
+                self.modifierPredictions = tf.reshape(tf.round(tf.nn.sigmoid(self.modifierLogits)), shape=[batchSize, length, numModifiers])
 
         # Calculate mean cross-entropy loss
         with tf.name_scope("loss"):
-            losses = tf.nn.softmax_cross_entropy_with_logits_v2(logits=self.logits, labels=tf.reshape(self.inputY, shape=[batchSize * self.maxLength, numClasses]))
-            self.loss = tf.reduce_mean(losses)
+            classificationLosses = tf.nn.softmax_cross_entropy_with_logits_v2(logits=self.classificationLogits, labels=tf.reshape(self.inputClassification, shape=[batchSize * length, numClasses]))
+            modifierLosses = tf.nn.sigmoid_cross_entropy_with_logits(logits=self.modifierLogits, labels=tf.reshape(self.inputModifiers, shape=[batchSize * length, numModifiers]))
+            self.loss = tf.reduce_mean(classificationLosses) + tf.reduce_mean(modifierLosses)
 
-        predictionsFlat = tf.cast(tf.reshape(self.predictions, shape=[batchSize * self.maxLength]), tf.int32)
-        actualFlat = tf.cast(tf.argmax(tf.reshape(self.inputY, shape=[batchSize * self.maxLength, numClasses]), axis=1), tf.int32)
+        classificationPredictionsFlat = tf.cast(tf.reshape(self.classificationPredictions, shape=[batchSize * length]), tf.int32)
+        classificationActualFlat = tf.cast(tf.argmax(tf.reshape(self.inputClassification, shape=[batchSize * length, numClasses]), axis=1), tf.int32)
+
+        modifierPredictionsFlat = tf.cast(tf.reshape(self.modifierPredictions, shape=[batchSize * length, numModifiers]), tf.int32)
+        modifierActualFlat = tf.cast(tf.reshape(self.inputModifiers, shape=[batchSize * length, numModifiers]), tf.int32)
 
         # Accuracy
         with tf.name_scope("accuracy"):
-            correct_predictions = tf.equal(predictionsFlat, actualFlat)
-            self.accuracy = tf.reduce_mean(tf.cast(correct_predictions, tf.float32), name="accuracy")
+            correct_classifications = tf.equal(classificationPredictionsFlat, classificationActualFlat)
+            correct_modifiers = tf.equal(modifierPredictionsFlat, modifierActualFlat)
+
+            self.classificationAccuracy = tf.reduce_mean(tf.cast(correct_classifications, tf.float32), name="classificationAccuracy")
+            self.modifierAccuracy = tf.reduce_mean(tf.cast(correct_modifiers, tf.float32), name="modifierAccuracy")
 
             # Replace class_id_preds with class_id_true for recall here
-            accuracy_mask = tf.cast(tf.equal(predictionsFlat, self.labels.index('null')), tf.int32) * \
-                            tf.cast(tf.equal(actualFlat, self.labels.index('null')), tf.int32)
+            classificationAccuracyMask = tf.cast(tf.equal(classificationPredictionsFlat, self.labels.index('null')), tf.int32) * \
+                            tf.cast(tf.equal(classificationActualFlat, self.labels.index('null')), tf.int32)
 
-            accuracy_mask = 1 - accuracy_mask
+            classificationAccuracyMask = 1 - classificationAccuracyMask
 
-            class_acc_tensor = tf.cast(tf.equal(actualFlat, predictionsFlat), tf.int32) * accuracy_mask
-            class_acc = tf.reduce_sum(class_acc_tensor) / tf.maximum(tf.reduce_sum(accuracy_mask), 1)
 
-            self.nonNullAccuracy = class_acc
+            modifierAccuracyMask = tf.cast(tf.equal(modifierPredictionsFlat, 0), tf.int32) * \
+                            tf.cast(tf.equal(modifierActualFlat, 0), tf.int32)
 
-        with tf.name_scope("confusion_matrix"):
-            self.confusionMatrix = tf.confusion_matrix(actualFlat, predictionsFlat)
+            modifierAccuracyMask = 1 - modifierAccuracyMask
+
+            class_acc_tensor = tf.cast(tf.equal(classificationActualFlat, classificationPredictionsFlat), tf.int32) * classificationAccuracyMask
+            class_acc = tf.reduce_sum(class_acc_tensor) / tf.maximum(tf.reduce_sum(classificationAccuracyMask), 1)
+
+            self.classificationNonNullAccuracy = class_acc
+
+            modifier_class_acc_tensor = tf.cast(tf.equal(modifierActualFlat, modifierPredictionsFlat), tf.int32) * modifierAccuracyMask
+            modifier_class_acc = tf.reduce_sum(modifier_class_acc_tensor) / tf.maximum(tf.reduce_sum(modifierAccuracyMask), 1)
+
+            self.modifierNonNullAccuracy = modifier_class_acc
+
+        with tf.device('/cpu:0'):
+            with tf.name_scope("confusion_matrix"):
+                self.confusionMatrix = tf.confusion_matrix(classificationActualFlat, classificationPredictionsFlat)
 
     @staticmethod
     def _get_cell(hidden_size, cell_type):

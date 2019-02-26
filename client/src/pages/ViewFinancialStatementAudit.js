@@ -123,7 +123,7 @@ class ViewFinancialStatementAudit extends React.Component
                                         </thead>
                                         <tbody>
                                         {
-                                            this.state.financialStatement.extractedData[this.state.groups['income'].field] && this.state.financialStatement.extractedData[this.state.groups['income'].field].map((item) => {
+                                            this.state.financialStatement.extractedData[this.state.groups['items'].field] && this.state.financialStatement.extractedData[this.state.groups['items'].field].map((item) => {
                                                 return <tr key={item.lineNumber} className={`${!item.include ? 'excluded-item' : ''}`}>
                                                     <td className={"name-column"}>
                                                         <span>{item['income_name']}</span>
@@ -179,7 +179,7 @@ class ViewFinancialStatementAudit extends React.Component
                                         </thead>
                                         <tbody>
                                         {
-                                            this.state.financialStatement.extractedData[this.state.groups['expense'].field] && this.state.financialStatement.extractedData[this.state.groups['expense'].field].map((item) => {
+                                            this.state.financialStatement.extractedData[this.state.groups['items'].field] && this.state.financialStatement.extractedData[this.state.groups['items'].field].map((item) => {
                                                 return <tr key={item.lineNumber} className={`${!item.include ? 'excluded-item' : ''}`}>
                                                     <td className={"name-column"}>
                                                         <span>{item['expense_name']}</span>

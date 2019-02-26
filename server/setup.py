@@ -19,7 +19,8 @@ requires = [
     'pillow',
     'azure-storage',
     'filetype',
-    'python-docx'
+    'python-docx',
+    'matplotlib'
 ]
 
 tests_require = [

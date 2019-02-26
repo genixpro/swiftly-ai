@@ -50,7 +50,7 @@ class AnnotationExtractionToken extends React.Component
         const wordIndex = this.state.wordIndex;
         return (
             <ContextMenuTrigger id="annotation-editor-word-menu" collect={() => {return {wordIndex}} }>
-                <div className={`annotation-editor-word ${this.state.selected ? 'selected' : ''} ${this.state.word.classification !== "null" ? 'classified' : ''}`}
+                <div className={`annotation-editor-word ${this.state.selected ? 'selected' : ''} ${(this.state.word.classification !== "null" || (this.state.word.modifiers && this.state.word.modifiers.length > 0)) ? 'classified' : ''}`}
                      style={{"top": `${word.top*100}%`, "left": `${word.left*100}%`, "width": `${word.right*100 - word.left*100}%`, "height": `${word.bottom*100 - word.top*100}%`}}
                      onMouseEnter={this.onHoverStart.bind(this)}
                      onMouseLeave={this.onHoverEnd.bind(this)}

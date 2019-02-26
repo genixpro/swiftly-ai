@@ -6,16 +6,15 @@ import numpy
 import pickle
 import random
 import concurrent.futures
+from pprint import pprint
+import copy
 import multiprocessing
+import functools
 
+globalVectorProcess = None
 
 class DocumentExtractorDataset:
     manager = multiprocessing.Manager()
-    fasttextLock = manager.Lock()
-    vectors = subprocess.Popen(["fasttext", "print-word-vectors", "crawl-300d-2M-subword.bin"],
-                               stdin=subprocess.PIPE,
-                               stdout=subprocess.PIPE,
-                               stderr=subprocess.PIPE)
 
     def __init__(self):
         self.generator = DocumentGenerator()
@@ -24,48 +23,81 @@ class DocumentExtractorDataset:
             "null",
             "DOCUMENT_NUMBER", "DOCUMENT_DATE", "DOCUMENT_TIME", "DOCUMENT_TIME", "STATEMENT_DATE",
             "BUILDING_ADDRESS", "USER_ID", "STATEMENT_YEAR", "STATEMENT_NEXT_YEAR", "ACC_NUM", "ACC_NAME",
-            "ACC_SUM_NAME", "FORECAST", "FORECAST_S", "BUDGET", "BUDGET_S", "BUDGET_N", "BUDGET_SN",
-            "VARIANCE", "VARIANCE_S", "VARIANCE_N", "VARIANCE_SN", "VARIANCE_P", "VARIANCE_SP", "VARIANCE_NP",
-            "VARIANCE_SPN"
+            "FORECAST", "BUDGET", "VARIANCE"
         ]
 
-        self.maxLength = 250
+        self.modifiers = [
+            "SUM", "NEXT_YEAR", "PERCENTAGE", "INCOME", "EXPENSE"
+        ]
+
+        self.numberLabels = ['FORECAST', 'BUDGET', 'VARIANCE']
+
+        self.lengthMin = 100
+        self.lengthMax = 500
         self.wordVectorSize = 300
 
+        self.dataset = DocumentExtractorDataset.manager.list()
+
+        self.augmentationValues = {
+            label: [] for label in self.labels
+        }
+
+    def getFasttextProcess(self):
+        global globalVectorProcess
+        if globalVectorProcess is None:
+            globalVectorProcess = subprocess.Popen(["fasttext", "print-word-vectors", "crawl-300d-2M-subword.bin"],
+                                       stdin=subprocess.PIPE,
+                                       stdout=subprocess.PIPE,
+                                       stderr=subprocess.PIPE)
+        return globalVectorProcess
+
+
+    @functools.lru_cache(maxsize=1024)
+    def getWordVector(self, word):
+        vectorProcess = self.getFasttextProcess()
+        try:
+            vectorProcess.stdin.write(bytes(word + "\n", 'utf8'))
+            vectorProcess.stdin.flush()
+        except BrokenPipeError:
+            print(vectorProcess.stderr.read())
+        line = vectorProcess.stdout.readline()
+
+        vector = [float(v) for v in line.split()[1:]]
+
+        return vector
+
     def prepareDocument(self, file):
-        with self.fasttextLock:
-            # load
-
-            wordVectors = []
-            for word in file['words']:
-                try:
-                    self.vectors.stdin.write(bytes(word['word'] + "\n", 'utf8'))
-                    self.vectors.stdin.flush()
-                except BrokenPipeError:
-                    print(self.vectors.stderr.read())
-                line = self.vectors.stdout.readline()
-
-                vector = [float(v) for v in line.split()[1:]]
-                wordVectors.append(numpy.array(vector))
+        wordVectors = []
+        for word in file['words']:
+            wordVectors.append(numpy.array(self.getWordVector(word['word'])))
 
         lineSortedWordIndexes = [word['index'] for word in sorted(file['words'], key=lambda word: (word['page'], word['lineNumber'], word['left']))]
-        columnLeftSortedWordIndexes = [word['index'] for word in sorted(file['words'], key=lambda word: (word['columnLeft'], word['lineNumber'], word['left']))]
-        columnRightSortedWordIndexes = [word['index'] for word in sorted(file['words'], key=lambda word: (word['columnRight'], word['lineNumber'], word['left']))]
+        columnLeftSortedWordIndexes = [word['index'] for word in sorted(file['words'], key=lambda word: (word['page'], word['columnLeft'], word['lineNumber'], word['left']))]
+        columnRightSortedWordIndexes = [word['index'] for word in sorted(file['words'], key=lambda word: (word['page'], word['columnRight'], word['lineNumber'], word['left']))]
 
         lineSortedReverseWordIndexes = [lineSortedWordIndexes.index(word['index']) for word in file['words']]
         columnLeftReverseWordIndexes = [columnLeftSortedWordIndexes.index(word['index']) for word in file['words']]
         columnRightReverseWordIndexes = [columnRightSortedWordIndexes.index(word['index']) for word in file['words']]
 
-        outputs = []
+        classificationOutputs = []
+        modifierOutputs = []
 
         for word in file['words']:
-            oneHotCode = [0] * len(self.labels)
+            oneHotCodeClassification = [0] * len(self.labels)
+            oneHotCodeModifiers = [0] * len(self.modifiers)
 
             if 'classification' in word:
-                oneHotCode[self.labels.index(word['classification'])] = 1
+                oneHotCodeClassification[self.labels.index(word['classification'])] = 1
             else:
-                oneHotCode[self.labels.index('null')] = 1
-            outputs.append(oneHotCode)
+                oneHotCodeClassification[self.labels.index('null')] = 1
+            classificationOutputs.append(oneHotCodeClassification)
+
+            if 'modifiers' in word:
+                for modifier in word['modifiers']:
+                    oneHotCodeModifiers[self.modifiers.index(modifier)] = 1
+            modifierOutputs.append(oneHotCodeModifiers)
+
+
         return (
             wordVectors,
             lineSortedWordIndexes,
@@ -74,29 +106,191 @@ class DocumentExtractorDataset:
             columnLeftReverseWordIndexes,
             columnRightSortedWordIndexes,
             columnRightReverseWordIndexes,
-            outputs)
+            classificationOutputs,
+            modifierOutputs)
 
-    def generateAndSaveDocument(self, n):
-        data = self.generator.generateDocument("financial_statement_1.docx", "financial_statement")
-        data = self.prepareDocument(data)
+    def loadDataset(self, db):
+        filesCollection = db['files']
+        files = filesCollection.find({"type": "financials"})
 
-        with open(f'data/data-{n}.bin', 'wb') as file:
-            pickle.dump(data, file)
+        for file in files:
+            for token in self.breakDocumentIntoTokens(file):
+                self.augmentationValues[token['classification']].append(token['text'])
 
-    def generateAndSaveDataset(self):
-        with concurrent.futures.ProcessPoolExecutor(max_workers=3) as executor:
-            for n in range(1000):
-                executor.submit(self.generateAndSaveDocument, n)
-            executor.shutdown(wait=True)
+            self.dataset.append(file)
 
-    def loadDataset(self):
-        dataset = []
-        for index in range(1000):
-            with open(f"data/data-{index}.bin", 'rb') as file:
-                result = pickle.load(file)
+    def breakDocumentIntoTokens(self, file):
+        tokens = []
+        currentToken = None
+        for word in file['words']:
+            if word['classification'] != "null":
+                if currentToken is None:
+                    currentToken = {
+                        "classification": word['classification'],
+                        "modifiers": word.get('modifiers', []),
+                        "words": [word],
+                        "startIndex": word['index']
+                    }
+                elif currentToken['classification'] == word['classification'] and set(currentToken['modifiers']) == set(word.get('modifiers', [])):
+                    currentToken['words'].append(word)
+                else:
+                    currentToken['endIndex'] = word['index']
+                    tokens.append(currentToken)
+                    currentToken = {
+                        "classification": word['classification'],
+                        "modifiers": word.get('modifiers', []),
+                        "words": [word],
+                        "startIndex": word['index']
+                    }
+            else:
+                if currentToken is not None:
+                    currentToken['endIndex'] = word['index']
+                    tokens.append(currentToken)
+                    currentToken = None
 
-                dataset.append(result)
-        return dataset
+        for token in tokens:
+            text = ""
+            for word in token['words']:
+                text += word['word'] + " "
+            text = text.strip()
+            token['text'] = text
+
+        return tokens
+
+    def augmentToken(self, token):
+        if token['classification'] in self.numberLabels:
+            magnitude = random.choice([10, 100, 1000, 10000, 100000, 1000000])
+            number = random.uniform(0, magnitude)
+
+            format = random.choice([
+                "{:,.2f}",
+                "{:.2f}",
+                "{:,.0f}",
+                "{:.0f}"
+            ])
+
+            text = format.format(number)
+
+            if random.uniform(0,1) < 0.5:
+                if random.uniform(0,1) < 0.5:
+                    text = "-" + text
+                else:
+                    text = "(" + text + ")"
+            newText = text
+        else:
+            newText = random.choice(self.augmentationValues[token['classification']])
+
+        if len(set([word['page'] for word in token['words']])) > 1:
+            raise NotImplemented("Support for augmenting tokens that cross multiple pages not yet implemented")
+
+        # Break the words on the token down into lines
+        wordsByLine = {}
+        for word in token['words']:
+            if word['lineNumber'] in wordsByLine:
+                wordsByLine[word['lineNumber']].append(word)
+            else:
+                wordsByLine[word['lineNumber']] = [word]
+
+        # Set the start line and finish line
+        startLine = min(wordsByLine.keys())
+        endLine = max(wordsByLine.keys())
+        lineDelta = endLine - startLine
+
+        # Create the words for the new token
+        newWords = [
+            {
+                "word": word,
+                "classification": token['classification'],
+                "modifiers": token['modifiers'],
+                "page": token['words'][0]['page'],
+                "lineNumber": startLine + int(round((wordIndex / len(token['words'])) * lineDelta))
+            } for wordIndex, word in enumerate(newText.split())
+        ]
+
+        newWordsByLine = {}
+        for word in newWords:
+            if word['lineNumber'] in newWordsByLine:
+                newWordsByLine[word['lineNumber']].append(word)
+            else:
+                newWordsByLine[word['lineNumber']] = [word]
+
+        for lineNumber in newWordsByLine:
+            for wordIndex, word in enumerate(newWordsByLine[lineNumber]):
+                lineOriginalWords = wordsByLine[lineNumber]
+
+                lineLeft = min([word['left'] for word in lineOriginalWords])
+                lineRight = max([word['right'] for word in lineOriginalWords])
+                lineWordSize = (lineRight - lineLeft) / len(newWordsByLine[lineNumber])
+
+                columnLeftStart = min([word['columnLeft'] for word in lineOriginalWords])
+                columnLeftEnd = max([word['columnLeft'] for word in lineOriginalWords])
+                columnLeftSize = (columnLeftEnd - columnLeftStart) / len(newWordsByLine[lineNumber])
+
+                columnRightStart = min([word['columnRight'] for word in lineOriginalWords])
+                columnRightEnd = max([word['columnRight'] for word in lineOriginalWords])
+                columnRightSize = (columnRightEnd - columnRightStart) / len(newWordsByLine[lineNumber])
+
+                word['top'] = min([word['top'] for word in lineOriginalWords])
+                word['bottom'] = max([word['bottom'] for word in lineOriginalWords])
+                word['left'] = lineLeft + lineWordSize * wordIndex
+                word['right'] = lineLeft + lineWordSize * (wordIndex+1)
+
+                word['columnLeft'] = int(round(columnLeftStart + columnLeftSize * wordIndex))
+                word['columnRight'] = int(round(columnRightStart + columnRightSize * wordIndex))
+
+
+        return {
+            "text": newText,
+            "words": newWords
+        }
+
+
+
+    def augmentDocument(self, file):
+        tokens = self.breakDocumentIntoTokens(file)
+
+        indexAdjustment = 0
+        for token in tokens:
+            newToken = self.augmentToken(token)
+
+            start = token['startIndex'] + indexAdjustment
+            end = token['endIndex'] + indexAdjustment
+
+            file['words'][start:end] = newToken['words']
+
+            indexAdjustment += (len(newToken['words']) - len(token['words']))
+
+            # print("token")
+            # pprint(token)
+            # print("newToken")
+            # pprint(newToken)
+
+        for wordIndex, word in enumerate(file['words']):
+            word['index'] = wordIndex
+
+        return file
+
+    # def generateAndSaveDocument(self, n):
+    #     data = self.generator.generateDocument("financial_statement_1.docx", "financial_statement")
+    #     data = self.prepareDocument(data)
+    #
+    #     with open(f'data/data-{n}.bin', 'wb') as file:
+    #         pickle.dump(data, file)
+    #
+    # def generateAndSaveDataset(self):
+    #     with concurrent.futures.ProcessPoolExecutor(max_workers=3) as executor:
+    #         for n in range(1000):
+    #             executor.submit(self.generateAndSaveDocument, n)
+    #         executor.shutdown(wait=True)
+
+    # def loadDataset(self):
+    #     dataset = []
+    #     for index in range(1000):
+    #         with open(f"data/data-{index}.bin", 'rb') as file:
+    #             result = pickle.load(file)
+    #
+    #             dataset.append(result)
+    #     return dataset
 
     def createBatch(self, batchSize):
         batchWordVectors = []
@@ -106,13 +300,14 @@ class DocumentExtractorDataset:
         batchColumnLeftReverseWordIndexes = []
         batchColumnRightSortedWordIndexes = []
         batchColumnRightReverseWordIndexes = []
-        batchOutputs = []
+        batchClassificationOutputs = []
+        batchModifierOutputs = []
+
+        maxLength = random.randint(self.lengthMin, self.lengthMax)
 
         for n in range(batchSize):
-            randomIndex = random.randint(0, 999)
-
-            with open(f"data/data-{randomIndex}.bin", 'rb') as file:
-                result = pickle.load(file)
+            randomIndex = random.randint(0, len(self.dataset)-1)
+            result = self.prepareDocument(self.augmentDocument(self.dataset[randomIndex]))
 
             wordVectors = result[0]
             lineSortedWordIndexes = result[1]
@@ -121,9 +316,10 @@ class DocumentExtractorDataset:
             columnLeftReverseWordIndexes = result[4]
             columnRightSortedWordIndexes = result[5]
             columnRightReverseWordIndexes = result[6]
-            outputs = result[7]
+            classificationOutputs = result[7]
+            modifierOutputs = result[8]
 
-            while len(wordVectors) < self.maxLength:
+            while len(wordVectors) < maxLength:
                 index = len(wordVectors)
                 lineSortedWordIndexes.append(index)
                 lineSortedReverseWordIndexes.append(index)
@@ -132,20 +328,27 @@ class DocumentExtractorDataset:
                 columnRightSortedWordIndexes.append(index)
                 columnRightReverseWordIndexes.append(index)
                 wordVectors.append([0] * self.wordVectorSize)
-                outputs.append(self.labels.index("null"))
 
-            if len(wordVectors) > self.maxLength:
-                start = random.randint(0, len(wordVectors) - self.maxLength - 1)
+                oneHotCodeClassification = [0] * len(self.labels)
+                oneHotCodeModifiers = [0] * len(self.modifiers)
+                oneHotCodeClassification[self.labels.index("null")] = 1
 
-                wordVectors = wordVectors[start:start + self.maxLength]
-                lineSortedWordIndexes = [index-start for index in lineSortedWordIndexes if index >= start and index < (start + self.maxLength)]
-                lineSortedReverseWordIndexes = [lineSortedWordIndexes.index(index) for index in range(0, self.maxLength)]
-                columnLeftSortedWordIndexes = [index-start for index in columnLeftSortedWordIndexes if index >= start and index < (start + self.maxLength)]
-                columnLeftReverseWordIndexes = [columnLeftSortedWordIndexes.index(index) for index in range(0, self.maxLength)]
-                columnRightSortedWordIndexes = [index-start for index in columnRightSortedWordIndexes if index >= start and index < (start + self.maxLength)]
-                columnRightReverseWordIndexes = [columnRightSortedWordIndexes.index(index) for index in range(0, self.maxLength)]
+                classificationOutputs.append(oneHotCodeClassification)
+                modifierOutputs.append(oneHotCodeModifiers)
 
-                outputs = outputs[start:start + self.maxLength]
+            if len(wordVectors) > maxLength:
+                start = random.randint(0, len(wordVectors) - maxLength - 1)
+
+                wordVectors = wordVectors[start:start + maxLength]
+                lineSortedWordIndexes = [index-start for index in lineSortedWordIndexes if index >= start and index < (start + maxLength)]
+                lineSortedReverseWordIndexes = [lineSortedWordIndexes.index(index) for index in range(0, maxLength)]
+                columnLeftSortedWordIndexes = [index-start for index in columnLeftSortedWordIndexes if index >= start and index < (start + maxLength)]
+                columnLeftReverseWordIndexes = [columnLeftSortedWordIndexes.index(index) for index in range(0, maxLength)]
+                columnRightSortedWordIndexes = [index-start for index in columnRightSortedWordIndexes if index >= start and index < (start + maxLength)]
+                columnRightReverseWordIndexes = [columnRightSortedWordIndexes.index(index) for index in range(0, maxLength)]
+
+                classificationOutputs = classificationOutputs[start:start + maxLength]
+                modifierOutputs = modifierOutputs[start:start + maxLength]
 
             batchWordVectors.append(wordVectors)
             batchLineSortedWordIndexes.append(lineSortedWordIndexes)
@@ -154,7 +357,8 @@ class DocumentExtractorDataset:
             batchColumnLeftReverseWordIndexes.append(columnLeftReverseWordIndexes)
             batchColumnRightSortedWordIndexes.append(columnRightSortedWordIndexes)
             batchColumnRightReverseWordIndexes.append(columnRightReverseWordIndexes)
-            batchOutputs.append(outputs)
+            batchClassificationOutputs.append(classificationOutputs)
+            batchModifierOutputs.append(modifierOutputs)
 
         # print(batchWordVectors[0][0])
         # print(batchLineSortedWordIndexes)
@@ -167,4 +371,6 @@ class DocumentExtractorDataset:
             numpy.array(batchColumnLeftReverseWordIndexes),
             numpy.array(batchColumnRightSortedWordIndexes),
             numpy.array(batchColumnRightReverseWordIndexes),
-            numpy.array(batchOutputs))
+            numpy.array(batchClassificationOutputs),
+            numpy.array(batchModifierOutputs)
+        )

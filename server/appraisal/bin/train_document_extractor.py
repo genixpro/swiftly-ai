@@ -22,6 +22,6 @@ def main():
 
     db = MongoClient(settings.get('db.uri'))[settings.get('db.name')]
 
-    classifier = DocumentExtractor()
-    classifier.trainAlgorithm(db)
+    classifier = DocumentExtractor(db)
+    classifier.trainAlgorithm()
 

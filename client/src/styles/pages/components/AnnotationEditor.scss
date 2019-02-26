@@ -5,6 +5,12 @@
   user-select: none;
 }
 
+#annotation-editor-side-menu div.side-menu-scroll-area
+{
+  height: 75vh;
+  overflow-y: scroll;
+}
+
 .annotation-editor-canvas
 {
   width: 150%;

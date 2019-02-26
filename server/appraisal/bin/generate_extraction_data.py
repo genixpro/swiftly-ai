@@ -1,4 +1,4 @@
-from appraisal.components.document_extractor import DocumentExtractor
+from appraisal.components.document_extractor_dataset import DocumentExtractorDataset
 import bz2
 import sys
 import os
@@ -22,6 +22,6 @@ def main():
 
     db = MongoClient(settings.get('db.uri'))[settings.get('db.name')]
 
-    classifier = DocumentExtractor()
-    classifier.generateAndSaveDataset()
+    dataset = DocumentExtractorDataset()
+    dataset.generateAndSaveDataset()
 

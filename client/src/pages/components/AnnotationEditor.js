@@ -73,6 +73,10 @@ class AnnotationEditor extends React.Component
             if(word.classification !== 'null')
             {
                 const fieldGroupInfo = this.getGroupInformation(word.classification);
+                if (!fieldGroupInfo)
+                {
+                    return
+                }
 
                 const x = word.left * imageElement.clientWidth + (imageElement.getBoundingClientRect().left - canvasElement.getBoundingClientRect().left);
                 const y = word.top * imageElement.clientHeight;
@@ -84,8 +88,8 @@ class AnnotationEditor extends React.Component
                 let hoverFieldName = null;
                 if(fieldGroupInfo.multiple)
                 {
-                    fieldElement = document.getElementById(`${word.classification}-${word.lineNumber}-field`);
-                    hoverFieldName = `${word.classification}-${word.lineNumber}`;
+                    fieldElement = document.getElementById(`${word.classification}-${word.page}-${word.lineNumber}-field`);
+                    hoverFieldName = `${word.classification}-${word.page}-${word.lineNumber}`;
                 }
                 else
                 {
@@ -125,7 +129,6 @@ class AnnotationEditor extends React.Component
     {
         this.selecting = true;
         this.selectStart = wordIndex;
-
         const wordToken = this.tokens[wordIndex];
         wordToken.setState({selected: true});
     }
@@ -157,11 +160,30 @@ class AnnotationEditor extends React.Component
         const word = this.state.document.words[wordIndex];
         const wordToken = this.tokens[wordIndex];
 
+        this.setState({selectedWord: word});
+
         if (this.selecting)
         {
+            const startWord = this.state.document.words[this.selectStart];
+            const startWordToken = this.tokens[this.selectStart];
+
+            const endWord = this.state.document.words[wordIndex];
+            const endWordToken = this.tokens[wordIndex];
+
+            const selectTop = Math.min(startWord.top, endWord.top);
+            const selectBottom = Math.max(startWord.bottom, endWord.bottom);
+            const selectLeft = Math.min(startWord.left, endWord.left);
+            const selectRight = Math.max(startWord.right, endWord.right);
+
+
             Object.values(this.tokens).forEach((wordToken, wordTokenIndex) =>
             {
-                const shouldSelect = (wordTokenIndex >= wordIndex && wordTokenIndex <= this.selectStart) || (wordTokenIndex >= this.selectStart && wordTokenIndex <= wordIndex);
+                const shouldSelectHorizontal = (wordToken.props.word.left <= selectRight) && (wordToken.props.word.right >= selectLeft);
+                const shouldSelectVertical = (wordToken.props.word.top <= selectBottom) && (wordToken.props.word.bottom >= selectTop);
+
+                const shouldSelect = shouldSelectHorizontal && shouldSelectVertical;
+
+                // const shouldSelect = (wordTokenIndex >= wordIndex && wordTokenIndex <= this.selectStart) || (wordTokenIndex >= this.selectStart && wordTokenIndex <= wordIndex);
                 if (wordToken.state.selected && !shouldSelect)
                 {
                     wordToken.setState({selected: false});
@@ -200,6 +222,24 @@ class AnnotationEditor extends React.Component
         this.updateCanvas();
     }
 
+    clearWordClassification(evt)
+    {
+        evt.stopPropagation();
+
+        Object.values(this.tokens).forEach((wordToken) =>
+        {
+            if (wordToken.state.selected)
+            {
+                const word = wordToken.state.word;
+                word.classification = "null";
+                word.modifiers = [];
+                wordToken.setState({word: word, selected: false});
+            }
+        });
+        this.updateExtractedData();
+        this.updateCanvas();
+    }
+
     changeWordClassification(evt, newClass)
     {
         evt.stopPropagation();
@@ -210,6 +250,60 @@ class AnnotationEditor extends React.Component
             {
                 const word = wordToken.state.word;
                 word.classification = newClass;
+                wordToken.setState({word: word, selected: false});
+            }
+        });
+        this.updateExtractedData();
+        this.updateCanvas();
+    }
+
+
+    addWordModifiers(evt, newModifier)
+    {
+        evt.stopPropagation();
+
+        Object.values(this.tokens).forEach((wordToken) =>
+        {
+            if (wordToken.state.selected)
+            {
+                const word = wordToken.state.word;
+                if (!word.modifiers)
+                {
+                    word.modifiers = [];
+                }
+
+                if (word.modifiers.indexOf(newModifier) === -1)
+                {
+                    word.modifiers.push(newModifier);
+                }
+
+                wordToken.setState({word: word, selected: false});
+            }
+        });
+        this.updateExtractedData();
+        this.updateCanvas();
+    }
+
+
+    removeWordModifiers(evt, newModifier)
+    {
+        evt.stopPropagation();
+
+        Object.values(this.tokens).forEach((wordToken) =>
+        {
+            if (wordToken.state.selected)
+            {
+                const word = wordToken.state.word;
+                if (!word.modifiers)
+                {
+                    word.modifiers = [];
+                }
+
+                if (word.modifiers.indexOf(newModifier) !== -1)
+                {
+                    word.modifiers.splice(word.modifiers.indexOf(newModifier), 1);
+                }
+
                 wordToken.setState({word: word, selected: false});
             }
         });
@@ -268,19 +362,19 @@ class AnnotationEditor extends React.Component
                         extractedData[groupInfo.field] = {};
                     }
 
-                    if(!extractedData[groupInfo.field][word.lineNumber])
+                    if(!extractedData[groupInfo.field][word.page + "-" + word.lineNumber])
                     {
-                        extractedData[groupInfo.field][word.lineNumber] = {
-                            lineNumber: word.lineNumber
+                        extractedData[groupInfo.field][word.page + "-" + word.lineNumber] = {
+                            lineNumber: word.page + "-" + word.lineNumber
                         };
                     }
 
-                    if(!extractedData[groupInfo.field][word.lineNumber][word.classification])
+                    if(!extractedData[groupInfo.field][word.page + "-" + word.lineNumber][word.classification])
                     {
-                        extractedData[groupInfo.field][word.lineNumber][word.classification] = "";
+                        extractedData[groupInfo.field][word.page + "-" + word.lineNumber][word.classification] = "";
                     }
 
-                    extractedData[groupInfo.field][word.lineNumber][word.classification] += word.word + " "
+                    extractedData[groupInfo.field][word.page + "-" + word.lineNumber][word.classification] += word.word + " "
                 }
                 else
                 {
@@ -465,7 +559,28 @@ class AnnotationEditor extends React.Component
                         </div>
                     </Col>
                     <Col xs={3} id="annotation-editor-side-menu">
-                        <div style={{"marginTop": `${this.state.menuScroll}px`}}>
+                        <div style={{"marginTop": `${this.state.menuScroll}px`}} className={"side-menu-scroll-area"}>
+                            {
+                                this.state.selectedWord ? <Row>
+                                    <Col xs={12}>
+                                        <Card outline color="primary" className="mb-3">
+                                            <CardHeader className="text-white bg-primary">Selected</CardHeader>
+                                            <CardBody>
+                                                <p>Text: {this.state.selectedWord.word}</p>
+                                                <p>Line: {this.state.selectedWord.lineNumber}</p>
+                                                <p>Left Column: {this.state.selectedWord.columnLeft}</p>
+                                                <p>Right Column: {this.state.selectedWord.columnRight}</p>
+                                                <p>Classification: {this.state.selectedWord.classification}</p>
+                                                <p>Modifiers: {this.state.selectedWord.modifiers && this.state.selectedWord.modifiers.map((item) => {
+                                                    return <p>{item}</p>
+                                                })}</p>
+
+                                            </CardBody>
+                                        </Card>
+                                    </Col>
+                                </Row> : null
+                            }
+
                             {
                                 this.props.annotationFields.map((group) =>
                                 {
@@ -546,16 +661,24 @@ class AnnotationEditor extends React.Component
                     {
                         this.props.annotationFields.map((group) => {
                             return <SubMenu title={group.name} key={group.name}>
-                                {group.fields.map((field) => {
+                                {group.fields && group.fields.map((field) => {
                                     return <MenuItem onClick={(evt, data) => this.changeWordClassification(evt, field.field)} key={field.field}>
                                         {field.name}
                                     </MenuItem>
                                 })
                                 }
+                                {group.modifiers && group.modifiers.map((field) => {
+                                    return [<MenuItem onClick={(evt, data) => this.addWordModifiers(evt, field.field)} key={field.field}>
+                                        +{field.name}
+                                    </MenuItem>,<MenuItem onClick={(evt, data) => this.removeWordModifiers(evt, field.field)} key={field.field}>
+                                        -{field.name}
+                                    </MenuItem>]
+                                })
+                                }
                             </SubMenu>
                         })
                     }
-                    <MenuItem onClick={(evt, data) => this.changeWordClassification(evt, "null")}>
+                    <MenuItem onClick={(evt, data) => this.clearWordClassification(evt)}>
                         Nothing
                     </MenuItem>
                 </ContextMenu>

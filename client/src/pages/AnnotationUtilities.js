@@ -3,6 +3,11 @@
 export default {
     cleanAmount(text)
     {
+        if (!text)
+        {
+            return "";
+        }
+
         let negative = false;
         if (text.indexOf('(') !== -1 || text.indexOf(')') !== -1)
         {

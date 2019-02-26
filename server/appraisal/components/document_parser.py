@@ -13,8 +13,11 @@ from pprint import pprint
 import concurrent.futures
 import filetype
 import time
+import matplotlib.pyplot as plt
 import numpy
 import math
+import scipy.signal
+from sklearn.neighbors.kde import KernelDensity
 
 class DocumentParser:
 
@@ -83,8 +86,9 @@ class DocumentParser:
                         }
 
                         words.append(word)
-                self.assignLineNumbersToWords(words)
-                self.assignColumnNumbersToWords(words)
+                words = self.assignLineNumbersToWords(words)
+                words = self.mergeWords(words)
+                words = self.assignColumnNumbersToWords(words)
                 words = sorted(words, key=lambda word: (word['page'], word['lineNumber'], word['left']))
         return words
 
@@ -126,8 +130,9 @@ class DocumentParser:
                 word['classification'] = 'null'
 
             words.append(word)
-        self.assignLineNumbersToWords(words)
-        self.assignColumnNumbersToWords(words)
+        words = self.assignLineNumbersToWords(words)
+        words = self.mergeWords(words)
+        words = self.assignColumnNumbersToWords(words)
         words = sorted(words, key=lambda word: (word['lineNumber'], word['left']))
         return words
 
@@ -168,8 +173,8 @@ class DocumentParser:
                         bestIoU = iou
                         bestLine = line
 
-                # If intersection over union > 0.7, take on the same line
-                if bestLine is not None and bestIoU > 0.7:
+                # If intersection over union > 0.5, take on the same line
+                if bestLine is not None and bestIoU > 0.5:
                     word['line'] = bestLine
                     bestLine['top'] = min(bestLine['top'], word['top'])
                     bestLine['bottom'] = max(bestLine['bottom'], word['bottom'])
@@ -191,6 +196,7 @@ class DocumentParser:
             for word in sortedWords:
                 word['lineNumber'] = word['line']['lineNumber']
                 del word['line']
+        return words
 
     def assignColumnNumbersToWords(self, words):
         wordsByPage = {}
@@ -199,14 +205,68 @@ class DocumentParser:
                 wordsByPage[word['page']] = []
             wordsByPage[word['page']].append(word)
 
-        for page in wordsByPage.keys():
-            averageWordWidth = numpy.mean([word['right'] - word['left'] for word in words])
-            columns = math.ceil(1.0 / averageWordWidth)
+        averageWordWidth = numpy.mean([word['right'] - word['left'] for word in words])
+
+        for page in wordsByPage:
+            pageWords = wordsByPage[page]
+
+            leftPositions = numpy.array([[word['left']] for word in pageWords])
+            leftKDE = KernelDensity(kernel='gaussian', bandwidth=averageWordWidth).fit(leftPositions)
+            grid = numpy.reshape(numpy.linspace(0, 1, 1000), newshape=[1000, 1])
+            leftProbs = leftKDE.score_samples(grid)
+            leftPeaks = scipy.signal.find_peaks(leftProbs)[0] / 1000
+
+            rightPositions = numpy.array([[word['right']] for word in pageWords])
+            rightKDE = KernelDensity(kernel='gaussian', bandwidth=averageWordWidth).fit(rightPositions)
+            grid = numpy.reshape(numpy.linspace(0, 1, 1000), newshape=[1000, 1])
+            rightProbs = rightKDE.score_samples(grid)
+            rightPeaks = scipy.signal.find_peaks(rightProbs)[0] / 1000
 
             for word in wordsByPage[page]:
-                # Set the column numbers for left and right
-                word['columnLeft'] = math.floor(word['left'] / averageWordWidth)
-                word['columnRight'] = math.floor(word['right'] / averageWordWidth)
+                # Find the left column closest to this word
+                bestDist = None
+                for column, peak in enumerate(leftPeaks):
+                    dist = abs(word['left'] - peak)
+                    if bestDist is None or (dist < bestDist):
+                        word['columnLeft'] = column
+                        bestDist = dist
+
+                # Find the right column closest to this word
+                bestDist = None
+                for column, peak in enumerate(rightPeaks):
+                    dist = abs(word['right'] - peak)
+                    if bestDist is None or (dist < bestDist):
+                        word['columnRight'] = column
+                        bestDist = dist
+
+        return words
+
+    def mergeWords(self, words):
+        words = sorted(words, key=lambda word: (word['page'], word['lineNumber'], word['left']))
+
+        lastWord = None
+        wordsToRemove = []
+        mergeRatio = 0.050
+        for word in words:
+            if lastWord is not None:
+                horizontalGap = word['left'] - lastWord['right']
+                maxCharSize = max((word['right'] - word['left']) / len(word['word']), (lastWord['right'] - lastWord['left']) / len(lastWord['word']))
+
+                if word['lineNumber'] == lastWord['lineNumber'] and horizontalGap < (maxCharSize * mergeRatio):
+                    lastWord['word'] += word['word']
+                    lastWord['right'] = word['right']
+                    lastWord['top'] = min(lastWord['top'], word['top'])
+                    lastWord['bottom'] = max(lastWord['bottom'], word['bottom'])
+                    wordsToRemove.append(word)
+                else:
+                    lastWord = word
+            else:
+                lastWord = word
+
+        for word in wordsToRemove:
+            del words[words.index(word)]
+
+        return words
 
     def assignWordIndexesToWords(self, words):
         for index, word in enumerate(words):

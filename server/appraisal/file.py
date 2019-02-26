@@ -17,6 +17,7 @@ import concurrent.futures
 import filetype
 from .components.document_classifier import DocumentClassifier
 from .components.document_parser import DocumentParser
+from .components.document_extractor import DocumentExtractor
 
 
 @resource(collection_path='/appraisal/{appraisalId}/files', path='/appraisal/{appraisalId}/files/{id}', renderer='bson', cors_enabled=True, cors_origins="*")
@@ -125,6 +126,12 @@ class FileAPI(object):
 
         data['extractedData'] = extractedData
         data['words'] = words
+
+        if len(extractedWords) == 0:
+            extractor = DocumentExtractor(request.registry.db)
+            extractor.predictDocument(data)
+
+
         data['pages'] = len(images)
 
         data['type'] = self.classifier.classifyFile(data)

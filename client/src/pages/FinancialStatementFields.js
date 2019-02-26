@@ -4,43 +4,103 @@ export default [
         "name": "General",
         "fields": [
             {
-                "name": "Date",
-                "placeholder": "Date",
-                "field": "date"
+                "name": "Document Number",
+                "placeholder": "Document Number",
+                "field": "DOCUMENT_NUMBER"
+            },
+            {
+                "name": "Document Date",
+                "placeholder": "Document Date",
+                "field": "DOCUMENT_DATE"
+            },
+            {
+                "name": "Document Time",
+                "placeholder": "Document Time",
+                "field": "DOCUMENT_TIME"
+            },
+            {
+                "name": "Statement Date",
+                "placeholder": "Statement Date",
+                "field": "STATEMENT_DATE"
+            },
+            {
+                "name": "Building Address",
+                "placeholder": "Building Address",
+                "field": "BUILDING_ADDRESS"
+            },
+            {
+                "name": "User ID",
+                "placeholder": "User ID",
+                "field": "USER_ID"
+            },
+            {
+                "name": "Statement Year",
+                "placeholder": "Statement Year",
+                "field": "STATEMENT_YEAR"
+            },
+            {
+                "name": "Statement Next Year",
+                "placeholder": "Statement Next Year",
+                "field": "STATEMENT_NEXT_YEAR"
             }
         ]
     },
     {
-        "name": "Income",
+        "name": "Line Items",
         "multiple": true,
-        "field": "income",
+        "field": "items",
         "fields": [
             {
-                "name": "Name",
-                "placeholder": "Name",
-                "field": "income_name"
+                "name": "Account Number",
+                "placeholder": "Account Number",
+                "field": "ACC_NUM"
             },
             {
-                "name": "Amount",
-                "placeholder": "Amount",
-                "field": "income_amount"
+                "name": "Account Name",
+                "placeholder": "Account Name",
+                "field": "ACC_NAME"
+            },
+            {
+                "name": "Forecast",
+                "placeholder": "Forecast",
+                "field": "FORECAST"
+            },
+            {
+                "name": "Budget",
+                "placeholder": "Budget",
+                "field": "BUDGET"
+            },
+            {
+                "name": "Variance",
+                "placeholder": "Variance",
+                "field": "VARIANCE"
             }
-        ]
-    },
-    {
-        "name": "Expenses",
-        "multiple": true,
-        "field": "expense",
-        "fields": [
+        ],
+        "modifiers": [
             {
-                "name": "Name",
-                "placeholder": "Name",
-                "field": "expense_name"
+                "name": "Sum",
+                "placeholder": "Sum",
+                "field": "SUM"
             },
             {
-                "name": "Amount",
-                "placeholder": "Amount",
-                "field": "expense_amount"
+                "name": "Next Year",
+                "placeholder": "Next Year",
+                "field": "NEXT_YEAR"
+            },
+            {
+                "name": "Percentage",
+                "placeholder": "Percentage",
+                "field": "PERCENTAGE"
+            },
+            {
+                "name": "Income",
+                "placeholder": "Income",
+                "field": "INCOME"
+            },
+            {
+                "name": "Expense",
+                "placeholder": "Expense",
+                "field": "EXPENSE"
             }
         ]
     }
