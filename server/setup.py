@@ -20,7 +20,9 @@ requires = [
     'azure-storage',
     'filetype',
     'python-docx',
-    'matplotlib'
+    'matplotlib',
+    'dateparser',
+    'python-dateutil'
 ]
 
 tests_require = [
@@ -59,7 +61,8 @@ setup(
             'appraisal_train_classifier = appraisal.bin.train_document_classifier:main',
             'appraisal_generate_documents = appraisal.bin.generate_documents:main',
             'appraisal_generate_extraction_data = appraisal.bin.generate_extraction_data:main',
-            'appraisal_train_extractor = appraisal.bin.train_document_extractor:main'
+            'appraisal_train_extractor = appraisal.bin.train_document_extractor:main',
+            'appraisal_train_page_classifier = appraisal.bin.train_page_classifier:main'
         ]
     },
 )

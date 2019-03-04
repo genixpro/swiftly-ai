@@ -222,6 +222,10 @@ class DocumentParser:
             rightProbs = rightKDE.score_samples(grid)
             rightPeaks = scipy.signal.find_peaks(rightProbs)[0] / 1000
 
+            # plt.plot(leftProbs)
+            # plt.savefig(f"histogram-{page}.png")
+            # plt.clf()
+
             for word in wordsByPage[page]:
                 # Find the left column closest to this word
                 bestDist = None
@@ -242,29 +246,29 @@ class DocumentParser:
         return words
 
     def mergeWords(self, words):
-        words = sorted(words, key=lambda word: (word['page'], word['lineNumber'], word['left']))
-
-        lastWord = None
-        wordsToRemove = []
-        mergeRatio = 0.050
-        for word in words:
-            if lastWord is not None:
-                horizontalGap = word['left'] - lastWord['right']
-                maxCharSize = max((word['right'] - word['left']) / len(word['word']), (lastWord['right'] - lastWord['left']) / len(lastWord['word']))
-
-                if word['lineNumber'] == lastWord['lineNumber'] and horizontalGap < (maxCharSize * mergeRatio):
-                    lastWord['word'] += word['word']
-                    lastWord['right'] = word['right']
-                    lastWord['top'] = min(lastWord['top'], word['top'])
-                    lastWord['bottom'] = max(lastWord['bottom'], word['bottom'])
-                    wordsToRemove.append(word)
-                else:
-                    lastWord = word
-            else:
-                lastWord = word
-
-        for word in wordsToRemove:
-            del words[words.index(word)]
+        # words = sorted(words, key=lambda word: (word['page'], word['lineNumber'], word['left']))
+        #
+        # lastWord = None
+        # wordsToRemove = []
+        # mergeRatio = 0.050
+        # for word in words:
+        #     if lastWord is not None:
+        #         horizontalGap = word['left'] - lastWord['right']
+        #         maxCharSize = max((word['right'] - word['left']) / len(word['word']), (lastWord['right'] - lastWord['left']) / len(lastWord['word']))
+        #
+        #         if word['lineNumber'] == lastWord['lineNumber'] and horizontalGap < (maxCharSize * mergeRatio):
+        #             lastWord['word'] += word['word']
+        #             lastWord['right'] = word['right']
+        #             lastWord['top'] = min(lastWord['top'], word['top'])
+        #             lastWord['bottom'] = max(lastWord['bottom'], word['bottom'])
+        #             wordsToRemove.append(word)
+        #         else:
+        #             lastWord = word
+        #     else:
+        #         lastWord = word
+        #
+        # for word in wordsToRemove:
+        #     del words[words.index(word)]
 
         return words
 

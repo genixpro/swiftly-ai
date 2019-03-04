@@ -46,7 +46,7 @@ class DocumentExtractor:
             print(tf.GraphKeys.TRAINABLE_VARIABLES)
             train_op = tf.train.AdamOptimizer(learningRate).minimize(self.loss, global_step=global_step)
 
-            with concurrent.futures.ProcessPoolExecutor(max_workers=4) as executor:
+            with concurrent.futures.ProcessPoolExecutor(max_workers=1) as executor:
                 batchFutures = []
                 for n in range(20):
                     batchFutures.append(executor.submit(self.dataset.createBatch, self.batchSize))
@@ -92,7 +92,7 @@ class DocumentExtractor:
 
                         _, step, loss, classificationAccuracy, classificationNonNullAccuracy, modifierAccuracy, modifierNonNullAccuracy, confusionMatrix = self.session.run([train_op, global_step, self.loss, self.classificationAccuracy, self.classificationNonNullAccuracy, self.modifierAccuracy, self.modifierNonNullAccuracy, self.confusionMatrix], feed_dict)
 
-                        print(f"Epoch: {epoch} Batch: {batchIndex} Loss: {loss} Classification: {classificationAccuracy} Non Null: {classificationNonNullAccuracy} Modifier: {modifierAccuracy} Non Null: {modifierNonNullAccuracy}")
+                        print(f"Epoch: {epoch} Batch: {batchIndex} Loss: {loss} Classification: {classificationAccuracy} Non Null: {classificationNonNullAccuracy} Modifier: {modifierAccuracy} Non Null: {modifierNonNullAccuracy}", flush=True)
 
                         if batchIndex % 10 == 0:
                             with open("matrix.csv", "wt") as file:
@@ -102,35 +102,39 @@ class DocumentExtractor:
                 self.saver.save(self.session, "models/model.ckpt")
 
     def formatConfusionMatrix(self, matrix):
-        results = []
+        try:
+            results = []
 
-        for labelIndex, label in enumerate(self.labels):
-            rowTotal = numpy.sum(matrix[labelIndex])
+            for labelIndex, label in enumerate(self.labels):
+                rowTotal = numpy.sum(matrix[labelIndex])
 
-            result = {
-                "actual": label
-            }
-            for labelIndex2, label2 in enumerate(self.labels):
-                if rowTotal == 0:
-                    result[f"predicted {label2}"] = 0
-                else:
-                    result[f"predicted {label2}"] = matrix[labelIndex][labelIndex2] / rowTotal
-            results.append(result)
+                result = {
+                    "actual": label
+                }
+                for labelIndex2, label2 in enumerate(self.labels):
+                    if rowTotal == 0:
+                        result[f"predicted {label2}"] = 0
+                    else:
+                        result[f"predicted {label2}"] = matrix[labelIndex][labelIndex2] / rowTotal
+                results.append(result)
 
-        buffer = io.StringIO()
+            buffer = io.StringIO()
 
-        writer = csv.DictWriter(buffer, fieldnames=list(results[0].keys()))
+            writer = csv.DictWriter(buffer, fieldnames=list(results[0].keys()))
 
-        writer.writeheader()
-        writer.writerows(results)
+            writer.writeheader()
+            writer.writerows(results)
 
-        return buffer.getvalue()
+            return buffer.getvalue()
+        except IndexError:
+            print("Error creating confusion matrix.")
+            return ""
 
 
     def loadAlgorithm(self):
         with self.session.as_default():
-            with tf.device('/gpu:0'):
-                self.createNetwork()
+            # with tf.device('/gpu:0'):
+            self.createNetwork()
 
             self.createSaver()
 
@@ -166,15 +170,23 @@ class DocumentExtractor:
             self.columnRightSortedReverseIndexesInput: columnRightReverseWordIndexes
         }
 
-        classifications, modifiers = self.session.run([self.classificationPredictions, self.modifierPredictions], feed_dict)
+        classifications, classificationProbabilities, modifierPredictions, modifierProbabilities = self.session.run([self.classificationPredictions, self.classificationProbabilities, self.modifierPredictions, self.modifierProbabilities], feed_dict)
 
         for wordIndex in range(len(wordVectors[0])):
             prediction = classifications[0][wordIndex]
 
-            word = document['words'][wordIndex]
+            word = document.words[wordIndex]
 
             word['classification'] = self.labels[prediction]
-            word['modifiers'] = [modifier for index, modifier in enumerate(self.modifiers) if modifiers[0][wordIndex][index]]
+            word['classificationProbabilities'] = {
+                label: float(classificationProbabilities[0][wordIndex][labelIndex])
+                for labelIndex, label in enumerate(self.labels)
+            }
+            word['modifiers'] = [modifier for index, modifier in enumerate(self.modifiers) if modifierPredictions[0][wordIndex][index]]
+            word['modifierProbabilities'] = {
+                label: float(modifierProbabilities[0][wordIndex][labelIndex])
+                for labelIndex, label in enumerate(self.modifiers)
+            }
 
 
     def createNetwork(self):

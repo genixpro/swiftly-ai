@@ -10,6 +10,7 @@ from pprint import pprint
 import copy
 import multiprocessing
 import functools
+from .document import Document
 
 globalVectorProcess = None
 
@@ -27,14 +28,15 @@ class DocumentExtractorDataset:
         ]
 
         self.modifiers = [
-            "SUM", "NEXT_YEAR", "PERCENTAGE", "INCOME", "EXPENSE"
+            "SUM", "NEXT_YEAR", "PERCENTAGE", "INCOME", "EXPENSE", # "RENT", "RECOVERY",
         ]
 
         self.numberLabels = ['FORECAST', 'BUDGET', 'VARIANCE']
 
         self.lengthMin = 100
-        self.lengthMax = 500
+        self.lengthMax = 1500
         self.wordVectorSize = 300
+        self.wordOmissionRate = 0.05
 
         self.dataset = DocumentExtractorDataset.manager.list()
 
@@ -52,7 +54,7 @@ class DocumentExtractorDataset:
         return globalVectorProcess
 
 
-    @functools.lru_cache(maxsize=1024)
+    @functools.lru_cache(maxsize=10240)
     def getWordVector(self, word):
         vectorProcess = self.getFasttextProcess()
         try:
@@ -66,23 +68,23 @@ class DocumentExtractorDataset:
 
         return vector
 
-    def prepareDocument(self, file):
+    def prepareDocument(self, document):
         wordVectors = []
-        for word in file['words']:
+        for word in document.words:
             wordVectors.append(numpy.array(self.getWordVector(word['word'])))
 
-        lineSortedWordIndexes = [word['index'] for word in sorted(file['words'], key=lambda word: (word['page'], word['lineNumber'], word['left']))]
-        columnLeftSortedWordIndexes = [word['index'] for word in sorted(file['words'], key=lambda word: (word['page'], word['columnLeft'], word['lineNumber'], word['left']))]
-        columnRightSortedWordIndexes = [word['index'] for word in sorted(file['words'], key=lambda word: (word['page'], word['columnRight'], word['lineNumber'], word['left']))]
+        lineSortedWordIndexes = [word['index'] for word in sorted(document.words, key=lambda word: (word['page'], word['lineNumber'], word['left']))]
+        columnLeftSortedWordIndexes = [word['index'] for word in sorted(document.words, key=lambda word: (word['page'], word['columnLeft'], word['lineNumber'], word['left']))]
+        columnRightSortedWordIndexes = [word['index'] for word in sorted(document.words, key=lambda word: (word['page'], word['columnRight'], word['lineNumber'], word['left']))]
 
-        lineSortedReverseWordIndexes = [lineSortedWordIndexes.index(word['index']) for word in file['words']]
-        columnLeftReverseWordIndexes = [columnLeftSortedWordIndexes.index(word['index']) for word in file['words']]
-        columnRightReverseWordIndexes = [columnRightSortedWordIndexes.index(word['index']) for word in file['words']]
+        lineSortedReverseWordIndexes = [lineSortedWordIndexes.index(word['index']) for word in document.words]
+        columnLeftReverseWordIndexes = [columnLeftSortedWordIndexes.index(word['index']) for word in document.words]
+        columnRightReverseWordIndexes = [columnRightSortedWordIndexes.index(word['index']) for word in document.words]
 
         classificationOutputs = []
         modifierOutputs = []
 
-        for word in file['words']:
+        for word in document.words:
             oneHotCodeClassification = [0] * len(self.labels)
             oneHotCodeModifiers = [0] * len(self.modifiers)
 
@@ -114,48 +116,11 @@ class DocumentExtractorDataset:
         files = filesCollection.find({"type": "financials"})
 
         for file in files:
-            for token in self.breakDocumentIntoTokens(file):
+            document = Document(file)
+            for token in document.breakIntoTokens():
                 self.augmentationValues[token['classification']].append(token['text'])
 
-            self.dataset.append(file)
-
-    def breakDocumentIntoTokens(self, file):
-        tokens = []
-        currentToken = None
-        for word in file['words']:
-            if word['classification'] != "null":
-                if currentToken is None:
-                    currentToken = {
-                        "classification": word['classification'],
-                        "modifiers": word.get('modifiers', []),
-                        "words": [word],
-                        "startIndex": word['index']
-                    }
-                elif currentToken['classification'] == word['classification'] and set(currentToken['modifiers']) == set(word.get('modifiers', [])):
-                    currentToken['words'].append(word)
-                else:
-                    currentToken['endIndex'] = word['index']
-                    tokens.append(currentToken)
-                    currentToken = {
-                        "classification": word['classification'],
-                        "modifiers": word.get('modifiers', []),
-                        "words": [word],
-                        "startIndex": word['index']
-                    }
-            else:
-                if currentToken is not None:
-                    currentToken['endIndex'] = word['index']
-                    tokens.append(currentToken)
-                    currentToken = None
-
-        for token in tokens:
-            text = ""
-            for word in token['words']:
-                text += word['word'] + " "
-            text = text.strip()
-            token['text'] = text
-
-        return tokens
+            self.dataset.append(document)
 
     def augmentToken(self, token):
         if token['classification'] in self.numberLabels:
@@ -246,36 +211,44 @@ class DocumentExtractorDataset:
 
 
 
-    def augmentDocument(self, file):
-        tokens = self.breakDocumentIntoTokens(file)
+    def augmentDocument(self, document):
+        tokens = document.breakIntoTokens(document)
 
         indexAdjustment = 0
         for token in tokens:
-            newToken = self.augmentToken(token)
+            if random.uniform(0, 1) < self.wordOmissionRate:
+                start = token['startIndex'] + indexAdjustment
+                end = token['endIndex'] + indexAdjustment
 
-            start = token['startIndex'] + indexAdjustment
-            end = token['endIndex'] + indexAdjustment
+                document.words[start:end] = []
 
-            file['words'][start:end] = newToken['words']
+                indexAdjustment -= len(token['words'])
+            else:
+                newToken = self.augmentToken(token)
 
-            indexAdjustment += (len(newToken['words']) - len(token['words']))
+                start = token['startIndex'] + indexAdjustment
+                end = token['endIndex'] + indexAdjustment
+
+                document.words[start:end] = newToken['words']
+
+                indexAdjustment += (len(newToken['words']) - len(token['words']))
 
             # print("token")
             # pprint(token)
             # print("newToken")
             # pprint(newToken)
 
-        for wordIndex, word in enumerate(file['words']):
+        for wordIndex, word in enumerate(document.words):
             word['index'] = wordIndex
 
-        return file
+        return document
 
     # def generateAndSaveDocument(self, n):
     #     data = self.generator.generateDocument("financial_statement_1.docx", "financial_statement")
     #     data = self.prepareDocument(data)
     #
-    #     with open(f'data/data-{n}.bin', 'wb') as file:
-    #         pickle.dump(data, file)
+    #     with open(f'data/data-{n}.bin', 'wb') as document:
+    #         pickle.dump(data, document)
     #
     # def generateAndSaveDataset(self):
     #     with concurrent.futures.ProcessPoolExecutor(max_workers=3) as executor:
@@ -286,8 +259,8 @@ class DocumentExtractorDataset:
     # def loadDataset(self):
     #     dataset = []
     #     for index in range(1000):
-    #         with open(f"data/data-{index}.bin", 'rb') as file:
-    #             result = pickle.load(file)
+    #         with open(f"data/data-{index}.bin", 'rb') as document:
+    #             result = pickle.load(document)
     #
     #             dataset.append(result)
     #     return dataset

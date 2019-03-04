@@ -15,10 +15,12 @@ import hashlib
 from pprint import pprint
 import concurrent.futures
 import filetype
+from .components.discounted_cash_flow import DiscountedCashFlowModel
 from .components.document_classifier import DocumentClassifier
 from .components.document_parser import DocumentParser
 from .components.document_extractor import DocumentExtractor
-
+from .components.document import Document
+from .components.page_classifier import PageClassifier
 
 @resource(collection_path='/appraisal/{appraisalId}/files', path='/appraisal/{appraisalId}/files/{id}', renderer='bson', cors_enabled=True, cors_origins="*")
 class FileAPI(object):
@@ -28,6 +30,7 @@ class FileAPI(object):
         self.filesCollection = request.registry.db['files']
         self.classifier = DocumentClassifier()
         self.parser = DocumentParser()
+        self.pageClassifier = PageClassifier()
 
     def __acl__(self):
         return [(Allow, Everyone, 'everything')]
@@ -50,6 +53,14 @@ class FileAPI(object):
         fileId = self.request.matchdict['id']
 
         file = self.filesCollection.find_one({"_id": bson.ObjectId(fileId), "appraisalId": appraisalId})
+
+        # discountedCashFlow = DiscountedCashFlowModel([Document(file)])
+
+        # Quick hack
+        if 'pageTypes' not in file:
+            file['pageTypes'] = [
+                'miscellaneous' for page in range(file['pages'])
+            ]
 
         return {"file": file}
 
@@ -86,7 +97,7 @@ class FileAPI(object):
         # extractedData, extractedWords = self.loadFakeData(input_file)
 
         existingFile = self.filesCollection.find_one({"fileName": input_file_name})
-        if existingFile:
+        if existingFile and 'extractedData' in existingFile:
             extractedData = existingFile['extractedData']
             extractedWords = existingFile['words']
         else:
@@ -101,7 +112,7 @@ class FileAPI(object):
         result = request.registry.azureBlobStorage.create_blob_from_bytes('files', fileId, input_file)
 
         if mimeType == 'application/pdf':
-            images, words = self.parser.processPDF(input_file, extractWords=(len(extractedData) == 0))
+            images, words = self.parser.processPDF(input_file, extractWords=(len(extractedData) == 0), local=True)
 
             imageFileNames = []
             for page, imageData in enumerate(images):
@@ -127,12 +138,14 @@ class FileAPI(object):
         data['extractedData'] = extractedData
         data['words'] = words
 
+        data['pages'] = len(images)
+
+        data['pageTypes'] = self.pageClassifier.classifyFile(data)
+
         if len(extractedWords) == 0:
             extractor = DocumentExtractor(request.registry.db)
-            extractor.predictDocument(data)
+            extractor.predictDocument(Document(data))
 
-
-        data['pages'] = len(images)
 
         data['type'] = self.classifier.classifyFile(data)
 

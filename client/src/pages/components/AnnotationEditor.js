@@ -4,6 +4,9 @@ import ResizeObserver from 'resize-observer-polyfill';
 import _ from 'underscore';
 import { ContextMenu, MenuItem, SubMenu } from "react-contextmenu";
 import AnnotationExtractionToken from './AnnotationExtractionToken';
+import { Progress } from 'reactstrap';
+import NumberFormat from 'react-number-format';
+
 
 class AnnotationEditor extends React.Component
 {
@@ -17,7 +20,8 @@ class AnnotationEditor extends React.Component
             document: {
                 _id: {},
                 extractedData:{},
-                words: []
+                words: [],
+                pageTypes: []
             },
             imageZoom: 100
         };
@@ -25,6 +29,20 @@ class AnnotationEditor extends React.Component
         this.selecting = false;
         this.tokens = {};
         this.hoveredFields = [];
+
+        this.pageTypes = [
+            "miscellaneous",
+            "operating_statement",
+            "rent_roll",
+            "miscellaneous_financial"
+        ];
+
+        this.humanFriendlyPageType = {
+            "miscellaneous": "Header / Footer / Miscellaneous",
+            "operating_statement": "Operating Statement",
+            "rent_roll": "Rent Rolls",
+            "miscellaneous_financial": "Miscellaneous Financial"
+        }
     }
 
 
@@ -491,6 +509,14 @@ class AnnotationEditor extends React.Component
         }
     }
 
+    onPageTypeChanged(page, newPageType)
+    {
+        const document = this.state.document;
+        document.pageTypes[page] = newPageType;
+        this.setState({document: document}, () => this.saveDocument());
+    }
+
+
     render() {
         return (
             <div id={"annotation-editor-extractions"} onMouseUp={this.onMouseUp.bind(this)} onClick={this.onClick.bind(this)} onMouseMove={this.onMouseMove.bind(this)}>
@@ -509,6 +535,14 @@ class AnnotationEditor extends React.Component
                                             onClick={() => this.changePage(page)}
                                             className="annotationEditorImageThumbnail"
                                         />
+
+                                        <select className="custom-select" value={this.state.document.pageTypes[page]} onChange={(evt) => this.onPageTypeChanged(page, evt.target.value)}>
+                                            {
+                                                this.pageTypes.map((pageType) => <option value={pageType}>{this.humanFriendlyPageType[pageType]}</option>)
+                                            }
+                                        </select>
+
+                                        {/*<span>{this.humanFriendlyPageType[this.state.document.pageTypes[page]]}</span>*/}
                                     </CardBody>
                                 </Card>;
                             })
@@ -517,8 +551,22 @@ class AnnotationEditor extends React.Component
                     <Col xs={7}>
                         <canvas id="annotation-editor-canvas" className={"annotation-editor-canvas"} width={this.state.canvasWidth} height={this.state.canvasHeight} />
                         <div className={"extractions-toolbar"}>
-                            <em className="fa-2x icon-magnifier-add mr-2" onClick={() => this.zoomIn()}></em>
-                            <em className="fa-2x icon-magnifier-remove mr-2" onClick={() => this.zoomOut()}></em>
+                            <div className={"toolbar-label"}>
+                                <span>Page Type</span>
+                            </div>
+                            <div>
+                                <select className="custom-select" value={this.state.document.pageTypes[this.state.currentPage]} onChange={(evt) => this.onPageTypeChanged(this.state.currentPage, evt.target.value)}>
+                                    {
+                                        this.pageTypes.map((pageType) => <option value={pageType}>{this.humanFriendlyPageType[pageType]}</option>)
+                                    }
+                                </select>
+                            </div>
+                            <div>
+                                <em className="fa-2x icon-magnifier-add mr-2" onClick={() => this.zoomIn()}></em>
+                            </div>
+                            <div>
+                                <em className="fa-2x icon-magnifier-remove mr-2" onClick={() => this.zoomOut()}></em>
+                            </div>
                         </div>
                         <div className={"annotation-editor-image-outer-container"}
                              id={"annotation-editor-image-outer-container"}>
@@ -571,8 +619,15 @@ class AnnotationEditor extends React.Component
                                                 <p>Left Column: {this.state.selectedWord.columnLeft}</p>
                                                 <p>Right Column: {this.state.selectedWord.columnRight}</p>
                                                 <p>Classification: {this.state.selectedWord.classification}</p>
-                                                <p>Modifiers: {this.state.selectedWord.modifiers && this.state.selectedWord.modifiers.map((item) => {
-                                                    return <p>{item}</p>
+                                                <p>Modifiers: {this.state.selectedWord.modifiers && this.state.selectedWord.modifiers.map((item, itemIndex) => {
+                                                    if (itemIndex === this.state.selectedWord.modifiers.length - 1)
+                                                    {
+                                                        return <span>{item}</span>
+                                                    }
+                                                    else
+                                                    {
+                                                        return <span>{item}, </span>
+                                                    }
                                                 })}</p>
 
                                             </CardBody>
@@ -580,7 +635,45 @@ class AnnotationEditor extends React.Component
                                     </Col>
                                 </Row> : null
                             }
-
+                            {
+                                this.state.selectedWord && this.state.selectedWord.classificationProbabilities ? <Row>
+                                    <Col xs={12}>
+                                        <Card outline color="primary" className="mb-3">
+                                            <CardHeader className="text-white bg-primary">Debug</CardHeader>
+                                            <CardBody>
+                                                {
+                                                    Object.keys(this.state.selectedWord.classificationProbabilities).map((label) =>
+                                                    {
+                                                        const prob = this.state.selectedWord.classificationProbabilities[label];
+                                                        return <Row>
+                                                            <Col xs={6}>
+                                                                <span>{label}</span>
+                                                            </Col>
+                                                            <Col xs={6}>
+                                                                <Progress value={prob * 100}><NumberFormat value={Math.round(prob * 100)} displayType={"text"} /></Progress>
+                                                            </Col>
+                                                        </Row>;
+                                                    })
+                                                }
+                                                {
+                                                    Object.keys(this.state.selectedWord.modifierProbabilities).map((label) =>
+                                                    {
+                                                        const prob = this.state.selectedWord.modifierProbabilities[label];
+                                                        return <Row>
+                                                            <Col xs={6}>
+                                                                <span>{label}</span>
+                                                            </Col>
+                                                            <Col xs={6}>
+                                                                <Progress value={prob * 100}><NumberFormat value={Math.round(prob * 100)} displayType={"text"} /></Progress>
+                                                            </Col>
+                                                        </Row>;
+                                                    })
+                                                }
+                                            </CardBody>
+                                        </Card>
+                                    </Col>
+                                </Row> : null
+                            }
                             {
                                 this.props.annotationFields.map((group) =>
                                 {

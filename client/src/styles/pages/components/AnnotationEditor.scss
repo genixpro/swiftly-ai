@@ -78,9 +78,21 @@
 
 .extractions-toolbar
 {
+  background: white;
   position: absolute;
   right: 0;
   z-index: 1000;
+  display: flex;
+  flex-direction: row;
+
+  div {
+    margin-right: 10px;
+  }
+
+  .toolbar-label {
+    position: relative;
+    top: 5px;
+  }
 
   em {
     cursor: pointer;
