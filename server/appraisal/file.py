@@ -15,7 +15,6 @@ import hashlib
 from pprint import pprint
 import concurrent.futures
 import filetype
-from .components.discounted_cash_flow import DiscountedCashFlowModel
 from .components.document_classifier import DocumentClassifier
 from .components.document_parser import DocumentParser
 from .components.document_extractor import DocumentExtractor
@@ -40,8 +39,6 @@ class FileAPI(object):
 
         query = self.request.GET
 
-        print(query)
-
         query["appraisalId"] = appraisalId
 
         files = self.filesCollection.find(query, ['fileName', 'type'])
@@ -53,14 +50,6 @@ class FileAPI(object):
         fileId = self.request.matchdict['id']
 
         file = self.filesCollection.find_one({"_id": bson.ObjectId(fileId), "appraisalId": appraisalId})
-
-        # discountedCashFlow = DiscountedCashFlowModel([Document(file)])
-
-        # Quick hack
-        if 'pageTypes' not in file:
-            file['pageTypes'] = [
-                'miscellaneous' for page in range(file['pages'])
-            ]
 
         return {"file": file}
 

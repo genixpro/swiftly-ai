@@ -3,6 +3,8 @@ import dateparser
 from dateutil.relativedelta import relativedelta
 import datetime
 import re
+import numpy
+import copy
 import math
 from pprint import pprint
 from .market_data import MarketData
@@ -18,7 +20,12 @@ class DiscountedCashFlowModel:
         cashFlows = []
 
         for document in documents:
-            cashFlows.extend(self.getCashFlows(document))
+            cashFlows.extend(self.getYearlyCashFlows(document))
+
+        self.cashFlows = cashFlows
+
+    def getCashFlows(self):
+        return self.cashFlows
 
     def getDocumentYear(self, document):
         tokens = document.breakIntoTokens()
@@ -94,7 +101,7 @@ class DiscountedCashFlowModel:
         if "-" in amount or "(" in amount:
             negative = True
 
-        amount = re.sub("[^0-9\\.]", "")
+        amount = re.sub("[^0-9\\.]", "", amount)
         number = float(amount)
 
         if negative:
@@ -106,13 +113,12 @@ class DiscountedCashFlowModel:
 
     def projectCashFlows(self, lineItem, startYear, endYear):
         # We project cash flows for an item on the statement by increasing by inflation
+        amount = self.getCleanedAmount(lineItem.get("BUDGET", "0")) / 12
 
-        amount = self.getCleanedAmount(lineItem.get("FORECAST", "0"))
+        startDate = datetime.datetime(year=startYear, month=1, day=1, hour=0, minute=0, second=0)
+        endDate = datetime.datetime(year=endYear, month=12, day=1, hour=0, minute=0, second=0)
 
-        startDate = datetime.datetime(year=startYear, month=0, day=0, hour=0, minute=0, second=0)
-        endDate = datetime.datetime(year=endYear, month=11, day=0, hour=0, minute=0, second=0)
-
-        currentDate = datetime.datetime(startDate)
+        currentDate = copy.copy(startDate)
 
         monthlyInflation = math.pow(1.0 + (self.marketData.inflation) / 100, 1 / 12.0)
 
@@ -125,6 +131,7 @@ class DiscountedCashFlowModel:
             startYear += 1
 
             cashFlows.append({
+                "name": lineItem.get('ACC_NAME', ''),
                 "amount": amount * totalInflation,
                 "year": currentDate.year,
                 "month": currentDate.month,
@@ -147,21 +154,48 @@ class DiscountedCashFlowModel:
 
 
 
-    def getCashFlows(self, document):
+    def getMonthlyCashFlows(self, document):
         cashFlows = []
 
         lineItems = self.getLineItems(document)
 
         presentValue = 0
 
+        documentYear = self.getDocumentYear(document)
+
         for lineItem in lineItems:
-            if 'INCOME' in lineItem['modifiers']:
-                cashFlows.extend(self.projectCashFlows(lineItem))
+            # if 'INCOME' in lineItem['modifiers']:
+            cashFlows.extend(self.projectCashFlows(lineItem, documentYear, documentYear + 10))
 
 
+        self.discountCashFlows(cashFlows)
+
+        return cashFlows
 
 
+    def getYearlyCashFlows(self, document):
+        cashFlows = self.getMonthlyCashFlows(document)
 
+
+        cashFlowGroups = {}
+        for cashFlow in cashFlows:
+            groupId = (cashFlow['name'], cashFlow['year'])
+            if groupId in cashFlowGroups:
+                cashFlowGroups[groupId].append(cashFlow)
+            else:
+                cashFlowGroups[groupId] = [cashFlow]
+
+        yearlyCashFlows = []
+        for monthCashFlows in cashFlowGroups.values():
+            yearlyCashFlow = {
+                "name": monthCashFlows[0]['name'],
+                "year": monthCashFlows[0]['year'],
+                "amount": float(numpy.sum([cashFlow['amount'] for cashFlow in monthCashFlows])),
+                "presentValue": float(numpy.sum([cashFlow['amount'] for cashFlow in monthCashFlows]))
+            }
+            yearlyCashFlows.append(yearlyCashFlow)
+
+        return yearlyCashFlows
 
 
 

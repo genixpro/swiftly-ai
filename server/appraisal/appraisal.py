@@ -2,6 +2,9 @@ from cornice.resource import resource
 from pyramid.authorization import Allow, Everyone
 import bson
 from webob_graphql import serve_graphql_request
+from .components.discounted_cash_flow import DiscountedCashFlowModel
+from .components.market_data import MarketData
+from .components.document import Document
 
 
 @resource(collection_path='/appraisal/', path='/appraisal/{id}', renderer='bson', cors_enabled=True, cors_origins="*")
@@ -10,6 +13,7 @@ class AppraisalAPI(object):
     def __init__(self, request, context=None):
         self.request = request
         self.appraisalsCollection = request.registry.db['appraisals']
+        self.filesCollection = request.registry.db['files']
 
     def __acl__(self):
         return [(Allow, Everyone, 'everything')]
@@ -31,6 +35,12 @@ class AppraisalAPI(object):
         appraisalId = self.request.matchdict['id']
 
         appraisal = self.appraisalsCollection.find_one({"_id": bson.ObjectId(appraisalId)})
+
+        files = self.filesCollection.find({"appraisalId": appraisalId})
+
+        marketData = MarketData.getTestingMarketData()
+        discountedCashFlow = DiscountedCashFlowModel([Document(file) for file in files], marketData, 8.0)
+        appraisal['cashFlows'] = discountedCashFlow.getCashFlows()
 
         return {"appraisal": appraisal}
 

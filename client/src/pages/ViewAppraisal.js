@@ -12,6 +12,7 @@ import ViewFinancialStatement from "./ViewFinancialStatement";
 import ViewStabilizedStatementValuation from "./ViewStabilizedStatementValuation";
 import ViewComparableSales from "./ViewComparableSales";
 import ViewComparableSale from "./ViewComparableSale";
+import ViewDiscountedCashFlow from "./ViewDiscountedCashFlow";
 
 class ViewAppraisal extends React.Component
 {
@@ -48,6 +49,9 @@ class ViewAppraisal extends React.Component
                             <NavItem>
                                 <NavLink to={`${this.props.match.url}/stabilized_statement_valuation`} activeClassName="active" tag={RRNavLink}>Stabilized Statement Valuation</NavLink>
                             </NavItem>
+                            <NavItem>
+                                <NavLink to={`${this.props.match.url}/discounted_cash_flow`} activeClassName="active" tag={RRNavLink}>Discounted Cash Flow</NavLink>
+                            </NavItem>
                         </Nav>
                     </Row>
                     <Row>
@@ -63,6 +67,7 @@ class ViewAppraisal extends React.Component
                                         <Route path={`${this.props.match.path}/stabilized_statement_valuation`} component={ViewStabilizedStatementValuation} />
                                         <Route path={`${this.props.match.path}/comparable_sales`} component={ViewComparableSales} />
                                         <Route path={`${this.props.match.path}/comparable_sale/:comparableSaleId`} component={ViewComparableSale} />
+                                        <Route path={`${this.props.match.path}/discounted_cash_flow`} component={ViewDiscountedCashFlow} />
                                     </Switch>
                                 </CardBody>
                             </Card>
