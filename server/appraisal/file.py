@@ -69,6 +69,13 @@ class FileAPI(object):
         return {"_id": str(id)}
 
 
+    def delete(self):
+        appraisalId = self.request.matchdict['appraisalId']
+        fileId = self.request.matchdict['id']
+
+        self.filesCollection.remove({"_id": bson.ObjectId(fileId)})
+
+
     def collection_post(self):
         # Get the data for the file out from the request object
         request = self.request

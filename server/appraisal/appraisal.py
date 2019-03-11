@@ -38,9 +38,12 @@ class AppraisalAPI(object):
 
         files = self.filesCollection.find({"appraisalId": appraisalId})
 
+        documents = [Document(file) for file in files]
+
         marketData = MarketData.getTestingMarketData()
-        discountedCashFlow = DiscountedCashFlowModel([Document(file) for file in files], marketData, 8.0)
+        discountedCashFlow = DiscountedCashFlowModel(documents, marketData, 8.0)
         appraisal['cashFlows'] = discountedCashFlow.getCashFlows()
+        appraisal['cashFlowSummary'] = discountedCashFlow.getCashFlowSummary()
 
         return {"appraisal": appraisal}
 

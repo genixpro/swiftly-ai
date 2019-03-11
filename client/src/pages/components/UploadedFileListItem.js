@@ -1,5 +1,6 @@
 import React from 'react';
 import axios from "axios/index";
+import { Button } from 'reactstrap';
 
 
 class UploadedFileListItem extends React.Component
@@ -23,6 +24,14 @@ class UploadedFileListItem extends React.Component
         });
     }
 
+    onDeleteFile(evt)
+    {
+        axios.delete(`/appraisal/${this.props.appraisalId}/files/${this.state.file._id['$oid']}`).then((response) =>
+        {
+            this.props.handleDeletion(this.props.file);
+        });
+    }
+
 
     render()
     {
@@ -43,6 +52,9 @@ class UploadedFileListItem extends React.Component
                         <option value={"comparable"}>Comparable Sale</option>
                         <option value={"rentroll"}>Rent Roll</option>
                     </select>
+                </td>
+                <td>
+                    <Button color="danger" onClick={(evt) => this.onDeleteFile()}>Remove</Button>
                 </td>
             </tr>
         );

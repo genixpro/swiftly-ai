@@ -101,6 +101,11 @@ export default [
                 "name": "Expense",
                 "placeholder": "Expense",
                 "field": "EXPENSE"
+            },
+            {
+                "name": "Summary",
+                "placeholder": "Summary",
+                "field": "SUMMARY"
             }
         ]
     }
