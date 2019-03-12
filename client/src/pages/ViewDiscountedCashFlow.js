@@ -62,10 +62,10 @@ class ViewDiscountedCashFlow extends React.Component
                                 <CardBody>
                                     <Table hover responsive>
                                         <thead>
-                                            <tr>
-                                                <td></td>
+                                            <tr className={"header-row"}>
+                                                <td />
                                                 {
-                                                    this.state.rows && this.state.rows[0].map((cashFlow) => <td className={"amount-column"}>
+                                                    this.state.rows && this.state.rows.length > 0 && this.state.rows[0].map((cashFlow) => <td className={"amount-column"}>
                                                         <span><NumberFormat value={cashFlow['year']} displayType={"text"} /></span>
                                                     </td>)
                                                 }
@@ -73,7 +73,7 @@ class ViewDiscountedCashFlow extends React.Component
                                         </thead>
                                         <tbody>
                                         {
-                                            this.state.incomes && this.state.incomes.map((item, itemIndex) => {
+                                            this.state.incomes && this.state.incomes.length > 0 && this.state.incomes.map((item, itemIndex) => {
                                                 return <tr key={itemIndex}>
                                                     <td className={"name-column"}>
                                                         <span>{item[0].name}</span>
@@ -86,20 +86,23 @@ class ViewDiscountedCashFlow extends React.Component
                                                 </tr>
                                             })
                                         }
-                                        <tr className={"total-row"}>
-                                            <td className={"name-column"}>
-                                                <span>Net Revenues</span>
-                                            </td>
-                                            {
-                                                this.state.appraisal && this.state.appraisal.cashFlowSummary.years.map((year) => {
-                                                    return  <td className={"amount-column"}>
-                                                        <span><NumberFormat value={this.state.appraisal.cashFlowSummary.income[year]} displayType={"text"} decimalScale={2} thousandSeparator={", "} /></span>
-                                                    </td>;
-                                                })
-                                            }
-                                        </tr>
                                         {
-                                            this.state.expenses && this.state.expenses.map((item, itemIndex) => {
+                                            this.state.appraisal && this.state.appraisal.cashFlowSummary.years.length > 0 &&
+                                                <tr className={"total-row"}>
+                                                    <td className={"name-column"}>
+                                                        <span>Net Revenues</span>
+                                                    </td>
+                                                    {
+                                                        this.state.appraisal.cashFlowSummary.years.map((year) => {
+                                                            return  <td className={"amount-column"}>
+                                                                <span><NumberFormat value={this.state.appraisal.cashFlowSummary.income[year]} displayType={"text"} decimalScale={2} thousandSeparator={", "} /></span>
+                                                            </td>;
+                                                        })
+                                                    }
+                                                </tr>
+                                        }
+                                        {
+                                            this.state.expenses && this.state.expenses.length > 0 && this.state.expenses.map((item, itemIndex) => {
                                                 return <tr key={itemIndex}>
                                                     <td className={"name-column"}>
                                                         <span>{item[0].name}</span>
@@ -112,42 +115,60 @@ class ViewDiscountedCashFlow extends React.Component
                                                 </tr>
                                             })
                                         }
-                                        <tr className={"total-row"}>
-                                            <td className={"name-column"}>
-                                                <span>Operating Expenses</span>
-                                            </td>
-                                            {
-                                                this.state.appraisal && this.state.appraisal.cashFlowSummary.years.map((year) => {
-                                                    return  <td className={"amount-column"}>
-                                                        <span><NumberFormat value={this.state.appraisal.cashFlowSummary.expense[year]} displayType={"text"} decimalScale={2} thousandSeparator={", "} /></span>
-                                                    </td>;
-                                                })
-                                            }
-                                        </tr>
-                                        <tr className={"total-row"}>
-                                            <td className={"name-column"}>
-                                                <span>Net Operating Income</span>
-                                            </td>
-                                            {
-                                                this.state.appraisal && this.state.appraisal.cashFlowSummary.years.map((year) => {
-                                                    return  <td className={"amount-column"}>
-                                                        <span><NumberFormat value={this.state.appraisal.cashFlowSummary.netOperatingIncome[year]} displayType={"text"} decimalScale={2} thousandSeparator={", "} /></span>
-                                                    </td>;
-                                                })
-                                            }
-                                        </tr>
-                                        <tr className={"total-row"}>
-                                            <td className={"name-column"}>
-                                                <span>Present Value</span>
-                                            </td>
-                                            {
-                                                this.state.appraisal && this.state.appraisal.cashFlowSummary.years.map((year) => {
-                                                    return  <td className={"amount-column"}>
-                                                        <span><NumberFormat value={this.state.appraisal.cashFlowSummary.presentValue[year]} displayType={"text"} decimalScale={2} thousandSeparator={", "} /></span>
-                                                    </td>;
-                                                })
-                                            }
-                                        </tr>
+                                        {
+                                            this.state.appraisal && this.state.appraisal.cashFlowSummary.years.length > 0 &&
+                                            <tr className={"total-row"}>
+                                                <td className={"name-column"}>
+                                                    <span>Operating Expenses</span>
+                                                </td>
+                                                {
+                                                    this.state.appraisal.cashFlowSummary.years.map((year) => {
+                                                        return <td className={"amount-column"}>
+                                                            <span><NumberFormat
+                                                                value={this.state.appraisal.cashFlowSummary.expense[year]}
+                                                                displayType={"text"} decimalScale={2}
+                                                                thousandSeparator={", "}/></span>
+                                                        </td>;
+                                                    })
+                                                }
+                                            </tr>
+                                        }
+                                        {
+                                            this.state.appraisal && this.state.appraisal.cashFlowSummary.years.length > 0 &&
+                                            <tr className={"total-row"}>
+                                                <td className={"name-column"}>
+                                                    <span>Net Operating Income</span>
+                                                </td>
+                                                {
+                                                    this.state.appraisal.cashFlowSummary.years.map((year) => {
+                                                        return <td className={"amount-column"}>
+                                                            <span><NumberFormat
+                                                                value={this.state.appraisal.cashFlowSummary.netOperatingIncome[year]}
+                                                                displayType={"text"} decimalScale={2}
+                                                                thousandSeparator={", "}/></span>
+                                                        </td>;
+                                                    })
+                                                }
+                                            </tr>
+                                        }
+                                        {
+                                            this.state.appraisal && this.state.appraisal.cashFlowSummary.years.length > 0 &&
+                                            <tr className={"total-row"}>
+                                                <td className={"name-column"}>
+                                                    <span>Present Value</span>
+                                                </td>
+                                                {
+                                                    this.state.appraisal.cashFlowSummary.years.map((year) => {
+                                                        return <td className={"amount-column"}>
+                                                            <span><NumberFormat
+                                                                value={this.state.appraisal.cashFlowSummary.presentValue[year]}
+                                                                displayType={"text"} decimalScale={2}
+                                                                thousandSeparator={", "}/></span>
+                                                        </td>;
+                                                    })
+                                                }
+                                            </tr>
+                                        }
                                         </tbody>
                                     </Table>
                                 </CardBody>

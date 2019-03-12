@@ -48,9 +48,9 @@ class ViewFinancialStatement extends React.Component
                             <NavItem>
                                 <NavLink to={`${this.props.match.url}/raw`} activeClassName="active" tag={RRNavLink}>Raw Financial Statement</NavLink>
                             </NavItem>
-                            <NavItem>
-                                <NavLink to={`${this.props.match.url}/audit`} activeClassName="active" tag={RRNavLink}>Audit</NavLink>
-                            </NavItem>
+                            {/*<NavItem>*/}
+                                {/*<NavLink to={`${this.props.match.url}/audit`} activeClassName="active" tag={RRNavLink}>Audit</NavLink>*/}
+                            {/*</NavItem>*/}
                         </Nav>
                     </Col>
                 </Row>

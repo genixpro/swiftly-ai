@@ -92,23 +92,18 @@ class FileAPI(object):
 
         # extractedData, extractedWords = self.loadFakeData(input_file)
 
-        existingFile = self.filesCollection.find_one({"fileName": input_file_name})
-        if existingFile and 'extractedData' in existingFile:
-            extractedData = existingFile['extractedData']
-            extractedWords = existingFile['words']
-        else:
-            extractedData = {}
-            extractedWords = []
-
-
         insertResult = self.filesCollection.insert_one(data)
         mimeType = filetype.guess(input_file).mime
         fileId = str(insertResult.inserted_id)
 
         result = request.registry.azureBlobStorage.create_blob_from_bytes('files', fileId, input_file)
 
+
+        existingFile = self.filesCollection.find_one({"fileName": input_file_name})
+        hasExistingData = existingFile and 'extractedData' in existingFile and len(existingFile['extractedData']) > 0
+
         if mimeType == 'application/pdf':
-            images, words = self.parser.processPDF(input_file, extractWords=(len(extractedData) == 0), local=True)
+            images, words = self.parser.processPDF(input_file, extractWords=(not hasExistingData), local=True)
 
             imageFileNames = []
             for page, imageData in enumerate(images):
@@ -118,7 +113,7 @@ class FileAPI(object):
 
             result = self.filesCollection.update_one({"_id": insertResult.inserted_id}, {"$set": {"pageCount": len(images), "images": imageFileNames}})
         elif mimeType == 'image/png':
-            words = self.parser.processImage(input_file, fileId, extractWords=(len(extractedData) == 0))
+            words = self.parser.processImage(input_file, fileId, extractWords=(not hasExistingData))
 
             fileName = fileId + "-image-0.png"
             result = self.request.registry.azureBlobStorage.create_blob_from_bytes('files', fileName, input_file)
@@ -128,22 +123,21 @@ class FileAPI(object):
         else:
             raise ValueError(f"Unsupported file type provided: {mimeType}")
 
-        if len(extractedWords) > 0:
-            words = extractedWords
-
-        data['extractedData'] = extractedData
-        data['words'] = words
-
         data['pages'] = len(images)
 
-        data['pageTypes'] = self.pageClassifier.classifyFile(data)
+        if hasExistingData:
+            data['extractedData'] = existingFile['extractedData']
+            data['words'] = existingFile['words']
+            data['pageTypes'] = existingFile['pageTypes']
+            data['type'] = existingFile['type']
+        else:
+            data['extractedData'] = {}
+            data['words'] = words
+            data['type'] = self.classifier.classifyFile(data)
+            data['pageTypes'] = self.pageClassifier.classifyFile(data)
 
-        if len(extractedWords) == 0:
             extractor = DocumentExtractor(request.registry.db)
             extractor.predictDocument(Document(data))
-
-
-        data['type'] = self.classifier.classifyFile(data)
 
         self.filesCollection.update_one({
             "_id": bson.ObjectId(fileId)

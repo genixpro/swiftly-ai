@@ -23,82 +23,52 @@ class DiscountedCashFlowModel:
             cashFlows.extend(self.getYearlyCashFlows(document))
 
         self.cashFlows = cashFlows
+
+        # print(cashFlows)
+
         self.cashFlowSummary = self.computeCashFlowSummary(cashFlows)
+        self.rentRoll = self.computeRentRoll(documents)
 
-    def getCashFlows(self):
-        return self.cashFlows
-
-    def getCashFlowSummary(self):
-        return self.cashFlowSummary
-
-    def getDocumentYear(self, document):
-        tokens = document.breakIntoTokens()
-
-        date = ""
-        for token in tokens:
-            if token['classification'] == 'STATEMENT_YEAR':
-                return token['text']
-            elif token['classification'] == 'STATEMENT_DATE':
-                date = token['text']
-
-        if date == '':
-            return datetime.datetime.now().year
-
-        parsed = dateparser.parse(date)
-
-        return parsed.year
+    def fillInRent(self, lineItem):
+        if 'MONTHLY_RENT' in lineItem and 'YEARLY_RENT' not in lineItem:
+            lineItem['YEARLY_RENT'] = self.getCleanedAmount(lineItem['MONTHLY_RENT']) * 12.0
+        if 'YEARLY_RENT' in lineItem and 'MONTHLY_RENT' not in lineItem:
+            lineItem['MONTHLY_RENT'] = self.getCleanedAmount(lineItem['YEARLY_RENT']) / 12.0
 
 
-    def getLineItems(self, document):
-        tokens = document.breakIntoTokens()
+    def hasRentRollInfo(self, lineItem):
+        rentRollFields = ['TENANT_NAME', 'UNIT_NUM']
+        for field in rentRollFields:
+            if field not in lineItem:
+                return False
+        return True
 
-        year = self.getDocumentYear(document)
 
-        tokensByLineNumberAndPage = {}
-        for token in tokens:
-            if token['classification'] != "null":
-                lineNumberPage = (token['words'][0]['page'], token['words'][0]['lineNumber'])
-                if lineNumberPage in tokensByLineNumberAndPage:
-                    tokensByLineNumberAndPage[lineNumberPage].append(token)
-                else:
-                    tokensByLineNumberAndPage[lineNumberPage] = [token]
+    def computeRentRoll(self, documents):
+        rentRolls = []
+        for document in documents:
+            lineItems = document.getLineItems('rent_roll')
 
-        lineItems = []
+            # pprint(lineItems)
 
-        for lineNumberPage in tokensByLineNumberAndPage:
-            groupedByClassification = {}
-            for token in tokensByLineNumberAndPage[lineNumberPage]:
-                if token['classification'] in groupedByClassification:
-                    groupedByClassification[token['classification']].append(token)
-                else:
-                    groupedByClassification[token['classification']] = [token]
+            lastValidItem = None
+            for item in lineItems:
+                if self.hasRentRollInfo(item):
+                    lastValidItem = item
+                elif lastValidItem is not None:
+                    for key in lastValidItem:
+                        if key not in item:
+                            item[key] = lastValidItem[key]
 
-            maxSize = max([len(groupedByClassification[classification]) for classification in groupedByClassification])
+            # Eliminate entries which don't contain all of the required rent-roll information
+            lineItems = [item for item in lineItems if self.hasRentRollInfo(item)]
 
-            items = [{
-                'modifiers': set()
-            } for n in range(maxSize)]
-            for classification in groupedByClassification:
-                for tokenIndex, token in enumerate(groupedByClassification[classification]):
-                    if len(groupedByClassification[classification]) == 1:
-                        itemsForGroup = items
-                    else:
-                        itemsForGroup = [items[tokenIndex]]
+            for item in lineItems:
+                self.fillInRent(item)
 
-                    for item in itemsForGroup:
-                        item[token['classification']] = token['text']
-                        for modifier in token['modifiers']:
-                            item['modifiers'].add(modifier)
+            rentRolls.extend(lineItems)
 
-            for item in items:
-                if 'NEXT_YEAR' in item['modifiers']:
-                    item['year'] = year + 1
-                else:
-                    item['year'] = year
-
-            lineItems.extend(items)
-
-        return lineItems
+        return rentRolls
 
     def getCleanedAmount(self, amount):
         negative = False
@@ -172,11 +142,11 @@ class DiscountedCashFlowModel:
     def getMonthlyCashFlows(self, document):
         cashFlows = []
 
-        lineItems = self.getLineItems(document)
+        lineItems = document.getLineItems("operating_statement")
 
         presentValue = 0
 
-        documentYear = self.getDocumentYear(document)
+        documentYear = document.getDocumentYear()
 
         for lineItem in lineItems:
             if 'SUM' in lineItem['modifiers'] and 'SUMMARY' not in lineItem['modifiers']:
@@ -215,6 +185,17 @@ class DiscountedCashFlowModel:
 
     def computeCashFlowSummary(self, yearlyCashFlows):
         years = sorted(set(cashFlow['year'] for cashFlow in yearlyCashFlows))
+
+        if len(yearlyCashFlows) == 0:
+            return {
+                "years": [],
+                "income": [],
+                "expense": [],
+                "netOperatingIncome": {},
+                "presentValue": {}
+            }
+
+        # print(years)
 
         # Group incomes and expenses by name
         incomeGrouped = {}

@@ -5,6 +5,7 @@ from webob_graphql import serve_graphql_request
 from .components.discounted_cash_flow import DiscountedCashFlowModel
 from .components.market_data import MarketData
 from .components.document import Document
+from pprint import pprint
 
 
 @resource(collection_path='/appraisal/', path='/appraisal/{id}', renderer='bson', cors_enabled=True, cors_origins="*")
@@ -42,8 +43,11 @@ class AppraisalAPI(object):
 
         marketData = MarketData.getTestingMarketData()
         discountedCashFlow = DiscountedCashFlowModel(documents, marketData, 8.0)
-        appraisal['cashFlows'] = discountedCashFlow.getCashFlows()
-        appraisal['cashFlowSummary'] = discountedCashFlow.getCashFlowSummary()
+        appraisal['cashFlows'] = discountedCashFlow.cashFlows
+        appraisal['cashFlowSummary'] = discountedCashFlow.cashFlowSummary
+        appraisal['rentRoll'] = discountedCashFlow.rentRoll
+
+        pprint(appraisal['rentRoll'])
 
         return {"appraisal": appraisal}
 

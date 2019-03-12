@@ -108,5 +108,44 @@ export default [
                 "field": "SUMMARY"
             }
         ]
+    },
+    {
+        "name": "Rent Roll",
+        "multiple": true,
+        "field": "items",
+        "fields": [
+            {
+                "name": "Unit Number",
+                "placeholder": "Unit Number",
+                "field": "UNIT_NUM"
+            },
+            {
+                "name": "Tenant Name",
+                "placeholder": "Tenant Name",
+                "field": "TENANT_NAME"
+            },
+            {
+                "name": "Rentable Area",
+                "placeholder": "Rentable Area",
+                "field": "RENTABLE_AREA"
+            },
+            {
+                "name": "Lease Term",
+                "placeholder": "Lease Term",
+                "field": "TERM"
+            },
+            {
+                "name": "Monthly Rent",
+                "placeholder": "Monthly Rent",
+                "field": "MONTHLY_RENT"
+            },
+            {
+                "name": "Yearly Rent",
+                "placeholder": "Yearly Rent",
+                "field": "YEARLY_RENT"
+            }
+        ],
+        "modifiers": [
+        ]
     }
 ];
