@@ -22,8 +22,12 @@ class Tenancy(EmbeddedDocument):
         # This method returns True if this tenancy objects overlaps with the given
         # tenancy object (time-wise).
         # Otherwise returns False
-        if otherTenancy.endDate < self.startDate or otherTenancy.startDate > self.endDate:
+        if otherTenancy.endDate is not None and self.startDate is not None and otherTenancy.endDate < self.startDate:
             return False
+
+        if otherTenancy.startDate is not None and self.endDate is not None and otherTenancy.startDate > self.endDate:
+            return False
+
         return True
 
 
@@ -39,6 +43,23 @@ class Unit(EmbeddedDocument):
 
     # A list of occupants of this unit over various periods of time
     tenancies = ListField(EmbeddedDocumentField(Tenancy))
+
+    currentTenancy = EmbeddedDocumentField(Tenancy)
+
+    def updateCurrentTenancy(self):
+        currentDateTime = datetime.datetime.now()
+
+        if len(self.tenancies) > 0:
+            for tenancy in self.tenancies:
+                if tenancy.startDate is not None and currentDateTime >= tenancy.startDate and tenancy.endDate is not None and currentDateTime <= tenancy.endDate:
+                    self.currentTenancy = tenancy
+                    return
+
+            sortedTenancies = sorted(self.tenancies, key=lambda tenancy: (tenancy.startDate if tenancy.startDate is not None else currentDateTime) )
+
+            self.currentTenancy = sortedTenancies[-1]
+        else:
+            self.currentTenancy = None
 
 
     def mergeOtherUnitInfo(self, otherUnitInfo):
@@ -59,3 +80,4 @@ class Unit(EmbeddedDocument):
             if overlapTenancy is None:
                 self.tenancies.append(tenancy)
 
+        self.updateCurrentTenancy()

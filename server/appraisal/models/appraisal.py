@@ -1,6 +1,7 @@
 from mongoengine import *
 import datetime
 from .unit import Unit
+from .income_statement import IncomeStatement
 
 class Appraisal(Document):
     meta = {'collection': 'appraisals'}
@@ -22,3 +23,7 @@ class Appraisal(Document):
 
     # A list of units within this Appraisal
     units = ListField(EmbeddedDocumentField(Unit))
+
+    # Income statement for this Appraisal
+    incomeStatement = EmbeddedDocumentField(IncomeStatement)
+

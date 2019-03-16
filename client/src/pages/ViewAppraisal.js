@@ -50,9 +50,9 @@ class ViewAppraisal extends React.Component
                             <NavItem>
                                 <NavLink to={`${this.props.match.url}/tenants`} activeClassName="active" tag={RRNavLink}>Tenants</NavLink>
                             </NavItem>
-                            {/*<NavItem>*/}
-                                {/*<NavLink to={`${this.props.match.url}/stabilized_statement_valuation`} activeClassName="active" tag={RRNavLink}>Stabilized Statement Valuation</NavLink>*/}
-                            {/*</NavItem>*/}
+                            <NavItem>
+                                <NavLink to={`${this.props.match.url}/stabilized_statement_valuation`} activeClassName="active" tag={RRNavLink}>Stabilized Statement Valuation</NavLink>
+                            </NavItem>
                             <NavItem>
                                 <NavLink to={`${this.props.match.url}/discounted_cash_flow`} activeClassName="active" tag={RRNavLink}>Discounted Cash Flow</NavLink>
                             </NavItem>

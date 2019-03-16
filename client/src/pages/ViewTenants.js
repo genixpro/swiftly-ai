@@ -40,10 +40,21 @@ class ViewTenants extends React.Component
     {
         return <tr onClick={(evt) => this.onTenantClicked(unitInfo.unitNumber)} className={"tenant-row"}>
             <td>{unitInfo.unitNumber}</td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
+
+            <td>{unitInfo.currentTenancy.name}</td>
+            <td>
+                {unitInfo.currentTenancy.startDate && <Moment format="YYYY/MM/DD">{new Date(unitInfo.currentTenancy.startDate.$date).toISOString()}</Moment>}
+            </td>
+            <td>
+                {unitInfo.currentTenancy.endDate && <Moment format="YYYY/MM/DD">{new Date(unitInfo.currentTenancy.endDate.$date).toISOString()}</Moment>}
+            </td>
+            <td>$<NumberFormat
+                value={unitInfo.currentTenancy.monthlyRent}
+                displayType={'text'}
+                thousandSeparator={', '}
+                decimalScale={2}
+                fixedDecimalScale={true}
+            /></td>
         </tr>;
     }
 

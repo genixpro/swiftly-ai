@@ -43,6 +43,7 @@ class TenancyDataExtractor (DataExtractor):
                 tenancy.yearlyRent = self.cleanAmount(rentRoll.get('YEARLY_RENT', 0))
                 newUnit.tenancies.append(tenancy)
 
+            newUnit.updateCurrentTenancy()
             units.append(newUnit)
 
         return units

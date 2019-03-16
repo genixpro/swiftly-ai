@@ -7,6 +7,7 @@ import filetype
 import re
 from pprint import pprint
 from .tenancy_data_extractor import TenancyDataExtractor
+from .income_statement_data_extractor import IncomeStatementDataExtractor
 
 
 class DocumentProcessor:
@@ -21,6 +22,7 @@ class DocumentProcessor:
         self.azureBlobStorage = azureBlobStorage
         self.db = db
         self.tenancyDataExtractor = TenancyDataExtractor()
+        self.incomeStatementExtractor = IncomeStatementDataExtractor()
 
 
     def processFileUpload(self, fileName, fileData, appraisal):
@@ -115,3 +117,14 @@ class DocumentProcessor:
                     break
             if not foundExisting:
                 appraisal.units.append(extractedUnit)
+
+        incomeStatement = self.incomeStatementExtractor.extractIncomeStatement(file)
+
+        if appraisal.incomeStatement is None:
+            appraisal.incomeStatement = incomeStatement
+        else:
+            appraisal.incomeStatement.mergeWithIncomeStatement(incomeStatement)
+
+
+
+

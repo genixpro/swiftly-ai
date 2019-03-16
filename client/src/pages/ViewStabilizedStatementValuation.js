@@ -14,7 +14,7 @@ class ViewStabilizedStatementValuation extends React.Component
 
     componentDidMount()
     {
-        axios.get(`/appraisal/${this.props.match.params._id}`).then((response) =>
+        axios.get(`/appraisal/${this.props.match.params.id}`).then((response) =>
         {
             this.setState({appraisal: response.data.appraisal}, () => this.computeGroupTotals())
         });
@@ -27,7 +27,7 @@ class ViewStabilizedStatementValuation extends React.Component
 
     computeGroupTotals()
     {
-        if (!this.state.appraisal.stabilizedStatement)
+        if (!this.state.appraisal.incomeStatement)
         {
             return
         }
@@ -35,25 +35,19 @@ class ViewStabilizedStatementValuation extends React.Component
         let incomeTotal = 0;
         let expenseTotal = 0;
 
-        if (this.state.appraisal.stabilizedStatement.income)
+        if (this.state.appraisal.incomeStatement.incomes)
         {
-            this.state.appraisal.stabilizedStatement.income.forEach((income) =>
+            this.state.appraisal.incomeStatement.incomes.forEach((income) =>
             {
-                if (income.include)
-                {
-                    incomeTotal += AnnotationUtilities.cleanAmount(income.income_amount);
-                }
+                incomeTotal += income.yearlyAmount;
             });
         }
 
-        if (this.state.appraisal.stabilizedStatement.expense)
+        if (this.state.appraisal.incomeStatement.expenses)
         {
-            this.state.appraisal.stabilizedStatement.expense.forEach((expense) =>
+            this.state.appraisal.incomeStatement.expenses.forEach((expense) =>
             {
-                if (expense.include)
-                {
-                    expenseTotal += AnnotationUtilities.cleanAmount(expense.expense_amount);
-                }
+                expenseTotal += expense.yearlyAmount;
             });
         }
 
@@ -70,7 +64,7 @@ class ViewStabilizedStatementValuation extends React.Component
 
     render() {
         return (
-             (this.state.appraisal && this.state.appraisal.stabilizedStatement) ?
+             (this.state.appraisal && this.state.appraisal.incomeStatement) ?
                     <div id={"view-stabilized-statement"} className={"view-stabilized-statement"}>
                         <Row>
                             <Col xs={12} md={10} lg={8} xl={6}>
@@ -80,22 +74,23 @@ class ViewStabilizedStatementValuation extends React.Component
                                         <Table striped bordered hover responsive>
                                             <tbody>
                                             {
-                                                this.state.appraisal.stabilizedStatement['income'] && this.state.appraisal.stabilizedStatement['income'].map((item) => {
-                                                    if (item.include)
-                                                    {
-                                                        return <tr key={item.lineNumber}>
-                                                            <td className={"name-column"}>
-                                                                <span>{item['income_name']}</span>
-                                                            </td>
-                                                            <td className={"amount-column"}>
-                                                                <span>{item['income_amount']}</span>
-                                                            </td>
-                                                        </tr>
-                                                    }
-                                                    else
-                                                    {
-                                                        return null;
-                                                    }
+                                                this.state.appraisal.incomeStatement.incomes && this.state.appraisal.incomeStatement.incomes.map((item) => {
+                                                    return <tr key={item.name}>
+                                                        <td className={"name-column"}>
+                                                            <span>{item.name}</span>
+                                                        </td>
+                                                        <td className={"amount-column"}>
+                                                            <span>
+                                                                $<NumberFormat
+                                                                    value={item.yearlyAmount}
+                                                                    displayType={'text'}
+                                                                    thousandSeparator={', '}
+                                                                    decimalScale={2}
+                                                                    fixedDecimalScale={true}
+                                                                />
+                                                            </span>
+                                                        </td>
+                                                    </tr>
                                                 })
                                             }
                                             <tr className={"total-row"}>
@@ -104,7 +99,7 @@ class ViewStabilizedStatementValuation extends React.Component
                                                 </td>
                                                 <td className={"amount-column"}>
                                                     <span>
-                                                        <NumberFormat
+                                                        $<NumberFormat
                                                             value={this.state.incomeTotal}
                                                             displayType={'text'}
                                                             thousandSeparator={', '}
@@ -126,21 +121,21 @@ class ViewStabilizedStatementValuation extends React.Component
                                     <CardHeader className="text-white bg-primary">Expenses</CardHeader>
                                     <CardBody>
                                         <Table striped bordered hover responsive>
-                                            <thead>
-                                            <tr>
-                                                <th className={"name-column"}/>
-                                                <th className={"amount-column"}/>
-                                            </tr>
-                                            </thead>
                                             <tbody>
                                             {
-                                                this.state.appraisal.stabilizedStatement['expense'] && this.state.appraisal.stabilizedStatement['expense'].map((item) => {
-                                                    return <tr key={item.lineNumber}>
+                                                this.state.appraisal.incomeStatement.expenses && this.state.appraisal.incomeStatement.expenses.map((item) => {
+                                                    return <tr key={item.name}>
                                                         <td className={"name-column"}>
-                                                            <span>{item['expense_name']}</span>
+                                                            <span>{item.name}</span>
                                                         </td>
                                                         <td className={"amount-column"}>
-                                                            <span>{item['expense_amount']}</span>
+                                                            <span>
+                                                                $<NumberFormat value={item.yearlyAmount}
+                                                                              displayType={'text'}
+                                                                              thousandSeparator={', '}
+                                                                              decimalScale={2}
+                                                                              fixedDecimalScale={true}/>
+                                                            </span>
                                                         </td>
                                                     </tr>
                                                 })
@@ -151,7 +146,7 @@ class ViewStabilizedStatementValuation extends React.Component
                                                 </td>
                                                 <td className={"amount-column"}>
                                                     <span>
-                                                        <NumberFormat value={this.state.expenseTotal}
+                                                        $<NumberFormat value={this.state.expenseTotal}
                                                                       displayType={'text'}
                                                                       thousandSeparator={', '}
                                                                       decimalScale={2}
@@ -179,7 +174,7 @@ class ViewStabilizedStatementValuation extends React.Component
                                                     </td>
                                                     <td className={"amount-column"}>
                                                             <span>
-                                                                <NumberFormat value={this.state.incomeTotal}
+                                                                $<NumberFormat value={this.state.incomeTotal}
                                                                               displayType={'text'}
                                                                               thousandSeparator={', '}
                                                                               decimalScale={2}
@@ -193,7 +188,7 @@ class ViewStabilizedStatementValuation extends React.Component
                                                     </td>
                                                     <td className={"amount-column"}>
                                                             <span>
-                                                                <NumberFormat value={this.state.expenseTotal}
+                                                                $<NumberFormat value={this.state.expenseTotal}
                                                                               displayType={'text'}
                                                                               thousandSeparator={', '}
                                                                               decimalScale={2}
@@ -207,7 +202,7 @@ class ViewStabilizedStatementValuation extends React.Component
                                                     </td>
                                                     <td className={"amount-column"}>
                                                             <span>
-                                                                <NumberFormat value={this.state.operatingIncome}
+                                                                $<NumberFormat value={this.state.operatingIncome}
                                                                               displayType={'text'}
                                                                               thousandSeparator={', '}
                                                                               decimalScale={2}
@@ -250,7 +245,7 @@ class ViewStabilizedStatementValuation extends React.Component
                                                 </td>
                                                 <td className={"amount-column"}>
                                                             <span>
-                                                                <NumberFormat value={this.state.valuation}
+                                                                $<NumberFormat value={this.state.valuation}
                                                                               displayType={'text'}
                                                                               thousandSeparator={', '}
                                                                               decimalScale={2}
