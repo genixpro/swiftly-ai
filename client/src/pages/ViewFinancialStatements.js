@@ -12,6 +12,7 @@ class ViewFinancialStatements extends React.Component
 
     componentDidMount()
     {
+        console.log(this.props.match);
         axios.get(`/appraisal/${this.props.match.params.id}/files?type=financials`).then((response) =>
         {
             this.setState({financial_statements: response.data.files})

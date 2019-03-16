@@ -12,7 +12,7 @@ class ViewComparableSales extends React.Component
 
     componentDidMount()
     {
-        axios.get(`/appraisal/${this.props.match.params.id}/files?type=comparable`).then((response) =>
+        axios.get(`/appraisal/${this.props.match.params._id}/files?type=comparable`).then((response) =>
         {
             this.setState({comparableSales: response.data.files})
         });
@@ -27,7 +27,7 @@ class ViewComparableSales extends React.Component
                         <h3>View Comparable Sales</h3>
                     </Col>
                     <Col xs={12}>
-                        <ComparableSaleList comparableSales={this.state.comparableSales} history={this.props.history} appraisalId={this.props.match.params.id}/>
+                        <ComparableSaleList comparableSales={this.state.comparableSales} history={this.props.history} appraisalId={this.props.match.params._id}/>
                     </Col>
                 </Row>
             </div>

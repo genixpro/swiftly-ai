@@ -22,7 +22,8 @@ requires = [
     'python-docx',
     'matplotlib',
     'dateparser',
-    'python-dateutil'
+    'python-dateutil',
+    'mongoengine'
 ]
 
 tests_require = [

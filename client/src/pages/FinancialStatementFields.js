@@ -130,9 +130,14 @@ export default [
                 "field": "RENTABLE_AREA"
             },
             {
-                "name": "Lease Term",
-                "placeholder": "Lease Term",
-                "field": "TERM"
+                "name": "Lease Term Start",
+                "placeholder": "Lease Term Start",
+                "field": "TERM_START"
+            },
+            {
+                "name": "Lease Term End",
+                "placeholder": "Lease Term End",
+                "field": "TERM_END"
             },
             {
                 "name": "Monthly Rent",

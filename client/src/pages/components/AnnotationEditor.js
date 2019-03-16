@@ -19,11 +19,11 @@ class AnnotationEditor extends React.Component
             currentPage: 0,
             document: {
                 _id: {},
-                extractedData:{},
                 words: [],
                 pageTypes: []
             },
-            imageZoom: 100
+            imageZoom: 100,
+            extractedData:{}
         };
 
         this.selecting = false;
@@ -139,7 +139,7 @@ class AnnotationEditor extends React.Component
     onWindowScroll(evt)
     {
         const viewDocumentElement = document.getElementById("annotation-editor-side-menu");
-        if (!viewDocumentElement)
+        if (viewDocumentElement)
         {
             const menuTop = viewDocumentElement.getBoundingClientRect().top + evt.pageY;
             this.setState({menuScroll: Math.max(evt.pageY - menuTop + 20, 0)})
@@ -438,9 +438,7 @@ class AnnotationEditor extends React.Component
             }
         });
 
-        const document = this.state.document;
-        document.extractedData = extractedData;
-        this.setState({document: document}, () => this.saveDocument());
+        this.setState({extractedData: extractedData});
     }
 
     saveDocument()
@@ -611,72 +609,72 @@ class AnnotationEditor extends React.Component
                     </Col>
                     <Col xs={3} id="annotation-editor-side-menu">
                         <div style={{"marginTop": `${this.state.menuScroll}px`}} className={"side-menu-scroll-area"}>
-                            {/*{*/}
-                                {/*this.state.selectedWord ? <Row>*/}
-                                    {/*<Col xs={12}>*/}
-                                        {/*<Card outline color="primary" className="mb-3">*/}
-                                            {/*<CardHeader className="text-white bg-primary">Selected</CardHeader>*/}
-                                            {/*<CardBody>*/}
-                                                {/*<p>Text: {this.state.selectedWord.word}</p>*/}
-                                                {/*<p>Line: {this.state.selectedWord.lineNumber}</p>*/}
-                                                {/*<p>Left Column: {this.state.selectedWord.columnLeft}</p>*/}
-                                                {/*<p>Right Column: {this.state.selectedWord.columnRight}</p>*/}
-                                                {/*<p>Classification: {this.state.selectedWord.classification}</p>*/}
-                                                {/*<p>Modifiers: {this.state.selectedWord.modifiers && this.state.selectedWord.modifiers.map((item, itemIndex) => {*/}
-                                                    {/*if (itemIndex === this.state.selectedWord.modifiers.length - 1)*/}
-                                                    {/*{*/}
-                                                        {/*return <span>{item}</span>*/}
-                                                    {/*}*/}
-                                                    {/*else*/}
-                                                    {/*{*/}
-                                                        {/*return <span>{item}, </span>*/}
-                                                    {/*}*/}
-                                                {/*})}</p>*/}
+                            {
+                                this.state.selectedWord ? <Row>
+                                    <Col xs={12}>
+                                        <Card outline color="primary" className="mb-3">
+                                            <CardHeader className="text-white bg-primary">Selected</CardHeader>
+                                            <CardBody>
+                                                <p>Text: {this.state.selectedWord.word}</p>
+                                                <p>Line: {this.state.selectedWord.lineNumber}</p>
+                                                <p>Left Column: {this.state.selectedWord.columnLeft}</p>
+                                                <p>Right Column: {this.state.selectedWord.columnRight}</p>
+                                                <p>Classification: {this.state.selectedWord.classification}</p>
+                                                <p>Modifiers: {this.state.selectedWord.modifiers && this.state.selectedWord.modifiers.map((item, itemIndex) => {
+                                                    if (itemIndex === this.state.selectedWord.modifiers.length - 1)
+                                                    {
+                                                        return <span>{item}</span>
+                                                    }
+                                                    else
+                                                    {
+                                                        return <span>{item}, </span>
+                                                    }
+                                                })}</p>
 
-                                            {/*</CardBody>*/}
-                                        {/*</Card>*/}
-                                    {/*</Col>*/}
-                                {/*</Row> : null*/}
-                            {/*}*/}
-                            {/*{*/}
-                                {/*this.state.selectedWord && this.state.selectedWord.classificationProbabilities ? <Row>*/}
-                                    {/*<Col xs={12}>*/}
-                                        {/*<Card outline color="primary" className="mb-3">*/}
-                                            {/*<CardHeader className="text-white bg-primary">Debug</CardHeader>*/}
-                                            {/*<CardBody>*/}
-                                                {/*{*/}
-                                                    {/*Object.keys(this.state.selectedWord.classificationProbabilities).map((label) =>*/}
-                                                    {/*{*/}
-                                                        {/*const prob = this.state.selectedWord.classificationProbabilities[label];*/}
-                                                        {/*return <Row>*/}
-                                                            {/*<Col xs={6}>*/}
-                                                                {/*<span>{label}</span>*/}
-                                                            {/*</Col>*/}
-                                                            {/*<Col xs={6}>*/}
-                                                                {/*<Progress value={prob * 100}><NumberFormat value={Math.round(prob * 100)} displayType={"text"} /></Progress>*/}
-                                                            {/*</Col>*/}
-                                                        {/*</Row>;*/}
-                                                    {/*})*/}
-                                                {/*}*/}
-                                                {/*{*/}
-                                                    {/*Object.keys(this.state.selectedWord.modifierProbabilities).map((label) =>*/}
-                                                    {/*{*/}
-                                                        {/*const prob = this.state.selectedWord.modifierProbabilities[label];*/}
-                                                        {/*return <Row>*/}
-                                                            {/*<Col xs={6}>*/}
-                                                                {/*<span>{label}</span>*/}
-                                                            {/*</Col>*/}
-                                                            {/*<Col xs={6}>*/}
-                                                                {/*<Progress value={prob * 100}><NumberFormat value={Math.round(prob * 100)} displayType={"text"} /></Progress>*/}
-                                                            {/*</Col>*/}
-                                                        {/*</Row>;*/}
-                                                    {/*})*/}
-                                                {/*}*/}
-                                            {/*</CardBody>*/}
-                                        {/*</Card>*/}
-                                    {/*</Col>*/}
-                                {/*</Row> : null*/}
-                            {/*}*/}
+                                            </CardBody>
+                                        </Card>
+                                    </Col>
+                                </Row> : null
+                            }
+                            {
+                                this.state.selectedWord && this.state.selectedWord.classificationProbabilities ? <Row>
+                                    <Col xs={12}>
+                                        <Card outline color="primary" className="mb-3">
+                                            <CardHeader className="text-white bg-primary">Debug</CardHeader>
+                                            <CardBody>
+                                                {
+                                                    Object.keys(this.state.selectedWord.classificationProbabilities).map((label) =>
+                                                    {
+                                                        const prob = this.state.selectedWord.classificationProbabilities[label];
+                                                        return <Row>
+                                                            <Col xs={6}>
+                                                                <span>{label}</span>
+                                                            </Col>
+                                                            <Col xs={6}>
+                                                                <Progress value={prob * 100}><NumberFormat value={Math.round(prob * 100)} displayType={"text"} /></Progress>
+                                                            </Col>
+                                                        </Row>;
+                                                    })
+                                                }
+                                                {
+                                                    Object.keys(this.state.selectedWord.modifierProbabilities).map((label) =>
+                                                    {
+                                                        const prob = this.state.selectedWord.modifierProbabilities[label];
+                                                        return <Row>
+                                                            <Col xs={6}>
+                                                                <span>{label}</span>
+                                                            </Col>
+                                                            <Col xs={6}>
+                                                                <Progress value={prob * 100}><NumberFormat value={Math.round(prob * 100)} displayType={"text"} /></Progress>
+                                                            </Col>
+                                                        </Row>;
+                                                    })
+                                                }
+                                            </CardBody>
+                                        </Card>
+                                    </Col>
+                                </Row> : null
+                            }
                             {
                                 this.props.annotationFields.map((group) =>
                                 {
@@ -695,7 +693,7 @@ class AnnotationEditor extends React.Component
                                                             </thead>
                                                             <tbody>
                                                                 {
-                                                                    this.state.document.extractedData[group.field] && this.state.document.extractedData[group.field].map((item) =>
+                                                                    this.state.extractedData[group.field] && this.state.extractedData[group.field].map((item) =>
                                                                     {
                                                                         return <tr key={item.lineNumber}>
                                                                             {group.fields.map((field) => <td
@@ -734,9 +732,9 @@ class AnnotationEditor extends React.Component
                                                                     <label className={"annotation-editor-form-field-title"}>{field.name}</label>
                                                                     <div className={"annotation-editor-form-data"} id={`${field.field}-field`}>
                                                                         {
-                                                                            this.state.document.extractedData[field.field] ?
+                                                                            this.state.extractedData[field.field] ?
                                                                                 <Badge color="secondary" className={"annotation-editor-extracted-data"}>
-                                                                                    {this.state.document.extractedData[field.field]}
+                                                                                    {this.state.extractedData[field.field]}
                                                                                 </Badge> : ""
                                                                         }
                                                                     </div>

@@ -4,7 +4,7 @@ import NumberFormat from 'react-number-format';
 import axios from "axios/index";
 import AnnotationUtilities from './AnnotationUtilities';
 import _ from 'underscore';
-
+import Moment from 'react-moment';
 
 
 class ViewTenants extends React.Component
@@ -18,16 +18,8 @@ class ViewTenants extends React.Component
     {
         axios.get(`/appraisal/${this.props.match.params.id}`).then((response) =>
         {
-            this.setState({appraisal: response.data.appraisal}, () => this.groupTenants())
+            this.setState({appraisal: response.data.appraisal})
         });
-    }
-
-
-    groupTenants()
-    {
-        const tenantsByUnit = _.groupBy(this.state.appraisal.rentRoll, (tenant) => tenant.UNIT_NUM);
-
-        this.setState({"tenants": tenantsByUnit})
     }
 
     onTenantClicked(unitNum)
@@ -44,14 +36,30 @@ class ViewTenants extends React.Component
         }
     }
 
-    renderTenantRow(tenantInfo, showIdentifyingInfo)
+    renderUnitRow(unitInfo)
     {
-        return <tr onClick={(evt) => this.onTenantClicked(tenantInfo.UNIT_NUM)} className={"tenant-row"}>
-            <td>{showIdentifyingInfo ? tenantInfo.UNIT_NUM : ""}</td>
-            <td>{showIdentifyingInfo ? tenantInfo.TENANT_NAME : ""}</td>
-            <td>{tenantInfo.TERM}</td>
+        return <tr onClick={(evt) => this.onTenantClicked(unitInfo.unitNumber)} className={"tenant-row"}>
+            <td>{unitInfo.unitNumber}</td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>;
+    }
+
+    renderTenancy(unitInfo, tenantInfo)
+    {
+        return <tr onClick={(evt) => this.onTenantClicked(unitInfo.unitNumber)} className={"tenant-row"}>
+            <td></td>
+            <td>{tenantInfo.name}</td>
+            <td>
+                {tenantInfo.startDate && <Moment format="YYYY/MM/DD">{new Date(tenantInfo.startDate.$date).toISOString()}</Moment>}
+            </td>
+            <td>
+                {tenantInfo.endDate && <Moment format="YYYY/MM/DD">{new Date(tenantInfo.endDate.$date).toISOString()}</Moment>}
+            </td>
             <td>$<NumberFormat
-                value={tenantInfo.MONTHLY_RENT}
+                value={tenantInfo.monthlyRent}
                 displayType={'text'}
                 thousandSeparator={', '}
                 decimalScale={2}
@@ -75,23 +83,27 @@ class ViewTenants extends React.Component
                                             <tr>
                                                 <td>Unit Number</td>
                                                 <td>Tenant Name</td>
-                                                <td>Term</td>
+                                                <td>Term Start</td>
+                                                <td>Term End</td>
                                                 <td>Monthly Rent</td>
                                             </tr>
                                         </thead>
                                         <tbody>
                                         {
-                                            this.state.tenants && Object.values(this.state.tenants).map((tenant) => {
-                                                if (this.state.expandedTenants[tenant[0].UNIT_NUM])
+                                            this.state.appraisal && this.state.appraisal.units && Object.values(this.state.appraisal.units).map((unit) => {
+                                                if (this.state.expandedTenants[unit.unitNumber])
                                                 {
-                                                    return tenant.map((tenantInfo, index) =>
-                                                    {
-                                                        return this.renderTenantRow(tenantInfo, index === 0);
-                                                    });
+                                                    return[
+                                                            this.renderUnitRow(unit),
+                                                            unit.tenancies.map((tenantInfo) =>
+                                                            {
+                                                                return this.renderTenancy(unit, tenantInfo);
+                                                            })
+                                                        ];
                                                 }
                                                 else
                                                 {
-                                                    return this.renderTenantRow(tenant[0], true);
+                                                    return this.renderUnitRow(unit);
                                                 }
                                             })
                                         }

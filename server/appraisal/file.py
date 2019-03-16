@@ -15,21 +15,16 @@ import hashlib
 from pprint import pprint
 import concurrent.futures
 import filetype
-from .components.document_classifier import DocumentClassifier
-from .components.document_parser import DocumentParser
-from .components.document_extractor import DocumentExtractor
-from .components.document import Document
-from .components.page_classifier import PageClassifier
+from .components.document_processor import DocumentProcessor
+from .models.file import File, Word
+from .models.appraisal import Appraisal
 
 @resource(collection_path='/appraisal/{appraisalId}/files', path='/appraisal/{appraisalId}/files/{id}', renderer='bson', cors_enabled=True, cors_origins="*")
 class FileAPI(object):
 
     def __init__(self, request, context=None):
         self.request = request
-        self.filesCollection = request.registry.db['files']
-        self.classifier = DocumentClassifier()
-        self.parser = DocumentParser()
-        self.pageClassifier = PageClassifier()
+        self.processor = DocumentProcessor(request.registry.db, request.registry.azureBlobStorage)
 
     def __acl__(self):
         return [(Allow, Everyone, 'everything')]
@@ -41,17 +36,17 @@ class FileAPI(object):
 
         query["appraisalId"] = appraisalId
 
-        files = self.filesCollection.find(query, ['fileName', 'type'])
+        files = File.objects(**query).only('fileName', 'type')
 
-        return {"files": list(files)}
+        return {"files": [file.to_mongo() for file in files]}
 
     def get(self):
         appraisalId = self.request.matchdict['appraisalId']
         fileId = self.request.matchdict['id']
 
-        file = self.filesCollection.find_one({"_id": bson.ObjectId(fileId), "appraisalId": appraisalId})
+        file = File.objects(id=fileId).first()
 
-        return {"file": file}
+        return {"file": file.to_mongo()}
 
     def post(self):
         data = self.request.json_body
@@ -62,7 +57,9 @@ class FileAPI(object):
         if '_id' in data:
             del data['_id']
 
-        self.filesCollection.update_one({"_id": bson.ObjectId(fileId)}, {"$set": data})
+        file = File.objects(id=fileId).first()
+        file.update(**data)
+        file.save()
 
         # self.updateStabilizedStatement(appraisalId)
 
@@ -73,7 +70,20 @@ class FileAPI(object):
         appraisalId = self.request.matchdict['appraisalId']
         fileId = self.request.matchdict['id']
 
-        self.filesCollection.remove({"_id": bson.ObjectId(fileId)})
+        file = File.objects(id=fileId).first()
+        file.delete()
+
+    def convertOldWord(self, word):
+        data = {
+            k: v for k,v in word.items()
+        }
+
+        if 'hover' in data:
+            del data['hover']
+
+        data['word'] = str(data['word'])
+        return Word(**data)
+
 
 
     def collection_post(self):
@@ -85,65 +95,10 @@ class FileAPI(object):
 
         appraisalId = self.request.matchdict['appraisalId']
 
-        data = {
-            "fileName": input_file_name,
-            "appraisalId": appraisalId
-        }
+        appraisal = Appraisal.objects(id=appraisalId).first()
 
-        # extractedData, extractedWords = self.loadFakeData(input_file)
-
-        insertResult = self.filesCollection.insert_one(data)
-        mimeType = filetype.guess(input_file).mime
-        fileId = str(insertResult.inserted_id)
-
-        result = request.registry.azureBlobStorage.create_blob_from_bytes('files', fileId, input_file)
-
-
-        existingFile = self.filesCollection.find_one({"fileName": input_file_name})
-        hasExistingData = existingFile and 'extractedData' in existingFile and len(existingFile['extractedData']) > 0
-
-        if mimeType == 'application/pdf':
-            images, words = self.parser.processPDF(input_file, extractWords=(not hasExistingData), local=True)
-
-            imageFileNames = []
-            for page, imageData in enumerate(images):
-                fileName = fileId + "-image-" + str(page) + ".png"
-                result = self.request.registry.azureBlobStorage.create_blob_from_bytes('files', fileName, imageData)
-                imageFileNames.append(fileName)
-
-            result = self.filesCollection.update_one({"_id": insertResult.inserted_id}, {"$set": {"pageCount": len(images), "images": imageFileNames}})
-        elif mimeType == 'image/png':
-            words = self.parser.processImage(input_file, fileId, extractWords=(not hasExistingData))
-
-            fileName = fileId + "-image-0.png"
-            result = self.request.registry.azureBlobStorage.create_blob_from_bytes('files', fileName, input_file)
-            images = [fileName]
-
-            result = self.filesCollection.update_one({"_id": insertResult.inserted_id}, {"$set": {"pageCount": 1, "images": [fileName]}})
-        else:
-            raise ValueError(f"Unsupported file type provided: {mimeType}")
-
-        data['pages'] = len(images)
-
-        if hasExistingData:
-            data['extractedData'] = existingFile['extractedData']
-            data['words'] = existingFile['words']
-            data['pageTypes'] = existingFile['pageTypes']
-            data['type'] = existingFile['type']
-        else:
-            data['extractedData'] = {}
-            data['words'] = words
-            data['type'] = self.classifier.classifyFile(data)
-            data['pageTypes'] = self.pageClassifier.classifyFile(data)
-
-            extractor = DocumentExtractor(request.registry.db)
-            extractor.predictDocument(Document(data))
-
-        self.filesCollection.update_one({
-            "_id": bson.ObjectId(fileId)
-        }, {
-            "$set": data
-        })
+        # Send through processing
+        file = self.processor.processFileUpload(input_file_name, input_file, appraisal)
 
 
     def loadFakeData(self, fileData):

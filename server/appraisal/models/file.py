@@ -1,16 +1,76 @@
-
-import dateparser
+from mongoengine import *
 import datetime
 
 
-class Document:
-    """ This class represents a document being processed by our system."""
+class Word(EmbeddedDocument):
+    # This is the raw text of the word
+    word = StringField()
 
-    def __init__(self, file):
-        """ Create a Document object out of the given file record in the database."""
-        self.words = file['words']
-        self.pageTypes = file['pageTypes']
+    # The page within the document that this word is located on
+    page = IntField()
 
+    # This is the line number of the word, within the page that its on (line numbers reset to 0 on new pages)
+    lineNumber = IntField()
+
+    # The column number for the left-edge of this word.
+    columnLeft = IntField()
+
+    # The column number for the right-edge of this word.
+    columnRight = IntField()
+
+    # The index of the word within the larger array of words
+    index = IntField()
+
+    # The coordinate of the left edge of the word, between 0 and 1
+    left = FloatField()
+
+    # The coordinate of the right edge of the word, between 0 and 1
+    right = FloatField()
+
+    # The coordinate of the top edge of the word, between 0 and 1
+    top = FloatField()
+
+    # The coordinate of the bottom edge of the word, between 0 and 1
+    bottom = FloatField()
+
+    # This is the classification of this word, for data extraction purposes
+    classification = StringField()
+
+    # This gives the probabilities assigned to each classification
+    classificationProbabilities = DictField(default={})
+
+    # These are modifiers that are attached to the classification this word is in. Unlike the classification, there may be one or more modifiers
+    modifiers = ListField(StringField(), default=[])
+
+    # This gives the probabilities assigned to each modifier
+    modifierProbabilities = DictField(default={})
+
+
+
+
+class File(Document):
+    meta = {'collection': 'files'}
+
+    # The original uploaded filename for this file
+    fileName = StringField()
+
+    # The ID of the Appraisal object that this File is attached to
+    appraisalId = StringField()
+
+    # The type of this document
+    type = StringField()
+
+    # This is a list of filenames for images rendered from this document
+    images = ListField(StringField())
+
+    # A list of words that were found in this document
+    words = ListField(EmbeddedDocumentField(Word))
+
+    # The number of pages within the document
+    pages = IntField()
+
+    # A list containing the page-type classifications for each page in the file
+    pageTypes = ListField(StringField())
 
     def breakIntoTokens(self):
         tokens = []
@@ -19,25 +79,25 @@ class Document:
             if word['classification'] != "null":
                 if currentToken is None:
                     currentToken = {
-                        "classification": word['classification'],
-                        "modifiers": word.get('modifiers', []),
+                        "classification": word.classification,
+                        "modifiers": word.modifiers,
                         "words": [word],
-                        "startIndex": word['index']
+                        "startIndex": word.index
                     }
-                elif currentToken['classification'] == word['classification'] and set(currentToken['modifiers']) == set(word.get('modifiers', [])):
+                elif currentToken['classification'] == word.classification and set(currentToken['modifiers']) == set(word.modifiers):
                     currentToken['words'].append(word)
                 else:
-                    currentToken['endIndex'] = word['index']
+                    currentToken['endIndex'] = word.index
                     tokens.append(currentToken)
                     currentToken = {
-                        "classification": word['classification'],
-                        "modifiers": word.get('modifiers', []),
+                        "classification": word.classification,
+                        "modifiers": word.modifiers,
                         "words": [word],
-                        "startIndex": word['index']
+                        "startIndex": word.index
                     }
             else:
                 if currentToken is not None:
-                    currentToken['endIndex'] = word['index']
+                    currentToken['endIndex'] = word.index
                     tokens.append(currentToken)
                     currentToken = None
 
@@ -121,3 +181,5 @@ class Document:
             lineItems.extend(items)
 
         return lineItems
+
+

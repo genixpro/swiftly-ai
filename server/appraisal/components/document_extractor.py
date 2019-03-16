@@ -146,10 +146,10 @@ class DocumentExtractor:
         all_variables = tf.get_collection_ref(tf.GraphKeys.GLOBAL_VARIABLES)
         self.saver = tf.train.Saver(var_list=[v for v in all_variables])
 
-    def predictDocument(self, document):
+    def predictDocument(self, file):
         self.loadAlgorithm()
 
-        data = self.dataset.prepareDocument(document)
+        data = self.dataset.prepareDocument(file)
 
         wordVectors = [data[0]]
         lineSortedWordIndexes = [data[1]]
@@ -175,7 +175,7 @@ class DocumentExtractor:
         for wordIndex in range(len(wordVectors[0])):
             prediction = classifications[0][wordIndex]
 
-            word = document.words[wordIndex]
+            word = file.words[wordIndex]
 
             word['classification'] = self.labels[prediction]
             word['classificationProbabilities'] = {

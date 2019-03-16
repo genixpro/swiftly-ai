@@ -3,6 +3,7 @@ import pymongo
 from mongoengine import connect
 from azure.storage.blob import BlockBlobService, PublicAccess
 
+
 # You can connect to a real mongo server instance by your own.
 
 

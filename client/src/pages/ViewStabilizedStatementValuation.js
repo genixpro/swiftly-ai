@@ -14,7 +14,7 @@ class ViewStabilizedStatementValuation extends React.Component
 
     componentDidMount()
     {
-        axios.get(`/appraisal/${this.props.match.params.id}`).then((response) =>
+        axios.get(`/appraisal/${this.props.match.params._id}`).then((response) =>
         {
             this.setState({appraisal: response.data.appraisal}, () => this.computeGroupTotals())
         });

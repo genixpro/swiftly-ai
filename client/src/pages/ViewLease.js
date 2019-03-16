@@ -16,7 +16,7 @@ class ViewLease extends React.Component
 
     componentDidMount()
     {
-        axios.get(`/appraisal/${this.props.match.params.id}/files/${this.props.match.params.leaseId}`).then((response) =>
+        axios.get(`/appraisal/${this.props.match.params._id}/files/${this.props.match.params.leaseId}`).then((response) =>
         {
             this.setState({lease: response.data.file})
         });
@@ -29,7 +29,7 @@ class ViewLease extends React.Component
 
     saveLeaseData(newLease)
     {
-        axios.post(`/appraisal/${this.props.match.params.id}/files/${this.props.match.params.leaseId}`, newLease).then((response) =>
+        axios.post(`/appraisal/${this.props.match.params._id}/files/${this.props.match.params.leaseId}`, newLease).then((response) =>
         {
             this.setState({lease: newLease})
         });

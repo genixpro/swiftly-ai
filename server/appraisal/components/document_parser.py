@@ -18,6 +18,7 @@ import numpy
 import math
 import scipy.signal
 from sklearn.neighbors.kde import KernelDensity
+from ..models.file import Word
 
 class DocumentParser:
 
@@ -76,20 +77,20 @@ class DocumentParser:
                         height = float(pageRegex.fullmatch(line).group(2))
                         page += 1
                     elif line.startswith("<word"):
-                        word = {
-                            "word": wordRegex.fullmatch(line).group(5),
-                            "page": page,
-                            "left": float(wordRegex.fullmatch(line).group(1)) / width,
-                            "right": float(wordRegex.fullmatch(line).group(3)) / width,
-                            "top": float(wordRegex.fullmatch(line).group(2)) / height,
-                            "bottom": float(wordRegex.fullmatch(line).group(4)) / height
-                        }
+                        word = Word(
+                            word=wordRegex.fullmatch(line).group(5),
+                            page=page,
+                            left=float(wordRegex.fullmatch(line).group(1)) / width,
+                            right=float(wordRegex.fullmatch(line).group(3)) / width,
+                            top=float(wordRegex.fullmatch(line).group(2)) / height,
+                            bottom=float(wordRegex.fullmatch(line).group(4)) / height
+                        )
 
                         words.append(word)
                 words = self.assignLineNumbersToWords(words)
                 words = self.mergeWords(words)
                 words = self.assignColumnNumbersToWords(words)
-                words = sorted(words, key=lambda word: (word['page'], word['lineNumber'], word['left']))
+                words = sorted(words, key=lambda word: (word.page, word.lineNumber, word.left))
         return words
 
 
@@ -115,25 +116,21 @@ class DocumentParser:
         words = []
 
         for annotation in response.json()['responses'][0]['textAnnotations'][1:]:
-            word = {
-                "word": annotation['description'],
-                "page": page,
-                "left": min([vertex.get('x', 0) - 3 for vertex in annotation['boundingPoly']['vertices']]) / im.width,
-                "right": max([vertex.get('x', 0) + 3 for vertex in annotation['boundingPoly']['vertices']]) / im.width,
-                "top": min([vertex.get('y', 0) - 1 for vertex in annotation['boundingPoly']['vertices']]) / im.height,
-                "bottom": max([vertex.get('y', 0) + 1 for vertex in annotation['boundingPoly']['vertices']]) / im.height
-            }
-
-            if word['word'].lower() in ['example', 'corporation', 'inc.']:
-                word['classification'] = 'counterparty_name'
-            else:
-                word['classification'] = 'null'
+            word = Word(
+                word=annotation['description'],
+                page=page,
+                left=min([vertex.get('x', 0) - 3 for vertex in annotation['boundingPoly']['vertices']]) / im.width,
+                right=max([vertex.get('x', 0) + 3 for vertex in annotation['boundingPoly']['vertices']]) / im.width,
+                top=min([vertex.get('y', 0) - 1 for vertex in annotation['boundingPoly']['vertices']]) / im.height,
+                bottom=max([vertex.get('y', 0) + 1 for vertex in annotation['boundingPoly']['vertices']]) / im.height,
+                classification='null'
+            )
 
             words.append(word)
         words = self.assignLineNumbersToWords(words)
         words = self.mergeWords(words)
         words = self.assignColumnNumbersToWords(words)
-        words = sorted(words, key=lambda word: (word['lineNumber'], word['left']))
+        words = sorted(words, key=lambda word: (word.lineNumber, word.left))
         return words
 
     def verticalIntersectionOverUnion(self, line1, line2):

@@ -15,7 +15,7 @@ class ViewComparableSale extends React.Component
 
     componentDidMount()
     {
-        axios.get(`/appraisal/${this.props.match.params.id}/comparable_sales/${this.props.match.params.comparableSaleId}`).then((response) =>
+        axios.get(`/appraisal/${this.props.match.params._id}/comparable_sales/${this.props.match.params.comparableSaleId}`).then((response) =>
         {
             this.setState({comparableSale: response.data.comparableSale})
         });
@@ -28,7 +28,7 @@ class ViewComparableSale extends React.Component
 
     saveComparableSaleData(newLease)
     {
-        axios.post(`/appraisal/${this.props.match.params.id}/comparable_sales/${this.props.match.params.comparableSaleId}`, newLease).then((response) =>
+        axios.post(`/appraisal/${this.props.match.params._id}/comparable_sales/${this.props.match.params.comparableSaleId}`, newLease).then((response) =>
         {
             this.setState({comparableSale: newLease})
         });

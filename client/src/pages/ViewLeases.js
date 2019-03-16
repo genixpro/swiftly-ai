@@ -12,7 +12,7 @@ class ViewLeases extends React.Component
 
     componentDidMount()
     {
-        axios.get(`/appraisal/${this.props.match.params.id}/files?type=lease`).then((response) =>
+        axios.get(`/appraisal/${this.props.match.params._id}/files?type=lease`).then((response) =>
         {
             this.setState({leases: response.data.files})
         });
@@ -27,7 +27,7 @@ class ViewLeases extends React.Component
                         <h3>View Leases</h3>
                     </Col>
                     <Col xs={12}>
-                        <LeaseList leases={this.state.leases} history={this.props.history} appraisalId={this.props.match.params.id}/>
+                        <LeaseList leases={this.state.leases} history={this.props.history} appraisalId={this.props.match.params._id}/>
                     </Col>
                 </Row>
             </div>
