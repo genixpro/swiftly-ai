@@ -8,6 +8,7 @@ from pprint import pprint
 from pymongo import MongoClient
 import gridfs
 import pickle
+from mongoengine import connect
 
 from pyramid.paster import (
     get_appsettings,
@@ -21,6 +22,8 @@ def main():
     settings = get_appsettings(config_uri)
 
     db = MongoClient(settings.get('db.uri'))[settings.get('db.name')]
+
+    connect('appraisal', host=settings.get('db.uri'))
 
     classifier = DocumentExtractor(db)
     classifier.trainAlgorithm()

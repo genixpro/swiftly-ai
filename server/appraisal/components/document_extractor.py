@@ -11,6 +11,9 @@ import concurrent.futures
 import csv
 import multiprocessing
 from .document_extractor_dataset import DocumentExtractorDataset
+from ..libs.transformer.model.attention_layer import SelfAttention
+from ..libs.transformer.model import model_utils
+
 
 
 class DocumentExtractor:
@@ -23,7 +26,7 @@ class DocumentExtractor:
         self.modifiers = self.dataset.modifiers
 
         self.wordVectorSize = 300
-        self.batchSize = 16
+        self.batchSize = 8
 
         session_conf = tf.ConfigProto(
             # allow_soft_placement=params['allow_soft_placement'],
@@ -32,6 +35,23 @@ class DocumentExtractor:
 
         self.session = tf.Session(config=session_conf)
 
+        self.lstmSize = 100
+        self.lstmDropout = 0.5
+        self.denseSize = 100
+
+        self.attentionDropout = 0.5
+        self.attentionSize = 256
+        self.attentionHeads = 4
+
+        self.denseDropout = 0.5
+        self.learningRate = 1e-3
+        self.layers = 2
+        self.epochs = 100
+        self.stepsPerEpoch = 1000
+
+        self.maxWorkers = 5
+        self.batchPreload = 20
+
     def trainAlgorithm(self):
         self.dataset.loadDataset(self.db)
 
@@ -39,16 +59,14 @@ class DocumentExtractor:
             with tf.device('/gpu:0'):
                 self.createNetwork()
 
-            learningRate = 0.001
-
             # Define Training procedure
             global_step = tf.Variable(0, name="global_step", trainable=False)
             print(tf.GraphKeys.TRAINABLE_VARIABLES)
-            train_op = tf.train.AdamOptimizer(learningRate).minimize(self.loss, global_step=global_step)
+            train_op = tf.train.AdamOptimizer(self.learningRate, beta1=0.99).minimize(self.loss, global_step=global_step)
 
-            with concurrent.futures.ProcessPoolExecutor(max_workers=1) as executor:
+            with concurrent.futures.ProcessPoolExecutor(max_workers=self.maxWorkers) as executor:
                 batchFutures = []
-                for n in range(20):
+                for n in range(self.batchPreload):
                     batchFutures.append(executor.submit(self.dataset.createBatch, self.batchSize))
 
                 for future in batchFutures:
@@ -59,9 +77,9 @@ class DocumentExtractor:
                 # Initialize all variables
                 self.session.run(tf.global_variables_initializer())
 
-                for epoch in range(100):
+                for epoch in range(self.epochs):
                     # Training loop. For each batch...
-                    for batchIndex in range(1000):
+                    for batchIndex in range(self.stepsPerEpoch):
                         batchFuture = batchFutures.pop(0)
                         batchFutures.append(executor.submit(self.dataset.createBatch, self.batchSize))
 
@@ -188,12 +206,53 @@ class DocumentExtractor:
                 for labelIndex, label in enumerate(self.modifiers)
             }
 
+    def createRecurrentAttentionLayer(self, inputs, wordIndexes, reverseWordIndexes):
+        batchSize = tf.shape(inputs)[0]
+        length = tf.shape(inputs)[1]
+        vectorSize = inputs.shape[2]
+
+        inputs = tf.batch_gather(inputs, wordIndexes)
+        # inputs = tf.reshape(inputs, shape=[batchSize, length, vectorSize])
+        #
+        # positionEncodiing = model_utils.get_position_encoding(length, vectorSize)
+        # attention_bias = model_utils.get_padding_bias(tf.reduce_sum(inputs, axis=2))
+        # attention = SelfAttention(self.attentionSize, self.attentionHeads, self.attentionDropout, True)(inputs + positionEncodiing, attention_bias)
+        #
+        # denseInput = tf.reshape(attention, shape=[batchSize * length, self.attentionSize])
+        # dense = tf.layers.dense(denseInput, self.attentionSize, activation=tf.nn.relu)
+        # rnnInput = tf.reshape(dense, [batchSize, length, self.attentionSize])
+
+        rnnInput = inputs
+        rnnOutputs, _ = tf.nn.bidirectional_dynamic_rnn(cell_fw=tf.nn.rnn_cell.DropoutWrapper(tf.nn.rnn_cell.LSTMCell(self.lstmSize), output_keep_prob=self.lstmDropout),
+                                                                  cell_bw=tf.nn.rnn_cell.DropoutWrapper(tf.nn.rnn_cell.LSTMCell(self.lstmSize), output_keep_prob=self.lstmDropout),
+                                                                  inputs=rnnInput,
+                                                                  # sequence_length=self.inputLength,
+                                                                  dtype=tf.float32)
+
+        output = tf.batch_gather(rnnOutputs[0] + rnnOutputs[1], reverseWordIndexes)
+        # output = tf.batch_gather(rnnInput, reverseWordIndexes)
+
+        return output
+        
+
+    def createComboLineColumnLayer(self, inputs):
+        with tf.name_scope("lineSorted"), tf.variable_scope("lineSorted"):
+            lineSortedOutput = self.createRecurrentAttentionLayer(inputs, self.lineSortedWordIndexesInput, self.lineSortedReverseIndexesInput)
+
+        with tf.name_scope("columnLeft"), tf.variable_scope("columnLeft"):
+            columnLeftOutput = self.createRecurrentAttentionLayer(inputs, self.columnLeftSortedWordIndexesInput, self.columnLeftSortedReverseIndexesInput)
+
+        with tf.name_scope("columnRight"), tf.variable_scope("columnRight"):
+            columnRightOutput = self.createRecurrentAttentionLayer(inputs, self.columnRightSortedWordIndexesInput, self.columnRightSortedReverseIndexesInput)
+
+        layerOutputs = tf.concat(values=[lineSortedOutput, columnLeftOutput, columnRightOutput], axis=2)
+
+        layerOutputs = tf.layers.batch_normalization(layerOutputs)
+
+        return layerOutputs
+
 
     def createNetwork(self):
-        lstmSize = 100
-        lstmDropout = 0.5
-        denseSize = 100
-        denseDropout = 0.5
         numClasses = len(self.labels)
         numModifiers = len(self.modifiers)
 
@@ -214,80 +273,21 @@ class DocumentExtractor:
 
         # Recurrent Neural Network
         with tf.name_scope("rnn"), tf.variable_scope("rnn", reuse=tf.AUTO_REUSE):
-            with tf.name_scope("lineSorted1"), tf.variable_scope("lineSorted1"):
-                inputs = tf.batch_gather(self.inputWordVectors, self.lineSortedWordIndexesInput)
-                lineSortedRnnOutputs, _ = tf.nn.bidirectional_dynamic_rnn(cell_fw=tf.nn.rnn_cell.DropoutWrapper(tf.nn.rnn_cell.LSTMCell(lstmSize), output_keep_prob=lstmDropout),
-                                                   cell_bw=tf.nn.rnn_cell.DropoutWrapper(tf.nn.rnn_cell.LSTMCell(lstmSize), output_keep_prob=lstmDropout),
-                                                   inputs=inputs,
-                                                   # sequence_length=self.inputLength,
-                                                   dtype=tf.float32)
+            currentOutput = self.inputWordVectors
+            for layer in range(self.layers):
+                with tf.name_scope(f"layer{layer}"), tf.variable_scope(f"layer{layer}"):
+                    currentOutput = self.createComboLineColumnLayer(currentOutput)
 
+            batchSize = tf.shape(currentOutput)[0]
+            length = tf.shape(currentOutput)[1]
+            vectorSize = currentOutput.shape[2]
 
-                lineSortedOutput1 = tf.batch_gather(lineSortedRnnOutputs[0] + lineSortedRnnOutputs[1], self.lineSortedReverseIndexesInput)
-
-            with tf.name_scope("columnLeft1"), tf.variable_scope("columnLeft1"):
-                columnLeftRnnOutputs, _ = tf.nn.bidirectional_dynamic_rnn(cell_fw=tf.nn.rnn_cell.DropoutWrapper(tf.nn.rnn_cell.LSTMCell(lstmSize), output_keep_prob=lstmDropout),
-                                                   cell_bw=tf.nn.rnn_cell.DropoutWrapper(tf.nn.rnn_cell.LSTMCell(lstmSize), output_keep_prob=lstmDropout),
-                                                   inputs=tf.batch_gather(self.inputWordVectors, self.columnLeftSortedWordIndexesInput),
-                                                   # sequence_length=self.inputLength,
-                                                   dtype=tf.float32)
-
-                columnLeftOutput1 = tf.batch_gather(columnLeftRnnOutputs[0] + columnLeftRnnOutputs[1], self.columnLeftSortedReverseIndexesInput)
-
-            with tf.name_scope("columnRight1"), tf.variable_scope("columnRight1"):
-                columnRightRnnOutputs, _ = tf.nn.bidirectional_dynamic_rnn(cell_fw=tf.nn.rnn_cell.DropoutWrapper(tf.nn.rnn_cell.LSTMCell(lstmSize), output_keep_prob=lstmDropout),
-                                                   cell_bw=tf.nn.rnn_cell.DropoutWrapper(tf.nn.rnn_cell.LSTMCell(lstmSize), output_keep_prob=lstmDropout),
-                                                   inputs=tf.batch_gather(self.inputWordVectors, self.columnRightSortedWordIndexesInput),
-                                                   # sequence_length=self.inputLength,
-                                                   dtype=tf.float32)
-
-                columnRightOutput1 = tf.batch_gather(columnRightRnnOutputs[0] + columnRightRnnOutputs[1], self.columnRightSortedReverseIndexesInput)
-
-            layer1Outputs = tf.concat(values=[lineSortedOutput1, columnLeftOutput1, columnRightOutput1], axis=2)
-            layer1Outputs = tf.layers.batch_normalization(layer1Outputs)
-
-            with tf.name_scope("lineSorted2"), tf.variable_scope("lineSorted2"):
-                inputs = tf.batch_gather(layer1Outputs, self.lineSortedWordIndexesInput)
-                lineSortedRnnOutputs, _ = tf.nn.bidirectional_dynamic_rnn(cell_fw=tf.nn.rnn_cell.DropoutWrapper(tf.nn.rnn_cell.LSTMCell(lstmSize), output_keep_prob=lstmDropout),
-                                                   cell_bw=tf.nn.rnn_cell.DropoutWrapper(tf.nn.rnn_cell.LSTMCell(lstmSize), output_keep_prob=lstmDropout),
-                                                   inputs=inputs,
-                                                   # sequence_length=self.inputLength,
-                                                   dtype=tf.float32)
-
-                lineSortedOutput2 = tf.batch_gather(lineSortedRnnOutputs[0] + lineSortedRnnOutputs[1], self.lineSortedReverseIndexesInput)
-
-            with tf.name_scope("columnLeft2"), tf.variable_scope("columnLeft2"):
-                columnLeftRnnOutputs, _ = tf.nn.bidirectional_dynamic_rnn(cell_fw=tf.nn.rnn_cell.DropoutWrapper(tf.nn.rnn_cell.LSTMCell(lstmSize), output_keep_prob=lstmDropout),
-                                                   cell_bw=tf.nn.rnn_cell.DropoutWrapper(tf.nn.rnn_cell.LSTMCell(lstmSize), output_keep_prob=lstmDropout),
-                                                   inputs=tf.batch_gather(layer1Outputs, self.columnLeftSortedWordIndexesInput),
-                                                   # sequence_length=self.inputLength,
-                                                   dtype=tf.float32)
-
-                columnLeftOutput2 = tf.batch_gather(columnLeftRnnOutputs[0] + columnLeftRnnOutputs[1], self.columnLeftSortedReverseIndexesInput)
-
-            with tf.name_scope("columnRight2"), tf.variable_scope("columnRight2"):
-                columnRightRnnOutputs, _ = tf.nn.bidirectional_dynamic_rnn(cell_fw=tf.nn.rnn_cell.DropoutWrapper(tf.nn.rnn_cell.LSTMCell(lstmSize), output_keep_prob=lstmDropout),
-                                                   cell_bw=tf.nn.rnn_cell.DropoutWrapper(tf.nn.rnn_cell.LSTMCell(lstmSize), output_keep_prob=lstmDropout),
-                                                   inputs=tf.batch_gather(layer1Outputs, self.columnRightSortedWordIndexesInput),
-                                                   # sequence_length=self.inputLength,
-                                                   dtype=tf.float32)
-
-                columnRightOutput2 = tf.batch_gather(columnRightRnnOutputs[0] + columnRightRnnOutputs[1], self.columnRightSortedReverseIndexesInput)
-
-
-            layer2Outputs = tf.concat(values=[lineSortedOutput2, columnLeftOutput2, columnRightOutput2], axis=2)
-
-            batchSize = tf.shape(layer2Outputs)[0]
-            length = tf.shape(layer2Outputs)[1]
-
-            reshaped = tf.reshape(layer2Outputs, shape=(batchSize * length, lstmSize * 3))
+            reshaped = tf.reshape(currentOutput, shape=(batchSize * length, vectorSize))
 
             with tf.name_scope("denseLayers"), tf.variable_scope("denseLayers"):
-                batchNormOutput = tf.layers.batch_normalization(reshaped)
-
-                dense1 = tf.layers.dense(tf.layers.dropout(batchNormOutput, rate=denseDropout), denseSize, activation=tf.nn.relu)
+                dense1 = tf.layers.dense(tf.layers.dropout(reshaped, rate=self.denseDropout), self.denseSize, activation=tf.nn.relu)
                 batchNorm1 = tf.layers.batch_normalization(dense1)
-                dense2 = tf.layers.dense(tf.layers.dropout(batchNorm1, rate=denseDropout), denseSize, activation=tf.nn.relu)
+                dense2 = tf.layers.dense(tf.layers.dropout(batchNorm1, rate=self.denseDropout), self.denseSize, activation=tf.nn.relu)
                 batchNorm2 = tf.layers.batch_normalization(dense2)
                 self.classificationLogits = tf.layers.dense(batchNorm2, numClasses)
                 self.modifierLogits = tf.layers.dense(batchNorm2, numModifiers)

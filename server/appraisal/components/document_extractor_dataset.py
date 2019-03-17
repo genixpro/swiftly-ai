@@ -10,6 +10,7 @@ from pprint import pprint
 import copy
 import multiprocessing
 import functools
+from ..models.file import File
 
 globalVectorProcess = None
 
@@ -23,17 +24,18 @@ class DocumentExtractorDataset:
             "null",
             "DOCUMENT_NUMBER", "DOCUMENT_DATE", "DOCUMENT_TIME", "DOCUMENT_TIME", "STATEMENT_DATE",
             "BUILDING_ADDRESS", "USER_ID", "STATEMENT_YEAR", "STATEMENT_NEXT_YEAR", "ACC_NUM", "ACC_NAME",
-            "FORECAST", "BUDGET", "VARIANCE"
+            "FORECAST", "BUDGET", "VARIANCE", "UNIT_NUM", "TENANT_NAME", "RENTABLE_AREA", "TERM_START",
+            "TERM_END", "MONTHLY_RENT", "YEARLY_RENT"
         ]
 
         self.modifiers = [
-            "SUM", "NEXT_YEAR", "PERCENTAGE", "INCOME", "EXPENSE", #"SUMMARY", "RENT", "RECOVERY",
+            "SUM", "NEXT_YEAR", "PERCENTAGE", "INCOME", "EXPENSE", "SUMMARY", "RENT", "RECOVERY",
         ]
 
         self.numberLabels = ['FORECAST', 'BUDGET', 'VARIANCE']
 
-        self.lengthMin = 100
-        self.lengthMax = 1500
+        self.lengthMin = 500
+        self.lengthMax = 1000
         self.wordVectorSize = 300
         self.wordOmissionRate = 0.05
 
@@ -111,8 +113,7 @@ class DocumentExtractorDataset:
             modifierOutputs)
 
     def loadDataset(self, db):
-        filesCollection = db['files']
-        files = filesCollection.find({"type": "financials"})
+        files = File.objects(type="financials")
 
         for file in files:
             for token in file.breakIntoTokens():
@@ -210,7 +211,14 @@ class DocumentExtractorDataset:
 
 
     def augmentDocument(self, file):
-        tokens = file.breakIntoTokens(file)
+        file = copy.copy(file)
+
+        # Select a random page within the document
+        pages = set(word.page for word in file.words)
+        chosenPage = random.choice(list(pages))
+        file.words = [word for word in file.words if word.page == chosenPage]
+
+        tokens = file.breakIntoTokens()
 
         indexAdjustment = 0
         for token in tokens:
@@ -274,11 +282,16 @@ class DocumentExtractorDataset:
         batchClassificationOutputs = []
         batchModifierOutputs = []
 
-        maxLength = random.randint(self.lengthMin, self.lengthMax)
-
+        results = []
         for n in range(batchSize):
             randomIndex = random.randint(0, len(self.dataset)-1)
             result = self.prepareDocument(self.augmentDocument(self.dataset[randomIndex]))
+            results.append(result)
+
+        maxLength = min(random.randint(self.lengthMin, self.lengthMax), max([len(result[0]) for result in results]))
+
+        for n in range(batchSize):
+            result = results[n]
 
             wordVectors = result[0]
             lineSortedWordIndexes = result[1]

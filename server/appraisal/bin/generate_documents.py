@@ -8,6 +8,8 @@ from pprint import pprint
 from pymongo import MongoClient
 import gridfs
 import pickle
+from mongoengine import connect
+
 
 from pyramid.paster import (
     get_appsettings,
@@ -22,7 +24,8 @@ def main():
 
     db = MongoClient(settings.get('db.uri'))[settings.get('db.name')]
 
+    connect('appraisal', host=settings.get('db.uri'))
+
     generator = DocumentGenerator()
     generator.generateDocument("financial_statement_1.docx", "financial_statement")
-
 

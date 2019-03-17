@@ -40,6 +40,7 @@ class ViewTenants extends React.Component
     {
         return <tr onClick={(evt) => this.onTenantClicked(unitInfo.unitNumber)} className={"tenant-row"}>
             <td>{unitInfo.unitNumber}</td>
+            <td>{unitInfo.floorNumber}</td>
 
             <td>{unitInfo.currentTenancy.name}</td>
             <td>
@@ -61,6 +62,7 @@ class ViewTenants extends React.Component
     renderTenancy(unitInfo, tenantInfo)
     {
         return <tr onClick={(evt) => this.onTenantClicked(unitInfo.unitNumber)} className={"tenant-row"}>
+            <td></td>
             <td></td>
             <td>{tenantInfo.name}</td>
             <td>
@@ -93,6 +95,7 @@ class ViewTenants extends React.Component
                                         <thead>
                                             <tr>
                                                 <td>Unit Number</td>
+                                                <td>Floor</td>
                                                 <td>Tenant Name</td>
                                                 <td>Term Start</td>
                                                 <td>Term End</td>
