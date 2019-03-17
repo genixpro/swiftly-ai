@@ -11,8 +11,8 @@ import concurrent.futures
 import csv
 import multiprocessing
 from .document_extractor_dataset import DocumentExtractorDataset
-from ..libs.transformer.model.attention_layer import SelfAttention
-from ..libs.transformer.model import model_utils
+# from ..libs.transformer.model.attention_layer import SelfAttention
+# from ..libs.transformer.model import model_utils
 
 
 

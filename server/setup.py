@@ -23,7 +23,8 @@ requires = [
     'matplotlib',
     'dateparser',
     'python-dateutil',
-    'mongoengine'
+    'mongoengine',
+    'collada'
 ]
 
 tests_require = [

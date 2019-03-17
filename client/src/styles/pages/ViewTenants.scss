@@ -7,5 +7,10 @@
     cursor: pointer;
   }
 
+  .tenant-row.selected-tenant-row
+  {
+    background-color: #eee;
+  }
+
 
 }

@@ -14,6 +14,7 @@ import ViewComparableSales from "./ViewComparableSales";
 import ViewComparableSale from "./ViewComparableSale";
 import ViewDiscountedCashFlow from "./ViewDiscountedCashFlow";
 import ViewTenants from "./ViewTenants";
+import ViewUnitInformation from "./ViewUnitInformation";
 
 class ViewAppraisal extends React.Component
 {
@@ -73,6 +74,7 @@ class ViewAppraisal extends React.Component
                                         <Route path={`${this.props.match.path}/comparable_sale/:comparableSaleId`} component={ViewComparableSale} />
                                         <Route path={`${this.props.match.path}/discounted_cash_flow`} component={ViewDiscountedCashFlow} />
                                         <Route path={`${this.props.match.path}/tenants`} component={ViewTenants} />
+                                        <Route path={`${this.props.match.path}/units/:unitNum`} component={ViewUnitInformation} />
                                     </Switch>
                                 </CardBody>
                             </Card>

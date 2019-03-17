@@ -83,6 +83,7 @@
     "raphael": "2.2.7",
     "rc-slider": "8.6.3",
     "react": "16.6.3",
+    "react-3d-viewer": "^1.0.12",
     "react-big-calendar": "0.20.2",
     "react-chartist": "0.13.1",
     "react-chartjs-2": "2.7.4",

@@ -5,13 +5,14 @@ import axios from "axios/index";
 import AnnotationUtilities from './AnnotationUtilities';
 import _ from 'underscore';
 import Moment from 'react-moment';
+import {DAEModel} from 'react-3d-viewer';
 
 
 class ViewTenants extends React.Component
 {
     state = {
         capitalizationRate: 8.4,
-        expandedTenants: {}
+        selectedUnit: null
     };
 
     componentDidMount()
@@ -24,21 +25,24 @@ class ViewTenants extends React.Component
 
     onTenantClicked(unitNum)
     {
-        if (this.state.expandedTenants[unitNum])
+        this.state.appraisal.units.forEach((unit) =>
         {
-            this.state.expandedTenants[unitNum] = false;
-            this.setState({expandedTenants: this.state.expandedTenants});
-        }
-        else
-        {
-            this.state.expandedTenants[unitNum] = true;
-            this.setState({expandedTenants: this.state.expandedTenants});
-        }
+            if (unit.unitNumber === unitNum)
+            {
+                this.setState({selectedUnit: unit})
+            }
+        });
     }
 
     renderUnitRow(unitInfo)
     {
-        return <tr onClick={(evt) => this.onTenantClicked(unitInfo.unitNumber)} className={"tenant-row"}>
+        let selectedClass = "";
+        if (this.state.selectedUnit && unitInfo.unitNumber === this.state.selectedUnit.unitNumber)
+        {
+            selectedClass = " selected-tenant-row";
+        }
+
+        return <tr onClick={(evt) => this.onTenantClicked(unitInfo.unitNumber)} className={"tenant-row " + selectedClass}>
             <td>{unitInfo.unitNumber}</td>
             <td>{unitInfo.floorNumber}</td>
 
@@ -87,7 +91,7 @@ class ViewTenants extends React.Component
             (this.state.appraisal) ?
                 <div id={"view-tenants"} className={"view-tenants"}>
                     <Row>
-                        <Col xs={12} md={12} lg={12} xl={12}>
+                        <Col xs={4} md={4} lg={4} xl={4}>
                             <Card outline color="primary" className="mb-3">
                                 <CardHeader className="text-white bg-primary">Tenants</CardHeader>
                                 <CardBody>
@@ -105,20 +109,7 @@ class ViewTenants extends React.Component
                                         <tbody>
                                         {
                                             this.state.appraisal && this.state.appraisal.units && Object.values(this.state.appraisal.units).map((unit) => {
-                                                if (this.state.expandedTenants[unit.unitNumber])
-                                                {
-                                                    return[
-                                                            this.renderUnitRow(unit),
-                                                            unit.tenancies.map((tenantInfo) =>
-                                                            {
-                                                                return this.renderTenancy(unit, tenantInfo);
-                                                            })
-                                                        ];
-                                                }
-                                                else
-                                                {
-                                                    return this.renderUnitRow(unit);
-                                                }
+                                                return this.renderUnitRow(unit);
                                             })
                                         }
                                         </tbody>
@@ -126,6 +117,21 @@ class ViewTenants extends React.Component
                                 </CardBody>
                             </Card>
                         </Col>
+                        {
+                            this.state.selectedUnit ?
+                                <Col xs={8} md={8} lg={8} xl={8}>
+                                    <Card outline color="primary" className="mb-3">
+                                        <CardHeader className="text-white bg-primary">Tenant Information</CardHeader>
+                                        <CardBody>
+
+                                            <p>Unit Number {this.state.selectedUnit.unitNumber}</p>
+                                            <p>Floor Number {this.state.selectedUnit.floorNumber}</p>
+
+                                            <DAEModel src={axios.defaults.baseURL + `appraisal/${this.props.match.params.id}/building`} texPath=""/>
+                                        </CardBody>
+                                    </Card>
+                                </Col> : null
+                        }
                     </Row>
                 </div>
                 : null
