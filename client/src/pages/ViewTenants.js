@@ -141,10 +141,25 @@ class ViewTenants extends React.Component
         </tr>;
     }
 
-    renderTenancy(unitInfo, tenantInfo)
+    removeTenancy(unitInfo, tenancyInfo, tenancyIndex)
     {
-        return <tr onClick={(evt) => this.onTenantClicked(unitInfo.unitNumber)} className={"tenant-row"}>
-            <td>{tenantInfo.name}</td>
+        unitInfo.tenancies.splice(tenancyIndex, 1);
+        this.setState({appraisal: this.state.appraisal}, () => this.saveDocument(this.state.appraisal));
+    }
+
+    renderTenancy(unitInfo, tenantInfo, tenancyIndex)
+    {
+        return <tr
+            onClick={(evt) => this.onTenantClicked(unitInfo.unitNumber)} className={"tenant-row"}
+            key={tenancyIndex}
+        >
+            <td>
+                <FieldDisplayEdit
+                    type='text'
+                    value={tenantInfo.name}
+                    placeholder={"name"}
+                    onChange={(newValue) => this.changeTenancyField(this.state.selectedUnit, tenantInfo, 'name', newValue)}/>
+            </td>
             <td>
                 {
                     tenantInfo.startDate ? <Datetime
@@ -172,6 +187,110 @@ class ViewTenants extends React.Component
                     value={tenantInfo.monthlyRent}
                     placeholder={"monthly rent"}
                     onChange={(newValue) => this.changeTenancyField(this.state.selectedUnit, tenantInfo, 'monthlyRent', newValue)}/>
+            </td>
+
+            <td className={"action-column"}>
+                <Button
+                    color="info"
+                    onClick={(evt) => this.removeTenancy(unitInfo, tenantInfo, tenancyIndex)}
+                    title={"New Tenancy"}
+                >
+                    <i className="fa fa-minus-square"></i>
+                </Button>
+            </td>
+        </tr>;
+    }
+
+
+    createNewTenancy(field, value)
+    {
+        const newTenancy = {
+        };
+
+        if (field)
+        {
+            newTenancy[field] = value;
+        }
+
+        if (_.isUndefined(newTenancy['name']))
+        {
+            newTenancy['name'] = 'New Tenant';
+        }
+
+        if (_.isUndefined(newTenancy['monthlyRent']))
+        {
+            newTenancy['monthlyRent'] = 0;
+        }
+
+        if (_.isUndefined(newTenancy['yearlyRent']))
+        {
+            newTenancy['yearlyRent'] = 0;
+        }
+
+        if (_.isUndefined(newTenancy['startDate']))
+        {
+            newTenancy['startDate'] = new Date();
+        }
+
+        if (_.isUndefined(newTenancy['endDate']))
+        {
+            newTenancy['endDate'] = new Date();
+        }
+
+        this.state.selectedUnit.tenancies.push(newTenancy);
+        this.setState({appraisal: this.state.appraisal}, () => this.saveDocument(this.state.appraisal));
+    }
+
+
+
+    renderNewTenancyRow()
+    {
+        return <tr>
+            <td>
+                <FieldDisplayEdit
+                    hideIcon={true}
+                    value={""}
+                    onChange={_.once((newValue) => this.createNewTenancy("name", newValue))}
+                />
+            </td>
+            <td>
+                {
+                    <Datetime
+                        inputProps={{className: 'form-control'}}
+                        dateFormat={"YYYY/MM/DD"}
+                        timeFormat={false}
+                        onChange={(newValue) => newValue.toDate ? this.createNewTenancy('startDate', newValue.toDate()) : null }
+                        defaultValue={new Date()}
+                    />
+                }
+            </td>
+            <td>
+                {
+                    <Datetime
+                        inputProps={{className: 'form-control'}}
+                        dateFormat={"YYYY/MM/DD"}
+                        timeFormat={false}
+                        onChange={(newValue) => newValue.toDate ? this.createNewTenancy('endDate', newValue.toDate()) : null }
+                        defaultValue={new Date()}
+                    />
+                }
+            </td>
+            <td>
+                <FieldDisplayEdit
+                    type='currency'
+                    value={""}
+                    placeholder={"monthly rent"}
+                    onChange={(newValue) => this.createNewTenancy('monthlyRent', newValue)}/>
+            </td>
+
+            <td className={"action-column"}>
+                <Button
+                    color="info"
+                    onClick={(evt) => this.createNewTenancy()}
+                    title={"New Tenancy"}
+                >
+                    <i className="fa fa-plus-square"></i>
+                </Button>
             </td>
         </tr>;
     }
@@ -331,13 +450,17 @@ class ViewTenants extends React.Component
                                                         <td>Term Start</td>
                                                         <td>Term End</td>
                                                         <td>Monthly Rent</td>
+                                                        <td className="action-column" />
                                                     </tr>
                                                 </thead>
                                                 <tbody>
                                                 {
-                                                    this.state.selectedUnit.tenancies.map((tenancy) => {
-                                                        return this.renderTenancy(this.state.selectedUnit, tenancy);
+                                                    this.state.selectedUnit.tenancies.map((tenancy, tenancyIndex) => {
+                                                        return this.renderTenancy(this.state.selectedUnit, tenancy, tenancyIndex);
                                                     })
+                                                }
+                                                {
+                                                    this.renderNewTenancyRow()
                                                 }
                                                 </tbody>
 
