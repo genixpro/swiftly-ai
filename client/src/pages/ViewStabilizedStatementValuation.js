@@ -119,7 +119,7 @@ class ViewStabilizedStatementValuation extends React.Component
                     onChange={(newValue) => this.changeIncomeItemValue(incomeStatementItem, newValue)}
                 />
             </td>
-            <td className={"action-row"}>
+            <td className={"action-column"}>
                 <Button
                     color="info"
                     onClick={(evt) => this.removeIncomeItem(incomeStatementItem, itemIndex)}
@@ -134,9 +134,13 @@ class ViewStabilizedStatementValuation extends React.Component
     createNewIncomeItem(field, value, type)
     {
         const newItem = {
-            [field]: value,
             type: type
         };
+
+        if (field)
+        {
+            newItem[field] = value;
+        }
 
         if (_.isUndefined(newItem['yearlyAmount']))
         {
@@ -179,7 +183,14 @@ class ViewStabilizedStatementValuation extends React.Component
                     onChange={_.once((newValue) => this.createNewIncomeItem("yearlyAmount", newValue, type))}
                 />
             </td>
-            <td className={"action-row"}>
+            <td className={"action-column"}>
+                <Button
+                    color="info"
+                    onClick={(evt) => this.createNewIncomeItem(null, null, type)}
+                    title={"New Unit"}
+                >
+                    <i className="fa fa-plus-square"></i>
+                </Button>
             </td>
         </tr>
     }

@@ -7,6 +7,11 @@
     cursor: pointer;
   }
 
+  .action-column
+  {
+    max-width: 70px;
+  }
+
   .tenant-row.selected-tenant-row
   {
     background-color: #eee;

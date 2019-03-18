@@ -57,13 +57,22 @@ class FieldDisplayEdit extends React.Component
                 return "$" + this.numberWithCommas(value.toString());
             }
         }
+        else if (this.props.type === 'integer')
+        {
+            try {
+                return this.numberWithCommas(Number(value).toFixed(0).toString());
+            }
+            catch(err) {
+                return this.numberWithCommas(value.toString());
+            }
+        }
         return value;
     }
 
 
     cleanValue(value)
     {
-        if (this.props.type === 'currency')
+        if (this.props.type === 'currency' || this.props.type === 'number')
         {
             const cleanText = value.toString().replace(/[^0-9\.-]/g, "");
 
