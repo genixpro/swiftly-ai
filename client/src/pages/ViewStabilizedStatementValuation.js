@@ -1,10 +1,10 @@
 import React from 'react';
-import { Row, Col, Card, CardBody, CardHeader, Table } from 'reactstrap';
+import { Row, Col, Card, CardBody, CardHeader, Table, Button } from 'reactstrap';
 import NumberFormat from 'react-number-format';
 import axios from "axios/index";
 import AnnotationUtilities from './AnnotationUtilities';
 import FieldDisplayEdit from './components/FieldDisplayEdit';
-
+import _ from 'underscore';
 
 class ViewStabilizedStatementValuation extends React.Component
 {
@@ -86,6 +86,106 @@ class ViewStabilizedStatementValuation extends React.Component
     }
 
 
+    removeIncomeItem(item, itemIndex)
+    {
+        if (item.type === 'income')
+        {
+            this.state.appraisal.incomeStatement.incomes.splice(itemIndex, 1);
+        }
+        else
+        {
+            this.state.appraisal.incomeStatement.expenses.splice(itemIndex, 1);
+        }
+
+        this.setState({appraisal: this.state.appraisal}, () => this.saveDocument(this.state.appraisal));
+    }
+
+
+    renderIncomeStatementItemRow(incomeStatementItem, itemIndex)
+    {
+        return <tr key={itemIndex}>
+            <td className={"name-column"}>
+                <FieldDisplayEdit
+                    hideIcon={true}
+                    value={incomeStatementItem.name}
+                    onChange={(newValue) => this.changeIncomeItemName(incomeStatementItem, newValue)}
+                />
+            </td>
+            <td className={"amount-column"}>
+                <FieldDisplayEdit
+                    type="currency"
+                    hideIcon={true}
+                    value={incomeStatementItem.yearlyAmount}
+                    onChange={(newValue) => this.changeIncomeItemValue(incomeStatementItem, newValue)}
+                />
+            </td>
+            <td className={"action-row"}>
+                <Button
+                    color="info"
+                    onClick={(evt) => this.removeIncomeItem(incomeStatementItem, itemIndex)}
+                    title={"Delete Line Item"}
+                >
+                    <i className="fa fa-minus-square"></i>
+                </Button>
+            </td>
+        </tr>
+    }
+
+    createNewIncomeItem(field, value, type)
+    {
+        const newItem = {
+            [field]: value,
+            type: type
+        };
+
+        if (_.isUndefined(newItem['yearlyAmount']))
+        {
+            newItem['yearlyAmount'] = 0;
+        }
+
+        if (_.isUndefined(newItem['name']))
+        {
+            newItem['name'] = 'New Item';
+        }
+
+        if (type === 'income')
+        {
+            this.state.appraisal.incomeStatement.incomes.push(newItem);
+        }
+        else
+        {
+            this.state.appraisal.incomeStatement.expenses.push(newItem);
+        }
+
+        this.setState({appraisal: this.state.appraisal}, () => this.saveDocument(this.state.appraisal));
+
+    }
+
+    renderNewItemRow(type)
+    {
+        return <tr>
+            <td className={"name-column"}>
+                <FieldDisplayEdit
+                    hideIcon={true}
+                    value={""}
+                    onChange={_.once((newValue) => this.createNewIncomeItem("name", newValue, type))}
+                />
+            </td>
+            <td className={"amount-column"}>
+                <FieldDisplayEdit
+                    type="currency"
+                    hideIcon={true}
+                    value={""}
+                    onChange={_.once((newValue) => this.createNewIncomeItem("yearlyAmount", newValue, type))}
+                />
+            </td>
+            <td className={"action-row"}>
+            </td>
+        </tr>
+    }
+
+
+
     render() {
         return (
              (this.state.appraisal && this.state.appraisal.incomeStatement) ?
@@ -99,26 +199,13 @@ class ViewStabilizedStatementValuation extends React.Component
                                             <tbody>
                                             {
                                                 this.state.appraisal.incomeStatement.incomes && this.state.appraisal.incomeStatement.incomes.map((item, itemIndex) => {
-                                                    return <tr key={itemIndex}>
-                                                        <td className={"name-column"}>
-                                                            <FieldDisplayEdit
-                                                                hideIcon={true}
-                                                                value={item.name}
-                                                                onChange={(newValue) => this.changeIncomeItemName(item, newValue)}
-                                                            />
-                                                        </td>
-                                                        <td className={"amount-column"}>
-                                                            <span>
-                                                                <FieldDisplayEdit
-                                                                    type="currency"
-                                                                    hideIcon={true}
-                                                                    value={item.yearlyAmount}
-                                                                    onChange={(newValue) => this.changeIncomeItemValue(item, newValue)}
-                                                                />
-                                                            </span>
-                                                        </td>
-                                                    </tr>
+                                                    return this.renderIncomeStatementItemRow(item, itemIndex);
                                                 })
+                                            }
+                                            {
+                                                this.state.appraisal.incomeStatement.incomes ?
+                                                    this.renderNewItemRow('income')
+                                                    : null
                                             }
                                             <tr className={"total-row"}>
                                                 <td className={"name-column"}>
@@ -135,6 +222,8 @@ class ViewStabilizedStatementValuation extends React.Component
                                                         />
                                                     </span>
                                                 </td>
+                                                <td>
+                                                </td>
                                             </tr>
                                             </tbody>
                                         </Table>
@@ -150,27 +239,14 @@ class ViewStabilizedStatementValuation extends React.Component
                                         <Table striped bordered hover responsive>
                                             <tbody>
                                             {
-                                                this.state.appraisal.incomeStatement.expenses && this.state.appraisal.incomeStatement.expenses.map((item) => {
-                                                    return <tr key={item.name}>
-                                                        <td className={"name-column"}>
-                                                            <FieldDisplayEdit
-                                                                hideIcon={true}
-                                                                value={item.name}
-                                                                onChange={(newValue) => this.changeIncomeItemName(item, newValue)}
-                                                            />
-                                                        </td>
-                                                        <td className={"amount-column"}>
-                                                            <span>
-                                                                <FieldDisplayEdit
-                                                                    type="currency"
-                                                                    hideIcon={true}
-                                                                    value={item.yearlyAmount}
-                                                                    onChange={(newValue) => this.changeIncomeItemValue(item, newValue)}
-                                                                />
-                                                            </span>
-                                                        </td>
-                                                    </tr>
+                                                this.state.appraisal.incomeStatement.expenses && this.state.appraisal.incomeStatement.expenses.map((item, itemIndex) => {
+                                                    return this.renderIncomeStatementItemRow(item, itemIndex);
                                                 })
+                                            }
+                                            {
+                                                this.state.appraisal.incomeStatement.expenses ?
+                                                    this.renderNewItemRow('expense')
+                                                    : null
                                             }
                                             <tr className={"total-row"}>
                                                 <td className={"name-column"}>
@@ -184,6 +260,8 @@ class ViewStabilizedStatementValuation extends React.Component
                                                                       decimalScale={2}
                                                                       fixedDecimalScale={true}/>
                                                     </span>
+                                                </td>
+                                                <td>
                                                 </td>
                                             </tr>
 
@@ -213,6 +291,8 @@ class ViewStabilizedStatementValuation extends React.Component
                                                                               fixedDecimalScale={true}/>
                                                             </span>
                                                     </td>
+                                                    <td>
+                                                    </td>
                                                 </tr>
                                                 <tr>
                                                     <td className={"name-column"}>
@@ -227,6 +307,8 @@ class ViewStabilizedStatementValuation extends React.Component
                                                                               fixedDecimalScale={true}/>
                                                             </span>
                                                     </td>
+                                                    <td>
+                                                    </td>
                                                 </tr>
                                                 <tr>
                                                     <td className={"name-column"}>
@@ -240,6 +322,8 @@ class ViewStabilizedStatementValuation extends React.Component
                                                                               decimalScale={2}
                                                                               fixedDecimalScale={true}/>
                                                             </span>
+                                                    </td>
+                                                    <td>
                                                     </td>
                                                 </tr>
                                             </tbody>
@@ -270,6 +354,8 @@ class ViewStabilizedStatementValuation extends React.Component
                                                         />
                                                     </span>
                                                 </td>
+                                                <td>
+                                                </td>
                                             </tr>
                                             <tr>
                                                 <td className={"name-column"}>
@@ -284,6 +370,8 @@ class ViewStabilizedStatementValuation extends React.Component
                                                                               fixedDecimalScale={true}
                                                                 />
                                                             </span>
+                                                </td>
+                                                <td>
                                                 </td>
                                             </tr>
                                             </tbody>
