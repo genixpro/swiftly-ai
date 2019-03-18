@@ -100,7 +100,7 @@ class UploadFiles extends React.Component
                         <h3>View Existing Files</h3>
                     </Col>
                     <Col xs={12}>
-                        <UploadedFileList appraisalId={this.props.match.params['id']} ref={(obj) => this.fileList = obj}/>
+                        <UploadedFileList appraisalId={this.props.match.params['id']} ref={(obj) => this.fileList = obj} history={this.props.history}/>
                     </Col>
                 </Row>
             </div>

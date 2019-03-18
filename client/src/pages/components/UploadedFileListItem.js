@@ -32,6 +32,23 @@ class UploadedFileListItem extends React.Component
         });
     }
 
+    onFileClicked()
+    {
+        if (this.state.file.type === 'financials')
+        {
+            this.props.history.push("/appraisal/" + this.props.appraisalId + "/financial_statement/" + this.state.file._id['$oid'] + "/raw");
+        }
+        else if (this.state.file.type === 'lease')
+        {
+            this.props.history.push("/appraisal/" + this.props.appraisalId + "/lease/" + this.state.file._id['$oid'] + "/raw");
+        }
+        else if (this.state.file.type === 'comparable')
+        {
+            this.props.history.push("/appraisal/" + this.props.appraisalId + "/comparable_sale/" + this.state.file._id['$oid'] + "/raw");
+        }
+
+    }
+
 
     render()
     {
@@ -43,7 +60,7 @@ class UploadedFileListItem extends React.Component
         }
 
         return (
-            <tr className={"uploaded-file-list-item"}>
+            <tr className={"uploaded-file-list-item"} onClick={(evt) => this.onFileClicked()}>
                 <td>{file.fileName}</td>
                 <td>
                     <select value={file.type} onChange={this.onFileTypeChanged.bind(this)}>

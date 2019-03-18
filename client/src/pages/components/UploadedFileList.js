@@ -38,7 +38,7 @@ class UploadedFileList extends React.Component
                 </thead>
                 <tbody>
                 {
-                    this.state.files.map((file) => <UploadedFileListItem key={file._id['$oid']} file={file} appraisalId={this.props.appraisalId} handleDeletion={() => this.refresh()}/>)
+                    this.state.files.map((file) => <UploadedFileListItem key={file._id['$oid']} file={file} appraisalId={this.props.appraisalId} handleDeletion={() => this.refresh()} history={this.props.history}/>)
                 }
                 </tbody>
             </Table>
