@@ -34,8 +34,6 @@ class IncomeStatementDataExtractor (DataExtractor):
 
         lineItems = document.getLineItems("operating_statement")
 
-        pprint(lineItems)
-
         for lineItem in lineItems:
             if 'SUM' in lineItem['modifiers'] and 'SUMMARY' not in lineItem['modifiers'] and 'NEXT_YEAR' not in lineItem['modifiers']:
                 incomeStatementItems.append(self.createIncomeStatementObject(lineItem))
@@ -58,29 +56,4 @@ class IncomeStatementDataExtractor (DataExtractor):
         return incomeStatementItem
 
 
-
-    # def getYearlyCashFlows(self, document):
-    #     cashFlows = self.getMonthlyCashFlows(document)
-    #
-    #
-    #     cashFlowGroups = {}
-    #     for cashFlow in cashFlows:
-    #         groupId = (cashFlow['name'], cashFlow['year'])
-    #         if groupId in cashFlowGroups:
-    #             cashFlowGroups[groupId].append(cashFlow)
-    #         else:
-    #             cashFlowGroups[groupId] = [cashFlow]
-    #
-    #     yearlyCashFlows = []
-    #     for monthCashFlows in cashFlowGroups.values():
-    #         yearlyCashFlow = {
-    #             "name": monthCashFlows[0]['name'],
-    #             "year": monthCashFlows[0]['year'],
-    #             "type": monthCashFlows[0]['type'],
-    #             "amount": float(numpy.sum([cashFlow['amount'] for cashFlow in monthCashFlows])),
-    #             "presentValue": float(numpy.sum([cashFlow['amount'] for cashFlow in monthCashFlows]))
-    #         }
-    #         yearlyCashFlows.append(yearlyCashFlow)
-    #
-    #     return yearlyCashFlows
 

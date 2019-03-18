@@ -8,6 +8,8 @@ import re
 from pprint import pprint
 from .tenancy_data_extractor import TenancyDataExtractor
 from .income_statement_data_extractor import IncomeStatementDataExtractor
+from .discounted_cash_flow import DiscountedCashFlowModel
+from .market_data import MarketData
 
 
 class DocumentProcessor:
@@ -23,6 +25,8 @@ class DocumentProcessor:
         self.db = db
         self.tenancyDataExtractor = TenancyDataExtractor()
         self.incomeStatementExtractor = IncomeStatementDataExtractor()
+        self.marketData = MarketData.getTestingMarketData()
+        self.discountedCashFlow = DiscountedCashFlowModel(self.marketData, 8.0)
 
 
     def processFileUpload(self, fileName, fileData, appraisal):
@@ -125,6 +129,7 @@ class DocumentProcessor:
         else:
             appraisal.incomeStatement.mergeWithIncomeStatement(incomeStatement)
 
-
+        discountedCashFlow = self.discountedCashFlow.createDiscountedCashFlow(appraisal)
+        appraisal.discountedCashFlow = discountedCashFlow
 
 

@@ -2,6 +2,7 @@ from mongoengine import *
 import datetime
 from .unit import Unit
 from .income_statement import IncomeStatement
+from .discounted_cash_flow import DiscountedCashFlow
 
 class Appraisal(Document):
     meta = {'collection': 'appraisals'}
@@ -26,4 +27,7 @@ class Appraisal(Document):
 
     # Income statement for this Appraisal
     incomeStatement = EmbeddedDocumentField(IncomeStatement)
+
+    # Discounted cash flow for this Appraisal
+    discountedCashFlow = EmbeddedDocumentField(DiscountedCashFlow)
 
