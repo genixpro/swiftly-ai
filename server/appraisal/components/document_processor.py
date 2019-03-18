@@ -8,7 +8,7 @@ import re
 from pprint import pprint
 from .tenancy_data_extractor import TenancyDataExtractor
 from .income_statement_data_extractor import IncomeStatementDataExtractor
-from .discounted_cash_flow import DiscountedCashFlowModel
+from .discounted_cash_flow_model import DiscountedCashFlowModel
 
 
 class DocumentProcessor:
