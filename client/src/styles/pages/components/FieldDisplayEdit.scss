@@ -1,0 +1,32 @@
+
+
+.field-display-edit
+{
+
+}
+
+.field-display-edit.static:not(:hover)
+{
+  .input-group-append
+  {
+    visibility: hidden;
+  }
+
+  input
+  {
+    border: 1px white;
+  }
+
+  padding-right: 1px;
+}
+
+.field-display-edit.static:hover
+{
+  .input-group-append
+  {
+    opacity: 0.5;
+  }
+  input {
+    cursor: pointer;
+  }
+}

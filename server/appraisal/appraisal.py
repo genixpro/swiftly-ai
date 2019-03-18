@@ -1,6 +1,7 @@
 from cornice.resource import resource
 from pyramid.authorization import Allow, Everyone
 import bson
+import json
 from webob_graphql import serve_graphql_request
 from .components.discounted_cash_flow import DiscountedCashFlowModel
 from .components.market_data import MarketData
@@ -21,7 +22,7 @@ class AppraisalAPI(object):
     def collection_get(self):
         appraisals = Appraisal.objects()
 
-        return {"appraisals": [appraisal.to_mongo() for appraisal in appraisals]}
+        return {"appraisals": [json.loads(appraisal.to_json()) for appraisal in appraisals]}
 
     def collection_post(self):
         data = self.request.json_body
@@ -53,7 +54,7 @@ class AppraisalAPI(object):
 
         # pprint(appraisal['rentRoll'])
 
-        return {"appraisal": appraisal.to_mongo()}
+        return {"appraisal": json.loads(appraisal.to_json())}
 
 
     def post(self):
@@ -64,7 +65,7 @@ class AppraisalAPI(object):
         if '_id' in data:
             del data['_id']
 
-        appraisal = Appraisal.objects(id=appraisalId)
+        appraisal = Appraisal.objects(id=appraisalId).first()
         appraisal.update(**data)
         appraisal.save()
 

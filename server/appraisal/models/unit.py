@@ -1,6 +1,6 @@
 from mongoengine import *
 import datetime
-
+from .date_field import ConvertingDateField
 
 class Tenancy(EmbeddedDocument):
     # The name of the tenant.
@@ -13,10 +13,10 @@ class Tenancy(EmbeddedDocument):
     yearlyRent = FloatField()
 
     # The start date of the tenancy.
-    startDate = DateTimeField()
+    startDate = ConvertingDateField()
 
     # The end date of the tenancy. If there is a predefined escalation schedule, then there will be separate tenancy objects for each escalation period.
-    endDate = DateTimeField()
+    endDate = ConvertingDateField()
 
     def doesOverlapWith(self, otherTenancy):
         # This method returns True if this tenancy objects overlaps with the given

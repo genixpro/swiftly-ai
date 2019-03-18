@@ -38,7 +38,7 @@ class FileAPI(object):
 
         files = File.objects(**query).only('fileName', 'type')
 
-        return {"files": [file.to_mongo() for file in files]}
+        return {"files": [json.loads(file.to_json()) for file in files]}
 
     def get(self):
         appraisalId = self.request.matchdict['appraisalId']
@@ -46,7 +46,7 @@ class FileAPI(object):
 
         file = File.objects(id=fileId).first()
 
-        return {"file": file.to_mongo()}
+        return {"file": json.loads(file.to_json())}
 
     def post(self):
         data = self.request.json_body

@@ -2,7 +2,7 @@
 
 .view-tenants
 {
-  .tenant-row
+  .unit-row
   {
     cursor: pointer;
   }
@@ -13,4 +13,22 @@
   }
 
 
+  .rdt:not(.rdtOpen)
+  {
+    cursor: pointer;
+    input {
+      cursor: pointer;
+    }
+  }
+
+  .rdt:not(:hover)
+  {
+    input {
+      border: 1px #fff;
+    }
+  }
+
+  .rdtPicker {
+    width: auto;
+  }
 }
