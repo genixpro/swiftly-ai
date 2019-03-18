@@ -13,9 +13,12 @@ class DiscountedCashFlowInputs(EmbeddedDocument):
     leasingCommission = FloatField(default=1000)
 
     # The cost of tenant inducements for new tenants
-    tenantInducements = FloatField(default=1000)
+    tenantInducementsPSF = FloatField(default=1000)
 
     # This is the period of time, in months, that it takes to find a new tenant
     renewalPeriod = IntField(default=3)
+
+    # This is the market rent for a given property, given as rent per square foot
+    marketRentPSF = FloatField(default=10)
 
 

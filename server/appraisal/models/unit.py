@@ -46,6 +46,14 @@ class Unit(EmbeddedDocument):
 
     currentTenancy = EmbeddedDocumentField(Tenancy)
 
+    def findTenancyAtDate(self, tenancyDate):
+        for tenancy in self.tenancies:
+            if tenancy.startDate and tenancy.startDate <= tenancyDate and tenancy.endDate and tenancy.endDate >= tenancyDate:
+                return tenancy
+        return None
+
+
+
     def updateCurrentTenancy(self):
         currentDateTime = datetime.datetime.now()
 

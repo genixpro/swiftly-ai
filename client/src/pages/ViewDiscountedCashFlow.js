@@ -121,7 +121,7 @@ class ViewDiscountedCashFlow extends React.Component
                                                 <tbody>
                                                 <tr>
                                                     <td>
-                                                        <strong>Leasing Commission Costs</strong>
+                                                        <strong>Leasing Commission Costs (Per Lease)</strong>
                                                     </td>
                                                     <td>
                                                         <FieldDisplayEdit value={this.state.appraisal.discountedCashFlowInputs.leasingCommission} onChange={(newValue) => this.changeDCFInput('leasingCommission', newValue)}/>
@@ -129,10 +129,10 @@ class ViewDiscountedCashFlow extends React.Component
                                                 </tr>
                                                 <tr>
                                                     <td>
-                                                        <strong>Tenant Inducement Costs</strong>
+                                                        <strong>Tenant Inducement Costs (Per Square Foot)</strong>
                                                     </td>
                                                     <td>
-                                                        <FieldDisplayEdit value={this.state.appraisal.discountedCashFlowInputs.tenantInducements} onChange={(newValue) => this.changeDCFInput('tenantInducements', newValue)}/>
+                                                        <FieldDisplayEdit value={this.state.appraisal.discountedCashFlowInputs.tenantInducementsPSF} onChange={(newValue) => this.changeDCFInput('tenantInducementsPSF', newValue)}/>
                                                     </td>
                                                 </tr>
                                                 </tbody>
@@ -147,6 +147,14 @@ class ViewDiscountedCashFlow extends React.Component
                                                     </td>
                                                     <td>
                                                         <FieldDisplayEdit value={this.state.appraisal.discountedCashFlowInputs.renewalPeriod} onChange={(newValue) => this.changeDCFInput('renewalPeriod', newValue)}/>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>
+                                                        <strong>Market Rent (Per Square Foot)</strong>
+                                                    </td>
+                                                    <td>
+                                                        <FieldDisplayEdit value={this.state.appraisal.discountedCashFlowInputs.marketRentPSF} onChange={(newValue) => this.changeDCFInput('marketRentPSF', newValue)}/>
                                                     </td>
                                                 </tr>
                                                 </tbody>

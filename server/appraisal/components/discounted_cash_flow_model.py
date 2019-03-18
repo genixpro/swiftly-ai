@@ -26,13 +26,97 @@ class DiscountedCashFlowModel:
         return dcf
 
 
-    def projectCashFlows(self, incomeStatementItem, startYear, endYear, inflation):
+    def projectRentalCashFlows(self, unitInfo, startYear, endYear, discountCashFlowInputs):
+        startDate = datetime.date(year=startYear, month=1, day=1)
+        endDate = datetime.date(year=endYear, month=12, day=1)
+
+        currentDate = copy.copy(startDate)
+
+        monthlyInflation = math.pow(1.0 + (discountCashFlowInputs.inflation / 100), 1 / 12.0)
+
+        cashFlows = []
+
+        month = 0
+        mode = ''
+        vacancyMonths = 0
+
+        while currentDate < endDate:
+            tenancy = unitInfo.findTenancyAtDate(currentDate)
+
+            totalInflation = monthlyInflation ** month
+
+            rentAmount = None
+            inducementAmount = None
+            leasingCommissionAmount = None
+
+            if tenancy:
+                rentAmount = tenancy.monthlyRent
+                inducementAmount = 0
+                leasingCommissionAmount = 0
+            elif mode == '' or (mode == 'vacancy' and vacancyMonths < discountCashFlowInputs.renewalPeriod):
+                mode = 'vacancy'
+                vacancyMonths += 1
+
+                rentAmount = 0
+                inducementAmount = 0
+                leasingCommissionAmount = 0
+            elif mode == 'vacancy' and vacancyMonths == discountCashFlowInputs.renewalPeriod:
+                mode = "market_rents"
+
+                rentAmount = discountCashFlowInputs.marketRentPSF * unitInfo.squareFootage * totalInflation
+                inducementAmount = discountCashFlowInputs.leasingCommission * totalInflation
+                leasingCommissionAmount = discountCashFlowInputs.tenantInducementsPSF * unitInfo.squareFootage * totalInflation
+
+            elif mode == 'market_rents':
+                mode = "market_rents"
+
+                rentAmount = discountCashFlowInputs.marketRentPSF * unitInfo.squareFootage * totalInflation
+                inducementAmount = 0
+                leasingCommissionAmount = 0
+
+            incomeItem = MonthlyCashFlowItem(
+                name="Rent",
+                amount=rentAmount,
+                type="income",
+                year=currentDate.year,
+                month=currentDate.month,
+                relativeMonth=month
+            )
+            cashFlows.append(incomeItem)
+
+            leasingCommissionItem = MonthlyCashFlowItem(
+                name="Lease Commission",
+                amount=leasingCommissionAmount,
+                type="expense",
+                year=currentDate.year,
+                month=currentDate.month,
+                relativeMonth=month
+            )
+            cashFlows.append(leasingCommissionItem)
+
+            tenantInducementsItem = MonthlyCashFlowItem(
+                name="Tenant Inducements",
+                amount=inducementAmount,
+                type="expense",
+                year=currentDate.year,
+                month=currentDate.month,
+                relativeMonth=month
+            )
+            cashFlows.append(tenantInducementsItem)
+
+            currentDate = currentDate + relativedelta(months=1)
+            month += 1
+
+        return cashFlows
+
+
+    def projectCashFlows(self, incomeStatementItem, startYear, endYear, discountCashFlowInputs):
         startDate = datetime.datetime(year=startYear, month=1, day=1, hour=0, minute=0, second=0)
         endDate = datetime.datetime(year=endYear, month=12, day=1, hour=0, minute=0, second=0)
 
         currentDate = copy.copy(startDate)
 
-        monthlyInflation = math.pow(1.0 + (inflation / 100), 1 / 12.0)
+        monthlyInflation = math.pow(1.0 + (discountCashFlowInputs.inflation / 100), 1 / 12.0)
 
         cashFlows = []
 
@@ -59,16 +143,51 @@ class DiscountedCashFlowModel:
         return cashFlows
 
 
+    def projectAllRentalCashFlows(self, appraisal):
+        cashFlows = []
+
+        for unit in appraisal.units:
+            cashFlows.extend(self.projectRentalCashFlows(unit, startYear=datetime.datetime.now().year, endYear=datetime.datetime.now().year + 10, discountCashFlowInputs=appraisal.discountedCashFlowInputs))
+
+        # Group by month, year, and name
+        grouped = {}
+
+        for cashFlow in cashFlows:
+            key = (cashFlow.year, cashFlow.month, cashFlow.name)
+
+            if key in grouped:
+                grouped[key].append(cashFlow)
+            else:
+                grouped[key] = [cashFlow]
+
+        # Now merge together all the cash flows for each key
+        mergedCashFlows = []
+        for key in grouped:
+            mergedCashFlows.append(MonthlyCashFlowItem(
+                name=key[2],
+                amount=float(numpy.sum([cashFlow.amount for cashFlow in grouped[key]])),
+                type=grouped[key][0].type,
+                year=key[0],
+                month=key[1],
+                relativeMonth=grouped[key][0].relativeMonth
+            ))
+
+        return mergedCashFlows
+
+
+
     def getMonthlyCashFlowItems(self, appraisal):
         cashFlows = []
         for item in appraisal.incomeStatement.incomes:
-            cashFlows.extend(self.projectCashFlows(incomeStatementItem=item, startYear=datetime.datetime.now().year, endYear=datetime.datetime.now().year + 10, inflation=appraisal.discountedCashFlowInputs.inflation))
+            cashFlows.extend(self.projectCashFlows(incomeStatementItem=item, startYear=datetime.datetime.now().year, endYear=datetime.datetime.now().year + 10, discountCashFlowInputs=appraisal.discountedCashFlowInputs))
         for item in appraisal.incomeStatement.expenses:
-            cashFlows.extend(self.projectCashFlows(incomeStatementItem=item, startYear=datetime.datetime.now().year, endYear=datetime.datetime.now().year + 10, inflation=appraisal.discountedCashFlowInputs.inflation))
+            cashFlows.extend(self.projectCashFlows(incomeStatementItem=item, startYear=datetime.datetime.now().year, endYear=datetime.datetime.now().year + 10, discountCashFlowInputs=appraisal.discountedCashFlowInputs))
+
         return cashFlows
 
     def getYearlyCashFlowItems(self, appraisal):
         cashFlows = self.getMonthlyCashFlowItems(appraisal)
+        cashFlows.extend(self.projectAllRentalCashFlows(appraisal))
 
         cashFlowGroups = {}
         for cashFlow in cashFlows:
