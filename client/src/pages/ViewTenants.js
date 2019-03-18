@@ -180,7 +180,7 @@ class ViewTenants extends React.Component
                     <Row>
                         <Col xs={4} md={4} lg={4} xl={4}>
                             <Card outline color="primary" className="mb-3">
-                                <CardHeader className="text-white bg-primary">Tenants</CardHeader>
+                                <CardHeader className="text-white bg-primary">Units</CardHeader>
                                 <CardBody>
                                     <Table hover responsive>
                                         <thead>

@@ -12,9 +12,24 @@ class FieldDisplayEdit extends React.Component
         isEditing: false
     };
 
+    constructor()
+    {
+        super();
+        this.inputElem = null;
+    }
 
     componentDidMount()
     {
+
+        if (this.props.hideIcon)
+        {
+            this.setState({hideIcon: true});
+        }
+        else
+        {
+            this.setState({hideIcon: false});
+        }
+
         this.setState({value: this.formatValue(this.props.value)})
     }
 
@@ -24,15 +39,39 @@ class FieldDisplayEdit extends React.Component
         this.setState({value: newValue})
     }
 
+
+    numberWithCommas(x)
+    {
+        return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ", ");
+    }
+
+
     formatValue(value)
     {
         if (this.props.type === 'currency')
         {
             try {
-                return Number(value).toFixed(2);
+                return "$" + this.numberWithCommas(Number(value).toFixed(2).toString());
             }
             catch(err) {
-                return value;
+                return "$" + this.numberWithCommas(value.toString());
+            }
+        }
+        return value;
+    }
+
+
+    cleanValue(value)
+    {
+        if (this.props.type === 'currency')
+        {
+            const cleanText = value.toString().replace(/[^0-9\.-]/g, "");
+
+            try {
+                return Number(cleanText);
+            }
+            catch(err) {
+                return 0;
             }
         }
         return value;
@@ -49,22 +88,45 @@ class FieldDisplayEdit extends React.Component
     {
         if (this.props.onChange)
         {
-            this.setState({value: this.formatValue(this.state.value)});
-            this.props.onChange(this.state.value);
+            this.setState({value: this.formatValue(this.cleanValue(this.state.value)) });
+            this.props.onChange(this.cleanValue(this.state.value));
+        }
+
+        if (this.inputElem)
+        {
+            this.inputElem.blur();
         }
         this.setState({isEditing: false});
     }
 
 
+    handleKeyPress(e)
+    {
+        if (e.key === 'Enter') {
+            this.finishEditing();
+        }
+    }
+
+
     render() {
         return (
-            <div onClick={(evt) => this.startEditing()} onBlur={(evt) => this.finishEditing()}>
+            <div onClick={(evt) => this.startEditing()}
+                 onBlur={(evt) => this.finishEditing()}>
                 <InputGroup className={"field-display-edit " + (this.state.isEditing ? " editing" : "static")}>
-                    <Input placeholder={this.props.placeholder} value={this.state.isEditing ? this.state.value : this.formatValue(this.props.value)}
-                           onChange={(evt) => this.inputUpdated(evt.target.value)} />
-                    <InputGroupAddon addonType="append">
-                        <span className={"input-group-text"}><i className={"fa fa-wrench"} /></span>
-                    </InputGroupAddon>
+                    <Input placeholder={this.props.placeholder}
+                           value={this.state.isEditing ? this.state.value : this.formatValue(this.props.value)}
+                           onChange={(evt) => this.inputUpdated(evt.target.value)}
+                           innerRef={(inputElem) => this.inputElem = inputElem}
+                           onKeyPress={(evt) => this.handleKeyPress(evt)}
+                    />
+                    {
+                        !this.state.hideIcon ?
+                            <InputGroupAddon addonType="append">
+                                <span className={"input-group-text"}>
+                                    <i className={"fa fa-wrench"} />
+                                </span>
+                            </InputGroupAddon> : null
+                    }
                 </InputGroup>
             </div>
         );

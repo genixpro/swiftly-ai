@@ -2,7 +2,9 @@
 
 .field-display-edit
 {
-
+  input {
+    background: transparent;
+  }
 }
 
 .field-display-edit.static:not(:hover)
@@ -15,6 +17,7 @@
   input
   {
     border: 1px white;
+    border-radius: 0;
   }
 
   padding-right: 1px;
@@ -28,5 +31,12 @@
   }
   input {
     cursor: pointer;
+  }
+}
+
+.field-display-edit.static:hover, .field-display-edit.editing
+{
+  input {
+    background: white;
   }
 }

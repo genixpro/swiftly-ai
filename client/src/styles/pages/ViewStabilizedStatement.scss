@@ -3,6 +3,7 @@
 .view-stabilized-statement
 {
 
+
   .name-column
   {
 
@@ -11,13 +12,25 @@
   {
     text-align: right;
     max-width: 60px;
+
+
+    .field-display-edit
+    {
+      input {
+        text-align: right;
+      }
+    }
   }
 
   .total-row
   {
     .name-column
     {
-
+      padding-left: 30px;
+    }
+    .amount-column
+    {
+      padding-right: 30px;
     }
   }
 }
