@@ -11,17 +11,6 @@ const Menu = [
         name: 'View Appraisals',
         path: '/appraisal/',
         icon : 'icon-menu',
-    },
-    {
-        name: 'Menu',
-        icon: 'icon-speedometer',
-        translate: 'sidebar.nav.MENU',
-        label: { value: 1, color: 'info' },
-        submenu: [{
-            name: 'Submenu',
-            translate: 'sidebar.nav.SUBMENU',
-            path: 'submenu'
-        }]
     }
 ];
 
