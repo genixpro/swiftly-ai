@@ -49,7 +49,11 @@ class FieldDisplayEdit extends React.Component
 
     formatValue(value)
     {
-        if (this.props.type === 'currency')
+        if (value === "")
+        {
+            return "";
+        }
+        else if (this.props.type === 'currency')
         {
             try {
                 return "$" + this.numberWithCommas(Number(value).toFixed(2).toString());

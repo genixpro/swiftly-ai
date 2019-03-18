@@ -250,6 +250,7 @@ class ViewTenants extends React.Component
                 <FieldDisplayEdit
                     hideIcon={true}
                     value={""}
+                    placeholder={"name"}
                     onChange={_.once((newValue) => this.createNewTenancy("name", newValue))}
                 />
             </td>
@@ -260,7 +261,6 @@ class ViewTenants extends React.Component
                         dateFormat={"YYYY/MM/DD"}
                         timeFormat={false}
                         onChange={(newValue) => newValue.toDate ? this.createNewTenancy('startDate', newValue.toDate()) : null }
-                        defaultValue={new Date()}
                     />
                 }
             </td>
@@ -271,7 +271,6 @@ class ViewTenants extends React.Component
                         dateFormat={"YYYY/MM/DD"}
                         timeFormat={false}
                         onChange={(newValue) => newValue.toDate ? this.createNewTenancy('endDate', newValue.toDate()) : null }
-                        defaultValue={new Date()}
                     />
                 }
             </td>

@@ -20,3 +20,8 @@ Data.fs*
 coverage
 test
 venv
+dump
+data
+*.bin
+*.vec
+models
