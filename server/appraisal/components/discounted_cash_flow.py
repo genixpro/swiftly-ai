@@ -7,16 +7,14 @@ import numpy
 import copy
 import math
 from pprint import pprint
-from .market_data import MarketData
 from ..models.discounted_cash_flow import MonthlyCashFlowItem, YearlyCashFlowItem, DiscountedCashFlow, DiscountedCashFlowSummary, DiscountedCashFlowSummaryItem
 
 class DiscountedCashFlowModel:
     """ This class encapsulated the information for a discounted cash flow model of an appraisal. """
 
-    def __init__(self, marketData, discountRate):
+    def __init__(self):
         """Constructs a discounted cash flow model based on the given documents"""
-        self.marketData = marketData
-        self.discountRate = discountRate
+        pass
 
 
     def createDiscountedCashFlow(self, appraisal):
@@ -28,13 +26,13 @@ class DiscountedCashFlowModel:
         return dcf
 
 
-    def projectCashFlows(self, incomeStatementItem, startYear, endYear):
+    def projectCashFlows(self, incomeStatementItem, startYear, endYear, inflation):
         startDate = datetime.datetime(year=startYear, month=1, day=1, hour=0, minute=0, second=0)
         endDate = datetime.datetime(year=endYear, month=12, day=1, hour=0, minute=0, second=0)
 
         currentDate = copy.copy(startDate)
 
-        monthlyInflation = math.pow(1.0 + (self.marketData.inflation) / 100, 1 / 12.0)
+        monthlyInflation = math.pow(1.0 + (inflation / 100), 1 / 12.0)
 
         cashFlows = []
 
@@ -61,21 +59,12 @@ class DiscountedCashFlowModel:
         return cashFlows
 
 
-    def discountCashFlows(self, cashFlows):
-        monthlyDiscount = math.pow(1.0 + (self.discountRate) / 100, 1 / 12.0)
-
-        for cashFlow in cashFlows:
-            totalDiscount = monthlyDiscount ** cashFlow.relativeMonth
-            presentValue = cashFlow.amount * totalDiscount
-            cashFlow.presentValue = presentValue
-
-
     def getMonthlyCashFlowItems(self, appraisal):
         cashFlows = []
         for item in appraisal.incomeStatement.incomes:
-            cashFlows.extend(self.projectCashFlows(incomeStatementItem=item, startYear=datetime.datetime.now().year, endYear=datetime.datetime.now().year + 10))
+            cashFlows.extend(self.projectCashFlows(incomeStatementItem=item, startYear=datetime.datetime.now().year, endYear=datetime.datetime.now().year + 10, inflation=appraisal.discountedCashFlowInputs.inflation))
         for item in appraisal.incomeStatement.expenses:
-            cashFlows.extend(self.projectCashFlows(incomeStatementItem=item, startYear=datetime.datetime.now().year, endYear=datetime.datetime.now().year + 10))
+            cashFlows.extend(self.projectCashFlows(incomeStatementItem=item, startYear=datetime.datetime.now().year, endYear=datetime.datetime.now().year + 10, inflation=appraisal.discountedCashFlowInputs.inflation))
         return cashFlows
 
     def getYearlyCashFlowItems(self, appraisal):
@@ -191,7 +180,7 @@ class DiscountedCashFlowModel:
 
 
         # Compute present value by year
-        yearlyDiscount = 1.0 + (self.discountRate) / 100.0
+        yearlyDiscount = 1.0 + (appraisal.discountedCashFlowInputs.discountRate) / 100.0
         presentValueByYear = {}
         startYear = years[0]
         for year in years:

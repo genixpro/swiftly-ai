@@ -3,6 +3,7 @@ import datetime
 from .unit import Unit
 from .income_statement import IncomeStatement
 from .discounted_cash_flow import DiscountedCashFlow
+from .discounted_cash_flow_inputs import DiscountedCashFlowInputs
 
 class Appraisal(Document):
     meta = {'collection': 'appraisals'}
@@ -27,6 +28,9 @@ class Appraisal(Document):
 
     # Income statement for this Appraisal
     incomeStatement = EmbeddedDocumentField(IncomeStatement)
+
+    # The inputs used in a discounted cash flow
+    discountedCashFlowInputs = EmbeddedDocumentField(DiscountedCashFlowInputs, default=DiscountedCashFlowInputs)
 
     # Discounted cash flow for this Appraisal
     discountedCashFlow = EmbeddedDocumentField(DiscountedCashFlow)

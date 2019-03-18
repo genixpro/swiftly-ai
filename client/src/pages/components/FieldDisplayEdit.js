@@ -16,6 +16,7 @@ class FieldDisplayEdit extends React.Component
     {
         super();
         this.inputElem = null;
+        this.sentUpdate = false;
     }
 
     componentDidMount()
@@ -88,6 +89,7 @@ class FieldDisplayEdit extends React.Component
 
     startEditing()
     {
+        this.sentUpdate = false;
         this.setState({value: this.formatValue(this.props.value), isEditing: true})
 
     }
@@ -95,17 +97,22 @@ class FieldDisplayEdit extends React.Component
 
     finishEditing()
     {
-        if (this.props.onChange)
+        if (!this.sentUpdate)
         {
-            this.setState({value: this.formatValue(this.cleanValue(this.state.value)) });
-            this.props.onChange(this.cleanValue(this.state.value));
-        }
+            this.sentUpdate = true;
 
-        if (this.inputElem)
-        {
-            this.inputElem.blur();
+            if (this.props.onChange)
+            {
+                this.setState({value: this.formatValue(this.cleanValue(this.state.value)) });
+                this.props.onChange(this.cleanValue(this.state.value));
+            }
+
+            if (this.inputElem)
+            {
+                this.inputElem.blur();
+            }
+            this.setState({isEditing: false});
         }
-        this.setState({isEditing: false});
     }
 
 

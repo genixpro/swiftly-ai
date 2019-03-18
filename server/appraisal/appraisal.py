@@ -4,7 +4,6 @@ import bson
 import json
 from webob_graphql import serve_graphql_request
 from .components.discounted_cash_flow import DiscountedCashFlowModel
-from .components.market_data import MarketData
 from pprint import pprint
 from .models.appraisal import Appraisal
 from .models.file import File
@@ -15,6 +14,8 @@ class AppraisalAPI(object):
 
     def __init__(self, request, context=None):
         self.request = request
+
+        self.discountedCashFlow = DiscountedCashFlowModel()
 
     def __acl__(self):
         return [(Allow, Everyone, 'everything')]
@@ -66,10 +67,14 @@ class AppraisalAPI(object):
             del data['_id']
 
         appraisal = Appraisal.objects(id=appraisalId).first()
-        appraisal.update(**data)
+        appraisal.modify(**data)
+
+        discountedCashFlow = self.discountedCashFlow.createDiscountedCashFlow(appraisal)
+        appraisal.discountedCashFlow = discountedCashFlow
+
         appraisal.save()
 
-        return {"_id": str(id)}
+        return {"appraisal": json.loads(appraisal.to_json())}
 
 
 

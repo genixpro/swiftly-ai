@@ -107,7 +107,7 @@ class ViewTenants extends React.Component
 
     renderNewUnitRow()
     {
-        return <tr>
+        return <tr className={"unit-row"}>
             <td>
                 <FieldDisplayEdit
                     hideIcon={true}
@@ -245,7 +245,7 @@ class ViewTenants extends React.Component
 
     renderNewTenancyRow()
     {
-        return <tr>
+        return <tr className={"tenant-row"}>
             <td>
                 <FieldDisplayEdit
                     hideIcon={true}

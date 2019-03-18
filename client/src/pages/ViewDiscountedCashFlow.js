@@ -4,7 +4,7 @@ import NumberFormat from 'react-number-format';
 import axios from "axios/index";
 import AnnotationUtilities from './AnnotationUtilities';
 import _ from 'underscore';
-
+import FieldDisplayEdit from "./components/FieldDisplayEdit";
 
 
 class ViewDiscountedCashFlow extends React.Component
@@ -69,11 +69,94 @@ class ViewDiscountedCashFlow extends React.Component
         </tr>
     }
 
+    changeDCFInput(field, newValue)
+    {
+        this.state.appraisal.discountedCashFlowInputs[field] = newValue;
+        this.setState({appraisal: this.state.appraisal}, () => this.saveDocument(this.state.appraisal))
+    }
+
+
+    saveDocument(newAppraisal)
+    {
+        axios.post(`/appraisal/${this.props.match.params.id}`, newAppraisal).then((response) =>
+        {
+            this.setState({appraisal: response.data.appraisal})
+        });
+    }
 
     render() {
         return (
             (this.state.appraisal && this.state.appraisal.discountedCashFlow ) ?
                 <div id={"view-discounted-cash-flow"} className={"view-discounted-cash-flow"}>
+                    <Row>
+                        <Col xs={12} md={12} lg={12} xl={12}>
+                            <Card outline color="primary" className="mb-3">
+                                <CardHeader className="text-white bg-primary">Inputs</CardHeader>
+                                <CardBody>
+                                    <Row>
+                                        <Col xs={12} sm={6} md={4}>
+                                            <table className="table">
+                                                <tbody>
+                                                <tr>
+                                                    <td>
+                                                        <strong>Inflation Rate</strong>
+                                                    </td>
+                                                    <td>
+                                                        <FieldDisplayEdit value={this.state.appraisal.discountedCashFlowInputs.inflation} onChange={(newValue) => this.changeDCFInput('inflation', newValue)}/>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>
+                                                        <strong>Discount Rate</strong>
+                                                    </td>
+                                                    <td>
+                                                        <FieldDisplayEdit value={this.state.appraisal.discountedCashFlowInputs.discountRate} onChange={(newValue) => this.changeDCFInput('discountRate', newValue)}/>
+                                                    </td>
+                                                </tr>
+                                                </tbody>
+                                            </table>
+                                        </Col>
+                                        <Col xs={12} sm={6} md={4}>
+                                            <table className="table">
+                                                <tbody>
+                                                <tr>
+                                                    <td>
+                                                        <strong>Leasing Commission Costs</strong>
+                                                    </td>
+                                                    <td>
+                                                        <FieldDisplayEdit value={this.state.appraisal.discountedCashFlowInputs.leasingCommission} onChange={(newValue) => this.changeDCFInput('leasingCommission', newValue)}/>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>
+                                                        <strong>Tenant Inducement Costs</strong>
+                                                    </td>
+                                                    <td>
+                                                        <FieldDisplayEdit value={this.state.appraisal.discountedCashFlowInputs.tenantInducements} onChange={(newValue) => this.changeDCFInput('tenantInducements', newValue)}/>
+                                                    </td>
+                                                </tr>
+                                                </tbody>
+                                            </table>
+                                        </Col>
+                                        <Col xs={12} sm={6} md={4}>
+                                            <table className="table">
+                                                <tbody>
+                                                <tr>
+                                                    <td>
+                                                        <strong>Renewal Period</strong>
+                                                    </td>
+                                                    <td>
+                                                        <FieldDisplayEdit value={this.state.appraisal.discountedCashFlowInputs.renewalPeriod} onChange={(newValue) => this.changeDCFInput('renewalPeriod', newValue)}/>
+                                                    </td>
+                                                </tr>
+                                                </tbody>
+                                            </table>
+                                        </Col>
+                                    </Row>
+                                </CardBody>
+                            </Card>
+                        </Col>
+                    </Row>
                     <Row>
                         <Col xs={12} md={12} lg={12} xl={12}>
                             <Card outline color="primary" className="mb-3">

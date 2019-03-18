@@ -9,12 +9,30 @@
 
   .action-column
   {
+    opacity: 0;
     max-width: 70px;
   }
 
   .tenant-row.selected-tenant-row
   {
     background-color: #eee;
+  }
+
+
+  .unit-row:hover
+  {
+    .action-column
+    {
+      opacity: 1;
+    }
+  }
+
+  .tenant-row:hover
+  {
+    .action-column
+    {
+      opacity: 1;
+    }
   }
 
 
