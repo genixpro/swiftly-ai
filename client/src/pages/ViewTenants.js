@@ -2,6 +2,7 @@ import React from 'react';
 import {Row, Col, Card, CardBody, Nav, NavItem, NavLink} from 'reactstrap';
 import axios from 'axios';
 import ViewTenantsRentRoll from "./ViewTenantRentRoll";
+import ViewTenantsLeasingCosts from "./ViewTenantLeasingCosts";
 import {NavLink as RRNavLink} from 'react-router-dom';
 import {Switch, Route} from 'react-router-dom';
 
@@ -19,10 +20,10 @@ class ViewTenants extends React.Component {
                 <Col xs={12}>
                     <Nav tabs>
                         <NavItem>
-                            <NavLink to={`${this.props.match.url}/raw`} activeClassName="active" tag={RRNavLink}>Rent Roll</NavLink>
+                            <NavLink to={`${this.props.match.url}/rent_roll`} activeClassName="active" tag={RRNavLink}>Rent Roll</NavLink>
                         </NavItem>
                         <NavItem>
-                            <NavLink to={`${this.props.match.url}/report`} activeClassName="active" tag={RRNavLink}>Leasing Costs</NavLink>
+                            <NavLink to={`${this.props.match.url}/leasing_costs`} activeClassName="active" tag={RRNavLink}>Leasing Costs</NavLink>
                         </NavItem>
                     </Nav>
                 </Col>
@@ -33,10 +34,11 @@ class ViewTenants extends React.Component {
                         <CardBody>
                             <div id={"view-tenants"}>
                                 <Switch>
-                                    <Route path={`${this.props.match.url}/`}
-                                           render={() => <ViewTenantsRentRoll appraisalId={this.props.match.params.id}/>}/>
                                     <Route path={`${this.props.match.url}/rent_roll`}
                                            render={() => <ViewTenantsRentRoll appraisalId={this.props.match.params.id}/>}/>
+                                    <Route path={`${this.props.match.url}/leasing_costs`}
+                                           render={() => <ViewTenantsLeasingCosts appraisalId={this.props.match.params.id}/>}/>
+                                    {/*<Route render={() => <ViewTenantsRentRoll appraisalId={this.props.match.params.id}/>}/>*/}
                                 </Switch>
                             </div>
                         </CardBody>

@@ -42,7 +42,7 @@ class ViewTenantsRentRoll extends React.Component
         let selectedClass = "";
         if (this.state.selectedUnit && unitInfo.unitNumber === this.state.selectedUnit.unitNumber)
         {
-            selectedClass = " selected-tenant-row";
+            selectedClass = " selected-unit-row";
         }
 
         return <tr onClick={(evt) => this.onTenantClicked(unitInfo.unitNumber)} className={"unit-row " + selectedClass} key={unitIndex}>
@@ -312,7 +312,7 @@ class ViewTenantsRentRoll extends React.Component
 
     saveDocument(newAppraisal)
     {
-        axios.post(`/appraisal/${this.props.match.params.id}`, newAppraisal).then((response) =>
+        axios.post(`/appraisal/${this.props.appraisalId}`, newAppraisal).then((response) =>
         {
             // this.setState({financialStatement: newLease})
         });
@@ -374,215 +374,130 @@ class ViewTenantsRentRoll extends React.Component
     render() {
         return (
             (this.state.appraisal) ?
+                <div id={"view-tenants-rent-roll"} className={"view-tenants-rent-roll"}>
                     <Row>
-                        <Col xs={12}>
-                            <Card className="card-default">
+                        <Col xs={5} md={5} lg={5} xl={5}>
+                            <Card outline color="primary" className="mb-3">
+                                <CardHeader className="text-white bg-primary">Units</CardHeader>
                                 <CardBody>
-                                    <div id={"view-tenants"} className={"view-tenants"}>
-                                        <Row>
-                                            <Col xs={12} md={12} lg={12} xl={12}>
-                                                <Card outline color="primary" className="mb-3">
-                                                    <CardHeader className="text-white bg-primary">Inputs</CardHeader>
-                                                    <CardBody>
-                                                        <Row>
-                                                            <Col xs={12} sm={6} md={4}>
-                                                                <table className="table">
-                                                                    <tbody>
-                                                                    <tr>
-                                                                        <td>
-                                                                            <strong>Inflation Rate</strong>
-                                                                        </td>
-                                                                        <td>
-                                                                            <FieldDisplayEdit value={this.state.appraisal.discountedCashFlowInputs.inflation} onChange={(newValue) => this.changeDCFInput('inflation', newValue)}/>
-                                                                        </td>
-                                                                    </tr>
-                                                                    <tr>
-                                                                        <td>
-                                                                            <strong>Discount Rate</strong>
-                                                                        </td>
-                                                                        <td>
-                                                                            <FieldDisplayEdit value={this.state.appraisal.discountedCashFlowInputs.discountRate} onChange={(newValue) => this.changeDCFInput('discountRate', newValue)}/>
-                                                                        </td>
-                                                                    </tr>
-                                                                    </tbody>
-                                                                </table>
-                                                            </Col>
-                                                            <Col xs={12} sm={6} md={4}>
-                                                                <table className="table">
-                                                                    <tbody>
-                                                                    <tr>
-                                                                        <td>
-                                                                            <strong>Leasing Commission Costs (Per Lease)</strong>
-                                                                        </td>
-                                                                        <td>
-                                                                            <FieldDisplayEdit value={this.state.appraisal.discountedCashFlowInputs.leasingCommission} onChange={(newValue) => this.changeDCFInput('leasingCommission', newValue)}/>
-                                                                        </td>
-                                                                    </tr>
-                                                                    <tr>
-                                                                        <td>
-                                                                            <strong>Tenant Inducement Costs (Per Square Foot)</strong>
-                                                                        </td>
-                                                                        <td>
-                                                                            <FieldDisplayEdit value={this.state.appraisal.discountedCashFlowInputs.tenantInducementsPSF} onChange={(newValue) => this.changeDCFInput('tenantInducementsPSF', newValue)}/>
-                                                                        </td>
-                                                                    </tr>
-                                                                    </tbody>
-                                                                </table>
-                                                            </Col>
-                                                            <Col xs={12} sm={6} md={4}>
-                                                                <table className="table">
-                                                                    <tbody>
-                                                                    <tr>
-                                                                        <td>
-                                                                            <strong>Renewal Period</strong>
-                                                                        </td>
-                                                                        <td>
-                                                                            <FieldDisplayEdit value={this.state.appraisal.discountedCashFlowInputs.renewalPeriod} onChange={(newValue) => this.changeDCFInput('renewalPeriod', newValue)}/>
-                                                                        </td>
-                                                                    </tr>
-                                                                    <tr>
-                                                                        <td>
-                                                                            <strong>Market Rent (Per Square Foot)</strong>
-                                                                        </td>
-                                                                        <td>
-                                                                            <FieldDisplayEdit value={this.state.appraisal.discountedCashFlowInputs.marketRentPSF} onChange={(newValue) => this.changeDCFInput('marketRentPSF', newValue)}/>
-                                                                        </td>
-                                                                    </tr>
-                                                                    </tbody>
-                                                                </table>
-                                                            </Col>
-                                                        </Row>
-                                                    </CardBody>
-                                                </Card>
-                                            </Col>
-                                        </Row>
-                                        <Row>
-                                            <Col xs={5} md={5} lg={5} xl={5}>
-                                                <Card outline color="primary" className="mb-3">
-                                                    <CardHeader className="text-white bg-primary">Units</CardHeader>
-                                                    <CardBody>
-                                                        <Table hover responsive>
-                                                            <thead>
-                                                            <tr>
-                                                                <td><strong>Unit Number</strong></td>
-                                                                <td><strong>Tenant Name</strong></td>
-                                                                <td><strong>Size (sf)</strong></td>
-                                                                <td><strong>Annual Net Rent (psf)</strong></td>
-                                                                <td className={"action-column"} />
-                                                            </tr>
-                                                            </thead>
-                                                            <tbody>
-                                                            {
-                                                                this.state.appraisal && this.state.appraisal.units && Object.values(this.state.appraisal.units).map((unit, unitIndex) => {
-                                                                    return this.renderUnitRow(unit, unitIndex);
-                                                                })
-                                                            }
-                                                            {
-                                                                this.state.appraisal ?
-                                                                    this.renderNewUnitRow()
-                                                                    : null
-                                                            }
-                                                            <tr>
-                                                                <td>PUT TOTALS HERE</td>
-                                                            </tr>
-                                                            </tbody>
-                                                        </Table>
-                                                    </CardBody>
-                                                </Card>
-                                            </Col>
-                                            {
-                                                this.state.selectedUnit ?
-                                                    <Col xs={7} md={7} lg={7} xl={7}>
-                                                        <Card outline color="primary" className="mb-3">
-                                                            <CardHeader className="text-white bg-primary">Tenant Information</CardHeader>
-                                                            <CardBody>
-                                                                <table className="table">
-                                                                    <tbody>
-                                                                    <tr>
-                                                                        <td>
-                                                                            <strong>Unit Number</strong>
-                                                                        </td>
-                                                                        <td>
-                                                                            <FieldDisplayEdit value={this.state.selectedUnit.unitNumber} onChange={(newValue) => this.changeUnitField(this.state.selectedUnit, 'unitNumber', newValue)}/>
-                                                                        </td>
-                                                                    </tr>
-                                                                    <tr>
-                                                                        <td>
-                                                                            <strong>Floor Number</strong>
-                                                                        </td>
-                                                                        <td>
-                                                                            <FieldDisplayEdit value={this.state.selectedUnit.floorNumber} onChange={(newValue) => this.changeUnitField(this.state.selectedUnit, 'floorNumber', newValue)}/>
-                                                                        </td>
-                                                                    </tr>
-                                                                    <tr>
-                                                                        <td>
-                                                                            <strong>Tenant Name</strong>
-                                                                        </td>
-                                                                        <td>
-                                                                            <FieldDisplayEdit value={this.state.selectedUnit.currentTenancy.name} onChange={(newValue) => this.changeAllTenantField(this.state.selectedUnit, this.state.selectedUnit.currentTenancy, 'name', newValue)}/>
-                                                                        </td>
-                                                                    </tr>
-                                                                    <tr>
-                                                                        <td>
-                                                                            <strong>Remarks</strong>
-                                                                        </td>
-                                                                        <td>
-                                                                            <FieldDisplayEdit value={this.state.selectedUnit.remarks} onChange={(newValue) => this.changeUnitField(this.state.selectedUnit, 'remarks', newValue)}/>
-                                                                        </td>
-                                                                    </tr>
-                                                                    <tr>
-                                                                        <td>
-                                                                            <strong>Current Monthly Rent</strong>
-                                                                        </td>
-                                                                        <td>
-                                                                            $<NumberFormat
-                                                                            value={this.state.selectedUnit.currentTenancy.monthlyRent}
-                                                                            displayType={'text'}
-                                                                            thousandSeparator={', '}
-                                                                            decimalScale={2}
-                                                                            fixedDecimalScale={true}
-                                                                        />
-                                                                        </td>
-                                                                    </tr>
-                                                                    </tbody>
-                                                                </table>
-                                                            </CardBody>
-                                                        </Card>
-                                                        <Card outline color="primary" className="mb-3">
-                                                            <CardHeader className="text-white bg-primary">Tenancy & Escalation Schedule</CardHeader>
-                                                            <CardBody>
-                                                                <table className="table">
-                                                                    <thead>
-                                                                    <tr>
-                                                                        <td>Tenant Name</td>
-                                                                        <td>Term Start</td>
-                                                                        <td>Term End</td>
-                                                                        <td>Monthly Rent</td>
-                                                                        <td className="action-column" />
-                                                                    </tr>
-                                                                    </thead>
-                                                                    <tbody>
-                                                                    {
-                                                                        this.state.selectedUnit.tenancies.map((tenancy, tenancyIndex) => {
-                                                                            return this.renderTenancy(this.state.selectedUnit, tenancy, tenancyIndex);
-                                                                        })
-                                                                    }
-                                                                    {
-                                                                        this.renderNewTenancyRow()
-                                                                    }
-                                                                    </tbody>
-
-                                                                </table>
-                                                            </CardBody>
-                                                        </Card>
-                                                    </Col> : null
-                                            }
-                                        </Row>
-                                    </div>
+                                    <Table hover responsive>
+                                        <thead>
+                                        <tr>
+                                            <td><strong>Unit Number</strong></td>
+                                            <td><strong>Tenant Name</strong></td>
+                                            <td><strong>Size (sf)</strong></td>
+                                            <td><strong>Annual Net Rent (psf)</strong></td>
+                                            <td className={"action-column"} />
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        {
+                                            this.state.appraisal && this.state.appraisal.units && Object.values(this.state.appraisal.units).map((unit, unitIndex) => {
+                                                return this.renderUnitRow(unit, unitIndex);
+                                            })
+                                        }
+                                        {
+                                            this.state.appraisal ?
+                                                this.renderNewUnitRow()
+                                                : null
+                                        }
+                                        <tr>
+                                            <td>PUT TOTALS HERE</td>
+                                        </tr>
+                                        </tbody>
+                                    </Table>
                                 </CardBody>
                             </Card>
                         </Col>
+                        {
+                            this.state.selectedUnit ?
+                                <Col xs={7} md={7} lg={7} xl={7}>
+                                    <Card outline color="primary" className="mb-3">
+                                        <CardHeader className="text-white bg-primary">Tenant Information</CardHeader>
+                                        <CardBody>
+                                            <table className="table">
+                                                <tbody>
+                                                <tr>
+                                                    <td>
+                                                        <strong>Unit Number</strong>
+                                                    </td>
+                                                    <td>
+                                                        <FieldDisplayEdit value={this.state.selectedUnit.unitNumber} onChange={(newValue) => this.changeUnitField(this.state.selectedUnit, 'unitNumber', newValue)}/>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>
+                                                        <strong>Floor Number</strong>
+                                                    </td>
+                                                    <td>
+                                                        <FieldDisplayEdit value={this.state.selectedUnit.floorNumber} onChange={(newValue) => this.changeUnitField(this.state.selectedUnit, 'floorNumber', newValue)}/>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>
+                                                        <strong>Tenant Name</strong>
+                                                    </td>
+                                                    <td>
+                                                        <FieldDisplayEdit value={this.state.selectedUnit.currentTenancy.name} onChange={(newValue) => this.changeAllTenantField(this.state.selectedUnit, this.state.selectedUnit.currentTenancy, 'name', newValue)}/>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>
+                                                        <strong>Remarks</strong>
+                                                    </td>
+                                                    <td>
+                                                        <FieldDisplayEdit value={this.state.selectedUnit.remarks} onChange={(newValue) => this.changeUnitField(this.state.selectedUnit, 'remarks', newValue)}/>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>
+                                                        <strong>Current Monthly Rent</strong>
+                                                    </td>
+                                                    <td>
+                                                        $<NumberFormat
+                                                        value={this.state.selectedUnit.currentTenancy.monthlyRent}
+                                                        displayType={'text'}
+                                                        thousandSeparator={', '}
+                                                        decimalScale={2}
+                                                        fixedDecimalScale={true}
+                                                    />
+                                                    </td>
+                                                </tr>
+                                                </tbody>
+                                            </table>
+                                        </CardBody>
+                                    </Card>
+                                    <Card outline color="primary" className="mb-3">
+                                        <CardHeader className="text-white bg-primary">Tenancy & Escalation Schedule</CardHeader>
+                                        <CardBody>
+                                            <table className="table">
+                                                <thead>
+                                                <tr>
+                                                    <td>Tenant Name</td>
+                                                    <td>Term Start</td>
+                                                    <td>Term End</td>
+                                                    <td>Monthly Rent</td>
+                                                    <td className="action-column" />
+                                                </tr>
+                                                </thead>
+                                                <tbody>
+                                                {
+                                                    this.state.selectedUnit.tenancies.map((tenancy, tenancyIndex) => {
+                                                        return this.renderTenancy(this.state.selectedUnit, tenancy, tenancyIndex);
+                                                    })
+                                                }
+                                                {
+                                                    this.renderNewTenancyRow()
+                                                }
+                                                </tbody>
+
+                                            </table>
+                                        </CardBody>
+                                    </Card>
+                                </Col> : null
+                        }
                     </Row>
+                </div>
                 : null
         );
     }

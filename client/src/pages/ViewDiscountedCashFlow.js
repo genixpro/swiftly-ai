@@ -120,50 +120,6 @@ class ViewDiscountedCashFlow extends React.Component
                                                                     </tbody>
                                                                 </table>
                                                             </Col>
-                                                            <Col xs={12} sm={6} md={4}>
-                                                                <table className="table">
-                                                                    <tbody>
-                                                                    <tr>
-                                                                        <td>
-                                                                            <strong>Leasing Commission Costs (Per Lease)</strong>
-                                                                        </td>
-                                                                        <td>
-                                                                            <FieldDisplayEdit value={this.state.appraisal.discountedCashFlowInputs.leasingCommission} onChange={(newValue) => this.changeDCFInput('leasingCommission', newValue)}/>
-                                                                        </td>
-                                                                    </tr>
-                                                                    <tr>
-                                                                        <td>
-                                                                            <strong>Tenant Inducement Costs (Per Square Foot)</strong>
-                                                                        </td>
-                                                                        <td>
-                                                                            <FieldDisplayEdit value={this.state.appraisal.discountedCashFlowInputs.tenantInducementsPSF} onChange={(newValue) => this.changeDCFInput('tenantInducementsPSF', newValue)}/>
-                                                                        </td>
-                                                                    </tr>
-                                                                    </tbody>
-                                                                </table>
-                                                            </Col>
-                                                            <Col xs={12} sm={6} md={4}>
-                                                                <table className="table">
-                                                                    <tbody>
-                                                                    <tr>
-                                                                        <td>
-                                                                            <strong>Renewal Period</strong>
-                                                                        </td>
-                                                                        <td>
-                                                                            <FieldDisplayEdit value={this.state.appraisal.discountedCashFlowInputs.renewalPeriod} onChange={(newValue) => this.changeDCFInput('renewalPeriod', newValue)}/>
-                                                                        </td>
-                                                                    </tr>
-                                                                    <tr>
-                                                                        <td>
-                                                                            <strong>Market Rent (Per Square Foot)</strong>
-                                                                        </td>
-                                                                        <td>
-                                                                            <FieldDisplayEdit value={this.state.appraisal.discountedCashFlowInputs.marketRentPSF} onChange={(newValue) => this.changeDCFInput('marketRentPSF', newValue)}/>
-                                                                        </td>
-                                                                    </tr>
-                                                                    </tbody>
-                                                                </table>
-                                                            </Col>
                                                         </Row>
                                                     </CardBody>
                                                 </Card>

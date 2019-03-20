@@ -1,0 +1,63 @@
+
+
+.view-tenants-rent-roll
+{
+  .unit-row
+  {
+    cursor: pointer;
+  }
+
+  .action-column
+  {
+    opacity: 0;
+    max-width: 70px;
+  }
+
+  .tenant-row.selected-tenant-row
+  {
+    background-color: #eee;
+  }
+
+
+  .unit-row:hover
+  {
+    .action-column
+    {
+      opacity: 1;
+    }
+  }
+
+  .unit-row.selected-unit-row
+  {
+    background-color: #eee;
+  }
+
+
+  .tenant-row:hover
+  {
+    .action-column
+    {
+      opacity: 1;
+    }
+  }
+
+
+  .rdt:not(.rdtOpen)
+  {
+    cursor: pointer;
+    input {
+      cursor: pointer;
+    }
+  }
+
+  .rdt:not(:hover)
+  {
+    input {
+      border: 1px #fff;
+    }
+  }
+
+  .rdtPicker {
+    width: auto;
+  }
+}

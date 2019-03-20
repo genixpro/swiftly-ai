@@ -15,6 +15,7 @@ import ViewComparableSale from "./ViewComparableSale";
 import ViewDiscountedCashFlow from "./ViewDiscountedCashFlow";
 import ViewTenants from "./ViewTenants";
 import ViewUnitInformation from "./ViewUnitInformation";
+import ViewBuildingInformation from "./ViewBuildingInformation";
 
 class ViewAppraisal extends React.Component
 {
@@ -41,6 +42,9 @@ class ViewAppraisal extends React.Component
                                 <CardBody>
                                     <Nav tabs>
                                         <NavItem>
+                                            <NavLink to={`${this.props.match.url}/general`} activeClassName="active" tag={RRNavLink}>General</NavLink>
+                                        </NavItem>
+                                        <NavItem>
                                             <NavLink to={`${this.props.match.url}/leases`} activeClassName="active" tag={RRNavLink}>Leases</NavLink>
                                         </NavItem>
                                         <NavItem>
@@ -50,7 +54,7 @@ class ViewAppraisal extends React.Component
                                             <NavLink to={`${this.props.match.url}/comparable_sales`} activeClassName="active" tag={RRNavLink}>Comparable Sales</NavLink>
                                         </NavItem>
                                         <NavItem>
-                                            <NavLink to={`${this.props.match.url}/tenants`} activeClassName="active" tag={RRNavLink}>Tenants</NavLink>
+                                            <NavLink to={`${this.props.match.url}/tenants/rent_roll`} activeClassName="active" tag={RRNavLink}>Tenants</NavLink>
                                         </NavItem>
                                     </Nav>
                                 </CardBody>
@@ -96,6 +100,7 @@ class ViewAppraisal extends React.Component
                         <Route path={`${this.props.match.path}/discounted_cash_flow`} component={ViewDiscountedCashFlow} />
                         <Route path={`${this.props.match.path}/tenants`} component={ViewTenants} />
                         <Route path={`${this.props.match.path}/units/:unitNum`} component={ViewUnitInformation} />
+                        <Route path={`${this.props.match.path}/general`} component={ViewBuildingInformation} />
                     </Switch>
                 </div>
             </ContentWrapper>
