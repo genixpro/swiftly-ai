@@ -30,45 +30,43 @@ class ViewComparableSale extends React.Component {
 
     render() {
         return (
-            <div>
-                <Row>
-                    <Col xs={12} className={"content-column"}>
-                        <Card className="card-default">
-                            <CardBody>
-                                <div id={"view-lease-page"}>
-                                    <Row>
+            <Row>
+                <Col xs={12}>
+                    <Card className="card-default">
+                        <CardBody>
+                            <div id={"view-lease-page"}>
+                                <Row>
+                                    <Col xs={12}>
+                                        <Nav tabs>
+                                            <NavItem>
+                                                <NavLink to={`${this.props.match.url}/raw`} activeClassName="active"
+                                                         tag={RRNavLink}>Raw Comparable Sale Info</NavLink>
+                                            </NavItem>
+                                        </Nav>
+                                    </Col>
+                                </Row>
+                                {
+                                    (this.state.comparableSale && <Row>
                                         <Col xs={12}>
-                                            <Nav tabs>
-                                                <NavItem>
-                                                    <NavLink to={`${this.props.match.url}/raw`} activeClassName="active"
-                                                             tag={RRNavLink}>Raw Comparable Sale Info</NavLink>
-                                                </NavItem>
-                                            </Nav>
+                                            <Card className="card-default">
+                                                <CardBody>
+                                                    <Switch>
+                                                        <Route path={`${this.props.match.url}/raw`}
+                                                               render={() => <ViewComparableSaleExtractions
+                                                                   comparableSale={this.state.comparableSale}
+                                                                   saveComparableSaleData={this.saveComparableSaleData.bind(this)}/>}
+                                                               comparableSale={this.state.comparableSale}/>
+                                                    </Switch>
+                                                </CardBody>
+                                            </Card>
                                         </Col>
-                                    </Row>
-                                    {
-                                        (this.state.comparableSale && <Row>
-                                            <Col xs={12} className={"content-column"}>
-                                                <Card className="card-default">
-                                                    <CardBody>
-                                                        <Switch>
-                                                            <Route path={`${this.props.match.url}/raw`}
-                                                                   render={() => <ViewComparableSaleExtractions
-                                                                       comparableSale={this.state.comparableSale}
-                                                                       saveComparableSaleData={this.saveComparableSaleData.bind(this)}/>}
-                                                                   comparableSale={this.state.comparableSale}/>
-                                                        </Switch>
-                                                    </CardBody>
-                                                </Card>
-                                            </Col>
-                                        </Row>)
-                                    }
-                                </div>
-                            </CardBody>
-                        </Card>
-                    </Col>
-                </Row>
-            </div>
+                                    </Row>)
+                                }
+                            </div>
+                        </CardBody>
+                    </Card>
+                </Col>
+            </Row>
         );
     }
 }

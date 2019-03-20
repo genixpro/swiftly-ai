@@ -18,28 +18,26 @@ class ViewComparableSales extends React.Component {
 
     render() {
         return (
-            <div>
-                <Row>
-                    <Col xs={12} className={"content-column"}>
-                        <Card className="card-default">
-                            <CardBody>
-                                <div>
-                                    <Row>
-                                        <Col xs={12}>
-                                            <h3>View Comparable Sales</h3>
-                                        </Col>
-                                        <Col xs={12}>
-                                            <ComparableSaleList comparableSales={this.state.comparableSales}
-                                                                history={this.props.history}
-                                                                appraisalId={this.props.match.params._id}/>
-                                        </Col>
-                                    </Row>
-                                </div>
-                            </CardBody>
-                        </Card>
-                    </Col>
-                </Row>
-            </div>
+            <Row>
+                <Col xs={12}>
+                    <Card className="card-default">
+                        <CardBody>
+                            <div>
+                                <Row>
+                                    <Col xs={12}>
+                                        <h3>View Comparable Sales</h3>
+                                    </Col>
+                                    <Col xs={12}>
+                                        <ComparableSaleList comparableSales={this.state.comparableSales}
+                                                            history={this.props.history}
+                                                            appraisalId={this.props.match.params._id}/>
+                                    </Col>
+                                </Row>
+                            </div>
+                        </CardBody>
+                    </Card>
+                </Col>
+            </Row>
         );
     }
 }

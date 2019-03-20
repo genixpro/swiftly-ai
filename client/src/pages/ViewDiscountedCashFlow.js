@@ -86,9 +86,8 @@ class ViewDiscountedCashFlow extends React.Component
 
     render() {
         return (
-            <div>
                 <Row>
-                    <Col xs={12} className={"content-column"}>
+                    <Col xs={12}>
                         <Card className="card-default">
                             <CardBody>
                                 {(this.state.appraisal && this.state.appraisal.discountedCashFlow ) ?
@@ -229,7 +228,6 @@ class ViewDiscountedCashFlow extends React.Component
                         </Card>
                     </Col>
                 </Row>
-            </div>
         );
     }
 }

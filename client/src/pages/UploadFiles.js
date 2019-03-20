@@ -60,7 +60,7 @@ class UploadFiles extends React.Component {
         return (
             <div>
                 <Row>
-                    <Col xs={12} className={"content-column"}>
+                    <Col xs={12}>
                         <Card className="card-default">
                             <CardBody>
                                 <div>

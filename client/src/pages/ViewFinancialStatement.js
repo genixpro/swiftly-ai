@@ -32,66 +32,64 @@ class ViewFinancialStatement extends React.Component {
 
     render() {
         return (
-            <div>
-                <Row>
-                    <Col xs={12} className={"content-column"}>
-                        <Card className="card-default">
-                            <CardBody>
-                                <div id={"view-lease-page"}>
-                                    <Row>
+            <Row>
+                <Col xs={12}>
+                    <Card className="card-default">
+                        <CardBody>
+                            <div id={"view-lease-page"}>
+                                <Row>
+                                    <Col xs={12}>
+                                        <Nav tabs>
+                                            {/*<NavItem>*/}
+                                            {/*<NavLink to={`${this.props.match.url}/summary`} activeClassName="active" tag={RRNavLink}>Summarized Data</NavLink>*/}
+                                            {/*</NavItem>*/}
+                                            <NavItem>
+                                                <NavLink to={`${this.props.match.url}/raw`} activeClassName="active"
+                                                         tag={RRNavLink}>Raw Financial Statement</NavLink>
+                                            </NavItem>
+                                            {/*<NavItem>*/}
+                                            {/*<NavLink to={`${this.props.match.url}/audit`} activeClassName="active" tag={RRNavLink}>Audit</NavLink>*/}
+                                            {/*</NavItem>*/}
+                                        </Nav>
+                                    </Col>
+                                </Row>
+                                {
+                                    (this.state.financialStatement && <Row>
                                         <Col xs={12}>
-                                            <Nav tabs>
-                                                {/*<NavItem>*/}
-                                                {/*<NavLink to={`${this.props.match.url}/summary`} activeClassName="active" tag={RRNavLink}>Summarized Data</NavLink>*/}
-                                                {/*</NavItem>*/}
-                                                <NavItem>
-                                                    <NavLink to={`${this.props.match.url}/raw`} activeClassName="active"
-                                                             tag={RRNavLink}>Raw Financial Statement</NavLink>
-                                                </NavItem>
-                                                {/*<NavItem>*/}
-                                                {/*<NavLink to={`${this.props.match.url}/audit`} activeClassName="active" tag={RRNavLink}>Audit</NavLink>*/}
-                                                {/*</NavItem>*/}
-                                            </Nav>
+                                            <Card className="card-default">
+                                                <CardBody>
+                                                    <Switch>
+                                                        <Route path={`${this.props.match.url}/raw`}
+                                                               render={() => <ViewFinancialStatementExtractions
+                                                                   financialStatement={this.state.financialStatement}
+                                                                   saveFinancialStatementData={this.saveFinancialStatementData.bind(this)}/>}
+                                                               financialStatement={this.state.financialStatement}/>
+                                                        <Route path={`${this.props.match.url}/audit`}
+                                                               render={() => <ViewFinancialStatementAudit
+                                                                   financialStatement={this.state.financialStatement}
+                                                                   saveFinancialStatementData={this.saveFinancialStatementData.bind(this)}/>}
+                                                               financialStatement={this.state.financialStatement}/>
+                                                        <Route path={`${this.props.match.url}/summary`}
+                                                               render={() => <ViewFinancialStatementAudit
+                                                                   financialStatement={this.state.financialStatement}
+                                                                   saveFinancialStatementData={this.saveFinancialStatementData.bind(this)}/>}
+                                                               financialStatement={this.state.financialStatement}/>
+                                                        <Route path={`${this.props.match.url}/report`}
+                                                               render={() => <ViewFinancialStatementAudit
+                                                                   financialStatement={this.state.financialStatement}
+                                                                   saveFinancialStatementData={this.saveFinancialStatementData.bind(this)}/>}
+                                                               financialStatement={this.state.financialStatement}/>
+                                                    </Switch>
+                                                </CardBody>
+                                            </Card>
                                         </Col>
-                                    </Row>
-                                    {
-                                        (this.state.financialStatement && <Row>
-                                            <Col xs={12} className={"content-column"}>
-                                                <Card className="card-default">
-                                                    <CardBody>
-                                                        <Switch>
-                                                            <Route path={`${this.props.match.url}/raw`}
-                                                                   render={() => <ViewFinancialStatementExtractions
-                                                                       financialStatement={this.state.financialStatement}
-                                                                       saveFinancialStatementData={this.saveFinancialStatementData.bind(this)}/>}
-                                                                   financialStatement={this.state.financialStatement}/>
-                                                            <Route path={`${this.props.match.url}/audit`}
-                                                                   render={() => <ViewFinancialStatementAudit
-                                                                       financialStatement={this.state.financialStatement}
-                                                                       saveFinancialStatementData={this.saveFinancialStatementData.bind(this)}/>}
-                                                                   financialStatement={this.state.financialStatement}/>
-                                                            <Route path={`${this.props.match.url}/summary`}
-                                                                   render={() => <ViewFinancialStatementAudit
-                                                                       financialStatement={this.state.financialStatement}
-                                                                       saveFinancialStatementData={this.saveFinancialStatementData.bind(this)}/>}
-                                                                   financialStatement={this.state.financialStatement}/>
-                                                            <Route path={`${this.props.match.url}/report`}
-                                                                   render={() => <ViewFinancialStatementAudit
-                                                                       financialStatement={this.state.financialStatement}
-                                                                       saveFinancialStatementData={this.saveFinancialStatementData.bind(this)}/>}
-                                                                   financialStatement={this.state.financialStatement}/>
-                                                        </Switch>
-                                                    </CardBody>
-                                                </Card>
-                                            </Col>
-                                        </Row>)
-                                    }
-                                </div>
-                            </CardBody>
-                        </Card>
-                    </Col>
-                </Row>
-            </div>
+                                    </Row>)
+                                }
+                            </div>
+                        </CardBody>
+                    </Card>
+                </Col>
+            </Row>
         );
     }
 }

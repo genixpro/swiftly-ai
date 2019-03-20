@@ -172,210 +172,208 @@ class ViewStabilizedStatementValuation extends React.Component {
 
     render() {
         return (
-            <div>
-                <Row>
-                    <Col xs={12} className={"content-column"}>
-                        <Card className="card-default">
-                            <CardBody>
-                                {(this.state.appraisal && this.state.appraisal.incomeStatement) ?
-                                    <div id={"view-stabilized-statement"} className={"view-stabilized-statement"}>
-                                        <Row>
-                                            <Col xs={12} md={10} lg={8} xl={6}>
-                                                <Card outline color="primary" className="mb-3">
-                                                    <CardHeader className="text-white bg-primary">Income</CardHeader>
-                                                    <CardBody>
-                                                        <Table striped bordered hover responsive>
-                                                            <tbody>
-                                                            {
-                                                                this.state.appraisal.incomeStatement.incomes && this.state.appraisal.incomeStatement.incomes.map((item, itemIndex) => {
-                                                                    return this.renderIncomeStatementItemRow(item, itemIndex);
-                                                                })
-                                                            }
-                                                            {
-                                                                this.state.appraisal.incomeStatement.incomes ?
-                                                                    this.renderNewItemRow('income')
-                                                                    : null
-                                                            }
-                                                            <tr className={"total-row"}>
-                                                                <td className={"name-column"}>
-                                                                    <span>Total</span>
-                                                                </td>
-                                                                <td className={"amount-column"}>
-                                                    <span>
-                                                        $<NumberFormat
-                                                        value={this.state.incomeTotal}
-                                                        displayType={'text'}
-                                                        thousandSeparator={', '}
-                                                        decimalScale={2}
-                                                        fixedDecimalScale={true}
-                                                    />
-                                                    </span>
-                                                                </td>
-                                                                <td>
-                                                                </td>
-                                                            </tr>
-                                                            </tbody>
-                                                        </Table>
-                                                    </CardBody>
-                                                </Card>
-                                            </Col>
-                                        </Row>
-                                        <Row>
-                                            <Col xs={12} md={10} lg={8} xl={6}>
-                                                <Card outline color="primary" className="mb-3">
-                                                    <CardHeader className="text-white bg-primary">Expenses</CardHeader>
-                                                    <CardBody>
-                                                        <Table striped bordered hover responsive>
-                                                            <tbody>
-                                                            {
-                                                                this.state.appraisal.incomeStatement.expenses && this.state.appraisal.incomeStatement.expenses.map((item, itemIndex) => {
-                                                                    return this.renderIncomeStatementItemRow(item, itemIndex);
-                                                                })
-                                                            }
-                                                            {
-                                                                this.state.appraisal.incomeStatement.expenses ?
-                                                                    this.renderNewItemRow('expense')
-                                                                    : null
-                                                            }
-                                                            <tr className={"total-row"}>
-                                                                <td className={"name-column"}>
-                                                                    <span>Total</span>
-                                                                </td>
-                                                                <td className={"amount-column"}>
-                                                    <span>
-                                                        $<NumberFormat value={this.state.expenseTotal}
-                                                                       displayType={'text'}
-                                                                       thousandSeparator={', '}
-                                                                       decimalScale={2}
-                                                                       fixedDecimalScale={true}/>
-                                                    </span>
-                                                                </td>
-                                                                <td>
-                                                                </td>
-                                                            </tr>
+            <Row>
+                <Col xs={12}>
+                    <Card className="card-default">
+                        <CardBody>
+                            {(this.state.appraisal && this.state.appraisal.incomeStatement) ?
+                                <div id={"view-stabilized-statement"} className={"view-stabilized-statement"}>
+                                    <Row>
+                                        <Col xs={12} md={10} lg={8} xl={6}>
+                                            <Card outline color="primary" className="mb-3">
+                                                <CardHeader className="text-white bg-primary">Income</CardHeader>
+                                                <CardBody>
+                                                    <Table striped bordered hover responsive>
+                                                        <tbody>
+                                                        {
+                                                            this.state.appraisal.incomeStatement.incomes && this.state.appraisal.incomeStatement.incomes.map((item, itemIndex) => {
+                                                                return this.renderIncomeStatementItemRow(item, itemIndex);
+                                                            })
+                                                        }
+                                                        {
+                                                            this.state.appraisal.incomeStatement.incomes ?
+                                                                this.renderNewItemRow('income')
+                                                                : null
+                                                        }
+                                                        <tr className={"total-row"}>
+                                                            <td className={"name-column"}>
+                                                                <span>Total</span>
+                                                            </td>
+                                                            <td className={"amount-column"}>
+                                                <span>
+                                                    $<NumberFormat
+                                                    value={this.state.incomeTotal}
+                                                    displayType={'text'}
+                                                    thousandSeparator={', '}
+                                                    decimalScale={2}
+                                                    fixedDecimalScale={true}
+                                                />
+                                                </span>
+                                                            </td>
+                                                            <td>
+                                                            </td>
+                                                        </tr>
+                                                        </tbody>
+                                                    </Table>
+                                                </CardBody>
+                                            </Card>
+                                        </Col>
+                                    </Row>
+                                    <Row>
+                                        <Col xs={12} md={10} lg={8} xl={6}>
+                                            <Card outline color="primary" className="mb-3">
+                                                <CardHeader className="text-white bg-primary">Expenses</CardHeader>
+                                                <CardBody>
+                                                    <Table striped bordered hover responsive>
+                                                        <tbody>
+                                                        {
+                                                            this.state.appraisal.incomeStatement.expenses && this.state.appraisal.incomeStatement.expenses.map((item, itemIndex) => {
+                                                                return this.renderIncomeStatementItemRow(item, itemIndex);
+                                                            })
+                                                        }
+                                                        {
+                                                            this.state.appraisal.incomeStatement.expenses ?
+                                                                this.renderNewItemRow('expense')
+                                                                : null
+                                                        }
+                                                        <tr className={"total-row"}>
+                                                            <td className={"name-column"}>
+                                                                <span>Total</span>
+                                                            </td>
+                                                            <td className={"amount-column"}>
+                                                <span>
+                                                    $<NumberFormat value={this.state.expenseTotal}
+                                                                   displayType={'text'}
+                                                                   thousandSeparator={', '}
+                                                                   decimalScale={2}
+                                                                   fixedDecimalScale={true}/>
+                                                </span>
+                                                            </td>
+                                                            <td>
+                                                            </td>
+                                                        </tr>
 
-                                                            </tbody>
-                                                        </Table>
-                                                    </CardBody>
-                                                </Card>
-                                            </Col>
-                                        </Row>
-                                        <Row>
-                                            <Col xs={12} md={10} lg={8} xl={6}>
-                                                <Card outline color="primary" className="mb-3">
-                                                    <CardHeader className="text-white bg-primary">Total</CardHeader>
-                                                    <CardBody>
-                                                        <Table striped bordered hover responsive>
-                                                            <tbody>
-                                                            <tr>
-                                                                <td className={"name-column"}>
-                                                                    <span>Total Income</span>
-                                                                </td>
-                                                                <td className={"amount-column"}>
-                                                            <span>
-                                                                $<NumberFormat value={this.state.incomeTotal}
-                                                                               displayType={'text'}
-                                                                               thousandSeparator={', '}
-                                                                               decimalScale={2}
-                                                                               fixedDecimalScale={true}/>
-                                                            </span>
-                                                                </td>
-                                                                <td>
-                                                                </td>
-                                                            </tr>
-                                                            <tr>
-                                                                <td className={"name-column"}>
-                                                                    <span>Total Expenses</span>
-                                                                </td>
-                                                                <td className={"amount-column"}>
-                                                            <span>
-                                                                $<NumberFormat value={this.state.expenseTotal}
-                                                                               displayType={'text'}
-                                                                               thousandSeparator={', '}
-                                                                               decimalScale={2}
-                                                                               fixedDecimalScale={true}/>
-                                                            </span>
-                                                                </td>
-                                                                <td>
-                                                                </td>
-                                                            </tr>
-                                                            <tr>
-                                                                <td className={"name-column"}>
-                                                                    <span>Operating Income</span>
-                                                                </td>
-                                                                <td className={"amount-column"}>
-                                                            <span>
-                                                                $<NumberFormat value={this.state.operatingIncome}
-                                                                               displayType={'text'}
-                                                                               thousandSeparator={', '}
-                                                                               decimalScale={2}
-                                                                               fixedDecimalScale={true}/>
-                                                            </span>
-                                                                </td>
-                                                                <td>
-                                                                </td>
-                                                            </tr>
-                                                            </tbody>
-                                                        </Table>
-                                                    </CardBody>
-                                                </Card>
-                                            </Col>
-                                        </Row>
-                                        <Row>
-                                            <Col xs={12} md={10} lg={8} xl={6}>
-                                                <Card outline color="primary" className="mb-3">
-                                                    <CardHeader className="text-white bg-primary">Valuation</CardHeader>
-                                                    <CardBody>
-                                                        <Table striped bordered hover responsive>
-                                                            <tbody>
-                                                            <tr>
-                                                                <td className={"name-column"}>
-                                                                    <span>Capitalization Rate</span>
-                                                                </td>
-                                                                <td className={"amount-column"}>
-                                                    <span>
-                                                        <input
-                                                            type="number"
-                                                            value={this.state.capitalizationRate}
-                                                            onChange={this.changeCapitalization.bind(this)}
-                                                            min={0.1}
-                                                            step={0.1}
+                                                        </tbody>
+                                                    </Table>
+                                                </CardBody>
+                                            </Card>
+                                        </Col>
+                                    </Row>
+                                    <Row>
+                                        <Col xs={12} md={10} lg={8} xl={6}>
+                                            <Card outline color="primary" className="mb-3">
+                                                <CardHeader className="text-white bg-primary">Total</CardHeader>
+                                                <CardBody>
+                                                    <Table striped bordered hover responsive>
+                                                        <tbody>
+                                                        <tr>
+                                                            <td className={"name-column"}>
+                                                                <span>Total Income</span>
+                                                            </td>
+                                                            <td className={"amount-column"}>
+                                                        <span>
+                                                            $<NumberFormat value={this.state.incomeTotal}
+                                                                           displayType={'text'}
+                                                                           thousandSeparator={', '}
+                                                                           decimalScale={2}
+                                                                           fixedDecimalScale={true}/>
+                                                        </span>
+                                                            </td>
+                                                            <td>
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td className={"name-column"}>
+                                                                <span>Total Expenses</span>
+                                                            </td>
+                                                            <td className={"amount-column"}>
+                                                        <span>
+                                                            $<NumberFormat value={this.state.expenseTotal}
+                                                                           displayType={'text'}
+                                                                           thousandSeparator={', '}
+                                                                           decimalScale={2}
+                                                                           fixedDecimalScale={true}/>
+                                                        </span>
+                                                            </td>
+                                                            <td>
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td className={"name-column"}>
+                                                                <span>Operating Income</span>
+                                                            </td>
+                                                            <td className={"amount-column"}>
+                                                        <span>
+                                                            $<NumberFormat value={this.state.operatingIncome}
+                                                                           displayType={'text'}
+                                                                           thousandSeparator={', '}
+                                                                           decimalScale={2}
+                                                                           fixedDecimalScale={true}/>
+                                                        </span>
+                                                            </td>
+                                                            <td>
+                                                            </td>
+                                                        </tr>
+                                                        </tbody>
+                                                    </Table>
+                                                </CardBody>
+                                            </Card>
+                                        </Col>
+                                    </Row>
+                                    <Row>
+                                        <Col xs={12} md={10} lg={8} xl={6}>
+                                            <Card outline color="primary" className="mb-3">
+                                                <CardHeader className="text-white bg-primary">Valuation</CardHeader>
+                                                <CardBody>
+                                                    <Table striped bordered hover responsive>
+                                                        <tbody>
+                                                        <tr>
+                                                            <td className={"name-column"}>
+                                                                <span>Capitalization Rate</span>
+                                                            </td>
+                                                            <td className={"amount-column"}>
+                                                <span>
+                                                    <input
+                                                        type="number"
+                                                        value={this.state.capitalizationRate}
+                                                        onChange={this.changeCapitalization.bind(this)}
+                                                        min={0.1}
+                                                        step={0.1}
+                                                    />
+                                                </span>
+                                                            </td>
+                                                            <td>
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td className={"name-column"}>
+                                                                <span>Valuation</span>
+                                                            </td>
+                                                            <td className={"amount-column"}>
+                                                        <span>
+                                                            $<NumberFormat value={this.state.valuation}
+                                                                           displayType={'text'}
+                                                                           thousandSeparator={', '}
+                                                                           decimalScale={2}
+                                                                           fixedDecimalScale={true}
                                                         />
-                                                    </span>
-                                                                </td>
-                                                                <td>
-                                                                </td>
-                                                            </tr>
-                                                            <tr>
-                                                                <td className={"name-column"}>
-                                                                    <span>Valuation</span>
-                                                                </td>
-                                                                <td className={"amount-column"}>
-                                                            <span>
-                                                                $<NumberFormat value={this.state.valuation}
-                                                                               displayType={'text'}
-                                                                               thousandSeparator={', '}
-                                                                               decimalScale={2}
-                                                                               fixedDecimalScale={true}
-                                                            />
-                                                            </span>
-                                                                </td>
-                                                                <td>
-                                                                </td>
-                                                            </tr>
-                                                            </tbody>
-                                                        </Table>
-                                                    </CardBody>
-                                                </Card>
-                                            </Col>
-                                        </Row>
-                                    </div>
-                                    : null}
-                            </CardBody>
-                        </Card>
-                    </Col>
-                </Row>
-            </div>
+                                                        </span>
+                                                            </td>
+                                                            <td>
+                                                            </td>
+                                                        </tr>
+                                                        </tbody>
+                                                    </Table>
+                                                </CardBody>
+                                            </Card>
+                                        </Col>
+                                    </Row>
+                                </div>
+                                : null}
+                        </CardBody>
+                    </Card>
+                </Col>
+            </Row>
         );
     }
 }
