@@ -46,6 +46,9 @@ class Unit(EmbeddedDocument):
 
     currentTenancy = EmbeddedDocumentField(Tenancy)
 
+    # General comments on the unit
+    remarks = StringField()
+
     def findTenancyAtDate(self, tenancyDate):
         for tenancy in self.tenancies:
             if tenancy.startDate and tenancy.startDate <= tenancyDate and tenancy.endDate and tenancy.endDate >= tenancyDate:
