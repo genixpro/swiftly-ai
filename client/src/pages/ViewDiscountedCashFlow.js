@@ -32,11 +32,11 @@ class ViewDiscountedCashFlow extends React.Component
 
         Object.values(grouped).map((cashFlows) =>
         {
-            if (cashFlows[0].type === 'income')
+            if (cashFlows[0].cashFlowType === 'income')
             {
                 incomes.push(cashFlows);
             }
-            else if (cashFlows[0].type === 'expense')
+            else if (cashFlows[0].cashFlowType === 'expense')
             {
                 expenses.push(cashFlows);
             }
@@ -109,6 +109,12 @@ class ViewDiscountedCashFlow extends React.Component
                                                                             <FieldDisplayEdit value={this.state.appraisal.discountedCashFlowInputs.inflation} onChange={(newValue) => this.changeDCFInput('inflation', newValue)}/>
                                                                         </td>
                                                                     </tr>
+                                                                    </tbody>
+                                                                </table>
+                                                            </Col>
+                                                            <Col xs={12} sm={6} md={4}>
+                                                                <table className="table">
+                                                                    <tbody>
                                                                     <tr>
                                                                         <td>
                                                                             <strong>Discount Rate</strong>

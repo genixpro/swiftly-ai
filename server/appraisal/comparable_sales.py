@@ -1,6 +1,5 @@
 from cornice.resource import resource
 from pyramid.authorization import Allow, Everyone
-from webob_graphql import serve_graphql_request
 import pymongo
 import bson
 import tempfile

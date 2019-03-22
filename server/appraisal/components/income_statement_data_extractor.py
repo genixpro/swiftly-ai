@@ -21,9 +21,9 @@ class IncomeStatementDataExtractor (DataExtractor):
         incomeStatement.expenses = []
 
         for item in items:
-            if item.type == 'income':
+            if item.cashFlowType == 'income':
                 incomeStatement.incomes.append(item)
-            elif item.type == 'expense':
+            elif item.cashFlowType == 'expense':
                 incomeStatement.expenses.append(item)
 
         return incomeStatement
@@ -49,9 +49,9 @@ class IncomeStatementDataExtractor (DataExtractor):
         incomeStatementItem.monthlyAmount = incomeStatementItem.yearlyAmount / 12.0
 
         if 'INCOME' in lineItem['modifiers']:
-            incomeStatementItem.type = 'income'
+            incomeStatementItem.cashFlowType = 'income'
         elif 'EXPENSE' in lineItem['modifiers']:
-            incomeStatementItem.type = 'expense'
+            incomeStatementItem.cashFlowType = 'expense'
 
         return incomeStatementItem
 

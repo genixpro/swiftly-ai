@@ -6,7 +6,7 @@ from .discounted_cash_flow import DiscountedCashFlow
 from .discounted_cash_flow_inputs import DiscountedCashFlowInputs
 
 class Appraisal(Document):
-    meta = {'collection': 'appraisals'}
+    meta = {'collection': 'appraisals', 'strict': False}
 
     # The name of this appraisal. Arbitrary and chosen by the user
     name = StringField()

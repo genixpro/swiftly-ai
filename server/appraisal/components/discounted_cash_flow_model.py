@@ -27,8 +27,8 @@ class DiscountedCashFlowModel:
 
 
     def projectRentalCashFlows(self, unitInfo, startYear, endYear, discountCashFlowInputs):
-        startDate = datetime.date(year=startYear, month=1, day=1)
-        endDate = datetime.date(year=endYear, month=12, day=1)
+        startDate = datetime.datetime(year=startYear, month=1, day=1)
+        endDate = datetime.datetime(year=endYear, month=12, day=1)
 
         currentDate = copy.copy(startDate)
 
@@ -77,7 +77,7 @@ class DiscountedCashFlowModel:
             incomeItem = MonthlyCashFlowItem(
                 name="Rent",
                 amount=rentAmount,
-                type="income",
+                cashFlowType="income",
                 year=currentDate.year,
                 month=currentDate.month,
                 relativeMonth=month
@@ -87,7 +87,7 @@ class DiscountedCashFlowModel:
             leasingCommissionItem = MonthlyCashFlowItem(
                 name="Lease Commission",
                 amount=leasingCommissionAmount,
-                type="expense",
+                cashFlowType="expense",
                 year=currentDate.year,
                 month=currentDate.month,
                 relativeMonth=month
@@ -97,7 +97,7 @@ class DiscountedCashFlowModel:
             tenantInducementsItem = MonthlyCashFlowItem(
                 name="Tenant Inducements",
                 amount=inducementAmount,
-                type="expense",
+                cashFlowType="expense",
                 year=currentDate.year,
                 month=currentDate.month,
                 relativeMonth=month
@@ -129,7 +129,7 @@ class DiscountedCashFlowModel:
             item = MonthlyCashFlowItem(
                 name=incomeStatementItem.name,
                 amount=incomeStatementItem.monthlyAmount * totalInflation,
-                type=incomeStatementItem.type,
+                cashFlowType=incomeStatementItem.cashFlowType,
                 year=currentDate.year,
                 month=currentDate.month,
                 relativeMonth=month
@@ -166,7 +166,7 @@ class DiscountedCashFlowModel:
             mergedCashFlows.append(MonthlyCashFlowItem(
                 name=key[2],
                 amount=float(numpy.sum([cashFlow.amount for cashFlow in grouped[key]])),
-                type=grouped[key][0].type,
+                cashFlowType=grouped[key][0].cashFlowType,
                 year=key[0],
                 month=key[1],
                 relativeMonth=grouped[key][0].relativeMonth
@@ -205,7 +205,7 @@ class DiscountedCashFlowModel:
                 name=monthCashFlows[0].name,
                 year=monthCashFlows[0].year,
                 relativeYear=monthCashFlows[0].year - minYear,
-                type=monthCashFlows[0].type,
+                cashFlowType=monthCashFlows[0].cashFlowType,
                 amount=float(numpy.sum([cashFlow.amount for cashFlow in monthCashFlows]))
             )
             yearlyCashFlowItems.append(yearlyCashFlow)
@@ -232,9 +232,9 @@ class DiscountedCashFlowModel:
         incomeGrouped = {}
         expenseGrouped = {}
         for cashFlow in yearlyCashFlowItems:
-            if cashFlow.type == 'income':
+            if cashFlow.cashFlowType == 'income':
                 grouped = incomeGrouped
-            elif cashFlow.type == 'expense':
+            elif cashFlow.cashFlowType == 'expense':
                 grouped = expenseGrouped
             else:
                 continue

@@ -7,6 +7,8 @@ class MonthlyCashFlowItem(EmbeddedDocument):
         This class represents a single input number in a discounted cash flow model. This an amount of cash flow
         taking place in a single month for a single item
     """
+    meta = {'strict': False}
+
     # The name of the cash flow item
     name = StringField()
 
@@ -23,13 +25,15 @@ class MonthlyCashFlowItem(EmbeddedDocument):
     amount = FloatField()
 
     # A string representing the type of this cash flow,
-    type = StringField()
+    cashFlowType = StringField()
 
 
 class YearlyCashFlowItem(EmbeddedDocument):
     """
         This class represents the summarization of a cash flow over a year.
     """
+    meta = {'strict': False}
+
     # The name of the cash flow item
     name = StringField()
 
@@ -43,7 +47,7 @@ class YearlyCashFlowItem(EmbeddedDocument):
     amount = FloatField()
 
     # A string representing the type of this cash flow,
-    type = StringField()
+    cashFlowType = StringField()
     
 
 class DiscountedCashFlowSummaryItem(EmbeddedDocument):

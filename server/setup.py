@@ -24,7 +24,11 @@ requires = [
     'dateparser',
     'python-dateutil',
     'mongoengine',
-    'collada'
+    'pycollada',
+    'tensorflow',
+    'gunicorn',
+    'scipy',
+    'scikit-learn'
 ]
 
 tests_require = [

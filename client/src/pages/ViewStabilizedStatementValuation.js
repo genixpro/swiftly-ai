@@ -72,7 +72,7 @@ class ViewStabilizedStatementValuation extends React.Component {
 
 
     removeIncomeItem(item, itemIndex) {
-        if (item.type === 'income') {
+        if (item.cashFlowType === 'income') {
             this.state.appraisal.incomeStatement.incomes.splice(itemIndex, 1);
         }
         else {

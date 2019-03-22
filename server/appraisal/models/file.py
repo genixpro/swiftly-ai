@@ -49,7 +49,7 @@ class Word(EmbeddedDocument):
 
 
 class File(Document):
-    meta = {'collection': 'files'}
+    meta = {'collection': 'files', 'strict': False}
 
     # The original uploaded filename for this file
     fileName = StringField()
@@ -58,7 +58,7 @@ class File(Document):
     appraisalId = StringField()
 
     # The type of this document
-    type = StringField()
+    fileType = StringField()
 
     # This is a list of filenames for images rendered from this document
     images = ListField(StringField())

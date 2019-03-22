@@ -4,6 +4,8 @@ import datetime
 
 
 class IncomeStatementItem(EmbeddedDocument):
+    meta = {'strict': False}
+
     # The name of the income statement item
     name = StringField()
 
@@ -14,7 +16,7 @@ class IncomeStatementItem(EmbeddedDocument):
     yearlyAmount = FloatField()
 
     # Whether the income statement item is an income or an expense
-    type = StringField()
+    cashFlowType = StringField()
 
 
 

@@ -15,10 +15,10 @@ class UploadedFileListItem extends React.Component
     onFileTypeChanged(evt)
     {
         const file = this.state.file;
-        file.type = evt.target.value;
+        file.fileType = evt.target.value;
         this.setState({file: file});
 
-        axios.post(`/appraisal/${this.props.appraisalId}/files/${this.state.file._id['$oid']}`, {"type": evt.target.value}).then((response) =>
+        axios.post(`/appraisal/${this.props.appraisalId}/files/${this.state.file._id['$oid']}`, {"fileType": evt.target.value}).then((response) =>
         {
 
         });
@@ -34,15 +34,15 @@ class UploadedFileListItem extends React.Component
 
     onFileClicked()
     {
-        if (this.state.file.type === 'financials')
+        if (this.state.file.fileType === 'financials')
         {
             this.props.history.push("/appraisal/" + this.props.appraisalId + "/financial_statement/" + this.state.file._id['$oid'] + "/raw");
         }
-        else if (this.state.file.type === 'lease')
+        else if (this.state.file.fileType === 'lease')
         {
             this.props.history.push("/appraisal/" + this.props.appraisalId + "/lease/" + this.state.file._id['$oid'] + "/raw");
         }
-        else if (this.state.file.type === 'comparable')
+        else if (this.state.file.fileType === 'comparable')
         {
             this.props.history.push("/appraisal/" + this.props.appraisalId + "/comparable_sale/" + this.state.file._id['$oid'] + "/raw");
         }
@@ -63,7 +63,7 @@ class UploadedFileListItem extends React.Component
             <tr className={"uploaded-file-list-item"} onClick={(evt) => this.onFileClicked()}>
                 <td>{file.fileName}</td>
                 <td>
-                    <select value={file.type} onChange={this.onFileTypeChanged.bind(this)}>
+                    <select value={file.fileType} onChange={this.onFileTypeChanged.bind(this)}>
                         <option value={"lease"}>Lease</option>
                         <option value={"financials"}>Financial Statement</option>
                         <option value={"comparable"}>Comparable Sale</option>

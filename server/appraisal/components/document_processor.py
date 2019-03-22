@@ -55,7 +55,7 @@ class DocumentProcessor:
         if hasExistingData:
             file.words = existingFile.words
             file.pageTypes = existingFile.pageTypes
-            file.type = existingFile.type
+            file.fileType = existingFile.fileType
         else:
             self.classifyAndProcessDocument(file)
 
@@ -98,7 +98,7 @@ class DocumentProcessor:
 
 
     def classifyAndProcessDocument(self, file):
-        file.type = self.classifier.classifyFile(file)
+        file.fileType = self.classifier.classifyFile(file)
         file.pageTypes = self.pageClassifier.classifyFile(file)
 
         extractor = DocumentExtractor(self.db)

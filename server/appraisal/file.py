@@ -1,6 +1,5 @@
 from cornice.resource import resource
 from pyramid.authorization import Allow, Everyone
-from webob_graphql import serve_graphql_request
 import tempfile
 import subprocess
 import os
@@ -36,7 +35,7 @@ class FileAPI(object):
 
         query["appraisalId"] = appraisalId
 
-        files = File.objects(**query).only('fileName', 'type')
+        files = File.objects(**query).only('fileName', 'fileType')
 
         return {"files": [json.loads(file.to_json()) for file in files]}
 
@@ -58,7 +57,8 @@ class FileAPI(object):
             del data['_id']
 
         file = File.objects(id=fileId).first()
-        file.update(**data)
+
+        file.modify(**data)
         file.save()
 
         # self.updateStabilizedStatement(appraisalId)

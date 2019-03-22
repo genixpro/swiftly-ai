@@ -22,7 +22,7 @@ import './styles/bootstrap.scss';
 import './styles/app.scss'
 import axios from 'axios';
 
-axios.defaults.baseURL = "http://localhost:3002/";
+axios.defaults.baseURL = process.env.VALUATE_ENVIRONMENT.REACT_APP_SERVER_URL;
 
 axios.interceptors.response.use(function (response) {
     // Do something with response data

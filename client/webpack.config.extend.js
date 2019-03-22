@@ -18,8 +18,11 @@ const webpack = require('webpack');
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 const rtlcssLoader = path.resolve(__dirname, 'rtlcss-loader.js');
 const RelayCompilerWebpackPlugin = require('relay-compiler-webpack-plugin');
+const dotenv=require("dotenv");
+
 
 module.exports = (webpackConfig, env, { paths }) => {
+    const valuateEnv=dotenv.config({path: '.env.' + (process.env.VALUATE_ENV || 'development')}).parsed;
 
     // Support for RTL
     /*
@@ -78,6 +81,12 @@ module.exports = (webpackConfig, env, { paths }) => {
     // webpackConfig.plugins = (webpackConfig.plugins || []).concat([
     //     new BundleAnalyzerPlugin()
     // ]);
+
+    webpackConfig.plugins = (webpackConfig.plugins || []).concat([
+        new webpack.DefinePlugin({
+            'process.env.VALUATE_ENVIRONMENT': JSON.stringify(valuateEnv)
+        })
+    ]);
 
     // here you can extend your webpackConfig at will
     return webpackConfig

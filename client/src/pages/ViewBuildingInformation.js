@@ -50,7 +50,7 @@ class ViewBuildingInformation extends React.Component
                                                 <CardHeader className="text-white bg-primary">General Information</CardHeader>
                                                 <CardBody>
                                                     <Row>
-                                                        <Col xs={12} sm={6} md={4}>
+                                                        <Col xs={12} sm={10} md={8}>
                                                             <table className="table">
                                                                 <tbody>
                                                                 <tr>
@@ -63,7 +63,7 @@ class ViewBuildingInformation extends React.Component
                                                                 </tr>
                                                                 <tr>
                                                                     <td>
-                                                                        <strong>Discount Rate</strong>
+                                                                        <strong>Address</strong>
                                                                     </td>
                                                                     <td>
                                                                         <FieldDisplayEdit value={this.state.appraisal.address} onChange={(newValue) => this.changeAppraisalField('address', newValue)}/>
@@ -82,7 +82,7 @@ class ViewBuildingInformation extends React.Component
                                                                         <strong>Region</strong>
                                                                     </td>
                                                                     <td>
-                                                                        <FieldDisplayEdit value={this.state.appraisal.city} onChange={(newValue) => this.changeAppraisalField('region', newValue)}/>
+                                                                        <FieldDisplayEdit value={this.state.appraisal.region} onChange={(newValue) => this.changeAppraisalField('region', newValue)}/>
                                                                     </td>
                                                                 </tr>
                                                                 <tr>

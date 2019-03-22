@@ -1,6 +1,6 @@
 import React from 'react';
 import ContentWrapper from '../components/Layout/ContentWrapper';
-import { Row, Col, Nav, NavItem, NavLink, Card, CardBody, CardHeader } from 'reactstrap';
+import { Row, Col, Nav, NavItem, NavLink, Card, CardBody, CardHeader, Collapse } from 'reactstrap';
 import { Switch, Route } from 'react-router-dom';
 import { NavLink as RRNavLink } from 'react-router-dom';
 
@@ -16,6 +16,8 @@ import ViewDiscountedCashFlow from "./ViewDiscountedCashFlow";
 import ViewTenants from "./ViewTenants";
 import ViewUnitInformation from "./ViewUnitInformation";
 import ViewBuildingInformation from "./ViewBuildingInformation";
+import ViewExpenses from "./ViewExpenses";
+import ViewChecklist from "./ViewChecklist";
 
 class ViewAppraisal extends React.Component
 {
@@ -45,16 +47,22 @@ class ViewAppraisal extends React.Component
                                             <NavLink to={`${this.props.match.url}/general`} activeClassName="active" tag={RRNavLink}>General</NavLink>
                                         </NavItem>
                                         <NavItem>
-                                            <NavLink to={`${this.props.match.url}/leases`} activeClassName="active" tag={RRNavLink}>Leases</NavLink>
+                                            <NavLink to={`${this.props.match.url}/checklist`} activeClassName="active" tag={RRNavLink}>Checklist</NavLink>
                                         </NavItem>
-                                        <NavItem>
-                                            <NavLink to={`${this.props.match.url}/financial_statements`} activeClassName="active" tag={RRNavLink}>Financials</NavLink>
-                                        </NavItem>
-                                        <NavItem>
-                                            <NavLink to={`${this.props.match.url}/comparable_sales`} activeClassName="active" tag={RRNavLink}>Comparable Sales</NavLink>
-                                        </NavItem>
+                                        {/*<NavItem>*/}
+                                            {/*<NavLink to={`${this.props.match.url}/leases`} activeClassName="active" tag={RRNavLink}>Leases</NavLink>*/}
+                                        {/*</NavItem>*/}
+                                        {/*<NavItem>*/}
+                                            {/*<NavLink to={`${this.props.match.url}/financial_statements`} activeClassName="active" tag={RRNavLink}>Financials</NavLink>*/}
+                                        {/*</NavItem>*/}
+                                        {/*<NavItem>*/}
+                                            {/*<NavLink to={`${this.props.match.url}/comparable_sales`} activeClassName="active" tag={RRNavLink}>Comparable Sales</NavLink>*/}
+                                        {/*</NavItem>*/}
                                         <NavItem>
                                             <NavLink to={`${this.props.match.url}/tenants/rent_roll`} activeClassName="active" tag={RRNavLink}>Tenants</NavLink>
+                                        </NavItem>
+                                        <NavItem>
+                                            <NavLink to={`${this.props.match.url}/expenses`} activeClassName="active" tag={RRNavLink}>Expenses</NavLink>
                                         </NavItem>
                                     </Nav>
                                 </CardBody>
@@ -101,6 +109,8 @@ class ViewAppraisal extends React.Component
                         <Route path={`${this.props.match.path}/tenants`} component={ViewTenants} />
                         <Route path={`${this.props.match.path}/units/:unitNum`} component={ViewUnitInformation} />
                         <Route path={`${this.props.match.path}/general`} component={ViewBuildingInformation} />
+                        <Route path={`${this.props.match.path}/expenses`} component={ViewExpenses} />
+                        <Route path={`${this.props.match.path}/checklist`} component={ViewChecklist} />
                     </Switch>
                 </div>
             </ContentWrapper>

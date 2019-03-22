@@ -2,7 +2,6 @@ from cornice.resource import resource
 from pyramid.authorization import Allow, Everyone
 import bson
 import json
-from webob_graphql import serve_graphql_request
 from .components.discounted_cash_flow_model import DiscountedCashFlowModel
 from pprint import pprint
 from .models.appraisal import Appraisal

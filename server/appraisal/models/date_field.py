@@ -18,6 +18,6 @@ class ConvertingDateField(mongoengine.fields.DateTimeField):
         value = super(ConvertingDateField, self).to_python(value)
         # convert datetime to date
         if isinstance(value, datetime.datetime):
-            value = datetime.date(value.year, value.month, value.day)
+            value = datetime.datetime(value.year, value.month, value.day)
         return value
 

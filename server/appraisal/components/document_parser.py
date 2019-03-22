@@ -152,14 +152,14 @@ class DocumentParser:
     def assignLineNumbersToWords(self, words):
         wordsByPage = {}
         for word in words:
-            if word['page'] not in wordsByPage:
-                wordsByPage[word['page']] = []
-            wordsByPage[word['page']].append(word)
+            if word.page not in wordsByPage:
+                wordsByPage[word.page] = []
+            wordsByPage[word.page].append(word)
 
         for page in wordsByPage.keys():
             lines = []
 
-            sortedWords = sorted(wordsByPage[page], key=lambda word: word['left'])
+            sortedWords = sorted(wordsByPage[page], key=lambda word: word.left)
             for word in sortedWords:
                 # Find the maximum IoU between this word and any existing lines
                 bestIoU = None
@@ -172,16 +172,16 @@ class DocumentParser:
 
                 # If intersection over union > 0.5, take on the same line
                 if bestLine is not None and bestIoU > 0.5:
-                    word['line'] = bestLine
-                    bestLine['top'] = min(bestLine['top'], word['top'])
-                    bestLine['bottom'] = max(bestLine['bottom'], word['bottom'])
+                    word.line = bestLine
+                    bestLine['top'] = min(bestLine['top'], word.top)
+                    bestLine['bottom'] = max(bestLine['bottom'], word.bottom)
                 else:
                     newLine = {
-                        'top': word['top'],
-                        'bottom': word['bottom']
+                        'top': word.top,
+                        'bottom': word.bottom
                     }
                     lines.append(newLine)
-                    word['line'] = newLine
+                    word.line = newLine
 
             # Now sort the lines by their top point
             lines = sorted(lines, key=lambda line: line['top'])
@@ -191,29 +191,29 @@ class DocumentParser:
                 line['lineNumber'] = lineNumber
 
             for word in sortedWords:
-                word['lineNumber'] = word['line']['lineNumber']
-                del word['line']
+                word.lineNumber = word.line['lineNumber']
+                del word.line
         return words
 
     def assignColumnNumbersToWords(self, words):
         wordsByPage = {}
         for word in words:
-            if word['page'] not in wordsByPage:
-                wordsByPage[word['page']] = []
-            wordsByPage[word['page']].append(word)
+            if word.page not in wordsByPage:
+                wordsByPage[word.page] = []
+            wordsByPage[word.page].append(word)
 
-        averageWordWidth = numpy.mean([word['right'] - word['left'] for word in words])
+        averageWordWidth = numpy.mean([word.right - word.left for word in words])
 
         for page in wordsByPage:
             pageWords = wordsByPage[page]
 
-            leftPositions = numpy.array([[word['left']] for word in pageWords])
+            leftPositions = numpy.array([[word.left] for word in pageWords])
             leftKDE = KernelDensity(kernel='gaussian', bandwidth=averageWordWidth).fit(leftPositions)
             grid = numpy.reshape(numpy.linspace(0, 1, 1000), newshape=[1000, 1])
             leftProbs = leftKDE.score_samples(grid)
             leftPeaks = scipy.signal.find_peaks(leftProbs)[0] / 1000
 
-            rightPositions = numpy.array([[word['right']] for word in pageWords])
+            rightPositions = numpy.array([[word.right] for word in pageWords])
             rightKDE = KernelDensity(kernel='gaussian', bandwidth=averageWordWidth).fit(rightPositions)
             grid = numpy.reshape(numpy.linspace(0, 1, 1000), newshape=[1000, 1])
             rightProbs = rightKDE.score_samples(grid)
@@ -227,37 +227,37 @@ class DocumentParser:
                 # Find the left column closest to this word
                 bestDist = None
                 for column, peak in enumerate(leftPeaks):
-                    dist = abs(word['left'] - peak)
+                    dist = abs(word.left - peak)
                     if bestDist is None or (dist < bestDist):
-                        word['columnLeft'] = column
+                        word.columnLeft = column
                         bestDist = dist
 
                 # Find the right column closest to this word
                 bestDist = None
                 for column, peak in enumerate(rightPeaks):
-                    dist = abs(word['right'] - peak)
+                    dist = abs(word.right - peak)
                     if bestDist is None or (dist < bestDist):
-                        word['columnRight'] = column
+                        word.columnRight = column
                         bestDist = dist
 
         return words
 
     def mergeWords(self, words):
-        # words = sorted(words, key=lambda word: (word['page'], word['lineNumber'], word['left']))
+        # words = sorted(words, key=lambda word: (word.page, word.lineNumber, word.left))
         #
         # lastWord = None
         # wordsToRemove = []
         # mergeRatio = 0.050
         # for word in words:
         #     if lastWord is not None:
-        #         horizontalGap = word['left'] - lastWord['right']
-        #         maxCharSize = max((word['right'] - word['left']) / len(word['word']), (lastWord['right'] - lastWord['left']) / len(lastWord['word']))
+        #         horizontalGap = word.left - lastWord.right
+        #         maxCharSize = max((word.right - word.left) / len(word.word), (lastWord.right - lastWord.left) / len(lastWord.word))
         #
-        #         if word['lineNumber'] == lastWord['lineNumber'] and horizontalGap < (maxCharSize * mergeRatio):
-        #             lastWord['word'] += word['word']
-        #             lastWord['right'] = word['right']
-        #             lastWord['top'] = min(lastWord['top'], word['top'])
-        #             lastWord['bottom'] = max(lastWord['bottom'], word['bottom'])
+        #         if word.lineNumber == lastWord.lineNumber and horizontalGap < (maxCharSize * mergeRatio):
+        #             lastWord.word += word.word
+        #             lastWord.right = word.right
+        #             lastWord.top = min(lastWord.top, word.top)
+        #             lastWord.bottom = max(lastWord.bottom, word.bottom)
         #             wordsToRemove.append(word)
         #         else:
         #             lastWord = word
@@ -271,7 +271,7 @@ class DocumentParser:
 
     def assignWordIndexesToWords(self, words):
         for index, word in enumerate(words):
-            word['index'] = index
+            word.index = index
 
     def processImage(self, imageData, fileId, extractWords=True):
         if extractWords:
