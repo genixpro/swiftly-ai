@@ -4,6 +4,7 @@ from .unit import Unit
 from .income_statement import IncomeStatement
 from .discounted_cash_flow import DiscountedCashFlow
 from .discounted_cash_flow_inputs import DiscountedCashFlowInputs
+from .appraisal_validation_result import AppraisalValidationResult
 
 class Appraisal(Document):
     meta = {'collection': 'appraisals', 'strict': False}
@@ -35,3 +36,5 @@ class Appraisal(Document):
     # Discounted cash flow for this Appraisal
     discountedCashFlow = EmbeddedDocumentField(DiscountedCashFlow)
 
+    # The validation results for this appraisal
+    validationResult = EmbeddedDocumentField(AppraisalValidationResult)

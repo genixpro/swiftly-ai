@@ -2,7 +2,7 @@ from cornice.resource import resource
 from pyramid.authorization import Allow, Everyone
 import bson
 import json
-from .components.discounted_cash_flow_model import DiscountedCashFlowModel
+from .components.document_processor import DocumentProcessor
 from pprint import pprint
 from .models.appraisal import Appraisal
 from .models.file import File
@@ -14,7 +14,7 @@ class AppraisalAPI(object):
     def __init__(self, request, context=None):
         self.request = request
 
-        self.discountedCashFlow = DiscountedCashFlowModel()
+        self.processor = DocumentProcessor(request.registry.db, request.registry.azureBlobStorage)
 
     def __acl__(self):
         return [(Allow, Everyone, 'everything')]
@@ -68,8 +68,7 @@ class AppraisalAPI(object):
         appraisal = Appraisal.objects(id=appraisalId).first()
         appraisal.modify(**data)
 
-        discountedCashFlow = self.discountedCashFlow.createDiscountedCashFlow(appraisal)
-        appraisal.discountedCashFlow = discountedCashFlow
+        self.processor.processAppraisalResults(appraisal)
 
         appraisal.save()
 

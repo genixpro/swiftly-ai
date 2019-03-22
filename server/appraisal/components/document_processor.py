@@ -9,7 +9,7 @@ from pprint import pprint
 from .tenancy_data_extractor import TenancyDataExtractor
 from .income_statement_data_extractor import IncomeStatementDataExtractor
 from .discounted_cash_flow_model import DiscountedCashFlowModel
-
+from .appraisal_validator import AppraisalValidator
 
 class DocumentProcessor:
     """
@@ -25,6 +25,7 @@ class DocumentProcessor:
         self.tenancyDataExtractor = TenancyDataExtractor()
         self.incomeStatementExtractor = IncomeStatementDataExtractor()
         self.discountedCashFlow = DiscountedCashFlowModel()
+        self.appraisalValidator = AppraisalValidator()
 
 
     def processFileUpload(self, fileName, fileData, appraisal):
@@ -62,7 +63,8 @@ class DocumentProcessor:
         # Save
         file.save()
 
-        self.extractAndProcessAppraisalData(file, appraisal)
+        self.extractAndMergeAppraisalData(file, appraisal)
+        self.processAppraisalResults(appraisal)
 
         appraisal.save()
 
@@ -105,7 +107,7 @@ class DocumentProcessor:
         extractor.predictDocument(file)
 
 
-    def extractAndProcessAppraisalData(self, file, appraisal):
+    def extractAndMergeAppraisalData(self, file, appraisal):
         extractedUnits = self.tenancyDataExtractor.extractUnits(file)
 
         # Now we merge together the existing units from the appraisal
@@ -127,7 +129,12 @@ class DocumentProcessor:
         else:
             appraisal.incomeStatement.mergeWithIncomeStatement(incomeStatement)
 
+
+
+    def processAppraisalResults(self, appraisal):
         discountedCashFlow = self.discountedCashFlow.createDiscountedCashFlow(appraisal)
         appraisal.discountedCashFlow = discountedCashFlow
 
+        validationResult = self.appraisalValidator.validateAppraisal(appraisal)
+        appraisal.validationResult = validationResult
 

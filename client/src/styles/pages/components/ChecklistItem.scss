@@ -1,0 +1,13 @@
+
+.checklist-item, .checklist-item.card-default
+{
+  background: $primary;
+  margin-bottom: 5px;
+  color: white;
+
+  .card-header
+  {
+    cursor: pointer;
+    background: transparent;
+  }
+}
