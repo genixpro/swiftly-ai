@@ -37,4 +37,4 @@ class Appraisal(Document):
     discountedCashFlow = EmbeddedDocumentField(DiscountedCashFlow)
 
     # The validation results for this appraisal
-    validationResult = EmbeddedDocumentField(AppraisalValidationResult)
+    validationResult = EmbeddedDocumentField(AppraisalValidationResult, default=AppraisalValidationResult)

@@ -57,6 +57,16 @@ class AppraisalAPI(object):
         return {"appraisal": json.loads(appraisal.to_json())}
 
 
+    def delete(self):
+        appraisalId = self.request.matchdict['id']
+
+        appraisal = Appraisal.objects(id=appraisalId).first()
+
+        appraisal.delete()
+
+        return {}
+
+
     def post(self):
         data = self.request.json_body
 

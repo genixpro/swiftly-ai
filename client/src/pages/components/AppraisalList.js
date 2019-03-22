@@ -15,11 +15,12 @@ class AppraisalList extends React.Component
                     <th>City</th>
                     <th>Region</th>
                     <th>Country</th>
+                    <th>Action</th>
                 </tr>
                 </thead>
                 <tbody>
                 {
-                    this.props.appraisals.map((appraisal) => <AppraisalListItem key={appraisal._id['$oid']} appraisal={appraisal} history={this.props.history}/>)
+                    this.props.appraisals.map((appraisal) => <AppraisalListItem key={appraisal._id['$oid']} deleteAppraisal={this.props.deleteAppraisal} appraisal={appraisal} history={this.props.history}/>)
                 }
                 </tbody>
             </Table>

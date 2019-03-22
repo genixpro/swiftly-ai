@@ -2,4 +2,15 @@
 .appraisal-list-item
 {
   cursor: pointer;
+
+  .action-column {
+    opacity: 0;
+  }
+}
+
+.appraisal-list-item:hover
+{
+  .action-column {
+    opacity: 1;
+  }
 }

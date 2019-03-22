@@ -14,6 +14,8 @@ class UploadedFileListItem extends React.Component
 
     onFileTypeChanged(evt)
     {
+        evt.stopPropagation();
+
         const file = this.state.file;
         file.fileType = evt.target.value;
         this.setState({file: file});
@@ -26,6 +28,7 @@ class UploadedFileListItem extends React.Component
 
     onDeleteFile(evt)
     {
+        evt.stopPropagation();
         axios.delete(`/appraisal/${this.props.appraisalId}/files/${this.state.file._id['$oid']}`).then((response) =>
         {
             this.props.handleDeletion(this.props.file);
@@ -63,7 +66,7 @@ class UploadedFileListItem extends React.Component
             <tr className={"uploaded-file-list-item"} onClick={(evt) => this.onFileClicked()}>
                 <td>{file.fileName}</td>
                 <td>
-                    <select value={file.fileType} onChange={this.onFileTypeChanged.bind(this)}>
+                    <select value={file.fileType} onChange={this.onFileTypeChanged.bind(this)} onClick={(evt) => evt.stopPropagation()}>
                         <option value={"lease"}>Lease</option>
                         <option value={"financials"}>Financial Statement</option>
                         <option value={"comparable"}>Comparable Sale</option>
@@ -71,7 +74,7 @@ class UploadedFileListItem extends React.Component
                     </select>
                 </td>
                 <td>
-                    <Button color="danger" onClick={(evt) => this.onDeleteFile()}>Remove</Button>
+                    <Button color="danger" onClick={(evt) => this.onDeleteFile(evt)}>Remove</Button>
                 </td>
             </tr>
         );

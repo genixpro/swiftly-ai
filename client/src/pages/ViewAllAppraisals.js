@@ -14,9 +14,24 @@ class ViewAllAppraisals extends React.Component {
 
     componentDidMount()
     {
+        this.reloadAppraisals();
+    }
+
+
+    reloadAppraisals()
+    {
         axios.get("/appraisal/").then((response) =>
         {
             this.setState({appraisals: response.data.appraisals});
+        });
+    }
+
+
+    deleteAppraisal(appraisal)
+    {
+        axios.delete("/appraisal/" + appraisal._id['$oid']).then((response) =>
+        {
+            this.reloadAppraisals();
         });
     }
 
@@ -28,7 +43,7 @@ class ViewAllAppraisals extends React.Component {
                 </div>
                 <Row>
                     <div className="col-md-6">
-                        <AppraisalList appraisals={this.state.appraisals} history={this.props.history}/>
+                        <AppraisalList appraisals={this.state.appraisals} history={this.props.history} deleteAppraisal={(appraisal) => this.deleteAppraisal(appraisal)}/>
                     </div>
                 </Row>
             </ContentWrapper>
