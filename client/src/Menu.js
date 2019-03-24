@@ -15,7 +15,7 @@ const Menu = [
     {
         name: 'Appraisal',
         icon: 'icon-docs',
-        path: '/appraisal/:appraisalId/',
+        match: '/appraisal/:appraisalId/',
         submenu: [
             {
                 name: 'Upload Files',
@@ -26,12 +26,9 @@ const Menu = [
                 path: '/appraisal/:appraisalId/general',
             },
             {
-                name: 'Checklist',
-                path: '/appraisal/:appraisalId/checklist',
-            },
-            {
                 name: 'Tenants',
                 path: '/appraisal/:appraisalId/tenants/rent_roll',
+                match: '/appraisal/:appraisalId/tenants',
             },
             {
                 name: 'Expenses',

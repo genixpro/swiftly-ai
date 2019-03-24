@@ -3,6 +3,7 @@ import ContentWrapper from '../components/Layout/ContentWrapper';
 import { Row, Col, Nav, NavItem, NavLink, Card, CardBody, CardHeader, Collapse } from 'reactstrap';
 import { Switch, Route } from 'react-router-dom';
 import { NavLink as RRNavLink } from 'react-router-dom';
+import {withProps} from 'recompose';
 
 import UploadFiles from "./UploadFiles";
 import ViewLeases from "./ViewLeases";
@@ -17,7 +18,7 @@ import ViewTenants from "./ViewTenants";
 import ViewUnitInformation from "./ViewUnitInformation";
 import ViewBuildingInformation from "./ViewBuildingInformation";
 import ViewExpenses from "./ViewExpenses";
-import ViewChecklist from "./ViewChecklist";
+import axios from "axios/index";
 
 class ViewAppraisal extends React.Component
 {
@@ -26,35 +27,48 @@ class ViewAppraisal extends React.Component
 
     componentDidMount()
     {
-
+        axios.get(`/appraisal/${this.props.match.params.id}`).then((response) =>
+        {
+            this.setState({appraisal: response.data.appraisal})
+        });
     }
 
+    saveDocument(newAppraisal)
+    {
+        this.setState({appraisal: this.state.appraisal});
+        axios.post(`/appraisal/${this.props.match.params.id}`, newAppraisal).then((response) =>
+        {
+            // this.setState({appraisal: response.data.appraisal})
+        });
+    }
 
     render() {
+        const routeProps = {
+            appraisal: this.state.appraisal,
+            saveDocument: this.saveDocument.bind(this)
+        };
+
         return (
+            this.state.appraisal ?
             <ContentWrapper>
-                <div className="content-heading">
-                    <div>View Appraisal</div>
-                </div>
                 <div className={"view-appraisal"}>
                     <Switch>
-                        <Route path={`${this.props.match.path}/upload`} component={UploadFiles} />
-                        <Route path={`${this.props.match.path}/leases`} component={ViewLeases} />
-                        <Route path={`${this.props.match.path}/lease/:leaseId`} component={ViewLease} />
-                        <Route path={`${this.props.match.path}/financial_statements`} component={ViewFinancialStatements} />
-                        <Route path={`${this.props.match.path}/financial_statement/:financialStatementId`} component={ViewFinancialStatement} />
-                        <Route path={`${this.props.match.path}/stabilized_statement_valuation`} component={ViewStabilizedStatementValuation} />
-                        <Route path={`${this.props.match.path}/comparable_sales`} component={ViewComparableSales} />
-                        <Route path={`${this.props.match.path}/comparable_sale/:comparableSaleId`} component={ViewComparableSale} />
-                        <Route path={`${this.props.match.path}/discounted_cash_flow`} component={ViewDiscountedCashFlow} />
-                        <Route path={`${this.props.match.path}/tenants`} component={ViewTenants} />
-                        <Route path={`${this.props.match.path}/units/:unitNum`} component={ViewUnitInformation} />
-                        <Route path={`${this.props.match.path}/general`} component={ViewBuildingInformation} />
-                        <Route path={`${this.props.match.path}/expenses`} component={ViewExpenses} />
-                        <Route path={`${this.props.match.path}/checklist`} component={ViewChecklist} />
+                        <Route path={`${this.props.match.path}/upload`} render={(props) => withProps({...routeProps, ...props})(UploadFiles)()} />
+                        <Route path={`${this.props.match.path}/leases`} render={(props) => withProps({...routeProps, ...props})(ViewLeases)()} />
+                        <Route path={`${this.props.match.path}/lease/:leaseId`} render={(props) => withProps({...routeProps, ...props})(ViewLease)()} />
+                        <Route path={`${this.props.match.path}/financial_statements`} render={(props) => withProps({...routeProps, ...props})(ViewFinancialStatements)()} />
+                        <Route path={`${this.props.match.path}/financial_statement/:financialStatementId`} render={(props) => withProps({...routeProps, ...props})(ViewFinancialStatement)()} />
+                        <Route path={`${this.props.match.path}/stabilized_statement_valuation`} render={(props) => withProps({...routeProps, ...props})(ViewStabilizedStatementValuation)()} />
+                        <Route path={`${this.props.match.path}/comparable_sales`} render={(props) => withProps({...routeProps, ...props})(ViewComparableSales)()} />
+                        <Route path={`${this.props.match.path}/comparable_sale/:comparableSaleId`} render={(props) => withProps({...routeProps, ...props})(ViewComparableSale)()} />
+                        <Route path={`${this.props.match.path}/discounted_cash_flow`} render={(props) => withProps({...routeProps, ...props})(ViewDiscountedCashFlow)()} />
+                        <Route path={`${this.props.match.path}/tenants`} render={(props) => withProps({...routeProps, ...props})(ViewTenants)()} />
+                        <Route path={`${this.props.match.path}/units/:unitNum`} render={(props) => withProps({...routeProps, ...props})(ViewUnitInformation)()} />
+                        <Route path={`${this.props.match.path}/general`} render={(props) => withProps({...routeProps, ...props})(ViewBuildingInformation)()}/>} />
+                        <Route path={`${this.props.match.path}/expenses`} render={(props) => withProps({...routeProps, ...props})(ViewExpenses)()} />
                     </Switch>
                 </div>
-            </ContentWrapper>
+            </ContentWrapper> : null
         );
     }
 }

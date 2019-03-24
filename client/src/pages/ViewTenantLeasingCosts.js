@@ -20,31 +20,14 @@ class ViewTenantsLeasingCosts extends React.Component
 
     changeDCFInput(field, newValue)
     {
-        this.state.appraisal.discountedCashFlowInputs[field] = newValue;
-        this.setState({appraisal: this.state.appraisal}, () => this.saveDocument(this.state.appraisal))
+        this.props.appraisal.discountedCashFlowInputs[field] = newValue;
+        this.props.saveDocument(this.props.appraisal);
     }
 
-
-    componentDidMount()
-    {
-        axios.get(`/appraisal/${this.props.appraisalId}`).then((response) =>
-        {
-            this.setState({appraisal: response.data.appraisal})
-        });
-    }
-
-
-    saveDocument(newAppraisal)
-    {
-        axios.post(`/appraisal/${this.props.appraisalId}`, newAppraisal).then((response) =>
-        {
-            // this.setState({financialStatement: newLease})
-        });
-    }
 
     render() {
         return (
-            (this.state.appraisal) ?
+            (this.props.appraisal) ?
                 <div id={"view-tenants"} className={"view-tenants"}>
                     <Row>
                         <Col xs={12} md={12} lg={12} xl={12}>
@@ -60,7 +43,7 @@ class ViewTenantsLeasingCosts extends React.Component
                                                         <strong>Leasing Commission Costs (Per Lease)</strong>
                                                     </td>
                                                     <td>
-                                                        <FieldDisplayEdit value={this.state.appraisal.discountedCashFlowInputs.leasingCommission} onChange={(newValue) => this.changeDCFInput('leasingCommission', newValue)}/>
+                                                        <FieldDisplayEdit value={this.props.appraisal.discountedCashFlowInputs.leasingCommission} onChange={(newValue) => this.changeDCFInput('leasingCommission', newValue)}/>
                                                     </td>
                                                 </tr>
                                                 <tr>
@@ -68,7 +51,7 @@ class ViewTenantsLeasingCosts extends React.Component
                                                         <strong>Tenant Inducement Costs (Per Square Foot)</strong>
                                                     </td>
                                                     <td>
-                                                        <FieldDisplayEdit value={this.state.appraisal.discountedCashFlowInputs.tenantInducementsPSF} onChange={(newValue) => this.changeDCFInput('tenantInducementsPSF', newValue)}/>
+                                                        <FieldDisplayEdit value={this.props.appraisal.discountedCashFlowInputs.tenantInducementsPSF} onChange={(newValue) => this.changeDCFInput('tenantInducementsPSF', newValue)}/>
                                                     </td>
                                                 </tr>
                                                 </tbody>
@@ -82,7 +65,7 @@ class ViewTenantsLeasingCosts extends React.Component
                                                         <strong>Leasing Period (Months)</strong>
                                                     </td>
                                                     <td>
-                                                        <FieldDisplayEdit value={this.state.appraisal.discountedCashFlowInputs.leasingPeriod} onChange={(newValue) => this.changeDCFInput('leasingPeriod', newValue)}/>
+                                                        <FieldDisplayEdit value={this.props.appraisal.discountedCashFlowInputs.leasingPeriod} onChange={(newValue) => this.changeDCFInput('leasingPeriod', newValue)}/>
                                                     </td>
                                                 </tr>
                                                 <tr>
@@ -90,7 +73,7 @@ class ViewTenantsLeasingCosts extends React.Component
                                                         <strong>Renewal Period</strong>
                                                     </td>
                                                     <td>
-                                                        <FieldDisplayEdit value={this.state.appraisal.discountedCashFlowInputs.renewalPeriod} onChange={(newValue) => this.changeDCFInput('renewalPeriod', newValue)}/>
+                                                        <FieldDisplayEdit value={this.props.appraisal.discountedCashFlowInputs.renewalPeriod} onChange={(newValue) => this.changeDCFInput('renewalPeriod', newValue)}/>
                                                     </td>
                                                 </tr>
                                                 </tbody>
@@ -104,7 +87,7 @@ class ViewTenantsLeasingCosts extends React.Component
                                                         <strong>Market Rent (Per Square Foot)</strong>
                                                     </td>
                                                     <td>
-                                                        <FieldDisplayEdit value={this.state.appraisal.discountedCashFlowInputs.marketRentPSF} onChange={(newValue) => this.changeDCFInput('marketRentPSF', newValue)}/>
+                                                        <FieldDisplayEdit value={this.props.appraisal.discountedCashFlowInputs.marketRentPSF} onChange={(newValue) => this.changeDCFInput('marketRentPSF', newValue)}/>
                                                     </td>
                                                 </tr>
                                                 </tbody>

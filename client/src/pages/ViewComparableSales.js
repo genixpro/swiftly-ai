@@ -4,6 +4,7 @@ import axios from 'axios';
 import ComparableSaleList from "./components/ComparableSaleList";
 import Promise from 'bluebird';
 import _ from 'underscore';
+import AppraisalContentHeader from "./components/AppraisalContentHeader";
 
 
 class ViewComparableSales extends React.Component {
@@ -16,11 +17,6 @@ class ViewComparableSales extends React.Component {
         axios.get(`/comparable_sales`).then((response) => {
             // console.log(response.data.comparableSales);
             this.setState({comparableSales: response.data.comparableSales})
-        });
-
-        axios.get(`/appraisal/${this.props.match.params.id}`).then((response) =>
-        {
-            this.setState({appraisal: response.data.appraisal})
         });
     }
 
@@ -37,27 +33,18 @@ class ViewComparableSales extends React.Component {
         this.setState({comparableSales: comps});
     }
 
-    saveDocument(newAppraisal)
-    {
-        axios.post(`/appraisal/${this.props.match.params.id}`, {comparables: newAppraisal.comparables}).then((response) =>
-        {
-            this.setState({appraisal: response.data.appraisal})
-        });
-    }
-
     addComparableToAppraisal(comp)
     {
-        const appraisal = this.state.appraisal;
+        const appraisal = this.props.appraisal;
         appraisal.comparables.push(comp._id['$oid']);
         appraisal.comparables = _.clone(appraisal.comparables);
-        this.setState({appraisal: appraisal});
-        this.saveDocument(appraisal);
+        this.props.saveDocument(appraisal);
     }
 
 
     removeComparableFromAppraisal(comp)
     {
-        const appraisal = this.state.appraisal;
+        const appraisal = this.props.appraisal;
         for (let i = 0; i < appraisal.comparables.length; i += 1)
         {
             if (appraisal.comparables[i] === comp._id['$oid'])
@@ -67,19 +54,19 @@ class ViewComparableSales extends React.Component {
             }
         }
         appraisal.comparables = _.clone(appraisal.comparables);
-        this.setState({appraisal: appraisal});
-        this.saveDocument(appraisal);
+        this.props.saveDocument(appraisal);
     }
 
 
     render()
     {
-        if (!this.state.appraisal)
+        if (!this.props.appraisal)
         {
             return null;
         }
 
-        return (
+        return [
+            <AppraisalContentHeader appraisal={this.props.appraisal} title="Comparable Sales" />,
             <Row>
                 <Col xs={6}>
                     <Card className="card-default">
@@ -92,7 +79,7 @@ class ViewComparableSales extends React.Component {
                                 </Row>
                                 <Row>
                                     <Col xs={12}>
-                                        <ComparableSaleList comparableSaleIds={this.state.appraisal.comparables}
+                                        <ComparableSaleList comparableSaleIds={this.props.appraisal.comparables}
                                                             allowNew={false}
                                                             history={this.props.history}
                                                             appraisalId={this.props.match.params._id}
@@ -127,7 +114,7 @@ class ViewComparableSales extends React.Component {
                                     <Col xs={12}>
                                         <ComparableSaleList comparableSales={this.state.comparableSales}
                                                             allowNew={true}
-                                                            excludeIds={this.state.appraisal.comparables}
+                                                            excludeIds={this.props.appraisal.comparables}
                                                             history={this.props.history}
                                                             appraisalId={this.props.match.params._id}
                                                             onAddComparableClicked={(comp) => this.addComparableToAppraisal(comp)}
@@ -141,7 +128,7 @@ class ViewComparableSales extends React.Component {
                     </Card>
                 </Col>
             </Row>
-        );
+        ];
     }
 }
 

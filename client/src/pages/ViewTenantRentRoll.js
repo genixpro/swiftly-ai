@@ -18,17 +18,9 @@ class ViewTenantsRentRoll extends React.Component
         selectedUnit: null
     };
 
-    componentDidMount()
-    {
-        axios.get(`/appraisal/${this.props.appraisalId}`).then((response) =>
-        {
-            this.setState({appraisal: response.data.appraisal})
-        });
-    }
-
     onTenantClicked(unitNum)
     {
-        this.state.appraisal.units.forEach((unit) =>
+        this.props.appraisal.units.forEach((unit) =>
         {
             if (unit.unitNumber === unitNum)
             {
@@ -76,8 +68,8 @@ class ViewTenantsRentRoll extends React.Component
 
     removeUnit(unitInfo, unitIndex)
     {
-        this.state.appraisal.units.splice(unitIndex, 1);
-        this.setState({appraisal: this.state.appraisal}, () => this.saveDocument(this.state.appraisal));
+        this.props.appraisal.units.splice(unitIndex, 1);
+        this.props.saveDocument(this.props.appraisal);
     }
 
 
@@ -108,8 +100,8 @@ class ViewTenantsRentRoll extends React.Component
             newUnit['squareFootage'] = 1;
         }
 
-        this.state.appraisal.units.push(newUnit);
-        this.setState({appraisal: this.state.appraisal}, () => this.saveDocument(this.state.appraisal));
+        this.props.appraisal.units.push(newUnit);
+        this.props.saveDocument(this.props.appraisal);
 
     }
 
@@ -160,7 +152,7 @@ class ViewTenantsRentRoll extends React.Component
     removeTenancy(unitInfo, tenancyInfo, tenancyIndex)
     {
         unitInfo.tenancies.splice(tenancyIndex, 1);
-        this.setState({appraisal: this.state.appraisal}, () => this.saveDocument(this.state.appraisal));
+        this.props.saveDocument(this.props.appraisal);
     }
 
     renderTenancy(unitInfo, tenantInfo, tenancyIndex)
@@ -254,7 +246,7 @@ class ViewTenantsRentRoll extends React.Component
         }
 
         this.state.selectedUnit.tenancies.push(newTenancy);
-        this.setState({appraisal: this.state.appraisal}, () => this.saveDocument(this.state.appraisal));
+        this.props.saveDocument(this.props.appraisal);
     }
 
 
@@ -310,17 +302,9 @@ class ViewTenantsRentRoll extends React.Component
         </tr>;
     }
 
-    saveDocument(newAppraisal)
-    {
-        axios.post(`/appraisal/${this.props.appraisalId}`, newAppraisal).then((response) =>
-        {
-            // this.setState({financialStatement: newLease})
-        });
-    }
-
     changeUnitField(unitInfo, field, newValue)
     {
-        this.state.appraisal.units.forEach((unit) =>
+        this.props.appraisal.units.forEach((unit) =>
         {
             if (unit.unitNumber === unitInfo.unitNumber)
             {
@@ -328,13 +312,12 @@ class ViewTenantsRentRoll extends React.Component
             }
         });
 
-        this.saveDocument(this.state.appraisal);
-        this.setState({appraisal: this.state.appraisal});
+        this.props.saveDocument(this.props.appraisal);
     }
 
     changeAllTenantField(unitInfo, tenantInfo, field, newValue)
     {
-        this.state.appraisal.units.forEach((unit) =>
+        this.props.appraisal.units.forEach((unit) =>
         {
             if (unit.unitNumber === unitInfo.unitNumber)
             {
@@ -346,15 +329,14 @@ class ViewTenantsRentRoll extends React.Component
             }
         });
 
-        this.saveDocument(this.state.appraisal);
-        this.setState({appraisal: this.state.appraisal});
+        this.props.saveDocument(this.props.appraisal);
     }
 
     changeTenancyField(unitInfo, tenantInfo, field, newValue)
     {
         tenantInfo[field] = newValue;
 
-        // this.state.appraisal.units.forEach((unit) =>
+        // this.props.appraisal.units.forEach((unit) =>
         // {
         //     if (unit.unitNumber === unitInfo.unitNumber)
         //     {
@@ -366,14 +348,13 @@ class ViewTenantsRentRoll extends React.Component
         //     }
         // });
 
-        this.saveDocument(this.state.appraisal);
-        this.setState({appraisal: this.state.appraisal}, () => this.setState({appraisal: this.state.appraisal}));
+        this.props.saveDocument(this.props.appraisal);
     }
 
 
     render() {
         return (
-            (this.state.appraisal) ?
+            (this.props.appraisal) ?
                 <div id={"view-tenants-rent-roll"} className={"view-tenants-rent-roll"}>
                     <Row>
                         <Col xs={5} md={5} lg={5} xl={5}>
@@ -392,12 +373,12 @@ class ViewTenantsRentRoll extends React.Component
                                         </thead>
                                         <tbody>
                                         {
-                                            this.state.appraisal && this.state.appraisal.units && Object.values(this.state.appraisal.units).map((unit, unitIndex) => {
+                                            this.props.appraisal && this.props.appraisal.units && Object.values(this.props.appraisal.units).map((unit, unitIndex) => {
                                                 return this.renderUnitRow(unit, unitIndex);
                                             })
                                         }
                                         {
-                                            this.state.appraisal ?
+                                            this.props.appraisal ?
                                                 this.renderNewUnitRow()
                                                 : null
                                         }

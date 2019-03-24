@@ -70,10 +70,20 @@ class Sidebar extends Component
             .filter(({heading}) => !heading)
             .forEach(({name, path, submenu}) =>
             {
-                collapse[name] = this.routeActive(submenu ? submenu.map(({path}) => path) : path)
+                collapse[name] = this.routeActive(submenu ? submenu.map((subItem) => this.matchRouteForItem(subItem)) : path)
             })
         this.setState({collapse});
     }
+
+    matchRouteForItem(item)
+    {
+        if (item.match)
+        {
+            return item.match;
+        }
+        return item.path;
+    }
+
 
     navigator(route)
     {
@@ -153,7 +163,7 @@ class Sidebar extends Component
         });
     }
 
-    getSubRoutes = item => item.submenu.map(({path}) => path);
+    getSubRoutes = item => item.submenu.map((subItem) => this.matchRouteForItem(subItem));
 
     /** map menu config to string to determine what element to render */
     itemType = item =>
@@ -191,15 +201,15 @@ class Sidebar extends Component
                                     if (this.itemType(item) === 'heading')
                                         return (
                                             <SidebarItemHeader item={this.getItemWithIds(item)} key={i}/>
-                                        )
+                                        );
                                     else
                                     {
                                         if (this.itemType(item) === 'menu')
                                             return (
-                                                <SidebarItem isActive={this.routeActive(item.path)}
+                                                <SidebarItem isActive={this.routeActive(this.matchRouteForItem(item))}
                                                              item={this.getItemWithIds(item)}
                                                              key={i}/>
-                                            )
+                                            );
                                         if (this.itemType(item) === 'submenu')
                                             return [
                                                 <SidebarSubItem item={this.getItemWithIds(item)}
@@ -212,7 +222,7 @@ class Sidebar extends Component
                                                         item.submenu.map((subitem, i) =>
                                                             <SidebarItem key={i}
                                                                          item={this.getItemWithIds(subitem)}
-                                                                         isActive={this.routeActive(subitem.path)}/>
+                                                                         isActive={this.routeActive(this.matchRouteForItem(subitem))}/>
                                                         )
                                                     }
                                                 </SidebarSubItem>

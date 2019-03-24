@@ -6,6 +6,8 @@ import Promise from "bluebird";
 import UploadedFileList from "./components/UploadedFileList"
 import 'loaders.css/loaders.css';
 import 'spinkit/css/spinkit.css';
+import AppraisalContentHeader from "./components/AppraisalContentHeader";
+import Checklist from "./components/Checklist";
 
 
 class UploadFiles extends React.Component {
@@ -14,11 +16,13 @@ class UploadFiles extends React.Component {
         uploading: false
     };
 
-    componentDidMount() {
-
+    componentDidMount()
+    {
+        this.appraisalId = this.props.match.params['id'];
     }
 
-    onDrop(files) {
+    onDrop(files)
+    {
         this.setState({uploading: true});
         Promise.mapSeries(files, (file) => {
             return new Promise((resolve, reject) => {
@@ -59,17 +63,18 @@ class UploadFiles extends React.Component {
     render() {
         return (
             <div>
+                <AppraisalContentHeader appraisal={this.props.appraisal} title="Upload Files" />
                 <Row>
                     <Col xs={12}>
                         <Card className="card-default">
                             <CardBody>
                                 <div>
-                                    <Row>
-                                        <Col xs={12}>
-                                            <h3>Upload files for analysis</h3>
-                                            <br/>
-                                        </Col>
-                                    </Row>
+                                    {/*<Row>*/}
+                                        {/*<Col xs={12}>*/}
+                                            {/*<h3>Upload</h3>*/}
+                                            {/*<br/>*/}
+                                        {/*</Col>*/}
+                                    {/*</Row>*/}
                                     <Row>
                                         <Col xs={12} md={6} lg={4}>
                                             <Dropzone className="card card-default p-3 upload-zone"
@@ -94,11 +99,14 @@ class UploadFiles extends React.Component {
                                                 }
                                             </Dropzone>
                                         </Col>
+                                        <Col xs={{size: 4, offset: 4}}>
+                                            <Checklist appraisal={this.props.appraisal}/>
+                                        </Col>
                                     </Row>
                                     <Row>
-                                        <Col xs={12}>
-                                            <h3>View Existing Files</h3>
-                                        </Col>
+                                        {/*<Col xs={12}>*/}
+                                            {/*<h3>Existing Files</h3>*/}
+                                        {/*</Col>*/}
                                         <Col xs={12}>
                                             <UploadedFileList appraisalId={this.props.match.params['id']}
                                                               ref={(obj) => this.fileList = obj}

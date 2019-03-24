@@ -5,46 +5,55 @@ import ViewTenantsRentRoll from "./ViewTenantRentRoll";
 import ViewTenantsLeasingCosts from "./ViewTenantLeasingCosts";
 import {NavLink as RRNavLink} from 'react-router-dom';
 import {Switch, Route} from 'react-router-dom';
+import AppraisalContentHeader from "./components/AppraisalContentHeader";
+import {withProps} from "recompose";
 
-
-class ViewTenants extends React.Component {
+class ViewTenants extends React.Component
+{
     state = {
         width: 0,
         height: 0
     };
 
-    render() {
-        console.log(this.props);
+    render()
+    {
+        const routeProps = {
+            appraisalId: this.props.match.params.id,
+            appraisal: this.props.appraisal,
+            saveDocument: this.props.saveDocument,
+        };
+
         return (
-            [<Row>
-                <Col xs={12}>
-                    <Nav tabs>
-                        <NavItem>
-                            <NavLink to={`${this.props.match.url}/rent_roll`} activeClassName="active" tag={RRNavLink}>Rent Roll</NavLink>
-                        </NavItem>
-                        <NavItem>
-                            <NavLink to={`${this.props.match.url}/leasing_costs`} activeClassName="active" tag={RRNavLink}>Leasing Costs</NavLink>
-                        </NavItem>
-                    </Nav>
-                </Col>
-            </Row>,
-            <Row>
-                <Col xs={12}>
-                    <Card className="card-default">
-                        <CardBody>
-                            <div id={"view-tenants"}>
-                                <Switch>
-                                    <Route path={`${this.props.match.url}/rent_roll`}
-                                           render={() => <ViewTenantsRentRoll appraisalId={this.props.match.params.id}/>}/>
-                                    <Route path={`${this.props.match.url}/leasing_costs`}
-                                           render={() => <ViewTenantsLeasingCosts appraisalId={this.props.match.params.id}/>}/>
-                                    {/*<Route render={() => <ViewTenantsRentRoll appraisalId={this.props.match.params.id}/>}/>*/}
-                                </Switch>
-                            </div>
-                        </CardBody>
-                    </Card>
-                </Col>
-            </Row>]
+            [
+                <AppraisalContentHeader key={1} appraisal={this.props.appraisal} title="Tenants" />,
+                <Row key={2}>
+                    <Col xs={12}>
+                        <Nav tabs>
+                            <NavItem>
+                                <NavLink to={`${this.props.match.url}/rent_roll`} activeClassName="active"
+                                         tag={RRNavLink}>Rent Roll</NavLink>
+                            </NavItem>
+                            <NavItem>
+                                <NavLink to={`${this.props.match.url}/leasing_costs`} activeClassName="active"
+                                         tag={RRNavLink}>Leasing Costs</NavLink>
+                            </NavItem>
+                        </Nav>
+                    </Col>
+                </Row>,
+                <Row key={3}>
+                    <Col xs={12}>
+                        <Card className="card-default">
+                            <CardBody>
+                                <div id={"view-tenants"}>
+                                    <Switch>
+                                        <Route path={`${this.props.match.url}/rent_roll`} render={(props) => withProps({...routeProps, ...props})(ViewTenantsRentRoll)()} />
+                                        <Route path={`${this.props.match.url}/leasing_costs`} render={(props) => withProps({...routeProps, ...props})(ViewTenantsLeasingCosts)()} />
+                                    </Switch>
+                                </div>
+                            </CardBody>
+                        </Card>
+                    </Col>
+                </Row>]
         );
     }
 }

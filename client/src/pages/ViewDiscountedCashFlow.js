@@ -5,6 +5,7 @@ import axios from "axios/index";
 import AnnotationUtilities from './AnnotationUtilities';
 import _ from 'underscore';
 import FieldDisplayEdit from "./components/FieldDisplayEdit";
+import AppraisalContentHeader from "./components/AppraisalContentHeader";
 
 
 class ViewDiscountedCashFlow extends React.Component
@@ -15,16 +16,13 @@ class ViewDiscountedCashFlow extends React.Component
 
     componentDidMount()
     {
-        axios.get(`/appraisal/${this.props.match.params.id}`).then((response) =>
-        {
-            this.setState({appraisal: response.data.appraisal}, () => this.groupCashFlows())
-        });
+        this.groupCashFlows();
     }
 
 
     groupCashFlows()
     {
-        const grouped = _.groupBy(this.state.appraisal.cashFlows, (cashFlow) => cashFlow.name);
+        const grouped = _.groupBy(this.props.appraisal.cashFlows, (cashFlow) => cashFlow.name);
 
         // Now group all of the income and expense cash flows
         const incomes = [];
@@ -62,7 +60,7 @@ class ViewDiscountedCashFlow extends React.Component
                 <span>{cashFlowSummaryItem.name}</span>
             </td>
             {
-                this.state.appraisal.discountedCashFlow.cashFlowSummary.years.map((year) => <td className={"amount-column"}>
+                this.props.appraisal.discountedCashFlow.cashFlowSummary.years.map((year) => <td className={"amount-column"}>
                     <span><NumberFormat value={cashFlowSummaryItem.amounts[year]} displayType={"text"} decimalScale={2} thousandSeparator={", "} /></span>
                 </td>)
             }
@@ -71,26 +69,18 @@ class ViewDiscountedCashFlow extends React.Component
 
     changeDCFInput(field, newValue)
     {
-        this.state.appraisal.discountedCashFlowInputs[field] = newValue;
-        this.setState({appraisal: this.state.appraisal}, () => this.saveDocument(this.state.appraisal))
-    }
-
-
-    saveDocument(newAppraisal)
-    {
-        axios.post(`/appraisal/${this.props.match.params.id}`, newAppraisal).then((response) =>
-        {
-            this.setState({appraisal: response.data.appraisal})
-        });
+        this.props.appraisal.discountedCashFlowInputs[field] = newValue;
+        this.props.saveDocument(this.props.appraisal);
     }
 
     render() {
-        return (
+        return [
+            <AppraisalContentHeader appraisal={this.props.appraisal} title="Discounted Cash Flow" />,
                 <Row>
                     <Col xs={12}>
                         <Card className="card-default">
                             <CardBody>
-                                {(this.state.appraisal && this.state.appraisal.discountedCashFlow ) ?
+                                {(this.props.appraisal && this.props.appraisal.discountedCashFlow ) ?
                                     <div id={"view-discounted-cash-flow"} className={"view-discounted-cash-flow"}>
                                         <Row>
                                             <Col xs={12} md={12} lg={12} xl={12}>
@@ -106,7 +96,7 @@ class ViewDiscountedCashFlow extends React.Component
                                                                             <strong>Inflation Rate</strong>
                                                                         </td>
                                                                         <td>
-                                                                            <FieldDisplayEdit value={this.state.appraisal.discountedCashFlowInputs.inflation} onChange={(newValue) => this.changeDCFInput('inflation', newValue)}/>
+                                                                            <FieldDisplayEdit value={this.props.appraisal.discountedCashFlowInputs.inflation} onChange={(newValue) => this.changeDCFInput('inflation', newValue)}/>
                                                                         </td>
                                                                     </tr>
                                                                     </tbody>
@@ -120,7 +110,7 @@ class ViewDiscountedCashFlow extends React.Component
                                                                             <strong>Discount Rate</strong>
                                                                         </td>
                                                                         <td>
-                                                                            <FieldDisplayEdit value={this.state.appraisal.discountedCashFlowInputs.discountRate} onChange={(newValue) => this.changeDCFInput('discountRate', newValue)}/>
+                                                                            <FieldDisplayEdit value={this.props.appraisal.discountedCashFlowInputs.discountRate} onChange={(newValue) => this.changeDCFInput('discountRate', newValue)}/>
                                                                         </td>
                                                                     </tr>
                                                                     </tbody>
@@ -149,33 +139,33 @@ class ViewDiscountedCashFlow extends React.Component
                                                             </thead>
                                                             <tbody>
                                                             {
-                                                                this.state.appraisal.discountedCashFlow.cashFlowSummary.incomes.length > 0 && this.state.appraisal.discountedCashFlow.cashFlowSummary.incomes.map((item, itemIndex) => {
+                                                                this.props.appraisal.discountedCashFlow.cashFlowSummary.incomes.length > 0 && this.props.appraisal.discountedCashFlow.cashFlowSummary.incomes.map((item, itemIndex) => {
                                                                     return this.formatCashFlowRow(item, itemIndex, false);
                                                                 })
                                                             }
                                                             {
-                                                                this.state.appraisal.discountedCashFlow.cashFlowSummary.years.length > 0 ?
-                                                                    this.formatCashFlowRow(this.state.appraisal.discountedCashFlow.cashFlowSummary.incomeTotal, 0, true)
+                                                                this.props.appraisal.discountedCashFlow.cashFlowSummary.years.length > 0 ?
+                                                                    this.formatCashFlowRow(this.props.appraisal.discountedCashFlow.cashFlowSummary.incomeTotal, 0, true)
                                                                     : null
                                                             }
                                                             {
-                                                                this.state.appraisal.discountedCashFlow.cashFlowSummary.expenses.length > 0 && this.state.appraisal.discountedCashFlow.cashFlowSummary.expenses.map((item, itemIndex) => {
+                                                                this.props.appraisal.discountedCashFlow.cashFlowSummary.expenses.length > 0 && this.props.appraisal.discountedCashFlow.cashFlowSummary.expenses.map((item, itemIndex) => {
                                                                     return this.formatCashFlowRow(item, itemIndex, false);
                                                                 })
                                                             }
                                                             {
-                                                                this.state.appraisal.discountedCashFlow.cashFlowSummary.years.length > 0 ?
-                                                                    this.formatCashFlowRow(this.state.appraisal.discountedCashFlow.cashFlowSummary.expenseTotal, 0, true)
+                                                                this.props.appraisal.discountedCashFlow.cashFlowSummary.years.length > 0 ?
+                                                                    this.formatCashFlowRow(this.props.appraisal.discountedCashFlow.cashFlowSummary.expenseTotal, 0, true)
                                                                     : null
                                                             }
                                                             {
-                                                                this.state.appraisal.discountedCashFlow.cashFlowSummary.years.length > 0 ?
-                                                                    this.formatCashFlowRow(this.state.appraisal.discountedCashFlow.cashFlowSummary.netOperatingIncome, 0, true)
+                                                                this.props.appraisal.discountedCashFlow.cashFlowSummary.years.length > 0 ?
+                                                                    this.formatCashFlowRow(this.props.appraisal.discountedCashFlow.cashFlowSummary.netOperatingIncome, 0, true)
                                                                     : null
                                                             }
                                                             {
-                                                                this.state.appraisal.discountedCashFlow.cashFlowSummary.years.length > 0
-                                                                    ? this.formatCashFlowRow(this.state.appraisal.discountedCashFlow.cashFlowSummary.presentValue, 0, true)
+                                                                this.props.appraisal.discountedCashFlow.cashFlowSummary.years.length > 0
+                                                                    ? this.formatCashFlowRow(this.props.appraisal.discountedCashFlow.cashFlowSummary.presentValue, 0, true)
                                                                     : null
                                                             }
                                                             </tbody>
@@ -190,7 +180,7 @@ class ViewDiscountedCashFlow extends React.Component
                         </Card>
                     </Col>
                 </Row>
-        );
+        ];
     }
 }
 

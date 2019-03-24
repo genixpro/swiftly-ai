@@ -5,38 +5,34 @@ import axios from "axios/index";
 import AnnotationUtilities from './AnnotationUtilities';
 import FieldDisplayEdit from './components/FieldDisplayEdit';
 import _ from 'underscore';
+import AppraisalContentHeader from "./components/AppraisalContentHeader";
 
 class ViewStabilizedStatementValuation extends React.Component {
     state = {
         capitalizationRate: 8.4
     };
 
-    componentDidMount() {
-        axios.get(`/appraisal/${this.props.match.params.id}`).then((response) => {
-            this.setState({appraisal: response.data.appraisal}, () => this.computeGroupTotals())
-        });
-    }
-
-    componentDidUpdate() {
+    componentDidUpdate() 
+    {
 
     }
 
     computeGroupTotals() {
-        if (!this.state.appraisal.incomeStatement) {
+        if (!this.props.appraisal.incomeStatement) {
             return
         }
 
         let incomeTotal = 0;
         let expenseTotal = 0;
 
-        if (this.state.appraisal.incomeStatement.incomes) {
-            this.state.appraisal.incomeStatement.incomes.forEach((income) => {
+        if (this.props.appraisal.incomeStatement.incomes) {
+            this.props.appraisal.incomeStatement.incomes.forEach((income) => {
                 incomeTotal += income.yearlyAmount;
             });
         }
 
-        if (this.state.appraisal.incomeStatement.expenses) {
-            this.state.appraisal.incomeStatement.expenses.forEach((expense) => {
+        if (this.props.appraisal.incomeStatement.expenses) {
+            this.props.appraisal.incomeStatement.expenses.forEach((expense) => {
                 expenseTotal += expense.yearlyAmount;
             });
         }
@@ -61,25 +57,25 @@ class ViewStabilizedStatementValuation extends React.Component {
     changeIncomeItemValue(item, newValue) {
         item['yearlyAmount'] = newValue;
         item['monthlyAmount'] = newValue / 12.0;
-        this.setState({appraisal: this.state.appraisal}, () => this.saveDocument(this.state.appraisal));
+        this.setState({appraisal: this.props.appraisal}, () => this.saveDocument(this.props.appraisal));
     }
 
 
     changeIncomeItemName(item, newName) {
         item['name'] = newName;
-        this.setState({appraisal: this.state.appraisal}, () => this.saveDocument(this.state.appraisal));
+        this.setState({appraisal: this.props.appraisal}, () => this.saveDocument(this.props.appraisal));
     }
 
 
     removeIncomeItem(item, itemIndex) {
         if (item.cashFlowType === 'income') {
-            this.state.appraisal.incomeStatement.incomes.splice(itemIndex, 1);
+            this.props.appraisal.incomeStatement.incomes.splice(itemIndex, 1);
         }
         else {
-            this.state.appraisal.incomeStatement.expenses.splice(itemIndex, 1);
+            this.props.appraisal.incomeStatement.expenses.splice(itemIndex, 1);
         }
 
-        this.setState({appraisal: this.state.appraisal}, () => this.saveDocument(this.state.appraisal));
+        this.setState({appraisal: this.props.appraisal}, () => this.saveDocument(this.props.appraisal));
     }
 
 
@@ -130,13 +126,13 @@ class ViewStabilizedStatementValuation extends React.Component {
         }
 
         if (type === 'income') {
-            this.state.appraisal.incomeStatement.incomes.push(newItem);
+            this.props.appraisal.incomeStatement.incomes.push(newItem);
         }
         else {
-            this.state.appraisal.incomeStatement.expenses.push(newItem);
+            this.props.appraisal.incomeStatement.expenses.push(newItem);
         }
 
-        this.setState({appraisal: this.state.appraisal}, () => this.saveDocument(this.state.appraisal));
+        this.setState({appraisal: this.props.appraisal}, () => this.saveDocument(this.props.appraisal));
 
     }
 
@@ -171,12 +167,13 @@ class ViewStabilizedStatementValuation extends React.Component {
 
 
     render() {
-        return (
+        return [
+            <AppraisalContentHeader appraisal={this.props.appraisal} title="Stabilized Statement Valuation" />,
             <Row>
                 <Col xs={12}>
                     <Card className="card-default">
                         <CardBody>
-                            {(this.state.appraisal && this.state.appraisal.incomeStatement) ?
+                            {(this.props.appraisal && this.props.appraisal.incomeStatement) ?
                                 <div id={"view-stabilized-statement"} className={"view-stabilized-statement"}>
                                     <Row>
                                         <Col xs={12} md={10} lg={8} xl={6}>
@@ -186,12 +183,12 @@ class ViewStabilizedStatementValuation extends React.Component {
                                                     <Table striped bordered hover responsive>
                                                         <tbody>
                                                         {
-                                                            this.state.appraisal.incomeStatement.incomes && this.state.appraisal.incomeStatement.incomes.map((item, itemIndex) => {
+                                                            this.props.appraisal.incomeStatement.incomes && this.props.appraisal.incomeStatement.incomes.map((item, itemIndex) => {
                                                                 return this.renderIncomeStatementItemRow(item, itemIndex);
                                                             })
                                                         }
                                                         {
-                                                            this.state.appraisal.incomeStatement.incomes ?
+                                                            this.props.appraisal.incomeStatement.incomes ?
                                                                 this.renderNewItemRow('income')
                                                                 : null
                                                         }
@@ -227,12 +224,12 @@ class ViewStabilizedStatementValuation extends React.Component {
                                                     <Table striped bordered hover responsive>
                                                         <tbody>
                                                         {
-                                                            this.state.appraisal.incomeStatement.expenses && this.state.appraisal.incomeStatement.expenses.map((item, itemIndex) => {
+                                                            this.props.appraisal.incomeStatement.expenses && this.props.appraisal.incomeStatement.expenses.map((item, itemIndex) => {
                                                                 return this.renderIncomeStatementItemRow(item, itemIndex);
                                                             })
                                                         }
                                                         {
-                                                            this.state.appraisal.incomeStatement.expenses ?
+                                                            this.props.appraisal.incomeStatement.expenses ?
                                                                 this.renderNewItemRow('expense')
                                                                 : null
                                                         }
@@ -374,7 +371,7 @@ class ViewStabilizedStatementValuation extends React.Component {
                     </Card>
                 </Col>
             </Row>
-        );
+        ];
     }
 }
 

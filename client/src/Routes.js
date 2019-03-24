@@ -54,7 +54,7 @@ const Routes = ({ location }) => {
                             <Route path="/appraisal/:id" component={ViewAppraisal} history={history}/>
                             <Route path="/appraisals/" component={ViewAllAppraisals} history={history}/>
 
-                            <Redirect to="/appraisal/"/>
+                            <Redirect to="/appraisals/"/>
                         </Switch>
                     </div>
                 </CSSTransition>
