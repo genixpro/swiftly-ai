@@ -84,7 +84,10 @@ class ComparableSaleList extends React.Component
     {
         const comparables = this.state.comparableSales;
         comparables[index] = changedComp;
-        this.props.onChange(comparables);
+        if (this.props.onChange)
+        {
+            this.props.onChange(comparables);
+        }
     }
 
 
@@ -101,7 +104,10 @@ class ComparableSaleList extends React.Component
             }
         }
 
-        this.props.onChange(comparables);
+        if (this.props.onChange)
+        {
+            this.props.onChange(comparables);
+        }
     }
 
 

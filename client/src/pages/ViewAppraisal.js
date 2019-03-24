@@ -37,65 +37,6 @@ class ViewAppraisal extends React.Component
                     <div>View Appraisal</div>
                 </div>
                 <div className={"view-appraisal"}>
-                    <Row>
-                        <Col xs={12} md={5} lg={5} xl={5}>
-                            <Card outline color="primary" className="mb-3">
-                                <CardHeader className="text-white bg-primary">Property Information</CardHeader>
-                                <CardBody>
-                                    <Nav tabs>
-                                        <NavItem>
-                                            <NavLink to={`${this.props.match.url}/general`} activeClassName="active" tag={RRNavLink}>General</NavLink>
-                                        </NavItem>
-                                        <NavItem>
-                                            <NavLink to={`${this.props.match.url}/checklist`} activeClassName="active" tag={RRNavLink}>Checklist</NavLink>
-                                        </NavItem>
-                                        {/*<NavItem>*/}
-                                            {/*<NavLink to={`${this.props.match.url}/leases`} activeClassName="active" tag={RRNavLink}>Leases</NavLink>*/}
-                                        {/*</NavItem>*/}
-                                        {/*<NavItem>*/}
-                                            {/*<NavLink to={`${this.props.match.url}/financial_statements`} activeClassName="active" tag={RRNavLink}>Financials</NavLink>*/}
-                                        {/*</NavItem>*/}
-                                        <NavItem>
-                                            <NavLink to={`${this.props.match.url}/tenants/rent_roll`} activeClassName="active" tag={RRNavLink}>Tenants</NavLink>
-                                        </NavItem>
-                                        <NavItem>
-                                            <NavLink to={`${this.props.match.url}/expenses`} activeClassName="active" tag={RRNavLink}>Expenses</NavLink>
-                                        </NavItem>
-                                    </Nav>
-                                </CardBody>
-                            </Card>
-                        </Col>
-                        <Col xs={12} md={5} lg={5} xl={5}>
-                            <Card outline color="primary" className="mb-3">
-                                <CardHeader className="text-white bg-primary">Property Valuation</CardHeader>
-                                <CardBody>
-                                    <Nav tabs>
-                                        <NavItem>
-                                            <NavLink to={`${this.props.match.url}/comparable_sales`} activeClassName="active" tag={RRNavLink}>Comparable Sales</NavLink>
-                                        </NavItem>
-                                        <NavItem>
-                                            <NavLink to={`${this.props.match.url}/stabilized_statement_valuation`} activeClassName="active" tag={RRNavLink}>Stabilized Statement Valuation</NavLink>
-                                        </NavItem>
-                                        <NavItem>
-                                            <NavLink to={`${this.props.match.url}/discounted_cash_flow`} activeClassName="active" tag={RRNavLink}>Discounted Cash Flow</NavLink>
-                                        </NavItem>
-                                    </Nav>
-                                </CardBody>
-                            </Card>
-                        </Col>
-                        <Col xs={12} md={2} lg={2} xl={2}>
-                            <Card outline color="primary" className="mb-3">
-                                <CardHeader className="text-white bg-primary">Upload Data</CardHeader>
-                                <CardBody>
-                                    <Nav tabs>
-                                        <NavItem>
-                                            <NavLink to={`${this.props.match.url}/upload`} activeClassName="active" tag={RRNavLink}>Upload</NavLink>
-                                        </NavItem>
-                                    </Nav>
-                                </CardBody>
-                            </Card>
-                        </Col>
-                    </Row>
                     <Switch>
                         <Route path={`${this.props.match.path}/upload`} component={UploadFiles} />
                         <Route path={`${this.props.match.path}/leases`} component={ViewLeases} />

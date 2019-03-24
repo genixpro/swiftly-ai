@@ -52,7 +52,7 @@ const Routes = ({ location }) => {
                         <Switch location={location}>
                             <Route path="/appraisal/new" component={StartAppraisal} history={history}/>
                             <Route path="/appraisal/:id" component={ViewAppraisal} history={history}/>
-                            <Route path="/appraisal/" component={ViewAllAppraisals} history={history}/>
+                            <Route path="/appraisals/" component={ViewAllAppraisals} history={history}/>
 
                             <Redirect to="/appraisal/"/>
                         </Switch>
