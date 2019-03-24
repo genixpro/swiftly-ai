@@ -6,6 +6,9 @@ import AnnotationUtilities from './AnnotationUtilities';
 import _ from 'underscore';
 import FieldDisplayEdit from "./components/FieldDisplayEdit";
 import AppraisalContentHeader from "./components/AppraisalContentHeader";
+import PropertyTypeSelector from "./components/PropertyTypeSelector";
+import IndustrialSubtypeSelector from "./components/IndustrialSubtypeSelector";
+import LandSubtypeSelector from "./components/LandSubtypeSelector";
 
 
 class ViewBuildingInformation extends React.Component
@@ -72,6 +75,62 @@ class ViewBuildingInformation extends React.Component
                                                     </td>
                                                     <td>
                                                         <FieldDisplayEdit value={this.props.appraisal.country} onChange={(newValue) => this.changeAppraisalField('country', newValue)}/>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>
+                                                        <strong>Property Type</strong>
+                                                    </td>
+                                                    <td>
+                                                        <PropertyTypeSelector value={this.props.appraisal.propertyType}  onChange={(newValue) => this.changeAppraisalField('propertyType', newValue)}/>
+                                                    </td>
+                                                </tr>
+                                                {
+                                                    this.props.appraisal.propertyType === 'industrial' ?
+                                                        <tr>
+                                                            <td>
+                                                                <strong>Sub-type</strong>
+                                                            </td>
+                                                            <td>
+                                                                <IndustrialSubtypeSelector value={this.props.appraisal.industrialSubType}  onChange={(newValue) => this.changeAppraisalField('industrialSubType', newValue)}/>
+                                                            </td>
+                                                        </tr> : null
+                                                }
+                                                {
+                                                    this.props.appraisal.propertyType === 'land' ?
+                                                        <tr>
+                                                            <td>
+                                                                <strong>Sub-type</strong>
+                                                            </td>
+                                                            <td>
+                                                                <IndustrialSubtypeSelector
+                                                                    value={this.props.appraisal.landSubType}
+                                                                    onChange={(newValue) => this.changeAppraisalField('landSubType', newValue)}/>
+                                                            </td>
+                                                        </tr> : null
+                                                }
+                                                <tr>
+                                                    <td>
+                                                        <strong>Size of Building</strong>
+                                                    </td>
+                                                    <td>
+                                                        <FieldDisplayEdit type="number" value={this.props.appraisal.sizeOfBuilding} onChange={(newValue) => this.changeAppraisalField('sizeOfBuilding', newValue)}/>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>
+                                                        <strong>Size of Land</strong>
+                                                    </td>
+                                                    <td>
+                                                        <FieldDisplayEdit type="number" value={this.props.appraisal.sizeOfLand} onChange={(newValue) => this.changeAppraisalField('sizeOfLand', newValue)}/>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>
+                                                        <strong>Legal Description</strong>
+                                                    </td>
+                                                    <td>
+                                                        <FieldDisplayEdit value={this.props.appraisal.legalDescription} onChange={(newValue) => this.changeAppraisalField('legalDescription', newValue)}/>
                                                     </td>
                                                 </tr>
                                                 </tbody>

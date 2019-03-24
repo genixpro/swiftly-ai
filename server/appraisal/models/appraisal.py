@@ -25,6 +25,24 @@ class Appraisal(Document):
     # The country that the building this appraisal is being done on is located in
     country = StringField()
 
+    # The type of property this is.
+    propertyType = StringField()
+
+    # If this property type is industrial, this is the industrial sub-type for the property
+    industrialSubType = StringField()
+
+    # If this property type is land, this is the land sub-type for the property
+    landSubType = StringField()
+
+    # This is the size of the building, in square feet
+    sizeOfBuilding = FloatField()
+
+    # This is the size of the land the building is on, in square feet
+    sizeOfLand = FloatField()
+
+    # This is the legal description of the building, which references its plot number
+    legalDescription = StringField()
+
     # A list of units within this Appraisal
     units = ListField(EmbeddedDocumentField(Unit))
 

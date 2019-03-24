@@ -59,14 +59,14 @@ class ViewStabilizedStatementValuation extends React.Component
     {
         item['yearlyAmount'] = newValue;
         item['monthlyAmount'] = newValue / 12.0;
-        this.saveDocument(this.props.appraisal)
+        this.props.saveDocument(this.props.appraisal)
     }
 
 
     changeIncomeItemName(item, newName)
     {
         item['name'] = newName;
-        this.saveDocument(this.props.appraisal)
+        this.props.saveDocument(this.props.appraisal)
     }
 
 
@@ -81,7 +81,7 @@ class ViewStabilizedStatementValuation extends React.Component
             this.props.appraisal.incomeStatement.expenses.splice(itemIndex, 1);
         }
 
-        this.saveDocument(this.props.appraisal)
+        this.props.saveDocument(this.props.appraisal)
     }
 
 
@@ -145,7 +145,7 @@ class ViewStabilizedStatementValuation extends React.Component
             this.props.appraisal.incomeStatement.expenses.push(newItem);
         }
 
-        this.saveDocument(this.props.appraisal)
+        this.props.saveDocument(this.props.appraisal)
 
     }
 

@@ -33,12 +33,15 @@ class ViewAppraisal extends React.Component
         });
     }
 
-    saveDocument(newAppraisal)
+    saveDocument(newAppraisal, updateStateAfterSave)
     {
         this.setState({appraisal: this.state.appraisal});
         axios.post(`/appraisal/${this.props.match.params.id}`, newAppraisal).then((response) =>
         {
-            // this.setState({appraisal: response.data.appraisal})
+            if (updateStateAfterSave)
+            {
+                this.setState({appraisal: response.data.appraisal})
+            }
         });
     }
 
