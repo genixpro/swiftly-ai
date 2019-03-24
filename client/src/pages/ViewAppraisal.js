@@ -55,9 +55,6 @@ class ViewAppraisal extends React.Component
                                         {/*<NavItem>*/}
                                             {/*<NavLink to={`${this.props.match.url}/financial_statements`} activeClassName="active" tag={RRNavLink}>Financials</NavLink>*/}
                                         {/*</NavItem>*/}
-                                        {/*<NavItem>*/}
-                                            {/*<NavLink to={`${this.props.match.url}/comparable_sales`} activeClassName="active" tag={RRNavLink}>Comparable Sales</NavLink>*/}
-                                        {/*</NavItem>*/}
                                         <NavItem>
                                             <NavLink to={`${this.props.match.url}/tenants/rent_roll`} activeClassName="active" tag={RRNavLink}>Tenants</NavLink>
                                         </NavItem>
@@ -73,6 +70,9 @@ class ViewAppraisal extends React.Component
                                 <CardHeader className="text-white bg-primary">Property Valuation</CardHeader>
                                 <CardBody>
                                     <Nav tabs>
+                                        <NavItem>
+                                            <NavLink to={`${this.props.match.url}/comparable_sales`} activeClassName="active" tag={RRNavLink}>Comparable Sales</NavLink>
+                                        </NavItem>
                                         <NavItem>
                                             <NavLink to={`${this.props.match.url}/stabilized_statement_valuation`} activeClassName="active" tag={RRNavLink}>Stabilized Statement Valuation</NavLink>
                                         </NavItem>

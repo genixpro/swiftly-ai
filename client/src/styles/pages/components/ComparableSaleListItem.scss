@@ -2,4 +2,66 @@
 .comparable-sale-list-item
 {
   cursor: pointer;
+
+  .building-image
+  {
+    position: relative;
+
+    .upload-image-overlay
+    {
+      position: absolute;
+      left: 15px;
+      width: calc(100% - 30px);
+      top: 0;
+      height: 100%;
+      background-color: black;
+      opacity: 0.0;
+    }
+
+    .upload-image-icon
+    {
+      position: absolute;
+      left: calc(50% - 30px);
+      top: calc(50% - 30px);
+      opacity: 0.0;
+
+      i.fa {
+        font-size: 60px;
+        color: white;
+      }
+    }
+  }
+
+  .building-image:hover {
+    .upload-image-overlay {
+      opacity: 0.3;
+    }
+    .upload-image-icon {
+      opacity: 1.0;
+    }
+  }
+
+  .comparable-name
+  {
+    position: relative;
+    left: -15px;
+    width: calc(100% + 15px);
+  }
+
+  .comparable-fields-area
+  {
+    display: grid;
+    grid-template-columns: max-content auto;
+    align-items: start;
+
+    .comparable-field-label {
+      margin-top: 6px;
+      margin-right: 5px;
+      grid-column: 1 / span 1;
+    }
+
+    .field-display-edit {
+      grid-column: 2 / span 1;
+    }
+  }
 }

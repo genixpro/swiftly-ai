@@ -4,56 +4,53 @@ import pymongo
 import bson
 import tempfile
 import subprocess
+import json
 import os
+from .models.comparable_sale import ComparableSale
 
-
-@resource(collection_path='/appraisal/{appraisalId}/comparable_sales', path='/appraisal/{appraisalId}/comparable_sales/{id}', renderer='bson', cors_enabled=True, cors_origins="*")
+@resource(collection_path='/comparable_sales', path='/comparable_sales/{id}', renderer='bson', cors_enabled=True, cors_origins="*")
 class ComparableSaleAPI(object):
 
     def __init__(self, request, context=None):
         self.request = request
-        self.comparableSalesCollection = request.registry.db['comparable_sales']
-        self.appraisalsCollection = request.registry.db['appraisals']
 
     def __acl__(self):
         return [(Allow, Everyone, 'everything')]
 
     def collection_get(self):
-        appraisalId = self.request.matchdict['appraisalId']
+        query = self.request.GET
 
-        comparable_sales = self.comparableSalesCollection.find({"appraisalId": appraisalId})
+        comparableSales = ComparableSale.objects(**query)
 
-        return {"comparableSales": list(comparable_sales)}
+        return {"comparableSales": list([json.loads(sale.to_json()) for sale in comparableSales])}
 
     def get(self):
-        appraisalId = self.request.matchdict['appraisalId']
-        leaseId = self.request.matchdict['id']
+        comparableId = self.request.matchdict['id']
 
-        comparableSale = self.comparableSalesCollection.find_one({"_id": bson.ObjectId(leaseId), "appraisalId": appraisalId})
+        comparableSale = ComparableSale.objects(id=comparableId).first()
 
-        return {"comparableSale": comparableSale}
+        return {"comparableSale": json.loads(comparableSale.to_json())}
 
     def collection_post(self):
         data = self.request.json_body
 
-        appraisalId = self.request.matchdict['appraisalId']
-        data["appraisalId"] = appraisalId
+        comparable = ComparableSale(**data)
+        comparable.save()
 
-        result = self.comparableSalesCollection.insert_one(data)
-
-        id = result.inserted_id
-        return {"_id": str(id)}
+        return {"_id": str(comparable.id)}
 
 
     def post(self):
         data = self.request.json_body
 
-        appraisalId = self.request.matchdict['appraisalId']
-        statementId = self.request.matchdict['id']
+        comparableId = self.request.matchdict['id']
 
         if '_id' in data:
             del data['_id']
 
-        self.comparableSalesCollection.update_one({"_id": bson.ObjectId(statementId)}, {"$set": data})
+        comparable = ComparableSale.objects(id=comparableId).first()
+        comparable.modify(**data)
 
-        return {"_id": str(id)}
+        comparable.save()
+
+        return {"_id": str(comparableId)}

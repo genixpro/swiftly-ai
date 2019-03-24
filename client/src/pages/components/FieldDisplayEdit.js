@@ -1,5 +1,7 @@
 import React from 'react';
 import { Table } from 'reactstrap';
+import _ from 'underscore';
+
 import {
     Input,
     InputGroup,
@@ -53,6 +55,12 @@ class FieldDisplayEdit extends React.Component
         {
             return "";
         }
+
+        if (_.isUndefined(value))
+        {
+            return "";
+        }
+
         else if (this.props.type === 'currency')
         {
             try {
@@ -130,25 +138,34 @@ class FieldDisplayEdit extends React.Component
 
     render() {
         return (
-            <div onClick={(evt) => this.startEditing()}
-                 onBlur={(evt) => this.finishEditing()}>
-                <InputGroup className={"field-display-edit " + (this.state.isEditing ? " editing" : "static")}>
-                    <Input placeholder={this.props.placeholder}
-                           value={this.state.isEditing ? this.state.value : this.formatValue(this.props.value)}
-                           onChange={(evt) => this.inputUpdated(evt.target.value)}
-                           innerRef={(inputElem) => this.inputElem = inputElem}
-                           onKeyPress={(evt) => this.handleKeyPress(evt)}
-                    />
-                    {
-                        !this.state.hideIcon ?
-                            <InputGroupAddon addonType="append">
-                                <span className={"input-group-text"}>
-                                    <i className={"fa fa-wrench"} />
-                                </span>
-                            </InputGroupAddon> : null
-                    }
-                </InputGroup>
-            </div>
+            <InputGroup className={"field-display-edit " + (this.state.isEditing ? " editing" : "static") + " " + (this.props.className ? this.props.className : "")}
+                        onClick={(evt) => this.startEditing()}
+                        onBlur={(evt) => this.finishEditing()}>
+                {
+                    this.props.type === "textbox" ?
+                        <textarea
+                            placeholder={this.props.placeholder}
+                            value={this.state.isEditing ? this.state.value : this.formatValue(this.props.value)}
+                            onChange={(evt) => this.inputUpdated(evt.target.value)}
+                            ref={(inputElem) => this.inputElem = inputElem}
+                            onKeyPress={(evt) => this.handleKeyPress(evt)}
+                        /> :
+                        <Input placeholder={this.props.placeholder}
+                               value={this.state.isEditing ? this.state.value : this.formatValue(this.props.value)}
+                               onChange={(evt) => this.inputUpdated(evt.target.value)}
+                               innerRef={(inputElem) => this.inputElem = inputElem}
+                               onKeyPress={(evt) => this.handleKeyPress(evt)}
+                        />
+                }
+                {
+                    !this.state.hideIcon ?
+                        <InputGroupAddon addonType="append">
+                            <span className={"input-group-text"}>
+                                <i className={"fa fa-wrench"} />
+                            </span>
+                        </InputGroupAddon> : null
+                }
+            </InputGroup>
         );
     }
 }
