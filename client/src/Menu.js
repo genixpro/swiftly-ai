@@ -16,6 +16,7 @@ const Menu = [
         name: 'Appraisal',
         icon: 'icon-docs',
         match: '/appraisal/:appraisalId/',
+        openByDefault: true,
         submenu: [
             {
                 name: 'Upload Files',

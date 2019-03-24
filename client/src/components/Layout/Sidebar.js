@@ -68,10 +68,17 @@ class Sidebar extends Component
         let collapse = {};
         Menu
             .filter(({heading}) => !heading)
-            .forEach(({name, path, submenu}) =>
+            .forEach(({openByDefault, name, path, submenu}) =>
             {
-                collapse[name] = this.routeActive(submenu ? submenu.map((subItem) => this.matchRouteForItem(subItem)) : path)
-            })
+                if (openByDefault)
+                {
+                    collapse[name] = true;
+                }
+                else
+                {
+                    collapse[name] = this.routeActive(submenu ? submenu.map((subItem) => this.matchRouteForItem(subItem)) : path)
+                }
+            });
         this.setState({collapse});
     }
 
@@ -192,7 +199,7 @@ class Sidebar extends Component
                             {
                                 Menu.map((item, i) =>
                                 {
-                                    if (item.path && !this.shouldShowRoute(item.path))
+                                    if (this.matchRouteForItem(item) && !this.shouldShowRoute(this.matchRouteForItem(item)))
                                     {
                                         return null;
                                     }
