@@ -1,7 +1,9 @@
 import React from 'react';
 import {Row, Col, Card, CardBody} from 'reactstrap';
 import axios from 'axios';
-import ComparableSaleList from "./components/ComparableSaleList"
+import ComparableSaleList from "./components/ComparableSaleList";
+import Promise from 'bluebird';
+import _ from 'underscore';
 
 
 class ViewComparableSales extends React.Component {
@@ -9,20 +11,74 @@ class ViewComparableSales extends React.Component {
         comparableSales: []
     };
 
-    componentDidMount() {
+    componentDidMount()
+    {
         axios.get(`/comparable_sales`).then((response) => {
+            // console.log(response.data.comparableSales);
             this.setState({comparableSales: response.data.comparableSales})
+        });
+
+        axios.get(`/appraisal/${this.props.match.params.id}`).then((response) =>
+        {
+            this.setState({appraisal: response.data.appraisal})
         });
     }
 
-    onComparablesChanged(newComparables)
+
+    createNewComparable(newComparable)
     {
-        this.setState({comparableSales: newComparables});
+        const comparables = this.state.comparableSales;
+        comparables.splice(0, 0, newComparable);
+        this.setState({comparableSales: comparables});
+    }
+
+    onComparablesChanged(comps)
+    {
+        this.setState({comparableSales: comps});
+    }
+
+    saveDocument(newAppraisal)
+    {
+        axios.post(`/appraisal/${this.props.match.params.id}`, {comparables: newAppraisal.comparables}).then((response) =>
+        {
+            this.setState({appraisal: response.data.appraisal})
+        });
+    }
+
+    addComparableToAppraisal(comp)
+    {
+        const appraisal = this.state.appraisal;
+        appraisal.comparables.push(comp._id['$oid']);
+        appraisal.comparables = _.clone(appraisal.comparables);
+        this.setState({appraisal: appraisal});
+        this.saveDocument(appraisal);
     }
 
 
+    removeComparableFromAppraisal(comp)
+    {
+        const appraisal = this.state.appraisal;
+        for (let i = 0; i < appraisal.comparables.length; i += 1)
+        {
+            if (appraisal.comparables[i] === comp._id['$oid'])
+            {
+                appraisal.comparables.splice(i, 1);
+                break;
+            }
+        }
+        appraisal.comparables = _.clone(appraisal.comparables);
+        this.setState({appraisal: appraisal});
+        this.saveDocument(appraisal);
+    }
 
-    render() {
+
+    render()
+    {
+        if (!this.state.appraisal)
+        {
+            return null;
+        }
+
         return (
             <Row>
                 <Col xs={6}>
@@ -36,10 +92,11 @@ class ViewComparableSales extends React.Component {
                                 </Row>
                                 <Row>
                                     <Col xs={12}>
-                                        <ComparableSaleList comparableSales={this.state.comparableSales}
+                                        <ComparableSaleList comparableSaleIds={this.state.appraisal.comparables}
+                                                            allowNew={false}
                                                             history={this.props.history}
                                                             appraisalId={this.props.match.params._id}
-                                                            onChange={(comps) => this.onComparablesChanged(comps)}
+                                                            onRemoveComparableClicked={(comp) => this.removeComparableFromAppraisal(comp)}
                                         />
                                     </Col>
                                 </Row>
@@ -61,24 +118,22 @@ class ViewComparableSales extends React.Component {
                                         <form action="">
                                             <div className="input-group input-group-lg">
                                                 <input className="form-control form-control-lg rounded-0" type="text" name="term" placeholder="Search"/>
-                                                {/*<select className="form-control form-control-lg">*/}
-                                                {/*<option>All Products</option>*/}
-                                                {/*<option>Templates</option>*/}
-                                                {/*<option>Servers</option>*/}
-                                                {/*<option>Billing</option>*/}
-                                                {/*<option>Buyers</option>*/}
-                                                {/*<option>Sellers</option>*/}
-                                                {/*<option>Plans</option>*/}
-                                                {/*<option>Accounts</option>*/}
-                                                {/*</select>*/}
-                                                {/*<div className="input-group-append">*/}
-                                                {/*<button className="btn btn-info btn-lg b0 rounded-0" type="button">*/}
-                                                {/*<strong>Search</strong>*/}
-                                                {/*</button>*/}
-                                                {/*</div>*/}
                                                 <br />
                                             </div>
                                         </form>
+                                    </Col>
+                                </Row>
+                                <Row>
+                                    <Col xs={12}>
+                                        <ComparableSaleList comparableSales={this.state.comparableSales}
+                                                            allowNew={true}
+                                                            excludeIds={this.state.appraisal.comparables}
+                                                            history={this.props.history}
+                                                            appraisalId={this.props.match.params._id}
+                                                            onAddComparableClicked={(comp) => this.addComparableToAppraisal(comp)}
+                                                            onNewComparable={(comp) => this.createNewComparable(comp)}
+                                                            onChange={(comps) => this.onComparablesChanged(comps)}
+                                        />
                                     </Col>
                                 </Row>
                             </div>

@@ -1,17 +1,63 @@
 
-.comparable-sale-list-item
+
+.new-comparable
 {
   cursor: pointer;
+  margin-bottom: 0;
+  color: gray;
+  text-align: center;
+}
+
+.new-comparable:hover
+{
+  background-color: #eeeeee;
+}
+
+
+.comparable-sale-list-item
+{
+  display: flex;
+  flex-direction: row;
+  padding-left: 0;
+
+  .comparable-button-column
+  {
+    margin-top: -15px;
+    margin-bottom: -15px;
+
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+
+    .move-comparable-button {
+      flex-grow: 1;
+    }
+
+    .btn {
+      border-radius: 0;
+    }
+  }
+
+  .comparable-button-column.right
+  {
+    margin-right: -15px;
+  }
 
   .building-image
   {
+    cursor: pointer;
     position: relative;
+    flex-grow: 0;
+    flex-shrink: 0;
+    flex-basis: 25%;
+    margin-left: 15px;
+    margin-right: 15px;
 
     .upload-image-overlay
     {
       position: absolute;
-      left: 15px;
-      width: calc(100% - 30px);
+      left: 0;
+      width: 100%;
       top: 0;
       height: 100%;
       background-color: black;
@@ -41,17 +87,28 @@
     }
   }
 
+  .comparable-sale-content
+  {
+    flex-grow: 1;
+
+    display: flex;
+    flex-direction: column;
+  }
+
   .comparable-name
   {
     position: relative;
     left: -15px;
     width: calc(100% + 15px);
+    flex-grow: 0;
   }
 
   .comparable-fields-area
   {
+    flex-grow: 1;
     display: grid;
     grid-template-columns: max-content auto;
+    grid-template-rows: min-content min-content 1fr;
     align-items: start;
 
     .comparable-field-label {
@@ -62,6 +119,7 @@
 
     .field-display-edit {
       grid-column: 2 / span 1;
+      height: 100%;
     }
   }
 }

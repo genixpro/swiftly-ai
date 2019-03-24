@@ -149,6 +149,7 @@ class FieldDisplayEdit extends React.Component
                             onChange={(evt) => this.inputUpdated(evt.target.value)}
                             ref={(inputElem) => this.inputElem = inputElem}
                             onKeyPress={(evt) => this.handleKeyPress(evt)}
+                            rows={1}
                         /> :
                         <Input placeholder={this.props.placeholder}
                                value={this.state.isEditing ? this.state.value : this.formatValue(this.props.value)}

@@ -5,6 +5,7 @@ from .income_statement import IncomeStatement
 from .discounted_cash_flow import DiscountedCashFlow
 from .discounted_cash_flow_inputs import DiscountedCashFlowInputs
 from .appraisal_validation_result import AppraisalValidationResult
+from .comparable_sale import ComparableSale
 
 class Appraisal(Document):
     meta = {'collection': 'appraisals', 'strict': False}
@@ -38,3 +39,6 @@ class Appraisal(Document):
 
     # The validation results for this appraisal
     validationResult = EmbeddedDocumentField(AppraisalValidationResult, default=AppraisalValidationResult)
+
+    # A list of comparables that are attached to this appraisal
+    comparables = ListField(StringField())

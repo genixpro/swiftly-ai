@@ -54,3 +54,9 @@ class ComparableSaleAPI(object):
         comparable.save()
 
         return {"_id": str(comparableId)}
+
+    def delete(self):
+        fileId = self.request.matchdict['id']
+
+        sale = ComparableSale.objects(id=fileId).first()
+        sale.delete()
