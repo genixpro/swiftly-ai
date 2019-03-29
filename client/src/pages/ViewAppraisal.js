@@ -18,6 +18,7 @@ import ViewTenants from "./ViewTenants";
 import ViewUnitInformation from "./ViewUnitInformation";
 import ViewBuildingInformation from "./ViewBuildingInformation";
 import ViewExpenses from "./ViewExpenses";
+import ViewComparableLeases from "./ViewComparableLeases";
 import axios from "axios/index";
 
 class ViewAppraisal extends React.Component
@@ -69,6 +70,7 @@ class ViewAppraisal extends React.Component
                         <Route path={`${this.props.match.path}/units/:unitNum`} render={(props) => withProps({...routeProps, ...props})(ViewUnitInformation)()} />
                         <Route path={`${this.props.match.path}/general`} render={(props) => withProps({...routeProps, ...props})(ViewBuildingInformation)()}/>} />
                         <Route path={`${this.props.match.path}/expenses`} render={(props) => withProps({...routeProps, ...props})(ViewExpenses)()} />
+                        <Route path={`${this.props.match.path}/comparable_leases`} render={(props) => withProps({...routeProps, ...props})(ViewComparableLeases)()} />
                     </Switch>
                 </div>
             </ContentWrapper> : null

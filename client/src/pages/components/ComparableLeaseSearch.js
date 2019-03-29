@@ -5,7 +5,7 @@ import Datetime from 'react-datetime';
 import PropertyTypeSelector from './PropertyTypeSelector';
 import _ from 'underscore';
 
-class ComparableSearch extends React.Component
+class ComparableLeaseSearch extends React.Component
 {
     state = {
         value: "",
@@ -46,14 +46,14 @@ class ComparableSearch extends React.Component
                                     <tbody>
                                     <tr>
                                         <td>
-                                            <strong>Sale Date Start:</strong>
+                                            <strong>Lease Date Start:</strong>
                                         </td>
                                         <td>
                                             {
                                                 <FieldDisplayEdit
                                                     type={"date"}
-                                                    value={this.state.search.saleDateFrom}
-                                                    onChange={(newValue) => this.changeSearchField("saleDateFrom", newValue)}
+                                                    value={this.state.search.leaseDateFrom}
+                                                    onChange={(newValue) => this.changeSearchField("leaseDateFrom", newValue)}
                                                     hideInput={false}
                                                     hideIcon={true}
                                                 />
@@ -62,14 +62,14 @@ class ComparableSearch extends React.Component
                                     </tr>
                                     <tr>
                                         <td>
-                                            <strong>Sale Date End:</strong>
+                                            <strong>Lease Date End:</strong>
                                         </td>
                                         <td>
                                             {
                                                 <FieldDisplayEdit
                                                     type={"date"}
-                                                    value={this.state.search.saleDateTo}
-                                                    onChange={(newValue) => this.changeSearchField("saleDateTo", newValue)}
+                                                    value={this.state.search.leaseDateTo}
+                                                    onChange={(newValue) => this.changeSearchField("leaseDateTo", newValue)}
                                                     hideInput={false}
                                                     hideIcon={true}
                                                 />
@@ -93,14 +93,14 @@ class ComparableSearch extends React.Component
                                     <tbody>
                                     <tr>
                                         <td>
-                                            <strong>Sale Price Low:</strong>
+                                            <strong>Size of Unit Low:</strong>
                                         </td>
                                         <td>
                                             {
                                                 <FieldDisplayEdit
-                                                    type={"currency"}
-                                                    value={this.state.search.salePriceFrom}
-                                                    onChange={(newValue) => this.changeSearchField("salePriceFrom", newValue)}
+                                                    type={"number"}
+                                                    value={this.state.search.sizeOfUnitFrom}
+                                                    onChange={(newValue) => this.changeSearchField("sizeOfUnitFrom", newValue)}
                                                     hideInput={false}
                                                     hideIcon={true}
                                                 />
@@ -109,14 +109,14 @@ class ComparableSearch extends React.Component
                                     </tr>
                                     <tr>
                                         <td>
-                                            <strong>Sale Price High:</strong>
+                                            <strong>Size of Unit High:</strong>
                                         </td>
                                         <td>
                                             {
                                                 <FieldDisplayEdit
-                                                    type={"currency"}
-                                                    value={this.state.search.salePriceTo}
-                                                    onChange={(newValue) => this.changeSearchField("salePriceTo", newValue)}
+                                                    type={"number"}
+                                                    value={this.state.search.sizeOfUnitTo}
+                                                    onChange={(newValue) => this.changeSearchField("sizeOfUnitTo", newValue)}
                                                     hideInput={false}
                                                     hideIcon={true}
 
@@ -130,14 +130,14 @@ class ComparableSearch extends React.Component
                                     <tbody>
                                     <tr>
                                         <td>
-                                            <strong>Leasable Area Low:</strong>
+                                            <strong>Yearly Rent Low:</strong>
                                         </td>
                                         <td>
                                             {
                                                 <FieldDisplayEdit
                                                     type={"currency"}
-                                                    value={this.state.search.leasableAreaFrom}
-                                                    onChange={(newValue) => this.changeSearchField("leasableAreaFrom", newValue)}
+                                                    value={this.state.search.yearlyRentFrom}
+                                                    onChange={(newValue) => this.changeSearchField("yearlyRentFrom", newValue)}
                                                     hideInput={false}
                                                     hideIcon={true}
                                                 />
@@ -146,14 +146,14 @@ class ComparableSearch extends React.Component
                                     </tr>
                                     <tr>
                                         <td>
-                                            <strong>Leasable Area High:</strong>
+                                            <strong>Yearly Rent High:</strong>
                                         </td>
                                         <td>
                                             {
                                                 <FieldDisplayEdit
                                                     type={"currency"}
-                                                    value={this.state.search.leasableAreaTo}
-                                                    onChange={(newValue) => this.changeSearchField("leasableAreaTo", newValue)}
+                                                    value={this.state.search.yearlyRentTo}
+                                                    onChange={(newValue) => this.changeSearchField("yearlyRentTo", newValue)}
                                                     hideInput={false}
                                                     hideIcon={true}
 
@@ -173,5 +173,5 @@ class ComparableSearch extends React.Component
 }
 
 
-export default ComparableSearch;
+export default ComparableLeaseSearch;
 

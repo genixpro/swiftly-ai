@@ -222,7 +222,7 @@ class FieldDisplayEdit extends React.Component
                 {
                     this.props.type === "date" ?
                         <Datetime
-                            inputProps={{className: 'form-control', disabled: !this.props.edit}}
+                            inputProps={{className: 'form-control', disabled: !this.props.edit, placeholder: this.props.placeholder}}
                             dateFormat={"YYYY/MM/DD"}
                             timeFormat={false}
                             input={true}

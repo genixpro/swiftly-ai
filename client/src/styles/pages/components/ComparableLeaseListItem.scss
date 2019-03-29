@@ -1,0 +1,90 @@
+
+
+.new-comparable
+{
+  cursor: pointer;
+  margin-bottom: 0;
+  color: gray;
+  text-align: center;
+}
+
+.new-comparable:hover
+{
+  background-color: #eeeeee;
+}
+
+.comparable-lease-list-item {
+  min-width: 40vw;
+
+  .comparable-lease-list-item-body {
+    display: flex;
+    flex-direction: row;
+    //padding-left: 0;
+
+    &.editable {
+
+    }
+
+    .comparable-lease-content {
+      flex-grow: 1;
+
+      display: flex;
+      flex-direction: column;
+    }
+
+    .comparable-name {
+      flex-grow: 0;
+    }
+
+    .comparable-fields-area {
+      flex-grow: 1;
+      display: grid;
+      grid-template-columns: max-content auto;
+      grid-template-rows: min-content min-content min-content min-content min-content min-content min-content 1fr;
+      align-items: start;
+
+      .comparable-field-label {
+        margin-top: 6px;
+        margin-right: 5px;
+        grid-column: 1 / span 1;
+      }
+
+      .field-display-edit {
+        grid-column: 2 / span 1;
+        height: 100%;
+      }
+    }
+  }
+
+  .card-footer
+  {
+    padding-top: 0;
+    padding-bottom: 0;
+  }
+
+  .comparable-button-row {
+    position: relative;
+    left: -15px;
+    width: calc(100% + 30px);
+
+    display: flex;
+    flex-direction: row;
+    align-items: stretch;
+
+    .btn {
+      border-radius: 0;
+    }
+
+    .btn:first-child {
+      border-bottom-left-radius: calc(0.25rem - 1px);
+    }
+
+    .btn:last-child {
+      border-bottom-right-radius: calc(0.25rem - 1px);
+    }
+
+    .move-comparable-button {
+      flex-grow: 1;
+    }
+  }
+}

@@ -55,5 +55,8 @@ class Appraisal(Document):
     # The validation results for this appraisal
     validationResult = EmbeddedDocumentField(AppraisalValidationResult, default=AppraisalValidationResult)
 
-    # A list of comparables that are attached to this appraisal
-    comparables = ListField(StringField())
+    # A list of comparable sales that are attached to this appraisal
+    comparableSales = ListField(StringField())
+
+    # A list of comparable leases that are attached to this appraisal
+    comparableLeases = ListField(StringField())

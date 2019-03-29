@@ -44,7 +44,7 @@ class PropertyTypeSelector extends React.Component
                 disabled={this.props.disabled}
 
             >
-                <option value={""}></option>
+                <option value={""}>Property Type</option>
                 <option value={"office"}>Office</option>
                 <option value={"industrial"}>Industrial</option>
                 <option value={"residential"}>Residential</option>

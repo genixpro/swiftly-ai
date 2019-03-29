@@ -5,20 +5,17 @@ import ComparableSaleList from "./components/ComparableSaleList";
 import Promise from 'bluebird';
 import _ from 'underscore';
 import AppraisalContentHeader from "./components/AppraisalContentHeader";
-import ComparableSearch from './components/ComparableSearch';
+import ComparableSaleSearch from './components/ComparableSaleSearch';
 
 
-class ViewAppraisalComparables extends React.Component {
+class ViewAppraisalComparableSales extends React.Component {
     state = {
         comparableSales: []
     };
 
     componentDidMount()
     {
-        axios.get(`/comparable_sales`).then((response) => {
-            // console.log(response.data.comparableSales);
-            this.setState({comparableSales: response.data.comparableSales})
-        });
+
     }
 
 
@@ -37,8 +34,8 @@ class ViewAppraisalComparables extends React.Component {
     addComparableToAppraisal(comp)
     {
         const appraisal = this.props.appraisal;
-        appraisal.comparables.push(comp._id['$oid']);
-        appraisal.comparables = _.clone(appraisal.comparables);
+        appraisal.comparableSales.push(comp._id['$oid']);
+        appraisal.comparableSales = _.clone(appraisal.comparableSales);
         this.props.saveDocument(appraisal);
     }
 
@@ -46,15 +43,15 @@ class ViewAppraisalComparables extends React.Component {
     removeComparableFromAppraisal(comp)
     {
         const appraisal = this.props.appraisal;
-        for (let i = 0; i < appraisal.comparables.length; i += 1)
+        for (let i = 0; i < appraisal.comparableSales.length; i += 1)
         {
-            if (appraisal.comparables[i] === comp._id['$oid'])
+            if (appraisal.comparableSales[i] === comp._id['$oid'])
             {
-                appraisal.comparables.splice(i, 1);
+                appraisal.comparableSales.splice(i, 1);
                 break;
             }
         }
-        appraisal.comparables = _.clone(appraisal.comparables);
+        appraisal.comparableSales = _.clone(appraisal.comparableSales);
         this.props.saveDocument(appraisal);
     }
 
@@ -75,7 +72,7 @@ class ViewAppraisalComparables extends React.Component {
                     </Row>
                     <Row>
                         <Col xs={12}>
-                            <ComparableSaleList comparableSaleIds={this.props.appraisal.comparables}
+                            <ComparableSaleList comparableSaleIds={this.props.appraisal.comparableSales}
                                                 allowNew={false}
                                                 history={this.props.history}
                                                 appraisalId={this.props.match.params._id}
@@ -89,4 +86,4 @@ class ViewAppraisalComparables extends React.Component {
     }
 }
 
-export default ViewAppraisalComparables;
+export default ViewAppraisalComparableSales;

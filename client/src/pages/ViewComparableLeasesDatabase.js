@@ -1,17 +1,17 @@
 import React from 'react';
 import {Row, Col, Card, CardBody, Popover, PopoverBody, PopoverHeader} from 'reactstrap';
 import axios from 'axios';
-import ComparableSaleList from "./components/ComparableSaleList";
+import ComparableLeaseList from "./components/ComparableLeaseList";
 import Promise from 'bluebird';
 import _ from 'underscore';
 import AppraisalContentHeader from "./components/AppraisalContentHeader";
-import ComparableSearch from "./components/ComparableSearch";
+import ComparableLeaseSearch from "./components/ComparableLeaseSearch";
 import GoogleMapReact from 'google-map-react';
-import ComparableSaleListItem from "./components/ComparableSaleListItem"
+import ComparableLeaseListItem from "./components/ComparableLeaseListItem"
 
-class ViewComparablesDatabase extends React.Component {
+class ViewComparableSalesDatabase extends React.Component {
     state = {
-        comparableSales: []
+        comparableLeases: []
     };
 
     search = {};
@@ -46,32 +46,30 @@ class ViewComparablesDatabase extends React.Component {
     {
         const params = _.extend({}, this.search, this.mapSearch);
 
-        console.log(params);
-
-        axios.get(`/comparable_sales`, {params: params}).then((response) => {
-            // console.log(response.data.comparableSales);
-            this.setState({comparableSales: response.data.comparableSales})
+        axios.get(`/comparable_leases`, {params: params}).then((response) => {
+            // console.log(response.data.comparableLeases);
+            this.setState({comparableLeases: response.data.comparableLeases})
         });
     }
 
 
     createNewComparable(newComparable)
     {
-        const comparables = this.state.comparableSales;
+        const comparables = this.state.comparableLeases;
         comparables.splice(0, 0, newComparable);
-        this.setState({comparableSales: comparables});
+        this.setState({comparableLeases: comparables});
     }
 
     onComparablesChanged(comps)
     {
-        this.setState({comparableSales: comps});
+        this.setState({comparableLeases: comps});
     }
 
     addComparableToAppraisal(comp)
     {
         const appraisal = this.props.appraisal;
-        appraisal.comparables.push(comp._id['$oid']);
-        appraisal.comparables = _.clone(appraisal.comparables);
+        appraisal.comparableLeases.push(comp._id['$oid']);
+        appraisal.comparableLeases = _.clone(appraisal.comparableLeases);
         this.props.saveDocument(appraisal);
     }
 
@@ -85,22 +83,22 @@ class ViewComparablesDatabase extends React.Component {
     removeComparableFromAppraisal(comp)
     {
         const appraisal = this.props.appraisal;
-        for (let i = 0; i < appraisal.comparables.length; i += 1)
+        for (let i = 0; i < appraisal.comparableLeases.length; i += 1)
         {
-            if (appraisal.comparables[i] === comp._id['$oid'])
+            if (appraisal.comparableLeases[i] === comp._id['$oid'])
             {
-                appraisal.comparables.splice(i, 1);
+                appraisal.comparableLeases.splice(i, 1);
                 break;
             }
         }
-        appraisal.comparables = _.clone(appraisal.comparables);
+        appraisal.comparableLeases = _.clone(appraisal.comparableLeases);
         this.props.saveDocument(appraisal);
     }
 
     toggleComparablePopover(comp)
     {
         comp.visible = !comp.visible;
-        this.setState({comparableSales: this.state.comparableSales});
+        this.setState({comparableLeases: this.state.comparableLeases});
     }
 
     onMapChanged(location)
@@ -138,14 +136,14 @@ class ViewComparablesDatabase extends React.Component {
                         <h3>Search for Comparables</h3>
                     </Col>
                 </Row>
-                <ComparableSearch onChange={(search) => this.onSearchChanged(search)}/>
+                <ComparableLeaseSearch onChange={(search) => this.onSearchChanged(search)}/>
                 <Row>
                     <Col xs={6}>
-                        <ComparableSaleList comparableSales={this.state.comparableSales}
+                        <ComparableLeaseList comparableLeases={this.state.comparableLeases}
                                             allowNew={true}
                                             history={this.props.history}
                                             appraisalId={this.props.match.params._id}
-                                            appraisalComparables={this.props.appraisal.comparables}
+                                            appraisalComparables={this.props.appraisal.comparableLeases}
                                             onAddComparableClicked={(comp) => this.addComparableToAppraisal(comp)}
                                             onRemoveComparableClicked={(comp) => this.removeComparableFromAppraisal(comp)}
                                             onNewComparable={(comp) => this.createNewComparable(comp)}
@@ -161,7 +159,7 @@ class ViewComparablesDatabase extends React.Component {
                                 onChange={(location) => this.onMapChanged(location)}
                             >
                                 {
-                                    this.state.comparableSales.map((comp) =>
+                                    this.state.comparableLeases.map((comp) =>
                                     {
                                         if (!comp.location)
                                         {
@@ -170,30 +168,30 @@ class ViewComparablesDatabase extends React.Component {
 
                                         const id = "comp-" + comp._id['$oid'];
                                         return <div
-                                                key={id}
-                                                lat={comp.location.coordinates[1]}
-                                                lng={comp.location.coordinates[0]}
-                                            >
-                                                <img
-                                                    id={id}
-                                                    className={"building-map-icon"}
-                                                    src={"/img/building-icon.png"}
-                                                    text={comp.name}
-                                                    onClick={() => this.toggleComparablePopover(comp)}
-                                                />
-                                                <Popover placement="right" isOpen={comp.visible} target={id} toggle={() => this.toggleComparablePopover(comp)}>
-                                                    <PopoverBody>
-                                                        <ComparableSaleListItem
-                                                            comparableSale={comp}
-                                                            history={this.props.history}
-                                                            edit={false}
-                                                            appraisalId={this.props.appraisalId}
-                                                            appraisalComparables={this.props.appraisal.comparables}
-                                                            onAddComparableClicked={(comp) => this.addComparableToAppraisal(comp)}
-                                                            onRemoveComparableClicked={(comp) => this.removeComparableFromAppraisal(comp)}
-                                                        />
-                                                    </PopoverBody>
-                                                </Popover>
+                                            key={id}
+                                            lat={comp.location.coordinates[1]}
+                                            lng={comp.location.coordinates[0]}
+                                        >
+                                            <img
+                                                id={id}
+                                                className={"building-map-icon"}
+                                                src={"/img/building-icon.png"}
+                                                text={comp.name}
+                                                onClick={() => this.toggleComparablePopover(comp)}
+                                            />
+                                            <Popover placement="right" isOpen={comp.visible} target={id} toggle={() => this.toggleComparablePopover(comp)}>
+                                                <PopoverBody>
+                                                    <ComparableLeaseListItem
+                                                        comparableSale={comp}
+                                                        history={this.props.history}
+                                                        edit={false}
+                                                        appraisalId={this.props.appraisalId}
+                                                        appraisalComparables={this.props.appraisal.comparableLeases}
+                                                        onAddComparableClicked={(comp) => this.addComparableToAppraisal(comp)}
+                                                        onRemoveComparableClicked={(comp) => this.removeComparableFromAppraisal(comp)}
+                                                    />
+                                                </PopoverBody>
+                                            </Popover>
                                         </div>
                                     })
                                 }
@@ -206,4 +204,4 @@ class ViewComparablesDatabase extends React.Component {
     }
 }
 
-export default ViewComparablesDatabase;
+export default ViewComparableSalesDatabase;
