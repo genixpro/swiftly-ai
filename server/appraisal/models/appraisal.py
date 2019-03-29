@@ -13,17 +13,11 @@ class Appraisal(Document):
     # The name of this appraisal. Arbitrary and chosen by the user
     name = StringField()
 
-    # The address of the building this appraisal is being done on
+    # The address of the building this appraisal is being done on. This is a complete address, including street, city, and country
     address = StringField()
 
-    # The city that the building this appraisal is being done on is located in
-    city = StringField()
-
-    # The region that the building this appraisal is being done on is located in
-    region = StringField()
-
-    # The country that the building this appraisal is being done on is located in
-    country = StringField()
+    # The location of the building on a map
+    location = PointField()
 
     # The type of property this is.
     propertyType = StringField()
@@ -42,6 +36,9 @@ class Appraisal(Document):
 
     # This is the legal description of the building, which references its plot number
     legalDescription = StringField()
+
+    # This is here to describe the zoning of the land the building is on
+    zoning = StringField()
 
     # A list of units within this Appraisal
     units = ListField(EmbeddedDocumentField(Unit))

@@ -1,11 +1,67 @@
 
 
+
 .field-display-edit
 {
-  input, textarea {
-    border: 1px solid lightgray;
-    background: transparent;
+  &.editable
+  {
+    input, textarea, select, select:focus {
+      border: 1px solid lightgray;
+      box-shadow: 0 0;
+      background: transparent;
+    }
+
+    &.static:hover
+    {
+      .input-group-append
+      {
+        opacity: 0.5;
+      }
+      input, textarea, select {
+        cursor: pointer;
+      }
+    }
+
+
+    &.static:hover, &.editing
+    {
+      input, textarea, select {
+        background: white;
+      }
+    }
   }
+
+  &.non-editable
+  {
+    input:disabled, textarea:disabled, select:disabled
+    {
+      background-color: white;
+      color: #656565;
+    }
+  }
+
+
+  &.static.hide-input:not(:hover), &.hide-input.non-editable
+  {
+    .input-group-append
+    {
+      visibility: hidden;
+    }
+
+    input, textarea, select
+    {
+      border: 1px white;
+      border-radius: 0;
+    }
+
+    padding-right: 1px;
+  }
+
+  .rdt
+  {
+    flex-grow: 1;
+  }
+
 
   textarea {
     flex-grow: 1;
@@ -19,38 +75,66 @@
   textarea::placeholder {
     color: gray;
   }
-}
 
-.field-display-edit.static:not(:hover)
-{
-  .input-group-append
-  {
-    visibility: hidden;
+  .geosuggest {
+    position: relative;
+    text-align: left;
+    flex-grow: 1;
+
+    input {
+      border-bottom-left-radius: 0;
+      border-bottom-right-radius: 0;
+    }
   }
 
-  input, textarea
-  {
-    border: 1px white;
-    border-radius: 0;
+  .geosuggest__suggests {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    max-height: 25em;
+    padding: 0;
+    margin-top: -1px;
+    background: #fff;
+    border: 1px solid #66afe9;
+    border-top-width: 0;
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+    overflow-x: hidden;
+    overflow-y: auto;
+    list-style: none;
+    z-index: 5;
+    //-webkit-transition: max-height 0.2s, border 0.2s;
+    //transition: max-height 0.2s, border 0.2s;
+  }
+  .geosuggest__suggests--hidden {
+    max-height: 0;
+    overflow: hidden;
+    border-width: 0;
   }
 
-  padding-right: 1px;
-}
-
-.field-display-edit.static:hover
-{
-  .input-group-append
-  {
-    opacity: 0.5;
-  }
-  input, textarea {
+  /**
+   * A geosuggest item
+   */
+  .geosuggest__item {
+    font-size: 18px;
+    font-size: 1rem;
+    padding: .5em .65em;
     cursor: pointer;
   }
-}
-
-.field-display-edit.static:hover, .field-display-edit.editing
-{
-  input, textarea {
-    background: white;
+  .geosuggest__item:hover,
+  .geosuggest__item:focus {
+    background: #f5f5f5;
+  }
+  .geosuggest__item--active {
+    background: #267dc0;
+    color: #fff;
+  }
+  .geosuggest__item--active:hover,
+  .geosuggest__item--active:focus {
+    background: #ccc;
+  }
+  .geosuggest__item__matched-text {
+    font-weight: bold;
   }
 }

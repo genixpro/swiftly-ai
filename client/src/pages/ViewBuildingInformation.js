@@ -24,6 +24,23 @@ class ViewBuildingInformation extends React.Component
         this.props.saveDocument(appraisal);
     }
 
+    renderFieldRow(title, fieldName, fieldType)
+    {
+        return<tr>
+            <td>
+                <strong>{title}</strong>
+            </td>
+            <td>
+                <FieldDisplayEdit
+                    type={fieldType}
+                    value={this.props.appraisal[fieldName]}
+                    onChange={(newValue) => this.changeAppraisalField(fieldName, newValue)}
+                    onGeoChange={(newValue) => this.changeAppraisalField("location", {"type": "Point", "coordinates": [newValue.lng, newValue.lat]} )}
+                />
+            </td>
+        </tr>;
+    }
+
     render() {
         return (
             (this.props.appraisal) ?
@@ -37,54 +54,9 @@ class ViewBuildingInformation extends React.Component
                                         <Col xs={12} sm={10} md={8}>
                                             <table className="table property-information-fields-table">
                                                 <tbody>
-                                                <tr>
-                                                    <td>
-                                                        <strong>Name</strong>
-                                                    </td>
-                                                    <td>
-                                                        <FieldDisplayEdit value={this.props.appraisal.name} onChange={(newValue) => this.changeAppraisalField('name', newValue)}/>
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <td>
-                                                        <strong>Address</strong>
-                                                    </td>
-                                                    <td>
-                                                        <FieldDisplayEdit value={this.props.appraisal.address} onChange={(newValue) => this.changeAppraisalField('address', newValue)}/>
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <td>
-                                                        <strong>City</strong>
-                                                    </td>
-                                                    <td>
-                                                        <FieldDisplayEdit value={this.props.appraisal.city} onChange={(newValue) => this.changeAppraisalField('city', newValue)}/>
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <td>
-                                                        <strong>Region</strong>
-                                                    </td>
-                                                    <td>
-                                                        <FieldDisplayEdit value={this.props.appraisal.region} onChange={(newValue) => this.changeAppraisalField('region', newValue)}/>
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <td>
-                                                        <strong>Country</strong>
-                                                    </td>
-                                                    <td>
-                                                        <FieldDisplayEdit value={this.props.appraisal.country} onChange={(newValue) => this.changeAppraisalField('country', newValue)}/>
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <td>
-                                                        <strong>Property Type</strong>
-                                                    </td>
-                                                    <td>
-                                                        <PropertyTypeSelector value={this.props.appraisal.propertyType}  onChange={(newValue) => this.changeAppraisalField('propertyType', newValue)}/>
-                                                    </td>
-                                                </tr>
+                                                {this.renderFieldRow("Name", "name")}
+                                                {this.renderFieldRow("Address", "address", "address")}
+                                                {this.renderFieldRow("Property Type", "propertyType")}
                                                 {
                                                     this.props.appraisal.propertyType === 'industrial' ?
                                                         <tr>
@@ -109,30 +81,10 @@ class ViewBuildingInformation extends React.Component
                                                             </td>
                                                         </tr> : null
                                                 }
-                                                <tr>
-                                                    <td>
-                                                        <strong>Size of Building</strong>
-                                                    </td>
-                                                    <td>
-                                                        <FieldDisplayEdit type="number" value={this.props.appraisal.sizeOfBuilding} onChange={(newValue) => this.changeAppraisalField('sizeOfBuilding', newValue)}/>
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <td>
-                                                        <strong>Size of Land</strong>
-                                                    </td>
-                                                    <td>
-                                                        <FieldDisplayEdit type="number" value={this.props.appraisal.sizeOfLand} onChange={(newValue) => this.changeAppraisalField('sizeOfLand', newValue)}/>
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <td>
-                                                        <strong>Legal Description</strong>
-                                                    </td>
-                                                    <td>
-                                                        <FieldDisplayEdit value={this.props.appraisal.legalDescription} onChange={(newValue) => this.changeAppraisalField('legalDescription', newValue)}/>
-                                                    </td>
-                                                </tr>
+                                                {this.renderFieldRow("Size of Building", "sizeOfBuilding", "number")}
+                                                {this.renderFieldRow("Size of Land", "sizeOfLand", "number")}
+                                                {this.renderFieldRow("Legal Description", "legalDescription")}
+                                                {this.renderFieldRow("Zoning", "zoning")}
                                                 </tbody>
                                             </table>
                                         </Col>

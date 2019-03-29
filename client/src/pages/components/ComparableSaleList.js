@@ -155,6 +155,7 @@ class ComparableSaleList extends React.Component
                                 comparableSale={comparableSale}
                                 history={this.props.history}
                                 onChange={(comp) => this.updateComparable(comp, index)}
+                                appraisalComparables={this.props.appraisalComparables}
                                 onAddComparableClicked={this.props.onAddComparableClicked}
                                 onRemoveComparableClicked={this.props.onRemoveComparableClicked}
                                 onDeleteComparable={(comp) => this.onRemoveComparableClicked(comp)}

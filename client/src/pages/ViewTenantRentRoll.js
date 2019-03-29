@@ -358,9 +358,9 @@ class ViewTenantsRentRoll extends React.Component
                 <div id={"view-tenants-rent-roll"} className={"view-tenants-rent-roll"}>
                     <Row>
                         <Col xs={5} md={5} lg={5} xl={5}>
-                            <Card outline color="primary" className="mb-3">
-                                <CardHeader className="text-white bg-primary">Units</CardHeader>
-                                <CardBody>
+                            {/*<Card outline color="primary" className="mb-3">*/}
+                                {/*<CardHeader className="text-white bg-primary">Units</CardHeader>*/}
+                                {/*<CardBody>*/}
                                     <Table hover responsive>
                                         <thead>
                                         <tr>
@@ -387,15 +387,16 @@ class ViewTenantsRentRoll extends React.Component
                                         </tr>
                                         </tbody>
                                     </Table>
-                                </CardBody>
-                            </Card>
+                                {/*</CardBody>*/}
+                            {/*</Card>*/}
                         </Col>
                         {
                             this.state.selectedUnit ?
                                 <Col xs={7} md={7} lg={7} xl={7}>
-                                    <Card outline color="primary" className="mb-3">
-                                        <CardHeader className="text-white bg-primary">Tenant Information</CardHeader>
-                                        <CardBody>
+                                    {/*<Card outline color="primary" className="mb-3">*/}
+                                    <h3>Tenant Information</h3>
+                                        {/*<CardHeader className="text-white bg-primary">Tenant Information</CardHeader>*/}
+                                        {/*<CardBody>*/}
                                             <table className="table">
                                                 <tbody>
                                                 <tr>
@@ -446,11 +447,12 @@ class ViewTenantsRentRoll extends React.Component
                                                 </tr>
                                                 </tbody>
                                             </table>
-                                        </CardBody>
-                                    </Card>
-                                    <Card outline color="primary" className="mb-3">
-                                        <CardHeader className="text-white bg-primary">Tenancy & Escalation Schedule</CardHeader>
-                                        <CardBody>
+                                        {/*</CardBody>*/}
+                                    {/*</Card>*/}
+                                    {/*<Card outline color="primary" className="mb-3">*/}
+                                    <h3>Tenancy & Esclation Schedule</h3>
+                                        {/*<CardHeader className="text-white bg-primary">Tenancy & Escalation Schedule</CardHeader>*/}
+                                        {/*<CardBody>*/}
                                             <table className="table">
                                                 <thead>
                                                 <tr>
@@ -473,8 +475,8 @@ class ViewTenantsRentRoll extends React.Component
                                                 </tbody>
 
                                             </table>
-                                        </CardBody>
-                                    </Card>
+                                        {/*</CardBody>*/}
+                                    {/*</Card>*/}
                                 </Col> : null
                         }
                     </Row>

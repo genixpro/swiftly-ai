@@ -18,7 +18,27 @@ class ComparableSaleAPI(object):
         return [(Allow, Everyone, 'everything')]
 
     def collection_get(self):
-        query = self.request.GET
+        query = {}
+        if 'salePriceFrom' in self.request.GET:
+            query['salePrice__gt'] = self.request.GET['salePriceFrom']
+        if 'salePriceTo' in self.request.GET:
+            query['salePrice__lt'] = self.request.GET['salePriceTo']
+        if 'saleDateFrom' in self.request.GET:
+            query['saleDate__gt'] = self.request.GET['saleDateFrom']
+        if 'saleDateTo' in self.request.GET:
+            query['saleDate__lt'] = self.request.GET['saleDateTo']
+        if 'leaseableAreaFrom' in self.request.GET:
+            query['sizeSquareFootage__gt'] = self.request.GET['leaseableAreaFrom']
+        if 'leaseableAreaTo' in self.request.GET:
+            query['sizeSquareFootage__lt'] = self.request.GET['leaseableAreaTo']
+        if 'propertyType' in self.request.GET:
+            query['propertyType'] = self.request.GET['propertyType']
+
+        if 'locationTop' in self.request.GET:
+            query['location__geo_within_box'] = [
+                (float(self.request.GET['locationLeft']), float(self.request.GET['locationBottom'])),
+                (float(self.request.GET['locationRight']), float(self.request.GET['locationTop']))
+            ]
 
         comparableSales = ComparableSale.objects(**query)
 

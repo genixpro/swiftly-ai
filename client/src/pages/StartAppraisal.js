@@ -74,18 +74,6 @@ class StartAppraisal extends React.Component {
                                         <label>Street Address</label>
                                         <Input type="text" placeholder="Address" onChange={this.updateForm.bind(this, "address")}/>
                                     </FormGroup>
-                                    <FormGroup>
-                                        <label>City</label>
-                                        <Input type="text" placeholder="City" onChange={this.updateForm.bind(this, "city")}/>
-                                    </FormGroup>
-                                    <FormGroup>
-                                        <label>State / Province / Region</label>
-                                        <Input type="text" placeholder="Region" onChange={this.updateForm.bind(this, "region")}/>
-                                    </FormGroup>
-                                    <FormGroup>
-                                        <label>Country</label>
-                                        <Input type="text" placeholder="Country" onChange={this.updateForm.bind(this, "country")}/>
-                                    </FormGroup>
                                     <button className="btn btn-sm btn-primary" type="submit" onClick={this.createAppraisal.bind(this)}>Create</button>
                                 </form>
                             </CardBody>

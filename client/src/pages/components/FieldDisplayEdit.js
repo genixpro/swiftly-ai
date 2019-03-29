@@ -1,6 +1,9 @@
 import React from 'react';
 import { Table } from 'reactstrap';
 import _ from 'underscore';
+import Geosuggest from 'react-geosuggest';
+import Datetime from 'react-datetime';
+import PropertyTypeSelector from './PropertyTypeSelector';
 
 import {
     Input,
@@ -10,6 +13,12 @@ import {
 
 class FieldDisplayEdit extends React.Component
 {
+    static defaultProps = {
+        edit: true,
+        hideInput: true,
+        hideIcon: false
+    };
+
     state = {
         isEditing: false
     };
@@ -61,6 +70,11 @@ class FieldDisplayEdit extends React.Component
             return "";
         }
 
+        if (_.isNull(value))
+        {
+            return "";
+        }
+
         else if (this.props.type === 'currency')
         {
             try {
@@ -79,6 +93,7 @@ class FieldDisplayEdit extends React.Component
                 return this.numberWithCommas(value.toString());
             }
         }
+
         return value;
     }
 
@@ -89,11 +104,16 @@ class FieldDisplayEdit extends React.Component
         {
             const cleanText = value.toString().replace(/[^0-9\.-]/g, "");
 
+            if (cleanText === "")
+            {
+                return null;
+            }
+
             try {
                 return Number(cleanText);
             }
             catch(err) {
-                return 0;
+                return null;
             }
         }
         return value;
@@ -104,6 +124,35 @@ class FieldDisplayEdit extends React.Component
         this.sentUpdate = false;
         this.setState({value: this.formatValue(this.props.value), isEditing: true})
 
+    }
+
+    dateInputUpdated(newValue)
+    {
+        if (newValue)
+        {
+            this.setState({value: newValue}, () => this.finishEditing());
+        }
+    }
+
+    addressInputUpdated(newValue)
+    {
+        if (newValue)
+        {
+            this.setState({value: newValue.label, geo: newValue.location}, () => this.finishEditing());
+
+            if (this.props.onGeoChange)
+            {
+                this.props.onGeoChange(newValue.location);
+            }
+        }
+    }
+
+    propertyTypeInputUpdated(newValue)
+    {
+        if (newValue)
+        {
+            this.setState({value: newValue}, () => this.finishEditing());
+        }
     }
 
 
@@ -137,26 +186,73 @@ class FieldDisplayEdit extends React.Component
 
 
     render() {
+
+        const editStateClass = (this.state.isEditing ? " editing" : "static");
+        const customClass = (this.props.className ? this.props.className : "");
+        const editableClass = (this.props.edit === false ? "non-editable" : "editable");
+        const hideInput = (this.props.hideInput === false ? "show-input" : "hide-input");
+
         return (
-            <InputGroup className={"field-display-edit " + (this.state.isEditing ? " editing" : "static") + " " + (this.props.className ? this.props.className : "")}
-                        onClick={(evt) => this.startEditing()}
-                        onBlur={(evt) => this.finishEditing()}>
+            <InputGroup className={`field-display-edit ${editStateClass} ${customClass} ${editableClass} ${hideInput}`}
+                        onFocus={(evt) => this.startEditing()}>
                 {
                     this.props.type === "textbox" ?
                         <textarea
                             placeholder={this.props.placeholder}
+                            disabled={!this.props.edit}
                             value={this.state.isEditing ? this.state.value : this.formatValue(this.props.value)}
                             onChange={(evt) => this.inputUpdated(evt.target.value)}
                             ref={(inputElem) => this.inputElem = inputElem}
                             onKeyPress={(evt) => this.handleKeyPress(evt)}
+                            onBlur={(evt) => this.finishEditing()}
                             rows={1}
-                        /> :
+                        /> : null
+                }
+                {
+                    this.props.type === "currency" || this.props.type === "number" || this.props.type === "text" || !this.props.type ?
                         <Input placeholder={this.props.placeholder}
+                               disabled={!this.props.edit}
                                value={this.state.isEditing ? this.state.value : this.formatValue(this.props.value)}
                                onChange={(evt) => this.inputUpdated(evt.target.value)}
                                innerRef={(inputElem) => this.inputElem = inputElem}
                                onKeyPress={(evt) => this.handleKeyPress(evt)}
-                        />
+                               onBlur={(evt) => this.finishEditing()}
+                        /> : null
+                }
+                {
+                    this.props.type === "date" ?
+                        <Datetime
+                            inputProps={{className: 'form-control', disabled: !this.props.edit}}
+                            dateFormat={"YYYY/MM/DD"}
+                            timeFormat={false}
+                            input={true}
+                            closeOnSelect={true}
+                            value={this.state.isEditing ? this.state.value : this.formatValue(this.props.value)}
+                            onChange={(newValue) => newValue.toDate ? this.dateInputUpdated(newValue.toDate()) : null}
+                            onBlur={() => this.finishEditing()}
+                        /> : null
+                }
+                {
+                    this.props.type === "propertyType" ?
+                        <PropertyTypeSelector
+                            value={this.state.isEditing ? this.state.value : this.props.value}
+                            disabled={!this.props.edit}
+                            onChange={(newValue) => this.propertyTypeInputUpdated(newValue) }
+                            onBlur={() => this.finishEditing()}
+                            innerRef={(inputElem) => this.inputElem = inputElem}
+                        /> : null
+                }
+                {
+                    this.props.type === "address" ?
+                        <Geosuggest
+                            types={["geocode"]}
+                            placeholder={this.props.placeholder}
+                            disabled={!this.props.edit}
+                            initialValue={this.state.isEditing ? this.state.value : this.formatValue(this.props.value)}
+                            onSuggestSelect={(newValue) => this.addressInputUpdated(newValue)}
+                            inputClassName={"form-control"}
+                            onBlur={(evt) => this.finishEditing()}
+                        /> : null
                 }
                 {
                     !this.state.hideIcon ?

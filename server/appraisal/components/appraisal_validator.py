@@ -22,7 +22,7 @@ class AppraisalValidator:
 
 
     def checkBuildingInformation(self, appraisal):
-        buildingFields = ['name', 'address', 'city', 'region', 'country']
+        buildingFields = ['name', 'address']
 
         hasAllBuildingFields = True
         for field in buildingFields:

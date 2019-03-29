@@ -24,4 +24,4 @@ dump
 data
 *.bin
 *.vec
-models
+server/models

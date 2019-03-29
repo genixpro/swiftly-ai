@@ -13,113 +13,132 @@
   background-color: #eeeeee;
 }
 
+.comparable-sale-list-item {
+  min-width: 40vw;
 
-.comparable-sale-list-item
-{
-  display: flex;
-  flex-direction: row;
-  padding-left: 0;
-
-  .comparable-button-column
-  {
-    margin-top: -15px;
-    margin-bottom: -15px;
-
+  .comparable-sale-list-item-body {
     display: flex;
-    flex-direction: column;
-    align-items: stretch;
+    flex-direction: row;
+    padding-left: 0;
 
-    .move-comparable-button {
+    .building-image {
+      position: relative;
+      flex-grow: 0;
+      flex-shrink: 0;
+      flex-basis: 25%;
+      margin-left: 15px;
+      margin-right: 15px;
+
+      .building-image-wrapper
+      {
+        position: relative;
+      }
+
+      img {
+        width: 100%;
+      }
+
+      .upload-image-overlay {
+        position: absolute;
+        left: 0;
+        width: 100%;
+        top: 0;
+        height: 100%;
+        background-color: black;
+        opacity: 0.0;
+      }
+
+      .upload-image-icon {
+        position: absolute;
+        left: calc(50% - 30px);
+        top: calc(50% - 30px);
+        opacity: 0.0;
+
+        i.fa {
+          font-size: 60px;
+          color: white;
+        }
+      }
+    }
+
+    &.editable {
+      .building-image {
+        cursor: pointer;
+      }
+
+      .building-image:hover {
+        .upload-image-overlay {
+          opacity: 0.3;
+        }
+        .upload-image-icon {
+          opacity: 1.0;
+        }
+      }
+    }
+
+    .comparable-sale-content {
       flex-grow: 1;
+
+      display: flex;
+      flex-direction: column;
     }
 
-    .btn {
-      border-radius: 0;
-    }
-  }
-
-  .comparable-button-column.right
-  {
-    margin-right: -15px;
-  }
-
-  .building-image
-  {
-    cursor: pointer;
-    position: relative;
-    flex-grow: 0;
-    flex-shrink: 0;
-    flex-basis: 25%;
-    margin-left: 15px;
-    margin-right: 15px;
-
-    .upload-image-overlay
-    {
-      position: absolute;
-      left: 0;
-      width: 100%;
-      top: 0;
-      height: 100%;
-      background-color: black;
-      opacity: 0.0;
+    .comparable-name {
+      position: relative;
+      left: -15px;
+      width: calc(100% + 15px);
+      flex-grow: 0;
     }
 
-    .upload-image-icon
-    {
-      position: absolute;
-      left: calc(50% - 30px);
-      top: calc(50% - 30px);
-      opacity: 0.0;
+    .comparable-fields-area {
+      flex-grow: 1;
+      display: grid;
+      grid-template-columns: max-content auto;
+      grid-template-rows: min-content min-content min-content min-content min-content min-content min-content 1fr;
+      align-items: start;
 
-      i.fa {
-        font-size: 60px;
-        color: white;
+      .comparable-field-label {
+        margin-top: 6px;
+        margin-right: 5px;
+        grid-column: 1 / span 1;
+      }
+
+      .field-display-edit {
+        grid-column: 2 / span 1;
+        height: 100%;
       }
     }
   }
 
-  .building-image:hover {
-    .upload-image-overlay {
-      opacity: 0.3;
-    }
-    .upload-image-icon {
-      opacity: 1.0;
-    }
+  .card-footer
+  {
+    padding-top: 0;
+    padding-bottom: 0;
   }
 
-  .comparable-sale-content
-  {
-    flex-grow: 1;
-
-    display: flex;
-    flex-direction: column;
-  }
-
-  .comparable-name
-  {
+  .comparable-button-row {
     position: relative;
     left: -15px;
-    width: calc(100% + 15px);
-    flex-grow: 0;
-  }
+    width: calc(100% + 30px);
 
-  .comparable-fields-area
-  {
-    flex-grow: 1;
-    display: grid;
-    grid-template-columns: max-content auto;
-    grid-template-rows: min-content min-content 1fr;
-    align-items: start;
+    display: flex;
+    flex-direction: row;
+    align-items: stretch;
 
-    .comparable-field-label {
-      margin-top: 6px;
-      margin-right: 5px;
-      grid-column: 1 / span 1;
+    .btn {
+      border-radius: 0;
     }
 
-    .field-display-edit {
-      grid-column: 2 / span 1;
-      height: 100%;
+    .btn:first-child {
+      border-bottom-left-radius: calc(0.25rem - 1px);
+    }
+
+    .btn:last-child {
+      border-bottom-right-radius: calc(0.25rem - 1px);
+    }
+
+    .move-comparable-button {
+      flex-grow: 1;
     }
   }
 }

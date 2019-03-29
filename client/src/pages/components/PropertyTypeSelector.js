@@ -8,14 +8,43 @@ class PropertyTypeSelector extends React.Component
     {
         if (this.props.onChange)
         {
-            this.props.onChange(newValue);
+            if (newValue !== this.props.value)
+            {
+                this.props.onChange(newValue);
+            }
+        }
+    }
+
+    onBlur()
+    {
+        if (this.props.onBlur)
+        {
+            this.props.onBlur();
+        }
+    }
+
+    onRef(select)
+    {
+        if (this.props.innerRef)
+        {
+            this.props.innerRef(select);
         }
     }
 
     render()
     {
         return (
-            <select defaultValue="" className="custom-select mb-3" onClick={(evt) => this.onChangeValue(evt.target.value)} value={this.props.value}>
+            <select
+                defaultValue=""
+                className="custom-select"
+                onClick={(evt) => this.onChangeValue(evt.target.value)}
+                onBlur={(evt) => this.onBlur()}
+                ref={(ref) => this.onRef(ref)}
+                value={this.props.value}
+                disabled={this.props.disabled}
+
+            >
+                <option value={""}></option>
                 <option value={"office"}>Office</option>
                 <option value={"industrial"}>Industrial</option>
                 <option value={"residential"}>Residential</option>
