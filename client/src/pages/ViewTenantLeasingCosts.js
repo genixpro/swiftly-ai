@@ -30,72 +30,63 @@ class ViewTenantsLeasingCosts extends React.Component
             (this.props.appraisal) ?
                 <div id={"view-tenants"} className={"view-tenants"}>
                     <Row>
-                        <Col xs={12} md={12} lg={12} xl={12}>
-                            <Card outline color="primary" className="mb-3">
-                                <CardHeader className="text-white bg-primary">Inputs</CardHeader>
-                                <CardBody>
-                                    <Row>
-                                        <Col xs={12} sm={6} md={4}>
-                                            <table className="table">
-                                                <tbody>
-                                                <tr>
-                                                    <td>
-                                                        <strong>Leasing Commission Costs (Per Lease)</strong>
-                                                    </td>
-                                                    <td>
-                                                        <FieldDisplayEdit value={this.props.appraisal.discountedCashFlowInputs.leasingCommission} onChange={(newValue) => this.changeDCFInput('leasingCommission', newValue)}/>
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <td>
-                                                        <strong>Tenant Inducement Costs (Per Square Foot)</strong>
-                                                    </td>
-                                                    <td>
-                                                        <FieldDisplayEdit value={this.props.appraisal.discountedCashFlowInputs.tenantInducementsPSF} onChange={(newValue) => this.changeDCFInput('tenantInducementsPSF', newValue)}/>
-                                                    </td>
-                                                </tr>
-                                                </tbody>
-                                            </table>
-                                        </Col>
-                                        <Col xs={12} sm={6} md={4}>
-                                            <table className="table">
-                                                <tbody>
-                                                <tr>
-                                                    <td>
-                                                        <strong>Leasing Period (Months)</strong>
-                                                    </td>
-                                                    <td>
-                                                        <FieldDisplayEdit value={this.props.appraisal.discountedCashFlowInputs.leasingPeriod} onChange={(newValue) => this.changeDCFInput('leasingPeriod', newValue)}/>
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <td>
-                                                        <strong>Renewal Period</strong>
-                                                    </td>
-                                                    <td>
-                                                        <FieldDisplayEdit value={this.props.appraisal.discountedCashFlowInputs.renewalPeriod} onChange={(newValue) => this.changeDCFInput('renewalPeriod', newValue)}/>
-                                                    </td>
-                                                </tr>
-                                                </tbody>
-                                            </table>
-                                        </Col>
-                                        <Col xs={12} sm={6} md={4}>
-                                            <table className="table">
-                                                <tbody>
-                                                <tr>
-                                                    <td>
-                                                        <strong>Market Rent (Per Square Foot)</strong>
-                                                    </td>
-                                                    <td>
-                                                        <FieldDisplayEdit value={this.props.appraisal.discountedCashFlowInputs.marketRentPSF} onChange={(newValue) => this.changeDCFInput('marketRentPSF', newValue)}/>
-                                                    </td>
-                                                </tr>
-                                                </tbody>
-                                            </table>
-                                        </Col>
-                                    </Row>
-                                </CardBody>
-                            </Card>
+                        <Col xs={12} sm={6} md={4}>
+                            <table className="table">
+                                <tbody>
+                                <tr>
+                                    <td>
+                                        <strong>Leasing Commission Costs (Per Lease)</strong>
+                                    </td>
+                                    <td>
+                                        <FieldDisplayEdit value={this.props.appraisal.discountedCashFlowInputs.leasingCommission} onChange={(newValue) => this.changeDCFInput('leasingCommission', newValue)}/>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <strong>Tenant Inducement Costs (Per Square Foot)</strong>
+                                    </td>
+                                    <td>
+                                        <FieldDisplayEdit value={this.props.appraisal.discountedCashFlowInputs.tenantInducementsPSF} onChange={(newValue) => this.changeDCFInput('tenantInducementsPSF', newValue)}/>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </Col>
+                        <Col xs={12} sm={6} md={4}>
+                            <table className="table">
+                                <tbody>
+                                <tr>
+                                    <td>
+                                        <strong>Leasing Period (Months)</strong>
+                                    </td>
+                                    <td>
+                                        <FieldDisplayEdit value={this.props.appraisal.discountedCashFlowInputs.leasingPeriod} onChange={(newValue) => this.changeDCFInput('leasingPeriod', newValue)}/>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <strong>Renewal Period</strong>
+                                    </td>
+                                    <td>
+                                        <FieldDisplayEdit value={this.props.appraisal.discountedCashFlowInputs.renewalPeriod} onChange={(newValue) => this.changeDCFInput('renewalPeriod', newValue)}/>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </Col>
+                        <Col xs={12} sm={6} md={4}>
+                            <table className="table">
+                                <tbody>
+                                <tr>
+                                    <td>
+                                        <strong>Market Rent (Per Square Foot)</strong>
+                                    </td>
+                                    <td>
+                                        <FieldDisplayEdit value={this.props.appraisal.discountedCashFlowInputs.marketRentPSF} onChange={(newValue) => this.changeDCFInput('marketRentPSF', newValue)}/>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
                         </Col>
                     </Row>
                 </div>

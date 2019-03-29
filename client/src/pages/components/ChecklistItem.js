@@ -39,7 +39,7 @@ class ChecklistItem extends React.Component {
                                         <i className={"fa fa-check"}></i>
                                     </small> :
                                     <small>
-                                        <i className={"fa fa-times"}></i>
+                                        <i className={"fa fa-trash-alt"}></i>
                                     </small>
                             }
                             &nbsp;

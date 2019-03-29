@@ -60,7 +60,7 @@ class ViewTenantsRentRoll extends React.Component
                     onClick={(evt) => this.removeUnit(unitInfo, unitIndex)}
                     title={"Delete Unit"}
                 >
-                    <i className="fa fa-minus-square"></i>
+                    <i className="fa fa-trash-alt"></i>
                 </Button>
             </td>
         </tr>;
@@ -203,7 +203,7 @@ class ViewTenantsRentRoll extends React.Component
                     onClick={(evt) => this.removeTenancy(unitInfo, tenantInfo, tenancyIndex)}
                     title={"New Tenancy"}
                 >
-                    <i className="fa fa-minus-square"></i>
+                    <i className="fa fa-trash-alt"></i>
                 </Button>
             </td>
         </tr>;

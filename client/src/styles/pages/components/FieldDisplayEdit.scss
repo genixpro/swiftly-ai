@@ -3,6 +3,16 @@
 
 .field-display-edit
 {
+  .input-group-append
+  {
+    //transition: opacity 0.2s ease-in-out;
+  }
+
+  input, textarea, select {
+    transition: border-color 0.2s ease-in-out;
+  }
+
+
   &.editable
   {
     input, textarea, select, select:focus {

@@ -46,6 +46,7 @@
         height: 100%;
         background-color: black;
         opacity: 0.0;
+        transition: opacity 0.2s ease-in-out;
       }
 
       .upload-image-icon {
@@ -53,6 +54,7 @@
         left: calc(50% - 30px);
         top: calc(50% - 30px);
         opacity: 0.0;
+        transition: opacity 0.2s ease-in-out;
 
         i.fa {
           font-size: 60px;

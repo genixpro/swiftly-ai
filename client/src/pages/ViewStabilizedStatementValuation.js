@@ -102,7 +102,7 @@ class ViewStabilizedStatementValuation extends React.Component {
                     onClick={(evt) => this.removeIncomeItem(incomeStatementItem, itemIndex)}
                     title={"Delete Line Item"}
                 >
-                    <i className="fa fa-minus-square"></i>
+                    <i className="fa fa-trash-alt"></i>
                 </Button>
             </td>
         </tr>

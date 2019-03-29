@@ -184,7 +184,7 @@ class ComparableLeaseListItem extends React.Component
                                     <span>Remove From Appraisal</span>
                                 </Button>
                                 <Button color={"danger"} onClick={(evt) => this.deleteComparable()} className={"delete-comparable-button"}>
-                                    <i className={"fa fa-times"} />
+                                    <i className={"fa fa-trash-alt"} />
                                 </Button>
                             </div> : null
                     }
@@ -197,7 +197,7 @@ class ComparableLeaseListItem extends React.Component
                                     <span>Add to Appraisal</span>
                                 </Button>
                                 <Button color={"danger"} onClick={(evt) => this.deleteComparable()} className={"delete-comparable-button"}>
-                                    <i className={"fa fa-times"} />
+                                    <i className={"fa fa-trash-alt"} />
                                 </Button>
                             </div> : null
                     }

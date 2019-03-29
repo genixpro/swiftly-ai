@@ -27,7 +27,7 @@ class AppraisalListItem extends React.Component
                         onClick={(evt) => this.deleteAppraisal(evt)}
                         title={"Delete Appraisal"}
                     >
-                        <i className="fa fa-minus-square"></i>
+                        <i className="fa fa-trash-alt"></i>
                     </Button>
                 </td>
             </tr>

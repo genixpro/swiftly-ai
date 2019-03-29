@@ -106,7 +106,12 @@ class ComparableSaleListItem extends React.Component
                     <div className={`building-image`}>
                         <div className={"building-image-wrapper"}>
                             <a href="">
-                                <img className="img-fluid img-thumbnail" src="/img/no_building_image.png" alt="Demo"/>
+                                {
+                                    (comparableSale.address && comparableSale.address !== "")?
+                                        <img className="img-fluid img-thumbnail" src={`https://maps.googleapis.com/maps/api/streetview?key=AIzaSyBRmZ2N4EhJjXmC29t3VeiLUQssNG-MY1I&size=640x480&source=outdoor&location=${comparableSale.address}`} alt="Demo"/>
+                                        : <img className="img-fluid img-thumbnail" src="/img/no_building_image.png" alt="Demo"/>
+
+                                }
                             </a>
                             <div className={"upload-image-overlay"} />
                             <div className={"upload-image-icon"}>
@@ -214,7 +219,7 @@ class ComparableSaleListItem extends React.Component
                                     <span>Remove From Appraisal</span>
                                 </Button>
                                 <Button color={"danger"} onClick={(evt) => this.deleteComparable()} className={"delete-comparable-button"}>
-                                    <i className={"fa fa-times"} />
+                                    <i className={"fa fa-trash-alt"} />
                                 </Button>
                             </div> : null
                     }
@@ -227,7 +232,7 @@ class ComparableSaleListItem extends React.Component
                                         <span>Add to Appraisal</span>
                                     </Button>
                                     <Button color={"danger"} onClick={(evt) => this.deleteComparable()} className={"delete-comparable-button"}>
-                                        <i className={"fa fa-times"} />
+                                        <i className={"fa fa-trash-alt"} />
                                     </Button>
                                 </div> : null
                     }
