@@ -1,5 +1,5 @@
 import React from 'react';
-import {Row, Col, Card, CardBody} from 'reactstrap';
+import {Row, Col, Card, CardBody, DropdownMenu, Dropdown, DropdownToggle, DropdownItem} from 'reactstrap';
 import axios from 'axios';
 import ComparableSaleList from "./components/ComparableSaleList";
 import Promise from 'bluebird';
@@ -55,6 +55,17 @@ class ViewAppraisalComparableSales extends React.Component {
         this.props.saveDocument(appraisal);
     }
 
+    toggle()
+    {
+        this.setState({downloadDropdownOpen: !this.state.downloadDropdownOpen})
+    }
+
+
+    downloadCapRateExcelSummary()
+    {
+        window.location = `${process.env.VALUATE_ENVIRONMENT.REACT_APP_SERVER_URL}appraisal/${this.props.appraisal._id['$oid']}/comparable_sales/excel`;
+    }
+
 
     render()
     {
@@ -64,10 +75,21 @@ class ViewAppraisalComparableSales extends React.Component {
         }
 
         return [
-                <div>
+                <div className={"view-appraisal-comparable-sales"}>
                     <Row>
-                        <Col xs={11}>
+                        <Col xs={10}>
                             <h3>View Comparable Sales</h3>
+                        </Col>
+                        <Col xs={2}>
+                            <Dropdown isOpen={this.state.downloadDropdownOpen} toggle={this.toggle.bind(this)}>
+                                <DropdownToggle caret color={"primary"} className={"download-dropdown-button"}>
+                                    Download
+                                </DropdownToggle>
+                                <DropdownMenu>
+                                    <DropdownItem onClick={() => this.downloadCapRateExcelSummary()}>Summary (excel)</DropdownItem>
+                                    <DropdownItem>Summary (word)</DropdownItem>
+                                </DropdownMenu>
+                            </Dropdown>
                         </Col>
                     </Row>
                     <Row>

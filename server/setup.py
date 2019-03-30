@@ -28,7 +28,8 @@ requires = [
     'tensorflow',
     'gunicorn',
     'scipy',
-    'scikit-learn'
+    'scikit-learn',
+    'openpyxl'
 ]
 
 tests_require = [
