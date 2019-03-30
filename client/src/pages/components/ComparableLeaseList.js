@@ -6,6 +6,7 @@ import FieldDisplayEdit from "./FieldDisplayEdit";
 import _ from 'underscore';
 import Promise from 'bluebird';
 import axios from "axios/index";
+import ComparableLeasesStatistics from "./ComparableLeasesStatistics";
 
 
 class ComparableLeaseList extends React.Component
@@ -137,6 +138,9 @@ class ComparableLeaseList extends React.Component
 
         return (
             <div>
+                {
+                    <ComparableLeasesStatistics comparableLeases={this.state.comparableLeases} />
+                }
                 {
                     this.props.allowNew ?
                         this.state.isCreatingNewItem ?
