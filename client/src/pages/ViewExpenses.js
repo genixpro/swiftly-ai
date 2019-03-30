@@ -7,15 +7,15 @@ import FieldDisplayEdit from './components/FieldDisplayEdit';
 import _ from 'underscore';
 import AppraisalContentHeader from "./components/AppraisalContentHeader";
 
-class ViewStabilizedStatementValuation extends React.Component
+class ViewExpenses extends React.Component
 {
     state = {
-        capitalizationRate: 8.4
+
     };
 
     componentDidMount()
     {
-        this.computeGroupTotals();
+        this.computeExpenseTotals();
     }
 
     componentDidUpdate()
@@ -23,42 +23,32 @@ class ViewStabilizedStatementValuation extends React.Component
 
     }
 
-    computeGroupTotals()
+    computeExpenseTotals()
     {
-        if (!this.props.appraisal.incomeStatement)
-        {
-            return
-        }
-
-        let incomeTotal = 0;
-        let expenseTotal = 0;
-
-        if (this.props.appraisal.incomeStatement.incomes)
-        {
-            this.props.appraisal.incomeStatement.incomes.forEach((income) =>
-            {
-                incomeTotal += income.yearlyAmount;
-            });
-        }
+        let expenseTotal = {};
 
         if (this.props.appraisal.incomeStatement.expenses)
         {
             this.props.appraisal.incomeStatement.expenses.forEach((expense) =>
             {
-                expenseTotal += expense.yearlyAmount;
+                for (let year of Object.keys(expense.yearlyAmounts))
+                {
+                    if (_.isUndefined(expenseTotal[year]))
+                    {
+                        expenseTotal[year] = 0;
+                    }
+                    expenseTotal[year] += expense.yearlyAmounts[year];
+                }
             });
         }
 
-        let operatingIncome = incomeTotal - expenseTotal;
-        let valuation = operatingIncome / (this.state.capitalizationRate / 100.0);
-        this.setState({incomeTotal, expenseTotal, operatingIncome, valuation});
+        return expenseTotal;
     }
 
 
-    changeIncomeItemValue(item, newValue)
+    changeIncomeItemValue(item, year, newValue)
     {
-        item['yearlyAmount'] = newValue;
-        item['monthlyAmount'] = newValue / 12.0;
+        item['yearlyAmounts'][year] = newValue;
         this.props.saveDocument(this.props.appraisal)
     }
 
@@ -95,14 +85,19 @@ class ViewStabilizedStatementValuation extends React.Component
                     onChange={(newValue) => this.changeIncomeItemName(incomeStatementItem, newValue)}
                 />
             </td>
-            <td className={"amount-column"}>
-                <FieldDisplayEdit
-                    type="currency"
-                    hideIcon={true}
-                    value={incomeStatementItem.yearlyAmount}
-                    onChange={(newValue) => this.changeIncomeItemValue(incomeStatementItem, newValue)}
-                />
-            </td>
+            {
+                this.props.appraisal.incomeStatement.years.map((year) =>
+                {
+                    return <td key={year} className={"amount-column"}>
+                        <FieldDisplayEdit
+                            type="currency"
+                            hideIcon={true}
+                            value={incomeStatementItem.yearlyAmounts[year.toString()]}
+                            onChange={(newValue) => this.changeIncomeItemValue(incomeStatementItem, year, newValue)}
+                        />
+                    </td>
+                })
+            }
             <td className={"action-column"}>
                 <Button
                     color="info"
@@ -138,11 +133,11 @@ class ViewStabilizedStatementValuation extends React.Component
 
         if (type === 'income')
         {
-            this.props.appraisal.incomeStatement.incomes.push(newItem);
+            this.props.appraisal.latestIncomeStatement.incomes.push(newItem);
         }
         else
         {
-            this.props.appraisal.incomeStatement.expenses.push(newItem);
+            this.props.appraisal.latestIncomeStatement.expenses.push(newItem);
         }
 
         this.props.saveDocument(this.props.appraisal)
@@ -190,10 +185,23 @@ class ViewStabilizedStatementValuation extends React.Component
                         <Card className="card-default">
                             <CardBody>
                                 {(this.props.appraisal && this.props.appraisal.incomeStatement) ?
-                                    <div id={"view-stabilized-statement"} className={"view-stabilized-statement"}>
+                                    <div id={"view-expensest"} className={"view-expensest"}>
                                         <Row>
                                             <Col xs={12} md={10} lg={8} xl={6}>
                                                 <Table striped bordered hover responsive>
+                                                    <thead>
+                                                        <tr>
+                                                            <td />
+                                                            {
+                                                                this.props.appraisal.incomeStatement.years.map((year) =>
+                                                                {
+                                                                    return <td key={year} className={"amount-column"}>
+                                                                        {year}
+                                                                    </td>
+                                                                })
+                                                            }
+                                                        </tr>
+                                                    </thead>
                                                     <tbody>
                                                     {
                                                         this.props.appraisal.incomeStatement.expenses && this.props.appraisal.incomeStatement.expenses.map((item, itemIndex) =>
@@ -238,4 +246,4 @@ class ViewStabilizedStatementValuation extends React.Component
     }
 }
 
-export default ViewStabilizedStatementValuation;
+export default ViewExpenses;

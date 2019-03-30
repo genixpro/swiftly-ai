@@ -124,11 +124,9 @@ class DiscountedCashFlowModel:
         while currentDate < endDate:
             totalInflation = monthlyInflation ** month
 
-            startYear += 1
-
             item = MonthlyCashFlowItem(
                 name=incomeStatementItem.name,
-                amount=incomeStatementItem.monthlyAmount * totalInflation,
+                amount=incomeStatementItem.yearlyAmounts.get(str(startYear), 0) * totalInflation,
                 cashFlowType=incomeStatementItem.cashFlowType,
                 year=currentDate.year,
                 month=currentDate.month,
