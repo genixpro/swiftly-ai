@@ -159,6 +159,17 @@ class ComparableSaleListItem extends React.Component
                                 value={comparableSale.netOperatingIncome}
                                 onChange={(newValue) => this.changeComparableField('netOperatingIncome', newValue)}
                             />
+
+                            <span className={"comparable-field-label"}>TMI (psf):</span>
+
+                            <FieldDisplayEdit
+                                type={"currency"}
+                                edit={this.props.edit}
+                                placeholder={"Taxes Maintenance Insurance (psf)"}
+                                value={comparableSale.taxesMaintenanceInsurancePSF}
+                                onChange={(newValue) => this.changeComparableField('taxesMaintenanceInsurancePSF', newValue)}
+                            />
+
                             <span className={"comparable-field-label"}>Sale Price:</span>
 
                             <FieldDisplayEdit
