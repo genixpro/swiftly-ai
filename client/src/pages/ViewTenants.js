@@ -3,6 +3,7 @@ import {Row, Col, Card, CardBody, Nav, NavItem, NavLink} from 'reactstrap';
 import axios from 'axios';
 import ViewTenantsRentRoll from "./ViewTenantRentRoll";
 import ViewTenantsLeasingCosts from "./ViewTenantLeasingCosts";
+import ViewVacancySchedule from "./ViewVacancySchedule";
 import {NavLink as RRNavLink} from 'react-router-dom';
 import {Switch, Route} from 'react-router-dom';
 import AppraisalContentHeader from "./components/AppraisalContentHeader";
@@ -37,6 +38,10 @@ class ViewTenants extends React.Component
                                 <NavLink to={`${this.props.match.url}/leasing_costs`} activeClassName="active"
                                          tag={RRNavLink}>Leasing Costs</NavLink>
                             </NavItem>
+                            <NavItem>
+                                <NavLink to={`${this.props.match.url}/vacancy_schedule`} activeClassName="active"
+                                         tag={RRNavLink}>Vacancy Schedule</NavLink>
+                            </NavItem>
                         </Nav>
                     </Col>
                 </Row>,
@@ -48,6 +53,7 @@ class ViewTenants extends React.Component
                                     <Switch>
                                         <Route path={`${this.props.match.url}/rent_roll`} render={(props) => withProps({...routeProps, ...props})(ViewTenantsRentRoll)()} />
                                         <Route path={`${this.props.match.url}/leasing_costs`} render={(props) => withProps({...routeProps, ...props})(ViewTenantsLeasingCosts)()} />
+                                        <Route path={`${this.props.match.url}/vacancy_schedule`} render={(props) => withProps({...routeProps, ...props})(ViewVacancySchedule)()} />
                                     </Switch>
                                 </div>
                             </CardBody>

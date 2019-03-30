@@ -1,0 +1,25 @@
+
+
+
+
+
+.view-vacancy-schedule
+{
+  .vacancy-schedule-table
+  {
+    td {
+      border: 1px solid lightgray;
+      text-align: center;
+    }
+
+    tbody
+    {
+      td.occupancy-cell {
+        padding-left: 0;
+        padding-right: 0;
+      }
+    }
+
+
+  }
+}
