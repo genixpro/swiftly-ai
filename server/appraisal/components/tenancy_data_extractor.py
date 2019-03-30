@@ -56,7 +56,7 @@ class TenancyDataExtractor (DataExtractor):
         return None
 
     def extractFloorNumber(self, unitNumber):
-        digits = str(self.cleanAmount(unitNumber))
+        digits = str(int(self.cleanAmount(unitNumber)))
 
         if len(digits) == 0:
             return 1

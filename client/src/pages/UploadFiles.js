@@ -89,7 +89,7 @@ class UploadFiles extends React.Component {
                                                     <br/>
                                                     <br/>
                                                     <span>Drop files here or click here to upload</span>
-                                                    
+
                                                     {
                                                         this.state.uploading &&
                                                         <div className="upload-files-loader ball-pulse">

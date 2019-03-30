@@ -351,6 +351,112 @@ class ViewTenantsRentRoll extends React.Component
         this.props.saveDocument(this.props.appraisal);
     }
 
+    getTotalSize()
+    {
+        let total = 0;
+        for(let unit of this.props.appraisal.units)
+        {
+            total += unit.squareFootage;
+        }
+        return total;
+    }
+
+    getAverageSize()
+    {
+        let total = 0;
+        let count = 0;
+        for(let unit of this.props.appraisal.units)
+        {
+            if (unit.squareFootage !== 0)
+            {
+                total += unit.squareFootage;
+                count += 1;
+            }
+        }
+        return total / count;
+    }
+
+    getAverageRentPSF()
+    {
+        let total = 0;
+        let count = 0;
+        for(let unit of this.props.appraisal.units)
+        {
+            if (unit.currentTenancy.yearlyRent !== 0)
+            {
+                total += unit.currentTenancy.yearlyRent / unit.squareFootage;
+                count += 1;
+            }
+        }
+        return total / count;
+    }
+
+    getMinimumSize()
+    {
+        let minSize = null;
+        for(let unit of this.props.appraisal.units)
+        {
+            if (unit.squareFootage !== 0)
+            {
+                if (minSize === null || unit.squareFootage < minSize)
+                {
+                    minSize = unit.squareFootage;
+                }
+            }
+        }
+        return minSize;
+    }
+
+    getMaximumSize()
+    {
+        let maxSize = null;
+        for(let unit of this.props.appraisal.units)
+        {
+            if (unit.squareFootage !== 0)
+            {
+                if (maxSize === null || unit.squareFootage > maxSize)
+                {
+                    maxSize = unit.squareFootage;
+                }
+            }
+        }
+        return maxSize;
+    }
+
+    getMinimumRentPSF()
+    {
+        let minRentPSF = null;
+        for(let unit of this.props.appraisal.units)
+        {
+            if (unit.currentTenancy.yearlyRent !== 0)
+            {
+                const rentPSF = unit.currentTenancy.yearlyRent / unit.squareFootage;
+                if (minRentPSF === null || rentPSF < minRentPSF)
+                {
+                    minRentPSF = rentPSF;
+                }
+            }
+        }
+        return minRentPSF;
+    }
+
+    getMaximumRentPSF()
+    {
+        let maxRentPSF = null;
+        for(let unit of this.props.appraisal.units)
+        {
+            if (unit.currentTenancy.yearlyRent !== 0)
+            {
+                const rentPSF = unit.currentTenancy.yearlyRent / unit.squareFootage;
+                if (maxRentPSF === null || rentPSF > maxRentPSF)
+                {
+                    maxRentPSF = rentPSF;
+                }
+            }
+        }
+        return maxRentPSF;
+    }
+
 
     render() {
         return (
@@ -383,7 +489,76 @@ class ViewTenantsRentRoll extends React.Component
                                                 : null
                                         }
                                         <tr>
-                                            <td>PUT TOTALS HERE</td>
+                                            <td></td>
+                                            <td><strong>Total</strong></td>
+                                            <td>
+                                                <NumberFormat
+                                                    value={this.getTotalSize()}
+                                                    displayType={'text'}
+                                                    thousandSeparator={', '}
+                                                    decimalScale={0}
+                                                    fixedDecimalScale={true}
+                                                />
+                                            </td>
+                                            <td></td>
+                                        </tr>
+                                        <tr>
+                                            <td></td>
+                                            <td><strong>Average</strong></td>
+                                            <td>
+                                                <NumberFormat
+                                                value={this.getAverageSize()}
+                                                displayType={'text'}
+                                                thousandSeparator={', '}
+                                                decimalScale={0}
+                                                fixedDecimalScale={true}
+                                            />
+                                            </td>
+                                            <td>
+                                                $<NumberFormat
+                                                value={this.getAverageRentPSF()}
+                                                displayType={'text'}
+                                                thousandSeparator={', '}
+                                                decimalScale={2}
+                                                fixedDecimalScale={true}
+                                            />
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td></td>
+                                            <td><strong>Range</strong></td>
+                                            <td>
+                                                <NumberFormat
+                                                value={this.getMinimumSize()}
+                                                displayType={'text'}
+                                                thousandSeparator={', '}
+                                                decimalScale={0}
+                                                fixedDecimalScale={true}
+                                            />&nbsp;-&nbsp;
+                                                <NumberFormat
+                                                value={this.getMaximumSize()}
+                                                displayType={'text'}
+                                                thousandSeparator={', '}
+                                                decimalScale={0}
+                                                fixedDecimalScale={true}
+                                            />
+                                            </td>
+                                            <td>
+                                                $<NumberFormat
+                                                value={this.getMinimumRentPSF()}
+                                                displayType={'text'}
+                                                thousandSeparator={', '}
+                                                decimalScale={2}
+                                                fixedDecimalScale={true}
+                                            />&nbsp;-&nbsp;
+                                                $<NumberFormat
+                                                value={this.getMaximumRentPSF()}
+                                                displayType={'text'}
+                                                thousandSeparator={', '}
+                                                decimalScale={2}
+                                                fixedDecimalScale={true}
+                                            />
+                                            </td>
                                         </tr>
                                         </tbody>
                                     </Table>
@@ -450,6 +625,7 @@ class ViewTenantsRentRoll extends React.Component
                                         {/*</CardBody>*/}
                                     {/*</Card>*/}
                                     {/*<Card outline color="primary" className="mb-3">*/}
+                                    <br/>
                                     <h3>Tenancy & Esclation Schedule</h3>
                                         {/*<CardHeader className="text-white bg-primary">Tenancy & Escalation Schedule</CardHeader>*/}
                                         {/*<CardBody>*/}
