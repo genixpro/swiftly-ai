@@ -4,6 +4,7 @@ import dateparser
 import re
 from ..models.income_statement import IncomeStatement, IncomeStatementItem
 from pprint import pprint
+import json
 
 class IncomeStatementDataExtractor(DataExtractor):
     """ This class is for extracting income statement information from documents. """
@@ -39,10 +40,10 @@ class IncomeStatementDataExtractor(DataExtractor):
         for item in items:
             if item not in toRemove:
                 for item2 in items:
-                    if item2 not in toRemove:
-                        if item.name == item2.name and item != item2:
-                            item.mergeWithIncomeStatementItem(item2)
-                            toRemove.append(item2)
+                    if item.name == item2.name and id(item) != id(item2):
+                        item.mergeWithIncomeStatementItem(item2)
+                        toRemove.append(item2)
+
         for item in toRemove:
             items.remove(item)
 
@@ -72,6 +73,7 @@ class IncomeStatementDataExtractor(DataExtractor):
         incomeStatementItem.name = lineItem.get('ACC_NAME', '')
 
         incomeStatementItem.yearlyAmounts = {str(year): self.cleanAmount(lineItem.get("BUDGET", "0"))}
+        incomeStatementItem.extractionReferences = {str(year): lineItem.get("BUDGET_reference", None)}
 
         if 'INCOME' in lineItem['modifiers']:
             incomeStatementItem.cashFlowType = 'income'

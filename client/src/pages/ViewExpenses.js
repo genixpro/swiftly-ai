@@ -91,8 +91,10 @@ class ViewExpenses extends React.Component
                     return <td key={year} className={"amount-column"}>
                         <FieldDisplayEdit
                             type="currency"
-                            hideIcon={true}
+                            hideIcon={false}
                             value={incomeStatementItem.yearlyAmounts[year.toString()]}
+                            extractionReference={incomeStatementItem.extractionReferences[year.toString()]}
+                            history={this.props.history}
                             onChange={(newValue) => this.changeIncomeItemValue(incomeStatementItem, year, newValue)}
                         />
                     </td>

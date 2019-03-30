@@ -1,9 +1,10 @@
 import React from 'react';
-import { Table } from 'reactstrap';
+import { Table, Button } from 'reactstrap';
 import _ from 'underscore';
 import Geosuggest from 'react-geosuggest';
 import Datetime from 'react-datetime';
 import PropertyTypeSelector from './PropertyTypeSelector';
+import history from "../../history";
 
 import {
     Input,
@@ -177,6 +178,14 @@ class FieldDisplayEdit extends React.Component
     }
 
 
+    viewExtractionInputs()
+    {
+        const extractionReference = this.props.extractionReference;
+        const url = `/appraisal/${extractionReference.appraisalId}/financial_statement/${extractionReference.fileId}/raw`;
+        this.props.history.push(url);
+    }
+
+
     handleKeyPress(e)
     {
         if (e.key === 'Enter') {
@@ -255,11 +264,19 @@ class FieldDisplayEdit extends React.Component
                         /> : null
                 }
                 {
-                    !this.state.hideIcon ?
+                    !this.state.hideIcon && !this.props.extractionReference ?
                         <InputGroupAddon addonType="append">
                             <span className={"input-group-text"}>
                                 <i className={"fa fa-wrench"} />
                             </span>
+                        </InputGroupAddon> : null
+                }
+                {
+                    !this.state.hideIcon && this.props.extractionReference ?
+                        <InputGroupAddon addonType="append">
+                            <Button className={"input-group-text"} onClick={() => this.viewExtractionInputs()}>
+                                <i className={"fa fa-search"} />
+                            </Button>
                         </InputGroupAddon> : null
                 }
             </InputGroup>

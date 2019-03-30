@@ -28,6 +28,11 @@ class ViewAppraisal extends React.Component
 
     componentDidMount()
     {
+        this.reloadAppraisal();
+    }
+
+    reloadAppraisal()
+    {
         axios.get(`/appraisal/${this.props.match.params.id}`).then((response) =>
         {
             this.setState({appraisal: response.data.appraisal})
@@ -49,7 +54,8 @@ class ViewAppraisal extends React.Component
     render() {
         const routeProps = {
             appraisal: this.state.appraisal,
-            saveDocument: this.saveDocument.bind(this)
+            saveDocument: this.saveDocument.bind(this),
+            reloadAppraisal: this.reloadAppraisal.bind(this)
         };
 
         return (

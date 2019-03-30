@@ -53,6 +53,7 @@ class UploadFiles extends React.Component {
             })
         }).then(() => {
             this.setState({uploading: false});
+            this.props.reloadAppraisal();
             this.fileList.refresh();
         }, (err) => {
             this.setState({uploading: false});

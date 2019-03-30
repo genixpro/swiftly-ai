@@ -1,6 +1,6 @@
 from mongoengine import *
 import datetime
-
+from .extraction_reference import ExtractionReference
 
 
 class IncomeStatementItem(EmbeddedDocument):
@@ -10,7 +10,10 @@ class IncomeStatementItem(EmbeddedDocument):
     name = StringField()
 
     # The yearly amount of this income statement item
-    yearlyAmounts = DictField()
+    yearlyAmounts = DictField(FloatField())
+
+    # The references to the original files that this data point was pulled from, by year.
+    extractionReferences = DictField()
 
     # Whether the income statement item is an income or an expense
     cashFlowType = StringField()
@@ -23,6 +26,7 @@ class IncomeStatementItem(EmbeddedDocument):
         for year in otherIncomeStatementItem.yearlyAmounts.keys():
             if year not in self.yearlyAmounts:
                 self.yearlyAmounts[year] = otherIncomeStatementItem.yearlyAmounts[year]
+                self.extractionReferences[year] = otherIncomeStatementItem.extractionReferences[year]
 
 
 

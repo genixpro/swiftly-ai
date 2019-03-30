@@ -1,6 +1,6 @@
 from mongoengine import *
 import datetime
-
+from .extraction_reference import ExtractionReference
 
 class Word(EmbeddedDocument):
     # This is the raw text of the word
@@ -169,6 +169,7 @@ class File(Document):
 
                     for item in itemsForGroup:
                         item[token['classification']] = token['text']
+                        item[token['classification'] + "_reference"] = ExtractionReference(fileId=str(self.id), appraisalId=str(self.appraisalId), wordIndexes=[word['index'] for word in token['words']])
                         for modifier in token['modifiers']:
                             item['modifiers'].add(modifier)
 

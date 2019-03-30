@@ -32,10 +32,9 @@ class StartAppraisal extends React.Component {
             country: this.state.country
         }).then((response) =>
         {
-            console.log(response.data)
             const newId = response.data._id;
 
-            this.props.history.push('/appraisal/' + newId);
+            this.props.history.push('/appraisal/' + newId + "/upload");
 
         });
     }
