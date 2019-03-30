@@ -1,18 +1,62 @@
 
 
-.upload-zone
+.upload-files-page
 {
-  cursor: pointer;
-}
+  .upload-zone-column, .checklist-column
+  {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    .appraisal-checklist {
+      flex-basis: 30%;
+    }
+
+    .upload-zone.card
+    {
+      cursor: pointer;
+      flex-basis: 30%;
+      padding: 0;
+    }
+
+    .upload-zone:after {
+      content: "";
+      display: block;
+      padding-bottom: 75%;
+    }
+
+    .drop-zone-content-wrapper {
+      position: absolute;
+      width: calc(100%);
+      height: calc(100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+
+      transition: background-color 0.2s;
+
+      .fa {
+        font-size: 30px;
+        padding-bottom: 10px;
+      }
+    }
+
+    .drop-zone-content-wrapper:hover {
+      background-color: #eeeeee;
+    }
+  }
 
 
-.upload-files-loader.ball-pulse
-{
-  margin-top: 15px;
-  line-height: 10px;
+  .upload-files-loader.ball-pulse
+  {
+    margin-top: 15px;
+    line-height: 10px;
+  }
+
+  .upload-files-loader.ball-pulse > div
+  {
+    background-color: blue;
+  }
 }
 
-.upload-files-loader.ball-pulse > div
-{
-  background-color: blue;
-}

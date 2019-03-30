@@ -63,7 +63,7 @@ class UploadFiles extends React.Component {
 
     render() {
         return (
-            <div>
+            <div className={"upload-files-page"}>
                 <AppraisalContentHeader appraisal={this.props.appraisal} title="Upload Files" />
                 <Row>
                     <Col xs={12}>
@@ -77,8 +77,8 @@ class UploadFiles extends React.Component {
                                         {/*</Col>*/}
                                     {/*</Row>*/}
                                     <Row>
-                                        <Col xs={12} md={6} lg={4}>
-                                            <Dropzone className="card card-default p-3 upload-zone"
+                                        <Col xs={12} className={"upload-zone-column"}>
+                                            <Dropzone className="card card-default upload-zone"
                                                       ref="dropzone"
                                                       multiple
                                                       onDrop={this.onDrop.bind(this)}
@@ -89,18 +89,21 @@ class UploadFiles extends React.Component {
                                                     <br/>
                                                     <br/>
                                                     <span>Drop files here or click here to upload</span>
+                                                    
+                                                    {
+                                                        this.state.uploading &&
+                                                        <div className="upload-files-loader ball-pulse">
+                                                            <div></div>
+                                                            <div></div>
+                                                            <div></div>
+                                                        </div>
+                                                    }
                                                 </div>
-                                                {
-                                                    this.state.uploading &&
-                                                    <div className="upload-files-loader ball-pulse">
-                                                        <div></div>
-                                                        <div></div>
-                                                        <div></div>
-                                                    </div>
-                                                }
                                             </Dropzone>
                                         </Col>
-                                        <Col xs={{size: 4, offset: 4}}>
+                                    </Row>
+                                    <Row>
+                                        <Col xs={12} className={"checklist-column"}>
                                             <Checklist appraisal={this.props.appraisal}/>
                                         </Col>
                                     </Row>

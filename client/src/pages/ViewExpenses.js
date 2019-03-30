@@ -86,12 +86,13 @@ class ViewExpenses extends React.Component
                 />
             </td>
             {
-                this.props.appraisal.incomeStatement.years.map((year) =>
+                this.props.appraisal.incomeStatement.years.map((year, yearIndex) =>
                 {
                     return <td key={year} className={"amount-column"}>
                         <FieldDisplayEdit
                             type="currency"
                             hideIcon={false}
+                            edit={yearIndex === this.props.appraisal.incomeStatement.years.length - 1}
                             value={incomeStatementItem.yearlyAmounts[year.toString()]}
                             extractionReference={incomeStatementItem.extractionReferences[year.toString()]}
                             history={this.props.history}
