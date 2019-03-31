@@ -73,6 +73,12 @@ class ViewAppraisalComparableSales extends React.Component {
     }
 
 
+    downloadDetailedSummary()
+    {
+        window.location = `${process.env.VALUATE_ENVIRONMENT.REACT_APP_SERVER_URL}appraisal/${this.props.appraisal._id['$oid']}/comparable_sales/detailed_word`;
+    }
+
+
     render()
     {
         if (!this.props.appraisal)
@@ -94,6 +100,7 @@ class ViewAppraisalComparableSales extends React.Component {
                                 <DropdownMenu>
                                     <DropdownItem onClick={() => this.downloadExcelSummary()}>Spreadsheet (xls)</DropdownItem>
                                     <DropdownItem onClick={() => this.downloadWordSummary()}>Cap-Rate Summary (docx)</DropdownItem>
+                                    <DropdownItem onClick={() => this.downloadDetailedSummary()}>Detailed Summary (docx)</DropdownItem>
                                 </DropdownMenu>
                             </Dropdown>
                         </Col>

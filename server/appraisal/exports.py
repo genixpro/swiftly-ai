@@ -29,6 +29,7 @@ from docx.oxml.ns import nsdecls
 from docx.oxml import parse_xml
 import docx
 
+
 class ExportAPI(object):
     def addBackground(self, cell, color):
         shading_elm_1 = parse_xml((r'<w:shd {} w:fill="{}" w:textColor="ffffff"/>').format(nsdecls('w'), color))
@@ -146,8 +147,6 @@ class ComparableSalesWordFile(ExportAPI):
 
         document.add_page_break()
 
-        document.save('demo.docx')
-
         for comp in comparables:
             row_cells = table.add_row().cells
             if comp.saleDate is not None:
@@ -169,6 +168,92 @@ class ComparableSalesWordFile(ExportAPI):
         table.columns[2].width = Inches(1)
         table.columns[3].width = Inches(2.0)
         table.columns[4].width = Inches(0.75)
+
+        buffer = io.BytesIO()
+        document.save(buffer)
+        buffer.seek(0)
+
+        response = Response()
+        response.body_file = buffer
+        response.content_type = "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+        response.content_disposition = "attachment; filename=\"ComparableSales.docx\""
+        return response
+
+
+
+@resource(path='/appraisal/{appraisalId}/comparable_sales/detailed_word', cors_enabled=True, cors_origins="*")
+class ComparableSalesDetailedWordFile(ExportAPI):
+
+    def __init__(self, request, context=None):
+        self.request = request
+
+    def __acl__(self):
+        return [(Allow, Everyone, 'everything')]
+
+
+    def addHeaderFormatting(self, cell):
+        self.addFontColor(cell, 0, 0, 0)
+
+    def get(self):
+        appraisalId = self.request.matchdict['appraisalId']
+
+        appraisal = Appraisal.objects(id=appraisalId).first()
+
+        comparables = ComparableSale.objects(id__in=appraisal.comparableSales)
+
+        document = Document()
+
+        document.add_heading('Comparable Sales', 0)
+
+        for comp in comparables:
+            image = requests.get(f"https://maps.googleapis.com/maps/api/streetview?key=AIzaSyBRmZ2N4EhJjXmC29t3VeiLUQssNG-MY1I&size=640x480&source=outdoor&location={comp.address}")
+
+            document.add_picture(io.BytesIO(image.content), width=Inches(6))
+
+            table = document.add_table(rows=0, cols=3)
+
+            if comp.saleDate is not None:
+                row = table.add_row()
+                row.cells[0].text = 'Date of Sale'
+                row.cells[2].text = comp.saleDate.strftime("%B %d, %Y")
+
+            if comp.address is not None:
+                row = table.add_row()
+                row.cells[0].text = 'Address'
+                row.cells[2].text = comp.address
+
+            if comp.salePrice is not None:
+                row = table.add_row()
+                row.cells[0].text = 'Consideration'
+                row.cells[2].text = "$" + self.formatAmount(comp.salePrice)
+
+            if comp.description is not None:
+                row = table.add_row()
+                row.cells[0].text = 'Description'
+                row.cells[2].text = comp.description
+
+            if comp.sizeSquareFootage is not None:
+                row = table.add_row()
+                row.cells[0].text = 'Building Size'
+                row.cells[2].text = self.formatAmount(comp.sizeSquareFootage) + " square feet"
+
+            if comp.salePrice is not None and comp.sizeSquareFootage is not None:
+                row = table.add_row()
+                row.cells[0].text = 'Price PSF of Building'
+                row.cells[2].text = "$" + self.formatAmount(comp.salePrice / comp.sizeSquareFootage)
+
+            for cell in table.columns[0].cells:
+                self.addHeaderFormatting(cell)
+
+            for cell in table.columns[1].cells:
+                cell.text = ':'
+                self.addHeaderFormatting(cell)
+
+            table.columns[0].width = Inches(1.5)
+            table.columns[1].width = Inches(0.3)
+            table.columns[2].width = Inches(4.2)
+
+            document.add_page_break()
 
         buffer = io.BytesIO()
         document.save(buffer)
