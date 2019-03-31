@@ -92,8 +92,8 @@ class ViewAppraisalComparableSales extends React.Component {
                                     Download
                                 </DropdownToggle>
                                 <DropdownMenu>
-                                    <DropdownItem onClick={() => this.downloadExcelSummary()}>Spreadsheet</DropdownItem>
-                                    <DropdownItem onClick={() => this.downloadWordSummary()}>Cap-Rate Summary (word)</DropdownItem>
+                                    <DropdownItem onClick={() => this.downloadExcelSummary()}>Spreadsheet (xls)</DropdownItem>
+                                    <DropdownItem onClick={() => this.downloadWordSummary()}>Cap-Rate Summary (docx)</DropdownItem>
                                 </DropdownMenu>
                             </Dropdown>
                         </Col>

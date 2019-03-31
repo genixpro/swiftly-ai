@@ -1,5 +1,5 @@
 import React from 'react';
-import {Row, Col, Card, CardBody} from 'reactstrap';
+import {Row, Col, Card, CardBody, DropdownMenu, Dropdown, DropdownToggle, DropdownItem} from 'reactstrap';
 import axios from 'axios';
 import ComparableSaleList from "./components/ComparableSaleList";
 import Promise from 'bluebird';
@@ -50,6 +50,23 @@ class ViewAppraisalComparableLeases extends React.Component {
         this.props.saveDocument(appraisal);
     }
 
+    toggleDownload()
+    {
+        this.setState({downloadDropdownOpen: !this.state.downloadDropdownOpen})
+    }
+
+
+    downloadExcelSummary()
+    {
+        window.location = `${process.env.VALUATE_ENVIRONMENT.REACT_APP_SERVER_URL}appraisal/${this.props.appraisal._id['$oid']}/comparable_leases/excel`;
+    }
+
+
+    downloadWordSummary()
+    {
+        window.location = `${process.env.VALUATE_ENVIRONMENT.REACT_APP_SERVER_URL}appraisal/${this.props.appraisal._id['$oid']}/comparable_leases/word`;
+    }
+
 
     render()
     {
@@ -59,10 +76,21 @@ class ViewAppraisalComparableLeases extends React.Component {
         }
 
         return [
-            <div>
+            <div className={"view-appraisal-comparable-leases"}>
                 <Row>
-                    <Col xs={11}>
+                    <Col xs={10}>
                         <h3>View Comparable Leases</h3>
+                    </Col>
+                    <Col xs={2}>
+                        <Dropdown isOpen={this.state.downloadDropdownOpen} toggle={this.toggleDownload.bind(this)}>
+                            <DropdownToggle caret color={"primary"} className={"download-dropdown-button"}>
+                                Download
+                            </DropdownToggle>
+                            <DropdownMenu>
+                                <DropdownItem onClick={() => this.downloadExcelSummary()}>Spreadsheet (xls)</DropdownItem>
+                                <DropdownItem onClick={() => this.downloadWordSummary()}>Cap-Rate Summary (docx)</DropdownItem>
+                            </DropdownMenu>
+                        </Dropdown>
                     </Col>
                 </Row>
                 <Row>
