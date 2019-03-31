@@ -61,9 +61,15 @@ class ViewAppraisalComparableSales extends React.Component {
     }
 
 
-    downloadCapRateExcelSummary()
+    downloadExcelSummary()
     {
         window.location = `${process.env.VALUATE_ENVIRONMENT.REACT_APP_SERVER_URL}appraisal/${this.props.appraisal._id['$oid']}/comparable_sales/excel`;
+    }
+
+
+    downloadWordSummary()
+    {
+        window.location = `${process.env.VALUATE_ENVIRONMENT.REACT_APP_SERVER_URL}appraisal/${this.props.appraisal._id['$oid']}/comparable_sales/word`;
     }
 
 
@@ -86,8 +92,8 @@ class ViewAppraisalComparableSales extends React.Component {
                                     Download
                                 </DropdownToggle>
                                 <DropdownMenu>
-                                    <DropdownItem onClick={() => this.downloadCapRateExcelSummary()}>Summary (excel)</DropdownItem>
-                                    <DropdownItem>Summary (word)</DropdownItem>
+                                    <DropdownItem onClick={() => this.downloadExcelSummary()}>Spreadsheet</DropdownItem>
+                                    <DropdownItem onClick={() => this.downloadWordSummary()}>Cap-Rate Summary (word)</DropdownItem>
                                 </DropdownMenu>
                             </Dropdown>
                         </Col>
