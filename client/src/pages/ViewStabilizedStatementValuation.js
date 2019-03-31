@@ -22,18 +22,20 @@ class ViewStabilizedStatementValuation extends React.Component {
             return
         }
 
+        const year = this.props.appraisal.incomeStatement.years[this.props.appraisal.incomeStatement.years.length - 1];
+
         let incomeTotal = 0;
         let expenseTotal = 0;
 
         if (this.props.appraisal.incomeStatement.incomes) {
             this.props.appraisal.incomeStatement.incomes.forEach((income) => {
-                incomeTotal += income.yearlyAmount;
+                incomeTotal += income.yearlyAmounts[year];
             });
         }
 
         if (this.props.appraisal.incomeStatement.expenses) {
             this.props.appraisal.incomeStatement.expenses.forEach((expense) => {
-                expenseTotal += expense.yearlyAmount;
+                expenseTotal += expense.yearlyAmounts[year];
             });
         }
 
@@ -55,8 +57,8 @@ class ViewStabilizedStatementValuation extends React.Component {
 
 
     changeIncomeItemValue(item, newValue) {
-        item['yearlyAmount'] = newValue;
-        item['monthlyAmount'] = newValue / 12.0;
+        const year = this.props.appraisal.incomeStatement.years[this.props.appraisal.incomeStatement.years.length - 1];
+        item['yearlyAmounts'][year] = newValue;
         this.setState({appraisal: this.props.appraisal}, () => this.saveDocument(this.props.appraisal));
     }
 
@@ -92,7 +94,7 @@ class ViewStabilizedStatementValuation extends React.Component {
                 <FieldDisplayEdit
                     type="currency"
                     hideIcon={true}
-                    value={incomeStatementItem.yearlyAmount}
+                    value={incomeStatementItem.yearlyAmounts[this.props.appraisal.incomeStatement.years[this.props.appraisal.incomeStatement.years.length - 1]]}
                     onChange={(newValue) => this.changeIncomeItemValue(incomeStatementItem, newValue)}
                 />
             </td>
