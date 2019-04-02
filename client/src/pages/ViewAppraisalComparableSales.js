@@ -76,7 +76,7 @@ class ViewAppraisalComparableSales extends React.Component {
         }
         appraisal.comparableSales = _.clone(appraisal.comparableSales);
         this.props.saveDocument(appraisal);
-        this.setState({comparables: comparables});
+        this.setState({comparableSales: comparables});
     }
 
     toggle()
@@ -135,6 +135,7 @@ class ViewAppraisalComparableSales extends React.Component {
                                                 allowNew={false}
                                                 history={this.props.history}
                                                 appraisalId={this.props.match.params._id}
+                                                appraisalComparables={this.props.appraisal.comparableSales}
                                                 onRemoveComparableClicked={(comp) => this.removeComparableFromAppraisal(comp)}
                                                 onChange={(comps) => this.onComparablesChanged(comps)}
                             />

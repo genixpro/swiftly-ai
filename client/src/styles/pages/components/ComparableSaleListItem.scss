@@ -17,6 +17,16 @@
 .comparable-sale-list-item {
   min-width: 40vw;
 
+  display: flex;
+  flex-direction: row;
+
+  .comparable-sale-item-content
+  {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+  }
+
   margin-bottom: 0;
   border-radius: 0;
 
@@ -127,19 +137,12 @@
     }
   }
 
-  .card-footer
-  {
-    padding-top: 0;
-    padding-bottom: 0;
-  }
-
   .comparable-button-row {
     position: relative;
-    left: -15px;
-    width: calc(100% + 30px);
+    height: 100%;
 
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
     align-items: stretch;
 
     .btn {
@@ -147,15 +150,28 @@
     }
 
     .btn:first-child {
-      border-bottom-left-radius: calc(0.25rem - 1px);
+      border-top-left-radius: calc(0.25rem - 1px);
     }
 
-    .btn:last-child {
-      border-bottom-right-radius: calc(0.25rem - 1px);
+    .btn:last-child, .btn:only-child {
+      border-bottom-left-radius: calc(0.25rem - 1px);
     }
 
     .move-comparable-button {
       flex-grow: 1;
+    }
+
+    .delete-comparable-button {
+      transition: opacity 0.4s ease-in-out, height 0.4s ease-in-out, padding 0.4s ease-in-out, margin 0.4s ease-in-out, border 0.4s ease-in-out;
+      overflow: hidden;
+    }
+
+    .delete-comparable-button.hidden {
+      opacity: 1;
+      height: 0;
+      padding: 0;
+      margin: 0;
+      border: 0;
     }
   }
 }

@@ -64,16 +64,19 @@ class ViewAppraisalComparableLeases extends React.Component {
     removeComparableFromAppraisal(comp)
     {
         const appraisal = this.props.appraisal;
+        const comparables = this.state.comparableLeases;
         for (let i = 0; i < appraisal.comparableLeases.length; i += 1)
         {
             if (appraisal.comparableLeases[i] === comp._id['$oid'])
             {
                 appraisal.comparableLeases.splice(i, 1);
+                comparables.splice(i, 1);
                 break;
             }
         }
         appraisal.comparableLeases = _.clone(appraisal.comparableLeases);
         this.props.saveDocument(appraisal);
+        this.setState({comparableLeases: comparables});
     }
 
     toggleDownload()
@@ -125,6 +128,7 @@ class ViewAppraisalComparableLeases extends React.Component {
                                             allowNew={false}
                                             history={this.props.history}
                                             appraisalId={this.props.match.params._id}
+                                             appraisalComparables={this.props.appraisal.comparableLeases}
                                             onRemoveComparableClicked={(comp) => this.removeComparableFromAppraisal(comp)}
                                             onChange={(comps) => this.onComparablesChanged(comps)}
                         />
