@@ -6,10 +6,13 @@ import AnnotationUtilities from './AnnotationUtilities';
 import FieldDisplayEdit from './components/FieldDisplayEdit';
 import _ from 'underscore';
 import AppraisalContentHeader from "./components/AppraisalContentHeader";
+import {SortableContainer, SortableElement, SortableHandle} from 'react-sortable-hoc';
+import arrayMove from "array-move";
 
 class ViewExpenses extends React.Component
 {
     state = {
+        expenseTotal: {}
 
     };
 
@@ -42,13 +45,14 @@ class ViewExpenses extends React.Component
             });
         }
 
-        return expenseTotal;
+        this.setState({expenseTotal: expenseTotal});
     }
 
 
     changeIncomeItemValue(item, year, newValue)
     {
         item['yearlyAmounts'][year] = newValue;
+        this.computeExpenseTotals();
         this.props.saveDocument(this.props.appraisal)
     }
 
@@ -70,25 +74,33 @@ class ViewExpenses extends React.Component
         {
             this.props.appraisal.incomeStatement.expenses.splice(itemIndex, 1);
         }
-
-        this.props.saveDocument(this.props.appraisal)
+        this.computeExpenseTotals();
+        this.props.saveDocument(this.props.appraisal);
     }
 
 
     renderIncomeStatementItemRow(incomeStatementItem, itemIndex)
     {
-        return <tr key={itemIndex}>
-            <td className={"name-column"}>
+        const DragHandle = SortableHandle(() => <i className={"fa fa-bars"} />);
+
+
+        return <li key={itemIndex} className={"row expense-row"}>
+            <Col className={"handle-column"}>
+                <div>
+                    <DragHandle/>
+                </div>
+            </Col>
+            <Col className={"name-column"}>
                 <FieldDisplayEdit
                     hideIcon={true}
                     value={incomeStatementItem.name}
                     onChange={(newValue) => this.changeIncomeItemName(incomeStatementItem, newValue)}
                 />
-            </td>
+            </Col>
             {
                 this.props.appraisal.incomeStatement.years.map((year, yearIndex) =>
                 {
-                    return <td key={year} className={"amount-column"}>
+                    return <Col key={year} className={"amount-column"}>
                         <FieldDisplayEdit
                             type="currency"
                             hideIcon={false}
@@ -98,10 +110,10 @@ class ViewExpenses extends React.Component
                             history={this.props.history}
                             onChange={(newValue) => this.changeIncomeItemValue(incomeStatementItem, year, newValue)}
                         />
-                    </td>
+                    </Col>
                 })
             }
-            <td className={"action-column"}>
+            <Col className={"action-column"}>
                 <Button
                     color="info"
                     onClick={(evt) => this.removeIncomeItem(incomeStatementItem, itemIndex)}
@@ -109,8 +121,8 @@ class ViewExpenses extends React.Component
                 >
                     <i className="fa fa-trash-alt"></i>
                 </Button>
-            </td>
-        </tr>
+            </Col>
+        </li>
     }
 
     createNewIncomeItem(field, value, type)
@@ -124,9 +136,9 @@ class ViewExpenses extends React.Component
             newItem[field] = value;
         }
 
-        if (_.isUndefined(newItem['yearlyAmount']))
+        if (_.isUndefined(newItem['yearlyAmounts']))
         {
-            newItem['yearlyAmount'] = 0;
+            newItem['yearlyAmounts'] = {};
         }
 
         if (_.isUndefined(newItem['name']))
@@ -134,38 +146,50 @@ class ViewExpenses extends React.Component
             newItem['name'] = 'New Item';
         }
 
+        if (_.isUndefined(newItem['extractionReferences']))
+        {
+            newItem['extractionReferences'] = {};
+        }
+
         if (type === 'income')
         {
-            this.props.appraisal.latestIncomeStatement.incomes.push(newItem);
+            this.props.appraisal.incomeStatement.incomes.push(newItem);
         }
         else
         {
-            this.props.appraisal.latestIncomeStatement.expenses.push(newItem);
+            this.props.appraisal.incomeStatement.expenses.push(newItem);
         }
 
+        this.computeExpenseTotals();
         this.props.saveDocument(this.props.appraisal)
 
     }
 
     renderNewItemRow(type)
     {
-        return <tr>
-            <td className={"name-column"}>
+        return <Row className={"expense-row"}>
+            {this.renderHiddenHandleColumn()}
+            <Col className={"name-column"}>
                 <FieldDisplayEdit
                     hideIcon={true}
                     value={""}
                     onChange={_.once((newValue) => this.createNewIncomeItem("name", newValue, type))}
                 />
-            </td>
-            <td className={"amount-column"}>
-                <FieldDisplayEdit
-                    type="currency"
-                    hideIcon={true}
-                    value={""}
-                    onChange={_.once((newValue) => this.createNewIncomeItem("yearlyAmount", newValue, type))}
-                />
-            </td>
-            <td className={"action-column"}>
+            </Col>
+            {
+                this.props.appraisal.incomeStatement.years.map((year, yearIndex) =>
+                {
+                    return <Col key={year} className={"amount-column"}>
+                        <FieldDisplayEdit
+                            type="currency"
+                            hideIcon={true}
+                            value={""}
+                            onChange={_.once((newValue) => this.createNewIncomeItem("yearlyAmounts", {[year]: newValue}, type))}
+                        />
+                    </Col>
+                })
+            }
+            <Col className={"action-column"}>
                 <Button
                     color="info"
                     onClick={(evt) => this.createNewIncomeItem(null, null, type)}
@@ -173,69 +197,109 @@ class ViewExpenses extends React.Component
                 >
                     <i className="fa fa-plus-square"></i>
                 </Button>
-            </td>
-        </tr>
+            </Col>
+        </Row>
+    }
+
+    onSortEnd({oldIndex, newIndex})
+    {
+        const appraisal = this.props.appraisal;
+        appraisal.incomeStatement.expenses = arrayMove(appraisal.incomeStatement.expenses, oldIndex, newIndex);
+        this.props.saveDocument(appraisal)
+
+        // this.setState({appraisal: appraisal});
+    };
+
+    renderHiddenHandleColumn()
+    {
+        return <Col className={"handle-column"}>
+            <div>
+                <i className={"fa fa-bars"} style={{"visibility": "hidden"}}/>
+            </div>
+        </Col>;
+    }
+
+    renderHiddenActionColumn()
+    {
+        return <Col className={"action-column"}>
+            <Button style={{"visibility": "hidden"}}>
+                <i className="fa fa-trash-alt"></i>
+            </Button>
+        </Col>
     }
 
 
     render()
     {
+        const SortableItem = SortableElement(({value, index}) => this.renderIncomeStatementItemRow(value, index));
+
+        const SortableList = SortableContainer(({items}) => {
+            return (
+                <ul className={"sortable"}>
+                    {items.map((value, index) => (
+                        <SortableItem key={`item-${index}`} index={index} value={value} />
+                    ))}
+                </ul>
+            );
+        });
+
         return (
-            [
+            <div className={"view-expenses"}>
                 <AppraisalContentHeader appraisal={this.props.appraisal} title="Expenses"/>,
                 <Row>
                     <Col xs={12}>
                         <Card className="card-default">
                             <CardBody>
                                 {(this.props.appraisal && this.props.appraisal.incomeStatement) ?
-                                    <div id={"view-expensest"} className={"view-expensest"}>
+                                    <div id={"view-expenses-body"} className={"view-expenses-body"}>
                                         <Row>
                                             <Col xs={12} md={10} lg={8} xl={6}>
-                                                <Table striped bordered hover responsive>
-                                                    <thead>
-                                                        <tr>
-                                                            <td />
-                                                            {
-                                                                this.props.appraisal.incomeStatement.years.map((year) =>
-                                                                {
-                                                                    return <td key={year} className={"amount-column"}>
-                                                                        {year}
-                                                                    </td>
-                                                                })
-                                                            }
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody>
+                                                <Row className={"expense-row expense-header-row"}>
+                                                    {this.renderHiddenHandleColumn()}
+                                                    <Col className={"name-column"}>
+                                                        Name
+                                                    </Col>
+
                                                     {
-                                                        this.props.appraisal.incomeStatement.expenses && this.props.appraisal.incomeStatement.expenses.map((item, itemIndex) =>
+                                                        this.props.appraisal.incomeStatement.years.map((year) =>
                                                         {
-                                                            return this.renderIncomeStatementItemRow(item, itemIndex);
+                                                            return <Col key={year} className={"amount-column"}>
+                                                                {year}
+                                                            </Col>
                                                         })
                                                     }
+                                                    {this.renderHiddenActionColumn()}
+                                                </Row>
+                                                {
+                                                    this.props.appraisal.incomeStatement.expenses ?
+                                                        <SortableList
+                                                            useDragHandle={true}
+                                                            items={this.props.appraisal.incomeStatement.expenses}
+                                                            onSortEnd={this.onSortEnd.bind(this)} />
+                                                        : null
+                                                }
+                                                {
+                                                    this.props.appraisal.incomeStatement.expenses ?
+                                                        this.renderNewItemRow('expense')
+                                                        : null
+                                                }
+                                                <Row className={"expense-row total-row"}>
+                                                    {this.renderHiddenHandleColumn()}
+                                                    <Col className={"name-column"}>Total</Col>
                                                     {
-                                                        this.props.appraisal.incomeStatement.expenses ?
-                                                            this.renderNewItemRow('expense')
-                                                            : null
+                                                        this.props.appraisal.incomeStatement.years.map((year) =>
+                                                        {
+                                                            return <Col key={year} className={"amount-column"}>
+                                                                $<NumberFormat value={this.state.expenseTotal[year]}
+                                                                               displayType={'text'}
+                                                                               thousandSeparator={', '}
+                                                                               decimalScale={2}
+                                                                               fixedDecimalScale={true}/>
+                                                            </Col>
+                                                        })
                                                     }
-                                                    <tr className={"total-row"}>
-                                                        <td className={"name-column"}>
-                                                            <span>Total</span>
-                                                        </td>
-                                                        <td className={"amount-column"}>
-                                                        <span>
-                                                            $<NumberFormat value={this.state.expenseTotal}
-                                                                           displayType={'text'}
-                                                                           thousandSeparator={', '}
-                                                                           decimalScale={2}
-                                                                           fixedDecimalScale={true}/>
-                                                        </span>
-                                                        </td>
-                                                        <td>
-                                                        </td>
-                                                    </tr>
-
-                                                    </tbody>
-                                                </Table>
+                                                    {this.renderHiddenActionColumn()}
+                                                </Row>
                                             </Col>
                                         </Row>
                                     </div>
@@ -244,7 +308,7 @@ class ViewExpenses extends React.Component
                         </Card>
                     </Col>
                 </Row>
-            ]
+            </div>
         );
     }
 }

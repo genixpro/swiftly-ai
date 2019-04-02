@@ -28,6 +28,7 @@
   "dependencies": {
     "@fortawesome/fontawesome-free": "5.5.0",
     "animate.css": "3.7.0",
+    "array-move": "^2.1.0",
     "axios": "^0.18.0",
     "babel-plugin-relay": "^2.0.0-rc.1",
     "bluebird": "^3.5.3",
@@ -110,6 +111,7 @@
     "react-router-bootstrap": "0.24.4",
     "react-router-dom": "4.3.1",
     "react-select": "2.1.1",
+    "react-sortable-hoc": "^1.8.3",
     "react-table": "^6.8.6",
     "react-toastify": "4.4.3",
     "react-transition-group": "2.5.0",

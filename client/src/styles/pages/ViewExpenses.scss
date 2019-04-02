@@ -1,0 +1,97 @@
+
+
+
+.view-expenses
+{
+    ul.sortable
+    {
+      padding-left: 0;
+      margin-bottom: 0;
+    }
+}
+
+.expense-row
+{
+  align-items: stretch;
+  z-index: 1000;
+
+  .col {
+    border: 1px #eee solid;
+    border-bottom: 0;
+    &:not(:first-child) {
+      border-left: 0;
+    }
+    &:first-child {
+      border-left: 2px solid #eee;
+    }
+    &:last-child {
+      border-right: 2px solid #eee;
+    }
+  }
+
+
+  &.total-row
+  {
+    .col {
+      border-bottom: 2px solid #eee;
+    }
+  }
+
+
+
+  .handle-column
+  {
+    flex-grow: 0;
+    cursor: pointer;
+    padding: 0;
+    margin-left: 15px;
+
+    .fa {
+      padding: 10px;
+    }
+  }
+
+  .name-column
+  {
+    //flex-grow: 0;
+    //flex-basis: 30%;
+
+  }
+
+  .amount-column
+  {
+    text-align: right;
+  }
+
+  .amount-column input
+  {
+    text-align: right;
+  }
+
+  .action-column
+  {
+    flex-grow: 0;
+    .btn
+    {
+      opacity: 0;
+      transition: visibility 0s, opacity 0s;
+    }
+  }
+
+  &:hover
+  {
+    .action-column .btn
+    {
+      opacity: 1;
+    }
+  }
+}
+
+.expense-header-row
+{
+  font-weight: bold;
+  .col
+  {
+    border-top: 2px solid #eee;
+  }
+}

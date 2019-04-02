@@ -67,6 +67,12 @@
     padding-right: 1px;
   }
 
+  &.hide-input.non-editable {
+    .input-group-append {
+      display: none;
+    }
+  }
+
   .rdt
   {
     flex-grow: 1;
