@@ -1,0 +1,70 @@
+.file-viewer {
+
+  .file-viewer-image {
+    width: 100%;
+    pointer-events: none;
+    user-select: none;
+
+    border: 1px dotted lightgray;
+  }
+
+  .file-viewer-word {
+    position: absolute;
+    cursor: pointer;
+    background-color: #00000000;
+    color: #00000000;
+    border-radius: 3px;
+  }
+
+  .file-viewer-word:hover, .file-viewer-word.selected, .file-viewer-word.selected:hover,
+  .file-viewer-word.classified:hover, .file-viewer-word.classified.selected, .file-viewer-word.classified.selected:hover {
+    background-color: #0000bbaa;
+  }
+
+  .file-viewer-word.classified {
+    background-color: rgba(0, 0, 255, 0.3);
+  }
+
+  .file-viewer-image-outer-container {
+    overflow: hidden;
+    height: 75vh;
+  }
+
+  .file-viewer-image-inner-container {
+    position: relative;
+    width: fit-content;
+    cursor: move;
+
+  }
+
+  .file-viewer-thumbnail-container.selected-page {
+    border-width: 3px;
+  }
+
+  .file-viewer-image-thumbnail {
+    cursor: pointer;
+    max-width: 100%;
+  }
+
+  .extractions-toolbar {
+    background: white;
+    position: absolute;
+    right: 0;
+    z-index: 1000;
+    display: flex;
+    flex-direction: row;
+
+    div {
+      margin-right: 10px;
+    }
+
+    .toolbar-label {
+      position: relative;
+      top: 5px;
+    }
+
+    em {
+      cursor: pointer;
+    }
+  }
+}

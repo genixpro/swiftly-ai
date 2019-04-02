@@ -1,17 +1,16 @@
 
+.view-expenses {
+  ul.sortable {
+    padding-left: 0;
+    margin-bottom: 0;
+  }
 
-
-.view-expenses
-{
-    ul.sortable
-    {
-      padding-left: 0;
-      margin-bottom: 0;
-    }
+  .file-selector-row {
+    margin-bottom: 10px;
+  }
 }
 
-.expense-row
-{
+.expense-row {
   align-items: stretch;
   z-index: 1000;
 
@@ -29,18 +28,13 @@
     }
   }
 
-
-  &.total-row
-  {
+  &.total-row {
     .col {
       border-bottom: 2px solid #eee;
     }
   }
 
-
-
-  .handle-column
-  {
+  .handle-column {
     flex-grow: 0;
     cursor: pointer;
     padding: 0;
@@ -51,47 +45,38 @@
     }
   }
 
-  .name-column
-  {
+  .name-column {
     //flex-grow: 0;
     //flex-basis: 30%;
 
   }
 
-  .amount-column
-  {
+  .amount-column {
     text-align: right;
   }
 
-  .amount-column input
-  {
+  .amount-column input {
     text-align: right;
   }
 
-  .action-column
-  {
+  .action-column {
     flex-grow: 0;
-    .btn
-    {
+    .btn {
       opacity: 0;
       transition: visibility 0s, opacity 0s;
     }
   }
 
-  &:hover
-  {
-    .action-column .btn
-    {
+  &:hover {
+    .action-column .btn {
       opacity: 1;
     }
   }
 }
 
-.expense-header-row
-{
+.expense-header-row {
   font-weight: bold;
-  .col
-  {
+  .col {
     border-top: 2px solid #eee;
   }
 }

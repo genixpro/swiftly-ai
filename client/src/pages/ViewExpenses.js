@@ -8,6 +8,8 @@ import _ from 'underscore';
 import AppraisalContentHeader from "./components/AppraisalContentHeader";
 import {SortableContainer, SortableElement, SortableHandle} from 'react-sortable-hoc';
 import arrayMove from "array-move";
+import FileViewer from "./components/FileViewer"
+import FileSelector from "./components/FileSelector"
 
 class ViewExpenses extends React.Component
 {
@@ -104,9 +106,10 @@ class ViewExpenses extends React.Component
                         <FieldDisplayEdit
                             type="currency"
                             hideIcon={false}
-                            edit={yearIndex === this.props.appraisal.incomeStatement.years.length - 1}
+                            edit={true}
                             value={incomeStatementItem.yearlyAmounts[year.toString()]}
                             extractionReference={incomeStatementItem.extractionReferences[year.toString()]}
+                            onViewExtractionReference={(ref) => this.onViewExtractionReference(ref)}
                             history={this.props.history}
                             onChange={(newValue) => this.changeIncomeItemValue(incomeStatementItem, year, newValue)}
                         />
@@ -163,6 +166,14 @@ class ViewExpenses extends React.Component
         this.computeExpenseTotals();
         this.props.saveDocument(this.props.appraisal)
 
+    }
+
+    onViewExtractionReference(extractionReference)
+    {
+        if (this.fileViewer)
+        {
+            this.fileViewer.hilightWords(extractionReference.wordIndexes);
+        }
     }
 
     renderNewItemRow(type)
@@ -228,6 +239,13 @@ class ViewExpenses extends React.Component
         </Col>
     }
 
+    onFileChanged(fileId)
+    {
+        axios.get(`/appraisal/${this.props.appraisalId}/files/${fileId}`).then((response) =>
+        {
+            this.setState({file: response.data.file})
+        });
+    }
 
     render()
     {
@@ -253,7 +271,7 @@ class ViewExpenses extends React.Component
                                 {(this.props.appraisal && this.props.appraisal.incomeStatement) ?
                                     <div id={"view-expenses-body"} className={"view-expenses-body"}>
                                         <Row>
-                                            <Col xs={12} md={10} lg={8} xl={6}>
+                                            <Col xs={6}>
                                                 <Row className={"expense-row expense-header-row"}>
                                                     {this.renderHiddenHandleColumn()}
                                                     <Col className={"name-column"}>
@@ -299,6 +317,28 @@ class ViewExpenses extends React.Component
                                                         })
                                                     }
                                                     {this.renderHiddenActionColumn()}
+                                                </Row>
+                                            </Col>
+                                            <Col xs={6}>
+                                                <Row className={"file-selector-row"}>
+                                                    <Col xs={12}>
+                                                        <FileSelector
+                                                            appraisalId={this.props.appraisal._id["$oid"]}
+                                                            onChange={(fileId) => this.onFileChanged(fileId)}
+                                                        />
+                                                    </Col>
+                                                </Row>
+                                                <Row>
+                                                    {
+                                                        this.state.file ?
+                                                            <Col xs={12}>
+                                                                <FileViewer
+                                                                    ref={(ref) => this.fileViewer = ref}
+                                                                    document={this.state.file}
+                                                                    hilightWords={this.state.hoverReference ? this.state.hoverReference.wordIndexes : []}
+                                                                />
+                                                            </Col> : null
+                                                    }
                                                 </Row>
                                             </Col>
                                         </Row>

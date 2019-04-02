@@ -184,9 +184,8 @@ class FieldDisplayEdit extends React.Component
 
     viewExtractionInputs()
     {
-        const extractionReference = this.props.extractionReference;
-        const url = `/appraisal/${extractionReference.appraisalId}/financial_statement/${extractionReference.fileId}/raw`;
-        this.props.history.push(url);
+        this.props.onViewExtractionReference(this.props.extractionReference);
+        this.setState({isEditing: false});
     }
 
 
@@ -278,7 +277,7 @@ class FieldDisplayEdit extends React.Component
                 {
                     !this.state.hideIcon && this.props.extractionReference ?
                         <InputGroupAddon addonType="append">
-                            <Button className={"input-group-text"} onClick={() => this.viewExtractionInputs()}>
+                            <Button className={"input-group-text"} onClick={(evt) => {this.viewExtractionInputs();}}>
                                 <i className={"fa fa-search"} />
                             </Button>
                         </InputGroupAddon> : null
