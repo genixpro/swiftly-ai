@@ -1,11 +1,31 @@
 .file-viewer {
 
   .file-viewer-image {
+    position: absolute;
     width: 100%;
     pointer-events: none;
     user-select: none;
 
     border: 1px dotted lightgray;
+    border-radius: 10px;
+    opacity: 0;
+
+    &.slow-transition {
+      transition: opacity 0.5s ease-in;
+    }
+  }
+
+  .file-viewer-image.frame {
+    position: relative;
+  }
+
+  .file-viewer-image.active {
+    opacity: 1;
+
+    &.slow-transition {
+      transition: opacity 0.5s ease-out;
+      transition-delay: 0.5s;
+    }
   }
 
   .file-viewer-word {
@@ -14,6 +34,7 @@
     background-color: #00000000;
     color: #00000000;
     border-radius: 3px;
+    animation: fadein 1.5s ease-in-out;
   }
 
   .file-viewer-word:hover, .file-viewer-word.selected, .file-viewer-word.selected:hover,
@@ -35,6 +56,9 @@
     width: fit-content;
     cursor: move;
 
+    &.slow-transition {
+      transition: left 1.0s ease-in-out, top 1.0s ease-in-out;
+    }
   }
 
   .file-viewer-thumbnail-container.selected-page {
@@ -66,5 +90,14 @@
     em {
       cursor: pointer;
     }
+  }
+}
+
+@keyframes fadein {
+  from {
+    opacity:0;
+  }
+  to {
+    opacity:1;
   }
 }

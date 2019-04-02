@@ -76,6 +76,7 @@ class FileViewer extends React.Component
     {
         this.selecting = false;
         this.isDraggingImage = false;
+        this.setState({isDraggingImage: false});
     }
 
 
@@ -84,23 +85,22 @@ class FileViewer extends React.Component
         this.setState({currentPage: newPage})
     }
 
-    moveViewTo(imageX, imageY, containerX, containerY)
+    moveViewTo(imageX, imageY, containerX, containerY, slowTransition)
     {
-        console.log(imageX, imageY, containerX, containerY);
-
         const imageContainer = document.getElementById("file-viewer-image-outer-container");
         const image = document.getElementById(`file-viewer-image`);
 
-
         this.setState({
+            slowTransition: (slowTransition ? true : false),
             innerScrollLeft: imageX * image.getBoundingClientRect().width - imageContainer.getBoundingClientRect().width * containerX,
             innerScrollTop: imageY * image.getBoundingClientRect().height - imageContainer.getBoundingClientRect().height * containerY
+        }, () =>
+        {
+            setTimeout(() =>
+            {
+                this.setState({slowTransition: false});
+            });
         });
-
-        // imageContainer.scroll({
-        //     left: ,
-        //     top:
-        // })
     }
 
 
@@ -204,6 +204,7 @@ class FileViewer extends React.Component
 
         this.dragStartX = evt.clientX;
         this.dragStartY = evt.clientY;
+        this.setState({isDraggingImage: true});
         this.isDraggingImage = true;
     }
 
@@ -227,10 +228,8 @@ class FileViewer extends React.Component
         const firstWord = this.props.document.words[words[0]];
         const newPage = firstWord.page;
 
-        this.setState({hilightWords: words, currentPage: newPage}, () =>
-        {
-            this.moveViewTo(firstWord.left, firstWord.top, 0.5, 0.5);
-        });
+        this.setState({hilightWords: words, currentPage: newPage});
+        this.moveViewTo(firstWord.left, firstWord.top, 0.5, 0.5, true);
     }
 
     onWheel(evt)
@@ -283,7 +282,7 @@ class FileViewer extends React.Component
                              onWheel={this.onWheel.bind(this)}
                              onMouseDown={this.startImageDrag.bind(this)}
                         >
-                            <div className={"file-viewer-image-inner-container"}
+                            <div className={"file-viewer-image-inner-container " + (this.state.slowTransition ? " slow-transition" : "")}
                                  id={"file-viewer-image-inner-container"}
                                  style={{
                                      "width": `${this.state.imageZoom}%`,
@@ -291,12 +290,22 @@ class FileViewer extends React.Component
                                      "top": -this.state.innerScrollTop,
                                  }}
                             >
+                                {
+                                    _.range(this.props.document.pages).map((page, pageIndex) =>
+                                    {
+                                        return <img
+                                            alt="Document"
+                                            id={`file-viewer-image`}
+                                            src={`https://appraisalfiles.blob.core.windows.net/files/${this.props.document._id['$oid']}-image-${page}.png`}
+                                            className={`file-viewer-image ${page === this.state.currentPage ? 'active' : ''} ${this.state.slowTransition ? " slow-transition" : ""}`}
+                                        />;
+                                    })
+                                }
                                 <img
                                     alt="Document"
                                     id={`file-viewer-image`}
                                     src={`https://appraisalfiles.blob.core.windows.net/files/${this.props.document._id['$oid']}-image-${this.state.currentPage}.png`}
-                                    onLoad={this.componentDidUpdate.bind(this)}
-                                    className="file-viewer-image"
+                                    className={`file-viewer-image frame`}
                                 />
                                 {
                                     this.props.document.words.map((word, wordIndex) =>
@@ -304,7 +313,7 @@ class FileViewer extends React.Component
                                         if(word.page === this.state.currentPage)
                                         {
                                             return <div className={`file-viewer-word ${this.state.hilightWords.indexOf(wordIndex) !== -1 ? "classified" : "null"}`}
-                                                 style={{"top": `${word.top*100}%`, "left": `${word.left*100}%`, "width": `${word.right*100 - word.left*100}%`, "height": `${word.bottom*100 - word.top*100}%`}}
+                                                        style={{"top": `${word.top*100}%`, "left": `${word.left*100}%`, "width": `${word.right*100 - word.left*100}%`, "height": `${word.bottom*100 - word.top*100}%`}}
                                             />
                                         }
                                         else
