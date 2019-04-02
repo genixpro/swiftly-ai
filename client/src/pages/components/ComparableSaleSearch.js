@@ -12,6 +12,11 @@ class ComparableSaleSearch extends React.Component
         search: {}
     };
 
+    componentDidMount()
+    {
+        this.setState({search: this.props.defaultSearch})
+    }
+
     changeSearchField(field, value)
     {
         const search = this.state.search;
@@ -151,8 +156,13 @@ class ComparableSaleSearch extends React.Component
                                         </td>
                                         <td>
                                             {
-                                                <PropertyTypeSelector
-                                                    onChange={(newValue) => this.changeSearchField('propertyType', newValue) } />
+                                                <FieldDisplayEdit
+                                                    type={"propertyType"}
+                                                    value={this.state.search.propertyType}
+                                                    onChange={(newValue) => this.changeSearchField("propertyType", newValue)}
+                                                    hideInput={false}
+                                                    hideIcon={true}
+                                                />
                                             }
                                         </td>
                                     </tr>

@@ -19,7 +19,38 @@ class ViewComparableSalesDatabase extends React.Component {
 
     componentDidMount()
     {
-        this.loadData();
+        this.search = this.getDefaultSearchParams();
+    }
+
+    getDefaultSearchParams()
+    {
+        const defaultSearch = {
+            "leaseDateFrom": new Date(Date.now() - (1000 * 3600 * 24 * 365 * 2))
+        };
+
+        const unitsWithSize = _.filter(this.props.appraisal.units, (unit) => _.isNumber(unit.squareFootage));
+        if (unitsWithSize.length > 0)
+        {
+            defaultSearch["sizeOfUnitFrom"] = Math.round(_.min(unitsWithSize, (unit) => unit.squareFootage).squareFootage * 0.8 / 100) * 100;
+            defaultSearch["sizeOfUnitTo"] = Math.round(_.max(unitsWithSize, (unit) => unit.squareFootage).squareFootage * 1.2 / 100) * 100;
+        }
+
+        const unitsWithSizeRent = _.filter(unitsWithSize, (unit) => _.isNumber(unit.squareFootage) && !_.isUndefined(unit.currentTenancy));
+        if (unitsWithSizeRent.length > 0)
+        {
+            const minRentUnit = _.min(unitsWithSizeRent, (unit) => unit.currentTenancy.yearlyRent / unit.squareFootage);
+            const maxRentUnit = _.max(unitsWithSizeRent, (unit) => unit.currentTenancy.yearlyRent / unit.squareFootage);
+
+            defaultSearch["yearlyRentFrom"] = Math.round(minRentUnit.currentTenancy.yearlyRent / minRentUnit.squareFootage * 0.8);
+            defaultSearch["yearlyRentTo"] = Math.round(maxRentUnit.currentTenancy.yearlyRent / maxRentUnit.squareFootage * 1.2);
+        }
+
+        if (this.props.appraisal.propertyType)
+        {
+            defaultSearch['propertyType'] = this.props.appraisal.propertyType;
+        }
+
+        return defaultSearch;
     }
 
     getDefaultMapParams()
@@ -129,6 +160,11 @@ class ViewComparableSalesDatabase extends React.Component {
             return null;
         }
 
+        if (!this.defaultSearch)
+        {
+            this.defaultSearch = this.getDefaultSearchParams();
+        }
+
         return [
             <div className={"view-comparables-database"}>
                 <Row>
@@ -136,7 +172,7 @@ class ViewComparableSalesDatabase extends React.Component {
                         <h3>Search for Comparables</h3>
                     </Col>
                 </Row>
-                <ComparableLeaseSearch onChange={(search) => this.onSearchChanged(search)}/>
+                <ComparableLeaseSearch onChange={(search) => this.onSearchChanged(search)} defaultSearch={this.defaultSearch}/>
                 <Row>
                     <Col xs={6}>
                         <ComparableLeaseList comparableLeases={this.state.comparableLeases}

@@ -187,7 +187,7 @@ class ComparableLeaseListItem extends React.Component
                                     value={comparableLease.yearlyRent}
                                     onChange={(newValue) => this.changeComparableField('yearlyRent', newValue)}
                                 />
-                                <span className={"comparable-field-label"}>Sale Date:</span>
+                                <span className={"comparable-field-label"}>Lease Date:</span>
 
                                 <FieldDisplayEdit
                                     type={"date"}

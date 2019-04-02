@@ -85,7 +85,7 @@ class FieldDisplayEdit extends React.Component
                 return "$" + this.numberWithCommas(value.toString());
             }
         }
-        else if (this.props.type === 'integer')
+        else if (this.props.type === 'number')
         {
             try {
                 return this.numberWithCommas(Number(value).toFixed(0).toString());
@@ -133,6 +133,10 @@ class FieldDisplayEdit extends React.Component
         {
             this.setState({value: newValue}, () => this.finishEditing());
         }
+        else if (newValue === null)
+        {
+            this.setState({value: newValue}, () => this.finishEditing());
+        }
     }
 
     addressInputUpdated(newValue)
@@ -150,10 +154,10 @@ class FieldDisplayEdit extends React.Component
 
     propertyTypeInputUpdated(newValue)
     {
-        if (newValue)
-        {
+        // if (newValue)
+        // {
             this.setState({value: newValue}, () => this.finishEditing());
-        }
+        // }
     }
 
 
@@ -237,7 +241,7 @@ class FieldDisplayEdit extends React.Component
                             input={true}
                             closeOnSelect={true}
                             value={this.state.isEditing ? this.state.value : this.formatValue(this.props.value)}
-                            onChange={(newValue) => newValue.toDate ? this.dateInputUpdated(newValue.toDate()) : null}
+                            onChange={(newValue) => newValue.toDate ? this.dateInputUpdated(newValue.toDate()) : newValue === "" ? this.dateInputUpdated(null) : null}
                             onBlur={() => this.finishEditing()}
                         /> : null
                 }

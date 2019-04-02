@@ -19,7 +19,21 @@ class ViewComparableSalesDatabase extends React.Component {
 
     componentDidMount()
     {
-        this.loadData();
+        this.search = this.getDefaultSearchParams();
+    }
+
+    getDefaultSearchParams()
+    {
+        const defaultSearch = {
+            "saleDateFrom": new Date(Date.now() - (1000 * 3600 * 24 * 365 * 2))
+        };
+
+        if (this.props.appraisal.propertyType)
+        {
+            defaultSearch['propertyType'] = this.props.appraisal.propertyType;
+        }
+
+        return defaultSearch;
     }
 
     getDefaultMapParams()
@@ -131,6 +145,11 @@ class ViewComparableSalesDatabase extends React.Component {
             return null;
         }
 
+        if (!this.defaultSearch)
+        {
+            this.defaultSearch = this.getDefaultSearchParams();
+        }
+
         return [
             <div className={"view-comparables-database"}>
                 <Row>
@@ -138,7 +157,7 @@ class ViewComparableSalesDatabase extends React.Component {
                         <h3>Search for Comparables</h3>
                     </Col>
                 </Row>
-                <ComparableSaleSearch onChange={(search) => this.onSearchChanged(search)}/>
+                <ComparableSaleSearch onChange={(search) => this.onSearchChanged(search)} defaultSearch={this.defaultSearch}/>
                 <Row>
                     <Col xs={6}>
                         <ComparableSaleList comparableSales={this.state.comparableSales}
