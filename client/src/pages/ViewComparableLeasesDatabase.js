@@ -8,8 +8,9 @@ import AppraisalContentHeader from "./components/AppraisalContentHeader";
 import ComparableLeaseSearch from "./components/ComparableLeaseSearch";
 import GoogleMapReact from 'google-map-react';
 import ComparableLeaseListItem from "./components/ComparableLeaseListItem"
+import ComparableLeasesMap from "./components/ComparableLeasesMap";
 
-class ViewComparableSalesDatabase extends React.Component {
+class ViewComparableLeasesDatabase extends React.Component {
     state = {
         comparableLeases: []
     };
@@ -51,25 +52,6 @@ class ViewComparableSalesDatabase extends React.Component {
         }
 
         return defaultSearch;
-    }
-
-    getDefaultMapParams()
-    {
-        const mapParams = {
-            defaultCenter: {
-                lat: 41.3625202,
-                lng: -100.5995477
-            },
-            defaultZoom: 12
-        };
-
-        if (this.props.appraisal.location)
-        {
-            mapParams.defaultCenter.lng = this.props.appraisal.location.coordinates[0];
-            mapParams.defaultCenter.lat = this.props.appraisal.location.coordinates[1];
-        }
-
-        return mapParams;
     }
 
 
@@ -126,30 +108,9 @@ class ViewComparableSalesDatabase extends React.Component {
         this.props.saveDocument(appraisal);
     }
 
-    toggleComparablePopover(comp)
+    onMapSearchChanged(mapSearch)
     {
-        comp.visible = !comp.visible;
-        this.setState({comparableLeases: this.state.comparableLeases});
-    }
-
-    onMapChanged(location)
-    {
-        const top = location.bounds.ne.lat;
-        const bottom = location.bounds.sw.lat;
-
-        const left = location.bounds.ne.lng;
-        const right = location.bounds.sw.lng;
-
-        const height = bottom - top;
-        const width = right - left;
-
-        this.mapSearch = {
-            "locationTop": top - height/2,
-            "locationBottom": bottom + height/2,
-            "locationLeft": left - width/2,
-            "locationRight": right + width/2
-        };
-
+        this.mapSearch = mapSearch;
         this.loadData();
     }
 
@@ -187,53 +148,13 @@ class ViewComparableSalesDatabase extends React.Component {
                         />
                     </Col>
                     <Col xs={6}>
-                        <div className={"map-container"}>
-                            <GoogleMapReact
-                                bootstrapURLKeys={{ key: "AIzaSyBRmZ2N4EhJjXmC29t3VeiLUQssNG-MY1I" }}
-                                defaultCenter={this.getDefaultMapParams().defaultCenter}
-                                defaultZoom={this.getDefaultMapParams().defaultZoom}
-                                onChange={(location) => this.onMapChanged(location)}
-                            >
-                                {
-                                    this.state.comparableLeases.map((comp) =>
-                                    {
-                                        if (!comp.location)
-                                        {
-                                            return;
-                                        }
-
-                                        const id = "comp-" + comp._id['$oid'];
-                                        return <div
-                                            key={id}
-                                            lat={comp.location.coordinates[1]}
-                                            lng={comp.location.coordinates[0]}
-                                        >
-                                            <img
-                                                id={id}
-                                                className={"building-map-icon"}
-                                                src={"/img/building-icon.png"}
-                                                text={comp.name}
-                                                onClick={() => this.toggleComparablePopover(comp)}
-                                            />
-                                            <Popover placement="right" isOpen={comp.visible} target={id} toggle={() => this.toggleComparablePopover(comp)}>
-                                                <PopoverBody>
-                                                    <ComparableLeaseListItem
-                                                        comparableLease={comp}
-                                                        history={this.props.history}
-                                                        edit={false}
-                                                        openByDefault={true}
-                                                        appraisalId={this.props.appraisalId}
-                                                        appraisalComparables={this.props.appraisal.comparableLeases}
-                                                        onAddComparableClicked={(comp) => this.addComparableToAppraisal(comp)}
-                                                        onRemoveComparableClicked={(comp) => this.removeComparableFromAppraisal(comp)}
-                                                    />
-                                                </PopoverBody>
-                                            </Popover>
-                                        </div>
-                                    })
-                                }
-                            </GoogleMapReact>
-                        </div>
+                        <ComparableLeasesMap
+                            appraisal={this.props.appraisal}
+                            comparableLeases={this.state.comparableLeases}
+                            onMapSearchChanged={(mapSearch) => this.onMapSearchChanged(mapSearch)}
+                            onAddComparableToAppraisal={(comp) => this.addComparableToAppraisal(comp)}
+                            onRemoveComparableFromAppraisal={(comp) => this.removeComparableFromAppraisal(comp)}
+                            />
                     </Col>
                 </Row>
             </div>
@@ -241,4 +162,4 @@ class ViewComparableSalesDatabase extends React.Component {
     }
 }
 
-export default ViewComparableSalesDatabase;
+export default ViewComparableLeasesDatabase;

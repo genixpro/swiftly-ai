@@ -7,12 +7,38 @@ import _ from 'underscore';
 import AppraisalContentHeader from "./components/AppraisalContentHeader";
 import ComparableSaleSearch from './components/ComparableSaleSearch';
 import ComparableLeaseList from "./components/ComparableLeaseList";
+import ComparableLeasesMap from "./components/ComparableLeasesMap";
 
 
 class ViewAppraisalComparableLeases extends React.Component {
     state = {
         comparableLeases: []
     };
+
+    loadedComparables = {}
+
+    componentDidMount()
+    {
+        Promise.map(this.props.appraisal.comparableLeases, (comparableLeaseId) =>
+        {
+            if (this.loadedComparables[comparableLeaseId])
+            {
+                return this.loadedComparables[comparableLeaseId];
+            }
+            else
+            {
+                // alert('loading');
+                return axios.get(`/comparable_leases/` + comparableLeaseId).then((response) =>
+                {
+                    this.loadedComparables[comparableLeaseId] = response.data.comparableLease;
+                    return response.data.comparableLease;
+                });
+            }
+        }).then((comparableLeases) =>
+        {
+            this.setState({comparableLeases: comparableLeases})
+        })
+    }
 
     createNewComparable(newComparable)
     {
@@ -94,13 +120,21 @@ class ViewAppraisalComparableLeases extends React.Component {
                     </Col>
                 </Row>
                 <Row>
-                    <Col xs={12}>
-                        <ComparableLeaseList comparableLeaseIds={this.props.appraisal.comparableLeases}
+                    <Col xs={6}>
+                        <ComparableLeaseList comparableLeases={this.state.comparableLeases}
                                             allowNew={false}
                                             history={this.props.history}
                                             appraisalId={this.props.match.params._id}
                                             onRemoveComparableClicked={(comp) => this.removeComparableFromAppraisal(comp)}
                                             onChange={(comps) => this.onComparablesChanged(comps)}
+                        />
+                    </Col>
+                    <Col xs={6}>
+                        <ComparableLeasesMap
+                            appraisal={this.props.appraisal}
+                            comparableLeases={this.state.comparableLeases}
+                            onAddComparableToAppraisal={(comp) => this.addComparableToAppraisal(comp)}
+                            onRemoveComparableFromAppraisal={(comp) => this.removeComparableFromAppraisal(comp)}
                         />
                     </Col>
                 </Row>

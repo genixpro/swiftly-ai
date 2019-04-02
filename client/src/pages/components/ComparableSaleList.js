@@ -34,40 +34,10 @@ class ComparableSaleList extends React.Component
 
     updateComparables()
     {
-        if (this.props.comparableSales)
+        if (this.props.comparableSales !== this.state.comparableSales)
         {
-            if (this.props.comparableSales !== this.state.comparableSales)
-            {
-                // this.setState({comparableSales: _.filter(this.props.comparableSales, (sale) => excludeIds.indexOf(sale._id['$oid]']) !== -1 )});
-                this.setState({comparableSales: this.props.comparableSales});
-            }
-        }
-        else if (this.props.comparableSaleIds)
-        {
-            if (this.props.comparableSaleIds !== this.state.comparableSaleIds)
-            {
-                this.setState({comparableSaleIds: this.props.comparableSaleIds});
-
-                Promise.map(this.props.comparableSaleIds, (comparableSaleId) =>
-                {
-                    if (this.loadedComparables[comparableSaleId])
-                    {
-                        return this.loadedComparables[comparableSaleId];
-                    }
-                    else
-                    {
-                        // alert('loading');
-                        return axios.get(`/comparable_sales/` + comparableSaleId).then((response) =>
-                        {
-                            this.loadedComparables[comparableSaleId] = response.data.comparableSale;
-                            return response.data.comparableSale;
-                        });
-                    }
-                }).then((comparableSales) =>
-                {
-                    this.setState({comparableSales: comparableSales})
-                })
-            }
+            // this.setState({comparableSales: _.filter(this.props.comparableSales, (sale) => excludeIds.indexOf(sale._id['$oid]']) !== -1 )});
+            this.setState({comparableSales: this.props.comparableSales});
         }
     }
 
