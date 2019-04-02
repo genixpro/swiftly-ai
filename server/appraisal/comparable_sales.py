@@ -31,6 +31,12 @@ class ComparableSaleAPI(object):
             query['sizeSquareFootage__gt'] = self.request.GET['leaseableAreaFrom']
         if 'leaseableAreaTo' in self.request.GET:
             query['sizeSquareFootage__lt'] = self.request.GET['leaseableAreaTo']
+
+        if 'capitalizationRateFrom' in self.request.GET:
+            query['capitalizationRate__gt'] = self.request.GET['capitalizationRateFrom']
+        if 'capitalizationRateTo' in self.request.GET:
+            query['capitalizationRate__lt'] = self.request.GET['capitalizationRateTo']
+
         if 'propertyType' in self.request.GET:
             query['propertyType'] = self.request.GET['propertyType']
 

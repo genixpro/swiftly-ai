@@ -1,7 +1,7 @@
 import React from 'react';
 import {Table} from 'reactstrap';
 import ComparableSaleListItem from './ComparableSaleListItem';
-import {Dropdown, DropdownItem, DropdownMenu, DropdownToggle, Row, Col} from 'reactstrap';
+import {Dropdown, DropdownItem, DropdownMenu, DropdownToggle, Row, Col, CardHeader, CardTitle} from 'reactstrap';
 import FieldDisplayEdit from "./FieldDisplayEdit";
 import _ from 'underscore';
 import Promise from 'bluebird';
@@ -140,6 +140,32 @@ class ComparableSaleList extends React.Component
             <div>
                 {
                     <ComparableSalesStatistics comparableSales={this.state.comparableSales}/>
+                }
+                {
+
+                    <div className={`card b comparable-sale-list-header`}>
+                        <CardHeader className={"comparable-sale-list-item-header"}>
+                            <CardTitle>
+                                <Row>
+                                    <Col xs={2} className={"header-field-column"}>
+                                        Date
+                                    </Col>
+                                    <Col xs={4} className={"header-field-column"}>
+                                        Address
+                                    </Col>
+                                    <Col xs={2} className={"header-field-column"}>
+                                        Sale Price
+                                    </Col>
+                                    <Col xs={2} className={"header-field-column"}>
+                                        Description
+                                    </Col>
+                                    <Col xs={2} className={"header-field-column"}>
+                                        Capitalization Rate
+                                    </Col>
+                                </Row>
+                            </CardTitle>
+                        </CardHeader>
+                    </div>
                 }
                 {
                     this.props.allowNew ?

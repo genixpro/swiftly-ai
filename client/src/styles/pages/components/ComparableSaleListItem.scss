@@ -6,6 +6,7 @@
   margin-bottom: 0;
   color: gray;
   text-align: center;
+  border-radius: 0;
 }
 
 .new-comparable:hover
@@ -15,6 +16,20 @@
 
 .comparable-sale-list-item {
   min-width: 40vw;
+
+  margin-bottom: 0;
+  border-radius: 0;
+
+  &:not(:last-child)
+  {
+    border-bottom: 0;
+  }
+
+  &:last-child
+  {
+    border-bottom-left-radius: 0.25rem;
+    border-bottom-right-radius: 0.25rem;
+  }
 
   .comparable-sale-list-item-body {
     display: flex;
@@ -142,5 +157,28 @@
     .move-comparable-button {
       flex-grow: 1;
     }
+  }
+}
+
+.comparable-sale-list-header
+{
+  margin-bottom: 0;
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+.comparable-sale-list-item-header
+{
+  cursor: pointer;
+
+  span.no-data
+  {
+    font-style: italic;
+    font-size: 75%;
+  }
+
+  .header-field-column:not(:first-child)
+  {
+    border-left: 1px solid #eeeeee;
   }
 }

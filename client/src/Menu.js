@@ -37,12 +37,12 @@ const Menu = [
             },
             {
                 name: 'Comparable Sales',
-                path: '/appraisal/:appraisalId/comparable_sales/appraisal',
+                path: '/appraisal/:appraisalId/comparable_sales/database',
                 match: '/appraisal/:appraisalId/comparable_sales',
             },
             {
                 name: 'Comparable Leases',
-                path: '/appraisal/:appraisalId/comparable_leases/appraisal',
+                path: '/appraisal/:appraisalId/comparable_leases/database',
                 match: '/appraisal/:appraisalId/comparable_leases',
             },
             {

@@ -78,12 +78,33 @@ class ComparableSaleSearch extends React.Component
                                     </tr>
                                     <tr>
                                         <td>
-                                            <strong>Property Type:</strong>
+                                            <strong>Cap Rate Low:</strong>
                                         </td>
                                         <td>
                                             {
-                                                <PropertyTypeSelector
-                                                    onChange={(newValue) => this.changeSearchField('propertyType', newValue) } />
+                                                <FieldDisplayEdit
+                                                    type={"number"}
+                                                    value={this.state.search.capitalizationRateFrom}
+                                                    onChange={(newValue) => this.changeSearchField("capitalizationRateFrom", newValue)}
+                                                    hideInput={false}
+                                                    hideIcon={true}
+                                                />
+                                            }
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <strong>Cap Rate High:</strong>
+                                        </td>
+                                        <td>
+                                            {
+                                                <FieldDisplayEdit
+                                                    type={"number"}
+                                                    value={this.state.search.capitalizationRateTo}
+                                                    onChange={(newValue) => this.changeSearchField("capitalizationRateTo", newValue)}
+                                                    hideInput={false}
+                                                    hideIcon={true}
+                                                />
                                             }
                                         </td>
                                     </tr>
@@ -121,6 +142,17 @@ class ComparableSaleSearch extends React.Component
                                                     hideIcon={true}
 
                                                 />
+                                            }
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <strong>Property Type:</strong>
+                                        </td>
+                                        <td>
+                                            {
+                                                <PropertyTypeSelector
+                                                    onChange={(newValue) => this.changeSearchField('propertyType', newValue) } />
                                             }
                                         </td>
                                     </tr>

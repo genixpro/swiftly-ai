@@ -1,5 +1,5 @@
 import React from 'react';
-import { Dropdown, DropdownItem, DropdownMenu, DropdownToggle, Button, CardFooter} from 'reactstrap';
+import { Dropdown, DropdownItem, DropdownMenu, DropdownToggle, Button, CardFooter, Collapse, CardTitle, CardHeader, Row, Col} from 'reactstrap';
 import FieldDisplayEdit from "./FieldDisplayEdit";
 import _ from 'underscore';
 import axios from "axios/index";
@@ -18,6 +18,11 @@ class ComparableLeaseListItem extends React.Component
 
     componentDidMount()
     {
+        if (!this.props.comparableLease._id || this.props.openByDefault)
+        {
+            this.setState({detailsOpen: true})
+        }
+
         this.setState({
             comparableLease: _.clone(this.props.comparableLease)
         })
@@ -93,6 +98,11 @@ class ComparableLeaseListItem extends React.Component
         return false;
     }
 
+    toggleDetails()
+    {
+        this.setState({detailsOpen: !this.state.detailsOpen});
+    }
+
 
     render()
     {
@@ -102,106 +112,132 @@ class ComparableLeaseListItem extends React.Component
 
         return (
             <div className={`card b comparable-lease-list-item`}>
-                <div className={`card-body comparable-lease-list-item-body ${editableClass}`}>
-                    <div className={`comparable-lease-content`}>
-                        <FieldDisplayEdit
-                            type={"text"}
-                            edit={this.props.edit}
-                            placeholder={"Name..."}
-                            className={"comparable-name"}
-                            value={comparableLease.name}
-                            onChange={(newValue) => this.changeComparableField('name', newValue)}
-                        />
-                        <div className={"comparable-fields-area"}>
-                            <span className={"comparable-field-label"}>Address:</span>
-
+                {
+                    comparableLease && comparableLease._id && !this.props.openByDefault ?
+                        <CardHeader onClick={() => this.toggleDetails()} className={"comparable-lease-list-item-header"}>
+                            <CardTitle>
+                                <Row>
+                                    <Col xs={2} className={"header-field-column"}>
+                                        {
+                                            comparableLease.leaseDate ? <span>{new Date(comparableLease.leaseDate.$date).getMonth()} / {new Date(comparableLease.leaseDate.$date).getFullYear().toString().substr(2)}</span>
+                                                : <span className={"no-data"}>No Lease Date</span>
+                                        }
+                                    </Col>
+                                    <Col xs={4} className={"header-field-column"}>
+                                        {comparableLease.address ? comparableLease.address : <span className={"no-data"}>No Address</span>}
+                                    </Col>
+                                    <Col xs={2} className={"header-field-column"}>
+                                        {comparableLease.sizeOfUnit ? comparableLease.sizeOfUnit : <span className={"no-data"}>No Size</span>}
+                                    </Col>
+                                    <Col xs={2} className={"header-field-column"}>
+                                        {comparableLease.yearlyRent ? comparableLease.yearlyRent : <span className={"no-data"}>No Rent</span>}
+                                    </Col>
+                                </Row>
+                            </CardTitle>
+                        </CardHeader> : null
+                }
+                <Collapse isOpen={this.state.detailsOpen}>
+                    <div className={`card-body comparable-lease-list-item-body ${editableClass}`}>
+                        <div className={`comparable-lease-content`}>
                             <FieldDisplayEdit
-                                type={"address"}
+                                type={"text"}
                                 edit={this.props.edit}
-                                placeholder={"Address"}
-                                value={comparableLease.address}
-                                onChange={(newValue) => this.changeComparableField('address', newValue)}
-                                onGeoChange={(newValue) => this.changeComparableField('location', {"type": "Point", "coordinates": [newValue.lng, newValue.lat]})}
+                                placeholder={"Name..."}
+                                className={"comparable-name"}
+                                value={comparableLease.name}
+                                onChange={(newValue) => this.changeComparableField('name', newValue)}
                             />
+                            <div className={"comparable-fields-area"}>
+                                <span className={"comparable-field-label"}>Address:</span>
 
-                            <span className={"comparable-field-label"}>Property Type:</span>
+                                <FieldDisplayEdit
+                                    type={"address"}
+                                    edit={this.props.edit}
+                                    placeholder={"Address"}
+                                    value={comparableLease.address}
+                                    onChange={(newValue) => this.changeComparableField('address', newValue)}
+                                    onGeoChange={(newValue) => this.changeComparableField('location', {"type": "Point", "coordinates": [newValue.lng, newValue.lat]})}
+                                />
 
-                            <FieldDisplayEdit
-                                type={"propertyType"}
-                                edit={this.props.edit}
-                                placeholder={"Property Type"}
-                                value={comparableLease.propertyType}
-                                onChange={(newValue) => this.changeComparableField('propertyType', newValue)}
-                            />
+                                <span className={"comparable-field-label"}>Property Type:</span>
 
-                            <span className={"comparable-field-label"}>Size Of Unit: </span>
+                                <FieldDisplayEdit
+                                    type={"propertyType"}
+                                    edit={this.props.edit}
+                                    placeholder={"Property Type"}
+                                    value={comparableLease.propertyType}
+                                    onChange={(newValue) => this.changeComparableField('propertyType', newValue)}
+                                />
 
-                            <FieldDisplayEdit
-                                type={"number"}
-                                edit={this.props.edit}
-                                placeholder={"Size of Unit"}
-                                value={comparableLease.sizeOfUnit}
-                                onChange={(newValue) => this.changeComparableField('sizeOfUnit', newValue)}
-                            />
-                            <span className={"comparable-field-label"}>Yearly Rent:</span>
+                                <span className={"comparable-field-label"}>Size Of Unit: </span>
 
-                            <FieldDisplayEdit
-                                type={"currency"}
-                                edit={this.props.edit}
-                                placeholder={"Yearly Rent"}
-                                value={comparableLease.yearlyRent}
-                                onChange={(newValue) => this.changeComparableField('yearlyRent', newValue)}
-                            />
-                            <span className={"comparable-field-label"}>Sale Date:</span>
+                                <FieldDisplayEdit
+                                    type={"number"}
+                                    edit={this.props.edit}
+                                    placeholder={"Size of Unit"}
+                                    value={comparableLease.sizeOfUnit}
+                                    onChange={(newValue) => this.changeComparableField('sizeOfUnit', newValue)}
+                                />
+                                <span className={"comparable-field-label"}>Yearly Rent:</span>
 
-                            <FieldDisplayEdit
-                                type={"date"}
-                                edit={this.props.edit}
-                                placeholder={"Lease Date"}
-                                value={comparableLease.leaseDate}
-                                onChange={(newValue) => this.changeComparableField('leaseDate', newValue)}
-                            />
+                                <FieldDisplayEdit
+                                    type={"currency"}
+                                    edit={this.props.edit}
+                                    placeholder={"Yearly Rent"}
+                                    value={comparableLease.yearlyRent}
+                                    onChange={(newValue) => this.changeComparableField('yearlyRent', newValue)}
+                                />
+                                <span className={"comparable-field-label"}>Sale Date:</span>
 
-                            <span className={"comparable-field-label"}>Description:</span>
+                                <FieldDisplayEdit
+                                    type={"date"}
+                                    edit={this.props.edit}
+                                    placeholder={"Lease Date"}
+                                    value={comparableLease.leaseDate}
+                                    onChange={(newValue) => this.changeComparableField('leaseDate', newValue)}
+                                />
 
-                            <FieldDisplayEdit
-                                type={"textbox"}
-                                edit={this.props.edit}
-                                placeholder={"Description..."}
-                                value={comparableLease.description}
-                                onChange={(newValue) => this.changeComparableField('description', newValue)}
-                            />
+                                <span className={"comparable-field-label"}>Description:</span>
+
+                                <FieldDisplayEdit
+                                    type={"textbox"}
+                                    edit={this.props.edit}
+                                    placeholder={"Description..."}
+                                    value={comparableLease.description}
+                                    onChange={(newValue) => this.changeComparableField('description', newValue)}
+                                />
+                            </div>
                         </div>
                     </div>
-                </div>
-                <CardFooter>
-                    {
-                        this.props.onRemoveComparableClicked && this.isCompWithinAppraisal(this.props.appraisalComparables) ?
-                            <div className={`comparable-button-row`}>
-                                <Button color={"primary"} onClick={(evt) => this.props.onRemoveComparableClicked(comparableLease)} className={"move-comparable-button"}>
-                                    <i className={"fa fa-angle-double-right"} />
-                                    &nbsp;
-                                    <span>Remove From Appraisal</span>
-                                </Button>
-                                <Button color={"danger"} onClick={(evt) => this.deleteComparable()} className={"delete-comparable-button"}>
-                                    <i className={"fa fa-trash-alt"} />
-                                </Button>
-                            </div> : null
-                    }
-                    {
-                        this.props.onAddComparableClicked && !this.isCompWithinAppraisal(this.props.appraisalComparables) ?
-                            <div className={`comparable-button-row`}>
-                                <Button color={"primary"} onClick={(evt) => this.props.onAddComparableClicked(comparableLease)} className={"move-comparable-button"}>
-                                    <i className={"fa fa-angle-double-left"} />
-                                    &nbsp;
-                                    <span>Add to Appraisal</span>
-                                </Button>
-                                <Button color={"danger"} onClick={(evt) => this.deleteComparable()} className={"delete-comparable-button"}>
-                                    <i className={"fa fa-trash-alt"} />
-                                </Button>
-                            </div> : null
-                    }
-                </CardFooter>
+                    <CardFooter>
+                        {
+                            this.props.onRemoveComparableClicked && this.isCompWithinAppraisal(this.props.appraisalComparables) ?
+                                <div className={`comparable-button-row`}>
+                                    <Button color={"primary"} onClick={(evt) => this.props.onRemoveComparableClicked(comparableLease)} className={"move-comparable-button"}>
+                                        <i className={"fa fa-angle-double-left"} />
+                                        &nbsp;
+                                        <span>Remove From Appraisal</span>
+                                    </Button>
+                                    <Button color={"danger"} onClick={(evt) => this.deleteComparable()} className={"delete-comparable-button"}>
+                                        <i className={"fa fa-trash-alt"} />
+                                    </Button>
+                                </div> : null
+                        }
+                        {
+                            this.props.onAddComparableClicked && !this.isCompWithinAppraisal(this.props.appraisalComparables) ?
+                                <div className={`comparable-button-row`}>
+                                    <Button color={"primary"} onClick={(evt) => this.props.onAddComparableClicked(comparableLease)} className={"move-comparable-button"}>
+                                        <i className={"fa fa-angle-double-right"} />
+                                        &nbsp;
+                                        <span>Add to Appraisal</span>
+                                    </Button>
+                                    <Button color={"danger"} onClick={(evt) => this.deleteComparable()} className={"delete-comparable-button"}>
+                                        <i className={"fa fa-trash-alt"} />
+                                    </Button>
+                                </div> : null
+                        }
+                    </CardFooter>
+                </Collapse>
             </div>
 
         );

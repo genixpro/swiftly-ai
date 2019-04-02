@@ -16,6 +16,19 @@
 .comparable-lease-list-item {
   min-width: 40vw;
 
+
+  &:not(:last-child)
+  {
+    border-bottom: 0;
+  }
+
+  &:last-child
+  {
+    border-bottom-left-radius: 0.25rem;
+    border-bottom-right-radius: 0.25rem;
+  }
+
+
   .comparable-lease-list-item-body {
     display: flex;
     flex-direction: row;
@@ -86,5 +99,29 @@
     .move-comparable-button {
       flex-grow: 1;
     }
+  }
+}
+
+
+.comparable-lease-list-header
+{
+  margin-bottom: 0;
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+.comparable-lease-list-item-header
+{
+  cursor: pointer;
+
+  span.no-data
+  {
+    font-style: italic;
+    font-size: 75%;
+  }
+
+  .header-field-column:not(:first-child)
+  {
+    border-left: 1px solid #eeeeee;
   }
 }

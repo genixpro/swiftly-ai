@@ -155,7 +155,7 @@ class ViewComparableSalesDatabase extends React.Component {
                     <Col xs={6}>
                         <div className={"map-container"}>
                             <GoogleMapReact
-                                // bootstrapURLKeys={{ key: "AIzaSyBBDqwdD-bi1UZI0tJag5KDQPV2Rt1I-lM" }}
+                                bootstrapURLKeys={{ key: "AIzaSyBRmZ2N4EhJjXmC29t3VeiLUQssNG-MY1I" }}
                                 defaultCenter={this.getDefaultMapParams().defaultCenter}
                                 defaultZoom={this.getDefaultMapParams().defaultZoom}
                                 onChange={(location) => this.onMapChanged(location)}
@@ -187,6 +187,7 @@ class ViewComparableSalesDatabase extends React.Component {
                                                             comparableSale={comp}
                                                             history={this.props.history}
                                                             edit={false}
+                                                            openByDefault={true}
                                                             appraisalId={this.props.appraisalId}
                                                             appraisalComparables={this.props.appraisal.comparableSales}
                                                             onAddComparableClicked={(comp) => this.addComparableToAppraisal(comp)}

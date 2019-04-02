@@ -31,10 +31,10 @@ class ViewComparableSales extends React.Component {
                 <Col xs={12}>
                     <Nav tabs>
                         <NavItem>
-                            <NavLink to={`${this.props.match.url}/appraisal`} activeClassName="active" tag={RRNavLink}>Appraisal Comparable Sales</NavLink>
+                            <NavLink to={`${this.props.match.url}/database`} activeClassName="active" tag={RRNavLink}>Comparable Sales Database</NavLink>
                         </NavItem>
                         <NavItem>
-                            <NavLink to={`${this.props.match.url}/database`} activeClassName="active" tag={RRNavLink}>Comparable Sales Database</NavLink>
+                            <NavLink to={`${this.props.match.url}/appraisal`} activeClassName="active" tag={RRNavLink}>Appraisal Comparable Sales</NavLink>
                         </NavItem>
                     </Nav>
                 </Col>
