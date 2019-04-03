@@ -2,9 +2,8 @@
 
 .view-tenants-rent-roll
 {
-  .unit-row
-  {
-    cursor: pointer;
+  td {
+    padding: 0;
   }
 
   .action-column
@@ -18,21 +17,6 @@
     background-color: #eee;
   }
 
-
-  .unit-row:hover
-  {
-    .action-column
-    {
-      opacity: 1;
-    }
-  }
-
-  .unit-row.selected-unit-row
-  {
-    background-color: #eee;
-  }
-
-
   .tenant-row:hover
   {
     .action-column
@@ -40,7 +24,6 @@
       opacity: 1;
     }
   }
-
 
   .rdt:not(.rdtOpen)
   {

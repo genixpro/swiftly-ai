@@ -10,143 +10,31 @@ import FieldDisplayEdit from './components/FieldDisplayEdit';
 import Datetime from 'react-datetime';
 import 'react-datetime/css/react-datetime.css'
 import { Switch, Route } from 'react-router-dom';
+import UnitsTable from "./components/UnitsTable";
 
 class ViewTenantsRentRoll extends React.Component
 {
     state = {
-        capitalizationRate: 8.4,
         selectedUnit: null
     };
 
-    onTenantClicked(unitNum)
+    onUnitClicked(unit)
     {
-        this.props.appraisal.units.forEach((unit) =>
-        {
-            if (unit.unitNumber === unitNum)
-            {
-                this.setState({selectedUnit: unit})
-            }
-        });
+        this.setState({selectedUnit: unit})
     }
 
-    renderUnitRow(unitInfo, unitIndex)
-    {
-        let selectedClass = "";
-        if (this.state.selectedUnit && unitInfo.unitNumber === this.state.selectedUnit.unitNumber)
-        {
-            selectedClass = " selected-unit-row";
-        }
-
-        return <tr onClick={(evt) => this.onTenantClicked(unitInfo.unitNumber)} className={"unit-row " + selectedClass} key={unitIndex}>
-            <td>{unitInfo.unitNumber}</td>
-            <td>{unitInfo.currentTenancy.name}</td>
-            <td><NumberFormat
-                value={unitInfo.squareFootage}
-                displayType={'text'}
-                thousandSeparator={', '}
-                decimalScale={0}
-                fixedDecimalScale={true}
-            /></td>
-            <td>$<NumberFormat
-                value={unitInfo.currentTenancy.yearlyRent / unitInfo.squareFootage}
-                displayType={'text'}
-                thousandSeparator={', '}
-                decimalScale={2}
-                fixedDecimalScale={true}
-            /></td>
-            <td className={"action-column"}>
-                <Button
-                    color="info"
-                    onClick={(evt) => this.removeUnit(unitInfo, unitIndex)}
-                    title={"Delete Unit"}
-                >
-                    <i className="fa fa-trash-alt"></i>
-                </Button>
-            </td>
-        </tr>;
-    }
-
-    removeUnit(unitInfo, unitIndex)
+    onRemoveUnit(unitIndex)
     {
         this.props.appraisal.units.splice(unitIndex, 1);
         this.props.saveDocument(this.props.appraisal);
     }
 
 
-    createNewUnit(field, value)
+    onCreateUnit(newUnit)
     {
-        const newUnit = {
-            tenancies: [],
-            currentTenancy: {}
-        };
-
-        if (field)
-        {
-            newUnit[field] = value;
-        }
-
-        if (_.isUndefined(newUnit['unitNumber']))
-        {
-            newUnit['unitNumber'] = 'new';
-        }
-
-        if (_.isUndefined(newUnit['floorNumber']))
-        {
-            newUnit['floorNumber'] = 1;
-        }
-
-        if (_.isUndefined(newUnit['squareFootage']))
-        {
-            newUnit['squareFootage'] = 1;
-        }
-
         this.props.appraisal.units.push(newUnit);
         this.props.saveDocument(this.props.appraisal);
 
-    }
-
-
-    renderNewUnitRow()
-    {
-        return <tr className={"unit-row"}>
-            <td>
-                <FieldDisplayEdit
-                    hideIcon={true}
-                    value={""}
-                    onChange={_.once((newValue) => this.createNewUnit("unitNumber", newValue))}
-                />
-            </td>
-            <td>
-                <FieldDisplayEdit
-                    hideIcon={true}
-                    value={""}
-                    onChange={_.once((newValue) => this.createNewUnit("tenantName", newValue))}
-                />
-            </td>
-            <td>
-                <FieldDisplayEdit
-                    hideIcon={true}
-                    value={""}
-                    onChange={_.once((newValue) => this.createNewUnit("squareFootage", newValue))}
-                />
-            </td>
-            <td>
-                <FieldDisplayEdit
-                    hideIcon={true}
-                    value={""}
-                    onChange={_.once((newValue) => this.createNewUnit("monthlyRent", newValue))}
-                />
-            </td>
-            <td className={"action-column"}>
-                <Button
-                    color="info"
-                    onClick={(evt) => this.createNewUnit()}
-                    title={"New Unit"}
-                >
-                    <i className="fa fa-plus-square"></i>
-                </Button>
-            </td>
-        </tr>;
     }
 
     removeTenancy(unitInfo, tenancyInfo, tenancyIndex)
@@ -158,7 +46,7 @@ class ViewTenantsRentRoll extends React.Component
     renderTenancy(unitInfo, tenantInfo, tenancyIndex)
     {
         return <tr
-            onClick={(evt) => this.onTenantClicked(unitInfo.unitNumber)} className={"tenant-row"}
+            className={"tenant-row"}
             key={tenancyIndex}
         >
             <td>
@@ -351,219 +239,19 @@ class ViewTenantsRentRoll extends React.Component
         this.props.saveDocument(this.props.appraisal);
     }
 
-    getTotalSize()
-    {
-        let total = 0;
-        for(let unit of this.props.appraisal.units)
-        {
-            total += unit.squareFootage;
-        }
-        return total;
-    }
-
-    getAverageSize()
-    {
-        let total = 0;
-        let count = 0;
-        for(let unit of this.props.appraisal.units)
-        {
-            if (unit.squareFootage !== 0)
-            {
-                total += unit.squareFootage;
-                count += 1;
-            }
-        }
-        return total / count;
-    }
-
-    getAverageRentPSF()
-    {
-        let total = 0;
-        let count = 0;
-        for(let unit of this.props.appraisal.units)
-        {
-            if (unit.currentTenancy.yearlyRent !== 0)
-            {
-                total += unit.currentTenancy.yearlyRent / unit.squareFootage;
-                count += 1;
-            }
-        }
-        return total / count;
-    }
-
-    getMinimumSize()
-    {
-        let minSize = null;
-        for(let unit of this.props.appraisal.units)
-        {
-            if (unit.squareFootage !== 0)
-            {
-                if (minSize === null || unit.squareFootage < minSize)
-                {
-                    minSize = unit.squareFootage;
-                }
-            }
-        }
-        return minSize;
-    }
-
-    getMaximumSize()
-    {
-        let maxSize = null;
-        for(let unit of this.props.appraisal.units)
-        {
-            if (unit.squareFootage !== 0)
-            {
-                if (maxSize === null || unit.squareFootage > maxSize)
-                {
-                    maxSize = unit.squareFootage;
-                }
-            }
-        }
-        return maxSize;
-    }
-
-    getMinimumRentPSF()
-    {
-        let minRentPSF = null;
-        for(let unit of this.props.appraisal.units)
-        {
-            if (unit.currentTenancy.yearlyRent !== 0)
-            {
-                const rentPSF = unit.currentTenancy.yearlyRent / unit.squareFootage;
-                if (minRentPSF === null || rentPSF < minRentPSF)
-                {
-                    minRentPSF = rentPSF;
-                }
-            }
-        }
-        return minRentPSF;
-    }
-
-    getMaximumRentPSF()
-    {
-        let maxRentPSF = null;
-        for(let unit of this.props.appraisal.units)
-        {
-            if (unit.currentTenancy.yearlyRent !== 0)
-            {
-                const rentPSF = unit.currentTenancy.yearlyRent / unit.squareFootage;
-                if (maxRentPSF === null || rentPSF > maxRentPSF)
-                {
-                    maxRentPSF = rentPSF;
-                }
-            }
-        }
-        return maxRentPSF;
-    }
-
-
     render() {
         return (
             (this.props.appraisal) ?
                 <div id={"view-tenants-rent-roll"} className={"view-tenants-rent-roll"}>
                     <Row>
                         <Col xs={5} md={5} lg={5} xl={5}>
-                            {/*<Card outline color="primary" className="mb-3">*/}
-                                {/*<CardHeader className="text-white bg-primary">Units</CardHeader>*/}
-                                {/*<CardBody>*/}
-                                    <Table hover responsive>
-                                        <thead>
-                                        <tr>
-                                            <td><strong>Unit Number</strong></td>
-                                            <td><strong>Tenant Name</strong></td>
-                                            <td><strong>Size (sf)</strong></td>
-                                            <td><strong>Annual Net Rent (psf)</strong></td>
-                                            <td className={"action-column"} />
-                                        </tr>
-                                        </thead>
-                                        <tbody>
-                                        {
-                                            this.props.appraisal && this.props.appraisal.units && Object.values(this.props.appraisal.units).map((unit, unitIndex) => {
-                                                return this.renderUnitRow(unit, unitIndex);
-                                            })
-                                        }
-                                        {
-                                            this.props.appraisal ?
-                                                this.renderNewUnitRow()
-                                                : null
-                                        }
-                                        <tr>
-                                            <td></td>
-                                            <td><strong>Total</strong></td>
-                                            <td>
-                                                <NumberFormat
-                                                    value={this.getTotalSize()}
-                                                    displayType={'text'}
-                                                    thousandSeparator={', '}
-                                                    decimalScale={0}
-                                                    fixedDecimalScale={true}
-                                                />
-                                            </td>
-                                            <td></td>
-                                        </tr>
-                                        <tr>
-                                            <td></td>
-                                            <td><strong>Average</strong></td>
-                                            <td>
-                                                <NumberFormat
-                                                value={this.getAverageSize()}
-                                                displayType={'text'}
-                                                thousandSeparator={', '}
-                                                decimalScale={0}
-                                                fixedDecimalScale={true}
-                                            />
-                                            </td>
-                                            <td>
-                                                $<NumberFormat
-                                                value={this.getAverageRentPSF()}
-                                                displayType={'text'}
-                                                thousandSeparator={', '}
-                                                decimalScale={2}
-                                                fixedDecimalScale={true}
-                                            />
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td></td>
-                                            <td><strong>Range</strong></td>
-                                            <td>
-                                                <NumberFormat
-                                                value={this.getMinimumSize()}
-                                                displayType={'text'}
-                                                thousandSeparator={', '}
-                                                decimalScale={0}
-                                                fixedDecimalScale={true}
-                                            />&nbsp;-&nbsp;
-                                                <NumberFormat
-                                                value={this.getMaximumSize()}
-                                                displayType={'text'}
-                                                thousandSeparator={', '}
-                                                decimalScale={0}
-                                                fixedDecimalScale={true}
-                                            />
-                                            </td>
-                                            <td>
-                                                $<NumberFormat
-                                                value={this.getMinimumRentPSF()}
-                                                displayType={'text'}
-                                                thousandSeparator={', '}
-                                                decimalScale={2}
-                                                fixedDecimalScale={true}
-                                            />&nbsp;-&nbsp;
-                                                $<NumberFormat
-                                                value={this.getMaximumRentPSF()}
-                                                displayType={'text'}
-                                                thousandSeparator={', '}
-                                                decimalScale={2}
-                                                fixedDecimalScale={true}
-                                            />
-                                            </td>
-                                        </tr>
-                                        </tbody>
-                                    </Table>
-                                {/*</CardBody>*/}
-                            {/*</Card>*/}
+                            <UnitsTable
+                                appraisal={this.props.appraisal}
+                                selectedUnit={this.state.selectedUnit}
+                                onUnitClicked={(unit) => this.onUnitClicked(unit)}
+                                onRemoveUnit={(unitIndex) => this.onRemoveUnit(unitIndex)}
+                                onCreateUnit={(newUnit) => this.onCreateUnit(newUnit)}
+                            />
                         </Col>
                         {
                             this.state.selectedUnit ?

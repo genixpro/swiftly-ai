@@ -1,0 +1,60 @@
+
+
+.units-table
+{
+  td {
+    padding: 0;
+  }
+
+  .header-row
+  {
+    td {
+      border-top: 1px solid gray;
+      border-bottom: 1px solid  gray;
+    }
+  }
+
+  tr.first-total-row
+  {
+    td.square-footage-column, td.rent-column {
+      border-top: 1px solid gray;
+    }
+  }
+
+  tr.last-total-row
+  {
+    td {
+      border-bottom: 1px solid gray;
+    }
+  }
+
+
+  td.square-footage-column, td.rent-column {
+    text-align: right;
+  }
+
+
+  .unit-row
+  {
+    cursor: pointer;
+  }
+
+  .action-column
+  {
+    opacity: 0;
+    max-width: 70px;
+  }
+
+  .unit-row:hover
+  {
+    .action-column
+    {
+      opacity: 1;
+    }
+  }
+
+  .unit-row.selected-unit-row
+  {
+    background-color: #eee;
+  }
+}
