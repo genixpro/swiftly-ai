@@ -29,7 +29,8 @@ class DocumentExtractorDataset:
         ]
 
         self.modifiers = [
-            "SUM", "NEXT_YEAR", "PERCENTAGE", "INCOME", "EXPENSE", "SUMMARY", "RENT", "RECOVERY",
+            "SUM", "NEXT_YEAR", "PERCENTAGE", "INCOME", "EXPENSE", "SUMMARY", "RENT", "ADDITIONAL_INCOME",  "EXPENSE_RECOVERY",
+            "OPERATING_EXPENSE", "NON_RECOVERABLE_EXPENSE", "TAXES", "MANAGEMENT_EXPENSE", "STRUCTURAL_ALLOWANCE"
         ]
 
         self.numberLabels = ['FORECAST', 'BUDGET', 'VARIANCE']

@@ -13,6 +13,9 @@ class Tenancy(EmbeddedDocument):
     # The yearly rent the tenant is paying.
     yearlyRent = FloatField()
 
+    # This specifies the rent-type. This can be either "NET" or "GROSS"
+    rentType = StringField(choices=["net", "gross"], default="net")
+
     # The start date of the tenancy.
     startDate = ConvertingDateField()
 

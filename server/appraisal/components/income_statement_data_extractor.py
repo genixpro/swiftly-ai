@@ -80,6 +80,25 @@ class IncomeStatementDataExtractor(DataExtractor):
         elif 'EXPENSE' in lineItem['modifiers']:
             incomeStatementItem.cashFlowType = 'expense'
 
+        if 'RENT' in lineItem['modifiers']:
+            incomeStatementItem.incomeStatementItemType = 'rental_income'
+        elif 'ADDITIONAL_INCOME' in lineItem['modifiers']:
+            incomeStatementItem.incomeStatementItemType = 'additional_income'
+        elif 'EXPENSE_RECOVERY' in lineItem['modifiers']:
+            incomeStatementItem.incomeStatementItemType = 'expense_recovery'
+        elif 'OPERATING_EXPENSE' in lineItem['modifiers']:
+            incomeStatementItem.incomeStatementItemType = 'operating_expense'
+        elif 'NON_RECOVERABLE_EXPENSE' in lineItem['modifiers']:
+            incomeStatementItem.incomeStatementItemType = 'non_recoverable_expense'
+        elif 'TAXES' in lineItem['modifiers']:
+            incomeStatementItem.incomeStatementItemType = 'taxes'
+        elif 'MANAGEMENT_EXPENSE' in lineItem['modifiers']:
+            incomeStatementItem.incomeStatementItemType = 'management_expense'
+        elif 'STRUCTURAL_ALLOWANCE' in lineItem['modifiers']:
+            incomeStatementItem.incomeStatementItemType = 'structural_allowance'
+        else:
+            incomeStatementItem.incomeStatementItemType = 'unknown'
+
         return incomeStatementItem
 
 

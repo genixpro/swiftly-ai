@@ -10,6 +10,7 @@ from .tenancy_data_extractor import TenancyDataExtractor
 from .income_statement_data_extractor import IncomeStatementDataExtractor
 from .discounted_cash_flow_model import DiscountedCashFlowModel
 from .appraisal_validator import AppraisalValidator
+from .stabilized_statement_model import StabilizedStatementModel
 
 class DocumentProcessor:
     """
@@ -26,6 +27,7 @@ class DocumentProcessor:
         self.incomeStatementExtractor = IncomeStatementDataExtractor()
         self.discountedCashFlow = DiscountedCashFlowModel()
         self.appraisalValidator = AppraisalValidator()
+        self.stabilizedStatement = StabilizedStatementModel()
 
 
     def processFileUpload(self, fileName, fileData, appraisal):
@@ -134,6 +136,9 @@ class DocumentProcessor:
     def processAppraisalResults(self, appraisal):
         discountedCashFlow = self.discountedCashFlow.createDiscountedCashFlow(appraisal)
         appraisal.discountedCashFlow = discountedCashFlow
+
+        stabilizedStatement = self.stabilizedStatement.createStabilizedStatement(appraisal)
+        appraisal.stabilizedStatement = stabilizedStatement
 
         validationResult = self.appraisalValidator.validateAppraisal(appraisal)
         appraisal.validationResult = validationResult

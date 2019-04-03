@@ -16,7 +16,21 @@ class IncomeStatementItem(EmbeddedDocument):
     extractionReferences = DictField()
 
     # Whether the income statement item is an income or an expense
-    cashFlowType = StringField()
+    cashFlowType = StringField(choices=["income", "expense"])
+
+    # This specifies the income item type, which breaks incomes and expenses into various categories
+    incomeStatementItemType = StringField(choices=[
+        "",
+        "rental_income",
+        "additional_income",
+        "expense_recovery",
+        "operating_expense",
+        "non_recoverable_expense",
+        "taxes",
+        "management_expense",
+        "structural_allowance",
+        "unknown"
+    ])
 
     def getLatestAmount(self):
         years = sorted(self.yearlyAmounts.keys(), key=lambda x: float(x))

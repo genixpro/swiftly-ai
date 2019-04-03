@@ -4,6 +4,7 @@ import _ from 'underscore';
 import Geosuggest from 'react-geosuggest';
 import Datetime from 'react-datetime';
 import PropertyTypeSelector from './PropertyTypeSelector';
+import RentTypeSelector from './RentTypeSelector';
 import history from "../../history";
 
 import {
@@ -11,6 +12,7 @@ import {
     InputGroup,
     InputGroupAddon
 } from 'reactstrap';
+import IncomeItemTypeSelector from "./IncomeItemTypeSelector";
 
 class FieldDisplayEdit extends React.Component
 {
@@ -165,8 +167,21 @@ class FieldDisplayEdit extends React.Component
     {
         // if (newValue)
         // {
-            this.setState({value: newValue}, () => this.finishEditing());
+        this.setState({value: newValue}, () => this.finishEditing());
         // }
+    }
+
+    rentTypeInputUpdated(newValue)
+    {
+        // if (newValue)
+        // {
+        this.setState({value: newValue}, () => this.finishEditing());
+        // }
+    }
+
+    incomeItemTypeInputUpdated(newValue)
+    {
+        this.setState({value: newValue}, () => this.finishEditing());
     }
 
 
@@ -261,6 +276,27 @@ class FieldDisplayEdit extends React.Component
                             value={this.state.isEditing ? this.state.value : this.props.value}
                             disabled={!this.props.edit}
                             onChange={(newValue) => this.propertyTypeInputUpdated(newValue) }
+                            onBlur={() => this.finishEditing()}
+                            innerRef={(inputElem) => this.inputElem = inputElem}
+                        /> : null
+                }
+                {
+                    this.props.type === "rentType" ?
+                        <RentTypeSelector
+                            value={this.state.isEditing ? this.state.value : this.props.value}
+                            disabled={!this.props.edit}
+                            onChange={(newValue) => this.rentTypeInputUpdated(newValue) }
+                            onBlur={() => this.finishEditing()}
+                            innerRef={(inputElem) => this.inputElem = inputElem}
+                        /> : null
+                }
+                {
+                    this.props.type === "incomeItemType" ?
+                        <IncomeItemTypeSelector
+                            value={this.state.isEditing ? this.state.value : this.props.value}
+                            disabled={!this.props.edit}
+                            cashFlowType={this.props.cashFlowType}
+                            onChange={(newValue) => this.incomeItemTypeInputUpdated(newValue) }
                             onBlur={() => this.finishEditing()}
                             innerRef={(inputElem) => this.inputElem = inputElem}
                         /> : null

@@ -79,6 +79,13 @@ class ViewTenantsRentRoll extends React.Component
             </td>
             <td>
                 <FieldDisplayEdit
+                    type='rentType'
+                    value={tenantInfo.rentType}
+                    placeholder={"gross/net"}
+                    onChange={(newValue) => this.changeTenancyField(this.state.selectedUnit, tenantInfo, 'rentType', newValue)}/>
+            </td>
+            <td>
+                <FieldDisplayEdit
                     type='currency'
                     value={tenantInfo.monthlyRent}
                     placeholder={"monthly rent"}
@@ -284,6 +291,14 @@ class ViewTenantsRentRoll extends React.Component
                                                     </td>
                                                     <td>
                                                         <FieldDisplayEdit value={this.state.selectedUnit.currentTenancy.name} onChange={(newValue) => this.changeAllTenantField(this.state.selectedUnit, this.state.selectedUnit.currentTenancy, 'name', newValue)}/>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>
+                                                        <strong>Rent Type</strong>
+                                                    </td>
+                                                    <td>
+                                                        <FieldDisplayEdit type="rentType" value={this.state.selectedUnit.currentTenancy.rentType} onChange={(newValue) => this.changeAllTenantField(this.state.selectedUnit, this.state.selectedUnit.currentTenancy, 'rentType', newValue)}/>
                                                     </td>
                                                 </tr>
                                                 <tr>

@@ -59,6 +59,13 @@ class ViewExpenses extends React.Component
     }
 
 
+    changeIncomeItemType(item, newType)
+    {
+        item['incomeStatementItemType'] = newType;
+        this.props.saveDocument(this.props.appraisal)
+    }
+
+
     changeIncomeItemName(item, newName)
     {
         item['name'] = newName;
@@ -97,6 +104,15 @@ class ViewExpenses extends React.Component
                     hideIcon={true}
                     value={incomeStatementItem.name}
                     onChange={(newValue) => this.changeIncomeItemName(incomeStatementItem, newValue)}
+                />
+            </Col>
+            <Col className={"type-column"}>
+                <FieldDisplayEdit
+                    type={"incomeItemType"}
+                    cashFlowType={"expense"}
+                    hideIcon={true}
+                    value={incomeStatementItem.incomeStatementItemType}
+                    onChange={(newValue) => this.changeIncomeItemType(incomeStatementItem, newValue)}
                 />
             </Col>
             {
@@ -185,6 +201,14 @@ class ViewExpenses extends React.Component
                     hideIcon={true}
                     value={""}
                     onChange={_.once((newValue) => this.createNewIncomeItem("name", newValue, type))}
+                />
+            </Col>
+            <Col className={"type-column"}>
+                <FieldDisplayEdit
+                    type={"incomeItemType"}
+                    hideIcon={true}
+                    value={""}
+                    onChange={_.once((newValue) => this.createNewIncomeItem("incomeStatementItemType", newValue, type))}
                 />
             </Col>
             {
@@ -277,6 +301,9 @@ class ViewExpenses extends React.Component
                                                     <Col className={"name-column"}>
                                                         Name
                                                     </Col>
+                                                    <Col className={"type-column"}>
+                                                        Type
+                                                    </Col>
 
                                                     {
                                                         this.props.appraisal.incomeStatement.years.map((year) =>
@@ -304,6 +331,7 @@ class ViewExpenses extends React.Component
                                                 <Row className={"expense-row total-row"}>
                                                     {this.renderHiddenHandleColumn()}
                                                     <Col className={"name-column"}>Total</Col>
+                                                    <Col className={"type-column"} />
                                                     {
                                                         this.props.appraisal.incomeStatement.years.map((year) =>
                                                         {

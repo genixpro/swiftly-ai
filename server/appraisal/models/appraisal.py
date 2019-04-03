@@ -6,6 +6,8 @@ from .discounted_cash_flow import DiscountedCashFlow
 from .discounted_cash_flow_inputs import DiscountedCashFlowInputs
 from .appraisal_validation_result import AppraisalValidationResult
 from .comparable_sale import ComparableSale
+from .stabilized_statement import StabilizedStatement
+from .stabilized_statement_inputs import StabilizedStatementInputs
 
 class Appraisal(Document):
     meta = {'collection': 'appraisals', 'strict': False}
@@ -40,9 +42,6 @@ class Appraisal(Document):
     # This is here to describe the zoning of the land the building is on
     zoning = StringField()
 
-    # This is the capitalization rate for doing a stabilized statement valuation
-    capitalizationRate = FloatField(default=5.0)
-
     # A list of units within this Appraisal
     units = ListField(EmbeddedDocumentField(Unit))
 
@@ -63,3 +62,10 @@ class Appraisal(Document):
 
     # A list of comparable leases that are attached to this appraisal
     comparableLeases = ListField(StringField())
+
+    # These are the inputs that are put into the stabilized statement
+    stabilizedStatementInputs = EmbeddedDocumentField(StabilizedStatementInputs, default=StabilizedStatementInputs)
+
+    # This the stabilized statement
+    stabilizedStatement = EmbeddedDocumentField(StabilizedStatement)
+
