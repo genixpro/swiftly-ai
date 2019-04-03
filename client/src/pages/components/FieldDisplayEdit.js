@@ -85,6 +85,15 @@ class FieldDisplayEdit extends React.Component
                 return "$" + this.numberWithCommas(value.toString());
             }
         }
+        else if (this.props.type === 'percent')
+        {
+            try {
+                return this.numberWithCommas(Number(value).toFixed(2).toString()) + "%";
+            }
+            catch(err) {
+                return this.numberWithCommas(value.toString()) + "%";
+            }
+        }
         else if (this.props.type === 'number')
         {
             try {
@@ -101,7 +110,7 @@ class FieldDisplayEdit extends React.Component
 
     cleanValue(value)
     {
-        if (this.props.type === 'currency' || this.props.type === 'number')
+        if (this.props.type === 'currency' || this.props.type === 'number' || this.props.type === 'percent')
         {
             const cleanText = value.toString().replace(/[^0-9\.-]/g, "");
 
@@ -206,7 +215,9 @@ class FieldDisplayEdit extends React.Component
 
         return (
             <InputGroup className={`field-display-edit ${editStateClass} ${customClass} ${editableClass} ${hideInput}`}
-                        onFocus={(evt) => this.startEditing()}>
+                        onFocus={(evt) => this.startEditing()}
+                        style={this.props.style}
+            >
                 {
                     this.props.type === "textbox" ?
                         <textarea
@@ -221,7 +232,7 @@ class FieldDisplayEdit extends React.Component
                         /> : null
                 }
                 {
-                    this.props.type === "currency" || this.props.type === "number" || this.props.type === "text" || !this.props.type ?
+                    this.props.type === "currency" || this.props.type === "number" || this.props.type === "percent" || this.props.type === "text" || !this.props.type ?
                         <Input placeholder={this.props.placeholder}
                                disabled={!this.props.edit}
                                value={this.state.isEditing ? this.state.value : this.formatValue(this.props.value)}

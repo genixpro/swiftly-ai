@@ -34,22 +34,29 @@
   }
 
 
-  .unit-row
-  {
-    cursor: pointer;
+  &.allow-selection {
+    .unit-row {
+      cursor: pointer;
+    }
   }
 
   .action-column
   {
     opacity: 0;
+    pointer-events: none;
     max-width: 70px;
+    padding-left: 10px;
   }
 
-  .unit-row:hover
+  &.allow-selection
   {
-    .action-column
+    .unit-row:hover
     {
-      opacity: 1;
+      .action-column
+      {
+        opacity: 1;
+        pointer-events: all;
+      }
     }
   }
 

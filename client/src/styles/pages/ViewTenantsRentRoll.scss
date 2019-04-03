@@ -6,41 +6,37 @@
     padding: 0;
   }
 
-  .action-column
-  {
-    opacity: 0;
-    max-width: 70px;
-  }
-
-  .tenant-row.selected-tenant-row
-  {
-    background-color: #eee;
-  }
-
-  .tenant-row:hover
-  {
-    .action-column
-    {
-      opacity: 1;
+  .tenancies-table {
+    .action-column {
+      opacity: 0;
+      max-width: 70px;
     }
-  }
 
-  .rdt:not(.rdtOpen)
-  {
-    cursor: pointer;
-    input {
+    .tenant-row.selected-tenant-row {
+      background-color: #eee;
+    }
+
+    .tenant-row:hover {
+      .action-column {
+        opacity: 1;
+      }
+    }
+
+    .rdt:not(.rdtOpen) {
       cursor: pointer;
+      input {
+        cursor: pointer;
+      }
     }
-  }
 
-  .rdt:not(:hover)
-  {
-    input {
-      border: 1px #fff;
+    .rdt:not(:hover) {
+      input {
+        border: 1px #fff;
+      }
     }
-  }
 
-  .rdtPicker {
-    width: auto;
+    .rdtPicker {
+      width: auto;
+    }
   }
 }

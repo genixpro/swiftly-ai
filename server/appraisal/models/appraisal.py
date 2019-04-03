@@ -40,6 +40,9 @@ class Appraisal(Document):
     # This is here to describe the zoning of the land the building is on
     zoning = StringField()
 
+    # This is the capitalization rate for doing a stabilized statement valuation
+    capitalizationRate = FloatField(default=5.0)
+
     # A list of units within this Appraisal
     units = ListField(EmbeddedDocumentField(Unit))
 

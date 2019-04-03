@@ -12,6 +12,12 @@ import { Switch, Route } from 'react-router-dom';
 
 class UnitsTable extends React.Component
 {
+    static defaultProps = {
+        allowSelection: true,
+        statsMode: "all",
+        allowNewUnit: true
+    };
+
     state = {
         selectedUnit: null
     };
@@ -264,7 +270,7 @@ class UnitsTable extends React.Component
     render() {
         return (
             (this.props.appraisal) ?
-                <Table hover responsive className={"units-table"}>
+                <Table hover={this.props.allowSelection} responsive className={"units-table " + (this.props.allowSelection ? "allow-selection" : "")}>
                     <thead>
                     <tr className={"header-row"}>
                         <td><strong>Unit Number</strong></td>
@@ -273,6 +279,7 @@ class UnitsTable extends React.Component
                         <td className={"rent-column"}><strong>Annual Net Rent (psf)</strong></td>
                         <td className={"action-column"} />
                     </tr>
+
                     </thead>
                     <tbody>
                     {
@@ -281,82 +288,91 @@ class UnitsTable extends React.Component
                         })
                     }
                     {
-                        this.props.appraisal ?
+                        this.props.appraisal && this.props.allowNewUnit ?
                             this.renderNewUnitRow()
                             : null
                     }
-                    <tr className={"first-total-row"}>
-                        <td></td>
-                        <td><strong>Total</strong></td>
-                        <td className={"square-footage-column"}>
-                            <NumberFormat
-                                value={this.getTotalSize()}
-                                displayType={'text'}
-                                thousandSeparator={', '}
-                                decimalScale={0}
-                                fixedDecimalScale={true}
-                            />
-                        </td>
-                        <td className={"rent-column"}></td>
-                    </tr>
-                    <tr className={"total-row"}>
-                        <td></td>
-                        <td><strong>Average</strong></td>
-                        <td className={"square-footage-column"}>
-                            <NumberFormat
-                                value={this.getAverageSize()}
-                                displayType={'text'}
-                                thousandSeparator={', '}
-                                decimalScale={0}
-                                fixedDecimalScale={true}
-                            />
-                        </td>
-                        <td className={"rent-column"}>
-                            $<NumberFormat
-                            value={this.getAverageRentPSF()}
-                            displayType={'text'}
-                            thousandSeparator={', '}
-                            decimalScale={2}
-                            fixedDecimalScale={true}
-                        />
-                        </td>
-                    </tr>
-                    <tr className={"last-total-row"}>
-                        <td></td>
-                        <td><strong>Range</strong></td>
-                        <td className={"square-footage-column"}>
-                            <NumberFormat
-                                value={this.getMinimumSize()}
-                                displayType={'text'}
-                                thousandSeparator={', '}
-                                decimalScale={0}
-                                fixedDecimalScale={true}
-                            />&nbsp;-&nbsp;
-                            <NumberFormat
-                                value={this.getMaximumSize()}
-                                displayType={'text'}
-                                thousandSeparator={', '}
-                                decimalScale={0}
-                                fixedDecimalScale={true}
-                            />
-                        </td>
-                        <td className={"rent-column"}>
-                            $<NumberFormat
-                            value={this.getMinimumRentPSF()}
-                            displayType={'text'}
-                            thousandSeparator={', '}
-                            decimalScale={2}
-                            fixedDecimalScale={true}
-                        />&nbsp;-&nbsp;
-                            $<NumberFormat
-                            value={this.getMaximumRentPSF()}
-                            displayType={'text'}
-                            thousandSeparator={', '}
-                            decimalScale={2}
-                            fixedDecimalScale={true}
-                        />
-                        </td>
-                    </tr>
+                    {
+                        this.props.statsMode === 'total' || this.props.statsMode === 'all' ?
+                            <tr className={"first-total-row " + (this.props.statsMode === 'total' ? "last-total-row" : "")}>
+                                <td></td>
+                                <td><strong>Total</strong></td>
+                                <td className={"square-footage-column"}>
+                                    <NumberFormat
+                                        value={this.getTotalSize()}
+                                        displayType={'text'}
+                                        thousandSeparator={', '}
+                                        decimalScale={0}
+                                        fixedDecimalScale={true}
+                                    />
+                                </td>
+                                <td className={"rent-column"}></td>
+                            </tr> : null
+                    }
+                    {
+                        this.props.statsMode === 'all' ?
+                            <tr className={"total-row"}>
+                                <td></td>
+                                <td><strong>Average</strong></td>
+                                <td className={"square-footage-column"}>
+                                    <NumberFormat
+                                        value={this.getAverageSize()}
+                                        displayType={'text'}
+                                        thousandSeparator={', '}
+                                        decimalScale={0}
+                                        fixedDecimalScale={true}
+                                    />
+                                </td>
+                                <td className={"rent-column"}>
+                                    $<NumberFormat
+                                    value={this.getAverageRentPSF()}
+                                    displayType={'text'}
+                                    thousandSeparator={', '}
+                                    decimalScale={2}
+                                    fixedDecimalScale={true}
+                                />
+                                </td>
+                            </tr> : null
+                    }
+                    {
+                        this.props.statsMode === 'all' ?
+                            <tr className={"last-total-row"}>
+                                <td></td>
+                                <td><strong>Range</strong></td>
+                                <td className={"square-footage-column"}>
+                                    <NumberFormat
+                                        value={this.getMinimumSize()}
+                                        displayType={'text'}
+                                        thousandSeparator={', '}
+                                        decimalScale={0}
+                                        fixedDecimalScale={true}
+                                    />&nbsp;-&nbsp;
+                                    <NumberFormat
+                                        value={this.getMaximumSize()}
+                                        displayType={'text'}
+                                        thousandSeparator={', '}
+                                        decimalScale={0}
+                                        fixedDecimalScale={true}
+                                    />
+                                </td>
+                                <td className={"rent-column"}>
+                                    $<NumberFormat
+                                    value={this.getMinimumRentPSF()}
+                                    displayType={'text'}
+                                    thousandSeparator={', '}
+                                    decimalScale={2}
+                                    fixedDecimalScale={true}
+                                />&nbsp;-&nbsp;
+                                    $<NumberFormat
+                                    value={this.getMaximumRentPSF()}
+                                    displayType={'text'}
+                                    thousandSeparator={', '}
+                                    decimalScale={2}
+                                    fixedDecimalScale={true}
+                                />
+                                </td>
+                            </tr> : null
+                    }
                     </tbody>
                 </Table>
                 : null

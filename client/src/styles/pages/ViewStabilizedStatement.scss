@@ -2,48 +2,136 @@
 
 .view-stabilized-statement
 {
-
-
-  .name-column
+  .stabilized-statement-centered
   {
+    position: relative;
+    width: 50%;
+    left: 25%;
 
-  }
-  .amount-column
-  {
-    text-align: right;
-    max-width: 60px;
+    h3, h4 {
+      text-align: center;
+    }
 
-
-    .field-display-edit
+    .final-valuation
     {
-      input {
-        text-align: right;
+      font-family: monospace, sans-serif;
+      letter-spacing: -2px;
+      font-style: italic;
+      font-weight: bolder;
+      color: black;
+      text-decoration: underline;
+    }
+  }
+
+  .title {
+    font-weight: bold;
+    font-size: 150%;
+  }
+
+  .statement-table
+  {
+    margin-left: auto;
+    margin-right: auto;
+    width: auto;
+
+    td {
+      vertical-align: middle;
+    }
+
+    .title-row
+    {
+
+    }
+
+    .data-row
+    {
+      font-family: monospace, serif;
+    }
+
+    tr:not(.title-row)
+    {
+      td.label-column
+      {
+        padding-left: 25px;
       }
     }
-  }
-  .action-column
-  {
-    opacity: 0;
-    max-width: 20px;
-  }
 
-  tr:hover
-  {
-    .action-column
+    td.amount-column
     {
-      opacity: 1;
+      padding-left: 20px;
+      font-family: monospace, serif;
+      text-align: right;
     }
-  }
 
-  .total-row
-  {
-    .name-column
+    td.amount-total-column
     {
-      padding-left: 30px;
+      padding-left: 20px;
+      font-family: monospace, serif;
+      text-align: right;
     }
-    .amount-column
+
+    td.label-column
     {
-      padding-right: 30px;
+      padding-right: 50px;
+    }
+
+    tr.statement-sum-after-row td.amount-column
+    {
+      border-bottom: 1px solid grey;
+    }
+
+    tr.statement-total-sum-row td.amount-total-column {
+      border-bottom: 1px solid grey;
+    }
+
+    tr.statement-sum-row td, tr.statement-total-sum-row td
+    {
+      padding-top: 25px;
+    }
+
+    tr.title-row td
+    {
+      padding-top: 25px;
+      &.amount-total-column
+      {
+        font-weight: bold;
+        color: black;
+      }
+    }
+
+    tr.rounding-row
+    {
+      td.amount-total-column
+      {
+        font-weight: bold;
+        color: black;
+      }
+    }
+
+    tr.capitalization-row
+    {
+      td.label-column
+      {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+
+        span
+        {
+          white-space: nowrap;
+        }
+
+        .field-display-edit
+        {
+          flex-grow: 1;
+          flex-shrink: 1;
+        }
+      }
+    }
+
+    td {
+      padding: 2px;
+      border: 0;
     }
   }
 }

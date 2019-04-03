@@ -317,7 +317,7 @@ class ViewTenantsRentRoll extends React.Component
                                     <h3>Tenancy & Esclation Schedule</h3>
                                         {/*<CardHeader className="text-white bg-primary">Tenancy & Escalation Schedule</CardHeader>*/}
                                         {/*<CardBody>*/}
-                                            <table className="table">
+                                            <table className="table tenancies-table">
                                                 <thead>
                                                 <tr>
                                                     <td>Tenant Name</td>
