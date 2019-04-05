@@ -48,6 +48,8 @@ class StabilizedStatementModel:
 
     def getLatestAmount(self, incomeStatementItem):
         years = sorted(incomeStatementItem.yearlyAmounts.keys(), key=lambda x: float(x))
+        if len(years) == 0:
+            return 0
         return incomeStatementItem.yearlyAmounts[years[-1]]
 
 

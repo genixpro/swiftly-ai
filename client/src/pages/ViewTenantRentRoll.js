@@ -295,7 +295,7 @@ class ViewTenantsRentRoll extends React.Component
                                                 </tr>
                                                 <tr>
                                                     <td>
-                                                        <strong>Rent Type</strong>
+                                                        <strong>Net / Gross</strong>
                                                     </td>
                                                     <td>
                                                         <FieldDisplayEdit type="rentType" value={this.state.selectedUnit.currentTenancy.rentType} onChange={(newValue) => this.changeAllTenantField(this.state.selectedUnit, this.state.selectedUnit.currentTenancy, 'rentType', newValue)}/>

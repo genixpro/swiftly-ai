@@ -17,6 +17,8 @@
   .col {
     border: 1px #eee solid;
     border-bottom: 0;
+    padding-left: 0;
+    padding-right: 0;
     &:not(:first-child) {
       border-left: 0;
     }
@@ -46,17 +48,28 @@
   }
 
   .name-column {
-    //flex-grow: 0;
+    flex-grow: 4;
+    //flex-basis: 30%;
+
+  }
+
+  .type-column {
+    flex-grow: 3;
     //flex-basis: 30%;
 
   }
 
   .amount-column {
+    flex-grow: 4;
     text-align: right;
   }
 
   .amount-column input {
     text-align: right;
+  }
+
+  .amount-column.psf {
+    flex-grow: 2;
   }
 
   .action-column {
@@ -74,9 +87,23 @@
   }
 }
 
-.expense-header-row {
+.expense-row.expense-header-row {
   font-weight: bold;
   .col {
     border-top: 2px solid #eee;
+    div.header-wrapper {
+      padding-top: 5px;
+      padding-left: 10px;
+      padding-right: 10px;
+    }
+
+    &.amount-column:not(.psf)
+    {
+      div.header-wrapper {
+        padding-left: 10px;
+        padding-right: 60px;
+      }
+    }
+
   }
 }

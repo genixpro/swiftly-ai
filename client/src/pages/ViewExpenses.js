@@ -10,6 +10,7 @@ import {SortableContainer, SortableElement, SortableHandle} from 'react-sortable
 import arrayMove from "array-move";
 import FileViewer from "./components/FileViewer"
 import FileSelector from "./components/FileSelector"
+import {IncomeStatementItemModel} from "../models/IncomeStatementModel";
 
 class ViewExpenses extends React.Component
 {
@@ -53,7 +54,27 @@ class ViewExpenses extends React.Component
 
     changeIncomeItemValue(item, year, newValue)
     {
+        if (newValue === null)
+        {
+            newValue = 0;
+        }
+
         item['yearlyAmounts'][year] = newValue;
+        this.computeExpenseTotals();
+        this.props.saveDocument(this.props.appraisal)
+    }
+
+
+    changeIncomeItemPSFValue(item, year, newValue)
+    {
+        if (newValue === null)
+        {
+            newValue = 0;
+        }
+
+        const yearlyAmountsPSF = item['yearlyAmountsPSF'];
+        yearlyAmountsPSF[year] = newValue;
+        item['yearlyAmountsPSF'] = yearlyAmountsPSF;
         this.computeExpenseTotals();
         this.props.saveDocument(this.props.appraisal)
     }
@@ -118,7 +139,7 @@ class ViewExpenses extends React.Component
             {
                 this.props.appraisal.incomeStatement.years.map((year, yearIndex) =>
                 {
-                    return <Col key={year} className={"amount-column"}>
+                    return [<Col key={year.toString() + "1"} className={"amount-column"}>
                         <FieldDisplayEdit
                             type="currency"
                             hideIcon={false}
@@ -129,7 +150,15 @@ class ViewExpenses extends React.Component
                             history={this.props.history}
                             onChange={(newValue) => this.changeIncomeItemValue(incomeStatementItem, year, newValue)}
                         />
-                    </Col>
+                    </Col>,<Col key={year.toString() + "2"} className={"amount-column psf"}>
+                        <FieldDisplayEdit
+                            type="currency"
+                            hideIcon={true}
+                            edit={true}
+                            value={incomeStatementItem.yearlyAmountsPSF[year.toString()]}
+                            onChange={(newValue) => this.changeIncomeItemPSFValue(incomeStatementItem, year, newValue)}
+                        />
+                    </Col>]
                 })
             }
             <Col className={"action-column"}>
@@ -146,9 +175,9 @@ class ViewExpenses extends React.Component
 
     createNewIncomeItem(field, value, type)
     {
-        const newItem = {
+        const newItem = new IncomeStatementItemModel({
             type: type
-        };
+        }, this.props.appraisal.incomeStatement);
 
         if (field)
         {
@@ -214,14 +243,14 @@ class ViewExpenses extends React.Component
             {
                 this.props.appraisal.incomeStatement.years.map((year, yearIndex) =>
                 {
-                    return <Col key={year} className={"amount-column"}>
+                    return [<Col key={year.toString() + "1"} className={"amount-column"}>
                         <FieldDisplayEdit
                             type="currency"
                             hideIcon={true}
                             value={""}
-                            onChange={_.once((newValue) => this.createNewIncomeItem("yearlyAmounts", {[year]: newValue}, type))}
+                            onChange={_.once((newValue) => newValue ? this.createNewIncomeItem("yearlyAmounts", {[year]: newValue}, type) : null)}
                         />
-                    </Col>
+                    </Col>, <Col key={year.toString() + "2"} className={"amount-column psf"}></Col>]
                 })
             }
             <Col className={"action-column"}>
@@ -299,18 +328,21 @@ class ViewExpenses extends React.Component
                                                 <Row className={"expense-row expense-header-row"}>
                                                     {this.renderHiddenHandleColumn()}
                                                     <Col className={"name-column"}>
-                                                        Name
+                                                        <div className={"header-wrapper"}>Name</div>
                                                     </Col>
                                                     <Col className={"type-column"}>
-                                                        Type
+                                                        <div className={"header-wrapper"}>Type</div>
                                                     </Col>
 
                                                     {
                                                         this.props.appraisal.incomeStatement.years.map((year) =>
                                                         {
-                                                            return <Col key={year} className={"amount-column"}>
-                                                                {year}
-                                                            </Col>
+                                                            return [<Col key={year.toString() + "-1"} className={"amount-column"}>
+                                                                <div className={"header-wrapper"}>{year}</div>
+                                                            </Col>,
+                                                            <Col key={year.toString() + "-2"} className={"amount-column psf"}>
+                                                                <div className={"header-wrapper"}>(psf)</div>
+                                                            </Col>]
                                                         })
                                                     }
                                                     {this.renderHiddenActionColumn()}
@@ -335,13 +367,13 @@ class ViewExpenses extends React.Component
                                                     {
                                                         this.props.appraisal.incomeStatement.years.map((year) =>
                                                         {
-                                                            return <Col key={year} className={"amount-column"}>
+                                                            return [<Col key={year.toString() + "1"} className={"amount-column"}>
                                                                 $<NumberFormat value={this.state.expenseTotal[year]}
                                                                                displayType={'text'}
                                                                                thousandSeparator={', '}
                                                                                decimalScale={2}
                                                                                fixedDecimalScale={true}/>
-                                                            </Col>
+                                                            </Col>, <Col key={year.toString() + "2"} className={"amount-column psf"} />]
                                                         })
                                                     }
                                                     {this.renderHiddenActionColumn()}
