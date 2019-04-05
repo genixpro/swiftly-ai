@@ -30,3 +30,6 @@ class ComparableLease(Document):
 
     # The date of the lease
     leaseDate = ConvertingDateField()
+
+    # This specifies the rent-type. This can be either "NET" or "GROSS"
+    rentType = StringField(choices=["net", "gross"], default="net")

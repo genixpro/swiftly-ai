@@ -134,6 +134,22 @@ class ComparableLeaseSearch extends React.Component
                                             }
                                         </td>
                                     </tr>
+                                    <tr>
+                                        <td>
+                                            <strong>Net / Gross:</strong>
+                                        </td>
+                                        <td>
+                                            {
+                                                <FieldDisplayEdit
+                                                    type={"rentType"}
+                                                    value={this.state.search.rentType}
+                                                    onChange={(newValue) => this.changeSearchField("rentType", newValue)}
+                                                    hideInput={false}
+                                                    hideIcon={true}
+                                                />
+                                            }
+                                        </td>
+                                    </tr>
                                     </tbody>
                                 </Col>
                                 <Col xs={12} sm={6} md={4}>
