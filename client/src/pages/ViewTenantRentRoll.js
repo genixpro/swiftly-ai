@@ -87,9 +87,9 @@ class ViewTenantsRentRoll extends React.Component
             <td>
                 <FieldDisplayEdit
                     type='currency'
-                    value={tenantInfo.monthlyRent}
-                    placeholder={"monthly rent"}
-                    onChange={(newValue) => this.changeTenancyField(this.state.selectedUnit, tenantInfo, 'monthlyRent', newValue)}/>
+                    value={tenantInfo.yearlyRentPSF}
+                    placeholder={"yearly rent (psf)"}
+                    onChange={(newValue) => this.changeTenancyField(this.state.selectedUnit, tenantInfo, 'yearlyRentPSF', newValue)}/>
             </td>
 
             <td className={"action-column"}>
@@ -311,11 +311,11 @@ class ViewTenantsRentRoll extends React.Component
                                                 </tr>
                                                 <tr>
                                                     <td>
-                                                        <strong>Current Monthly Rent</strong>
+                                                        <strong>Current Yearly Rent (psf)</strong>
                                                     </td>
                                                     <td>
                                                         $<NumberFormat
-                                                        value={this.state.selectedUnit.currentTenancy.monthlyRent}
+                                                        value={this.state.selectedUnit.currentTenancy.yearlyRentPSF}
                                                         displayType={'text'}
                                                         thousandSeparator={', '}
                                                         decimalScale={2}
@@ -338,7 +338,8 @@ class ViewTenantsRentRoll extends React.Component
                                                     <td>Tenant Name</td>
                                                     <td>Term Start</td>
                                                     <td>Term End</td>
-                                                    <td>Monthly Rent</td>
+                                                    <td>Net / Gross</td>
+                                                    <td>Yearly Rent (psf)</td>
                                                     <td className="action-column" />
                                                 </tr>
                                                 </thead>

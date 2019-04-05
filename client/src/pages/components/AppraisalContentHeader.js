@@ -4,6 +4,8 @@ import React from 'react';
 class AppraisalContentHeader extends React.Component
 {
     render() {
+        console.log(this.props.appraisal.name);
+
         return (
             <div className="content-heading">
                 {this.props.appraisal ?

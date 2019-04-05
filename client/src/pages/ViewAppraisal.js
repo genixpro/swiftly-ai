@@ -20,6 +20,7 @@ import ViewBuildingInformation from "./ViewBuildingInformation";
 import ViewExpenses from "./ViewExpenses";
 import ViewComparableLeases from "./ViewComparableLeases";
 import axios from "axios/index";
+import AppraisalModel from "../models/AppraisalModel";
 
 class ViewAppraisal extends React.Component
 {
@@ -35,7 +36,14 @@ class ViewAppraisal extends React.Component
     {
         axios.get(`/appraisal/${this.props.match.params.id}`).then((response) =>
         {
-            this.setState({appraisal: response.data.appraisal})
+            try
+            {
+                this.setState({appraisal: new AppraisalModel(response.data.appraisal)})
+            }
+            catch(err)
+            {
+                console.log(err);
+            }
         });
     }
 
@@ -57,6 +65,8 @@ class ViewAppraisal extends React.Component
             saveDocument: this.saveDocument.bind(this),
             reloadAppraisal: this.reloadAppraisal.bind(this)
         };
+
+        console.log(this.state.appraisal);
 
         return (
             this.state.appraisal ?
