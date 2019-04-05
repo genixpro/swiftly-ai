@@ -82,6 +82,11 @@ class ComparableSalesStatistics extends React.Component
                     <Card className="card-default">
                         <CardBody>
                             <Row>
+                                <Col xs={12}>
+                                    <h4>{this.props.title}</h4>
+                                </Col>
+                            </Row>
+                            <Row>
                                 <Col xs={4}>
                                     <strong>TMI Range</strong>&nbsp;&nbsp;&nbsp;
                                     {

@@ -132,6 +132,7 @@ class ViewAppraisalComparableSales extends React.Component {
                     <Row>
                         <Col xs={6}>
                             <ComparableSaleList comparableSales={this.state.comparableSales}
+                                                statsTitle={"Statistics for Selected Comps"}
                                                 allowNew={false}
                                                 history={this.props.history}
                                                 appraisalId={this.props.match.params._id}

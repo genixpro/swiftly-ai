@@ -137,6 +137,7 @@ class ViewComparableLeasesDatabase extends React.Component {
                 <Row>
                     <Col xs={6}>
                         <ComparableLeaseList comparableLeases={this.state.comparableLeases}
+                                             statsTitle={"Region Statistics"}
                                             allowNew={true}
                                             history={this.props.history}
                                             appraisalId={this.props.match.params._id}

@@ -139,7 +139,7 @@ class ComparableLeaseList extends React.Component
         return (
             <div>
                 {
-                    <ComparableLeasesStatistics comparableLeases={this.state.comparableLeases} />
+                    <ComparableLeasesStatistics comparableLeases={this.state.comparableLeases} title={this.props.statsTitle} />
                 }
                 {
                     this.props.allowNew ?
