@@ -1,6 +1,7 @@
 import React from 'react';
 import { FormGroup } from 'reactstrap';
 import axios from "axios/index";
+import FileModel from "../../models/FileModel";
 
 
 class FileSelector extends React.Component
@@ -18,7 +19,7 @@ class FileSelector extends React.Component
     {
         axios.get(`/appraisal/${this.props.appraisalId}/files`).then((response) =>
         {
-            this.setState({files: response.data.files});
+            this.setState({files: response.data.files.map((file) => new FileModel(file)) });
             this.onChangeValue(response.data.files[0]._id['$oid'])
         });
     }
@@ -65,7 +66,7 @@ class FileSelector extends React.Component
             >
                 {
                     this.state.files.map((file) =>
-                        <option value={file._id['$oid']} key={file._id['$oid']}>{file.fileName}</option>
+                        <option value={file._id} key={file._id}>{file.fileName}</option>
                     )
                 }
             </select>

@@ -18,7 +18,7 @@ class LeaseList extends React.Component
                 </thead>
                 <tbody>
                 {
-                    this.props.leases.map((lease) => <LeaseListItem key={lease._id['$oid']} lease={lease} history={this.props.history} appraisalId={this.props.appraisalId}/>)
+                    this.props.leases.map((lease) => <LeaseListItem key={lease._id} lease={lease} history={this.props.history} appraisalId={this.props.appraisalId}/>)
                 }
                 </tbody>
             </Table>

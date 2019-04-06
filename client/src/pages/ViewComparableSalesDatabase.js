@@ -9,6 +9,7 @@ import ComparableSaleSearch from "./components/ComparableSaleSearch";
 import GoogleMapReact from 'google-map-react';
 import ComparableSaleListItem from "./components/ComparableSaleListItem"
 import ComparableSalesMap from "./components/ComparableSalesMap"
+import ComparableSalesModel from "../models/ComparableSaleModel"
 
 class ViewComparableSalesDatabase extends React.Component {
     state = {
@@ -46,7 +47,7 @@ class ViewComparableSalesDatabase extends React.Component {
 
         axios.get(`/comparable_sales`, {params: params}).then((response) => {
             // console.log(response.data.comparableSales);
-            this.setState({comparableSales: response.data.comparableSales})
+            this.setState({comparableSales: response.data.comparableSales.map((comp) => new ComparableSalesModel(comp))})
         });
     }
 
@@ -66,7 +67,7 @@ class ViewComparableSalesDatabase extends React.Component {
     addComparableToAppraisal(comp)
     {
         const appraisal = this.props.appraisal;
-        appraisal.comparableSales.push(comp._id['$oid']);
+        appraisal.comparableSales.push(comp._id);
         appraisal.comparableSales = _.clone(appraisal.comparableSales);
         this.props.saveDocument(appraisal);
     }
@@ -83,7 +84,7 @@ class ViewComparableSalesDatabase extends React.Component {
         const appraisal = this.props.appraisal;
         for (let i = 0; i < appraisal.comparableSales.length; i += 1)
         {
-            if (appraisal.comparableSales[i] === comp._id['$oid'])
+            if (appraisal.comparableSales[i] === comp._id)
             {
                 appraisal.comparableSales.splice(i, 1);
                 break;

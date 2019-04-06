@@ -2,6 +2,7 @@ import React from 'react';
 import { Row, Col, Card, CardBody} from 'reactstrap';
 import axios from 'axios';
 import LeaseList from "./components/LeaseList"
+import FileModel from "../models/FileModel";
 
 
 class ViewLeases extends React.Component
@@ -14,7 +15,7 @@ class ViewLeases extends React.Component
     {
         axios.get(`/appraisal/${this.props.match.params._id}/files?type=lease`).then((response) =>
         {
-            this.setState({leases: response.data.files})
+            this.setState({leases: response.data.files.map((file) => new FileModel(file))})
         });
     }
 

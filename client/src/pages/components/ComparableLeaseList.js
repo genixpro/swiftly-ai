@@ -7,6 +7,7 @@ import _ from 'underscore';
 import Promise from 'bluebird';
 import axios from "axios/index";
 import ComparableLeasesStatistics from "./ComparableLeasesStatistics";
+import ComparableLeaseModel from "../../models/ComparableLeaseModel";
 
 
 class ComparableLeaseList extends React.Component
@@ -59,7 +60,7 @@ class ComparableLeaseList extends React.Component
                         // alert('loading');
                         return axios.get(`/comparable_leases/` + comparableLeaseId).then((response) =>
                         {
-                            this.loadedComparables[comparableLeaseId] = response.data.comparableLease;
+                            this.loadedComparables[comparableLeaseId] = new ComparableLeaseModel(response.data.comparableLease);
                             return response.data.comparableLease;
                         });
                     }
@@ -98,7 +99,7 @@ class ComparableLeaseList extends React.Component
 
         for (let i = 0; i < this.state.comparableLeases.length; i += 1)
         {
-            if (this.state.comparableLeases[i]._id['$oid'] === comparable._id['$oid'])
+            if (this.state.comparableLeases[i]._id === comparable._id)
             {
                 comparables.splice(i, 1);
                 break;
@@ -152,10 +153,10 @@ class ComparableLeaseList extends React.Component
                 {
                     this.state.comparableLeases.map((comparableLease, index) =>
                     {
-                        if (excludeIds.indexOf(comparableLease._id['$oid']) === -1)
+                        if (excludeIds.indexOf(comparableLease._id) === -1)
                         {
                             return <ComparableLeaseListItem
-                                key={comparableLease._id['$oid']}
+                                key={comparableLease._id}
                                 comparableLease={comparableLease}
                                 history={this.props.history}
                                 onChange={(comp) => this.updateComparable(comp, index)}

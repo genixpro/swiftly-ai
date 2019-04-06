@@ -30,7 +30,7 @@ class ComparableLeaseListItem extends React.Component
 
     saveComparable(updatedComparable)
     {
-        axios.post(`/comparable_leases/` + this.state.comparableLease._id['$oid'], updatedComparable).then((response) => {
+        axios.post(`/comparable_leases/` + this.state.comparableLease._id, updatedComparable).then((response) => {
             // console.log(response.data.comparableLeases);
             // this.setState({comparableLeases: response.data.comparableLeases})
         });
@@ -41,7 +41,7 @@ class ComparableLeaseListItem extends React.Component
         axios.post(`/comparable_leases`, newComparable).then((response) =>
         {
             const comparable = this.state.comparableLease;
-            comparable["_id"] = {"$oid": response.data._id};
+            comparable["_id"] = response.data._id;
             this.props.onChange(comparable);
         });
     }
@@ -69,7 +69,7 @@ class ComparableLeaseListItem extends React.Component
     {
         this.props.onDeleteComparable(this.state.comparableLease);
 
-        axios.delete(`/comparable_leases/` + this.state.comparableLease._id['$oid']).then((response) => {
+        axios.delete(`/comparable_leases/` + this.state.comparableLease._id).then((response) => {
             // console.log(response.data.comparableLeases);
             // this.setState({comparableLeases: response.data.comparableLeases})
         });
@@ -86,7 +86,7 @@ class ComparableLeaseListItem extends React.Component
             return false;
         }
 
-        const id = this.state.comparableLease._id['$oid'];
+        const id = this.state.comparableLease._id;
 
         for (let i = 0; i < appraisalComparables.length; i += 1)
         {

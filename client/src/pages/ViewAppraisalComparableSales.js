@@ -7,6 +7,7 @@ import _ from 'underscore';
 import AppraisalContentHeader from "./components/AppraisalContentHeader";
 import ComparableSaleSearch from './components/ComparableSaleSearch';
 import ComparableSalesMap from './components/ComparableSalesMap';
+import ComparableSaleModel from "../models/ComparableSaleModel";
 
 
 class ViewAppraisalComparableSales extends React.Component {
@@ -29,7 +30,7 @@ class ViewAppraisalComparableSales extends React.Component {
                 // alert('loading');
                 return axios.get(`/comparable_sales/` + comparableSaleId).then((response) =>
                 {
-                    this.loadedComparables[comparableSaleId] = response.data.comparableSale;
+                    this.loadedComparables[comparableSaleId] = new ComparableSaleModel(response.data.comparableSale);
                     return response.data.comparableSale;
                 });
             }
@@ -55,7 +56,7 @@ class ViewAppraisalComparableSales extends React.Component {
     addComparableToAppraisal(comp)
     {
         const appraisal = this.props.appraisal;
-        appraisal.comparableSales.push(comp._id['$oid']);
+        appraisal.comparableSales.push(comp._id);
         appraisal.comparableSales = _.clone(appraisal.comparableSales);
         this.props.saveDocument(appraisal);
     }
@@ -67,7 +68,7 @@ class ViewAppraisalComparableSales extends React.Component {
         const comparables = this.state.comparableSales;
         for (let i = 0; i < appraisal.comparableSales.length; i += 1)
         {
-            if (appraisal.comparableSales[i] === comp._id['$oid'])
+            if (appraisal.comparableSales[i] === comp._id)
             {
                 appraisal.comparableSales.splice(i, 1);
                 comparables.splice(i, 1);
@@ -87,19 +88,19 @@ class ViewAppraisalComparableSales extends React.Component {
 
     downloadExcelSummary()
     {
-        window.location = `${process.env.VALUATE_ENVIRONMENT.REACT_APP_SERVER_URL}appraisal/${this.props.appraisal._id['$oid']}/comparable_sales/excel`;
+        window.location = `${process.env.VALUATE_ENVIRONMENT.REACT_APP_SERVER_URL}appraisal/${this.props.appraisal._id}/comparable_sales/excel`;
     }
 
 
     downloadWordSummary()
     {
-        window.location = `${process.env.VALUATE_ENVIRONMENT.REACT_APP_SERVER_URL}appraisal/${this.props.appraisal._id['$oid']}/comparable_sales/word`;
+        window.location = `${process.env.VALUATE_ENVIRONMENT.REACT_APP_SERVER_URL}appraisal/${this.props.appraisal._id}/comparable_sales/word`;
     }
 
 
     downloadDetailedSummary()
     {
-        window.location = `${process.env.VALUATE_ENVIRONMENT.REACT_APP_SERVER_URL}appraisal/${this.props.appraisal._id['$oid']}/comparable_sales/detailed_word`;
+        window.location = `${process.env.VALUATE_ENVIRONMENT.REACT_APP_SERVER_URL}appraisal/${this.props.appraisal._id}/comparable_sales/detailed_word`;
     }
 
 

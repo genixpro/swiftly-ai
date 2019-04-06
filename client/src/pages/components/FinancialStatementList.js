@@ -15,7 +15,7 @@ class FinancialStatementList extends React.Component
                 </thead>
                 <tbody>
                 {
-                    this.props.financialStatements.map((financial_statement) => <FinancialStatementListItem key={financial_statement._id['$oid']} financialStatement={financial_statement} history={this.props.history} appraisalId={this.props.appraisalId}/>)
+                    this.props.financialStatements.map((financial_statement) => <FinancialStatementListItem key={financial_statement._id} financialStatement={financial_statement} history={this.props.history} appraisalId={this.props.appraisalId}/>)
                 }
                 </tbody>
             </Table>

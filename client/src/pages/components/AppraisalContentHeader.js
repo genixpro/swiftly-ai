@@ -14,7 +14,7 @@ class AppraisalContentHeader extends React.Component
                         <li className="breadcrumb-item"><a href="/">Home</a></li>
                         <li className="breadcrumb-item"><a href="/appraisals/">Appraisals</a></li>
                         <li className="breadcrumb-item"><a
-                            href={"/appraisals/" + this.props.appraisal._id['$oid'] + "/upload"}>{this.props.appraisal.name}</a>
+                            href={"/appraisals/" + this.props.appraisal._id + "/upload"}>{this.props.appraisal.name}</a>
                         </li>
                         <li className="breadcrumb-item active">{this.props.title}</li>
                     </ol>

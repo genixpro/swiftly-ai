@@ -20,7 +20,7 @@ class UploadedFileListItem extends React.Component
         file.fileType = evt.target.value;
         this.setState({file: file});
 
-        axios.post(`/appraisal/${this.props.appraisalId}/files/${this.state.file._id['$oid']}`, {"fileType": evt.target.value}).then((response) =>
+        axios.post(`/appraisal/${this.props.appraisalId}/files/${this.state.file._id}`, {"fileType": evt.target.value}).then((response) =>
         {
 
         });
@@ -29,7 +29,7 @@ class UploadedFileListItem extends React.Component
     onDeleteFile(evt)
     {
         evt.stopPropagation();
-        axios.delete(`/appraisal/${this.props.appraisalId}/files/${this.state.file._id['$oid']}`).then((response) =>
+        axios.delete(`/appraisal/${this.props.appraisalId}/files/${this.state.file._id}`).then((response) =>
         {
             this.props.handleDeletion(this.props.file);
         });
@@ -39,15 +39,15 @@ class UploadedFileListItem extends React.Component
     {
         if (this.state.file.fileType === 'financials')
         {
-            this.props.history.push("/appraisal/" + this.props.appraisalId + "/financial_statement/" + this.state.file._id['$oid'] + "/raw");
+            this.props.history.push("/appraisal/" + this.props.appraisalId + "/financial_statement/" + this.state.file._id + "/raw");
         }
         else if (this.state.file.fileType === 'lease')
         {
-            this.props.history.push("/appraisal/" + this.props.appraisalId + "/lease/" + this.state.file._id['$oid'] + "/raw");
+            this.props.history.push("/appraisal/" + this.props.appraisalId + "/lease/" + this.state.file._id + "/raw");
         }
         else if (this.state.file.fileType === 'comparable')
         {
-            this.props.history.push("/appraisal/" + this.props.appraisalId + "/comparable_sale/" + this.state.file._id['$oid'] + "/raw");
+            this.props.history.push("/appraisal/" + this.props.appraisalId + "/comparable_sale/" + this.state.file._id + "/raw");
         }
 
     }

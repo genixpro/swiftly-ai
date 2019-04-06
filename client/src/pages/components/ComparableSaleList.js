@@ -68,7 +68,7 @@ class ComparableSaleList extends React.Component
 
         for (let i = 0; i < this.state.comparableSales.length; i += 1)
         {
-            if (this.state.comparableSales[i]._id['$oid'] === comparable._id['$oid'])
+            if (this.state.comparableSales[i]._id === comparable._id)
             {
                 comparables.splice(i, 1);
                 break;
@@ -148,10 +148,10 @@ class ComparableSaleList extends React.Component
                 {
                     this.state.comparableSales.map((comparableSale, index) =>
                     {
-                        if (excludeIds.indexOf(comparableSale._id['$oid']) === -1)
+                        if (excludeIds.indexOf(comparableSale._id) === -1)
                         {
                             return <ComparableSaleListItem
-                                key={comparableSale._id['$oid']}
+                                key={comparableSale._id}
                                 comparableSale={comparableSale}
                                 history={this.props.history}
                                 onChange={(comp) => this.updateComparable(comp, index)}

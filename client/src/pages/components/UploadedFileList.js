@@ -2,6 +2,7 @@ import React from 'react';
 import { Table } from 'reactstrap';
 import UploadedFileListItem from './UploadedFileListItem';
 import axios from "axios";
+import FileModel from "../../models/FileModel";
 
 class UploadedFileList extends React.Component
 {
@@ -23,7 +24,7 @@ class UploadedFileList extends React.Component
     {
         axios.get(`/appraisal/${this.props.appraisalId}/files`).then((response) =>
         {
-            this.setState({files: response.data.files})
+            this.setState({files: response.data.files.map((file) => new FileModel(file))})
         });
     }
 
@@ -38,7 +39,7 @@ class UploadedFileList extends React.Component
                 </thead>
                 <tbody>
                 {
-                    this.state.files.map((file) => <UploadedFileListItem key={file._id['$oid']} file={file} appraisalId={this.props.appraisalId} handleDeletion={() => this.refresh()} history={this.props.history}/>)
+                    this.state.files.map((file) => <UploadedFileListItem key={file._id} file={file} appraisalId={this.props.appraisalId} handleDeletion={() => this.refresh()} history={this.props.history}/>)
                 }
                 </tbody>
             </Table>

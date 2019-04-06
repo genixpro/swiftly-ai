@@ -89,7 +89,7 @@ class ComparableLeasesMap extends React.Component {
                                 return;
                             }
 
-                            const id = "comp-" + comp._id['$oid'];
+                            const id = "comp-" + comp._id;
                             return <div
                                 key={id}
                                 lat={comp.location.coordinates[1]}

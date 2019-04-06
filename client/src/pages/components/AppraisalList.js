@@ -20,7 +20,7 @@ class AppraisalList extends React.Component
                 </thead>
                 <tbody>
                 {
-                    this.props.appraisals.map((appraisal) => <AppraisalListItem key={appraisal._id['$oid']} deleteAppraisal={this.props.deleteAppraisal} appraisal={appraisal} history={this.props.history}/>)
+                    this.props.appraisals.map((appraisal) => <AppraisalListItem key={appraisal._id} deleteAppraisal={this.props.deleteAppraisal} appraisal={appraisal} history={this.props.history}/>)
                 }
                 </tbody>
             </Table>

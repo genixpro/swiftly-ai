@@ -3,7 +3,7 @@ import ContentWrapper from '../components/Layout/ContentWrapper';
 import { Row } from 'reactstrap';
 import axios from 'axios';
 import AppraisalList from './components/AppraisalList';
-
+import AppraisalModel from "../models/AppraisalModel";
 
 class ViewAllAppraisals extends React.Component {
 
@@ -22,14 +22,14 @@ class ViewAllAppraisals extends React.Component {
     {
         axios.get("/appraisal/").then((response) =>
         {
-            this.setState({appraisals: response.data.appraisals});
+            this.setState({appraisals: response.data.appraisals.map((appraisal) => new AppraisalModel(appraisal))});
         });
     }
 
 
     deleteAppraisal(appraisal)
     {
-        axios.delete("/appraisal/" + appraisal._id['$oid']).then((response) =>
+        axios.delete("/appraisal/" + appraisal._id).then((response) =>
         {
             this.reloadAppraisals();
         });

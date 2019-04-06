@@ -31,7 +31,7 @@ class ComparableSaleListItem extends React.Component
 
     saveComparable(updatedComparable)
     {
-        axios.post(`/comparable_sales/` + this.state.comparableSale._id['$oid'], updatedComparable).then((response) => {
+        axios.post(`/comparable_sales/` + this.state.comparableSale._id, updatedComparable).then((response) => {
             // console.log(response.data.comparableSales);
             // this.setState({comparableSales: response.data.comparableSales})
         });
@@ -42,7 +42,7 @@ class ComparableSaleListItem extends React.Component
         axios.post(`/comparable_sales`, newComparable).then((response) =>
         {
             const comparable = this.state.comparableSale;
-            comparable["_id"] = {"$oid": response.data._id};
+            comparable["_id"] = response.data._id;
             this.props.onChange(comparable);
         });
     }
@@ -70,7 +70,7 @@ class ComparableSaleListItem extends React.Component
     {
         this.props.onDeleteComparable(this.state.comparableSale);
 
-        axios.delete(`/comparable_sales/` + this.state.comparableSale._id['$oid']).then((response) => {
+        axios.delete(`/comparable_sales/` + this.state.comparableSale._id).then((response) => {
             // console.log(response.data.comparableSales);
             // this.setState({comparableSales: response.data.comparableSales})
         });
@@ -87,7 +87,7 @@ class ComparableSaleListItem extends React.Component
             return false;
         }
 
-        const id = this.state.comparableSale._id['$oid'];
+        const id = this.state.comparableSale._id;
 
         for (let i = 0; i < appraisalComparables.length; i += 1)
         {

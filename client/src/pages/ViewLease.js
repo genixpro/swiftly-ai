@@ -5,6 +5,7 @@ import ViewLeaseExtractions from "./ViewLeaseExtractions";
 import ViewLeaseReport from "./ViewLeaseReport";
 import {NavLink as RRNavLink} from 'react-router-dom';
 import {Switch, Route} from 'react-router-dom';
+import FileModel from "../models/FileModel";
 
 
 class ViewLease extends React.Component {
@@ -15,7 +16,7 @@ class ViewLease extends React.Component {
 
     componentDidMount() {
         axios.get(`/appraisal/${this.props.match.params._id}/files/${this.props.match.params.leaseId}`).then((response) => {
-            this.setState({lease: response.data.file})
+            this.setState({lease: new FileModel(response.data.file)})
         });
     }
 

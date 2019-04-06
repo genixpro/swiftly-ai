@@ -1,3 +1,4 @@
+import IdField from "./IdField";
 import GenericField from "./GenericField";
 import ModelField from "./ModelField";
 import ListField from "./ListField";
@@ -12,7 +13,7 @@ import BaseModel from "./BaseModel";
 
 class AppraisalModel extends BaseModel
 {
-    static _id = new GenericField();
+    static _id = new IdField();
     static appraisalName = new GenericField("name");
     static address = new GenericField();
     static location = new GenericField();

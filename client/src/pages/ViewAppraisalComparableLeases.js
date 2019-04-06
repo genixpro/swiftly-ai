@@ -8,6 +8,7 @@ import AppraisalContentHeader from "./components/AppraisalContentHeader";
 import ComparableSaleSearch from './components/ComparableSaleSearch';
 import ComparableLeaseList from "./components/ComparableLeaseList";
 import ComparableLeasesMap from "./components/ComparableLeasesMap";
+import ComparableLeaseModel from "../models/ComparableLeaseModel";
 
 
 class ViewAppraisalComparableLeases extends React.Component {
@@ -30,7 +31,7 @@ class ViewAppraisalComparableLeases extends React.Component {
                 // alert('loading');
                 return axios.get(`/comparable_leases/` + comparableLeaseId).then((response) =>
                 {
-                    this.loadedComparables[comparableLeaseId] = response.data.comparableLease;
+                    this.loadedComparables[comparableLeaseId] = new ComparableLeaseModel(response.data.comparableLease);
                     return response.data.comparableLease;
                 });
             }
@@ -55,7 +56,7 @@ class ViewAppraisalComparableLeases extends React.Component {
     addComparableToAppraisal(comp)
     {
         const appraisal = this.props.appraisal;
-        appraisal.comparableLeases.push(comp._id['$oid']);
+        appraisal.comparableLeases.push(comp._id);
         appraisal.comparableLeases = _.clone(appraisal.comparableLeases);
         this.props.saveDocument(appraisal);
     }
@@ -67,7 +68,7 @@ class ViewAppraisalComparableLeases extends React.Component {
         const comparables = this.state.comparableLeases;
         for (let i = 0; i < appraisal.comparableLeases.length; i += 1)
         {
-            if (appraisal.comparableLeases[i] === comp._id['$oid'])
+            if (appraisal.comparableLeases[i] === comp._id)
             {
                 appraisal.comparableLeases.splice(i, 1);
                 comparables.splice(i, 1);
@@ -87,13 +88,13 @@ class ViewAppraisalComparableLeases extends React.Component {
 
     downloadExcelSummary()
     {
-        window.location = `${process.env.VALUATE_ENVIRONMENT.REACT_APP_SERVER_URL}appraisal/${this.props.appraisal._id['$oid']}/comparable_leases/excel`;
+        window.location = `${process.env.VALUATE_ENVIRONMENT.REACT_APP_SERVER_URL}appraisal/${this.props.appraisal._id}/comparable_leases/excel`;
     }
 
 
     downloadWordSummary()
     {
-        window.location = `${process.env.VALUATE_ENVIRONMENT.REACT_APP_SERVER_URL}appraisal/${this.props.appraisal._id['$oid']}/comparable_leases/word`;
+        window.location = `${process.env.VALUATE_ENVIRONMENT.REACT_APP_SERVER_URL}appraisal/${this.props.appraisal._id}/comparable_leases/word`;
     }
 
 

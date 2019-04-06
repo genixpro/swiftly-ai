@@ -11,6 +11,7 @@ import arrayMove from "array-move";
 import FileViewer from "./components/FileViewer"
 import FileSelector from "./components/FileSelector"
 import {IncomeStatementItemModel} from "../models/IncomeStatementModel";
+import FileModel from "../models/FileModel";
 
 class ViewExpenses extends React.Component
 {
@@ -294,10 +295,13 @@ class ViewExpenses extends React.Component
 
     onFileChanged(fileId)
     {
-        axios.get(`/appraisal/${this.props.appraisalId}/files/${fileId}`).then((response) =>
+        if (!this.state.file || this.state.file._id !== fileId)
         {
-            this.setState({file: response.data.file})
-        });
+            axios.get(`/appraisal/${this.props.appraisal._id}/files/${fileId}`).then((response) =>
+            {
+                this.setState({file: new FileModel(response.data.file)});
+            });
+        }
     }
 
     render()
@@ -383,7 +387,7 @@ class ViewExpenses extends React.Component
                                                 <Row className={"file-selector-row"}>
                                                     <Col xs={12}>
                                                         <FileSelector
-                                                            appraisalId={this.props.appraisal._id["$oid"]}
+                                                            appraisalId={this.props.appraisal._id}
                                                             onChange={(fileId) => this.onFileChanged(fileId)}
                                                         />
                                                     </Col>

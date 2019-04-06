@@ -6,6 +6,7 @@ import ViewFinancialStatementReport from "./ViewFinancialStatementReport";
 import ViewFinancialStatementAudit from "./ViewFinancialStatementAudit";
 import {NavLink as RRNavLink} from 'react-router-dom';
 import {Switch, Route} from 'react-router-dom';
+import FileModel from "../models/FileModel";
 
 
 class ViewFinancialStatement extends React.Component {
@@ -16,7 +17,7 @@ class ViewFinancialStatement extends React.Component {
 
     componentDidMount() {
         axios.get(`/appraisal/${this.props.match.params.id}/files/${this.props.match.params.financialStatementId}`).then((response) => {
-            this.setState({financialStatement: response.data.file})
+            this.setState({financialStatement: new FileModel(response.data.file)})
         });
     }
 
@@ -26,7 +27,7 @@ class ViewFinancialStatement extends React.Component {
 
     saveFinancialStatementData(newLease) {
         axios.post(`/appraisal/${this.props.match.params.id}/files/${this.props.match.params.financialStatementId}`, newLease).then((response) => {
-            this.setState({financialStatement: newLease})
+            this.setState({financialStatement: new FileModel(newLease)})
         });
     }
 

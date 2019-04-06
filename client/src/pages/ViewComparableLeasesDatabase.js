@@ -9,6 +9,7 @@ import ComparableLeaseSearch from "./components/ComparableLeaseSearch";
 import GoogleMapReact from 'google-map-react';
 import ComparableLeaseListItem from "./components/ComparableLeaseListItem"
 import ComparableLeasesMap from "./components/ComparableLeasesMap";
+import ComparableLeaseModel from "../models/ComparableLeaseModel";
 
 class ViewComparableLeasesDatabase extends React.Component {
     state = {
@@ -61,7 +62,7 @@ class ViewComparableLeasesDatabase extends React.Component {
 
         axios.get(`/comparable_leases`, {params: params}).then((response) => {
             // console.log(response.data.comparableLeases);
-            this.setState({comparableLeases: response.data.comparableLeases})
+            this.setState({comparableLeases: response.data.comparableLeases.map((lease) => new ComparableLeaseModel(lease))})
         });
     }
 
@@ -81,7 +82,7 @@ class ViewComparableLeasesDatabase extends React.Component {
     addComparableToAppraisal(comp)
     {
         const appraisal = this.props.appraisal;
-        appraisal.comparableLeases.push(comp._id['$oid']);
+        appraisal.comparableLeases.push(comp._id);
         appraisal.comparableLeases = _.clone(appraisal.comparableLeases);
         this.props.saveDocument(appraisal);
     }
@@ -98,7 +99,7 @@ class ViewComparableLeasesDatabase extends React.Component {
         const appraisal = this.props.appraisal;
         for (let i = 0; i < appraisal.comparableLeases.length; i += 1)
         {
-            if (appraisal.comparableLeases[i] === comp._id['$oid'])
+            if (appraisal.comparableLeases[i] === comp._id)
             {
                 appraisal.comparableLeases.splice(i, 1);
                 break;

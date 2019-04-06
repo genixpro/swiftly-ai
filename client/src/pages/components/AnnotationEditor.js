@@ -531,7 +531,7 @@ class AnnotationEditor extends React.Component
                                         <img
                                             alt="Document Preview"
                                             id={`annotation-editor-image-${page}-thumbnail`}
-                                            src={`https://appraisalfiles.blob.core.windows.net/files/${this.state.document._id['$oid']}-image-${page}.png`}
+                                            src={`https://appraisalfiles.blob.core.windows.net/files/${this.state.document._id}-image-${page}.png`}
                                             onLoad={this.componentDidUpdate.bind(this)}
                                             onClick={() => this.changePage(page)}
                                             className="annotationEditorImageThumbnail"
@@ -579,7 +579,7 @@ class AnnotationEditor extends React.Component
                                 <img
                                     alt="Document"
                                     id={`annotation-editor-image-${this.state.currentPage}`}
-                                    src={`https://appraisalfiles.blob.core.windows.net/files/${this.state.document._id['$oid']}-image-${this.state.currentPage}.png`}
+                                    src={`https://appraisalfiles.blob.core.windows.net/files/${this.state.document._id}-image-${this.state.currentPage}.png`}
                                     onLoad={this.componentDidUpdate.bind(this)}
                                     className="annotationEditorImage"
                                 />

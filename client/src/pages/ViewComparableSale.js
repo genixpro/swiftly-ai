@@ -4,6 +4,7 @@ import axios from 'axios';
 import ViewComparableSaleExtractions from "./ViewComparableSaleExtractions";
 import {NavLink as RRNavLink} from 'react-router-dom';
 import {Switch, Route} from 'react-router-dom';
+import ComparableSaleModel from "../models/ComparableSaleModel";
 
 
 class ViewComparableSale extends React.Component {
@@ -14,7 +15,7 @@ class ViewComparableSale extends React.Component {
 
     componentDidMount() {
         axios.get(`/appraisal/${this.props.match.params._id}/comparable_sales/${this.props.match.params.comparableSaleId}`).then((response) => {
-            this.setState({comparableSale: response.data.comparableSale})
+            this.setState({comparableSale: new ComparableSaleModel(response.data.comparableSale)})
         });
     }
 

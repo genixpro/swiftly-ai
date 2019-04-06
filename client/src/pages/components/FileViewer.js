@@ -65,9 +65,9 @@ class FileViewer extends React.Component
 
     componentDidUpdate()
     {
-        if (this.props.document._id['$oid'] !== this.documentId)
+        if (this.props.document._id !== this.documentId)
         {
-            this.documentId = this.props.document._id['$oid'];
+            this.documentId = this.props.document._id;
             this.setState({imageZoom: FileViewer.computeDefaultZoom(this.props.document)});
         }
     }
@@ -259,7 +259,7 @@ class FileViewer extends React.Component
                                         <img
                                             alt="Document Preview"
                                             id={`file-viewer-image-${page}-thumbnail`}
-                                            src={`https://appraisalfiles.blob.core.windows.net/files/${this.props.document._id['$oid']}-image-${page}.png`}
+                                            src={`https://appraisalfiles.blob.core.windows.net/files/${this.props.document._id}-image-${page}.png`}
                                             onClick={() => this.changePage(page)}
                                             className={`file-viewer-image-thumbnail`}
                                         />
@@ -296,7 +296,7 @@ class FileViewer extends React.Component
                                         return <img
                                             alt="Document"
                                             id={`file-viewer-image`}
-                                            src={`https://appraisalfiles.blob.core.windows.net/files/${this.props.document._id['$oid']}-image-${page}.png`}
+                                            src={`https://appraisalfiles.blob.core.windows.net/files/${this.props.document._id}-image-${page}.png`}
                                             className={`file-viewer-image ${page === this.state.currentPage ? 'active' : ''} ${this.state.slowTransition ? " slow-transition" : ""}`}
                                         />;
                                     })
@@ -304,7 +304,7 @@ class FileViewer extends React.Component
                                 <img
                                     alt="Document"
                                     id={`file-viewer-image`}
-                                    src={`https://appraisalfiles.blob.core.windows.net/files/${this.props.document._id['$oid']}-image-${this.state.currentPage}.png`}
+                                    src={`https://appraisalfiles.blob.core.windows.net/files/${this.props.document._id}-image-${this.state.currentPage}.png`}
                                     className={`file-viewer-image frame`}
                                 />
                                 {
