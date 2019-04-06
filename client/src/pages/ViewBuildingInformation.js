@@ -9,6 +9,8 @@ import AppraisalContentHeader from "./components/AppraisalContentHeader";
 import PropertyTypeSelector from "./components/PropertyTypeSelector";
 import IndustrialSubtypeSelector from "./components/IndustrialSubtypeSelector";
 import LandSubtypeSelector from "./components/LandSubtypeSelector";
+import ZoneSelector from "./components/ZoneSelector";
+import ZoneDescriptionEditor from "./components/ZoneDescriptionEditor";
 
 
 class ViewBuildingInformation extends React.Component
@@ -75,7 +77,7 @@ class ViewBuildingInformation extends React.Component
                                                                 <strong>Sub-type</strong>
                                                             </td>
                                                             <td>
-                                                                <IndustrialSubtypeSelector
+                                                                <LandSubtypeSelector
                                                                     value={this.props.appraisal.landSubType}
                                                                     onChange={(newValue) => this.changeAppraisalField('landSubType', newValue)}/>
                                                             </td>
@@ -84,7 +86,33 @@ class ViewBuildingInformation extends React.Component
                                                 {this.renderFieldRow("Size of Building", "sizeOfBuilding", "number")}
                                                 {this.renderFieldRow("Size of Land", "sizeOfLand", "number")}
                                                 {this.renderFieldRow("Legal Description", "legalDescription")}
-                                                {this.renderFieldRow("Zoning", "zoning")}
+
+                                                <tr>
+                                                    <td>
+                                                        <strong>Zoning</strong>
+                                                    </td>
+                                                    <td>
+                                                        <ZoneSelector
+                                                            value={this.props.appraisal.zoning}
+                                                            onChange={(newValue) => this.changeAppraisalField('zoning', newValue)}
+                                                        />
+                                                    </td>
+                                                </tr>
+
+                                                {
+                                                    (this.props.appraisal.zoning !== '' && this.props.appraisal.zoning !== null) ?
+                                                        <tr>
+                                                            <td>
+                                                                <strong>Zone Description</strong>
+                                                            </td>
+                                                            <td>
+                                                                <ZoneDescriptionEditor
+                                                                    zoneId={this.props.appraisal.zoning}
+                                                                />
+                                                            </td>
+                                                        </tr> : null
+                                                }
+
                                                 </tbody>
                                             </table>
                                         </Col>

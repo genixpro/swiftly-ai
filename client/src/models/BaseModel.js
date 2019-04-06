@@ -14,32 +14,40 @@ class BaseModel extends Object
     {
         super();
 
-        const modelClass = this.constructor;
-
-        Object.keys(modelClass).forEach((key) =>
+        try
         {
-            if (modelClass[key] instanceof BaseField)
+            const modelClass = this.constructor;
+
+            Object.keys(modelClass).forEach((key) =>
             {
-                const field = modelClass[key];
+                if (modelClass[key] instanceof BaseField)
+                {
+                    const field = modelClass[key];
 
-                if (field.fieldName)
-                {
-                    this[field.fieldName] = modelClass[key].toObject(data[field.fieldName], this);
+                    if (field.fieldName)
+                    {
+                        this[field.fieldName] = modelClass[key].toObject(data[field.fieldName], this);
+                    }
+                    else
+                    {
+                        this[key] = modelClass[key].toObject(data[key], this);
+                    }
                 }
-                else
-                {
-                    this[key] = modelClass[key].toObject(data[key], this);
-                }
+            });
+
+            if (parent)
+            {
+                this[BaseModel.parentSymbol] = parent;
             }
-        });
-
-        if (parent)
-        {
-            this[BaseModel.parentSymbol] = parent;
+            else
+            {
+                this[BaseModel.parentSymbol] = null;
+            }
         }
-        else
+        catch(err)
         {
-            this[BaseModel.parentSymbol] = null;
+            console.log("Error loading BaseModel subclass fields.");
+            console.log(err);
         }
     }
 
