@@ -19,7 +19,7 @@ class ComparableSaleListItem extends React.Component
 
     componentDidMount()
     {
-        if (!this.props.comparableSale._id || this.props.openByDefault)
+        if (!this.props.comparableSale._id || this.props.openByDefault || this.props.comparableSale.new)
         {
             this.setState({detailsOpen: true})
         }
@@ -43,6 +43,7 @@ class ComparableSaleListItem extends React.Component
         {
             const comparable = this.state.comparableSale;
             comparable["_id"] = response.data._id;
+            comparable.new = true;
             this.props.onChange(comparable);
         });
     }

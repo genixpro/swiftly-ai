@@ -64,7 +64,7 @@ class Appraisal(Document):
     comparableLeases = ListField(StringField())
 
     # These are the inputs that are put into the stabilized statement
-    stabilizedStatementInputs = EmbeddedDocumentField(StabilizedStatementInputs, default=StabilizedStatementInputs)
+    stabilizedStatementInputs = EmbeddedDocumentField(StabilizedStatementInputs, default=StabilizedStatementInputs, null=False)
 
     # This the stabilized statement
     stabilizedStatement = EmbeddedDocumentField(StabilizedStatement)

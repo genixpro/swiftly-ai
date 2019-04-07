@@ -33,6 +33,8 @@ class ComparableLeaseAPI(object):
             query['leaseDate__lt'] = self.request.GET['leaseDateTo']
         if 'propertyType' in self.request.GET:
             query['propertyType'] = self.request.GET['propertyType']
+        if 'tenantName' in self.request.GET:
+            query['tenantName__contains'] = self.request.GET['tenantName']
 
         if 'locationTop' in self.request.GET:
             query['location__geo_within_box'] = [

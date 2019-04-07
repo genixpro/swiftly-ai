@@ -31,7 +31,7 @@ class AppraisalModel extends BaseModel
     static validationResult = new ModelField(AppraisalValidationResultModel);
     static comparableSales = new ListField(new GenericField());
     static comparableLeases = new ListField(new GenericField());
-    static stabilizedStatementInputs = new ListField(StabilizedStatementInputsModel);
+    static stabilizedStatementInputs = new ModelField(StabilizedStatementInputsModel);
     static stabilizedStatement = new ModelField(StabilizedStatementModel)
 }
 

@@ -6,6 +6,7 @@ import Datetime from 'react-datetime';
 import PropertyTypeSelector from './PropertyTypeSelector';
 import RentTypeSelector from './RentTypeSelector';
 import history from "../../history";
+import ZoneSelector from "./ZoneSelector";
 
 import {
     Input,
@@ -299,6 +300,14 @@ class FieldDisplayEdit extends React.Component
                             onChange={(newValue) => this.incomeItemTypeInputUpdated(newValue) }
                             onBlur={() => this.finishEditing()}
                             innerRef={(inputElem) => this.inputElem = inputElem}
+                        /> : null
+                }
+                {
+                    this.props.type === "zone" ?
+                        <ZoneSelector
+                            value={this.state.isEditing ? this.state.value : this.props.value}
+                            onChange={(newValue) => this.inputUpdated(newValue) }
+                            onBlur={() => this.finishEditing()}
                         /> : null
                 }
                 {

@@ -1,7 +1,7 @@
 import React from 'react';
 import {Table} from 'reactstrap';
 import ComparableLeaseListItem from './ComparableLeaseListItem';
-import {Dropdown, DropdownItem, DropdownMenu, DropdownToggle, Row, Col} from 'reactstrap';
+import {Dropdown, DropdownItem, DropdownMenu, DropdownToggle, Row, Col, Card, CardHeader, CardTitle} from 'reactstrap';
 import FieldDisplayEdit from "./FieldDisplayEdit";
 import _ from 'underscore';
 import Promise from 'bluebird';
@@ -14,7 +14,9 @@ class ComparableLeaseList extends React.Component
 {
     state = {
         comparableLeases: [],
-        newComparableSale: {},
+        newComparableSale: {
+            rentType: "net"
+        },
         isCreatingNewItem: false
     };
 
@@ -141,6 +143,28 @@ class ComparableLeaseList extends React.Component
             <div>
                 {
                     <ComparableLeasesStatistics comparableLeases={this.state.comparableLeases} title={this.props.statsTitle} />
+                }
+                {
+                    <div className={`card b comparable-lease-list-header`}>
+                        <CardHeader className={"comparable-lease-list-item-header"}>
+                            <CardTitle>
+                                <Row>
+                                    <Col xs={2} className={"header-field-column"}>
+                                        Date
+                                    </Col>
+                                    <Col xs={4} className={"header-field-column"}>
+                                        Address
+                                    </Col>
+                                    <Col xs={2} className={"header-field-column"}>
+                                        Size
+                                    </Col>
+                                    <Col xs={2} className={"header-field-column"}>
+                                        Rent
+                                    </Col>
+                                </Row>
+                            </CardTitle>
+                        </CardHeader>
+                    </div>
                 }
                 {
                     this.props.allowNew ?

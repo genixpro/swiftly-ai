@@ -19,6 +19,9 @@ class ComparableLease(Document):
     # The type of property, as an enumeration.
     propertyType = StringField()
 
+    # The name of the tenant
+    tenantName = StringField()
+
     # The size of the unit in square-feet
     sizeOfUnit = FloatField()
 

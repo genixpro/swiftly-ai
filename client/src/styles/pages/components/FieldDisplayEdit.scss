@@ -8,14 +8,14 @@
     //transition: opacity 0.2s ease-in-out;
   }
 
-  input, textarea, select {
+  input, textarea, select, .zone-selector .zone-selector__control {
     transition: border-color 0.2s ease-in-out;
   }
 
 
   &.editable
   {
-    input, textarea, select, select:focus {
+    input, textarea, select, select:focus, .zone-selector .zone-selector__control {
       border: 1px solid lightgray;
       box-shadow: 0 0;
       background: transparent;
@@ -27,7 +27,7 @@
       {
         opacity: 0.5;
       }
-      input, textarea, select {
+      input, textarea, select, .zone-selector .zone-selector__control {
         cursor: pointer;
       }
     }
@@ -35,7 +35,7 @@
 
     &.static:hover, &.editing
     {
-      input, textarea, select {
+      input, textarea, select, .zone-selector .zone-selector__control {
         background: white;
       }
     }
@@ -43,7 +43,7 @@
 
   &.non-editable
   {
-    input:disabled, textarea:disabled, select:disabled
+    input:disabled, textarea:disabled, select:disabled, .zone-selector .zone-selector__control
     {
       background-color: white;
       color: #656565;
@@ -58,7 +58,7 @@
       opacity: 0;
     }
 
-    input, textarea, select
+    input, textarea, select, .zone-selector .zone-selector__control
     {
       border: 1px white;
       border-radius: 0;
@@ -76,6 +76,16 @@
   .rdt
   {
     flex-grow: 1;
+  }
+
+  .zone-selector
+  {
+    flex-grow: 1;
+  }
+
+  .zone-selector__indicators
+  {
+    display: none;
   }
 
 

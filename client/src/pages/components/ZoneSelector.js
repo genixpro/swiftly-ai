@@ -33,10 +33,17 @@ class ZoneSelector extends React.Component {
 
     loadOptions(inputValue, callback)
     {
-        axios.get(`/zones`, {params: {zoneName: inputValue}}).then((response) =>
+        if (inputValue)
         {
-            callback(response.data.zones.map((zone) => ({value: zone._id['$oid'], label: zone.zoneName}) ));
-        });
+            axios.get(`/zones`, {params: {zoneName: inputValue}}).then((response) =>
+            {
+                callback(response.data.zones.map((zone) => ({value: zone._id['$oid'], label: zone.zoneName}) ));
+            });
+        }
+        else
+        {
+            callback([]);
+        }
     }
 
     onChange(newZone)
@@ -54,6 +61,8 @@ class ZoneSelector extends React.Component {
 
         return (
             <AsyncCreatable
+                className={"zone-selector"}
+                classNamePrefix={"zone-selector"}
                 value={this.state.zone}
                 cacheOptions
                 loadOptions={this.loadOptions}
@@ -61,6 +70,7 @@ class ZoneSelector extends React.Component {
                 noOptionsMessage={() => <span>Search for a Zone</span>}
                 defaultOptions
                 onChange={(data) => this.onChange(data)}
+                onBlur={this.props.onBlur}
             />
         );
     }

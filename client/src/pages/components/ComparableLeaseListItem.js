@@ -8,6 +8,8 @@ import PropertyTypeSelector from './PropertyTypeSelector';
 
 class ComparableLeaseListItem extends React.Component
 {
+    static _newLease = Symbol('newLease');
+
     static defaultProps = {
         edit: true
     };
@@ -18,7 +20,7 @@ class ComparableLeaseListItem extends React.Component
 
     componentDidMount()
     {
-        if (!this.props.comparableLease._id || this.props.openByDefault)
+        if (!this.props.comparableLease._id || this.props.openByDefault || this.props.comparableLease[ComparableLeaseListItem._newLease])
         {
             this.setState({detailsOpen: true})
         }
@@ -26,6 +28,15 @@ class ComparableLeaseListItem extends React.Component
         this.setState({
             comparableLease: _.clone(this.props.comparableLease)
         })
+    }
+
+    cleanItem(item)
+    {
+        if (!item.rentType)
+        {
+            item.rentType = "net";
+        }
+        return item;
     }
 
     saveComparable(updatedComparable)
@@ -42,6 +53,7 @@ class ComparableLeaseListItem extends React.Component
         {
             const comparable = this.state.comparableLease;
             comparable["_id"] = response.data._id;
+            comparable[ComparableLeaseListItem._newLease] = true;
             this.props.onChange(comparable);
         });
     }
@@ -55,12 +67,12 @@ class ComparableLeaseListItem extends React.Component
 
         if (this.state.comparableLease._id)
         {
-            this.saveComparable(comparable);
-            this.props.onChange(comparable);
+            this.saveComparable(this.cleanItem(comparable));
+            this.props.onChange(this.cleanItem(comparable));
         }
         else
         {
-            this.createNewComparable(comparable);
+            this.createNewComparable(this.cleanItem(comparable));
         }
     }
 
@@ -212,6 +224,7 @@ class ComparableLeaseListItem extends React.Component
                                         value={comparableLease.yearlyRent}
                                         onChange={(newValue) => this.changeComparableField('yearlyRent', newValue)}
                                     />
+
                                     <span className={"comparable-field-label"}>Net / Gross:</span>
 
                                     <FieldDisplayEdit
@@ -221,6 +234,16 @@ class ComparableLeaseListItem extends React.Component
                                         value={comparableLease.rentType}
                                         onChange={(newValue) => this.changeComparableField('rentType', newValue)}
                                     />
+                                    <span className={"comparable-field-label"}>Tenant Name:</span>
+
+                                    <FieldDisplayEdit
+                                        type={"text"}
+                                        edit={this.props.edit}
+                                        placeholder={"Tenant Name"}
+                                        value={comparableLease.tenantName}
+                                        onChange={(newValue) => this.changeComparableField('tenantName', newValue)}
+                                    />
+
                                     <span className={"comparable-field-label"}>Lease Date:</span>
 
                                     <FieldDisplayEdit

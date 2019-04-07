@@ -53,7 +53,7 @@ class ViewAppraisal extends React.Component
         {
             if (updateStateAfterSave)
             {
-                this.setState({appraisal: response.data.appraisal})
+                this.setState({appraisal: new AppraisalModel(response.data.appraisal)})
             }
         });
     }

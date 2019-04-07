@@ -156,7 +156,7 @@ class ViewStabilizedStatementValuation extends React.Component
                                             <FieldDisplayEdit
                                                 type={"percent"}
                                                 placeholder={"Vacancy Rate"}
-                                                value={this.props.appraisal.stabilizedStatementInputs.vacancyRate}
+                                                value={this.props.appraisal.stabilizedStatementInputs ? this.props.appraisal.stabilizedStatementInputs.vacancyRate : 5.0}
                                                 onChange={(newValue) => this.changeStabilizedInput("vacancyRate", newValue)}
                                             />
                                         </td>
@@ -279,7 +279,7 @@ class ViewStabilizedStatementValuation extends React.Component
                                             <FieldDisplayEdit
                                                 type={"percent"}
                                                 placeholder={"Capitalization Rate"}
-                                                value={this.props.appraisal.stabilizedStatementInputs.capitalizationRate}
+                                                value={this.props.appraisal.stabilizedStatementInputs ? this.props.appraisal.stabilizedStatementInputs.capitalizationRate : 5.0}
                                                 onChange={(newValue) => this.changeStabilizedInput("capitalizationRate", newValue)}
                                             />
                                         </td>

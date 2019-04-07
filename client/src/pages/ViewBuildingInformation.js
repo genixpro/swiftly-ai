@@ -84,20 +84,9 @@ class ViewBuildingInformation extends React.Component
                                                         </tr> : null
                                                 }
                                                 {this.renderFieldRow("Size of Building", "sizeOfBuilding", "number")}
-                                                {this.renderFieldRow("Size of Land", "sizeOfLand", "number")}
+                                                {this.renderFieldRow("Lot Size", "sizeOfLand", "number")}
                                                 {this.renderFieldRow("Legal Description", "legalDescription")}
-
-                                                <tr>
-                                                    <td>
-                                                        <strong>Zoning</strong>
-                                                    </td>
-                                                    <td>
-                                                        <ZoneSelector
-                                                            value={this.props.appraisal.zoning}
-                                                            onChange={(newValue) => this.changeAppraisalField('zoning', newValue)}
-                                                        />
-                                                    </td>
-                                                </tr>
+                                                {this.renderFieldRow("Zoning", "zoning", "zone")}
 
                                                 {
                                                     (this.props.appraisal.zoning !== '' && this.props.appraisal.zoning !== null) ?
