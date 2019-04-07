@@ -47,7 +47,7 @@ class ComparableSale(Document):
 
     constructionDate = ConvertingDateField(sparse=True, default=None, null=True)
 
-    siteArea = FloatField()
+    siteArea = StringField()
 
     parking = StringField()
 

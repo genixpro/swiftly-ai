@@ -241,7 +241,7 @@ class ComparableSaleListItem extends React.Component
                                     <span className={"comparable-field-label"}>Cap Rate:</span>
 
                                     <FieldDisplayEdit
-                                        type={"number"}
+                                        type={"percentage"}
                                         edit={this.props.edit}
                                         placeholder={"Capitalization Rate"}
                                         value={comparableSale.capitalizationRate}
@@ -288,20 +288,10 @@ class ComparableSaleListItem extends React.Component
                                         onChange={(newValue) => this.changeComparableField('netOperatingIncome', newValue)}
                                     />
 
-                                    <span className={"comparable-field-label"}>Vacancy Rate:</span>
-
-                                    <FieldDisplayEdit
-                                        type={"number"}
-                                        edit={this.props.edit}
-                                        placeholder={"Vacancy Rate"}
-                                        value={comparableSale.vacancyRate}
-                                        onChange={(newValue) => this.changeComparableField('vacancyRate', newValue)}
-                                    />
-
                                     <span className={"comparable-field-label"}>Occupancy Rate:</span>
 
                                     <FieldDisplayEdit
-                                        type={"number"}
+                                        type={"percentage"}
                                         edit={this.props.edit}
                                         placeholder={"Occupancy Rate"}
                                         value={comparableSale.occupancyRate}
@@ -368,27 +358,27 @@ class ComparableSaleListItem extends React.Component
                                         onChange={(newValue) => this.changeComparableField('description', newValue)}
                                     />
 
-                                    <p>Is in reference to the {comparableSale.saleDate} sale of a {comparableSale.propertyType}
-                                        building located at {comparableSale.address}.
+                                    {/*<p>Is in reference to the {comparableSale.saleDate} sale of a {comparableSale.propertyType}*/}
+                                        {/*building located at {comparableSale.address}.*/}
 
-                                        {
-                                            comparableSale.sizeSquareFootage ? `The building has gross rentable area of ${comparableSale.sizeSquareFootage}.` : ""
-                                        }
+                                        {/*{*/}
+                                            {/*comparableSale.sizeSquareFootage ? `The building has gross rentable area of ${comparableSale.sizeSquareFootage}.` : ""*/}
+                                        {/*}*/}
 
-                                        {
-                                            comparableSale.vendor ? `The property was sold by ${comparableSale.vendor} and was acquired by ${comparableSale.purchaser} for a consideration of ${comparableSale.salePrice}` : ""
-                                        }
-                                        {
-                                            comparableSale.description ? `${comparableSale.description}` : ""
-                                        }
+                                        {/*{*/}
+                                            {/*comparableSale.vendor ? `The property was sold by ${comparableSale.vendor} and was acquired by ${comparableSale.purchaser} for a consideration of ${comparableSale.salePrice}` : ""*/}
+                                        {/*}*/}
+                                        {/*{*/}
+                                            {/*comparableSale.description ? `${comparableSale.description}` : ""*/}
+                                        {/*}*/}
 
-                                        {
-                                            comparableSale.tenants ? `The property is ${comparableSale.occupancyRate} leased to ${comparableSale.tenants}.` : ""
-                                        }
+                                        {/*{*/}
+                                            {/*comparableSale.tenants ? `The property is ${comparableSale.occupancyRate} leased to ${comparableSale.tenants}.` : ""*/}
+                                        {/*}*/}
 
-                                        {
-                                            comparableSale.capitalizationRate ? `The net income of ${comparableSale.netOperatingIncome} yielded a ${comparableSale.capitalizationRate}% rate of return.` : ""
-                                        }</p>
+                                        {/*{*/}
+                                            {/*comparableSale.capitalizationRate ? `The net income of ${comparableSale.netOperatingIncome} yielded a ${comparableSale.capitalizationRate}% rate of return.` : ""*/}
+                                        {/*}</p>*/}
                                 </div>
                             </div>
                         </div>
