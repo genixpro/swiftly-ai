@@ -20,7 +20,6 @@ class ComparableLeaseListItem extends React.Component
 
     componentDidMount()
     {
-        console.log(this.props.comparableLease);
         if (!this.props.comparableLease._id || this.props.openByDefault || this.props.comparableLease[ComparableLeaseListItem._newLease])
         {
             this.setState({detailsOpen: true})

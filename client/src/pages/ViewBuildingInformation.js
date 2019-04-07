@@ -11,6 +11,7 @@ import IndustrialSubtypeSelector from "./components/IndustrialSubtypeSelector";
 import LandSubtypeSelector from "./components/LandSubtypeSelector";
 import ZoneSelector from "./components/ZoneSelector";
 import ZoneDescriptionEditor from "./components/ZoneDescriptionEditor";
+import UploadableImage from "./components/UploadableImage";
 
 
 class ViewBuildingInformation extends React.Component
@@ -56,6 +57,20 @@ class ViewBuildingInformation extends React.Component
                                         <Col xs={12} sm={10} md={8}>
                                             <table className="table property-information-fields-table">
                                                 <tbody>
+                                                <tr>
+                                                    <td>
+                                                        <strong>Picture</strong>
+                                                    </td>
+                                                    <td>
+                                                        {
+                                                            (this.props.appraisal.address && this.props.appraisal.address !== "") ?
+                                                                <UploadableImage value={`https://maps.googleapis.com/maps/api/streetview?key=AIzaSyBRmZ2N4EhJjXmC29t3VeiLUQssNG-MY1I&size=640x480&source=outdoor&location=${this.props.appraisal.address}`} />
+                                                                : <UploadableImage />
+                                                        }
+                                                    </td>
+                                                </tr>
+
+
                                                 {this.renderFieldRow("Name", "name")}
                                                 {this.renderFieldRow("Address", "address", "address")}
                                                 {this.renderFieldRow("Property Type", "propertyType", "propertyType")}

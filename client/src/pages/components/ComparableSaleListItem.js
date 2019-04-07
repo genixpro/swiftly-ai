@@ -5,9 +5,13 @@ import _ from 'underscore';
 import axios from "axios/index";
 import Datetime from 'react-datetime';
 import PropertyTypeSelector from './PropertyTypeSelector';
+import ComparableLeaseListItem from "./ComparableLeaseListItem";
+import UploadableImage from "./UploadableImage";
 
 class ComparableSaleListItem extends React.Component
 {
+    static _newSale = Symbol('newSale');
+
     static defaultProps = {
         edit: true,
         detailsOpen: false
@@ -19,7 +23,7 @@ class ComparableSaleListItem extends React.Component
 
     componentDidMount()
     {
-        if (!this.props.comparableSale._id || this.props.openByDefault || this.props.comparableSale.new)
+        if (!this.props.comparableSale._id || this.props.openByDefault || this.props.comparableSale[ComparableSaleListItem._newSale])
         {
             this.setState({detailsOpen: true})
         }
@@ -43,7 +47,7 @@ class ComparableSaleListItem extends React.Component
         {
             const comparable = this.state.comparableSale;
             comparable["_id"] = response.data._id;
-            comparable.new = true;
+            comparable[ComparableSaleListItem._newSale] = true;
             this.props.onChange(comparable);
         });
     }
@@ -168,22 +172,11 @@ class ComparableSaleListItem extends React.Component
                     }
                     <Collapse isOpen={this.state.detailsOpen}>
                         <div className={`card-body comparable-sale-list-item-body ${editableClass}`}>
-                            <div className={`building-image`}>
-                                <div className={"building-image-wrapper"}>
-                                    <a href="">
-                                        {
-                                            (comparableSale.address && comparableSale.address !== "")?
-                                                <img className="img-fluid img-thumbnail" src={`https://maps.googleapis.com/maps/api/streetview?key=AIzaSyBRmZ2N4EhJjXmC29t3VeiLUQssNG-MY1I  &size=640x480&source=outdoor&location=${comparableSale.address}`} alt="Demo"/>
-                                                : <img className="img-fluid img-thumbnail" src="/img/no_building_image.png" alt="Demo"/>
-
-                                        }
-                                    </a>
-                                    <div className={"upload-image-overlay"} />
-                                    <div className={"upload-image-icon"}>
-                                        <i className={"fa fa-upload"} />
-                                    </div>
-                                </div>
-                            </div>
+                            {
+                                (comparableSale.address && comparableSale.address !== "") ?
+                                    <UploadableImage value={`https://maps.googleapis.com/maps/api/streetview?key=AIzaSyBRmZ2N4EhJjXmC29t3VeiLUQssNG-MY1I&size=640x480&source=outdoor&location=${comparableSale.address}`} />
+                                    : <UploadableImage  />
+                            }
                             <div className={`comparable-sale-content`}>
                                 <FieldDisplayEdit
                                     type={"text"}
