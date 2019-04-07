@@ -8,6 +8,7 @@ import Promise from 'bluebird';
 import axios from "axios/index";
 import ComparableLeasesStatistics from "./ComparableLeasesStatistics";
 import ComparableLeaseModel from "../../models/ComparableLeaseModel";
+import { Button, Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
 
 
 class ComparableLeaseList extends React.Component
@@ -72,6 +73,11 @@ class ComparableLeaseList extends React.Component
                 })
             }
         }
+    }
+
+    toggleNewItem()
+    {
+        this.setState({isCreatingNewItem: false});
     }
 
 
@@ -168,11 +174,19 @@ class ComparableLeaseList extends React.Component
                 }
                 {
                     this.props.allowNew ?
-                        this.state.isCreatingNewItem ?
-                            <ComparableLeaseListItem comparableLease={_.clone(this.state.newComparableSale)}
-                                                    onChange={(comp) => this.addNewComparable(comp)}/>
-                            : this.renderNewItemRow()
-                        : null
+                        <div>
+                            {this.renderNewItemRow()}
+                            <Modal isOpen={this.state.isCreatingNewItem} toggle={this.toggleNewItem} className={"new-comp-dialog"}>
+                                        <ModalHeader toggle={this.toggleNewItem.bind(this)}>New Comparable Lease</ModalHeader>
+                                        <ModalBody>
+                                            <ComparableLeaseListItem comparableLease={_.clone(this.state.newComparableSale)}
+                                                onChange={(comp) => this.addNewComparable(comp)}/>
+                                        </ModalBody>
+                                        <ModalFooter>
+                                        <Button color="primary" onClick={this.toggleNewItem.bind(this)}>Close</Button>{' '}
+                                </ModalFooter>
+                            </Modal>
+                        </div> : null
                 }
                 {
                     this.state.comparableLeases.map((comparableLease, index) =>

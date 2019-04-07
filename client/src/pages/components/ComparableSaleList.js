@@ -7,6 +7,7 @@ import _ from 'underscore';
 import Promise from 'bluebird';
 import axios from "axios/index";
 import ComparableSalesStatistics from "./ComparableSalesStatistics"
+import { Button, Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
 
 
 class ComparableSaleList extends React.Component
@@ -82,6 +83,12 @@ class ComparableSaleList extends React.Component
     }
 
 
+    toggleNewItem()
+    {
+        this.setState({isCreatingNewItem: false});
+    }
+
+
     toggleCreateNewItem()
     {
         this.setState({isCreatingNewItem: true})
@@ -139,11 +146,19 @@ class ComparableSaleList extends React.Component
                 }
                 {
                     this.props.allowNew ?
-                        this.state.isCreatingNewItem ?
-                            <ComparableSaleListItem comparableSale={_.clone(this.state.newComparableSale)}
-                                                    onChange={(comp) => this.addNewComparable(comp)}/>
-                            : this.renderNewItemRow()
-                        : null
+                        <div>
+                            {this.renderNewItemRow()}
+                            <Modal isOpen={this.state.isCreatingNewItem} toggle={this.toggleNewItem} className={"new-comp-dialog"}>
+                                <ModalHeader toggle={this.toggleNewItem.bind(this)}>New Comparable Sale</ModalHeader>
+                                <ModalBody>
+                                    <ComparableSaleListItem comparableSale={_.clone(this.state.newComparableSale)}
+                                                             onChange={(comp) => this.addNewComparable(comp)}/>
+                                </ModalBody>
+                                <ModalFooter>
+                                    <Button color="primary" onClick={this.toggleNewItem.bind(this)}>Close</Button>{' '}
+                                </ModalFooter>
+                            </Modal>
+                        </div> : null
                 }
                 {
                     this.state.comparableSales.map((comparableSale, index) =>
