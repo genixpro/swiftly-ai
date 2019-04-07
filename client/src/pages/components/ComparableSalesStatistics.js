@@ -88,21 +88,41 @@ class ComparableSalesStatistics extends React.Component
                             </Row>
                             <Row>
                                 <Col xs={4}>
-                                    <strong>TMI Range</strong>&nbsp;&nbsp;&nbsp;
+                                    <strong>Cap Rate Range (%)</strong>&nbsp;&nbsp;&nbsp;
                                     {
-                                        stats.minTMI ? <span>{stats.minTMI} - {stats.maxTMI}</span> : null
+                                        stats.minCapRate ? <span>{stats.minCapRate} - {stats.maxCapRate}</span> : null
                                     }
                                 </Col>
                                 <Col xs={4}>
-                                    <strong>Vacancy Range</strong>&nbsp;&nbsp;&nbsp;
+                                    <strong>Price Per Square Foot Range ($)</strong>&nbsp;&nbsp;&nbsp;
                                     {
                                         stats.minVacancy ? <span>{stats.minVacancy} - {stats.maxVacancy}</span> : null
                                     }
                                 </Col>
                                 <Col xs={4}>
-                                    <strong>Cap Rate Range</strong>&nbsp;&nbsp;&nbsp;
+                                    <strong>Building Size Range (sq)</strong>&nbsp;&nbsp;&nbsp;
                                     {
-                                        stats.minCapRate ? <span>{stats.minCapRate} - {stats.maxCapRate}</span> : null
+                                        stats.minVacancy ? <span>{stats.minVacancy} - {stats.maxVacancy}</span> : null
+                                    }
+                                </Col>
+                            </Row>
+                            <Row>
+                                <Col xs={4}>
+                                    <strong>Cap Rate Average (%)</strong>&nbsp;&nbsp;&nbsp;
+                                    {
+                                        stats.capRateAverage ? <span>{stats.capRateAverage}</span> : null
+                                    }
+                                </Col>
+                                <Col xs={4}>
+                                    <strong>Price Per Square Average ($)</strong>&nbsp;&nbsp;&nbsp;
+                                    {
+                                        stats.minVacancy ? <span>{stats.minVacancy} - {stats.maxVacancy}</span> : null
+                                    }
+                                </Col>
+                                <Col xs={4}>
+                                    <strong>Building Size Average (sq)</strong>&nbsp;&nbsp;&nbsp;
+                                    {
+                                        stats.minVacancy ? <span>{stats.minVacancy} - {stats.maxVacancy}</span> : null
                                     }
                                 </Col>
                             </Row>

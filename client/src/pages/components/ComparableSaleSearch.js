@@ -166,6 +166,22 @@ class ComparableSaleSearch extends React.Component
                                             }
                                         </td>
                                     </tr>
+                                    <tr>
+                                        <td>
+                                            <strong>Sub Type:</strong>
+                                        </td>
+                                        <td>
+                                            {
+                                                <FieldDisplayEdit
+                                                    type={"tags"}
+                                                    value={this.state.search.propertyTags}
+                                                    onChange={(newValue) => this.changeSearchField("propertyTags", newValue)}
+                                                    hideInput={false}
+                                                    hideIcon={true}
+                                                />
+                                            }
+                                        </td>
+                                    </tr>
                                     </tbody>
                                 </Col>
                                 <Col xs={12} sm={6} md={4}>
@@ -177,7 +193,7 @@ class ComparableSaleSearch extends React.Component
                                         <td>
                                             {
                                                 <FieldDisplayEdit
-                                                    type={"currency"}
+                                                    type={"number"}
                                                     value={this.state.search.leasableAreaFrom}
                                                     onChange={(newValue) => this.changeSearchField("leasableAreaFrom", newValue)}
                                                     hideInput={false}
@@ -193,7 +209,7 @@ class ComparableSaleSearch extends React.Component
                                         <td>
                                             {
                                                 <FieldDisplayEdit
-                                                    type={"currency"}
+                                                    type={"number"}
                                                     value={this.state.search.leasableAreaTo}
                                                     onChange={(newValue) => this.changeSearchField("leasableAreaTo", newValue)}
                                                     hideInput={false}
@@ -205,16 +221,33 @@ class ComparableSaleSearch extends React.Component
                                     </tr>
                                     <tr>
                                         <td>
-                                            <strong>Tags:</strong>
+                                            <strong>Price Per Square Foot Low:</strong>
                                         </td>
                                         <td>
                                             {
                                                 <FieldDisplayEdit
-                                                    type={"tags"}
-                                                    value={this.state.search.propertyTags}
-                                                    onChange={(newValue) => this.changeSearchField("propertyTags", newValue)}
+                                                    type={"number"}
+                                                    value={this.state.search.pricePerSquareFootFrom}
+                                                    onChange={(newValue) => this.changeSearchField("pricePerSquareFootFrom", newValue)}
                                                     hideInput={false}
                                                     hideIcon={true}
+                                                />
+                                            }
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <strong>Price Per Square Foot Low:</strong>
+                                        </td>
+                                        <td>
+                                            {
+                                                <FieldDisplayEdit
+                                                    type={"number"}
+                                                    value={this.state.search.pricePerSquareFootTo}
+                                                    onChange={(newValue) => this.changeSearchField("pricePerSquareFootTo", newValue)}
+                                                    hideInput={false}
+                                                    hideIcon={true}
+
                                                 />
                                             }
                                         </td>

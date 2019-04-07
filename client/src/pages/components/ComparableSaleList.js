@@ -134,7 +134,7 @@ class ComparableSaleList extends React.Component
                                         Sale Price
                                     </Col>
                                     <Col xs={2} className={"header-field-column"}>
-                                        Property Type
+                                        Property Type<br/>Sub Type
                                     </Col>
                                     <Col xs={1} className={"header-field-column"}>
                                         Cap Rate (%)

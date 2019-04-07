@@ -14,6 +14,11 @@ class BaseModel extends Object
     {
         super();
 
+        if (!data)
+        {
+            return;
+        }
+
         try
         {
             const modelClass = this.constructor;

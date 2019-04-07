@@ -37,7 +37,7 @@ class ViewComparableLeasesDatabase extends React.Component {
             defaultSearch["sizeOfUnitTo"] = Math.round(_.max(unitsWithSize, (unit) => unit.squareFootage).squareFootage * 1.2 / 100) * 100;
         }
 
-        const unitsWithSizeRent = _.filter(unitsWithSize, (unit) => _.isNumber(unit.squareFootage) && !_.isUndefined(unit.currentTenancy));
+        const unitsWithSizeRent = _.filter(unitsWithSize, (unit) => _.isNumber(unit.squareFootage) && !_.isUndefined(unit.currentTenancy) && !_.isNull(unit.currentTenancy));
         if (unitsWithSizeRent.length > 0)
         {
             const minRentUnit = _.min(unitsWithSizeRent, (unit) => unit.currentTenancy.yearlyRent / unit.squareFootage);

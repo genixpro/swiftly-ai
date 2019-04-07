@@ -3,6 +3,7 @@ import GenericField from "./GenericField";
 import ModelField from "./ModelField";
 import ListField from "./ListField";
 import BaseModel from "./BaseModel";
+import DateField from "./DateField";
 
 class ComparableSaleModel extends BaseModel
 {
@@ -18,7 +19,7 @@ class ComparableSaleModel extends BaseModel
     static sizeSquareFootage = new GenericField();
     static taxesMaintenanceInsurancePSF = new GenericField();
     static vacancyRate = new GenericField();
-    static saleDate = new GenericField();
+    static saleDate = new DateField();
     static propertyTags = new ListField(new GenericField());
     static purchaser = new GenericField();
 

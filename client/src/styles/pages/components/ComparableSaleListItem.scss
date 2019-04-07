@@ -164,6 +164,11 @@
     font-style: italic;
   }
 
+  .header-field-column
+  {
+    font-size: 12px;
+  }
+
   .header-field-column:not(:first-child)
   {
     border-left: 1px solid #eeeeee;

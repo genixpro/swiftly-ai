@@ -111,6 +111,43 @@ class ComparableSaleListItem extends React.Component
     }
 
 
+    defaultDescriptionText()
+    {
+        const comparableSale = this.props.comparableSale;
+
+
+        let text = `Is in reference to the ${new Date(comparableSale.saleDate).getFullYear()}/${new Date(comparableSale.saleDate).getMonth()}/${new Date(comparableSale.saleDate).getDate()} sale of a ${comparableSale.propertyType} building located at ${comparableSale.address}.`;
+
+        if (comparableSale.sizeSquareFootage)
+        {
+            text += `The building has gross rentable area of ${comparableSale.sizeSquareFootage}.`;
+        }
+
+
+        if(comparableSale.vendor && comparableSale.purchaser && comparableSale.salePrice)
+        {
+            text += `The property was sold by ${comparableSale.vendor} and was acquired by ${comparableSale.purchaser} for a consideration of $${comparableSale.salePrice}. `;
+        }
+
+        if(comparableSale.description)
+        {
+            text += comparableSale.description;
+        }
+
+        if(comparableSale.tenants)
+        {
+            text += `The property is leased to ${comparableSale.tenants}.`;
+        }
+
+        if(comparableSale.capitalizationRate)
+        {
+            text += `The net income of ${comparableSale.netOperatingIncome} yielded a ${comparableSale.capitalizationRate}% rate of return.`;
+        }
+
+        return text;
+    }
+
+
     render()
     {
         const comparableSale = this.state.comparableSale;
@@ -177,7 +214,8 @@ class ComparableSaleListItem extends React.Component
                                         /> : <span className={"no-data"}>No Price</span>}
                                     </Col>
                                     <Col xs={2} className={"header-field-column"}>
-                                        {comparableSale.propertyType ? comparableSale.propertyType : <span className={"no-data"}>No Propery Type</span>}
+                                        {comparableSale.propertyType ? comparableSale.propertyType : <span className={"no-data"}>No Propery Type</span>}<br/>
+                                        {comparableSale.propertyTags ? comparableSale.propertyTags.map((tag, tagIndex) => <span>{tag}{tagIndex !== comparableSale.propertyTags.length ? ", " : null}</span>) : <span className={"no-data"}>No Sub Type</span>}
                                     </Col>
                                     <Col xs={1} className={"header-field-column small-header-column"}>
                                         {comparableSale.capitalizationRate ? comparableSale.capitalizationRate : <span className={"no-data"}>No Cap Rate</span>}
@@ -373,31 +411,10 @@ class ComparableSaleListItem extends React.Component
                                         type={"textbox"}
                                         edit={this.props.edit}
                                         placeholder={"Description..."}
-                                        value={comparableSale.description}
+                                        value={comparableSale.description ? comparableSale.description : this.defaultDescriptionText()}
                                         onChange={(newValue) => this.changeComparableField('description', newValue)}
                                     />
 
-                                    {/*<p>Is in reference to the {comparableSale.saleDate} sale of a {comparableSale.propertyType}*/}
-                                        {/*building located at {comparableSale.address}.*/}
-
-                                        {/*{*/}
-                                            {/*comparableSale.sizeSquareFootage ? `The building has gross rentable area of ${comparableSale.sizeSquareFootage}.` : ""*/}
-                                        {/*}*/}
-
-                                        {/*{*/}
-                                            {/*comparableSale.vendor ? `The property was sold by ${comparableSale.vendor} and was acquired by ${comparableSale.purchaser} for a consideration of ${comparableSale.salePrice}` : ""*/}
-                                        {/*}*/}
-                                        {/*{*/}
-                                            {/*comparableSale.description ? `${comparableSale.description}` : ""*/}
-                                        {/*}*/}
-
-                                        {/*{*/}
-                                            {/*comparableSale.tenants ? `The property is ${comparableSale.occupancyRate} leased to ${comparableSale.tenants}.` : ""*/}
-                                        {/*}*/}
-
-                                        {/*{*/}
-                                            {/*comparableSale.capitalizationRate ? `The net income of ${comparableSale.netOperatingIncome} yielded a ${comparableSale.capitalizationRate}% rate of return.` : ""*/}
-                                        {/*}</p>*/}
                                 </div>
                             </div>
                         </div>

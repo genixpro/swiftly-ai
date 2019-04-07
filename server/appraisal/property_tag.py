@@ -25,7 +25,7 @@ class PropertyTagAPI(object):
         if "name" in self.request.GET:
             query['name__icontains'] = self.request.GET['name']
 
-        propertyTags = PropertyTag.objects(**query)
+        propertyTags = PropertyTag.objects(**query).limit(10)
 
         return {"tags": list([json.loads(propertyTag.to_json()) for propertyTag in propertyTags])}
 

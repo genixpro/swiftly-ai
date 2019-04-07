@@ -40,17 +40,10 @@ class TagEditor extends React.Component {
 
     loadOptions(inputValue, callback)
     {
-        if (inputValue)
+        axios.get(`/property_tags`, {params: {name: inputValue}}).then((response) =>
         {
-            axios.get(`/property_tags`, {params: {name: inputValue}}).then((response) =>
-            {
-                callback(response.data.tags.map((tag) => ({value: tag.name, label: tag.name}) ));
-            });
-        }
-        else
-        {
-            callback([]);
-        }
+            callback(response.data.tags.map((tag) => ({value: tag.name, label: tag.name}) ));
+        });
     }
 
 
