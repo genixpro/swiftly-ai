@@ -128,7 +128,7 @@ class ComparableSaleList extends React.Component
                                         Address
                                     </Col>
                                     <Col xs={2} className={"header-field-column"}>
-                                        Building Size
+                                        Building Size (sf)
                                     </Col>
                                     <Col xs={2} className={"header-field-column"}>
                                         Sale Price
@@ -137,10 +137,10 @@ class ComparableSaleList extends React.Component
                                         Property Type
                                     </Col>
                                     <Col xs={1} className={"header-field-column"}>
-                                        Cap Rate
+                                        Cap Rate (%)
                                     </Col>
                                     <Col xs={1} className={"header-field-column"}>
-                                        PSF
+                                        PSF ($)
                                     </Col>
                                 </Row>
                             </CardTitle>
