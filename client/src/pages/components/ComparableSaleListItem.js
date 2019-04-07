@@ -7,6 +7,7 @@ import Datetime from 'react-datetime';
 import PropertyTypeSelector from './PropertyTypeSelector';
 import ComparableLeaseListItem from "./ComparableLeaseListItem";
 import UploadableImage from "./UploadableImage";
+import NumberFormat from 'react-number-format';
 
 class ComparableSaleListItem extends React.Component
 {
@@ -158,10 +159,22 @@ class ComparableSaleListItem extends React.Component
                                         {comparableSale.address ? comparableSale.address : <span className={"no-data"}>No Address</span>}
                                     </Col>
                                     <Col xs={2} className={"header-field-column"}>
-                                        {comparableSale.sizeSquareFootage ? comparableSale.sizeSquareFootage : <span className={"no-data"}>No Size</span>}
+                                        {comparableSale.sizeSquareFootage ? <NumberFormat
+                                            value={comparableSale.sizeSquareFootage}
+                                            displayType={'text'}
+                                            thousandSeparator={', '}
+                                            decimalScale={2}
+                                            fixedDecimalScale={true}
+                                        /> : <span className={"no-data"}>No Size</span>}
                                     </Col>
                                     <Col xs={2} className={"header-field-column"}>
-                                        {comparableSale.salePrice ? comparableSale.salePrice : <span className={"no-data"}>No Price</span>}
+                                        {comparableSale.salePrice ? <NumberFormat
+                                            value={comparableSale.salePrice}
+                                            displayType={'text'}
+                                            thousandSeparator={', '}
+                                            decimalScale={2}
+                                            fixedDecimalScale={true}
+                                        /> : <span className={"no-data"}>No Price</span>}
                                     </Col>
                                     <Col xs={2} className={"header-field-column"}>
                                         {comparableSale.propertyType ? comparableSale.propertyType : <span className={"no-data"}>No Propery Type</span>}

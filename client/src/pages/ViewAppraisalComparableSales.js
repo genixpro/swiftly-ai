@@ -27,16 +27,18 @@ class ViewAppraisalComparableSales extends React.Component {
             }
             else
             {
-                // alert('loading');
                 return axios.get(`/comparable_sales/` + comparableSaleId).then((response) =>
                 {
-                    this.loadedComparables[comparableSaleId] = new ComparableSaleModel(response.data.comparableSale);
-                    return this.loadedComparables[comparableSaleId];
+                    if (response.data.comparableSale)
+                    {
+                        this.loadedComparables[comparableSaleId] = new ComparableSaleModel(response.data.comparableSale);
+                        return this.loadedComparables[comparableSaleId];
+                    }
                 });
             }
         }).then((comparableSales) =>
         {
-            this.setState({comparableSales: comparableSales})
+            this.setState({comparableSales: comparableSales.filter((item) => item)})
         })
     }
 
@@ -131,7 +133,7 @@ class ViewAppraisalComparableSales extends React.Component {
                         </Col>
                     </Row>
                     <Row>
-                        <Col xs={6}>
+                        <Col xs={8}>
                             <ComparableSaleList comparableSales={this.state.comparableSales}
                                                 statsTitle={"Statistics for Selected Comps"}
                                                 allowNew={false}
@@ -142,7 +144,7 @@ class ViewAppraisalComparableSales extends React.Component {
                                                 onChange={(comps) => this.onComparablesChanged(comps)}
                             />
                         </Col>
-                        <Col xs={6}>
+                        <Col xs={4}>
                             <ComparableSalesMap
                                 appraisal={this.props.appraisal}
                                 comparableSales={this.state.comparableSales}

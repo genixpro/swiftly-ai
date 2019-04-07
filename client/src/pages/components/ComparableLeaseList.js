@@ -87,7 +87,7 @@ class ComparableLeaseList extends React.Component
         // comparables.push(newComparable);
 
         this.props.onNewComparable(newComparable);
-        this.setState({isCreatingNewItem: false})
+        this.setState({isCreatingNewItem: false, newComparableSale: {}})
     }
 
     updateComparable(changedComp, index)
@@ -183,8 +183,8 @@ class ComparableLeaseList extends React.Component
                                                 onChange={(comp) => this.setState({newComparableSale: comp})}/>
                                         </ModalBody>
                                         <ModalFooter>
-                                        <Button color="primary" onClick={this.toggleNewItem.bind(this)}>Save</Button>{' '}
-                                        <Button color="primary" onClick={this.toggleNewItem.bind(this)}>Cancel</Button>{' '}
+                                        <Button color="primary" onClick={() => this.addNewComparable(this.state.newComparableSale)}>Save</Button>{' '}
+                                        <Button color="primary" onClick={() => this.toggleNewItem.bind(this)}>Cancel</Button>{' '}
                                 </ModalFooter>
                             </Modal>
                         </div> : null

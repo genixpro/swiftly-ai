@@ -46,7 +46,7 @@ class ComparableSaleList extends React.Component
     addNewComparable(newComparable)
     {
         this.props.onNewComparable(newComparable);
-        this.setState({isCreatingNewItem: false})
+        this.setState({isCreatingNewItem: false, newComparableSale: {}})
     }
 
     updateComparable(changedComp, index)

@@ -59,6 +59,9 @@ class ComparableSaleAPI(object):
 
         comparableSale = ComparableSale.objects(id=comparableId).first()
 
+        if comparableSale is not None:
+            return {"comparableSale": None}
+
         return {"comparableSale": json.loads(comparableSale.to_json())}
 
     def collection_post(self):

@@ -124,18 +124,18 @@ class ViewAppraisalComparableLeases extends React.Component {
                     </Col>
                 </Row>
                 <Row>
-                    <Col xs={6}>
+                    <Col xs={8}>
                         <ComparableLeaseList comparableLeases={this.state.comparableLeases}
                                              statsTitle={"Statistics for Selected Comps"}
                                             allowNew={false}
                                             history={this.props.history}
                                             appraisalId={this.props.match.params._id}
-                                             appraisalComparables={this.props.appraisal.comparableLeases}
+                                            appraisalComparables={this.props.appraisal.comparableLeases}
                                             onRemoveComparableClicked={(comp) => this.removeComparableFromAppraisal(comp)}
                                             onChange={(comps) => this.onComparablesChanged(comps)}
                         />
                     </Col>
-                    <Col xs={6}>
+                    <Col xs={4}>
                         <ComparableLeasesMap
                             appraisal={this.props.appraisal}
                             comparableLeases={this.state.comparableLeases}

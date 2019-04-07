@@ -34,7 +34,7 @@ class ComparableSale(Document):
     sizeSquareFootage = FloatField()
 
     # The occupancy rate of the building
-    occupancyPercentage = FloatField()
+    occupancyRate = FloatField()
 
     # The purchaser
     purchaser = StringField()

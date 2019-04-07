@@ -154,14 +154,23 @@
 {
   cursor: pointer;
 
+  font-size: 12px;
+  span {
+    font-size: 12px;
+  }
+
   span.no-data
   {
     font-style: italic;
-    font-size: 75%;
   }
 
   .header-field-column:not(:first-child)
   {
     border-left: 1px solid #eeeeee;
   }
+}
+
+.popover
+{
+  z-index: 100100;
 }
