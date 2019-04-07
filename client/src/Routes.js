@@ -10,6 +10,7 @@ import history from "./history";
 import StartAppraisal from './pages/StartAppraisal';
 import ViewAppraisal from './pages/ViewAppraisal';
 import ViewAllAppraisals from './pages/ViewAllAppraisals';
+import ClientDropbox from './pages/ClientDropbox';
 
 // import SubMenu from './components/SubMenu/SubMenu';
 
@@ -17,6 +18,7 @@ import ViewAllAppraisals from './pages/ViewAllAppraisals';
 // listed here to Switch between layouts
 // depending on the current pathname
 const listofPages = [
+    "/drop"
     /* See full project for reference */
 ];
 
@@ -36,6 +38,8 @@ const Routes = ({ location }) => {
             // Page Layout component wrapper
             <BasePage>
                 <Switch location={location}>
+                    <Route path="/drop/" component={ClientDropbox} history={history}/>
+                    <Route path="/drop/:id" component={ClientDropbox} history={history}/>
                     {/* See full project for reference */}
                 </Switch>
             </BasePage>
