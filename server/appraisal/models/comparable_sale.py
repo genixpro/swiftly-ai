@@ -33,6 +33,24 @@ class ComparableSale(Document):
     # The square footage of building
     sizeSquareFootage = FloatField()
 
+    # The occupancy rate of the building
+    occupancyPercentage = FloatField()
+
+    # The purchaser
+    purchaser = StringField()
+
+    vendor = StringField()
+
+    tenants = StringField()
+
+    additionalInfo = StringField()
+
+    constructionDate = ConvertingDateField(sparse=True, default=None, null=True)
+
+    siteArea = FloatField()
+
+    parking = StringField()
+
     # The TMI (taxes maintenance insurance) for the property
     taxesMaintenanceInsurancePSF = FloatField()
 

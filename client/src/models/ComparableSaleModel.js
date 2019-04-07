@@ -20,6 +20,18 @@ class ComparableSaleModel extends BaseModel
     static vacancyRate = new GenericField();
     static saleDate = new GenericField();
     static propertyTags = new ListField(new GenericField());
+    static purchaser = new GenericField();
+
+    static vendor = new GenericField();
+
+    static tenants = new GenericField();
+
+    static additionalInfo = new GenericField();
+    static constructionDate = new GenericField();
+
+    static siteArea = new GenericField();
+
+    static parking = new GenericField();
 }
 
 export default ComparableSaleModel;

@@ -3,6 +3,8 @@ import datetime
 from .extraction_reference import ExtractionReference
 
 class Word(EmbeddedDocument):
+    meta = {'strict': False}
+
     # This is the raw text of the word
     word = StringField()
 

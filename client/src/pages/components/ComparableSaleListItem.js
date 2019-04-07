@@ -208,24 +208,24 @@ class ComparableSaleListItem extends React.Component
                                         onChange={(newValue) => this.changeComparableField('propertyType', newValue)}
                                     />
 
-                                    <span className={"comparable-field-label"}>NOI: </span>
+                                    <span className={"comparable-field-label"}>Sub Type:</span>
 
                                     <FieldDisplayEdit
-                                        type={"currency"}
+                                        type={"tags"}
                                         edit={this.props.edit}
-                                        placeholder={"Net Operating Income"}
-                                        value={comparableSale.netOperatingIncome}
-                                        onChange={(newValue) => this.changeComparableField('netOperatingIncome', newValue)}
+                                        placeholder={"Sub Type"}
+                                        value={comparableSale.propertyTags}
+                                        onChange={(newValue) => this.changeComparableField('propertyTags', newValue)}
                                     />
 
-                                    <span className={"comparable-field-label"}>TMI (psf):</span>
+                                    <span className={"comparable-field-label"}>Building Size:</span>
 
                                     <FieldDisplayEdit
-                                        type={"currency"}
+                                        type={"number"}
                                         edit={this.props.edit}
-                                        placeholder={"Taxes Maintenance Insurance (psf)"}
-                                        value={comparableSale.taxesMaintenanceInsurancePSF}
-                                        onChange={(newValue) => this.changeComparableField('taxesMaintenanceInsurancePSF', newValue)}
+                                        placeholder={"Building Size"}
+                                        value={comparableSale.sizeSquareFootage}
+                                        onChange={(newValue) => this.changeComparableField('sizeSquareFootage', newValue)}
                                     />
 
                                     <span className={"comparable-field-label"}>Sale Price:</span>
@@ -236,25 +236,6 @@ class ComparableSaleListItem extends React.Component
                                         placeholder={"Sale Price"}
                                         value={comparableSale.salePrice}
                                         onChange={(newValue) => this.changeComparableField('salePrice', newValue)}
-                                    />
-                                    <span className={"comparable-field-label"}>Sale Date:</span>
-
-                                    <FieldDisplayEdit
-                                        type={"date"}
-                                        edit={this.props.edit}
-                                        placeholder={"Sale Date"}
-                                        value={comparableSale.saleDate}
-                                        onChange={(newValue) => this.changeComparableField('saleDate', newValue)}
-                                    />
-
-                                    <span className={"comparable-field-label"}>Vacancy Rate:</span>
-
-                                    <FieldDisplayEdit
-                                        type={"number"}
-                                        edit={this.props.edit}
-                                        placeholder={"Vacancy Rate"}
-                                        value={comparableSale.vacancyRate}
-                                        onChange={(newValue) => this.changeComparableField('vacancyRate', newValue)}
                                     />
 
                                     <span className={"comparable-field-label"}>Cap Rate:</span>
@@ -267,14 +248,114 @@ class ComparableSaleListItem extends React.Component
                                         onChange={(newValue) => this.changeComparableField('capitalizationRate', newValue)}
                                     />
 
-                                    <span className={"comparable-field-label"}>Tags:</span>
+                                    <span className={"comparable-field-label"}>Sale Date:</span>
 
                                     <FieldDisplayEdit
-                                        type={"tags"}
+                                        type={"date"}
                                         edit={this.props.edit}
-                                        placeholder={"Property Tags"}
-                                        value={comparableSale.propertyTags}
-                                        onChange={(newValue) => this.changeComparableField('propertyTags', newValue)}
+                                        placeholder={"Sale Date"}
+                                        value={comparableSale.saleDate}
+                                        onChange={(newValue) => this.changeComparableField('saleDate', newValue)}
+                                    />
+
+                                    <span className={"comparable-field-label"}>Vendor:</span>
+
+                                    <FieldDisplayEdit
+                                        type={"text"}
+                                        edit={this.props.edit}
+                                        placeholder={"Vendor"}
+                                        value={comparableSale.vendor}
+                                        onChange={(newValue) => this.changeComparableField('vendor', newValue)}
+                                    />
+
+                                    <span className={"comparable-field-label"}>Purchaser:</span>
+
+                                    <FieldDisplayEdit
+                                        type={"text"}
+                                        edit={this.props.edit}
+                                        placeholder={"Purchaser"}
+                                        value={comparableSale.purchaser}
+                                        onChange={(newValue) => this.changeComparableField('purchaser', newValue)}
+                                    />
+
+                                    <span className={"comparable-field-label"}>NOI: </span>
+
+                                    <FieldDisplayEdit
+                                        type={"currency"}
+                                        edit={this.props.edit}
+                                        placeholder={"Net Operating Income"}
+                                        value={comparableSale.netOperatingIncome}
+                                        onChange={(newValue) => this.changeComparableField('netOperatingIncome', newValue)}
+                                    />
+
+                                    <span className={"comparable-field-label"}>Vacancy Rate:</span>
+
+                                    <FieldDisplayEdit
+                                        type={"number"}
+                                        edit={this.props.edit}
+                                        placeholder={"Vacancy Rate"}
+                                        value={comparableSale.vacancyRate}
+                                        onChange={(newValue) => this.changeComparableField('vacancyRate', newValue)}
+                                    />
+
+                                    <span className={"comparable-field-label"}>Occupancy Rate:</span>
+
+                                    <FieldDisplayEdit
+                                        type={"number"}
+                                        edit={this.props.edit}
+                                        placeholder={"Occupancy Rate"}
+                                        value={comparableSale.occupancyRate}
+                                        onChange={(newValue) => this.changeComparableField('occupancyRate', newValue)}
+                                    />
+
+                                    <span className={"comparable-field-label"}>Tenants:</span>
+
+                                    <FieldDisplayEdit
+                                        type={"text"}
+                                        edit={this.props.edit}
+                                        placeholder={"Tenants"}
+                                        value={comparableSale.tenants}
+                                        onChange={(newValue) => this.changeComparableField('tenants', newValue)}
+                                    />
+
+                                    <span className={"comparable-field-label"}>Construction Date:</span>
+
+                                    <FieldDisplayEdit
+                                        type={"date"}
+                                        edit={this.props.edit}
+                                        placeholder={"Construction Date"}
+                                        value={comparableSale.constructionDate}
+                                        onChange={(newValue) => this.changeComparableField('constructionDate', newValue)}
+                                    />
+
+                                    <span className={"comparable-field-label"}>Site Area:</span>
+
+                                    <FieldDisplayEdit
+                                        type={"text"}
+                                        edit={this.props.edit}
+                                        placeholder={"Site Area"}
+                                        value={comparableSale.siteArea}
+                                        onChange={(newValue) => this.changeComparableField('siteArea', newValue)}
+                                    />
+
+                                    <span className={"comparable-field-label"}>Parking:</span>
+
+                                    <FieldDisplayEdit
+                                        type={"text"}
+                                        edit={this.props.edit}
+                                        placeholder={"Parking"}
+                                        value={comparableSale.parking}
+                                        onChange={(newValue) => this.changeComparableField('parking', newValue)}
+                                    />
+
+                                    <span className={"comparable-field-label"}>Additional Info:</span>
+
+                                    <FieldDisplayEdit
+                                        type={"text"}
+                                        edit={this.props.edit}
+                                        placeholder={"Additional Info"}
+                                        value={comparableSale.additionalInfo}
+                                        onChange={(newValue) => this.changeComparableField('additionalInfo', newValue)}
                                     />
 
                                     <span className={"comparable-field-label"}>Description:</span>
@@ -286,6 +367,28 @@ class ComparableSaleListItem extends React.Component
                                         value={comparableSale.description}
                                         onChange={(newValue) => this.changeComparableField('description', newValue)}
                                     />
+
+                                    <p>Is in reference to the {comparableSale.saleDate} sale of a {comparableSale.propertyType}
+                                        building located at {comparableSale.address}.
+
+                                        {
+                                            comparableSale.sizeSquareFootage ? `The building has gross rentable area of ${comparableSale.sizeSquareFootage}.` : ""
+                                        }
+
+                                        {
+                                            comparableSale.vendor ? `The property was sold by ${comparableSale.vendor} and was acquired by ${comparableSale.purchaser} for a consideration of ${comparableSale.salePrice}` : ""
+                                        }
+                                        {
+                                            comparableSale.description ? `${comparableSale.description}` : ""
+                                        }
+
+                                        {
+                                            comparableSale.tenants ? `The property is ${comparableSale.occupancyRate} leased to ${comparableSale.tenants}.` : ""
+                                        }
+
+                                        {
+                                            comparableSale.capitalizationRate ? `The net income of ${comparableSale.netOperatingIncome} yielded a ${comparableSale.capitalizationRate}% rate of return.` : ""
+                                        }</p>
                                 </div>
                             </div>
                         </div>
