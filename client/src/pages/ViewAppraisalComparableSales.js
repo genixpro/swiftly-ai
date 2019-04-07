@@ -31,7 +31,7 @@ class ViewAppraisalComparableSales extends React.Component {
                 return axios.get(`/comparable_sales/` + comparableSaleId).then((response) =>
                 {
                     this.loadedComparables[comparableSaleId] = new ComparableSaleModel(response.data.comparableSale);
-                    return response.data.comparableSale;
+                    return this.loadedComparables[comparableSaleId];
                 });
             }
         }).then((comparableSales) =>

@@ -42,6 +42,9 @@ class Appraisal(Document):
     # This is here to describe the zoning of the land the building is on
     zoning = StringField()
 
+    # A list of tags associated with this comparable lease
+    propertyTags = ListField(StringField())
+
     # A list of units within this Appraisal
     units = ListField(EmbeddedDocumentField(Unit))
 

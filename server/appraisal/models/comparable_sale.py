@@ -42,5 +42,8 @@ class ComparableSale(Document):
     # The date that the comparable was sold
     saleDate = ConvertingDateField(sparse=True, default=None, null=True)
 
+    # A list of tags associated with this comparable lease
+    propertyTags = ListField(StringField())
+
 
 

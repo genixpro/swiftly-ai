@@ -19,6 +19,7 @@ class ComparableSaleModel extends BaseModel
     static taxesMaintenanceInsurancePSF = new GenericField();
     static vacancyRate = new GenericField();
     static saleDate = new GenericField();
+    static propertyTags = new ListField(new GenericField());
 }
 
 export default ComparableSaleModel;

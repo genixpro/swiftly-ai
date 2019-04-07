@@ -36,3 +36,6 @@ class ComparableLease(Document):
 
     # This specifies the rent-type. This can be either "NET" or "GROSS"
     rentType = StringField(choices=["net", "gross"], default="net")
+
+    # A list of tags associated with this comparable lease
+    propertyTags = ListField(StringField())

@@ -86,6 +86,7 @@ class ViewBuildingInformation extends React.Component
                                                 {this.renderFieldRow("Size of Building", "sizeOfBuilding", "number")}
                                                 {this.renderFieldRow("Lot Size", "sizeOfLand", "number")}
                                                 {this.renderFieldRow("Legal Description", "legalDescription")}
+                                                {this.renderFieldRow("Tags", "propertyTags", "tags")}
                                                 {this.renderFieldRow("Zoning", "zoning", "zone")}
 
                                                 {

@@ -273,6 +273,17 @@ class ComparableSaleListItem extends React.Component
                                         value={comparableSale.capitalizationRate}
                                         onChange={(newValue) => this.changeComparableField('capitalizationRate', newValue)}
                                     />
+
+                                    <span className={"comparable-field-label"}>Tags:</span>
+
+                                    <FieldDisplayEdit
+                                        type={"tags"}
+                                        edit={this.props.edit}
+                                        placeholder={"Property Tags"}
+                                        value={comparableSale.propertyTags}
+                                        onChange={(newValue) => this.changeComparableField('propertyTags', newValue)}
+                                    />
+
                                     <span className={"comparable-field-label"}>Description:</span>
 
                                     <FieldDisplayEdit

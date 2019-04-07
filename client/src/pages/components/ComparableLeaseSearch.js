@@ -97,6 +97,22 @@ class ComparableLeaseSearch extends React.Component
                                             }
                                         </td>
                                     </tr>
+                                    <tr>
+                                        <td>
+                                            <strong>Tags:</strong>
+                                        </td>
+                                        <td>
+                                            {
+                                                <FieldDisplayEdit
+                                                    type={"tags"}
+                                                    value={this.state.search.propertyTags}
+                                                    onChange={(newValue) => this.changeSearchField("propertyTags", newValue)}
+                                                    hideInput={false}
+                                                    hideIcon={true}
+                                                />
+                                            }
+                                        </td>
+                                    </tr>
                                     </tbody>
                                 </Col>
                                 <Col xs={12} sm={6} md={4}>

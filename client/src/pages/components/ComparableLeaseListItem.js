@@ -20,6 +20,7 @@ class ComparableLeaseListItem extends React.Component
 
     componentDidMount()
     {
+        console.log(this.props.comparableLease);
         if (!this.props.comparableLease._id || this.props.openByDefault || this.props.comparableLease[ComparableLeaseListItem._newLease])
         {
             this.setState({detailsOpen: true})
@@ -252,6 +253,16 @@ class ComparableLeaseListItem extends React.Component
                                         placeholder={"Lease Date"}
                                         value={comparableLease.leaseDate}
                                         onChange={(newValue) => this.changeComparableField('leaseDate', newValue)}
+                                    />
+
+                                    <span className={"comparable-field-label"}>Tags:</span>
+
+                                    <FieldDisplayEdit
+                                        type={"tags"}
+                                        edit={this.props.edit}
+                                        placeholder={"Property Tags"}
+                                        value={comparableLease.propertyTags}
+                                        onChange={(newValue) => this.changeComparableField('propertyTags', newValue)}
                                     />
 
                                     <span className={"comparable-field-label"}>Description:</span>

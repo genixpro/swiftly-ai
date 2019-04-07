@@ -40,6 +40,10 @@ class ComparableSaleAPI(object):
         if 'propertyType' in self.request.GET:
             query['propertyType'] = self.request.GET['propertyType']
 
+
+        if 'propertyTags' in self.request.GET:
+            query['propertyTags__all'] = self.request.GET['propertyTags']
+
         if 'locationTop' in self.request.GET:
             query['location__geo_within_box'] = [
                 (float(self.request.GET['locationLeft']), float(self.request.GET['locationBottom'])),

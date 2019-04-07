@@ -24,6 +24,7 @@ class AppraisalModel extends BaseModel
     static sizeOfLand = new GenericField();
     static legalDescription = new GenericField();
     static zoning = new GenericField();
+    static propertyTags = new ListField(new GenericField());
     static units = new ListField(new ModelField(UnitModel));
     static incomeStatement = new ModelField(IncomeStatementModel);
     static discountedCashFlowInputs = new ModelField(DiscountedCashFlowInputsModel);

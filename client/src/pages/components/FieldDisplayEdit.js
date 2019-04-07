@@ -7,6 +7,7 @@ import PropertyTypeSelector from './PropertyTypeSelector';
 import RentTypeSelector from './RentTypeSelector';
 import history from "../../history";
 import ZoneSelector from "./ZoneSelector";
+import TagEditor from "./TagEditor";
 
 import {
     Input,
@@ -129,6 +130,13 @@ class FieldDisplayEdit extends React.Component
                 return null;
             }
         }
+        else if(this.props.type === 'tags')
+        {
+            if (!value)
+            {
+                return [];
+            }
+        }
         return value;
     }
 
@@ -183,6 +191,15 @@ class FieldDisplayEdit extends React.Component
     incomeItemTypeInputUpdated(newValue)
     {
         this.setState({value: newValue}, () => this.finishEditing());
+    }
+
+    tagInputUpdated(newValue)
+    {
+        // if (newValue)
+        // {
+        this.setState({value: newValue});
+        this.props.onChange(this.cleanValue(newValue));
+        // }
     }
 
 
@@ -307,6 +324,14 @@ class FieldDisplayEdit extends React.Component
                         <ZoneSelector
                             value={this.state.isEditing ? this.state.value : this.props.value}
                             onChange={(newValue) => this.inputUpdated(newValue) }
+                            onBlur={() => this.finishEditing()}
+                        /> : null
+                }
+                {
+                    this.props.type === "tags" ?
+                        <TagEditor
+                            value={this.state.isEditing ? this.state.value : this.props.value}
+                            onChange={(newValue) => this.tagInputUpdated(newValue) }
                             onBlur={() => this.finishEditing()}
                         /> : null
                 }
