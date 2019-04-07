@@ -170,7 +170,7 @@ class ComparableSaleListItem extends React.Component
                                         {comparableSale.capitalizationRate ? comparableSale.capitalizationRate : <span className={"no-data"}>No Cap Rate</span>}
                                     </Col>
                                     <Col xs={1} className={"header-field-column small-header-column"}>
-                                        {(comparableSale.salePrice && comparableSale.sizeSquareFootage) ? comparableSale.salePrice / comparableSale.sizeSquareFootage : <span className={"no-data"}>No PSF</span>}
+                                        {(comparableSale.salePrice && comparableSale.sizeSquareFootage) ?  "$" + (comparableSale.salePrice / comparableSale.sizeSquareFootage).toFixed(2) : <span className={"no-data"}>No PSF</span>}
                                     </Col>
                                 </Row>
                             </CardTitle>
@@ -247,7 +247,7 @@ class ComparableSaleListItem extends React.Component
                                     <span className={"comparable-field-label"}>Cap Rate:</span>
 
                                     <FieldDisplayEdit
-                                        type={"percentage"}
+                                        type={"percent"}
                                         edit={this.props.edit}
                                         placeholder={"Capitalization Rate"}
                                         value={comparableSale.capitalizationRate}
@@ -297,7 +297,7 @@ class ComparableSaleListItem extends React.Component
                                     <span className={"comparable-field-label"}>Occupancy Rate:</span>
 
                                     <FieldDisplayEdit
-                                        type={"percentage"}
+                                        type={"percent"}
                                         edit={this.props.edit}
                                         placeholder={"Occupancy Rate"}
                                         value={comparableSale.occupancyRate}

@@ -121,7 +121,7 @@ class ViewComparableSalesDatabase extends React.Component {
                 </Row>
                 <ComparableSaleSearch onChange={(search) => this.onSearchChanged(search)} defaultSearch={this.defaultSearch}/>
                 <Row>
-                    <Col xs={6}>
+                    <Col xs={8}>
                         <ComparableSaleList comparableSales={this.state.comparableSales}
                                             statsTitle={"Region Statistics"}
                                             allowNew={true}
@@ -134,7 +134,7 @@ class ViewComparableSalesDatabase extends React.Component {
                                             onChange={(comps) => this.onComparablesChanged(comps)}
                         />
                     </Col>
-                    <Col xs={6}>
+                    <Col xs={4}>
                         <ComparableSalesMap
                             appraisal={this.props.appraisal}
                             comparableSales={this.state.comparableSales}

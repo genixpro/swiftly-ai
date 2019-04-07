@@ -136,7 +136,7 @@ class ViewComparableLeasesDatabase extends React.Component {
                 </Row>
                 <ComparableLeaseSearch onChange={(search) => this.onSearchChanged(search)} defaultSearch={this.defaultSearch}/>
                 <Row>
-                    <Col xs={6}>
+                    <Col xs={7}>
                         <ComparableLeaseList comparableLeases={this.state.comparableLeases}
                                              statsTitle={"Region Statistics"}
                                             allowNew={true}
@@ -149,7 +149,7 @@ class ViewComparableLeasesDatabase extends React.Component {
                                             onChange={(comps) => this.onComparablesChanged(comps)}
                         />
                     </Col>
-                    <Col xs={6}>
+                    <Col xs={5}>
                         <ComparableLeasesMap
                             appraisal={this.props.appraisal}
                             comparableLeases={this.state.comparableLeases}
