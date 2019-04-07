@@ -41,7 +41,10 @@ class StabilizedStatementModel:
 
         statement.valuation = statement.netOperatingIncome / (appraisal.stabilizedStatementInputs.capitalizationRate / 100.0)
 
-        statement.valuationRounded = round(statement.valuation, -int(math.floor(math.log10(abs(statement.valuation)))) + 2) # Round to 3 significant figures
+        if statement.valuation == 0:
+            statement.valuationRounded = 0
+        else:
+            statement.valuationRounded = round(statement.valuation, -int(math.floor(math.log10(abs(statement.valuation)))) + 2) # Round to 3 significant figures
 
         return statement
 
@@ -62,6 +65,9 @@ class StabilizedStatementModel:
 
             if unit.currentTenancy.rentType == 'net':
                 totalNetSize += unit.squareFootage
+
+        if totalSize == 0:
+            return 1.0
 
         return float(totalNetSize) / float(totalSize)
 

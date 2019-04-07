@@ -187,6 +187,9 @@ class DiscountedCashFlowModel:
         cashFlows = self.getMonthlyCashFlowItems(appraisal)
         cashFlows.extend(self.projectAllRentalCashFlows(appraisal))
 
+        if len(cashFlows) == 0:
+            return []
+
         cashFlowGroups = {}
         for cashFlow in cashFlows:
             groupId = (cashFlow.name, cashFlow.year)
@@ -220,8 +223,8 @@ class DiscountedCashFlowModel:
         if len(yearlyCashFlowItems) == 0:
             return DiscountedCashFlowSummary(
                 years=[],
-                income=[],
-                expense=[],
+                incomes=[],
+                expenses=[],
                 netOperatingIncome=None,
                 presentValue=None
             )

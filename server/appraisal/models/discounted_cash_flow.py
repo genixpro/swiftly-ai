@@ -54,6 +54,8 @@ class DiscountedCashFlowSummaryItem(EmbeddedDocument):
     """
         This class represents a single line of the summarized discounted cash flow.
     """
+    meta = {'strict': False}
+
     # The name of the summary line
     name = StringField()
 
@@ -68,6 +70,8 @@ class DiscountedCashFlowSummary(EmbeddedDocument):
         numbers as they change over all the years the DCF is projected for. This isn't the raw
         data and summary lines can exist for totals as well.
     """
+    meta = {'strict': False}
+
     years = ListField(IntField())
 
     incomes = ListField(EmbeddedDocumentField(DiscountedCashFlowSummaryItem))
@@ -83,6 +87,8 @@ class DiscountedCashFlowSummary(EmbeddedDocument):
 
 
 class DiscountedCashFlow(EmbeddedDocument):
+    meta = {'strict': False}
+
     yearlyCashFlows = ListField(EmbeddedDocumentField(YearlyCashFlowItem))
 
     cashFlowSummary = EmbeddedDocumentField(DiscountedCashFlowSummary)
