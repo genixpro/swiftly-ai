@@ -45,9 +45,6 @@ class ComparableSaleList extends React.Component
 
     addNewComparable(newComparable)
     {
-        // const comparables = this.props.comparableSales;
-        // comparables.push(newComparable);
-
         this.props.onNewComparable(newComparable);
         this.setState({isCreatingNewItem: false})
     }
@@ -148,14 +145,15 @@ class ComparableSaleList extends React.Component
                     this.props.allowNew ?
                         <div>
                             {this.renderNewItemRow()}
-                            <Modal isOpen={this.state.isCreatingNewItem} toggle={this.toggleNewItem} className={"new-comp-dialog"}>
+                            <Modal isOpen={this.state.isCreatingNewItem} toggle={this.toggleNewItem.bind(this)} className={"new-comp-dialog"}>
                                 <ModalHeader toggle={this.toggleNewItem.bind(this)}>New Comparable Sale</ModalHeader>
                                 <ModalBody>
                                     <ComparableSaleListItem comparableSale={_.clone(this.state.newComparableSale)}
-                                                             onChange={(comp) => this.addNewComparable(comp)}/>
+                                                             onChange={(comp) => this.setState({newComparableSale: comp})} />
                                 </ModalBody>
                                 <ModalFooter>
-                                    <Button color="primary" onClick={this.toggleNewItem.bind(this)}>Close</Button>{' '}
+                                    <Button color="primary" onClick={() => this.addNewComparable(this.state.newComparableSale)}>Add</Button>{' '}
+                                    <Button color="primary" onClick={() => this.toggleNewItem()}>Cancel</Button>{' '}
                                 </ModalFooter>
                             </Modal>
                         </div> : null
