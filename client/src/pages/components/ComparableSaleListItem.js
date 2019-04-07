@@ -148,23 +148,29 @@ class ComparableSaleListItem extends React.Component
                         <CardHeader onClick={() => this.toggleDetails()} className={"comparable-sale-list-item-header"}>
                             <CardTitle>
                                 <Row>
-                                    <Col xs={2} className={"header-field-column"}>
+                                    <Col xs={1} className={"header-field-column"}>
                                         {
                                             comparableSale.saleDate ? <span>{new Date(comparableSale.saleDate.$date).getMonth()} / {new Date(comparableSale.saleDate.$date).getFullYear().toString().substr(2)}</span>
                                                 : <span className={"no-data"}>No Sale Date</span>
                                         }
                                     </Col>
-                                    <Col xs={4} className={"header-field-column"}>
+                                    <Col xs={3} className={"header-field-column"}>
                                         {comparableSale.address ? comparableSale.address : <span className={"no-data"}>No Address</span>}
+                                    </Col>
+                                    <Col xs={2} className={"header-field-column"}>
+                                        {comparableSale.sizeSquareFootage ? comparableSale.sizeSquareFootage : <span className={"no-data"}>No Size</span>}
                                     </Col>
                                     <Col xs={2} className={"header-field-column"}>
                                         {comparableSale.salePrice ? comparableSale.salePrice : <span className={"no-data"}>No Price</span>}
                                     </Col>
                                     <Col xs={2} className={"header-field-column"}>
-                                        {comparableSale.description ? comparableSale.description : <span className={"no-data"}>No Description</span>}
+                                        {comparableSale.propertyType ? comparableSale.propertyType : <span className={"no-data"}>No Propery Type</span>}
                                     </Col>
-                                    <Col xs={2} className={"header-field-column"}>
+                                    <Col xs={1} className={"header-field-column small-header-column"}>
                                         {comparableSale.capitalizationRate ? comparableSale.capitalizationRate : <span className={"no-data"}>No Cap Rate</span>}
+                                    </Col>
+                                    <Col xs={1} className={"header-field-column small-header-column"}>
+                                        {(comparableSale.salePrice && comparableSale.sizeSquareFootage) ? comparableSale.salePrice / comparableSale.sizeSquareFootage : <span className={"no-data"}>No PSF</span>}
                                     </Col>
                                 </Row>
                             </CardTitle>

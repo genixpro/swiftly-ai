@@ -121,20 +121,26 @@ class ComparableSaleList extends React.Component
                         <CardHeader className={"comparable-sale-list-item-header"}>
                             <CardTitle>
                                 <Row>
-                                    <Col xs={2} className={"header-field-column"}>
+                                    <Col xs={1} className={"header-field-column"}>
                                         Date
                                     </Col>
-                                    <Col xs={4} className={"header-field-column"}>
+                                    <Col xs={3} className={"header-field-column"}>
                                         Address
+                                    </Col>
+                                    <Col xs={2} className={"header-field-column"}>
+                                        Building Size
                                     </Col>
                                     <Col xs={2} className={"header-field-column"}>
                                         Sale Price
                                     </Col>
                                     <Col xs={2} className={"header-field-column"}>
-                                        Description
+                                        Property Type
                                     </Col>
-                                    <Col xs={2} className={"header-field-column"}>
-                                        Capitalization Rate
+                                    <Col xs={1} className={"header-field-column"}>
+                                        Cap Rate
+                                    </Col>
+                                    <Col xs={1} className={"header-field-column"}>
+                                        PSF
                                     </Col>
                                 </Row>
                             </CardTitle>

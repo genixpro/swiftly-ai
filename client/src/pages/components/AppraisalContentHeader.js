@@ -9,7 +9,7 @@ class AppraisalContentHeader extends React.Component
         return (
             <div className="content-heading">
                 {this.props.appraisal ?
-                <div>{this.props.appraisal.name} - {this.props.title}
+                <div>{this.props.appraisal.name} - {this.props.appraisal.address} - {this.props.title}
                     <ol className="breadcrumb breadcrumb px-0 pb-0">
                         <li className="breadcrumb-item"><a href="/">Home</a></li>
                         <li className="breadcrumb-item"><a href="/appraisals/">Appraisals</a></li>

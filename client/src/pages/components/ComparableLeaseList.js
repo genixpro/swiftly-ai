@@ -176,14 +176,15 @@ class ComparableLeaseList extends React.Component
                     this.props.allowNew ?
                         <div>
                             {this.renderNewItemRow()}
-                            <Modal isOpen={this.state.isCreatingNewItem} toggle={this.toggleNewItem} className={"new-comp-dialog"}>
+                            <Modal isOpen={this.state.isCreatingNewItem} toggle={this.toggleNewItem.bind(this)} className={"new-comp-dialog"}>
                                         <ModalHeader toggle={this.toggleNewItem.bind(this)}>New Comparable Lease</ModalHeader>
                                         <ModalBody>
                                             <ComparableLeaseListItem comparableLease={_.clone(this.state.newComparableSale)}
-                                                onChange={(comp) => this.addNewComparable(comp)}/>
+                                                onChange={(comp) => this.setState({newComparableSale: comp})}/>
                                         </ModalBody>
                                         <ModalFooter>
-                                        <Button color="primary" onClick={this.toggleNewItem.bind(this)}>Close</Button>{' '}
+                                        <Button color="primary" onClick={this.toggleNewItem.bind(this)}>Save</Button>{' '}
+                                        <Button color="primary" onClick={this.toggleNewItem.bind(this)}>Cancel</Button>{' '}
                                 </ModalFooter>
                             </Modal>
                         </div> : null

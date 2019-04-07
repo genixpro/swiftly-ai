@@ -81,6 +81,16 @@ class ComparableLeasesMap extends React.Component {
                     defaultZoom={this.getDefaultMapParams().defaultZoom}
                     onChange={(location) => this.onMapChanged(location)}
                 >
+                    <div
+                        lat={this.props.appraisal.location.coordinates[1]}
+                        lng={this.props.appraisal.location.coordinates[0]}>
+                        <div
+                            style={{"position": "absolute", "top": "-25px", "background-color": "lightgrey", "width": "55px", "height": "25px", "margin-left": "15px", "padding": "5px", "color": "black", "border": "2px black solid"}}
+                        >
+                            <span>Subject</span>
+                        </div>
+                        <img src={"img/button.svg"} style={{"width": "15px", "position": "relative", "top": "-7.5px", "left": "-7.5px"}}/>
+                    </div>
                     {
                         this.props.comparableLeases.map((comp) =>
                         {
