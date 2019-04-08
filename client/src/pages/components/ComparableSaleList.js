@@ -127,19 +127,18 @@ class ComparableSaleList extends React.Component
                                     <Col xs={3} className={"header-field-column"}>
                                         Address
                                     </Col>
-                                    <Col className={"header-field-column middle-col"}>
+                                    <Col  xs={2} className={"header-field-column"}>
                                         Building Size (sf)
                                     </Col>
-                                    <Col className={"header-field-column middle-col"}>
+                                    <Col xs={2} className={"header-field-column"}>
                                         Sale Price
                                     </Col>
                                     <Col xs={2} className={"header-field-column"}>
                                         Property Type<br/>Sub Type
                                     </Col>
-                                    <Col className={"header-field-column middle-col"}>
+                                    <Col xs={2} className={"header-field-column"}>
                                         Cap Rate (%)
-                                    </Col>
-                                    <Col className={"header-field-column middle-col"}>
+                                        <br/>
                                         PSF ($)
                                     </Col>
                                 </Row>

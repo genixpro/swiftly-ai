@@ -205,13 +205,13 @@ class ComparableSaleListItem extends React.Component
                                         /> : <span className={"no-data"}>No Size</span>}
                                     </Col>
                                     <Col className={"header-field-column middle-col"}>
-                                        {comparableSale.salePrice ? <NumberFormat
+                                        {comparableSale.salePrice ? <span>$<NumberFormat
                                             value={comparableSale.salePrice}
                                             displayType={'text'}
                                             thousandSeparator={', '}
                                             decimalScale={0}
                                             fixedDecimalScale={true}
-                                        /> : <span className={"no-data"}>No Price</span>}
+                                        /></span> : <span className={"no-data"}>No Price</span>}
                                     </Col>
                                     <Col xs={2} className={"header-field-column"}>
                                         {comparableSale.propertyType ? comparableSale.propertyType : <span className={"no-data"}>No Propery Type</span>}<br/>
@@ -219,8 +219,7 @@ class ComparableSaleListItem extends React.Component
                                     </Col>
                                     <Col className={"header-field-column small-header-column middle-col"}>
                                         {comparableSale.capitalizationRate ? (comparableSale.capitalizationRate.toString() + "%") : <span className={"no-data"}>No Cap Rate</span>}
-                                    </Col>
-                                    <Col className={"header-field-column small-header-column middle-col"}>
+                                        <br/>
                                         {(comparableSale.salePrice && comparableSale.sizeSquareFootage) ?  "$" + (comparableSale.salePrice / comparableSale.sizeSquareFootage).toFixed(2) : <span className={"no-data"}>No PSF</span>}
                                     </Col>
                                 </Row>
