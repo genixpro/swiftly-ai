@@ -17,8 +17,7 @@ class ComparableSaleModel extends BaseModel
     static capitalizationRate = new GenericField();
     static salePrice = new GenericField();
     static sizeSquareFootage = new GenericField();
-    static taxesMaintenanceInsurancePSF = new GenericField();
-    static vacancyRate = new GenericField();
+    static occupancyRate = new GenericField();
     static saleDate = new DateField();
     static propertyTags = new ListField(new GenericField());
     static purchaser = new GenericField();

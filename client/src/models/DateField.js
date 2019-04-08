@@ -5,7 +5,14 @@ class DateField extends BaseField
 {
     toObject(value, parent)
     {
-        return new Date(value['$date']);
+        if (value['$date'])
+        {
+            return new Date(value['$date']);
+        }
+        else
+        {
+            return value;
+        }
     }
 }
 
