@@ -49,7 +49,7 @@ class Appraisal(Document):
     units = ListField(EmbeddedDocumentField(Unit))
 
     # Income statement for this Appraisal
-    incomeStatement = EmbeddedDocumentField(IncomeStatement)
+    incomeStatement = EmbeddedDocumentField(IncomeStatement, default=IncomeStatement)
 
     # The inputs used in a discounted cash flow
     discountedCashFlowInputs = EmbeddedDocumentField(DiscountedCashFlowInputs, default=DiscountedCashFlowInputs)
@@ -70,5 +70,5 @@ class Appraisal(Document):
     stabilizedStatementInputs = EmbeddedDocumentField(StabilizedStatementInputs, default=StabilizedStatementInputs, null=False)
 
     # This the stabilized statement
-    stabilizedStatement = EmbeddedDocumentField(StabilizedStatement)
+    stabilizedStatement = EmbeddedDocumentField(StabilizedStatement, default=StabilizedStatement)
 

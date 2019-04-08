@@ -1,11 +1,8 @@
 
-
-.uploadable-image
-{
+.uploadable-image {
   position: relative;
 
-  .uploadable-image-wrapper
-  {
+  .uploadable-image-wrapper {
     position: relative;
   }
 
@@ -36,4 +33,21 @@
       color: white;
     }
   }
+
+  &.editable {
+    .uploadable-image-wrapper {
+
+      cursor: pointer;
+
+      &:hover {
+        .upload-image-overlay {
+          opacity: 0.3;
+        }
+        .upload-image-icon {
+          opacity: 1.0;
+        }
+      }
+    }
+  }
+
 }

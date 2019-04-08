@@ -60,21 +60,6 @@
       margin-right: 15px;
     }
 
-    &.editable {
-      .uploadable-image {
-        cursor: pointer;
-      }
-
-      .uploadable-image:hover {
-        .upload-image-overlay {
-          opacity: 0.3;
-        }
-        .upload-image-icon {
-          opacity: 1.0;
-        }
-      }
-    }
-
     .comparable-sale-content {
       flex-grow: 1;
 
@@ -116,6 +101,7 @@
     display: flex;
     flex-direction: column;
     align-items: stretch;
+    justify-content: space-between;
 
     .btn {
       border-radius: 0;
@@ -130,8 +116,9 @@
     }
 
     .move-comparable-button {
-      flex-grow: 0;
-      height: 55px;
+      flex-grow: 1;
+      min-height: 50px;
+      transition: flex-grow 0s 0.4s ease-in-out;
     }
 
     .delete-comparable-button {
@@ -145,6 +132,16 @@
       padding: 0;
       margin: 0;
       border: 0;
+    }
+  }
+
+  &.expanded
+  {
+    .comparable-button-row {
+      .move-comparable-button {
+        flex-grow: 0;
+        transition: flex-grow 0s 0s ease-in-out;
+      }
     }
   }
 }

@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="81.147934mm"
+   height="54.724026mm"
+   viewBox="0 0 81.147934 54.724026"
+   version="1.1"
+   id="svg8"
+   sodipodi:docname="test-client-logo.svg"
+   inkscape:export-filename="/home/bradley/eb-appraisal/client/public/img/test-client-logo.png"
+   inkscape:export-xdpi="90.772484"
+   inkscape:export-ydpi="90.772484"
+   inkscape:version="0.92.4 (unknown)">
+  <defs
+     id="defs2" />
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="2.8"
+     inkscape:cx="115.4415"
+     inkscape:cy="121.29096"
+     inkscape:document-units="mm"
+     inkscape:current-layer="layer1"
+     showgrid="false"
+     fit-margin-top="0"
+     fit-margin-left="0"
+     fit-margin-right="0"
+     fit-margin-bottom="0"
+     inkscape:window-width="1920"
+     inkscape:window-height="983"
+     inkscape:window-x="0"
+     inkscape:window-y="27"
+     inkscape:window-maximized="1" />
+  <metadata
+     id="metadata5">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(-8.9964284,-8.5642396)">
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:10.58333302px;line-height:1.25;font-family:'DejaVu Sans';-inkscape-font-specification:'DejaVu Sans';letter-spacing:0px;word-spacing:0px;fill:#000080;fill-opacity:1;stroke:none;stroke-width:0.26458332"
+       x="19.84375"
+       y="27.880953"
+       id="text12"><tspan
+         sodipodi:role="line"
+         id="tspan10"
+         x="19.84375"
+         y="27.880953"
+         style="font-weight:bold;fill:#000080;stroke-width:0.26458332">MacDonald,</tspan><tspan
+         sodipodi:role="line"
+         x="19.84375"
+         y="41.110119"
+         style="font-weight:bold;fill:#000080;stroke-width:0.26458332"
+         id="tspan14">Arsenault &amp;</tspan><tspan
+         sodipodi:role="line"
+         x="19.84375"
+         y="54.339287"
+         style="font-weight:bold;fill:#000080;stroke-width:0.26458332"
+         id="tspan16">Koski</tspan></text>
+    <path
+       style="fill:#000080;fill-opacity:1;stroke:none;stroke-width:0.79374999;stroke-linecap:square;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:257.12689209;stroke-opacity:1"
+       d="m 28.235905,10.291569 c -7.412044,2.820663 -13.702996,11.016389 -15.70135,17.455414 -1.608888,4.925467 -1.295834,10.222626 -0.644833,15.275981 1.294432,5.949401 4.646882,11.901048 10.349146,14.573631 8.176733,4.462664 17.798022,4.111447 26.826851,4.020305 12.828343,-2.358802 15.522422,-13.074841 21.952683,-14.829636 6.176121,-1.297235 12.543076,-0.398689 18.779678,-1.107859 -3.19953,3.30565 -8.158557,1.37187 -12.185564,1.953825 -6.280319,0.18285 -8.107079,0.627288 -8.377859,0.832058 -2.487489,3.538169 -5.652297,6.563515 -8.54569,9.799732 -2.673737,2.010957 -4.35629,2.364729 -7.570646,3.802475 -5.557684,2.077448 -11.611481,0.998646 -17.3898,1.047291 C 27.898934,62.777199 19.631472,60.482138 14.139303,54.59762 10.497989,49.710872 8.5060701,43.500822 8.9990585,37.387387 8.3768491,27.613572 14.159268,18.257063 22.106998,12.902321 c 2.41922,-1.53278 5.209615,-3.5865024 7.90129,-3.973109 -0.527493,0.53453 -1.22046,0.8546531 -1.772383,1.362357 z"
+       id="path38"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="ccccccccccccccccc" />
+  </g>
+</svg>

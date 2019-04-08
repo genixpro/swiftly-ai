@@ -46,7 +46,7 @@ class IncomeStatementItem(EmbeddedDocument):
 
 
 class IncomeStatement(EmbeddedDocument):
-    years = ListField(IntField())
+    years = ListField(IntField(), default=[])
 
     incomes = ListField(EmbeddedDocumentField(IncomeStatementItem))
 

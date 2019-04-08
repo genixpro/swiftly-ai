@@ -158,8 +158,10 @@ class ComparableSaleListItem extends React.Component
 
         const editableClass = this.props.edit ? "editable" : "non-editable";
 
+        const expandedClass = this.state.detailsOpen ? "expanded" : "";
+
         return (
-            <div className={`card b comparable-sale-list-item`}>
+            <div className={`card b comparable-sale-list-item ${expandedClass}`}>
                 <div className={"comparable-sale-list-item-button-column"}>
                     {
                         this.props.onRemoveComparableClicked && this.isCompWithinAppraisal(this.props.appraisalComparables) ?
@@ -234,18 +236,10 @@ class ComparableSaleListItem extends React.Component
                         <div className={`card-body comparable-sale-list-item-body ${editableClass}`}>
                             {
                                 (comparableSale.address && comparableSale.address !== "") ?
-                                    <UploadableImage value={`https://maps.googleapis.com/maps/api/streetview?key=AIzaSyBRmZ2N4EhJjXmC29t3VeiLUQssNG-MY1I&size=640x480&source=outdoor&location=${comparableSale.address}`} />
+                                    <UploadableImage editable={this.props.edit} value={`https://maps.googleapis.com/maps/api/streetview?key=AIzaSyBRmZ2N4EhJjXmC29t3VeiLUQssNG-MY1I&size=640x480&source=outdoor&location=${comparableSale.address}`} />
                                     : <UploadableImage  />
                             }
                             <div className={`comparable-sale-content`}>
-                                <FieldDisplayEdit
-                                    type={"text"}
-                                    edit={this.props.edit}
-                                    placeholder={"Name..."}
-                                    className={"comparable-name"}
-                                    value={comparableSale.name}
-                                    onChange={(newValue) => this.changeComparableField('name', newValue)}
-                                />
                                 <div className={"comparable-fields-area"}>
                                     <span className={"comparable-field-label"}>Address:</span>
 

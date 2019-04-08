@@ -6,9 +6,6 @@ from .date_field import ConvertingDateField
 class ComparableSale(Document):
     meta = {'collection': 'comparables', 'strict': False}
 
-    # The name of the comparable
-    name = StringField()
-
     # The address of the comparable. This is the full address, including city and region in a single string
     address = StringField()
 

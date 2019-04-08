@@ -8,10 +8,16 @@ import PropertyTypeSelector from './PropertyTypeSelector';
 
 class UploadableImage extends React.Component
 {
+    static defaultProps = {
+        editable: true
+    };
+
     render()
     {
+        const editableClass = this.props.editable ? " editable" : "";
+
         return (
-            <div className={`uploadable-image`}>
+            <div className={`uploadable-image ${editableClass}`}>
                 <div className={"uploadable-image-wrapper"}>
                     <a href="">
                         {

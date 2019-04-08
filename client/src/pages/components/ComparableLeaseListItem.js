@@ -123,8 +123,10 @@ class ComparableLeaseListItem extends React.Component
 
         const editableClass = this.props.edit ? "editable" : "non-editable";
 
+        const expandedClass = this.state.detailsOpen ? "expanded" : "";
+
         return (
-            <div className={`card b comparable-lease-list-item`}>
+            <div className={`card b comparable-lease-list-item ${expandedClass}`}>
                 <div>
                     {
                         this.props.onRemoveComparableClicked && this.isCompWithinAppraisal(this.props.appraisalComparables) ?
@@ -177,14 +179,6 @@ class ComparableLeaseListItem extends React.Component
                     <Collapse isOpen={this.state.detailsOpen}>
                         <div className={`card-body comparable-lease-list-item-body ${editableClass}`}>
                             <div className={`comparable-lease-content`}>
-                                <FieldDisplayEdit
-                                    type={"text"}
-                                    edit={this.props.edit}
-                                    placeholder={"Name..."}
-                                    className={"comparable-name"}
-                                    value={comparableLease.name}
-                                    onChange={(newValue) => this.changeComparableField('name', newValue)}
-                                />
                                 <div className={"comparable-fields-area"}>
                                     <span className={"comparable-field-label"}>Address:</span>
 

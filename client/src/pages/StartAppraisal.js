@@ -2,11 +2,13 @@ import React from 'react';
 import ContentWrapper from '../components/Layout/ContentWrapper';
 import { Row, Card, CardBody, FormGroup, Input } from 'reactstrap';
 import axios from 'axios';
+import FieldDisplayEdit from "./components/FieldDisplayEdit";
 
 class StartAppraisal extends React.Component {
 
     state = {
-        dropdownOpen: false
+        dropdownOpen: false,
+        newAppraisal: {}
     };
 
     changeLanguage = lng => {
@@ -24,13 +26,7 @@ class StartAppraisal extends React.Component {
     {
         evt.preventDefault();
 
-        axios.post("/appraisal/", {
-            name: this.state.name,
-            address: this.state.address,
-            city: this.state.city,
-            region: this.state.state,
-            country: this.state.country
-        }).then((response) =>
+        axios.post("/appraisal/", this.state.newAppraisal).then((response) =>
         {
             const newId = response.data._id;
 
@@ -39,9 +35,12 @@ class StartAppraisal extends React.Component {
         });
     }
 
-    updateForm(field, event)
+    updateValue(field, value)
     {
-        this.setState({[field]: event.target.value})
+        const newAppraisal = this.state.newAppraisal;
+        newAppraisal[field] = value;
+
+        this.setState({newAppraisal: newAppraisal})
     }
 
 
@@ -67,11 +66,25 @@ class StartAppraisal extends React.Component {
                                 <form onSubmit={this.createAppraisal.bind(this)}>
                                     <FormGroup>
                                         <label>Name</label>
-                                        <Input type="text" placeholder="Name" onChange={this.updateForm.bind(this, "name")}/>
+                                        <Input
+                                            type="text"
+                                            placeholder="Name"
+                                            onChange={(evt) => this.updateValue("name", evt.target.value)}
+                                            value={this.state.newAppraisal.name}
+                                        />
                                     </FormGroup>
                                     <FormGroup>
                                         <label>Street Address</label>
-                                        <Input type="text" placeholder="Address" onChange={this.updateForm.bind(this, "address")}/>
+                                        <FieldDisplayEdit
+                                            type={"address"}
+                                            edit={this.props.edit}
+                                            hideInput={false}
+                                            hideIcon={true}
+                                            placeholder={"Address"}
+                                            value={this.state.newAppraisal.address}
+                                            onChange={(newValue) => this.updateValue('address', newValue)}
+                                            onGeoChange={(newValue) => this.updateValue('location', {"type": "Point", "coordinates": [newValue.lng, newValue.lat]})}
+                                        />
                                     </FormGroup>
                                     <button className="btn btn-sm btn-primary" type="submit" onClick={this.createAppraisal.bind(this)}>Create</button>
                                 </form>
