@@ -20,6 +20,11 @@
   display: flex;
   flex-direction: row;
 
+  .middle-col
+  {
+    flex-basis: 0.125%;
+  }
+
   .comparable-sale-item-content
   {
     display: flex;

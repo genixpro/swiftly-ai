@@ -116,11 +116,11 @@ class ComparableSaleListItem extends React.Component
         const comparableSale = this.props.comparableSale;
 
 
-        let text = `Is in reference to the ${new Date(comparableSale.saleDate).getFullYear()}/${new Date(comparableSale.saleDate).getMonth()}/${new Date(comparableSale.saleDate).getDate()} sale of a ${comparableSale.propertyType} building located at ${comparableSale.address}.`;
+        let text = `In reference to the ${new Date(comparableSale.saleDate).getFullYear()}/${new Date(comparableSale.saleDate).getMonth()}/${new Date(comparableSale.saleDate).getDate()} sale of a ${comparableSale.propertyType} building located at ${comparableSale.address}. `;
 
         if (comparableSale.sizeSquareFootage)
         {
-            text += `The building has gross rentable area of ${comparableSale.sizeSquareFootage}.`;
+            text += `The building has gross rentable area of ${comparableSale.sizeSquareFootage}. `;
         }
 
 
@@ -136,12 +136,12 @@ class ComparableSaleListItem extends React.Component
 
         if(comparableSale.tenants)
         {
-            text += `The property is leased to ${comparableSale.tenants}.`;
+            text += `The property is leased to ${comparableSale.tenants}. `;
         }
 
         if(comparableSale.capitalizationRate)
         {
-            text += `The net income of ${comparableSale.netOperatingIncome} yielded a ${comparableSale.capitalizationRate}% rate of return.`;
+            text += `The net income of ${comparableSale.netOperatingIncome} yielded a ${comparableSale.capitalizationRate}% rate of return. `;
         }
 
         return text;
@@ -195,21 +195,21 @@ class ComparableSaleListItem extends React.Component
                                     <Col xs={3} className={"header-field-column"}>
                                         {comparableSale.address ? comparableSale.address : <span className={"no-data"}>No Address</span>}
                                     </Col>
-                                    <Col xs={2} className={"header-field-column"}>
+                                    <Col className={"header-field-column middle-col"}>
                                         {comparableSale.sizeSquareFootage ? <NumberFormat
                                             value={comparableSale.sizeSquareFootage}
                                             displayType={'text'}
                                             thousandSeparator={', '}
-                                            decimalScale={2}
+                                            decimalScale={0}
                                             fixedDecimalScale={true}
                                         /> : <span className={"no-data"}>No Size</span>}
                                     </Col>
-                                    <Col xs={2} className={"header-field-column"}>
+                                    <Col className={"header-field-column middle-col"}>
                                         {comparableSale.salePrice ? <NumberFormat
                                             value={comparableSale.salePrice}
                                             displayType={'text'}
                                             thousandSeparator={', '}
-                                            decimalScale={2}
+                                            decimalScale={0}
                                             fixedDecimalScale={true}
                                         /> : <span className={"no-data"}>No Price</span>}
                                     </Col>
@@ -217,10 +217,10 @@ class ComparableSaleListItem extends React.Component
                                         {comparableSale.propertyType ? comparableSale.propertyType : <span className={"no-data"}>No Propery Type</span>}<br/>
                                         {comparableSale.propertyTags ? comparableSale.propertyTags.map((tag, tagIndex) => <span>{tag}{tagIndex !== comparableSale.propertyTags.length ? ", " : null}</span>) : <span className={"no-data"}>No Sub Type</span>}
                                     </Col>
-                                    <Col xs={1} className={"header-field-column small-header-column"}>
-                                        {comparableSale.capitalizationRate ? comparableSale.capitalizationRate : <span className={"no-data"}>No Cap Rate</span>}
+                                    <Col className={"header-field-column small-header-column middle-col"}>
+                                        {comparableSale.capitalizationRate ? (comparableSale.capitalizationRate.toString() + "%") : <span className={"no-data"}>No Cap Rate</span>}
                                     </Col>
-                                    <Col xs={1} className={"header-field-column small-header-column"}>
+                                    <Col className={"header-field-column small-header-column middle-col"}>
                                         {(comparableSale.salePrice && comparableSale.sizeSquareFootage) ?  "$" + (comparableSale.salePrice / comparableSale.sizeSquareFootage).toFixed(2) : <span className={"no-data"}>No PSF</span>}
                                     </Col>
                                 </Row>
