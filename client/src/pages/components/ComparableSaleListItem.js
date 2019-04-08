@@ -188,7 +188,7 @@ class ComparableSaleListItem extends React.Component
                                 <Row>
                                     <Col xs={1} className={"header-field-column"}>
                                         {
-                                            comparableSale.saleDate ? <span>{new Date(comparableSale.saleDate.$date).getMonth()} / {new Date(comparableSale.saleDate.$date).getFullYear().toString().substr(2)}</span>
+                                            comparableSale.saleDate ? <span>{new Date(comparableSale.saleDate).getMonth()} / {new Date(comparableSale.saleDate).getFullYear().toString().substr(2)}</span>
                                                 : <span className={"no-data"}>No Sale Date</span>
                                         }
                                     </Col>
