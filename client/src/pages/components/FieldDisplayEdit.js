@@ -285,7 +285,7 @@ class FieldDisplayEdit extends React.Component
                             closeOnSelect={true}
                             value={this.state.isEditing ? this.state.value : this.formatValue(this.props.value)}
                             onChange={(newValue) => newValue.toDate ? this.dateInputUpdated(newValue.toDate()) : newValue === "" ? this.dateInputUpdated(null) : null}
-                            onBlur={() => this.finishEditing()}
+                            onBlur={() => setTimeout(() => this.finishEditing(), 100)}
                         /> : null
                 }
                 {
