@@ -19,10 +19,27 @@ class BaseModel extends Object
             return;
         }
 
+
+
         try
         {
             const modelClass = this.constructor;
 
+            // First validate
+            Object.keys(data).forEach((key) =>
+            {
+                if (!modelClass[key])
+                {
+                    const message = `Unexpected key ${key} on model ${modelClass.name} on the data received from the server.`;
+                    if (process.env.VALUATE_ENVIRONMENT.REACT_APP_DEBUG)
+                    {
+                        alert(message)
+                    }
+                    console.error(message);
+                }
+            });
+
+            // Then copy in data
             Object.keys(modelClass).forEach((key) =>
             {
                 if (modelClass[key] instanceof BaseField)

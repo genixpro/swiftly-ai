@@ -162,10 +162,10 @@ class ComparableLeaseList extends React.Component
                                         Address
                                     </Col>
                                     <Col xs={2} className={"header-field-column"}>
-                                        Size
+                                        Size (sf)
                                     </Col>
                                     <Col xs={2} className={"header-field-column"}>
-                                        Rent
+                                        Rent ($)
                                     </Col>
                                 </Row>
                             </CardTitle>

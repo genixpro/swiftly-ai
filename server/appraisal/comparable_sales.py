@@ -37,6 +37,27 @@ class ComparableSaleAPI(object):
         if 'capitalizationRateTo' in self.request.GET:
             query['capitalizationRate__lt'] = self.request.GET['capitalizationRateTo']
 
+        if 'pricePerSquareFootFrom' in self.request.GET:
+            query['pricePerSquareFoot__gt'] = self.request.GET['pricePerSquareFootFrom']
+        if 'pricePerSquareFootTo' in self.request.GET:
+            query['pricePerSquareFoot__lt'] = self.request.GET['pricePerSquareFootTo']
+
+
+        if 'clearCeilingHeightFrom' in self.request.GET:
+            query['clearCeilingHeight__gt'] = self.request.GET['clearCeilingHeightFrom']
+        if 'clearCeilingHeightTo' in self.request.GET:
+            query['clearCeilingHeight__lt'] = self.request.GET['clearCeilingHeightTo']
+
+        if 'shippingDoorsFrom' in self.request.GET:
+            query['shippingDoors__gt'] = self.request.GET['shippingDoorsFrom']
+        if 'shippingDoorsTo' in self.request.GET:
+            query['shippingDoors__lt'] = self.request.GET['shippingDoorsTo']
+
+        if 'siteCoverageFrom' in self.request.GET:
+            query['siteCoverage__gt'] = self.request.GET['siteCoverageFrom']
+        if 'siteCoverageTo' in self.request.GET:
+            query['siteCoverage__lt'] = self.request.GET['siteCoverageTo']
+
         if 'propertyType' in self.request.GET:
             query['propertyType'] = self.request.GET['propertyType']
 

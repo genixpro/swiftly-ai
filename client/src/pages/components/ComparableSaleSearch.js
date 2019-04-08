@@ -113,6 +113,46 @@ class ComparableSaleSearch extends React.Component
                                             }
                                         </td>
                                     </tr>
+                                    {
+                                        this.props.appraisal.propertyType === 'industrial' ?
+                                            <tr>
+                                                <td>
+                                                    <strong>Clear Ceiling Height Low:</strong>
+                                                </td>
+                                                <td>
+                                                    {
+                                                        <FieldDisplayEdit
+                                                            type={"length"}
+                                                            value={this.state.search.clearCeilingHeightFrom}
+                                                            onChange={(newValue) => this.changeSearchField("clearCeilingHeightFrom", newValue)}
+                                                            hideInput={false}
+                                                            hideIcon={true}
+
+                                                        />
+                                                    }
+                                                </td>
+                                            </tr> : null
+                                    }
+                                    {
+                                        this.props.appraisal.propertyType === 'industrial' ?
+                                            <tr>
+                                                <td>
+                                                    <strong>Clear Ceiling Height High:</strong>
+                                                </td>
+                                                <td>
+                                                    {
+                                                        <FieldDisplayEdit
+                                                            type={"length"}
+                                                            value={this.state.search.clearCeilingHeightTo}
+                                                            onChange={(newValue) => this.changeSearchField("clearCeilingHeightTo", newValue)}
+                                                            hideInput={false}
+                                                            hideIcon={true}
+
+                                                        />
+                                                    }
+                                                </td>
+                                            </tr> : null
+                                    }
                                     </tbody>
                                 </Col>
                                 <Col xs={12} sm={6} md={4}>
@@ -182,6 +222,46 @@ class ComparableSaleSearch extends React.Component
                                             }
                                         </td>
                                     </tr>
+                                    {
+                                        this.props.appraisal.propertyType === 'industrial' ?
+                                            <tr>
+                                                <td>
+                                                    <strong>Shipping Doors Low:</strong>
+                                                </td>
+                                                <td>
+                                                    {
+                                                        <FieldDisplayEdit
+                                                            type={"number"}
+                                                            value={this.state.search.shippingDoorsFrom}
+                                                            onChange={(newValue) => this.changeSearchField("shippingDoorsFrom", newValue)}
+                                                            hideInput={false}
+                                                            hideIcon={true}
+
+                                                        />
+                                                    }
+                                                </td>
+                                            </tr> : null
+                                    }
+                                    {
+                                        this.props.appraisal.propertyType === 'industrial' ?
+                                            <tr>
+                                                <td>
+                                                    <strong>Shipping Doors High:</strong>
+                                                </td>
+                                                <td>
+                                                    {
+                                                        <FieldDisplayEdit
+                                                            type={"number"}
+                                                            value={this.state.search.shippingDoorsTo}
+                                                            onChange={(newValue) => this.changeSearchField("shippingDoorsTo", newValue)}
+                                                            hideInput={false}
+                                                            hideIcon={true}
+
+                                                        />
+                                                    }
+                                                </td>
+                                            </tr> : null
+                                    }
                                     </tbody>
                                 </Col>
                                 <Col xs={12} sm={6} md={4}>
@@ -252,6 +332,46 @@ class ComparableSaleSearch extends React.Component
                                             }
                                         </td>
                                     </tr>
+                                    {
+                                        this.props.appraisal.propertyType === 'industrial' ?
+                                            <tr>
+                                                <td>
+                                                    <strong>Size Coverage Low:</strong>
+                                                </td>
+                                                <td>
+                                                    {
+                                                        <FieldDisplayEdit
+                                                            type={"number"}
+                                                            value={this.state.search.siteCoverageFrom}
+                                                            onChange={(newValue) => this.changeSearchField("siteCoverageFrom", newValue)}
+                                                            hideInput={false}
+                                                            hideIcon={true}
+
+                                                        />
+                                                    }
+                                                </td>
+                                            </tr> : null
+                                    }
+                                    {
+                                        this.props.appraisal.propertyType === 'industrial' ?
+                                            <tr>
+                                                <td>
+                                                    <strong>Site Coverage High:</strong>
+                                                </td>
+                                                <td>
+                                                    {
+                                                        <FieldDisplayEdit
+                                                            type={"number"}
+                                                            value={this.state.search.siteCoverageTo}
+                                                            onChange={(newValue) => this.changeSearchField("siteCoverageTo", newValue)}
+                                                            hideInput={false}
+                                                            hideIcon={true}
+
+                                                        />
+                                                    }
+                                                </td>
+                                            </tr> : null
+                                    }
                                     </tbody>
                                 </Col>
                             </Row>

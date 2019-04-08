@@ -48,11 +48,14 @@ class ComparableSale(Document):
 
     parking = StringField()
 
+    clearCeilingHeight = FloatField()
+
+    shippingDoors = IntField()
+
+    siteCoverage = FloatField()
+
     # The PPS for the building
     pricePerSquareFoot = FloatField()
-
-    # The vacancy rate for the building (between 0 and 1)
-    vacancyRate = FloatField()
 
     # The date that the comparable was sold
     saleDate = ConvertingDateField(sparse=True, default=None, null=True)

@@ -3,12 +3,8 @@ import NumberFormat from 'react-number-format';
 import _ from 'underscore';
 
 
-class CurrencyFormat extends React.Component
+class AreaFormat extends React.Component
 {
-    static defaultProps = {
-        cents: true
-    };
-
     render()
     {
         if (_.isUndefined(this.props.value) || _.isNull(this.props.value))
@@ -16,14 +12,14 @@ class CurrencyFormat extends React.Component
             return null;
         }
 
-        return <span>$<NumberFormat
+        return <span><NumberFormat
             value={this.props.value}
             displayType={'text'}
             thousandSeparator={', '}
-            decimalScale={this.props.cents ? 2 : 0}
+            decimalScale={0}
             fixedDecimalScale={true}
-        /></span>
+        /> sf</span>
     }
 }
 
-export default CurrencyFormat;
+export default AreaFormat;

@@ -6,6 +6,9 @@ import NumberFormat from 'react-number-format';
 import axios from "axios/index";
 import Datetime from 'react-datetime';
 import PropertyTypeSelector from './PropertyTypeSelector';
+import CurrencyFormat from './CurrencyFormat';
+import IntegerFormat from './IntegerFormat';
+import AreaFormat from './AreaFormat';
 
 class ComparableLeaseListItem extends React.Component
 {
@@ -159,7 +162,7 @@ class ComparableLeaseListItem extends React.Component
                                     <Row>
                                         <Col xs={2} className={"header-field-column"}>
                                             {
-                                                comparableLease.leaseDate ? <span>{new Date(comparableLease.leaseDate.$date).getMonth()} / {new Date(comparableLease.leaseDate.$date).getFullYear().toString().substr(2)}</span>
+                                                comparableLease.leaseDate ? <span>{new Date(comparableLease.leaseDate).getMonth()} / {new Date(comparableLease.leaseDate).getFullYear().toString().substr(2)}</span>
                                                     : <span className={"no-data"}>No Lease Date</span>
                                             }
                                         </Col>
@@ -167,10 +170,10 @@ class ComparableLeaseListItem extends React.Component
                                             {comparableLease.address ? comparableLease.address : <span className={"no-data"}>No Address</span>}
                                         </Col>
                                         <Col xs={2} className={"header-field-column"}>
-                                            {comparableLease.sizeOfUnit ? comparableLease.sizeOfUnit : <span className={"no-data"}>No Size</span>}
+                                            {comparableLease.sizeOfUnit ? <IntegerFormat value={comparableLease.sizeOfUnit} /> : <span className={"no-data"}>No Size</span>}
                                         </Col>
                                         <Col xs={2} className={"header-field-column"}>
-                                            {comparableLease.yearlyRent ? comparableLease.yearlyRent : <span className={"no-data"}>No Rent</span>}
+                                            {comparableLease.yearlyRent ? <CurrencyFormat value={comparableLease.yearlyRent} /> : <span className={"no-data"}>No Rent</span>}
                                         </Col>
                                     </Row>
                                 </CardTitle>
@@ -204,7 +207,7 @@ class ComparableLeaseListItem extends React.Component
                                     <span className={"comparable-field-label"}>Size Of Unit: </span>
 
                                     <FieldDisplayEdit
-                                        type={"number"}
+                                        type={"area"}
                                         edit={this.props.edit}
                                         placeholder={"Size of Unit"}
                                         value={comparableLease.sizeOfUnit}
@@ -218,6 +221,26 @@ class ComparableLeaseListItem extends React.Component
                                         placeholder={"Yearly Rent"}
                                         value={comparableLease.yearlyRent}
                                         onChange={(newValue) => this.changeComparableField('yearlyRent', newValue)}
+                                    />
+
+                                    <span className={"comparable-field-label"}>Free Rent:</span>
+
+                                    <FieldDisplayEdit
+                                        type={"text"}
+                                        edit={this.props.edit}
+                                        placeholder={"Free Rent"}
+                                        value={comparableLease.freeRent}
+                                        onChange={(newValue) => this.changeComparableField('freeRent', newValue)}
+                                    />
+
+                                    <span className={"comparable-field-label"}>Tenant Inducements:</span>
+
+                                    <FieldDisplayEdit
+                                        type={"text"}
+                                        edit={this.props.edit}
+                                        placeholder={"Tenant Inducements"}
+                                        value={comparableLease.tenantInducements}
+                                        onChange={(newValue) => this.changeComparableField('tenantInducements', newValue)}
                                     />
 
                                     <span className={"comparable-field-label"}>TMI:</span>

@@ -25,6 +25,12 @@ class ComparableLease(Document):
     # The yearly rent for the unit
     yearlyRent = FloatField()
 
+    # Tenant inducements in plain text
+    tenantInducements = StringField()
+
+    # Free rent in plain text
+    freeRent = StringField()
+
     # The description of the comparable
     description = StringField()
 

@@ -117,7 +117,11 @@ class ViewComparableSalesDatabase extends React.Component {
                         <h3>Search for Comparables</h3>
                     </Col>
                 </Row>
-                <ComparableSaleSearch onChange={(search) => this.onSearchChanged(search)} defaultSearch={this.defaultSearch}/>
+                <ComparableSaleSearch
+                    appraisal={this.props.appraisal}
+                    onChange={(search) => this.onSearchChanged(search)}
+                    defaultSearch={this.defaultSearch}
+                />
                 <Row>
                     <Col xs={8}>
                         <ComparableSaleList comparableSales={this.state.comparableSales}

@@ -107,6 +107,24 @@ class FieldDisplayEdit extends React.Component
                 return this.numberWithCommas(value.toString());
             }
         }
+        else if (this.props.type === 'length')
+        {
+            try {
+                return this.numberWithCommas(Number(value).toFixed(0).toString()) + " ft";
+            }
+            catch(err) {
+                return this.numberWithCommas(value.toString());
+            }
+        }
+        else if (this.props.type === 'area')
+        {
+            try {
+                return this.numberWithCommas(Number(value).toFixed(0).toString()) + " sqft";
+            }
+            catch(err) {
+                return this.numberWithCommas(value.toString());
+            }
+        }
 
         return value;
     }
@@ -114,7 +132,7 @@ class FieldDisplayEdit extends React.Component
 
     cleanValue(value)
     {
-        if (this.props.type === 'currency' || this.props.type === 'number' || this.props.type === 'percent')
+        if (this.props.type === 'currency' || this.props.type === 'number' || this.props.type === 'percent' || this.props.type === 'length' || this.props.type === 'area')
         {
             const cleanText = value.toString().replace(/[^0-9\.-]/g, "");
 
@@ -265,7 +283,10 @@ class FieldDisplayEdit extends React.Component
                         /> : null
                 }
                 {
-                    this.props.type === "currency" || this.props.type === "number" || this.props.type === "percent" || this.props.type === "text" || !this.props.type ?
+                    this.props.type === "currency" || this.props.type === "number" ||
+                    this.props.type === "percent" || this.props.type === "text" ||
+                    this.props.type === "length" || this.props.type === "area" ||
+                    !this.props.type ?
                         <Input placeholder={this.props.placeholder}
                                disabled={!this.props.edit}
                                value={this.state.isEditing ? this.state.value : this.formatValue(this.props.value)}

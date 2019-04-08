@@ -34,6 +34,11 @@ class ComparableSaleModel extends EquationMdoel
 
     static parking = new GenericField();
 
+    static description = new GenericField();
+
+    static clearCeilingHeight = new GenericField();
+    static shippingDoors = new GenericField();
+    static siteCoverage = new GenericField();
 
     static equations = {
         "netOperatingIncome": [

@@ -275,7 +275,7 @@ class ComparableSaleListItem extends React.Component
                                     <span className={"comparable-field-label"}>Building Size:</span>
 
                                     <FieldDisplayEdit
-                                        type={"number"}
+                                        type={"area"}
                                         edit={this.props.edit}
                                         placeholder={"Building Size"}
                                         value={comparableSale.sizeSquareFootage}
@@ -401,6 +401,40 @@ class ComparableSaleListItem extends React.Component
                                         value={comparableSale.parking}
                                         onChange={(newValue) => this.changeComparableField('parking', newValue)}
                                     />
+
+                                    {
+                                        comparableSale.propertyType === 'industrial' ?
+                                        [
+                                            <span className={"comparable-field-label"} key={1} >Clear Ceiling Height:</span>,
+                                            <FieldDisplayEdit
+                                                key={2}
+                                                type={"length"}
+                                                edit={this.props.edit}
+                                                placeholder={"Clear Ceiling Height"}
+                                                value={comparableSale.clearCeilingHeight}
+                                                onChange={(newValue) => this.changeComparableField('clearCeilingHeight', newValue)}
+                                            />,
+                                            <span className={"comparable-field-label"} key={3} >Shipping Doors:</span>,
+                                            <FieldDisplayEdit
+                                                key={4}
+                                                type={"number"}
+                                                edit={this.props.edit}
+                                                placeholder={"Shipping Doors"}
+                                                value={comparableSale.shippingDoors}
+                                                onChange={(newValue) => this.changeComparableField('shippingDoors', newValue)}
+                                            />,
+                                            <span className={"comparable-field-label"} key={5} >Site Coverage:</span>,
+                                            <FieldDisplayEdit
+                                                key={6}
+                                                type={"percent"}
+                                                edit={this.props.edit}
+                                                placeholder={"Site Coverage"}
+                                                value={comparableSale.siteCoverage}
+                                                onChange={(newValue) => this.changeComparableField('siteCoverage', newValue)}
+                                            />
+
+                                        ] : null
+                                    }
 
                                     <span className={"comparable-field-label"}>Additional Info:</span>
 
