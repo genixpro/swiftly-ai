@@ -51,8 +51,8 @@ class ComparableSale(Document):
 
     parking = StringField()
 
-    # The TMI (taxes maintenance insurance) for the property
-    taxesMaintenanceInsurancePSF = FloatField()
+    # The PPS for the building
+    pricePerSquareFoot = FloatField()
 
     # The vacancy rate for the building (between 0 and 1)
     vacancyRate = FloatField()

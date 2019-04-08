@@ -15,9 +15,18 @@ class ComparableLeasesStatistics extends React.Component
     {
         let minSize = null;
         let maxSize = null;
+        let totalSize = 0;
+        let sizeCount = 0;
 
         let minRent = null;
         let maxRent = null;
+        let totalRent = 0;
+        let rentCount = 0;
+
+        let minTMI = null;
+        let maxTMI = null;
+        let totalTMI = 0;
+        let tmiCount = 0;
 
         this.props.comparableLeases.forEach((comparable) =>
         {
@@ -32,6 +41,9 @@ class ComparableLeasesStatistics extends React.Component
                 {
                     maxSize = comparable.sizeOfUnit;
                 }
+
+                totalSize += comparable.sizeOfUnit;
+                sizeCount += 1;
             }
 
             if (_.isNumber(comparable.yearlyRent))
@@ -45,10 +57,39 @@ class ComparableLeasesStatistics extends React.Component
                 {
                     maxRent = comparable.yearlyRent;
                 }
+
+                totalRent += comparable.yearlyRent;
+                rentCount += 1;
+            }
+
+            if (_.isNumber(comparable.taxesMaintenanceInsurance))
+            {
+                if (minTMI === null || comparable.taxesMaintenanceInsurance < minTMI)
+                {
+                    minTMI = comparable.taxesMaintenanceInsurance;
+                }
+
+                if (maxTMI === null || comparable.taxesMaintenanceInsurance > maxTMI)
+                {
+                    maxTMI = comparable.taxesMaintenanceInsurance;
+                }
+
+                totalTMI += comparable.taxesMaintenanceInsurance;
+                tmiCount += 1;
             }
         });
 
-        return {minSize, maxSize, minRent, maxRent}
+        return {
+            minSize,
+            maxSize,
+            averageSize: sizeCount > 0 ? totalSize / sizeCount : null,
+            minRent,
+            maxRent,
+            averageRent: totalRent > 0 ? totalRent / rentCount : null,
+            minTMI,
+            maxTMI,
+            averageTMI: totalTMI > 0 ? totalTMI / tmiCount : null
+        }
     }
 
     render()
@@ -81,6 +122,32 @@ class ComparableLeasesStatistics extends React.Component
                                     <strong>Yearly Rent Range</strong>&nbsp;&nbsp;&nbsp;
                                     {
                                         stats.minRent ? <span>{stats.minRent} - {stats.maxRent}</span> : null
+                                    }
+                                </Col>
+                                <Col xs={4}>
+                                    <strong>TMI Range</strong>&nbsp;&nbsp;&nbsp;
+                                    {
+                                        stats.minTMI ? <span>{stats.minTMI} - {stats.maxTMI}</span> : null
+                                    }
+                                </Col>
+                            </Row>
+                            <Row>
+                                <Col xs={4}>
+                                    <strong>Size Average</strong>&nbsp;&nbsp;&nbsp;
+                                    {
+                                        stats.averageSize ? <span>{stats.averageSize}</span> : null
+                                    }
+                                </Col>
+                                <Col xs={4}>
+                                    <strong>Yearly Rent Average</strong>&nbsp;&nbsp;&nbsp;
+                                    {
+                                        stats.averageRent ? <span>{stats.averageRent}</span> : null
+                                    }
+                                </Col>
+                                <Col xs={4}>
+                                    <strong>TMI Average</strong>&nbsp;&nbsp;&nbsp;
+                                    {
+                                        stats.averageTMI ? <span>{stats.averageTMI}</span> : null
                                     }
                                 </Col>
                             </Row>

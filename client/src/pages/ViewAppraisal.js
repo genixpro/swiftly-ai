@@ -14,6 +14,7 @@ import ViewStabilizedStatementValuation from "./ViewStabilizedStatementValuation
 import ViewComparableSales from "./ViewComparableSales";
 import ViewComparableSale from "./ViewComparableSale";
 import ViewDiscountedCashFlow from "./ViewDiscountedCashFlow";
+import ViewDirectComparisonValuation from "./ViewDirectComparisonValuation";
 import ViewTenants from "./ViewTenants";
 import ViewBuildingInformation from "./ViewBuildingInformation";
 import ViewExpenses from "./ViewExpenses";
@@ -85,6 +86,7 @@ class ViewAppraisal extends React.Component
                         <Route path={`${this.props.match.path}/general`} render={(props) => withProps({...routeProps, ...props})(ViewBuildingInformation)()}/>} />
                         <Route path={`${this.props.match.path}/expenses`} render={(props) => withProps({...routeProps, ...props})(ViewExpenses)()} />
                         <Route path={`${this.props.match.path}/comparable_leases`} render={(props) => withProps({...routeProps, ...props})(ViewComparableLeases)()} />
+                        <Route path={`${this.props.match.path}/direct_comparison_valuation`} render={(props) => withProps({...routeProps, ...props})(ViewDirectComparisonValuation)()} />
                     </Switch>
                 </div>
             </ContentWrapper> : null

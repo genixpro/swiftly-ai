@@ -30,7 +30,7 @@ class ComparableSaleListItem extends React.Component
         }
 
         this.setState({
-            comparableSale: _.clone(this.props.comparableSale)
+            comparableSale: this.props.comparableSale
         })
     }
 
@@ -59,6 +59,10 @@ class ComparableSaleListItem extends React.Component
         const comparable = this.state.comparableSale;
 
         comparable[field] = newValue;
+        if (newValue)
+        {
+            comparable.calculateMissingNumbers();
+        }
 
         if (this.state.comparableSale._id)
         {
@@ -215,7 +219,7 @@ class ComparableSaleListItem extends React.Component
                                     </Col>
                                     <Col xs={2} className={"header-field-column"}>
                                         {comparableSale.propertyType ? comparableSale.propertyType : <span className={"no-data"}>No Propery Type</span>}<br/>
-                                        {comparableSale.propertyTags ? comparableSale.propertyTags.map((tag, tagIndex) => <span>{tag}{tagIndex !== comparableSale.propertyTags.length ? ", " : null}</span>) : <span className={"no-data"}>No Sub Type</span>}
+                                        {comparableSale.propertyTags ? comparableSale.propertyTags.map((tag, tagIndex) => <span key={tag}>{tag}{tagIndex !== comparableSale.propertyTags.length ? ", " : null}</span>) : <span className={"no-data"}>No Sub Type</span>}
                                     </Col>
                                     <Col className={"header-field-column small-header-column middle-col"}>
                                         {comparableSale.capitalizationRate ? (comparableSale.capitalizationRate.toString() + "%") : <span className={"no-data"}>No Cap Rate</span>}
@@ -292,6 +296,16 @@ class ComparableSaleListItem extends React.Component
                                         placeholder={"Sale Price"}
                                         value={comparableSale.salePrice}
                                         onChange={(newValue) => this.changeComparableField('salePrice', newValue)}
+                                    />
+
+                                    <span className={"comparable-field-label"}>PPS:</span>
+
+                                    <FieldDisplayEdit
+                                        type={"currency"}
+                                        edit={this.props.edit}
+                                        placeholder={"Price Per Square Foot"}
+                                        value={comparableSale.pricePerSquareFoot}
+                                        onChange={(newValue) => this.changeComparableField('pricePerSquareFoot', newValue)}
                                     />
 
                                     <span className={"comparable-field-label"}>Cap Rate:</span>

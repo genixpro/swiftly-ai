@@ -31,6 +31,12 @@ class ComparableLeaseAPI(object):
             query['leaseDate__gt'] = self.request.GET['leaseDateFrom']
         if 'leaseDateTo' in self.request.GET:
             query['leaseDate__lt'] = self.request.GET['leaseDateTo']
+
+        if 'taxesMaintenanceInsuranceFrom' in self.request.GET:
+            query['taxesMaintenanceInsurance__gt'] = self.request.GET['taxesMaintenanceInsuranceFrom']
+        if 'taxesMaintenanceInsuranceTo' in self.request.GET:
+            query['taxesMaintenanceInsurance__lt'] = self.request.GET['taxesMaintenanceInsuranceTo']
+
         if 'propertyType' in self.request.GET:
             query['propertyType'] = self.request.GET['propertyType']
         if 'tenantName' in self.request.GET:

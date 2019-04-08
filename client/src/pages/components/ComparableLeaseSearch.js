@@ -166,6 +166,22 @@ class ComparableLeaseSearch extends React.Component
                                             }
                                         </td>
                                     </tr>
+                                    <tr>
+                                        <td>
+                                            <strong>Tenant Name:</strong>
+                                        </td>
+                                        <td>
+                                            {
+                                                <FieldDisplayEdit
+                                                    type={"text"}
+                                                    value={this.state.search.tenantName}
+                                                    onChange={(newValue) => this.changeSearchField("tenantName", newValue)}
+                                                    hideInput={false}
+                                                    hideIcon={true}
+                                                />
+                                            }
+                                        </td>
+                                    </tr>
                                     </tbody>
                                 </Col>
                                 <Col xs={12} sm={6} md={4}>
@@ -205,16 +221,33 @@ class ComparableLeaseSearch extends React.Component
                                     </tr>
                                     <tr>
                                         <td>
-                                            <strong>Tenant Name:</strong>
+                                            <strong>TMI Low:</strong>
                                         </td>
                                         <td>
                                             {
                                                 <FieldDisplayEdit
-                                                    type={"text"}
-                                                    value={this.state.search.tenantName}
-                                                    onChange={(newValue) => this.changeSearchField("tenantName", newValue)}
+                                                    type={"currency"}
+                                                    value={this.state.search.taxesMaintenanceInsuranceFrom}
+                                                    onChange={(newValue) => this.changeSearchField("taxesMaintenanceInsuranceFrom", newValue)}
                                                     hideInput={false}
                                                     hideIcon={true}
+                                                />
+                                            }
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <strong>TMI High:</strong>
+                                        </td>
+                                        <td>
+                                            {
+                                                <FieldDisplayEdit
+                                                    type={"currency"}
+                                                    value={this.state.search.taxesMaintenanceInsuranceTo}
+                                                    onChange={(newValue) => this.changeSearchField("taxesMaintenanceInsuranceTo", newValue)}
+                                                    hideInput={false}
+                                                    hideIcon={true}
+
                                                 />
                                             }
                                         </td>

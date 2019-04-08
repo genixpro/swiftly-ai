@@ -1,52 +1,25 @@
 import React from 'react';
-import {Row, Col, Card, CardBody, Popover, PopoverBody, PopoverHeader} from 'reactstrap';
+import {Row, Col, Card, CardBody, DropdownMenu, Dropdown, DropdownToggle, DropdownItem} from 'reactstrap';
 import axios from 'axios';
 import ComparableSaleList from "./components/ComparableSaleList";
 import Promise from 'bluebird';
 import _ from 'underscore';
 import AppraisalContentHeader from "./components/AppraisalContentHeader";
-import ComparableSaleSearch from "./components/ComparableSaleSearch";
-import GoogleMapReact from 'google-map-react';
-import ComparableSaleListItem from "./components/ComparableSaleListItem"
-import ComparableSalesMap from "./components/ComparableSalesMap"
-import ComparableSalesModel from "../models/ComparableSaleModel"
+import ComparableSaleSearch from './components/ComparableSaleSearch';
+import ComparableSalesMap from './components/ComparableSalesMap';
+import ComparableSaleModel from "../models/ComparableSaleModel";
 
-class ViewComparableSalesDatabase extends React.Component {
+
+class ViewDirectComparisonValuation extends React.Component {
     state = {
         comparableSales: []
     };
 
-    search = {};
-    mapSearch = {};
+    loadedComparables = {};
 
     componentDidMount()
     {
-        this.search = this.getDefaultSearchParams();
-    }
 
-    getDefaultSearchParams()
-    {
-        const defaultSearch = {
-            "saleDateFrom": new Date(Date.now() - (1000 * 3600 * 24 * 365 * 2))
-        };
-
-        if (this.props.appraisal.propertyType)
-        {
-            defaultSearch['propertyType'] = this.props.appraisal.propertyType;
-        }
-
-        return defaultSearch;
-    }
-
-
-    loadData()
-    {
-        const params = _.extend({}, this.search, this.mapSearch);
-
-        axios.get(`/comparable_sales`, {params: params}).then((response) => {
-            // console.log(response.data.comparableSales);
-            this.setState({comparableSales: response.data.comparableSales.map((comp) => new ComparableSalesModel(comp))}, () => console.log(this.state.comparableSales))
-        });
     }
 
 
@@ -70,33 +43,48 @@ class ViewComparableSalesDatabase extends React.Component {
         this.props.saveDocument(appraisal);
     }
 
-    onSearchChanged(search)
-    {
-        this.search = search;
-        this.loadData();
-    }
-
 
     removeComparableFromAppraisal(comp)
     {
         const appraisal = this.props.appraisal;
+        const comparables = this.state.comparableSales;
         for (let i = 0; i < appraisal.comparableSales.length; i += 1)
         {
             if (appraisal.comparableSales[i] === comp._id)
             {
                 appraisal.comparableSales.splice(i, 1);
+                comparables.splice(i, 1);
                 break;
             }
         }
         appraisal.comparableSales = _.clone(appraisal.comparableSales);
         this.props.saveDocument(appraisal);
+        this.setState({comparableSales: comparables});
     }
 
-    onMapSearchChanged(mapSearch)
+    toggle()
     {
-        this.mapSearch = mapSearch;
-        this.loadData();
+        this.setState({downloadDropdownOpen: !this.state.downloadDropdownOpen})
     }
+
+
+    downloadExcelSummary()
+    {
+        window.location = `${process.env.VALUATE_ENVIRONMENT.REACT_APP_SERVER_URL}appraisal/${this.props.appraisal._id}/comparable_sales/excel`;
+    }
+
+
+    downloadWordSummary()
+    {
+        window.location = `${process.env.VALUATE_ENVIRONMENT.REACT_APP_SERVER_URL}appraisal/${this.props.appraisal._id}/comparable_sales/word`;
+    }
+
+
+    downloadDetailedSummary()
+    {
+        window.location = `${process.env.VALUATE_ENVIRONMENT.REACT_APP_SERVER_URL}appraisal/${this.props.appraisal._id}/comparable_sales/detailed_word`;
+    }
+
 
     render()
     {
@@ -105,30 +93,34 @@ class ViewComparableSalesDatabase extends React.Component {
             return null;
         }
 
-        if (!this.defaultSearch)
-        {
-            this.defaultSearch = this.getDefaultSearchParams();
-        }
-
         return [
-            <div className={"view-comparables-database"}>
+            <div className={"view-appraisal-comparable-sales"}>
                 <Row>
-                    <Col xs={12}>
-                        <h3>Search for Comparables</h3>
+                    <Col xs={10}>
+                        <h3>View Comparable Sales</h3>
+                    </Col>
+                    <Col xs={2}>
+                        <Dropdown isOpen={this.state.downloadDropdownOpen} toggle={this.toggle.bind(this)}>
+                            <DropdownToggle caret color={"primary"} className={"download-dropdown-button"}>
+                                Download
+                            </DropdownToggle>
+                            <DropdownMenu>
+                                <DropdownItem onClick={() => this.downloadExcelSummary()}>Spreadsheet (xls)</DropdownItem>
+                                <DropdownItem onClick={() => this.downloadWordSummary()}>Cap-Rate Summary (docx)</DropdownItem>
+                                <DropdownItem onClick={() => this.downloadDetailedSummary()}>Detailed Summary (docx)</DropdownItem>
+                            </DropdownMenu>
+                        </Dropdown>
                     </Col>
                 </Row>
-                <ComparableSaleSearch onChange={(search) => this.onSearchChanged(search)} defaultSearch={this.defaultSearch}/>
                 <Row>
                     <Col xs={8}>
                         <ComparableSaleList comparableSales={this.state.comparableSales}
-                                            statsTitle={"Region Statistics"}
-                                            allowNew={true}
+                                            statsTitle={"Statistics for Selected Comps"}
+                                            allowNew={false}
                                             history={this.props.history}
                                             appraisalId={this.props.match.params._id}
                                             appraisalComparables={this.props.appraisal.comparableSales}
-                                            onAddComparableClicked={(comp) => this.addComparableToAppraisal(comp)}
                                             onRemoveComparableClicked={(comp) => this.removeComparableFromAppraisal(comp)}
-                                            onNewComparable={(comp) => this.createNewComparable(comp)}
                                             onChange={(comps) => this.onComparablesChanged(comps)}
                         />
                     </Col>
@@ -136,7 +128,6 @@ class ViewComparableSalesDatabase extends React.Component {
                         <ComparableSalesMap
                             appraisal={this.props.appraisal}
                             comparableSales={this.state.comparableSales}
-                            onMapSearchChanged={(mapSearch) => this.onMapSearchChanged(mapSearch)}
                             onAddComparableToAppraisal={(comp) => this.addComparableToAppraisal(comp)}
                             onRemoveComparableFromAppraisal={(comp) => this.removeComparableFromAppraisal(comp)}
                         />
@@ -147,4 +138,4 @@ class ViewComparableSalesDatabase extends React.Component {
     }
 }
 
-export default ViewComparableSalesDatabase;
+export default ViewDirectComparisonValuation;

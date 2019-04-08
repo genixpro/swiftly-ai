@@ -39,3 +39,6 @@ class ComparableLease(Document):
 
     # A list of tags associated with this comparable lease
     propertyTags = ListField(StringField())
+
+    # The TMI (taxes maintenance insurance) for the property
+    taxesMaintenanceInsurance = FloatField()

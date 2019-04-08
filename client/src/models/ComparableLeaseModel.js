@@ -18,6 +18,7 @@ class ComparableLeaseModel extends BaseModel
     static rentType = new GenericField();
     static propertyTags = new ListField(new GenericField());
 
+    static taxesMaintenanceInsurance = new GenericField();
 }
 
 export default ComparableLeaseModel;
