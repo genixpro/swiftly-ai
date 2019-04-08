@@ -113,7 +113,7 @@ class ComparableSaleList extends React.Component
         return (
             <div>
                 {
-                    <ComparableSalesStatistics comparableSales={this.state.comparableSales}  title={this.props.statsTitle}/>
+                    <ComparableSalesStatistics appraisal={this.props.appraisal} comparableSales={this.state.comparableSales}  title={this.props.statsTitle}/>
                 }
                 {
 

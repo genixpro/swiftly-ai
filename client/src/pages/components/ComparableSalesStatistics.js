@@ -4,6 +4,7 @@ import _ from 'underscore';
 import CurrencyFormat from "./CurrencyFormat";
 import PercentFormat from "./PercentFormat";
 import IntegerFormat from "./IntegerFormat";
+import LengthFormat from "./LengthFormat";
 
 class ComparableSalesStatistics extends React.Component
 {
@@ -11,84 +12,59 @@ class ComparableSalesStatistics extends React.Component
         
     };
 
-    computeStatistics()
+    computeStatsForField(field)
     {
-        let minSize = null;
-        let maxSize = null;
-        let totalSize = 0;
-        let sizeCount = 0;
-
-        let minCapRate = null;
-        let maxCapRate = null;
-        let totalCapRate = 0;
-        let capCount = 0;
-
-        let minPPS = null;
-        let maxPPS = null;
-        let totalPPS = 0;
-        let ppsCount = 0;
+        let minVal = null;
+        let maxVal = null;
+        let totalVal = 0;
+        let valCount = 0;
 
         this.props.comparableSales.forEach((comparable) =>
         {
-            if (_.isNumber(comparable.capitalizationRate))
+            if (_.isNumber(comparable[field]))
             {
-                if (minCapRate === null || comparable.capitalizationRate < minCapRate)
+                if (minVal === null || comparable[field] < minVal)
                 {
-                    minCapRate = comparable.capitalizationRate;
+                    minVal = comparable[field];
                 }
 
-                if (maxCapRate === null || comparable.capitalizationRate > maxCapRate)
+                if (maxVal === null || comparable[field] > maxVal)
                 {
-                    maxCapRate = comparable.capitalizationRate;
+                    maxVal = comparable[field];
                 }
 
-                totalCapRate += comparable.capitalizationRate;
-                capCount += 1;
-            }
-
-            if (_.isNumber(comparable.sizeSquareFootage))
-            {
-                if (minSize === null || comparable.sizeSquareFootage < minSize)
-                {
-                    minSize = comparable.sizeSquareFootage;
-                }
-
-                if (maxSize === null || comparable.sizeSquareFootage > maxSize)
-                {
-                    maxSize = comparable.sizeSquareFootage;
-                }
-
-                totalSize += comparable.sizeSquareFootage;
-                sizeCount += 1;
-            }
-
-            if (_.isNumber(comparable.pricePerSquareFoot))
-            {
-                if (minPPS === null || comparable.pricePerSquareFoot < minPPS)
-                {
-                    minPPS = comparable.pricePerSquareFoot;
-                }
-
-                if (maxPPS === null || comparable.pricePerSquareFoot > maxPPS)
-                {
-                    maxPPS = comparable.pricePerSquareFoot;
-                }
-
-                totalPPS += comparable.pricePerSquareFoot;
-                ppsCount += 1;
+                totalVal += comparable[field];
+                valCount += 1;
             }
         });
 
         return {
+            min: minVal,
+            max: maxVal,
+            average: valCount > 0 ? totalVal / valCount : 0,
+        }
+    }
+
+    computeStatistics()
+    {
+        let {min: minSize, max: maxSize, average: sizeAverage} = this.computeStatsForField('sizeSquareFootage');
+        let {min: minPPS, max: maxPPS,  average: averagePPS} = this.computeStatsForField('pricePerSquareFoot');
+        let {min: minCapRate, max: maxCapRate,  average: averageCapRate} = this.computeStatsForField('capitalizationRate');
+        let {min: minClearCeilingHeight, max: maxClearCeilingHeight,  average: averageClearCeilingHeight} = this.computeStatsForField('clearCeilingHeight');
+
+        return {
             minSize,
             maxSize,
-            sizeAverage: sizeCount > 0 ? totalSize / sizeCount : 0,
+            sizeAverage,
             minCapRate,
             maxCapRate,
-            averageCapRate: capCount > 0 ? totalCapRate / capCount : 0,
+            averageCapRate,
             minPPS,
             maxPPS,
-            averagePPS: ppsCount > 0 ? totalPPS / ppsCount : 0
+            averagePPS,
+            minClearCeilingHeight,
+            maxClearCeilingHeight,
+            averageClearCeilingHeight,
         }
     }
 
@@ -152,6 +128,28 @@ class ComparableSalesStatistics extends React.Component
                                     }
                                 </Col>
                             </Row>
+                            {
+                                this.props.appraisal.propertyType === 'industrial' ?
+                                    <Row>
+                                        <Col xs={4}>
+                                            <strong>Clear Ceiling Height Range</strong>&nbsp;&nbsp;&nbsp;
+                                            {
+                                                stats.minClearCeilingHeight ? <span><IntegerFormat value={stats.minClearCeilingHeight} /> - <LengthFormat value={stats.maxClearCeilingHeight} /></span> : null
+                                            }
+                                        </Col>
+                                    </Row> : null
+                            }
+                            {
+                                this.props.appraisal.propertyType === 'industrial' ?
+                                    <Row>
+                                        <Col xs={4}>
+                                            <strong>Clear Ceiling Height Average</strong>&nbsp;&nbsp;&nbsp;
+                                            {
+                                                stats.averageClearCeilingHeight ? <LengthFormat value={stats.averageClearCeilingHeight} /> : null
+                                            }
+                                        </Col>
+                                    </Row> : null
+                            }
                         </CardBody>
                     </Card>
                 </Col>

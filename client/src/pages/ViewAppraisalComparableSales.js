@@ -138,6 +138,7 @@ class ViewAppraisalComparableSales extends React.Component {
                                                 statsTitle={"Statistics for Selected Comps"}
                                                 allowNew={false}
                                                 history={this.props.history}
+                                                appraisal={this.props.appraisal}
                                                 appraisalId={this.props.match.params._id}
                                                 appraisalComparables={this.props.appraisal.comparableSales}
                                                 onRemoveComparableClicked={(comp) => this.removeComparableFromAppraisal(comp)}

@@ -128,6 +128,7 @@ class ViewComparableSalesDatabase extends React.Component {
                                             statsTitle={"Region Statistics"}
                                             allowNew={true}
                                             history={this.props.history}
+                                            appraisal={this.props.appraisal}
                                             appraisalId={this.props.match.params._id}
                                             appraisalComparables={this.props.appraisal.comparableSales}
                                             onAddComparableClicked={(comp) => this.addComparableToAppraisal(comp)}
