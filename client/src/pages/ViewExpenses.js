@@ -1,6 +1,5 @@
 import React from 'react';
 import {Row, Col, Card, CardBody, CardHeader, Table, Button} from 'reactstrap';
-import NumberFormat from 'react-number-format';
 import axios from "axios/index";
 import AnnotationUtilities from './AnnotationUtilities';
 import FieldDisplayEdit from './components/FieldDisplayEdit';
@@ -12,6 +11,8 @@ import FileViewer from "./components/FileViewer"
 import FileSelector from "./components/FileSelector"
 import {IncomeStatementItemModel} from "../models/IncomeStatementModel";
 import FileModel from "../models/FileModel";
+import CurrencyFormat from "./components/CurrencyFormat";
+import YearlySourceTypeFormat from "./components/YearlySourceTypeFormat";
 
 class ViewExpenses extends React.Component
 {
@@ -173,7 +174,7 @@ class ViewExpenses extends React.Component
                             type="currency"
                             hideIcon={true}
                             edit={true}
-                            value={incomeStatementItem.yearlyAmountsPSF[year.toString()]}
+                            value={incomeStatementItem.yearlyAmountsPSF[year.toString()] ? incomeStatementItem.yearlyAmountsPSF[year.toString()] : ""}
                             onChange={(newValue) => this.changeIncomeItemPSFValue(incomeStatementItem, year, newValue)}
                         />
                     </Col>]
@@ -360,7 +361,7 @@ class ViewExpenses extends React.Component
                                                         this.props.appraisal.incomeStatement.years.map((year) =>
                                                         {
                                                             return [<Col key={year.toString() + "-1"} className={"amount-column"}>
-                                                                <div className={"header-wrapper"}>{year}</div>
+                                                                <div className={"header-wrapper"}>{year} <YearlySourceTypeFormat value={this.props.appraisal.incomeStatement.yearlySourceTypes[year]} /></div>
                                                             </Col>,
                                                                 <Col key={year.toString() + "-2"} className={"amount-column psf"}>
                                                                     <div className={"header-wrapper"}>(psf)</div>
@@ -393,11 +394,7 @@ class ViewExpenses extends React.Component
                                                         {
                                                             return [<Col key={year.toString() + "1"} className={"amount-column"}>
                                                                 <div className={"value-wrapper"}>
-                                                                    $<NumberFormat value={this.state.operatingExpenseTotal[year]}
-                                                                               displayType={'text'}
-                                                                               thousandSeparator={', '}
-                                                                               decimalScale={2}
-                                                                               fixedDecimalScale={true}/>
+                                                                    <CurrencyFormat value={this.state.operatingExpenseTotal[year]} />
                                                                 </div>
                                                             </Col>, <Col key={year.toString() + "2"} className={"amount-column psf"}/>]
                                                         })
@@ -415,11 +412,7 @@ class ViewExpenses extends React.Component
                                                         {
                                                             return [<Col key={year.toString() + "1"} className={"amount-column"}>
                                                                 <div className={"value-wrapper"}>
-                                                                    $<NumberFormat value={this.state.taxesExpenseTotal[year]}
-                                                                                   displayType={'text'}
-                                                                                   thousandSeparator={', '}
-                                                                                   decimalScale={2}
-                                                                                   fixedDecimalScale={true}/>
+                                                                    <CurrencyFormat value={this.state.taxesExpenseTotal[year]} />
                                                                 </div>
                                                             </Col>, <Col key={year.toString() + "2"} className={"amount-column psf"}/>]
                                                         })
@@ -437,11 +430,7 @@ class ViewExpenses extends React.Component
                                                         {
                                                             return [<Col key={year.toString() + "1"} className={"amount-column"}>
                                                                 <div className={"value-wrapper"}>
-                                                                    $<NumberFormat value={this.state.managementExpenseTotal[year]}
-                                                                                   displayType={'text'}
-                                                                                   thousandSeparator={', '}
-                                                                                   decimalScale={2}
-                                                                                   fixedDecimalScale={true}/>
+                                                                    <CurrencyFormat value={this.state.managementExpenseTotal[year]} />
                                                                 </div>
                                                             </Col>, <Col key={year.toString() + "2"} className={"amount-column psf"}/>]
                                                         })

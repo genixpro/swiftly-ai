@@ -2,12 +2,14 @@ import GenericField from "./GenericField";
 import ModelField from "./ModelField";
 import ListField from "./ListField";
 import BaseModel from "./BaseModel";
+import _ from "underscore";
 
 
 class IncomeStatementItemModel extends BaseModel
 {
     static itemName = new GenericField("name");
     static yearlyAmounts = new GenericField();
+    static yearlySourceTypes = new GenericField();
     static extractionReferences = new GenericField();
     static cashFlowType = new GenericField();
     static incomeStatementItemType = new GenericField();
@@ -19,7 +21,14 @@ class IncomeStatementItemModel extends BaseModel
 
         Object.keys(this.yearlyAmounts).forEach((year) =>
         {
-            psf[year] = this.yearlyAmounts[year] / size;
+            if (_.isUndefined(size))
+            {
+                psf[year] = this.yearlyAmounts[year] / size;
+            }
+            else
+            {
+                psf[year] = null;
+            }
         });
 
         return psf;
@@ -33,7 +42,10 @@ class IncomeStatementItemModel extends BaseModel
 
         Object.keys(newYearlyPSF).forEach((year) =>
         {
-            yearly[year] = newYearlyPSF[year] * size;
+            if (size)
+            {
+                yearly[year] = newYearlyPSF[year] * size;
+            }
         });
 
         this.yearlyAmounts = yearly;
@@ -44,6 +56,7 @@ class IncomeStatementItemModel extends BaseModel
 class IncomeStatementModel extends BaseModel
 {
     static years = new ListField(new GenericField());
+    static yearlySourceTypes = new GenericField();
     static incomes = new ListField(new ModelField(IncomeStatementItemModel));
     static expenses = new ListField(new ModelField(IncomeStatementItemModel));
 }

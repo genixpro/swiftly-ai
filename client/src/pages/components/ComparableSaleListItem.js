@@ -120,7 +120,7 @@ class ComparableSaleListItem extends React.Component
         const comparableSale = this.props.comparableSale;
 
 
-        let text = `In reference to the ${new Date(comparableSale.saleDate).getFullYear()}/${new Date(comparableSale.saleDate).getMonth()}/${new Date(comparableSale.saleDate).getDate()} sale of a ${comparableSale.propertyType} building located at ${comparableSale.address}. `;
+        let text = `In reference to the ${new Date(comparableSale.saleDate).getFullYear()}/${new Date(comparableSale.saleDate).getMonth() + 1}/${new Date(comparableSale.saleDate).getDate()} sale of a ${comparableSale.propertyType} building located at ${comparableSale.address}. `;
 
         if (comparableSale.sizeSquareFootage)
         {
@@ -194,7 +194,7 @@ class ComparableSaleListItem extends React.Component
                                 <Row>
                                     <Col xs={1} className={"header-field-column"}>
                                         {
-                                            comparableSale.saleDate ? <span>{new Date(comparableSale.saleDate).getMonth()} / {new Date(comparableSale.saleDate).getFullYear().toString().substr(2)}</span>
+                                            comparableSale.saleDate ? <span>{new Date(comparableSale.saleDate).getMonth() + 1} / {new Date(comparableSale.saleDate).getFullYear().toString().substr(2)}</span>
                                                 : <span className={"no-data"}>No Sale Date</span>
                                         }
                                     </Col>

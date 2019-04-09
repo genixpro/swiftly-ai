@@ -162,7 +162,7 @@ class ComparableLeaseListItem extends React.Component
                                     <Row>
                                         <Col xs={2} className={"header-field-column"}>
                                             {
-                                                comparableLease.leaseDate ? <span>{new Date(comparableLease.leaseDate).getMonth()} / {new Date(comparableLease.leaseDate).getFullYear().toString().substr(2)}</span>
+                                                comparableLease.leaseDate ? <span>{new Date(comparableLease.leaseDate).getMonth() + 1} / {new Date(comparableLease.leaseDate).getFullYear().toString().substr(2)}</span>
                                                     : <span className={"no-data"}>No Lease Date</span>
                                             }
                                         </Col>

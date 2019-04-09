@@ -86,6 +86,30 @@ class StartAppraisal extends React.Component {
                                             onGeoChange={(newValue) => this.updateValue('location', {"type": "Point", "coordinates": [newValue.lng, newValue.lat]})}
                                         />
                                     </FormGroup>
+                                    <FormGroup>
+                                        <label>Property Type</label>
+                                        <FieldDisplayEdit
+                                            type={"propertyType"}
+                                            edit={this.props.edit}
+                                            hideInput={false}
+                                            hideIcon={true}
+                                            placeholder={"Property Type"}
+                                            value={this.state.newAppraisal.propertyType}
+                                            onChange={(newValue) => this.updateValue('propertyType', newValue)}
+                                        />
+                                    </FormGroup>
+                                    <FormGroup>
+                                        <label>Building Size</label>
+                                        <FieldDisplayEdit
+                                            type={"buildingSize"}
+                                            edit={this.props.edit}
+                                            hideInput={false}
+                                            hideIcon={true}
+                                            placeholder={"Building Size"}
+                                            value={this.state.newAppraisal.buildingSize}
+                                            onChange={(newValue) => this.updateValue('buildingSize', newValue)}
+                                        />
+                                    </FormGroup>
                                     <button className="btn btn-sm btn-primary" type="submit" onClick={this.createAppraisal.bind(this)}>Create</button>
                                 </form>
                             </CardBody>

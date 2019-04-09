@@ -22,6 +22,7 @@ class IncomeStatementDataExtractor(DataExtractor):
         incomeStatement.expenses = []
 
         years = set()
+        yearTypes = {}
         for item in items:
             if item.cashFlowType == 'income':
                 incomeStatement.incomes.append(item)
@@ -29,8 +30,11 @@ class IncomeStatementDataExtractor(DataExtractor):
                 incomeStatement.expenses.append(item)
 
             years = years.union(item.yearlyAmounts.keys())
+            for year, yearType in item.yearlySourceTypes.items():
+                yearTypes[year] = yearType
 
         incomeStatement.years = sorted([int(year) for year in years])
+        incomeStatement.yearlySourceTypes = yearTypes
 
         return incomeStatement
 
@@ -72,8 +76,14 @@ class IncomeStatementDataExtractor(DataExtractor):
 
         incomeStatementItem.name = lineItem.get('ACC_NAME', '')
 
-        incomeStatementItem.yearlyAmounts = {str(year): self.cleanAmount(lineItem.get("BUDGET", "0"))}
-        incomeStatementItem.extractionReferences = {str(year): lineItem.get("BUDGET_reference", None)}
+        if 'BUDGET' in lineItem:
+            incomeStatementItem.yearlyAmounts = {str(year): self.cleanAmount(lineItem.get("BUDGET", "0"))}
+            incomeStatementItem.extractionReferences = {str(year): lineItem.get("BUDGET_reference", None)}
+            incomeStatementItem.yearlySourceTypes = {str(year): 'budget'}
+        elif 'FORECAST' in lineItem:
+            incomeStatementItem.yearlyAmounts = {str(year): self.cleanAmount(lineItem.get("FORECAST", "0"))}
+            incomeStatementItem.extractionReferences = {str(year): lineItem.get("FORECAST_reference", None)}
+            incomeStatementItem.yearlySourceTypes = {str(year): 'actual'}
 
         if 'INCOME' in lineItem['modifiers']:
             incomeStatementItem.cashFlowType = 'income'

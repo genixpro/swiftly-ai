@@ -12,6 +12,9 @@ class IncomeStatementItem(EmbeddedDocument):
     # The yearly amount of this income statement item
     yearlyAmounts = DictField(FloatField())
 
+    # This is the source type for each of the yearly amounts
+    yearlySourceTypes = DictField(StringField(choices=['actual', 'budget'], null=True))
+
     # The references to the original files that this data point was pulled from, by year.
     extractionReferences = DictField()
 
@@ -41,12 +44,15 @@ class IncomeStatementItem(EmbeddedDocument):
             if year not in self.yearlyAmounts:
                 self.yearlyAmounts[year] = otherIncomeStatementItem.yearlyAmounts[year]
                 self.extractionReferences[year] = otherIncomeStatementItem.extractionReferences[year]
+                self.yearlySourceTypes[year] = otherIncomeStatementItem.yearlySourceTypes[year]
 
 
 
 
 class IncomeStatement(EmbeddedDocument):
     years = ListField(IntField(), default=[])
+
+    yearlySourceTypes = DictField(StringField(), default={})
 
     incomes = ListField(EmbeddedDocumentField(IncomeStatementItem))
 
@@ -74,3 +80,8 @@ class IncomeStatement(EmbeddedDocument):
                 self.expenses.append(otherExpense)
 
         self.years = sorted(list(set(self.years).union(set(otherIncomeStatement.years))))
+        self.yearlySourceTypes = {}
+        for year in otherIncomeStatement.yearlySourceTypes:
+            if year not in self.yearlySourceTypes:
+                self.yearlySourceTypes[year] = otherIncomeStatement.yearlySourceTypes[year]
+
