@@ -291,7 +291,7 @@ class DiscountedCashFlowModel:
         # Compute net operating income
         operatingIncomeByYear = {}
         for year in years:
-            operatingIncomeByYear[str(year)] = incomeTotalsByYear[str(year)] - expenseTotalsByYear[str(year)]
+            operatingIncomeByYear[str(year)] = incomeTotalsByYear.get(str(year), 0) - expenseTotalsByYear.get(str(year), 0)
 
         netOperatingIncome = DiscountedCashFlowSummaryItem(
             name="Net Operating Income",

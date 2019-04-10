@@ -34,6 +34,8 @@ class ViewExpenses extends React.Component
 
         this.SortableItem = SortableElement(({value, index}) => <this.IncomeStatementItemRow value={value} index={index}/>);
 
+        this.SortableNewItemRow = SortableElement(({value, index}) => <this.NewItemRow value={value} index={index}/>);
+
         this.SortableHeader = SortableElement(({value, index}) => <li className={"row expense-group-row"}>
             <Col>
                 <Row><Col><div className={"header-label"}>{value}</div></Col></Row>
@@ -102,8 +104,6 @@ class ViewExpenses extends React.Component
             </Col>
         </li> );
 
-        this.SortableNewItemRow = SortableElement(({value, index}) => <this.NewItemRow value={value} index={index}/>);
-
         this.SortableStats = SortableElement(({value, index, name, field}) => <li className={"row expense-row total-row"}>
             {this.renderHiddenHandleColumn()}
             <Col className={"name-column"}>
@@ -157,7 +157,7 @@ class ViewExpenses extends React.Component
                         <this.SortableItem key={`item-${value[sortableIndex]}`} index={value[sortableIndex]} value={value}/>
                     ))}
 
-                    <this.SortableNewItemRow index={operatingExpenses.length + 3 + management.length + 3 + taxes.length + 1} value="management_expense" />
+                    <this.SortableNewItemRow index={operatingExpenses.length + 3 + management.length + 3 + taxes.length + 1} value="taxes" />
 
                     <this.SortableStats name="Taxes Total" index={operatingExpenses.length + 3 + management.length + 3 + taxes.length + 2} field="taxesExpenseTotal" />
 
@@ -336,16 +336,16 @@ class ViewExpenses extends React.Component
     }
 
 
-    removeIncomeItem(item, itemIndex)
+    removeIncomeItem(item)
     {
-        if (item.cashFlowType === 'income')
-        {
-            this.props.appraisal.incomeStatement.incomes.splice(itemIndex, 1);
-        }
-        else
-        {
-            this.props.appraisal.incomeStatement.expenses.splice(itemIndex, 1);
-        }
+        let expensedGrouped = this.sortIncomeStatementItems(this.props.appraisal.incomeStatement.expenses);
+        const expensesSorted = expensedGrouped.sorted;
+        const origIndex = _.indexOf(expensesSorted, _.filter(expensesSorted, (expense) => expense[sortableIndex] === item[sortableIndex])[0]);
+
+        expensesSorted.splice(origIndex, 1);
+
+        this.props.appraisal.incomeStatement.expenses = expensesSorted;
+
         this.computeExpenseTotals();
         this.props.saveDocument(this.props.appraisal);
     }
@@ -402,7 +402,7 @@ class ViewExpenses extends React.Component
             <Col className={"action-column"}>
                 <Button
                     color="info"
-                    onClick={(evt) => this.removeIncomeItem(incomeStatementItem, itemIndex)}
+                    onClick={(evt) => this.removeIncomeItem(incomeStatementItem)}
                     title={"Delete Line Item"}
                 >
                     <i className="fa fa-trash-alt"></i>
@@ -411,10 +411,11 @@ class ViewExpenses extends React.Component
         </li>
     }
 
-    createNewIncomeItem(field, value, type)
+    createNewIncomeItem(field, value, incomeStatementItemType)
     {
         const newItem = new IncomeStatementItemModel({
-            type: type
+            cashFlowType: "expense",
+            incomeStatementItemType: incomeStatementItemType
         }, this.props.appraisal.incomeStatement);
 
         if (field)
@@ -437,14 +438,7 @@ class ViewExpenses extends React.Component
             newItem['extractionReferences'] = {};
         }
 
-        if (type === 'income')
-        {
-            this.props.appraisal.incomeStatement.incomes.push(newItem);
-        }
-        else
-        {
-            this.props.appraisal.incomeStatement.expenses.push(newItem);
-        }
+        this.props.appraisal.incomeStatement.expenses.push(newItem);
 
         this.computeExpenseTotals();
         this.props.saveDocument(this.props.appraisal)
@@ -459,15 +453,16 @@ class ViewExpenses extends React.Component
         }
     }
 
-    renderNewItemRow(type)
+    renderNewItemRow(data)
     {
+        const incomeStatementItemType = data.value;
         return <li className={"row expense-row"}>
             {this.renderHiddenHandleColumn()}
             <Col className={"name-column"}>
                 <FieldDisplayEdit
                     hideIcon={true}
                     value={""}
-                    onChange={_.once((newValue) => this.createNewIncomeItem("name", newValue, type))}
+                    onChange={_.once((newValue) => this.createNewIncomeItem("name", newValue, incomeStatementItemType))}
                 />
             </Col>
             {
@@ -478,7 +473,7 @@ class ViewExpenses extends React.Component
                             type="currency"
                             hideIcon={true}
                             value={""}
-                            onChange={_.once((newValue) => newValue ? this.createNewIncomeItem("yearlyAmounts", {[year]: newValue}, type) : null)}
+                            onChange={_.once((newValue) => newValue ? this.createNewIncomeItem("yearlyAmounts", {[year]: newValue}, incomeStatementItemType) : null)}
                         />
                     </Col>,
                         this.props.appraisal.sizeSquareFootage ? <Col key={year.toString() + "2"} className={"amount-column psf"}></Col> : null
@@ -488,7 +483,7 @@ class ViewExpenses extends React.Component
             <Col className={"action-column"}>
                 <Button
                     color="info"
-                    onClick={(evt) => this.createNewIncomeItem(null, null, type)}
+                    onClick={(evt) => this.createNewIncomeItem(null, null, incomeStatementItemType)}
                     title={"New Unit"}
                 >
                     <i className="fa fa-plus-square"></i>
