@@ -46,6 +46,10 @@ class IncomeStatementItemModel extends BaseModel
             {
                 yearly[year] = newYearlyPSF[year] * size;
             }
+            else
+            {
+                yearly[year] = this.yearlyAmounts[year];
+            }
         });
 
         this.yearlyAmounts = yearly;
@@ -59,6 +63,11 @@ class IncomeStatementModel extends BaseModel
     static yearlySourceTypes = new GenericField();
     static incomes = new ListField(new ModelField(IncomeStatementItemModel));
     static expenses = new ListField(new ModelField(IncomeStatementItemModel));
+
+    get latestYear()
+    {
+        return _.max(this.years);
+    }
 }
 
 export {IncomeStatementItemModel, IncomeStatementModel};

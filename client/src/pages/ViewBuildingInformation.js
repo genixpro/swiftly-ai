@@ -85,8 +85,7 @@ class ViewBuildingInformation extends React.Component
                                                             </td>
                                                         </tr> : null
                                                 }
-                                                {
-                                                    this.props.appraisal.propertyType === 'land' ?
+                                                {                                                   this.props.appraisal.propertyType === 'land' ?
                                                         <tr>
                                                             <td>
                                                                 <strong>Sub-type</strong>
@@ -98,7 +97,7 @@ class ViewBuildingInformation extends React.Component
                                                             </td>
                                                         </tr> : null
                                                 }
-                                                {this.renderFieldRow("Size of Building", "sizeOfBuilding", "number")}
+                                                {this.renderFieldRow("Size of Building", "sizeOfBuilding", "area")}
                                                 {this.renderFieldRow("Lot Size", "sizeOfLand", "number")}
                                                 {this.renderFieldRow("Legal Description", "legalDescription")}
                                                 {this.renderFieldRow("Tags", "propertyTags", "tags")}

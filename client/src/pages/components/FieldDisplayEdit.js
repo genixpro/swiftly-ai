@@ -37,7 +37,6 @@ class FieldDisplayEdit extends React.Component
 
     componentDidMount()
     {
-
         if (this.props.hideIcon)
         {
             this.setState({hideIcon: true});
@@ -161,8 +160,11 @@ class FieldDisplayEdit extends React.Component
     startEditing()
     {
         this.sentUpdate = false;
-        this.setState({value: this.formatValue(this.props.value), isEditing: true})
-
+        this.setState({value: this.formatValue(this.props.value), isEditing: true});
+        if (this.props.onStartEditing)
+        {
+            this.props.onStartEditing();
+        }
     }
 
     dateInputUpdated(newValue)

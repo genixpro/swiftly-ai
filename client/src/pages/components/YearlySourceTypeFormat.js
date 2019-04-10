@@ -14,6 +14,10 @@ class YearlySourceTypeFormat extends React.Component
         {
             return "Budget";
         }
+        else if (this.props.value === 'user')
+        {
+            return "User";
+        }
         return "";
     }
 }

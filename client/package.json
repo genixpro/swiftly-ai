@@ -125,6 +125,7 @@
     "simple-line-icons": "2.4.1",
     "spinkit": "^1.2.5",
     "sweetalert": "2.1.2",
+    "underscore": "^1.9.1",
     "validator": "10.9.0",
     "weather-icons": "github:erikflowers/weather-icons",
     "whirl": "github:themicon/whirl"

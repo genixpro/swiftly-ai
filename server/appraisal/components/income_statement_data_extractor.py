@@ -76,14 +76,14 @@ class IncomeStatementDataExtractor(DataExtractor):
 
         incomeStatementItem.name = lineItem.get('ACC_NAME', '')
 
-        if 'BUDGET' in lineItem:
-            incomeStatementItem.yearlyAmounts = {str(year): self.cleanAmount(lineItem.get("BUDGET", "0"))}
-            incomeStatementItem.extractionReferences = {str(year): lineItem.get("BUDGET_reference", None)}
-            incomeStatementItem.yearlySourceTypes = {str(year): 'budget'}
-        elif 'FORECAST' in lineItem:
+        if 'FORECAST' in lineItem:
             incomeStatementItem.yearlyAmounts = {str(year): self.cleanAmount(lineItem.get("FORECAST", "0"))}
             incomeStatementItem.extractionReferences = {str(year): lineItem.get("FORECAST_reference", None)}
             incomeStatementItem.yearlySourceTypes = {str(year): 'actual'}
+        elif 'BUDGET' in lineItem:
+            incomeStatementItem.yearlyAmounts = {str(year): self.cleanAmount(lineItem.get("BUDGET", "0"))}
+            incomeStatementItem.extractionReferences = {str(year): lineItem.get("BUDGET_reference", None)}
+            incomeStatementItem.yearlySourceTypes = {str(year): 'budget'}
 
         if 'INCOME' in lineItem['modifiers']:
             incomeStatementItem.cashFlowType = 'income'

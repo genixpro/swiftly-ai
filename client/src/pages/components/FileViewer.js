@@ -6,6 +6,7 @@ import { ContextMenu, MenuItem, SubMenu } from "react-contextmenu";
 import AnnotationExtractionToken from './AnnotationExtractionToken';
 import { Progress } from 'reactstrap';
 import NumberFormat from 'react-number-format';
+import FieldDisplayEdit from "./FieldDisplayEdit";
 
 
 class FileViewer extends React.Component
@@ -55,7 +56,7 @@ class FileViewer extends React.Component
 
     componentDidMount()
     {
-
+        this.componentDidUpdate();
     }
 
     componentWillUnmount()
@@ -229,6 +230,9 @@ class FileViewer extends React.Component
         const newPage = firstWord.page;
 
         this.setState({hilightWords: words, currentPage: newPage});
+
+        this.pageSelectRef.value = newPage;
+
         this.moveViewTo(firstWord.left, firstWord.top, 0.5, 0.5, true);
     }
 
@@ -250,26 +254,21 @@ class FileViewer extends React.Component
         return (
             <div id={"file-viewer"} className={"file-viewer"} onMouseUp={this.onMouseUp.bind(this)} onMouseMove={this.onMouseMove.bind(this)}>
                 <Row>
-                    <Col xs={2}>
-                        {
-                            _.range(this.props.document.pages).map((page) =>
-                            {
-                                return <Card outline color="primary" className={`file-viewer-thumbnail-container ${this.state.currentPage === page ? "selected-page" : ""}`} key={page}>
-                                    <CardBody>
-                                        <img
-                                            alt="Document Preview"
-                                            id={`file-viewer-image-${page}-thumbnail`}
-                                            src={`https://appraisalfiles.blob.core.windows.net/files/${this.props.document._id}-image-${page}.png`}
-                                            onClick={() => this.changePage(page)}
-                                            className={`file-viewer-image-thumbnail`}
-                                        />
-                                    </CardBody>
-                                </Card>;
-                            })
-                        }
-                    </Col>
-                    <Col xs={10}>
+                    <Col xs={12}>
                         <div className={"extractions-toolbar"}>
+                            <div>
+                                <select //value={this.state.currentPage}
+                                        ref={(ref) => this.pageSelectRef = ref}
+                                        onChange={(evt) => this.changePage(Number(evt.target.value))}
+                                        className="custom-select">
+                                    {
+                                        _.range(this.props.document.pages).map((page) =>
+                                        {
+                                            return <option key={page} value={page}>Page {page + 1}</option>
+                                        })
+                                    }
+                                </select>
+                            </div>
                             <div>
                                 <em className="fa-2x icon-magnifier-add mr-2" onClick={() => this.zoomIn()}></em>
                             </div>
@@ -294,6 +293,7 @@ class FileViewer extends React.Component
                                     _.range(this.props.document.pages).map((page, pageIndex) =>
                                     {
                                         return <img
+                                            key={pageIndex}
                                             alt="Document"
                                             id={`file-viewer-image`}
                                             src={`https://appraisalfiles.blob.core.windows.net/files/${this.props.document._id}-image-${page}.png`}
@@ -312,7 +312,8 @@ class FileViewer extends React.Component
                                     {
                                         if(word.page === this.state.currentPage)
                                         {
-                                            return <div className={`file-viewer-word ${this.state.hilightWords.indexOf(wordIndex) !== -1 ? "classified" : "null"}`}
+                                            return <div key={wordIndex}
+                                                        className={`file-viewer-word ${this.state.hilightWords.indexOf(wordIndex) !== -1 ? "classified" : "null"}`}
                                                         style={{"top": `${word.top*100}%`, "left": `${word.left*100}%`, "width": `${word.right*100 - word.left*100}%`, "height": `${word.bottom*100 - word.top*100}%`}}
                                             />
                                         }
