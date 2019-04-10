@@ -51,7 +51,8 @@ class ViewExpenses extends React.Component
         operatingExpenseTotal: {},
         managementExpenseTotal: {},
         taxesExpenseTotal: {},
-        newYearGrowthPercent: 2.0
+        newYearGrowthPercent: 2.0,
+        newYearPopoverShowing: {}
     };
 
     constructor()
@@ -92,14 +93,15 @@ class ViewExpenses extends React.Component
                     }
                     <Col className={"add-column-column"}>
                         <Button
-                            id={"add-column-button"}
-                            color="info"
-                            onClick={(evt) => this.toggleNewYearPopover()}
+                            id={`add-column-button-${value.replace(/ /g, "")}`}
+                            className={`add-column-button`}
+                            color="default"
+                            onClick={(evt) => this.toggleNewYearPopover(value)}
                             title={"Add Year"}
                         >
                             <i className="fa fa-plus-square"></i>
                         </Button>
-                        <Popover placement="bottom" isOpen={this.state.newYearPopoverShowing} target="add-column-button" toggle={() => this.toggleNewYearPopover()}>
+                        <Popover placement="bottom" isOpen={this.state.newYearPopoverShowing[value]} target={`add-column-button-${value.replace(/ /g, "")}`} toggle={() => this.toggleNewYearPopover(value)}>
                             <PopoverHeader>Popover Title</PopoverHeader>
                             <PopoverBody>
                                 Add a new year. Apply Growth Rate to expenses:
@@ -123,7 +125,7 @@ class ViewExpenses extends React.Component
                                 &nbsp;
                                 <Button
                                     color="danger"
-                                    onClick={(evt) => this.toggleNewYearPopover()}
+                                    onClick={(evt) => this.toggleNewYearPopover(value)}
                                     title={"Cancel"}
                                 >
                                     Cancel
@@ -483,7 +485,7 @@ class ViewExpenses extends React.Component
                 <Button
                     color="info"
                     onClick={(evt) => this.removeIncomeItem(incomeStatementItem)}
-                    title={"Delete Line Item"}
+                    title={"Delete Expense"}
                 >
                     <i className="fa fa-trash-alt"></i>
                 </Button>
@@ -573,7 +575,7 @@ class ViewExpenses extends React.Component
                 <Button
                     color="info"
                     onClick={(evt) => this.createNewIncomeItem(null, null, incomeStatementItemType)}
-                    title={"New Unit"}
+                    title={"New Expense"}
                 >
                     <i className="fa fa-plus-square"></i>
                 </Button>
@@ -581,9 +583,11 @@ class ViewExpenses extends React.Component
         </li>
     }
 
-    toggleNewYearPopover()
+    toggleNewYearPopover(group)
     {
-        this.setState({newYearPopoverShowing: !this.state.newYearPopoverShowing});
+        const newYearPopoverShowing = this.state.newYearPopoverShowing;
+        newYearPopoverShowing[group] = !newYearPopoverShowing[group];
+        this.setState({newYearPopoverShowing: newYearPopoverShowing});
     }
 
     onSortEnd({oldIndex, newIndex})
