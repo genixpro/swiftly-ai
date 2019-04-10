@@ -29,7 +29,7 @@ function FieldDisplayEditWrapper({ isDragging, connectDropTarget, ...props}) {
  */
 const dragTarget = {
     drop: (props, monitor) => {
-        props.onChange(monitor.getItem().word.word)
+        props.onChange(monitor.getItem().word.word, [monitor.getItem().word.index])
     }
 };
 
@@ -79,8 +79,9 @@ class ViewExpenses extends React.Component
                         {
                             return [
                                 <Col key={year.toString() + "-1"} className={"amount-column"}>
-                                    <div className={"header-wrapper"}>{year} <YearlySourceTypeFormat
-                                        value={this.props.appraisal.incomeStatement.yearlySourceTypes[year]}/></div>
+                                    <div className={"header-wrapper"}>{year}
+                                    <br/>
+                                    <YearlySourceTypeFormat value={this.props.appraisal.incomeStatement.yearlySourceTypes[year]}/></div>
                                 </Col>,
                                 this.props.appraisal.sizeSquareFootage ?
                                     <Col key={year.toString() + "-2"} className={"amount-column psf"}>
@@ -300,7 +301,8 @@ class ViewExpenses extends React.Component
 
     cleanNumericalValue(value)
     {
-        const cleanText = value.toString().replace(/[^0-9\.]/g, "");
+        value = value.toString();
+        const cleanText = value.replace(/[^0-9\.]/g, "");
         const isNegative = value.indexOf("-") !== -1 || value.indexOf("(") !== -1 || value.indexOf(")") !== -1;
 
         if (cleanText === "")
@@ -323,7 +325,7 @@ class ViewExpenses extends React.Component
         }
     }
 
-    changeIncomeItemValue(item, year, newValue)
+    changeIncomeItemValue(item, year, newValue, newReference)
     {
         if (newValue === null)
         {
@@ -331,12 +333,24 @@ class ViewExpenses extends React.Component
         }
 
         item['yearlyAmounts'][year] = this.cleanNumericalValue(newValue);
+
+        if (newReference)
+        {
+            const references = item['extractionReferences'];
+            references[year] = {
+                appraisalId: this.props.appraisal._id,
+                fileId: this.state.file._id,
+                wordIndexes: newReference
+            };
+            item['extractionReferences'] = references;
+        }
+
         this.computeExpenseTotals();
         this.props.saveDocument(this.props.appraisal)
     }
 
 
-    changeIncomeItemPSFValue(item, year, newValue)
+    changeIncomeItemPSFValue(item, year, newValue, newReference)
     {
         if (newValue === null)
         {
@@ -346,6 +360,18 @@ class ViewExpenses extends React.Component
         const yearlyAmountsPSF = item['yearlyAmountsPSF'];
         yearlyAmountsPSF[year] = this.cleanNumericalValue(newValue);
         item['yearlyAmountsPSF'] = yearlyAmountsPSF;
+
+        if (newReference)
+        {
+            const references = item['extractionReferences'];
+            references[year] = {
+                appraisalId: this.props.appraisal._id,
+                fileId: this.state.file._id,
+                wordIndexes: newReference
+            };
+            item['extractionReferences'] = references;
+        }
+
         this.computeExpenseTotals();
         this.props.saveDocument(this.props.appraisal)
     }
@@ -437,7 +463,7 @@ class ViewExpenses extends React.Component
                             value={incomeStatementItem.yearlyAmounts[year.toString()]}
                             onStartEditing={() => this.onViewExtractionReference(incomeStatementItem.extractionReferences[year.toString()])}
                             history={this.props.history}
-                            onChange={(newValue) => this.changeIncomeItemValue(incomeStatementItem, year, newValue)}
+                            onChange={(newValue, newReference) => this.changeIncomeItemValue(incomeStatementItem, year, newValue, newReference)}
                         />
                     </Col>,
                         this.props.appraisal.sizeSquareFootage ?
@@ -448,7 +474,7 @@ class ViewExpenses extends React.Component
                                     edit={true}
                                     value={incomeStatementItem.yearlyAmountsPSF[year.toString()] ? incomeStatementItem.yearlyAmountsPSF[year.toString()] : ""}
                                     onStartEditing={() => this.onViewExtractionReference(incomeStatementItem.extractionReferences[year.toString()])}
-                                    onChange={(newValue) => this.changeIncomeItemPSFValue(incomeStatementItem, year, newValue)}
+                                    onChange={(newValue, newReference) => this.changeIncomeItemPSFValue(incomeStatementItem, year, newValue, newReference)}
                                 />
                             </Col> : null]
                 })
@@ -465,7 +491,7 @@ class ViewExpenses extends React.Component
         </li>
     }
 
-    createNewIncomeItem(field, value, incomeStatementItemType)
+    createNewIncomeItem(field, value, incomeStatementItemType, extractionReferences)
     {
         const newItem = new IncomeStatementItemModel({
             cashFlowType: "expense",
@@ -490,6 +516,11 @@ class ViewExpenses extends React.Component
         if (_.isUndefined(newItem['extractionReferences']))
         {
             newItem['extractionReferences'] = {};
+        }
+
+        if (extractionReferences)
+        {
+            newItem['extractionReferences'] = extractionReferences
         }
 
         this.props.appraisal.incomeStatement.expenses.push(newItem);
@@ -527,7 +558,11 @@ class ViewExpenses extends React.Component
                             type="currency"
                             hideIcon={true}
                             value={""}
-                            onChange={_.once((newValue) => newValue ? this.createNewIncomeItem("yearlyAmounts", {[year]: this.cleanNumericalValue(newValue)}, incomeStatementItemType) : null)}
+                            onChange={_.once((newValue, extractionReference) => newValue ? this.createNewIncomeItem("yearlyAmounts", {[year]: this.cleanNumericalValue(newValue)}, incomeStatementItemType, {[year]: {
+                                    appraisalId: this.props.appraisal._id,
+                                    fileId: this.state.file._id,
+                                    wordIndexes: extractionReference
+                                }}) : null)}
                         />
                     </Col>,
                         this.props.appraisal.sizeSquareFootage ? <Col key={year.toString() + "2"} className={"amount-column psf"}></Col> : null
