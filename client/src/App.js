@@ -21,6 +21,8 @@ import "./Vendor";
 import './styles/bootstrap.scss';
 import './styles/app.scss'
 import axios from 'axios';
+import { DragDropContextProvider } from 'react-dnd'
+import HTML5Backend from 'react-dnd-html5-backend'
 
 axios.defaults.baseURL = process.env.VALUATE_ENVIRONMENT.REACT_APP_SERVER_URL;
 
@@ -45,7 +47,9 @@ class App extends Component {
 
     return (
         <BrowserRouter basename={basename}>
-            <Routes />
+            <DragDropContextProvider backend={HTML5Backend}>
+                <Routes />
+            </DragDropContextProvider>
         </BrowserRouter>
     );
 

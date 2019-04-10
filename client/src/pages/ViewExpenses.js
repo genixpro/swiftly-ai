@@ -13,8 +13,37 @@ import {IncomeStatementItemModel} from "../models/IncomeStatementModel";
 import FileModel from "../models/FileModel";
 import CurrencyFormat from "./components/CurrencyFormat";
 import YearlySourceTypeFormat from "./components/YearlySourceTypeFormat";
+import { DropTarget } from 'react-dnd';
 
 const sortableIndex = Symbol("sortableIndex");
+
+/**
+ * Your Component
+ */
+function FieldDisplayEditWrapper({ isDragging, connectDropTarget, ...props}) {
+    return connectDropTarget(<div><FieldDisplayEdit {...props} /></div>)
+}
+
+/**
+ * Implement the drag source contract.
+ */
+const dragTarget = {
+    drop: (props, monitor) => {
+        props.onChange(monitor.getItem().word.word)
+    }
+};
+
+
+function collect(connect, monitor) {
+    return {
+        connectDropTarget: connect.dropTarget(),
+        isOver: monitor.isOver(),
+    }
+}
+
+// Export the wrapped component:
+const DroppableFieldDisplayEdit = DropTarget("Word", dragTarget, collect)(FieldDisplayEditWrapper);
+
 
 class ViewExpenses extends React.Component
 {
@@ -28,6 +57,7 @@ class ViewExpenses extends React.Component
     constructor()
     {
         super();
+
 
         this.IncomeStatementItemRow = this.renderIncomeStatementItemRow.bind(this);
         this.NewItemRow = this.renderNewItemRow.bind(this);
@@ -268,6 +298,30 @@ class ViewExpenses extends React.Component
         this.setState({operatingExpenseTotal, taxesExpenseTotal, managementExpenseTotal});
     }
 
+    cleanNumericalValue(value)
+    {
+        const cleanText = value.toString().replace(/[^0-9\.]/g, "");
+        const isNegative = value.indexOf("-") !== -1 || value.indexOf("(") !== -1 || value.indexOf(")") !== -1;
+
+        if (cleanText === "")
+        {
+            return 0;
+        }
+
+        try {
+            if (isNegative)
+            {
+                return -Number(cleanText);
+            }
+            else
+            {
+                return Number(cleanText);
+            }
+        }
+        catch(err) {
+            return 0;
+        }
+    }
 
     changeIncomeItemValue(item, year, newValue)
     {
@@ -276,7 +330,7 @@ class ViewExpenses extends React.Component
             newValue = 0;
         }
 
-        item['yearlyAmounts'][year] = newValue;
+        item['yearlyAmounts'][year] = this.cleanNumericalValue(newValue);
         this.computeExpenseTotals();
         this.props.saveDocument(this.props.appraisal)
     }
@@ -290,7 +344,7 @@ class ViewExpenses extends React.Component
         }
 
         const yearlyAmountsPSF = item['yearlyAmountsPSF'];
-        yearlyAmountsPSF[year] = newValue;
+        yearlyAmountsPSF[year] = this.cleanNumericalValue(newValue);
         item['yearlyAmountsPSF'] = yearlyAmountsPSF;
         this.computeExpenseTotals();
         this.props.saveDocument(this.props.appraisal)
@@ -365,7 +419,7 @@ class ViewExpenses extends React.Component
                 </div>
             </Col>
             <Col className={"name-column"}>
-                <FieldDisplayEdit
+                <DroppableFieldDisplayEdit
                     hideIcon={true}
                     value={incomeStatementItem.name}
                     onChange={(newValue) => this.changeIncomeItemName(incomeStatementItem, newValue)}
@@ -376,7 +430,7 @@ class ViewExpenses extends React.Component
                 this.props.appraisal.incomeStatement.years.map((year, yearIndex) =>
                 {
                     return [<Col key={year.toString() + "1"} className={"amount-column"}>
-                        <FieldDisplayEdit
+                        <DroppableFieldDisplayEdit
                             type="currency"
                             hideIcon={true}
                             edit={true}
@@ -388,7 +442,7 @@ class ViewExpenses extends React.Component
                     </Col>,
                         this.props.appraisal.sizeSquareFootage ?
                             <Col key={year.toString() + "2"} className={"amount-column psf"}>
-                                <FieldDisplayEdit
+                                <DroppableFieldDisplayEdit
                                     type="currency"
                                     hideIcon={true}
                                     edit={true}
@@ -459,7 +513,7 @@ class ViewExpenses extends React.Component
         return <li className={"row expense-row"}>
             {this.renderHiddenHandleColumn()}
             <Col className={"name-column"}>
-                <FieldDisplayEdit
+                <DroppableFieldDisplayEdit
                     hideIcon={true}
                     value={""}
                     onChange={_.once((newValue) => this.createNewIncomeItem("name", newValue, incomeStatementItemType))}
@@ -469,11 +523,11 @@ class ViewExpenses extends React.Component
                 this.props.appraisal.incomeStatement.years.map((year, yearIndex) =>
                 {
                     return [<Col key={year.toString() + "1"} className={"amount-column"}>
-                        <FieldDisplayEdit
+                        <DroppableFieldDisplayEdit
                             type="currency"
                             hideIcon={true}
                             value={""}
-                            onChange={_.once((newValue) => newValue ? this.createNewIncomeItem("yearlyAmounts", {[year]: newValue}, incomeStatementItemType) : null)}
+                            onChange={_.once((newValue) => newValue ? this.createNewIncomeItem("yearlyAmounts", {[year]: this.cleanNumericalValue(newValue)}, incomeStatementItemType) : null)}
                         />
                     </Col>,
                         this.props.appraisal.sizeSquareFootage ? <Col key={year.toString() + "2"} className={"amount-column psf"}></Col> : null

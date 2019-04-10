@@ -7,7 +7,36 @@ import AnnotationExtractionToken from './AnnotationExtractionToken';
 import { Progress } from 'reactstrap';
 import NumberFormat from 'react-number-format';
 import FieldDisplayEdit from "./FieldDisplayEdit";
+import { DragSource } from 'react-dnd'
 
+/**
+ * Your Component
+ */
+function Word({ isDragging, dragSource, word, wordIndex, hilightWords }) {
+    return dragSource(<div key={wordIndex}
+         className={`file-viewer-word ${hilightWords.indexOf(wordIndex) !== -1 ? "classified" : "null"} ${isDragging ? "dragging" : "null"}`}
+         style={{"top": `${word.top*100}%`, "left": `${word.left*100}%`, "width": `${word.right*100 - word.left*100}%`, "height": `${word.bottom*100 - word.top*100}%`}}
+     />)
+}
+/**
+ * Implement the drag source contract.
+ */
+const dragSource = {
+    beginDrag: props => ({ word: props.word, wordText: props.wordText }),
+};
+
+/**
+ * Specifies the props to inject into your component.
+ */
+function collect(connect, monitor) {
+    return {
+        dragSource: connect.dragSource(),
+        isDragging: monitor.isDragging(),
+    }
+}
+
+// Export the wrapped component:
+const DraggableWord = DragSource("Word", dragSource, collect)(Word);
 
 class FileViewer extends React.Component
 {
@@ -207,6 +236,8 @@ class FileViewer extends React.Component
         this.dragStartY = evt.clientY;
         this.setState({isDraggingImage: true});
         this.isDraggingImage = true;
+
+        evt.preventDefault();
     }
 
     onMouseMove(evt)
@@ -279,7 +310,6 @@ class FileViewer extends React.Component
                         <div className={"file-viewer-image-outer-container"}
                              id={"file-viewer-image-outer-container"}
                              onWheel={this.onWheel.bind(this)}
-                             onMouseDown={this.startImageDrag.bind(this)}
                         >
                             <div className={"file-viewer-image-inner-container " + (this.state.slowTransition ? " slow-transition" : "")}
                                  id={"file-viewer-image-inner-container"}
@@ -298,6 +328,7 @@ class FileViewer extends React.Component
                                             id={`file-viewer-image`}
                                             src={`https://appraisalfiles.blob.core.windows.net/files/${this.props.document._id}-image-${page}.png`}
                                             className={`file-viewer-image ${page === this.state.currentPage ? 'active' : ''} ${this.state.slowTransition ? " slow-transition" : ""}`}
+                                            onMouseDown={this.startImageDrag.bind(this)}
                                         />;
                                     })
                                 }
@@ -306,16 +337,14 @@ class FileViewer extends React.Component
                                     id={`file-viewer-image`}
                                     src={`https://appraisalfiles.blob.core.windows.net/files/${this.props.document._id}-image-${this.state.currentPage}.png`}
                                     className={`file-viewer-image frame`}
+                                    onMouseDown={this.startImageDrag.bind(this)}
                                 />
                                 {
                                     this.props.document.words.map((word, wordIndex) =>
                                     {
                                         if(word.page === this.state.currentPage)
                                         {
-                                            return <div key={wordIndex}
-                                                        className={`file-viewer-word ${this.state.hilightWords.indexOf(wordIndex) !== -1 ? "classified" : "null"}`}
-                                                        style={{"top": `${word.top*100}%`, "left": `${word.left*100}%`, "width": `${word.right*100 - word.left*100}%`, "height": `${word.bottom*100 - word.top*100}%`}}
-                                            />
+                                            return <DraggableWord key={wordIndex} word={word} wordIndex={wordIndex} hilightWords={this.state.hilightWords} />
                                         }
                                         else
                                         {
