@@ -103,16 +103,6 @@ export default [
                 "field": "PERCENTAGE"
             },
             {
-                "name": "Income",
-                "placeholder": "Income",
-                "field": "INCOME"
-            },
-            {
-                "name": "Expense",
-                "placeholder": "Expense",
-                "field": "EXPENSE"
-            },
-            {
                 "name": "Summary",
                 "placeholder": "Summary",
                 "field": "SUMMARY"
@@ -126,6 +116,11 @@ export default [
         "fields": [
         ],
         "modifiers": [
+            {
+                "name": "Income",
+                "placeholder": "Income",
+                "field": "INCOME"
+            },
             {
                 "name": "Rent",
                 "placeholder": "Rent",
@@ -150,6 +145,11 @@ export default [
         "fields": [
         ],
         "modifiers": [
+            {
+                "name": "Expense",
+                "placeholder": "Expense",
+                "field": "EXPENSE"
+            },
             {
                 "name": "Expense Recovery",
                 "placeholder": "Expense Recovery",
