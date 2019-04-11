@@ -112,51 +112,74 @@ export default [
                 "placeholder": "Expense",
                 "field": "EXPENSE"
             },
-            // {
-            //     "name": "Summary",
-            //     "placeholder": "Summary",
-            //     "field": "SUMMARY"
-            // },
-            // {
-            //     "name": "Rent",
-            //     "placeholder": "Rent",
-            //     "field": "RENT"
-            // },
-            // {
-            //     "name": "Additional Income",
-            //     "placeholder": "Additional Income",
-            //     "field": "ADDITIONAL_INCOME"
-            // },
-            // {
-            //     "name": "Expense Recovery",
-            //     "placeholder": "Expense Recovery",
-            //     "field": "EXPENSE_RECOVERY"
-            // },
-            // {
-            //     "name": "Operating Expense",
-            //     "placeholder": "Operating Expense",
-            //     "field": "OPERATING_EXPENSE"
-            // },
-            // {
-            //     "name": "Non Recoverable Expense",
-            //     "placeholder": "Non Recoverable Expense",
-            //     "field": "NON_RECOVERABLE_EXPENSE"
-            // },
-            // {
-            //     "name": "Taxes",
-            //     "placeholder": "Taxes",
-            //     "field": "TAXES"
-            // },
-            // {
-            //     "name": "Management Expense",
-            //     "placeholder": "Management Expense",
-            //     "field": "MANAGEMENT_EXPENSE"
-            // },
-            // {
-            //     "name": "Structural Allowance",
-            //     "placeholder": "Structural Allowance",
-            //     "field": "STRUCTURAL_ALLOWANCE"
-            // }
+            {
+                "name": "Summary",
+                "placeholder": "Summary",
+                "field": "SUMMARY"
+            },
+        ]
+    },
+    {
+        "name": "Income Types",
+        "multiple": true,
+        "field": "items",
+        "fields": [
+        ],
+        "modifiers": [
+            {
+                "name": "Rent",
+                "placeholder": "Rent",
+                "field": "RENT"
+            },
+            {
+                "name": "Additional Income",
+                "placeholder": "Additional Income",
+                "field": "ADDITIONAL_INCOME"
+            },
+            {
+                "name": "Expense Recovery",
+                "placeholder": "Expense Recovery",
+                "field": "EXPENSE_RECOVERY"
+            }
+        ]
+    },
+    {
+        "name": "Expense Types",
+        "multiple": true,
+        "field": "items",
+        "fields": [
+        ],
+        "modifiers": [
+            {
+                "name": "Expense Recovery",
+                "placeholder": "Expense Recovery",
+                "field": "EXPENSE_RECOVERY"
+            },
+            {
+                "name": "Operating Expense",
+                "placeholder": "Operating Expense",
+                "field": "OPERATING_EXPENSE"
+            },
+            {
+                "name": "Non Recoverable Expense",
+                "placeholder": "Non Recoverable Expense",
+                "field": "NON_RECOVERABLE_EXPENSE"
+            },
+            {
+                "name": "Taxes",
+                "placeholder": "Taxes",
+                "field": "TAXES"
+            },
+            {
+                "name": "Management Expense",
+                "placeholder": "Management Expense",
+                "field": "MANAGEMENT_EXPENSE"
+            },
+            {
+                "name": "Structural Allowance",
+                "placeholder": "Structural Allowance",
+                "field": "STRUCTURAL_ALLOWANCE"
+            }
         ]
     },
     {
