@@ -821,7 +821,7 @@ class ViewExpenses extends React.Component
                                 {/*{(this.props.appraisal && this.props.appraisal.incomeStatement) ?*/}
                                 <div id={"view-expenses-body"} className={"view-expenses-body"}>
                                     <Row>
-                                        <Col xs={this.state.pinnedYear !== null ? 3 : 7}>
+                                        <Col xs={this.state.pinnedYear !== null ? 5 : 7} md={this.state.pinnedYear !== null ? 5 : 7} lg={this.state.pinnedYear !== null ? 4 : 7} xl={this.state.pinnedYear !== null ? 3 : 7}>
 
                                             {
                                                 this.props.appraisal.incomeStatement.expenses ?
@@ -832,7 +832,7 @@ class ViewExpenses extends React.Component
                                                     : null
                                             }
                                         </Col>
-                                        <Col  xs={this.state.pinnedYear !== null ? 9: 5}>
+                                        <Col  xs={this.state.pinnedYear !== null ? 7: 5} md={this.state.pinnedYear !== null ? 7 : 5} lg={this.state.pinnedYear !== null ? 8 : 5} xl={this.state.pinnedYear !== null ? 9 : 5}>
                                             <Row className={"file-selector-row"}>
                                                 <Col xs={12}>
                                                     <FileSelector
