@@ -52,7 +52,9 @@ class ViewExpenses extends React.Component
         managementExpenseTotal: {},
         taxesExpenseTotal: {},
         newYearGrowthPercent: 2.0,
-        newYearPopoverShowing: {}
+        newYearPopoverShowing: {},
+        pinnedYear: null,
+        deleteYearPopoverShowing: {}
     };
 
     constructor()
@@ -78,9 +80,57 @@ class ViewExpenses extends React.Component
                     {
                         this.props.appraisal.incomeStatement.years.map((year) =>
                         {
+                            if (this.state.pinnedYear !== null && year !== this.state.pinnedYear)
+                            {
+                                return null;
+                            }
+
                             return [
                                 <Col key={year.toString() + "-1"} className={"amount-column"}>
-                                    <div className={"header-wrapper"}>{year}
+                                    <Button
+                                        className={`pin-column-button`}
+                                        color={this.state.pinnedYear === year ? "info" : "secondary"}
+                                        onClick={(evt) => this.togglePinYear(year)}
+                                        title={"Pin Column"}
+                                        style={{"float": "left"}}
+                                    >
+                                        <em className="icon-pin" />
+                                    </Button>
+                                    <Button
+                                        id={`remove-year-${year.toString()}`}
+                                        className={`remove-column-button`}
+                                        color="secondary"
+                                        onClick={(evt) =>this.toggleDeleteYearPopover(value, year)}
+                                        title={"Remove Column"}
+                                        style={{"float": "left"}}
+                                    >
+                                        <i className="fa fa-minus-square" />
+                                    </Button>
+                                    <Popover placement="bottom" isOpen={this.state.deleteYearPopoverShowing[value.toString() + year.toString()]} target={() => document.getElementById(`remove-year-${year.toString()}`)} toggle={() => this.toggleDeleteYearPopover(value, year)}>
+                                        <PopoverHeader>Delete Year</PopoverHeader>
+                                        <PopoverBody>
+                                            Are you sure you want to delete this year?
+                                            <br/>
+                                            <br/>
+                                            <Button
+                                                color="danger"
+                                                onClick={(evt) => this.removeYear(year)}
+                                                title={"Remove Year"}
+                                            >
+                                                Remove Year
+                                            </Button>
+                                            &nbsp;
+                                            <Button
+                                                color="info"
+                                                onClick={(evt) => this.toggleDeleteYearPopover(value, year)}
+                                                title={"Cancel"}
+                                            >
+                                                Cancel
+                                            </Button>
+                                        </PopoverBody>
+                                    </Popover>
+                                    <div className={"header-wrapper"}>
+                                    {year}
                                     <br/>
                                     <YearlySourceTypeFormat value={this.props.appraisal.incomeStatement.yearlySourceTypes[year]}/></div>
                                 </Col>,
@@ -95,14 +145,14 @@ class ViewExpenses extends React.Component
                         <Button
                             id={`add-column-button-${value.replace(/ /g, "")}`}
                             className={`add-column-button`}
-                            color="default"
+                            color="secondary"
                             onClick={(evt) => this.toggleNewYearPopover(value)}
                             title={"Add Year"}
                         >
                             <i className="fa fa-plus-square"></i>
                         </Button>
                         <Popover placement="bottom" isOpen={this.state.newYearPopoverShowing[value]} target={`add-column-button-${value.replace(/ /g, "")}`} toggle={() => this.toggleNewYearPopover(value)}>
-                            <PopoverHeader>Popover Title</PopoverHeader>
+                            <PopoverHeader>Add New Year</PopoverHeader>
                             <PopoverBody>
                                 Add a new year. Apply Growth Rate to expenses:
                                 <br/>
@@ -117,7 +167,7 @@ class ViewExpenses extends React.Component
 
                                 <Button
                                     color="info"
-                                    onClick={(evt) => this.createNewYear()}
+                                    onClick={(evt) => {this.createNewYear(); this.toggleNewYearPopover(value)}}
                                     title={"Add Year"}
                                 >
                                     Add Year
@@ -145,6 +195,11 @@ class ViewExpenses extends React.Component
             {
                 this.props.appraisal.incomeStatement.years.map((year) =>
                 {
+                    if (this.state.pinnedYear !== null && year !== this.state.pinnedYear)
+                    {
+                        return null;
+                    }
+
                     return [<Col key={year.toString() + "1"} className={"amount-column"}>
                         <div className={"value-wrapper"}>
                             <CurrencyFormat value={this.state[field][year]}/>
@@ -172,7 +227,7 @@ class ViewExpenses extends React.Component
 
                     <this.SortableNewItemRow index={operatingExpenses.length + 1} value="operating_expense" />
 
-                    <this.SortableStats name="Operating Total" index={operatingExpenses.length + 2} field="operatingExpenseTotal" />
+                    <this.SortableStats name="Operating Expense Total" index={operatingExpenses.length + 2} field="operatingExpenseTotal" />
 
                     <this.SortableHeader value="Management" index={operatingExpenses.length + 3}> </this.SortableHeader>
 
@@ -204,6 +259,18 @@ class ViewExpenses extends React.Component
         });
     }
 
+
+    togglePinYear(year)
+    {
+        if (year === this.state.pinnedYear)
+        {
+            this.setState({pinnedYear: null});
+        }
+        else
+        {
+            this.setState({pinnedYear: year});
+        }
+    }
 
     sortIncomeStatementItems(items)
     {
@@ -417,6 +484,25 @@ class ViewExpenses extends React.Component
         this.props.saveDocument(this.props.appraisal);
     }
 
+    removeYear(year)
+    {
+        this.props.appraisal.incomeStatement.years.splice(this.props.appraisal.incomeStatement.years.indexOf(year), 1);
+        delete this.props.appraisal.incomeStatement.yearlySourceTypes[year];
+
+        const deleteFunction = (expense) =>
+        {
+            if (!_.isUndefined(expense.yearlyAmounts[year]))
+            {
+                delete expense.yearlyAmounts[year];
+            }
+        };
+
+        this.props.appraisal.incomeStatement.incomes.forEach(deleteFunction);
+        this.props.appraisal.incomeStatement.expenses.forEach(deleteFunction);
+
+        this.props.saveDocument(this.props.appraisal);
+    }
+
 
     removeIncomeItem(item)
     {
@@ -457,6 +543,11 @@ class ViewExpenses extends React.Component
             {
                 this.props.appraisal.incomeStatement.years.map((year, yearIndex) =>
                 {
+                    if (this.state.pinnedYear && year !== this.state.pinnedYear)
+                    {
+                        return null;
+                    }
+
                     return [<Col key={year.toString() + "1"} className={"amount-column"}>
                         <DroppableFieldDisplayEdit
                             type="currency"
@@ -483,7 +574,7 @@ class ViewExpenses extends React.Component
             }
             <Col className={"action-column"}>
                 <Button
-                    color="info"
+                    color="secondary"
                     onClick={(evt) => this.removeIncomeItem(incomeStatementItem)}
                     title={"Delete Expense"}
                 >
@@ -555,6 +646,11 @@ class ViewExpenses extends React.Component
             {
                 this.props.appraisal.incomeStatement.years.map((year, yearIndex) =>
                 {
+                    if (this.state.pinnedYear !== null && year !== this.state.pinnedYear)
+                    {
+                        return null;
+                    }
+
                     return [<Col key={year.toString() + "1"} className={"amount-column"}>
                         <DroppableFieldDisplayEdit
                             type="currency"
@@ -573,7 +669,7 @@ class ViewExpenses extends React.Component
             }
             <Col className={"action-column"}>
                 <Button
-                    color="info"
+                    color="secondary"
                     onClick={(evt) => this.createNewIncomeItem(null, null, incomeStatementItemType)}
                     title={"New Expense"}
                 >
@@ -588,6 +684,13 @@ class ViewExpenses extends React.Component
         const newYearPopoverShowing = this.state.newYearPopoverShowing;
         newYearPopoverShowing[group] = !newYearPopoverShowing[group];
         this.setState({newYearPopoverShowing: newYearPopoverShowing});
+    }
+
+    toggleDeleteYearPopover(group, year)
+    {
+        const deleteYearPopoverShowing = this.state.deleteYearPopoverShowing;
+        deleteYearPopoverShowing[group.toString() + year.toString()] = !deleteYearPopoverShowing[group.toString() + year.toString()];
+        this.setState({deleteYearPopoverShowing: deleteYearPopoverShowing});
     }
 
     onSortEnd({oldIndex, newIndex})
@@ -704,7 +807,7 @@ class ViewExpenses extends React.Component
                                 {/*{(this.props.appraisal && this.props.appraisal.incomeStatement) ?*/}
                                 <div id={"view-expenses-body"} className={"view-expenses-body"}>
                                     <Row>
-                                        <Col xs={6}>
+                                        <Col xs={this.state.pinnedYear !== null ? 3 : 7}>
 
                                             {
                                                 this.props.appraisal.incomeStatement.expenses ?
@@ -715,7 +818,7 @@ class ViewExpenses extends React.Component
                                                     : null
                                             }
                                         </Col>
-                                        <Col xs={6}>
+                                        <Col  xs={this.state.pinnedYear !== null ? 9: 5}>
                                             <Row className={"file-selector-row"}>
                                                 <Col xs={12}>
                                                     <FileSelector

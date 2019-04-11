@@ -8,6 +8,11 @@
   .file-selector-row {
     margin-bottom: 10px;
   }
+
+  .pin-column-button
+  {
+
+  }
 }
 
 .expense-group-row
@@ -103,6 +108,8 @@
   .action-column {
     flex-grow: 0;
     .btn {
+      border: 0;
+      height: 100%;
       opacity: 0;
       transition: visibility 0s, opacity 0s;
     }
@@ -121,6 +128,8 @@
 
   .add-column-button {
     height: 100%;
+    border-radius: 0;
+    border: 0;
   }
 }
 
@@ -133,15 +142,26 @@
       padding-top: 5px;
       padding-left: 10px;
       padding-right: 10px;
+      overflow: hidden;
     }
 
-    &.amount-column:not(.psf)
-    {
+    &.amount-column:not(.psf) {
       div.header-wrapper {
         padding-left: 10px;
         //padding-right: 60px;
       }
     }
+  }
 
+  .pin-column-button, .remove-column-button {
+    border-left: 0;
+    border-top: 0;
+    border-bottom: 0;
+    height: 100%;
+    padding-top: 0.5vh;
+    padding-bottom: 0.5vh;
+    padding-left: 0.5vw;
+    padding-right: 0.5vw;
+    font-size: 0.8vw;
   }
 }
