@@ -138,11 +138,14 @@
   .col {
     border-top: 2px solid #eee;
     border-bottom: 0;
+
     div.header-wrapper {
       padding-top: 5px;
       padding-left: 10px;
       padding-right: 10px;
       overflow: hidden;
+      text-wrap: none;
+      white-space: nowrap;
     }
 
     &.amount-column:not(.psf) {
@@ -151,6 +154,12 @@
         //padding-right: 60px;
       }
     }
+  }
+
+  .remove-column-button-wrapper
+  {
+    float: left;
+    height: 100%;
   }
 
   .pin-column-button, .remove-column-button {

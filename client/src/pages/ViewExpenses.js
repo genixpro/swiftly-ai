@@ -96,43 +96,50 @@ class ViewExpenses extends React.Component
                                     >
                                         <em className="icon-pin" />
                                     </Button>
-                                    <Button
-                                        id={`remove-year-${year.toString()}`}
-                                        className={`remove-column-button`}
-                                        color="secondary"
-                                        onClick={(evt) =>this.toggleDeleteYearPopover(value, year)}
-                                        title={"Remove Column"}
-                                        style={{"float": "left"}}
-                                    >
-                                        <i className="fa fa-minus-square" />
-                                    </Button>
-                                    <Popover placement="bottom" isOpen={this.state.deleteYearPopoverShowing[value.toString() + year.toString()]} target={() => document.getElementById(`remove-year-${year.toString()}`)} toggle={() => this.toggleDeleteYearPopover(value, year)}>
-                                        <PopoverHeader>Delete Year</PopoverHeader>
-                                        <PopoverBody>
-                                            Are you sure you want to delete this year?
-                                            <br/>
-                                            <br/>
-                                            <Button
-                                                color="danger"
-                                                onClick={(evt) => this.removeYear(year)}
-                                                title={"Remove Year"}
-                                            >
-                                                Remove Year
-                                            </Button>
-                                            &nbsp;
-                                            <Button
-                                                color="info"
-                                                onClick={(evt) => this.toggleDeleteYearPopover(value, year)}
-                                                title={"Cancel"}
-                                            >
-                                                Cancel
-                                            </Button>
-                                        </PopoverBody>
-                                    </Popover>
+                                    {
+                                        this.state.pinnedYear === null ? <div className={"remove-column-button-wrapper"}><Button
+                                            id={`remove-year-${year.toString()}`}
+                                            className={`remove-column-button`}
+                                            color="secondary"
+                                            onClick={(evt) =>this.toggleDeleteYearPopover(value, year)}
+                                            title={"Remove Column"}
+                                            style={{"float": "left"}}
+                                        >
+                                            <i className="fa fa-minus-square" />
+                                        </Button>
+                                                <Popover placement="bottom" isOpen={this.state.deleteYearPopoverShowing[value.toString() + year.toString()]} target={() => document.getElementById(`remove-year-${year.toString()}`)} toggle={() => this.toggleDeleteYearPopover(value, year)}>
+                                                    <PopoverHeader>Delete Year</PopoverHeader>
+                                                    <PopoverBody>
+                                                        Are you sure you want to delete this year?
+                                                        <br/>
+                                                        <br/>
+                                                        <Button
+                                                            color="danger"
+                                                            onClick={(evt) => this.removeYear(year)}
+                                                            title={"Remove Year"}
+                                                        >
+                                                            Remove Year
+                                                        </Button>
+                                                        &nbsp;
+                                                        <Button
+                                                            color="info"
+                                                            onClick={(evt) => this.toggleDeleteYearPopover(value, year)}
+                                                            title={"Cancel"}
+                                                        >
+                                                            Cancel
+                                                        </Button>
+                                                    </PopoverBody>
+                                                </Popover>
+                                            </div>
+                                            : null
+                                    }
                                     <div className={"header-wrapper"}>
                                     {year}
                                     <br/>
-                                    <YearlySourceTypeFormat value={this.props.appraisal.incomeStatement.yearlySourceTypes[year]}/></div>
+                                        {
+                                            this.state.pinnedYear === null ? <YearlySourceTypeFormat value={this.props.appraisal.incomeStatement.yearlySourceTypes[year]}/> : null
+                                        }
+                                    </div>
                                 </Col>,
                                 this.props.appraisal.sizeOfBuilding ?
                                     <Col key={year.toString() + "-2"} className={"amount-column psf"}>
@@ -141,48 +148,50 @@ class ViewExpenses extends React.Component
                             ]
                         })
                     }
-                    <Col className={"add-column-column"}>
-                        <Button
-                            id={`add-column-button-${value.replace(/ /g, "")}`}
-                            className={`add-column-button`}
-                            color="secondary"
-                            onClick={(evt) => this.toggleNewYearPopover(value)}
-                            title={"Add Year"}
-                        >
-                            <i className="fa fa-plus-square"></i>
-                        </Button>
-                        <Popover placement="bottom" isOpen={this.state.newYearPopoverShowing[value]} target={`add-column-button-${value.replace(/ /g, "")}`} toggle={() => this.toggleNewYearPopover(value)}>
-                            <PopoverHeader>Add New Year</PopoverHeader>
-                            <PopoverBody>
-                                Add a new year. Apply Growth Rate to expenses:
-                                <br/>
-                                <br/>
-                                <FieldDisplayEdit
-                                    type={"percent"}
-                                    value={this.state.newYearGrowthPercent}
-                                    onChange={(newValue) => this.setState({newYearGrowthPercent: newValue})}
-                                    hideField={false}
-                                />
-                                <br/>
+                    {
+                        this.state.pinnedYear === null ? <Col className={"add-column-column"}>
+                            <Button
+                                id={`add-column-button-${value.replace(/ /g, "")}`}
+                                className={`add-column-button`}
+                                color="secondary"
+                                onClick={(evt) => this.toggleNewYearPopover(value)}
+                                title={"Add Year"}
+                            >
+                                <i className="fa fa-plus-square"></i>
+                            </Button>
+                            <Popover placement="bottom" isOpen={this.state.newYearPopoverShowing[value]} target={`add-column-button-${value.replace(/ /g, "")}`} toggle={() => this.toggleNewYearPopover(value)}>
+                                <PopoverHeader>Add New Year</PopoverHeader>
+                                <PopoverBody>
+                                    Add a new year. Apply Growth Rate to expenses:
+                                    <br/>
+                                    <br/>
+                                    <FieldDisplayEdit
+                                        type={"percent"}
+                                        value={this.state.newYearGrowthPercent}
+                                        onChange={(newValue) => this.setState({newYearGrowthPercent: newValue})}
+                                        hideField={false}
+                                    />
+                                    <br/>
 
-                                <Button
-                                    color="info"
-                                    onClick={(evt) => {this.createNewYear(); this.toggleNewYearPopover(value)}}
-                                    title={"Add Year"}
-                                >
-                                    Add Year
-                                </Button>
-                                &nbsp;
-                                <Button
-                                    color="danger"
-                                    onClick={(evt) => this.toggleNewYearPopover(value)}
-                                    title={"Cancel"}
-                                >
-                                    Cancel
-                                </Button>
-                            </PopoverBody>
-                        </Popover>
-                    </Col>
+                                    <Button
+                                        color="info"
+                                        onClick={(evt) => {this.createNewYear(); this.toggleNewYearPopover(value)}}
+                                        title={"Add Year"}
+                                    >
+                                        Add Year
+                                    </Button>
+                                    &nbsp;
+                                    <Button
+                                        color="danger"
+                                        onClick={(evt) => this.toggleNewYearPopover(value)}
+                                        title={"Cancel"}
+                                    >
+                                        Cancel
+                                    </Button>
+                                </PopoverBody>
+                            </Popover>
+                        </Col> : null
+                    }
                 </Row>
             </Col>
         </li> );
@@ -207,7 +216,7 @@ class ViewExpenses extends React.Component
                     </Col>, this.props.appraisal.sizeOfBuilding ? <Col key={year.toString() + "2"} className={"amount-column psf"}/> :null]
                 })
             }
-            {this.renderHiddenActionColumn()}
+            {this.state.pinnedYear === null ? this.renderHiddenActionColumn() : null}
         </li>);
 
         this.SortableList = SortableContainer(({items}) =>
@@ -572,15 +581,18 @@ class ViewExpenses extends React.Component
                             </Col> : null]
                 })
             }
-            <Col className={"action-column"}>
-                <Button
-                    color="secondary"
-                    onClick={(evt) => this.removeIncomeItem(incomeStatementItem)}
-                    title={"Delete Expense"}
-                >
-                    <i className="fa fa-trash-alt"></i>
-                </Button>
-            </Col>
+            {
+                this.state.pinnedYear === null ? <Col className={"action-column"}>
+                    <Button
+                        color="secondary"
+                        onClick={(evt) => this.removeIncomeItem(incomeStatementItem)}
+                        title={"Delete Expense"}
+                    >
+                        <i className="fa fa-trash-alt"></i>
+                    </Button>
+                </Col> : null
+            }
+
         </li>
     }
 
@@ -667,15 +679,17 @@ class ViewExpenses extends React.Component
                     ]
                 })
             }
-            <Col className={"action-column"}>
-                <Button
-                    color="secondary"
-                    onClick={(evt) => this.createNewIncomeItem(null, null, incomeStatementItemType)}
-                    title={"New Expense"}
-                >
-                    <i className="fa fa-plus-square"></i>
-                </Button>
-            </Col>
+            {
+                this.state.pinnedYear === null ? <Col className={"action-column"}>
+                    <Button
+                        color="secondary"
+                        onClick={(evt) => this.createNewIncomeItem(null, null, incomeStatementItemType)}
+                        title={"New Expense"}
+                    >
+                        <i className="fa fa-plus-square"></i>
+                    </Button>
+                </Col> : null
+            }
         </li>
     }
 
