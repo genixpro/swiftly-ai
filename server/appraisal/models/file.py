@@ -120,23 +120,23 @@ class File(Document):
         date = ""
         for token in tokens:
             if token['classification'] == 'STATEMENT_YEAR':
-                return token['text']
+                return int(token['text'])
             elif token['classification'] == 'STATEMENT_DATE':
                 date = token['text']
 
         if date == '':
-            return datetime.datetime.now().year
+            return int(datetime.datetime.now().year)
 
         parsed = dateparser.parse(date)
 
-        return parsed.year
+        return int(parsed.year)
 
     def getLineItems(self, pageType):
         tokens = self.breakIntoTokens()
 
         tokens = [token for token in tokens if token['pageType'] == pageType]
 
-        year = self.getDocumentYear()
+        year = int(self.getDocumentYear())
 
         tokensByLineNumberAndPage = {}
         for token in tokens:
@@ -178,6 +178,8 @@ class File(Document):
             for item in items:
                 if 'NEXT_YEAR' in item['modifiers']:
                     item['year'] = year + 1
+                elif 'PREVIOUS_YEAR' in item['modifiers']:
+                    item['year'] = year - 1
                 else:
                     item['year'] = year
 

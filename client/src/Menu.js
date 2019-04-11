@@ -49,11 +49,11 @@ const Menu = [
                 name: 'Stabilized Statement',
                 path: '/appraisal/:appraisalId/stabilized_statement_valuation',
             },
-            {
-                name: 'Direct Comparison Valuation',
-                path: '/appraisal/:appraisalId/direct_comparison_valuation/database',
-                match: '/appraisal/:appraisalId/direct_comparison_valuation',
-            },
+            // {
+            //     name: 'Direct Comparison Valuation',
+            //     path: '/appraisal/:appraisalId/direct_comparison_valuation/database',
+            //     match: '/appraisal/:appraisalId/direct_comparison_valuation',
+            // },
             // {
             //     name: 'Discounted Cash Flow',
             //     path: '/appraisal/:appraisalId/discounted_cash_flow',

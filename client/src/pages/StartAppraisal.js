@@ -101,13 +101,13 @@ class StartAppraisal extends React.Component {
                                     <FormGroup>
                                         <label>Building Size</label>
                                         <FieldDisplayEdit
-                                            type={"buildingSize"}
+                                            type={"area"}
                                             edit={this.props.edit}
                                             hideInput={false}
                                             hideIcon={true}
                                             placeholder={"Building Size"}
-                                            value={this.state.newAppraisal.buildingSize}
-                                            onChange={(newValue) => this.updateValue('buildingSize', newValue)}
+                                            value={this.state.newAppraisal.sizeSquareFootage}
+                                            onChange={(newValue) => this.updateValue('sizeSquareFootage', newValue)}
                                         />
                                     </FormGroup>
                                     <button className="btn btn-sm btn-primary" type="submit" onClick={this.createAppraisal.bind(this)}>Create</button>

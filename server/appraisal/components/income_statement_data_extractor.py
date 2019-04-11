@@ -57,13 +57,15 @@ class IncomeStatementDataExtractor(DataExtractor):
         incomeStatementItems = []
 
         lineItems = document.getLineItems("operating_statement")
-        year = document.getDocumentYear()
+        year = int(document.getDocumentYear())
 
         for lineItem in lineItems:
             if 'SUM' in lineItem['modifiers'] and 'SUMMARY' not in lineItem['modifiers']:
 
                 if 'NEXT_YEAR' in lineItem['modifiers']:
                     item = self.createIncomeStatementObject(lineItem, year + 1)
+                elif 'PREVIOUS_YEAR' in lineItem['modifiers']:
+                    item = self.createIncomeStatementObject(lineItem, year - 1)
                 else:
                     item = self.createIncomeStatementObject(lineItem, year)
 

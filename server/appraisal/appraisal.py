@@ -20,7 +20,7 @@ class AppraisalAPI(object):
         return [(Allow, Everyone, 'everything')]
 
     def collection_get(self):
-        appraisals = Appraisal.objects()
+        appraisals = Appraisal.objects().only('name', 'address')
 
         return {"appraisals": [json.loads(appraisal.to_json()) for appraisal in appraisals]}
 
