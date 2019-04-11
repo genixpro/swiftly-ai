@@ -120,7 +120,7 @@ class ComparableSaleListItem extends React.Component
         const comparableSale = this.props.comparableSale;
 
 
-        let text = `In reference to the ${new Date(comparableSale.saleDate).getFullYear()}/${new Date(comparableSale.saleDate).getMonth() + 1}/${new Date(comparableSale.saleDate).getDate()} sale of a ${comparableSale.propertyType} building located at ${comparableSale.address}. `;
+        let text = `In reference to the ${comparableSale.saleDate.getFullYear()}/${comparableSale.saleDate.getMonth() + 1}/${comparableSale.saleDate.getDate()} sale of a ${comparableSale.propertyType} building located at ${comparableSale.address}. `;
 
         if (comparableSale.sizeSquareFootage)
         {

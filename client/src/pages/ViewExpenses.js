@@ -84,7 +84,7 @@ class ViewExpenses extends React.Component
                                     <br/>
                                     <YearlySourceTypeFormat value={this.props.appraisal.incomeStatement.yearlySourceTypes[year]}/></div>
                                 </Col>,
-                                this.props.appraisal.sizeSquareFootage ?
+                                this.props.appraisal.sizeOfBuilding ?
                                     <Col key={year.toString() + "-2"} className={"amount-column psf"}>
                                         <div className={"header-wrapper"}>(psf)</div>
                                     </Col> : null
@@ -149,7 +149,7 @@ class ViewExpenses extends React.Component
                         <div className={"value-wrapper"}>
                             <CurrencyFormat value={this.state[field][year]}/>
                         </div>
-                    </Col>, this.props.appraisal.sizeSquareFootage ? <Col key={year.toString() + "2"} className={"amount-column psf"}/> :null]
+                    </Col>, this.props.appraisal.sizeOfBuilding ? <Col key={year.toString() + "2"} className={"amount-column psf"}/> :null]
                 })
             }
             {this.renderHiddenActionColumn()}
@@ -468,7 +468,7 @@ class ViewExpenses extends React.Component
                             onChange={(newValue, newReference) => this.changeIncomeItemValue(incomeStatementItem, year, newValue, newReference)}
                         />
                     </Col>,
-                        this.props.appraisal.sizeSquareFootage ?
+                        this.props.appraisal.sizeOfBuilding ?
                             <Col key={year.toString() + "2"} className={"amount-column psf"}>
                                 <DroppableFieldDisplayEdit
                                     type="currency"
@@ -520,7 +520,7 @@ class ViewExpenses extends React.Component
             newItem['extractionReferences'] = {};
         }
 
-        if (extractionReferences)
+        if (extractionReferences && extractionReferences.wordIndexes)
         {
             newItem['extractionReferences'] = extractionReferences
         }
@@ -567,7 +567,7 @@ class ViewExpenses extends React.Component
                                 }}) : null)}
                         />
                     </Col>,
-                        this.props.appraisal.sizeSquareFootage ? <Col key={year.toString() + "2"} className={"amount-column psf"}></Col> : null
+                        this.props.appraisal.sizeOfBuilding ? <Col key={year.toString() + "2"} className={"amount-column psf"}></Col> : null
                     ]
                 })
             }

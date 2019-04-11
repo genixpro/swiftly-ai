@@ -21,7 +21,7 @@ class IncomeStatementItemModel extends BaseModel
 
         Object.keys(this.yearlyAmounts).forEach((year) =>
         {
-            if (_.isUndefined(size))
+            if (_.isNumber(size))
             {
                 psf[year] = this.yearlyAmounts[year] / size;
             }
@@ -42,7 +42,7 @@ class IncomeStatementItemModel extends BaseModel
 
         Object.keys(newYearlyPSF).forEach((year) =>
         {
-            if (size)
+            if (_.isNumber(size))
             {
                 yearly[year] = newYearlyPSF[year] * size;
             }
