@@ -24,6 +24,8 @@ class ComparableLeaseModel extends BaseModel
 
     static tenantInducements = new GenericField();
     static freeRent = new GenericField();
+
+    static escalations = new GenericField();
 }
 
 export default ComparableLeaseModel;

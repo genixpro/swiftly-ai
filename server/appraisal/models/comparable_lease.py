@@ -31,6 +31,9 @@ class ComparableLease(Document):
     # Free rent in plain text
     freeRent = StringField()
 
+    # Escalations described in plain text
+    escalations = StringField()
+
     # The description of the comparable
     description = StringField()
 
