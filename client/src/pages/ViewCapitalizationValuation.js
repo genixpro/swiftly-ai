@@ -125,6 +125,7 @@ class ViewCapitalizationValuation extends React.Component
                                                     showPropertyTypeInHeader={false}
                                                     allowNew={false}
                                                     sort={this.state.sort}
+                                                    noCompMessage={"There are no comparables attached to this appraisal. Please go to the comparables database and select comparables from there."}
                                                     onSortChanged={(newSort) => this.onSortChanged(newSort)}
                                                     history={this.props.history}
                                                     appraisal={this.props.appraisal}

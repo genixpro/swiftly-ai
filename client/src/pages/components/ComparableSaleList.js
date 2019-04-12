@@ -15,7 +15,8 @@ class ComparableSaleList extends React.Component
 {
     static defaultProps = {
         "statsPosition": "above",
-        showPropertyTypeInHeader: true
+        showPropertyTypeInHeader: true,
+        "noCompMessage": "There are no comparables. Please add a new one or change your search settings."
     };
 
     state = {
@@ -233,6 +234,15 @@ class ComparableSaleList extends React.Component
                         }
                     })
                 }
+                <div>
+                    {
+                        this.state.comparableSales.length === 0 ? <div className="card b no-comparables-found">
+                            <div className="card-body">
+                                <span>{this.props.noCompMessage}</span>
+                            </div>
+                        </div> : null
+                    }
+                </div>
                 </div>
                 {
                     this.props.statsPosition === "below" ? <div><br/><ComparableSalesStatistics appraisal={this.props.appraisal} comparableSales={this.state.comparableSales}  title={this.props.statsTitle}/></div> : null

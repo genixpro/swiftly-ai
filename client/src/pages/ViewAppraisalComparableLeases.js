@@ -140,6 +140,7 @@ class ViewAppraisalComparableLeases extends React.Component {
                                             allowNew={false}
                                              sort={this.state.sort}
                                              onSortChanged={(newSort) => this.onSortChanged(newSort)}
+                                             noCompMessage={"There are no comparables attached to this appraisal. Please go to the comparables database and select comparables from there."}
                                             history={this.props.history}
                                             appraisalId={this.props.match.params._id}
                                             appraisalComparables={this.props.appraisal.comparableLeases}

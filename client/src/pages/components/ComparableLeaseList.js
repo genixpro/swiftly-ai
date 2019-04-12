@@ -14,6 +14,10 @@ import SortDirection from "./SortDirection";
 
 class ComparableLeaseList extends React.Component
 {
+    static defaultProps = {
+        "noCompMessage": "There are no comparables. Please add a new one or change your search settings."
+    };
+
     state = {
         comparableLeases: [],
         newComparableSale: {
@@ -243,6 +247,15 @@ class ComparableLeaseList extends React.Component
                         }
                     })
                 }
+                <div>
+                    {
+                        this.state.comparableLeases.length === 0 ? <div className="card b no-comparables-found">
+                            <div className="card-body">
+                                <span>{this.props.noCompMessage}</span>
+                            </div>
+                        </div> : null
+                    }
+                </div>
             </div>
         );
     }

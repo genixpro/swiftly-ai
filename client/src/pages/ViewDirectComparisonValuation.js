@@ -123,6 +123,7 @@ class ViewDirectComparisonValuation extends React.Component
                                                     statsTitle={""}
                                                     statsPosition={"below"}
                                                     allowNew={false}
+                                                    noCompMessage={"There are no comparables attached to this appraisal. Please go to the comparables database and select comparables from there."}
                                                     sort={this.state.sort}
                                                     onSortChanged={(newSort) => this.onSortChanged(newSort)}
                                                     history={this.props.history}
