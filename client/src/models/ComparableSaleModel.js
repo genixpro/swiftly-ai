@@ -4,6 +4,7 @@ import ModelField from "./ModelField";
 import ListField from "./ListField";
 import EquationMdoel from "./EquationModel";
 import DateField from "./DateField";
+import _ from "underscore";
 
 class ComparableSaleModel extends EquationMdoel
 {
@@ -76,6 +77,27 @@ class ComparableSaleModel extends EquationMdoel
             }
         ]
     };
+
+    static sortComparables(comparables, sort)
+    {
+        if (sort)
+        {
+            const field = sort.substr(1);
+            const direction = sort.substr(0, 1);
+
+            const sorted = _.sortBy(comparables, (comp) => comp[field]);
+
+            if (direction === "-")
+            {
+                return sorted.reverse();
+            }
+            else
+            {
+                return sorted;
+            }
+        }
+        return comparables;
+    }
 }
 
 export default ComparableSaleModel;

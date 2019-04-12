@@ -13,7 +13,8 @@ import ComparableSalesModel from "../models/ComparableSaleModel"
 
 class ViewComparableSalesDatabase extends React.Component {
     state = {
-        comparableSales: []
+        comparableSales: [],
+        sort: "-saleDate"
     };
 
     search = {};
@@ -42,6 +43,8 @@ class ViewComparableSalesDatabase extends React.Component {
     loadData()
     {
         const params = _.extend({}, this.search, this.mapSearch);
+
+        params['sort'] = this.state.sort;
 
         axios.get(`/comparable_sales`, {params: params}).then((response) => {
             // console.log(response.data.comparableSales);
@@ -98,6 +101,11 @@ class ViewComparableSalesDatabase extends React.Component {
         this.loadData();
     }
 
+    onSortChanged(newSort)
+    {
+        this.setState({sort: newSort}, () => this.loadData());
+    }
+
     render()
     {
         if (!this.props.appraisal)
@@ -127,6 +135,8 @@ class ViewComparableSalesDatabase extends React.Component {
                         <ComparableSaleList comparableSales={this.state.comparableSales}
                                             statsTitle={"Region Statistics"}
                                             allowNew={true}
+                                            sort={this.state.sort}
+                                            onSortChanged={(field) => this.onSortChanged(field)}
                                             history={this.props.history}
                                             appraisal={this.props.appraisal}
                                             appraisalId={this.props.match.params._id}

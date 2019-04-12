@@ -9,6 +9,7 @@ import axios from "axios/index";
 import ComparableLeasesStatistics from "./ComparableLeasesStatistics";
 import ComparableLeaseModel from "../../models/ComparableLeaseModel";
 import { Button, Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
+import SortDirection from "./SortDirection";
 
 
 class ComparableLeaseList extends React.Component
@@ -136,6 +137,29 @@ class ComparableLeaseList extends React.Component
         </div>
     }
 
+    changeSortColumn(field)
+    {
+        let newSort = "";
+        if (("+" + field) === this.props.sort)
+        {
+            newSort = "-" + field;
+        }
+        else if (("-" + field) === this.props.sort)
+        {
+            newSort = "+" + field;
+        }
+        else
+        {
+            newSort = "-" + field;
+        }
+
+        if (this.props.onSortChanged)
+        {
+            this.props.onSortChanged(newSort);
+        }
+
+        this.setState({sort: newSort});
+    }
 
     render()
     {
@@ -155,22 +179,22 @@ class ComparableLeaseList extends React.Component
                         <CardHeader className={"comparable-lease-list-item-header"}>
                             <CardTitle>
                                 <Row>
-                                    <Col xs={2} className={"header-field-column"}>
-                                        Date
+                                    <Col xs={2} className={"header-field-column"} onClick={() => this.changeSortColumn("leaseDate")}>
+                                        Date <SortDirection field={"leaseDate"} sort={this.props.sort} />
                                     </Col>
-                                    <Col xs={4} className={"header-field-column"}>
-                                        Address
+                                    <Col xs={4} className={"header-field-column"} onClick={() => this.changeSortColumn("address")}>
+                                        Address <SortDirection field={"address"} sort={this.props.sort} />
                                     </Col>
-                                    <Col xs={2} className={"header-field-column"}>
-                                        Size (sf)
+                                    <Col xs={2} className={"header-field-column"} onClick={() => this.changeSortColumn("sizeOfUnit")}>
+                                        Size (sf) <SortDirection field={"sizeOfUnit"} sort={this.props.sort} />
                                     </Col>
-                                    <Col xs={2} className={"header-field-column"}>
-                                        Rent ($)
+                                    <Col xs={2} className={"header-field-column"} onClick={() => this.changeSortColumn("yearlyRent")}>
+                                        Rent ($) <SortDirection field={"yearlyRent"} sort={this.props.sort} />
                                         <br/>
                                         Free Rent
                                     </Col>
-                                    <Col xs={2} className={"header-field-column"}>
-                                        TMI ($)
+                                    <Col xs={2} className={"header-field-column"} onClick={() => this.changeSortColumn("taxesMaintenanceInsurance")}>
+                                        TMI ($) <SortDirection field={"taxesMaintenanceInsurance"} sort={this.props.sort} />
                                         <br/>
                                         Inducements
                                     </Col>

@@ -4,6 +4,7 @@ import ModelField from "./ModelField";
 import ListField from "./ListField";
 import DateField from "./DateField";
 import BaseModel from "./BaseModel";
+import _ from "underscore";
 
 class ComparableLeaseModel extends BaseModel
 {
@@ -26,6 +27,27 @@ class ComparableLeaseModel extends BaseModel
     static freeRent = new GenericField();
 
     static escalations = new GenericField();
+
+    static sortComparables(comparables, sort)
+    {
+        if (sort)
+        {
+            const field = sort.substr(1);
+            const direction = sort.substr(0, 1);
+
+            const sorted = _.sortBy(comparables, (comp) => comp[field]);
+
+            if (direction === "-")
+            {
+                return sorted.reverse();
+            }
+            else
+            {
+                return sorted;
+            }
+        }
+        return comparables;
+    }
 }
 
 export default ComparableLeaseModel;

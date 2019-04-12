@@ -73,6 +73,9 @@ class ComparableSaleAPI(object):
 
         comparableSales = ComparableSale.objects(**query)
 
+        if 'sort' in self.request.GET:
+            comparableSales = comparableSales.order_by(self.request.GET['sort'])
+
         return {"comparableSales": list([json.loads(sale.to_json()) for sale in comparableSales])}
 
     def get(self):

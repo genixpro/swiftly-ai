@@ -12,10 +12,11 @@ import ComparableSaleModel from "../models/ComparableSaleModel";
 
 class ViewAppraisalComparableSales extends React.Component {
     state = {
-        comparableSales: []
+        comparableSales: [],
+        sort: "-saleDate"
     };
 
-    loadedComparables = {}
+    loadedComparables = {};
 
     componentDidMount()
     {
@@ -38,16 +39,8 @@ class ViewAppraisalComparableSales extends React.Component {
             }
         }).then((comparableSales) =>
         {
-            this.setState({comparableSales: comparableSales.filter((item) => item)})
+            this.setState({comparableSales: ComparableSaleModel.sortComparables(comparableSales.filter((item) => item), this.state.sort)})
         })
-    }
-
-
-    createNewComparable(newComparable)
-    {
-        const comparables = this.state.comparableSales;
-        comparables.splice(0, 0, newComparable);
-        this.setState({comparableSales: comparables});
     }
 
     onComparablesChanged(comps)
@@ -105,6 +98,14 @@ class ViewAppraisalComparableSales extends React.Component {
         window.location = `${process.env.VALUATE_ENVIRONMENT.REACT_APP_SERVER_URL}appraisal/${this.props.appraisal._id}/comparable_sales/detailed_word`;
     }
 
+    onSortChanged(newSort)
+    {
+        this.setState({
+            sort: newSort,
+            comparableSales: ComparableSaleModel.sortComparables(this.state.comparableSales, newSort)
+        })
+    }
+
 
     render()
     {
@@ -137,6 +138,8 @@ class ViewAppraisalComparableSales extends React.Component {
                             <ComparableSaleList comparableSales={this.state.comparableSales}
                                                 statsTitle={"Statistics for Selected Comps"}
                                                 allowNew={false}
+                                                sort={this.state.sort}
+                                                onSortChanged={(newSort) => this.onSortChanged(newSort)}
                                                 history={this.props.history}
                                                 appraisal={this.props.appraisal}
                                                 appraisalId={this.props.match.params._id}

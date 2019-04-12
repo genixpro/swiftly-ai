@@ -9,12 +9,14 @@ import AppraisalContentHeader from "./components/AppraisalContentHeader";
 import ComparableSaleList from "./components/ComparableSaleList";
 import ComparableSaleModel from "../models/ComparableSaleModel";
 import Promise from "bluebird";
+import ComparableLeaseModel from "../models/ComparableLeaseModel";
 
 class ViewDirectComparisonValuation extends React.Component
 {
     state = {
         capitalizationRate: 8.4,
-        comparableSales: []
+        comparableSales: [],
+        sort: "-saleDate"
     };
 
     loadedComparables = {};
@@ -40,7 +42,7 @@ class ViewDirectComparisonValuation extends React.Component
             }
         }).then((comparableSales) =>
         {
-            this.setState({comparableSales: comparableSales.filter((item) => item)})
+            this.setState({comparableSales: ComparableSaleModel.sortComparables(comparableSales.filter((item) => item), this.state.sort)})
         }).catch((err) =>
         {
             alert("Error: " + err.toString());
@@ -97,6 +99,14 @@ class ViewDirectComparisonValuation extends React.Component
         }
     }
 
+    onSortChanged(newSort)
+    {
+        this.setState({
+            sort: newSort,
+            comparableSales: ComparableSaleModel.sortComparables(this.state.comparableSales, newSort)
+        })
+    }
+
 
     render()
     {
@@ -113,6 +123,8 @@ class ViewDirectComparisonValuation extends React.Component
                                                     statsTitle={""}
                                                     statsPosition={"below"}
                                                     allowNew={false}
+                                                    sort={this.state.sort}
+                                                    onSortChanged={(newSort) => this.onSortChanged(newSort)}
                                                     history={this.props.history}
                                                     appraisal={this.props.appraisal}
                                                     appraisalId={this.props.match.params._id}

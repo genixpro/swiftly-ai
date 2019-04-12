@@ -13,7 +13,8 @@ import ComparableLeaseModel from "../models/ComparableLeaseModel";
 
 class ViewComparableLeasesDatabase extends React.Component {
     state = {
-        comparableLeases: []
+        comparableLeases: [],
+        sort: "-leaseDate"
     };
 
     search = {};
@@ -59,6 +60,8 @@ class ViewComparableLeasesDatabase extends React.Component {
     loadData()
     {
         const params = _.extend({}, this.search, this.mapSearch);
+
+        params['sort'] = this.state.sort;
 
         axios.get(`/comparable_leases`, {params: params}).then((response) => {
             // console.log(response.data.comparableLeases);
@@ -115,6 +118,11 @@ class ViewComparableLeasesDatabase extends React.Component {
         this.loadData();
     }
 
+    onSortChanged(newSort)
+    {
+        this.setState({sort: newSort}, () => this.loadData());
+    }
+
     render()
     {
         if (!this.props.appraisal)
@@ -139,14 +147,16 @@ class ViewComparableLeasesDatabase extends React.Component {
                     <Col xs={8}>
                         <ComparableLeaseList comparableLeases={this.state.comparableLeases}
                                              statsTitle={"Region Statistics"}
-                                            allowNew={true}
-                                            history={this.props.history}
-                                            appraisalId={this.props.match.params._id}
-                                            appraisalComparables={this.props.appraisal.comparableLeases}
-                                            onAddComparableClicked={(comp) => this.addComparableToAppraisal(comp)}
-                                            onRemoveComparableClicked={(comp) => this.removeComparableFromAppraisal(comp)}
-                                            onNewComparable={(comp) => this.createNewComparable(comp)}
-                                            onChange={(comps) => this.onComparablesChanged(comps)}
+                                             allowNew={true}
+                                             sort={this.state.sort}
+                                             onSortChanged={(field) => this.onSortChanged(field)}
+                                             history={this.props.history}
+                                             appraisalId={this.props.match.params._id}
+                                             appraisalComparables={this.props.appraisal.comparableLeases}
+                                             onAddComparableClicked={(comp) => this.addComparableToAppraisal(comp)}
+                                             onRemoveComparableClicked={(comp) => this.removeComparableFromAppraisal(comp)}
+                                             onNewComparable={(comp) => this.createNewComparable(comp)}
+                                             onChange={(comps) => this.onComparablesChanged(comps)}
                         />
                     </Col>
                     <Col xs={4}>

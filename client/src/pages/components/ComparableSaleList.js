@@ -8,6 +8,7 @@ import Promise from 'bluebird';
 import axios from "axios/index";
 import ComparableSalesStatistics from "./ComparableSalesStatistics"
 import { Button, Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
+import SortDirection from "./SortDirection";
 
 
 class ComparableSaleList extends React.Component
@@ -106,6 +107,30 @@ class ComparableSaleList extends React.Component
             </div>
     }
 
+    changeSortColumn(field)
+    {
+        let newSort = "";
+        if (("+" + field) === this.props.sort)
+        {
+            newSort = "-" + field;
+        }
+        else if (("-" + field) === this.props.sort)
+        {
+            newSort = "+" + field;
+        }
+        else
+        {
+            newSort = "-" + field;
+        }
+
+        if (this.props.onSortChanged)
+        {
+            this.props.onSortChanged(newSort);
+        }
+
+        this.setState({sort: newSort});
+    }
+
 
     render()
     {
@@ -126,36 +151,38 @@ class ComparableSaleList extends React.Component
                         <CardHeader className={"comparable-sale-list-item-header"}>
                             <CardTitle>
                                 <Row>
-                                    <Col xs={1} className={"header-field-column"}>
-                                        Date
+                                    <Col xs={1} className={"header-field-column"} onClick={() => this.changeSortColumn("saleDate")}>
+                                        Date <SortDirection field={"saleDate"} sort={this.props.sort} />
                                     </Col>
-                                    <Col xs={3} className={"header-field-column"}>
-                                        Address
+                                    <Col xs={3} className={"header-field-column"} onClick={() => this.changeSortColumn("address")}>
+                                        Address <SortDirection field={"address"} sort={this.props.sort} />
                                     </Col>
-                                    <Col  xs={2} className={"header-field-column"}>
-                                        Building Size (sf)
+                                    <Col  xs={2} className={"header-field-column"} onClick={() => this.changeSortColumn("sizeSquareFootage")}>
+                                        Building Size (sf) <SortDirection field={"sizeSquareFootage"} sort={this.props.sort} />
                                     </Col>
-                                    <Col xs={2} className={"header-field-column"}>
-                                        Sale Price
+                                    <Col xs={2} className={"header-field-column"} onClick={() => this.changeSortColumn("salePrice")}>
+                                        Sale Price <SortDirection field={"salePrice"} sort={this.props.sort} />
                                     </Col>
                                     {
                                         this.props.showPropertyTypeInHeader ?
-                                            <Col xs={2} className={"header-field-column"}>
-                                                Property Type<br/>Sub Type
+                                            <Col xs={2} className={"header-field-column"} onClick={() => this.changeSortColumn("propertyType")}>
+                                                Property Type <SortDirection field={"propertyType"} sort={this.props.sort} />
+                                                <br/>
+                                                Sub Type
                                             </Col> : null
                                     }
                                     {
                                         this.props.showPropertyTypeInHeader ?
-                                            <Col xs={2} className={"header-field-column"}>
-                                                Cap Rate (%)
+                                            <Col xs={2} className={"header-field-column"} onClick={() => this.changeSortColumn("capitalizationRate")}>
+                                                Cap Rate (%) <SortDirection field={"capitalizationRate"} sort={this.props.sort} />
                                                 <br/>
                                                 PPS ($)
                                             </Col> : [
-                                                <Col key={1} xs={2} className={"header-field-column"}>
-                                                    Cap Rate (%)
+                                                <Col key={1} xs={2} className={"header-field-column"} onClick={() => this.changeSortColumn("capitalizationRate")}>
+                                                    Cap Rate (%) <SortDirection field={"capitalizationRate"} sort={this.props.sort} />
                                                 </Col>,
-                                                <Col key={2} xs={2} className={"header-field-column"}>
-                                                    PPS ($)
+                                                <Col key={2} xs={2} className={"header-field-column"} onClick={() => this.changeSortColumn("pricePerSquareFoot")}>
+                                                    PPS ($) <SortDirection field={"pricePerSquareFoot"} sort={this.props.sort} />
                                                 </Col>
                                             ]
 

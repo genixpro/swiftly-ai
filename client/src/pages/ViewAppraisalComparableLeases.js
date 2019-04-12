@@ -9,11 +9,13 @@ import ComparableSaleSearch from './components/ComparableSaleSearch';
 import ComparableLeaseList from "./components/ComparableLeaseList";
 import ComparableLeasesMap from "./components/ComparableLeasesMap";
 import ComparableLeaseModel from "../models/ComparableLeaseModel";
+import ComparableSaleModel from "../models/ComparableSaleModel";
 
 
 class ViewAppraisalComparableLeases extends React.Component {
     state = {
-        comparableLeases: []
+        comparableLeases: [],
+        sort: "-leaseDate"
     };
 
     loadedComparables = {};
@@ -37,7 +39,7 @@ class ViewAppraisalComparableLeases extends React.Component {
             }
         }).then((comparableLeases) =>
         {
-            this.setState({comparableLeases: comparableLeases})
+            this.setState({comparableLeases: ComparableLeaseModel.sortComparables(comparableLeases, this.state.sort)})
         })
     }
 
@@ -97,6 +99,14 @@ class ViewAppraisalComparableLeases extends React.Component {
         window.location = `${process.env.VALUATE_ENVIRONMENT.REACT_APP_SERVER_URL}appraisal/${this.props.appraisal._id}/comparable_leases/word`;
     }
 
+    onSortChanged(newSort)
+    {
+        this.setState({
+            sort: newSort,
+            comparableLeases: ComparableLeaseModel.sortComparables(this.state.comparableLeases, newSort)
+        })
+    }
+
 
     render()
     {
@@ -128,6 +138,8 @@ class ViewAppraisalComparableLeases extends React.Component {
                         <ComparableLeaseList comparableLeases={this.state.comparableLeases}
                                              statsTitle={"Statistics for Selected Comps"}
                                             allowNew={false}
+                                             sort={this.state.sort}
+                                             onSortChanged={(newSort) => this.onSortChanged(newSort)}
                                             history={this.props.history}
                                             appraisalId={this.props.match.params._id}
                                             appraisalComparables={this.props.appraisal.comparableLeases}
