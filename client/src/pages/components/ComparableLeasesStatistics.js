@@ -4,6 +4,11 @@ import FieldDisplayEdit from "./FieldDisplayEdit";
 import Datetime from 'react-datetime';
 import PropertyTypeSelector from './PropertyTypeSelector';
 import _ from 'underscore';
+import CurrencyFormat from "./CurrencyFormat";
+import PercentFormat from "./PercentFormat";
+import IntegerFormat from "./IntegerFormat";
+import LengthFormat from "./LengthFormat";
+import AreaFormat from "./AreaFormat";
 
 class ComparableLeasesStatistics extends React.Component
 {
@@ -115,19 +120,19 @@ class ComparableLeasesStatistics extends React.Component
                                 <Col xs={4}>
                                     <strong>Size Range</strong>&nbsp;&nbsp;&nbsp;
                                     {
-                                        stats.minSize ? <span>{stats.minSize} - {stats.maxSize}</span> : null
+                                        stats.minSize ? <span><AreaFormat value={stats.minSize} /> - <AreaFormat value={stats.maxSize} /></span> : null
                                     }
                                 </Col>
                                 <Col xs={4}>
                                     <strong>Yearly Rent Range</strong>&nbsp;&nbsp;&nbsp;
                                     {
-                                        stats.minRent ? <span>{stats.minRent} - {stats.maxRent}</span> : null
+                                        stats.minRent ? <span><CurrencyFormat value={stats.minRent} /> - <CurrencyFormat value={stats.maxRent} /></span> : null
                                     }
                                 </Col>
                                 <Col xs={4}>
                                     <strong>TMI Range</strong>&nbsp;&nbsp;&nbsp;
                                     {
-                                        stats.minTMI ? <span>{stats.minTMI} - {stats.maxTMI}</span> : null
+                                        stats.minTMI ? <span><CurrencyFormat value={stats.minTMI} /> - <CurrencyFormat value={stats.maxTMI} /></span> : null
                                     }
                                 </Col>
                             </Row>
@@ -135,19 +140,19 @@ class ComparableLeasesStatistics extends React.Component
                                 <Col xs={4}>
                                     <strong>Size Average</strong>&nbsp;&nbsp;&nbsp;
                                     {
-                                        stats.averageSize ? <span>{stats.averageSize}</span> : null
+                                        stats.averageSize ? <span><AreaFormat value={stats.averageSize} /></span> : null
                                     }
                                 </Col>
                                 <Col xs={4}>
                                     <strong>Yearly Rent Average</strong>&nbsp;&nbsp;&nbsp;
                                     {
-                                        stats.averageRent ? <span>{stats.averageRent}</span> : null
+                                        stats.averageRent ? <span><CurrencyFormat value={stats.averageRent} /></span> : null
                                     }
                                 </Col>
                                 <Col xs={4}>
                                     <strong>TMI Average</strong>&nbsp;&nbsp;&nbsp;
                                     {
-                                        stats.averageTMI ? <span>{stats.averageTMI}</span> : null
+                                        stats.averageTMI ? <span><CurrencyFormat value={stats.averageTMI} /></span> : null
                                     }
                                 </Col>
                             </Row>
