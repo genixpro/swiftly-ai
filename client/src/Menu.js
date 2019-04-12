@@ -53,11 +53,11 @@ const Menu = [
                 name: 'Capitalization Valuation',
                 path: '/appraisal/:appraisalId/capitalization_valuation',
             },
-            // {
-            //     name: 'Direct Comparison Valuation',
-            //     path: '/appraisal/:appraisalId/direct_comparison_valuation/database',
-            //     match: '/appraisal/:appraisalId/direct_comparison_valuation',
-            // },
+            {
+                name: 'Direct Comparison',
+                path: '/appraisal/:appraisalId/direct_comparison_valuation/database',
+                match: '/appraisal/:appraisalId/direct_comparison_valuation',
+            },
             // {
             //     name: 'Discounted Cash Flow',
             //     path: '/appraisal/:appraisalId/discounted_cash_flow',

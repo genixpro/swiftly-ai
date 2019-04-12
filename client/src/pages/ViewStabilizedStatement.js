@@ -18,7 +18,7 @@ class ViewStabilizedStatement extends React.Component
     {
 
     }
-    
+
 
     changeStabilizedInput(field, newValue)
     {

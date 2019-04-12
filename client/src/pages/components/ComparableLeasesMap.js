@@ -1,5 +1,5 @@
 import React from 'react';
-import {Row, Col, Card, CardBody, Popover, PopoverBody, PopoverHeader} from 'reactstrap';
+import {Row, Col, Card, CardBody, Popover, PopoverBody, PopoverHeader, Button} from 'reactstrap';
 import axios from 'axios';
 import Promise from 'bluebird';
 import _ from 'underscore';
@@ -66,6 +66,20 @@ class ComparableLeasesMap extends React.Component {
         }
     }
 
+    toggleFullscreen()
+    {
+        if (this.fullscreen)
+        {
+            document.exitFullscreen();
+            this.fullscreen = false;
+        }
+        else
+        {
+            document.getElementById("comparable-leases-map").requestFullscreen();
+            this.fullscreen = true;
+        }
+    }
+
     render()
     {
         if (!this.props.appraisal)
@@ -74,7 +88,7 @@ class ComparableLeasesMap extends React.Component {
         }
 
         return [
-            <div className={"comparable-leases-map"}>
+            <div className={"comparable-leases-map"} id={"comparable-leases-map"}>
                 <GoogleMapReact
                     bootstrapURLKeys={{ key: "AIzaSyBRmZ2N4EhJjXmC29t3VeiLUQssNG-MY1I" }}
                     defaultCenter={this.getDefaultMapParams().defaultCenter}
@@ -115,7 +129,7 @@ class ComparableLeasesMap extends React.Component {
                                     text={comp.name}
                                     onClick={() => this.toggleComparablePopover(comp)}
                                 />
-                                <Popover placement="right" isOpen={comp.visible} target={id} toggle={() => this.toggleComparablePopover(comp)}>
+                                <Popover placement="right" isOpen={comp.visible} target={id} toggle={() => this.toggleComparablePopover(comp)} container={"comparable-leases-map"}>
                                     <PopoverBody>
                                         <ComparableLeaseListItem
                                             comparableLease={comp}
@@ -133,6 +147,9 @@ class ComparableLeasesMap extends React.Component {
                         })
                     }
                 </GoogleMapReact>
+                <div className={"full-screen-button"} onClick={() => this.toggleFullscreen()}>
+                    <Button color={"secondary"}><i className={"fa fa-expand"} /> </Button>
+                </div>
             </div>
         ];
     }

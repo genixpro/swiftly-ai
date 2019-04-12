@@ -1,17 +1,19 @@
 import React from 'react';
-import {Row, Col, Card, CardBody, DropdownMenu, Dropdown, DropdownToggle, DropdownItem} from 'reactstrap';
-import axios from 'axios';
-import ComparableSaleList from "./components/ComparableSaleList";
-import Promise from 'bluebird';
+import {Row, Col, Card, CardBody, CardHeader, Table, Button} from 'reactstrap';
+import NumberFormat from 'react-number-format';
+import axios from "axios/index";
+import AnnotationUtilities from './AnnotationUtilities';
+import FieldDisplayEdit from './components/FieldDisplayEdit';
 import _ from 'underscore';
 import AppraisalContentHeader from "./components/AppraisalContentHeader";
-import ComparableSaleSearch from './components/ComparableSaleSearch';
-import ComparableSalesMap from './components/ComparableSalesMap';
+import ComparableSaleList from "./components/ComparableSaleList";
 import ComparableSaleModel from "../models/ComparableSaleModel";
+import Promise from "bluebird";
 
-
-class ViewDirectComparisonValuation extends React.Component {
+class ViewDirectComparisonValuation extends React.Component
+{
     state = {
+        capitalizationRate: 8.4,
         comparableSales: []
     };
 
@@ -19,121 +21,136 @@ class ViewDirectComparisonValuation extends React.Component {
 
     componentDidMount()
     {
-
-    }
-
-
-    createNewComparable(newComparable)
-    {
-        const comparables = this.state.comparableSales;
-        comparables.splice(0, 0, newComparable);
-        this.setState({comparableSales: comparables});
-    }
-
-    onComparablesChanged(comps)
-    {
-        this.setState({comparableSales: comps});
-    }
-
-    addComparableToAppraisal(comp)
-    {
-        const appraisal = this.props.appraisal;
-        appraisal.comparableSales.push(comp._id);
-        appraisal.comparableSales = _.clone(appraisal.comparableSales);
-        this.props.saveDocument(appraisal);
-    }
-
-
-    removeComparableFromAppraisal(comp)
-    {
-        const appraisal = this.props.appraisal;
-        const comparables = this.state.comparableSales;
-        for (let i = 0; i < appraisal.comparableSales.length; i += 1)
+        Promise.map(this.props.appraisal.comparableSales, (comparableSaleId) =>
         {
-            if (appraisal.comparableSales[i] === comp._id)
+            if (this.loadedComparables[comparableSaleId])
             {
-                appraisal.comparableSales.splice(i, 1);
-                comparables.splice(i, 1);
-                break;
+                return this.loadedComparables[comparableSaleId];
             }
-        }
-        appraisal.comparableSales = _.clone(appraisal.comparableSales);
-        this.props.saveDocument(appraisal);
-        this.setState({comparableSales: comparables});
-    }
-
-    toggle()
-    {
-        this.setState({downloadDropdownOpen: !this.state.downloadDropdownOpen})
-    }
-
-
-    downloadExcelSummary()
-    {
-        window.location = `${process.env.VALUATE_ENVIRONMENT.REACT_APP_SERVER_URL}appraisal/${this.props.appraisal._id}/comparable_sales/excel`;
-    }
-
-
-    downloadWordSummary()
-    {
-        window.location = `${process.env.VALUATE_ENVIRONMENT.REACT_APP_SERVER_URL}appraisal/${this.props.appraisal._id}/comparable_sales/word`;
+            else
+            {
+                return axios.get(`/comparable_sales/` + comparableSaleId).then((response) =>
+                {
+                    if (response.data.comparableSale)
+                    {
+                        this.loadedComparables[comparableSaleId] = new ComparableSaleModel(response.data.comparableSale);
+                        return this.loadedComparables[comparableSaleId];
+                    }
+                });
+            }
+        }).then((comparableSales) =>
+        {
+            this.setState({comparableSales: comparableSales.filter((item) => item)})
+        }).catch((err) =>
+        {
+            alert("Error: " + err.toString());
+        })
     }
 
 
-    downloadDetailedSummary()
+    changeStabilizedInput(field, newValue)
     {
-        window.location = `${process.env.VALUATE_ENVIRONMENT.REACT_APP_SERVER_URL}appraisal/${this.props.appraisal._id}/comparable_sales/detailed_word`;
+        this.props.appraisal.stabilizedStatementInputs[field] = newValue;
+        this.props.saveDocument(this.props.appraisal, true);
     }
 
 
     render()
     {
-        if (!this.props.appraisal)
-        {
-            return null;
-        }
-
         return [
-            <div className={"view-appraisal-comparable-sales"}>
-                <Row>
-                    <Col xs={10}>
-                        <h3>View Comparable Sales</h3>
-                    </Col>
-                    <Col xs={2}>
-                        <Dropdown isOpen={this.state.downloadDropdownOpen} toggle={this.toggle.bind(this)}>
-                            <DropdownToggle caret color={"primary"} className={"download-dropdown-button"}>
-                                Download
-                            </DropdownToggle>
-                            <DropdownMenu>
-                                <DropdownItem onClick={() => this.downloadExcelSummary()}>Spreadsheet (xls)</DropdownItem>
-                                <DropdownItem onClick={() => this.downloadWordSummary()}>Cap-Rate Summary (docx)</DropdownItem>
-                                <DropdownItem onClick={() => this.downloadDetailedSummary()}>Detailed Summary (docx)</DropdownItem>
-                            </DropdownMenu>
-                        </Dropdown>
-                    </Col>
-                </Row>
-                <Row>
-                    <Col xs={8}>
-                        <ComparableSaleList comparableSales={this.state.comparableSales}
-                                            statsTitle={"Statistics for Selected Comps"}
-                                            allowNew={false}
-                                            history={this.props.history}
-                                            appraisalId={this.props.match.params._id}
-                                            appraisalComparables={this.props.appraisal.comparableSales}
-                                            onRemoveComparableClicked={(comp) => this.removeComparableFromAppraisal(comp)}
-                                            onChange={(comps) => this.onComparablesChanged(comps)}
-                        />
-                    </Col>
-                    <Col xs={4}>
-                        <ComparableSalesMap
-                            appraisal={this.props.appraisal}
-                            comparableSales={this.state.comparableSales}
-                            onAddComparableToAppraisal={(comp) => this.addComparableToAppraisal(comp)}
-                            onRemoveComparableFromAppraisal={(comp) => this.removeComparableFromAppraisal(comp)}
-                        />
-                    </Col>
-                </Row>
-            </div>
+            <AppraisalContentHeader appraisal={this.props.appraisal} title="Capitalization Valuation"/>,
+            <Row className={"view-capitalization-valuation"}>
+                <Col xs={12}>
+                    <Card className="card-default">
+                        <CardBody>
+                            <div className={"stabilized-statement-centered"}>
+                                <h3>Direct Comparison Valuation</h3>
+                                <h4>{this.props.appraisal.address}</h4>
+                                <ComparableSaleList comparableSales={this.state.comparableSales}
+                                                    statsTitle={""}
+                                                    statsPosition={"below"}
+                                                    allowNew={false}
+                                                    history={this.props.history}
+                                                    appraisal={this.props.appraisal}
+                                                    appraisalId={this.props.match.params._id}
+                                                    appraisalComparables={this.props.appraisal.comparableSales}
+                                    // onRemoveComparableClicked={(comp) => this.removeComparableFromAppraisal(comp)}
+                                    // onChange={(comps) => this.onComparablesChanged(comps)}
+                                />
+
+                                <Table className={"statement-table "}>
+                                    <tbody>
+                                    <tr className={"title-row"}>
+                                        <td className={"label-column"}><span className={"title"}>Net Operating Income</span></td>
+                                        <td className={"amount-column"} />
+                                        <td className={"amount-total-column"}>
+                                            $<NumberFormat
+                                            value={this.props.appraisal.stabilizedStatement.netOperatingIncome}
+                                            displayType={'text'}
+                                            thousandSeparator={', '}
+                                            decimalScale={2}
+                                            fixedDecimalScale={true}
+                                        />
+                                        </td>
+                                    </tr>
+                                    {/*<tr className={"data-row"}>*/}
+                                    {/*<td className={"label-column"}>NOI per square foot</td>*/}
+                                    {/*<td className={"amount-column"}></td>*/}
+                                    {/*<td className={"amount-total-column"}>todo</td>*/}
+                                    {/*</tr>*/}
+                                    <tr className={"data-row capitalization-row"}>
+                                        <td className={"label-column"}>
+                                            <span>Capitalized @</span>
+                                            <FieldDisplayEdit
+                                                type={"percent"}
+                                                placeholder={"Capitalization Rate"}
+                                                value={this.props.appraisal.stabilizedStatementInputs ? this.props.appraisal.stabilizedStatementInputs.capitalizationRate : 5.0}
+                                                onChange={(newValue) => this.changeStabilizedInput("capitalizationRate", newValue)}
+                                            />
+                                        </td>
+                                        <td className={"amount-column"}></td>
+                                        <td className={"amount-total-column"}>
+                                            $<NumberFormat
+                                            value={this.props.appraisal.stabilizedStatement.valuation}
+                                            displayType={'text'}
+                                            thousandSeparator={', '}
+                                            decimalScale={2}
+                                            fixedDecimalScale={true}
+                                        />
+                                        </td>
+                                    </tr>
+                                    <tr className={"data-row rounding-row"}>
+                                        <td className={"label-column"}>
+                                            <span>Rounded</span>
+                                        </td>
+                                        <td className={"amount-column"}></td>
+                                        <td className={"amount-total-column"}>
+                                            $<NumberFormat
+                                            value={this.props.appraisal.stabilizedStatement.valuationRounded}
+                                            displayType={'text'}
+                                            thousandSeparator={', '}
+                                            decimalScale={2}
+                                            fixedDecimalScale={true}
+                                        />
+                                        </td>
+                                    </tr>
+                                    </tbody>
+                                </Table>
+                                <br/>
+                                <br/>
+                                <h4 className={"final-valuation"}>Value by the Income Approach ... $<NumberFormat
+                                    value={this.props.appraisal.stabilizedStatement.valuationRounded}
+                                    displayType={'text'}
+                                    thousandSeparator={', '}
+                                    decimalScale={2}
+                                    fixedDecimalScale={true}
+                                />
+                                </h4>
+                            </div>
+                        </CardBody>
+                    </Card>
+                </Col>
+            </Row>
         ];
     }
 }

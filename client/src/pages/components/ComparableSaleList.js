@@ -12,6 +12,11 @@ import { Button, Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
 
 class ComparableSaleList extends React.Component
 {
+    static defaultProps = {
+        "statsPosition": "above",
+        showPropertyTypeInHeader: true
+    };
+
     state = {
         comparableSales: [],
         newComparableSale: {},
@@ -113,10 +118,10 @@ class ComparableSaleList extends React.Component
         return (
             <div>
                 {
-                    <ComparableSalesStatistics appraisal={this.props.appraisal} comparableSales={this.state.comparableSales}  title={this.props.statsTitle}/>
+                    this.props.statsPosition === "above" ? <ComparableSalesStatistics appraisal={this.props.appraisal} comparableSales={this.state.comparableSales}  title={this.props.statsTitle}/> : null
                 }
+                <div>
                 {
-
                     <div className={`card b comparable-sale-list-header`}>
                         <CardHeader className={"comparable-sale-list-item-header"}>
                             <CardTitle>
@@ -133,14 +138,28 @@ class ComparableSaleList extends React.Component
                                     <Col xs={2} className={"header-field-column"}>
                                         Sale Price
                                     </Col>
-                                    <Col xs={2} className={"header-field-column"}>
-                                        Property Type<br/>Sub Type
-                                    </Col>
-                                    <Col xs={2} className={"header-field-column"}>
-                                        Cap Rate (%)
-                                        <br/>
-                                        PSF ($)
-                                    </Col>
+                                    {
+                                        this.props.showPropertyTypeInHeader ?
+                                            <Col xs={2} className={"header-field-column"}>
+                                                Property Type<br/>Sub Type
+                                            </Col> : null
+                                    }
+                                    {
+                                        this.props.showPropertyTypeInHeader ?
+                                            <Col xs={2} className={"header-field-column"}>
+                                                Cap Rate (%)
+                                                <br/>
+                                                PPS ($)
+                                            </Col> : [
+                                                <Col key={1} xs={2} className={"header-field-column"}>
+                                                    Cap Rate (%)
+                                                </Col>,
+                                                <Col key={2} xs={2} className={"header-field-column"}>
+                                                    PPS ($)
+                                                </Col>
+                                            ]
+
+                                    }
                                 </Row>
                             </CardTitle>
                         </CardHeader>
@@ -172,6 +191,7 @@ class ComparableSaleList extends React.Component
                                 key={comparableSale._id}
                                 comparableSale={comparableSale}
                                 history={this.props.history}
+                                showPropertyTypeInHeader={this.props.showPropertyTypeInHeader}
                                 onChange={(comp) => this.updateComparable(comp, index)}
                                 appraisalComparables={this.props.appraisalComparables}
                                 onAddComparableClicked={this.props.onAddComparableClicked}
@@ -185,6 +205,10 @@ class ComparableSaleList extends React.Component
                             return null;
                         }
                     })
+                }
+                </div>
+                {
+                    this.props.statsPosition === "below" ? <div><br/><ComparableSalesStatistics appraisal={this.props.appraisal} comparableSales={this.state.comparableSales}  title={this.props.statsTitle}/></div> : null
                 }
             </div>
         );

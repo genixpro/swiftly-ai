@@ -68,6 +68,8 @@ class ViewCapitalizationValuation extends React.Component
                                 <h4>{this.props.appraisal.address}</h4>
                                 <ComparableSaleList comparableSales={this.state.comparableSales}
                                                     statsTitle={""}
+                                                    statsPosition={"below"}
+                                                    showPropertyTypeInHeader={false}
                                                     allowNew={false}
                                                     history={this.props.history}
                                                     appraisal={this.props.appraisal}

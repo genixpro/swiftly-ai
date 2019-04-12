@@ -15,7 +15,8 @@ class ComparableSaleListItem extends React.Component
 
     static defaultProps = {
         edit: true,
-        detailsOpen: false
+        detailsOpen: false,
+        showPropertyTypeInHeader: true
     };
 
     state = {
@@ -219,15 +220,28 @@ class ComparableSaleListItem extends React.Component
                                             fixedDecimalScale={true}
                                         /></span> : <span className={"no-data"}>No Price</span>}
                                     </Col>
-                                    <Col xs={2} className={"header-field-column"}>
-                                        {comparableSale.propertyType ? comparableSale.propertyType : <span className={"no-data"}>No Propery Type</span>}<br/>
-                                        {comparableSale.propertyTags ? comparableSale.propertyTags.map((tag, tagIndex) => <span key={tag}>{tag}{tagIndex !== comparableSale.propertyTags.length ? ", " : null}</span>) : <span className={"no-data"}>No Sub Type</span>}
-                                    </Col>
-                                    <Col className={"header-field-column small-header-column middle-col"}>
-                                        {comparableSale.capitalizationRate ? (comparableSale.capitalizationRate.toString() + "%") : <span className={"no-data"}>No Cap Rate</span>}
-                                        <br/>
-                                        {(comparableSale.salePrice && comparableSale.sizeSquareFootage) ?  "$" + (comparableSale.salePrice / comparableSale.sizeSquareFootage).toFixed(2) : <span className={"no-data"}>No PSF</span>}
-                                    </Col>
+                                    {
+                                        this.props.showPropertyTypeInHeader ?
+                                            <Col xs={2} className={"header-field-column"}>
+                                                {comparableSale.propertyType ? comparableSale.propertyType : <span className={"no-data"}>No Propery Type</span>}<br/>
+                                                {comparableSale.propertyTags ? comparableSale.propertyTags.map((tag, tagIndex) => <span key={tag}>{tag}{tagIndex !== comparableSale.propertyTags.length ? ", " : null}</span>) : <span className={"no-data"}>No Sub Type</span>}
+                                            </Col> : null
+                                    }
+                                    {
+                                        this.props.showPropertyTypeInHeader ?
+                                        <Col className={"header-field-column small-header-column middle-col"}>
+                                            {comparableSale.capitalizationRate ? (comparableSale.capitalizationRate.toString() + "%") : <span className={"no-data"}>No Cap Rate</span>}
+                                                <br/>
+                                            {(comparableSale.salePrice && comparableSale.sizeSquareFootage) ?  "$" + (comparableSale.salePrice / comparableSale.sizeSquareFootage).toFixed(2) : <span className={"no-data"}>No PSF</span>}
+                                        </Col> : [
+                                                <Col key={1} className={"header-field-column small-header-column middle-col"}>
+                                                    {comparableSale.capitalizationRate ? (comparableSale.capitalizationRate.toString() + "%") : <span className={"no-data"}>No Cap Rate</span>}
+                                                </Col>,
+                                                <Col key={2} className={"header-field-column small-header-column middle-col"}>
+                                                    {(comparableSale.salePrice && comparableSale.sizeSquareFootage) ?  "$" + (comparableSale.salePrice / comparableSale.sizeSquareFootage).toFixed(2) : <span className={"no-data"}>No PSF</span>}
+                                                </Col>
+                                            ]
+                                    }
                                 </Row>
                             </CardTitle>
                         </CardHeader> : null
