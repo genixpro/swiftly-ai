@@ -55,7 +55,7 @@ const Menu = [
             },
             {
                 name: 'Direct Comparison',
-                path: '/appraisal/:appraisalId/direct_comparison_valuation/database',
+                path: '/appraisal/:appraisalId/direct_comparison_valuation',
                 match: '/appraisal/:appraisalId/direct_comparison_valuation',
             },
             // {

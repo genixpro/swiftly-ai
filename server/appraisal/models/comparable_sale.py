@@ -63,5 +63,34 @@ class ComparableSale(Document):
     # A list of tags associated with this comparable lease
     propertyTags = ListField(StringField())
 
+    # For land comparables, this gives you the zoning information for the land
+    zoning = StringField()
+
+    # For land comparables, these are development proposals attached to the site
+    developmentProposals = StringField()
+
+    # Size of land, in square feet
+    sizeOfLandSqft = FloatField()
+
+    # Size of land, in acres
+    sizeOfLandAcres = FloatField()
+
+    # Size of buildable area, in square feet
+    sizeOfBuildableAreaSqft = FloatField()
+
+    # Size of buildable area, in acres
+    sizeOfBuildableAreaAcres = FloatField()
+
+    # Other land comp stuff
+    pricePerSquareFootLand = FloatField()
+
+    pricePerAcreLand = FloatField()
+
+    pricePerSquareFootBuildableArea = FloatField()
+
+    pricePerAcreBuildableArea = FloatField()
+
+    floorSpaceIndex = FloatField()
+
 
 

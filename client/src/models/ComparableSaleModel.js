@@ -41,6 +41,19 @@ class ComparableSaleModel extends EquationMdoel
     static shippingDoors = new GenericField();
     static siteCoverage = new GenericField();
 
+
+    static zoning = new GenericField();
+    static developmentProposals = new GenericField();
+    static sizeOfLandSqft = new GenericField();
+    static sizeOfLandAcres = new GenericField();
+    static sizeOfBuildableAreaSqft = new GenericField();
+    static sizeOfBuildableAreaAcres = new GenericField();
+    static pricePerSquareFootLand = new GenericField();
+    static pricePerAcreLand = new GenericField();
+    static pricePerSquareFootBuildableArea = new GenericField();
+    static pricePerAcreBuildableArea = new GenericField();
+    static floorSpaceIndex = new GenericField();
+
     static equations = {
         "netOperatingIncome": [
             {
@@ -74,6 +87,70 @@ class ComparableSaleModel extends EquationMdoel
             {
                 inputs: ['salePrice', 'sizeSquareFootage'],
                 equation: (salePrice, sizeSquareFootage) => salePrice / sizeSquareFootage
+            }
+        ],
+        "sizeOfLandSqft": [
+            {
+                inputs: ['sizeOfLandAcres'],
+                equation: (sizeOfLandAcres) => sizeOfLandAcres * 43560.0
+            }
+        ],
+        "sizeOfLandAcres": [
+            {
+                inputs: ['sizeOfLandSqft'],
+                equation: (sizeOfLandSqft) => sizeOfLandSqft / 43560.0
+            }
+        ],
+        "sizeOfBuildableAreaSqft": [
+            {
+                inputs: ['sizeOfBuildableAreaAcres'],
+                equation: (sizeOfBuildableAreaAcres) => sizeOfBuildableAreaAcres * 43560.0
+            }
+        ],
+        "sizeOfBuildableAreaAcres": [
+            {
+                inputs: ['sizeOfBuildableAreaSqft'],
+                equation: (sizeOfBuildableAreaSqft) => sizeOfBuildableAreaSqft / 43560.0
+            }
+        ],
+        "pricePerSquareFootLand": [
+            {
+                inputs: ['pricePerAcreLand'],
+                equation: (pricePerAcreLand) => pricePerAcreLand / 43560.0
+            },
+            {
+                inputs: ['salePrice', 'sizeOfLandSqft'],
+                equation: (salePrice, sizeOfLandSqft) => salePrice / sizeOfLandSqft
+            }
+        ],
+        "pricePerAcreLand": [
+            {
+                inputs: ['pricePerSquareFootLand'],
+                equation: (pricePerSquareFootLand) => pricePerSquareFootLand * 43560.0
+            },
+            {
+                inputs: ['salePrice', 'sizeOfLandAcres'],
+                equation: (salePrice, sizeOfLandAcres) => salePrice / sizeOfLandAcres
+            }
+        ],
+        "pricePerSquareFootBuildableArea": [
+            {
+                inputs: ['pricePerAcreBuildableArea'],
+                equation: (pricePerAcreBuildableArea) => pricePerAcreBuildableArea / 43560.0
+            },
+            {
+                inputs: ['salePrice', 'sizeOfBuildableAreaSqft'],
+                equation: (salePrice, sizeOfBuildableAreaSqft) => salePrice / sizeOfBuildableAreaSqft
+            }
+        ],
+        "pricePerAcreBuildableArea": [
+            {
+                inputs: ['pricePerSquareFootBuildableArea'],
+                equation: (pricePerSquareFootBuildableArea) => pricePerSquareFootBuildableArea * 43560.0
+            },
+            {
+                inputs: ['salePrice', 'sizeOfBuildableAreaAcres'],
+                equation: (salePrice, sizeOfBuildableAreaAcres) => salePrice / sizeOfBuildableAreaAcres
             }
         ]
     };

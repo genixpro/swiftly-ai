@@ -9,6 +9,7 @@ import axios from "axios/index";
 import ComparableSalesStatistics from "./ComparableSalesStatistics"
 import { Button, Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
 import SortDirection from "./SortDirection";
+import ComparableSaleModel from "../../models/ComparableSaleModel";
 
 
 class ComparableSaleList extends React.Component
@@ -21,7 +22,7 @@ class ComparableSaleList extends React.Component
 
     state = {
         comparableSales: [],
-        newComparableSale: {},
+        newComparableSale: new ComparableSaleModel({}),
         isCreatingNewItem: false
     };
 
@@ -53,7 +54,7 @@ class ComparableSaleList extends React.Component
     addNewComparable(newComparable)
     {
         this.props.onNewComparable(newComparable);
-        this.setState({isCreatingNewItem: false, newComparableSale: {}})
+        this.setState({isCreatingNewItem: false, newComparableSale: new ComparableSaleModel({})})
     }
 
     updateComparable(changedComp, index)
@@ -158,9 +159,21 @@ class ComparableSaleList extends React.Component
                                     <Col xs={3} className={"header-field-column"} onClick={() => this.changeSortColumn("address")}>
                                         Address <SortDirection field={"address"} sort={this.props.sort} />
                                     </Col>
-                                    <Col  xs={2} className={"header-field-column"} onClick={() => this.changeSortColumn("sizeSquareFootage")}>
-                                        Building Size (sf) <SortDirection field={"sizeSquareFootage"} sort={this.props.sort} />
-                                    </Col>
+
+                                    {
+                                        this.props.appraisal.propertyType !== "land" ?
+                                            <Col xs={2} className={"header-field-column"} onClick={() => this.changeSortColumn("sizeSquareFootage")}>
+                                                Building Size (sf) <SortDirection field={"sizeSquareFootage"} sort={this.props.sort}/>
+                                            </Col> : null
+                                    }
+                                    {
+                                        this.props.appraisal.propertyType === "land" ?
+                                            <Col xs={2} className={"header-field-column"} onClick={() => this.changeSortColumn("sizeOfLandAcres")}>
+                                                Site Area (acres) <SortDirection field={"sizeOfLandAcres"} sort={this.props.sort}/>
+                                                <br/>
+                                                Buildable Area (sqft)
+                                            </Col> : null
+                                    }
                                     <Col xs={2} className={"header-field-column"} onClick={() => this.changeSortColumn("salePrice")}>
                                         Sale Price <SortDirection field={"salePrice"} sort={this.props.sort} />
                                     </Col>
@@ -173,20 +186,38 @@ class ComparableSaleList extends React.Component
                                             </Col> : null
                                     }
                                     {
-                                        this.props.showPropertyTypeInHeader ?
-                                            <Col xs={2} className={"header-field-column"} onClick={() => this.changeSortColumn("capitalizationRate")}>
-                                                Cap Rate (%) <SortDirection field={"capitalizationRate"} sort={this.props.sort} />
-                                                <br/>
-                                                PPS ($)
-                                            </Col> : [
-                                                <Col key={1} xs={2} className={"header-field-column"} onClick={() => this.changeSortColumn("capitalizationRate")}>
+                                        this.props.appraisal.propertyType !== "land" ?
+                                            this.props.showPropertyTypeInHeader ?
+                                                <Col xs={2} className={"header-field-column"} onClick={() => this.changeSortColumn("capitalizationRate")}>
                                                     Cap Rate (%) <SortDirection field={"capitalizationRate"} sort={this.props.sort} />
-                                                </Col>,
-                                                <Col key={2} xs={2} className={"header-field-column"} onClick={() => this.changeSortColumn("pricePerSquareFoot")}>
-                                                    PPS ($) <SortDirection field={"pricePerSquareFoot"} sort={this.props.sort} />
-                                                </Col>
-                                            ]
-
+                                                    <br/>
+                                                    PPS ($)
+                                                </Col> : [
+                                                    <Col key={1} xs={2} className={"header-field-column"} onClick={() => this.changeSortColumn("capitalizationRate")}>
+                                                        Cap Rate (%) <SortDirection field={"capitalizationRate"} sort={this.props.sort} />
+                                                    </Col>,
+                                                    <Col key={2} xs={2} className={"header-field-column"} onClick={() => this.changeSortColumn("pricePerSquareFoot")}>
+                                                        PPS ($) <SortDirection field={"pricePerSquareFoot"} sort={this.props.sort} />
+                                                    </Col>
+                                                ]
+                                            : null
+                                    }
+                                    {
+                                        this.props.appraisal.propertyType === "land" ?
+                                            this.props.showPropertyTypeInHeader ?
+                                                <Col xs={2} className={"header-field-column"} onClick={() => this.changeSortColumn("pricePerAcreLand")}>
+                                                    PPA Land ($) <SortDirection field={"pricePerAcreLand"} sort={this.props.sort} />
+                                                    <br/>
+                                                    PPS Buildable Area ($)
+                                                </Col> : [
+                                                    <Col key={1} xs={2} className={"header-field-column"} onClick={() => this.changeSortColumn("pricePerAcreLand")}>
+                                                        PPA Land ($) <SortDirection field={"pricePerAcreLand"} sort={this.props.sort} />
+                                                    </Col>,
+                                                    <Col key={2} xs={2} className={"header-field-column"} onClick={() => this.changeSortColumn("pricePerSquareFootBuildableArea")}>
+                                                        PPS Buildable Area ($) <SortDirection field={"pricePerSquareFootBuildableArea"} sort={this.props.sort} />
+                                                    </Col>
+                                                ]
+                                            : null
                                     }
                                 </Row>
                             </CardTitle>
@@ -200,7 +231,8 @@ class ComparableSaleList extends React.Component
                             <Modal isOpen={this.state.isCreatingNewItem} toggle={this.toggleNewItem.bind(this)} className={"new-comp-dialog"}>
                                 <ModalHeader toggle={this.toggleNewItem.bind(this)}>New Comparable Sale</ModalHeader>
                                 <ModalBody>
-                                    <ComparableSaleListItem comparableSale={_.clone(this.state.newComparableSale)}
+                                    <ComparableSaleListItem comparableSale={this.state.newComparableSale}
+                                                            openByDefault={true}
                                                              onChange={(comp) => this.setState({newComparableSale: comp})} />
                                 </ModalBody>
                                 <ModalFooter>
@@ -219,6 +251,7 @@ class ComparableSaleList extends React.Component
                                 key={comparableSale._id}
                                 comparableSale={comparableSale}
                                 history={this.props.history}
+                                appraisal={this.props.appraisal}
                                 showPropertyTypeInHeader={this.props.showPropertyTypeInHeader}
                                 onChange={(comp) => this.updateComparable(comp, index)}
                                 appraisalComparables={this.props.appraisalComparables}

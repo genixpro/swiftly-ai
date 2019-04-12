@@ -20,9 +20,9 @@ class ComparableLeaseList extends React.Component
 
     state = {
         comparableLeases: [],
-        newComparableSale: {
+        newComparableLease: new ComparableLeaseModel({
             rentType: "net"
-        },
+        }),
         isCreatingNewItem: false
     };
 
@@ -92,7 +92,7 @@ class ComparableLeaseList extends React.Component
         // comparables.push(newComparable);
 
         this.props.onNewComparable(newComparable);
-        this.setState({isCreatingNewItem: false, newComparableSale: {}})
+        this.setState({isCreatingNewItem: false, newComparableLease: new ComparableLeaseModel({})})
     }
 
     updateComparable(changedComp, index)
@@ -214,11 +214,12 @@ class ComparableLeaseList extends React.Component
                             <Modal isOpen={this.state.isCreatingNewItem} toggle={this.toggleNewItem.bind(this)} className={"new-comp-dialog"}>
                                         <ModalHeader toggle={this.toggleNewItem.bind(this)}>New Comparable Lease</ModalHeader>
                                         <ModalBody>
-                                            <ComparableLeaseListItem comparableLease={_.clone(this.state.newComparableSale)}
-                                                onChange={(comp) => this.setState({newComparableSale: comp})}/>
+                                            <ComparableLeaseListItem comparableLease={this.state.newComparableLease}
+                                                                     openByDefault={true}
+                                                onChange={(comp) => this.setState({newComparableLease: comp})}/>
                                         </ModalBody>
                                         <ModalFooter>
-                                        <Button color="primary" onClick={() => this.addNewComparable(this.state.newComparableSale)}>Save</Button>{' '}
+                                        <Button color="primary" onClick={() => this.addNewComparable(this.state.newComparableLease)}>Save</Button>{' '}
                                         <Button color="primary" onClick={() => this.toggleNewItem.bind(this)}>Cancel</Button>{' '}
                                 </ModalFooter>
                             </Modal>

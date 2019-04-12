@@ -114,6 +114,15 @@ class FieldDisplayEdit extends React.Component
                 return this.numberWithCommas(value.toString());
             }
         }
+        else if (this.props.type === 'float')
+        {
+            try {
+                return this.numberWithCommas(Number(value).toFixed(2).toString());
+            }
+            catch(err) {
+                return this.numberWithCommas(value.toString());
+            }
+        }
         else if (this.props.type === 'length')
         {
             try {
@@ -303,6 +312,7 @@ class FieldDisplayEdit extends React.Component
                 }
                 {
                     this.props.type === "currency" || this.props.type === "number" ||
+                    this.props.type === "float" ||
                     this.props.type === "percent" || this.props.type === "text" ||
                     this.props.type === "length" || this.props.type === "area" ||
                     !this.props.type ?
