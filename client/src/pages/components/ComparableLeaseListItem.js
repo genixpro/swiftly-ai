@@ -279,7 +279,36 @@ class ComparableLeaseListItem extends React.Component
                                         value={comparableLease.rentType}
                                         onChange={(newValue) => this.changeComparableField('rentType', newValue)}
                                     />
+                                    {
+                                        comparableLease.propertyType === "office" ?
+                                            [
+                                                <span key={1} className={"comparable-field-label"}>Floor Number:</span>,
 
+                                                <FieldDisplayEdit
+                                                    key={2}
+                                                    type={"number"}
+                                                    edit={this.props.edit}
+                                                    placeholder={"Floor Number"}
+                                                    value={comparableLease.floorNumber}
+                                                    onChange={(newValue) => this.changeComparableField('floorNumber', newValue)}
+                                                />
+                                            ] : null
+                                    }
+                                    {
+                                        comparableLease.propertyType === "retail" ?
+                                            [
+                                                <span key={1} className={"comparable-field-label"}>Retail Location:</span>,
+
+                                                <FieldDisplayEdit
+                                                    key={2}
+                                                    type={"retailLocationType"}
+                                                    edit={this.props.edit}
+                                                    placeholder={"Retail Location"}
+                                                    value={comparableLease.retailLocationType}
+                                                    onChange={(newValue) => this.changeComparableField('retailLocationType', newValue)}
+                                                />
+                                            ] : null
+                                    }
 
                                     <span className={"comparable-field-label"}>Tenant Name:</span>
 

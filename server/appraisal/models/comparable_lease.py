@@ -37,6 +37,12 @@ class ComparableLease(Document):
     # The description of the comparable
     description = StringField()
 
+    # Floor number
+    floorNumber = IntField()
+
+    # Retail type
+    retailLocationType = StringField(choices=["street_front", "upper_level", ""], default="street_front")
+
     # The date of the lease
     leaseDate = ConvertingDateField()
 
