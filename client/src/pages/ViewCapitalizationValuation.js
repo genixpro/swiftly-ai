@@ -57,7 +57,21 @@ class ViewCapitalizationValuation extends React.Component
 
     changeStabilizedModifier(index, field, newValue)
     {
-        this.props.appraisal.stabilizedStatementInputs.modifiers[index][field] = newValue;
+        if (field === 'amount' && newValue === null)
+        {
+            this.removeModifier(index);
+        }
+        else
+        {
+            this.props.appraisal.stabilizedStatementInputs.modifiers[index][field] = newValue;
+            this.props.saveDocument(this.props.appraisal, true);
+        }
+    }
+    
+
+    removeModifier(index)
+    {
+        this.props.appraisal.stabilizedStatementInputs.modifiers.splice(index, 1);
         this.props.saveDocument(this.props.appraisal, true);
     }
 

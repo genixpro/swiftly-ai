@@ -44,7 +44,8 @@ class StabilizedStatementModel:
         statement.valuation = statement.capitalization
 
         for modifier in appraisal.stabilizedStatementInputs.modifiers:
-            statement.valuation += modifier.amount
+            if modifier.amount:
+                statement.valuation += modifier.amount
 
         if statement.valuation == 0:
             statement.valuationRounded = 0

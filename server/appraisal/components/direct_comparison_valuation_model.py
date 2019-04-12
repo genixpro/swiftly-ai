@@ -29,7 +29,8 @@ class DirectComparisonValuationModel:
         dca.valuation = dca.comparativeValue
 
         for modifier in appraisal.directComparisonInputs.modifiers:
-            dca.valuation += modifier.amount
+            if modifier.amount:
+                dca.valuation += modifier.amount
 
         if dca.valuation == 0:
             dca.valuationRounded = 0

@@ -57,10 +57,23 @@ class ViewDirectComparisonValuation extends React.Component
 
     changeModifier(index, field, newValue)
     {
-        this.props.appraisal.directComparisonInputs.modifiers[index][field] = newValue;
-        this.props.saveDocument(this.props.appraisal, true);
+        if (field === 'amount' && newValue === null)
+        {
+            this.removeModifier(index);
+        }
+        else
+        {
+            this.props.appraisal.directComparisonInputs.modifiers[index][field] = newValue;
+            this.props.saveDocument(this.props.appraisal, true);
+        }
     }
 
+
+    removeModifier(index)
+    {
+        this.props.appraisal.directComparisonInputs.modifiers.splice(index, 1);
+        this.props.saveDocument(this.props.appraisal, true);
+    }
 
 
     createNewModifier(field, newValue)
