@@ -75,20 +75,6 @@
       padding-right: 50px;
     }
 
-    tr.statement-sum-after-row td.amount-column
-    {
-      border-bottom: 1px solid grey;
-    }
-
-    tr.statement-total-sum-row td.amount-total-column {
-      border-bottom: 1px solid grey;
-    }
-
-    tr.statement-sum-row td, tr.statement-total-sum-row td
-    {
-      padding-top: 25px;
-    }
-
     tr.title-row td
     {
       padding-top: 25px;
@@ -96,6 +82,15 @@
       {
         font-weight: bold;
         color: black;
+      }
+    }
+
+    tr.modifier-row
+    {
+      .amount-total-column {
+        input {
+          text-align: right;
+        }
       }
     }
 

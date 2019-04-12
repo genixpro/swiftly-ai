@@ -55,6 +55,33 @@ class ViewCapitalizationValuation extends React.Component
     }
 
 
+    changeStabilizedModifier(index, field, newValue)
+    {
+        this.props.appraisal.stabilizedStatementInputs.modifiers[index][field] = newValue;
+        this.props.saveDocument(this.props.appraisal, true);
+    }
+
+
+
+    createNewModifier(field, newValue)
+    {
+        if (!this.props.appraisal.stabilizedStatementInputs.modifiers)
+        {
+            this.props.appraisal.stabilizedStatementInputs.modifiers = [];
+        }
+
+        const object = {
+            name: "Modification",
+            amount: 0
+        };
+
+        object[field] = newValue;
+
+        this.props.appraisal.stabilizedStatementInputs.modifiers.push(object);
+        this.props.saveDocument(this.props.appraisal, true);
+    }
+
+
     render()
     {
         return [
@@ -112,6 +139,66 @@ class ViewCapitalizationValuation extends React.Component
                                         <td className={"amount-column"}></td>
                                         <td className={"amount-total-column"}>
                                             $<NumberFormat
+                                            value={this.props.appraisal.stabilizedStatement.capitalization}
+                                            displayType={'text'}
+                                            thousandSeparator={', '}
+                                            decimalScale={2}
+                                            fixedDecimalScale={true}
+                                        />
+                                        </td>
+                                    </tr>
+                                    {
+                                        this.props.appraisal.stabilizedStatementInputs.modifiers ? this.props.appraisal.stabilizedStatementInputs.modifiers.map((modifier, index) =>
+                                        {
+                                            return <tr className={"data-row modifier-row"} key={index}>
+                                                <td className={"label-column"}>
+                                                    <span><FieldDisplayEdit
+                                                        type={"text"}
+                                                        placeholder={"Add/Remove ($)"}
+                                                        value={modifier.name}
+                                                        onChange={(newValue) => this.changeStabilizedModifier(index, "name", newValue)}
+                                                    /></span>
+                                                </td>
+                                                <td className={"amount-column"}></td>
+                                                <td className={"amount-total-column"}>
+                                                    <FieldDisplayEdit
+                                                        hideIcon={true}
+                                                        type={"currency"}
+                                                        placeholder={"Amount"}
+                                                        value={modifier.amount}
+                                                        onChange={(newValue) => this.changeStabilizedModifier(index, "amount", newValue)}
+                                                    />
+                                                </td>
+                                            </tr>
+                                        }) : null
+                                    }
+                                    <tr className={"data-row"}>
+                                        <td className={"label-column"}>
+                                            <span><FieldDisplayEdit
+                                                type={"text"}
+                                                placeholder={"Add/Remove ($)"}
+                                                // value={modifier.name}
+                                                onChange={(newValue) => this.createNewModifier("name", newValue)}
+                                            /></span>
+                                        </td>
+                                        <td className={"amount-column"}></td>
+                                        <td className={"amount-total-column"}>
+                                            <FieldDisplayEdit
+                                                type={"currency"}
+                                                placeholder={"Amount"}
+                                                hideIcon={true}
+                                                // value={modifier.amount}
+                                                onChange={(newValue) => this.createNewModifier("amount", newValue)}
+                                            />
+                                        </td>
+                                    </tr>
+                                    <tr className={"data-row rounding-row"}>
+                                        <td className={"label-column"}>
+                                            <span>Estimated Value</span>
+                                        </td>
+                                        <td className={"amount-column"}></td>
+                                        <td className={"amount-total-column"}>
+                                            $<NumberFormat
                                             value={this.props.appraisal.stabilizedStatement.valuation}
                                             displayType={'text'}
                                             thousandSeparator={', '}
@@ -139,7 +226,7 @@ class ViewCapitalizationValuation extends React.Component
                                 </Table>
                                 <br/>
                                 <br/>
-                                <h4 className={"final-valuation"}>Value by the Income Approach ... $<NumberFormat
+                                <h4 className={"final-valuation"}>Value by the Overall Capitalization Rate Method ... $<NumberFormat
                                     value={this.props.appraisal.stabilizedStatement.valuationRounded}
                                     displayType={'text'}
                                     thousandSeparator={', '}

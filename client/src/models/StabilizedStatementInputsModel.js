@@ -8,6 +8,8 @@ class StabilizedStatementInputsModel extends BaseModel
 {
     static capitalizationRate = new GenericField();
     static vacancyRate = new GenericField();
+
+    static modifiers = new GenericField();
 }
 
 export default StabilizedStatementInputsModel;

@@ -34,6 +34,8 @@ class StabilizedStatementModel extends BaseModel
 
     static netOperatingIncomePSF = new GenericField();
 
+    static capitalization = new GenericField();
+
     static valuation = new GenericField();
 
     static valuationRounded = new GenericField();
