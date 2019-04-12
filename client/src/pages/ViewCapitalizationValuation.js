@@ -67,7 +67,7 @@ class ViewCapitalizationValuation extends React.Component
             this.props.saveDocument(this.props.appraisal, true);
         }
     }
-    
+
 
     removeModifier(index)
     {

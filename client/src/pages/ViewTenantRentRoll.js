@@ -94,7 +94,7 @@ class ViewTenantsRentRoll extends React.Component
 
             <td className={"action-column"}>
                 <Button
-                    color="info"
+                    color="secondary"
                     onClick={(evt) => this.removeTenancy(unitInfo, tenantInfo, tenancyIndex)}
                     title={"New Tenancy"}
                 >
@@ -187,7 +187,7 @@ class ViewTenantsRentRoll extends React.Component
 
             <td className={"action-column"}>
                 <Button
-                    color="info"
+                    color="secondary"
                     onClick={(evt) => this.createNewTenancy()}
                     title={"New Tenancy"}
                 >

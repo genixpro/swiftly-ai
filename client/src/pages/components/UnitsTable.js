@@ -63,7 +63,7 @@ class UnitsTable extends React.Component
             /></td>
             <td className={"action-column"}>
                 <Button
-                    color="info"
+                    color="secondary"
                     onClick={(evt) => this.removeUnit(unitInfo, unitIndex)}
                     title={"Delete Unit"}
                 >
@@ -149,7 +149,7 @@ class UnitsTable extends React.Component
             </td>
             <td className={"action-column"}>
                 <Button
-                    color="info"
+                    color="secondary"
                     onClick={(evt) => this.createNewUnit()}
                     title={"New Unit"}
                 >

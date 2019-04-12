@@ -135,9 +135,9 @@ class ViewDirectComparisonValuation extends React.Component
                                                     value={this.props.appraisal.sizeOfBuilding || 0}
                                                     displayType={'text'}
                                                     thousandSeparator={', '}
-                                                    decimalScale={2}
+                                                    decimalScale={0}
                                                     fixedDecimalScale={true}
-                                                /> @
+                                                /> sqft @
                                             </span>
                                             <FieldDisplayEdit
                                                 type={"currency"}
