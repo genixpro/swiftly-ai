@@ -49,6 +49,10 @@ const Menu = [
                 name: 'Stabilized Statement',
                 path: '/appraisal/:appraisalId/stabilized_statement_valuation',
             },
+            {
+                name: 'Capitalization Valuation',
+                path: '/appraisal/:appraisalId/capitalization_valuation',
+            },
             // {
             //     name: 'Direct Comparison Valuation',
             //     path: '/appraisal/:appraisalId/direct_comparison_valuation/database',

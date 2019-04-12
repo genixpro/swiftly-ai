@@ -10,7 +10,7 @@ import ViewLeases from "./ViewLeases";
 import ViewLease from "./ViewLease";
 import ViewFinancialStatements from "./ViewFinancialStatements";
 import ViewFinancialStatement from "./ViewFinancialStatement";
-import ViewStabilizedStatementValuation from "./ViewStabilizedStatementValuation";
+import ViewStabilizedStatement from "./ViewStabilizedStatement";
 import ViewComparableSales from "./ViewComparableSales";
 import ViewComparableSale from "./ViewComparableSale";
 import ViewDiscountedCashFlow from "./ViewDiscountedCashFlow";
@@ -19,6 +19,7 @@ import ViewTenants from "./ViewTenants";
 import ViewBuildingInformation from "./ViewBuildingInformation";
 import ViewExpenses from "./ViewExpenses";
 import ViewComparableLeases from "./ViewComparableLeases";
+import ViewCapitalizationValuation from "./ViewCapitalizationValuation";
 import axios from "axios/index";
 import AppraisalModel from "../models/AppraisalModel";
 
@@ -78,7 +79,7 @@ class ViewAppraisal extends React.Component
                         <Route path={`${this.props.match.path}/lease/:leaseId`} render={(props) => withProps({...routeProps, ...props})(ViewLease)()} />
                         <Route path={`${this.props.match.path}/financial_statements`} render={(props) => withProps({...routeProps, ...props})(ViewFinancialStatements)()} />
                         <Route path={`${this.props.match.path}/financial_statement/:financialStatementId`} render={(props) => withProps({...routeProps, ...props})(ViewFinancialStatement)()} />
-                        <Route path={`${this.props.match.path}/stabilized_statement_valuation`} render={(props) => withProps({...routeProps, ...props})(ViewStabilizedStatementValuation)()} />
+                        <Route path={`${this.props.match.path}/stabilized_statement_valuation`} render={(props) => withProps({...routeProps, ...props})(ViewStabilizedStatement)()} />
                         <Route path={`${this.props.match.path}/comparable_sales`} render={(props) => withProps({...routeProps, ...props})(ViewComparableSales)()} />
                         <Route path={`${this.props.match.path}/comparable_sale/:comparableSaleId`} render={(props) => withProps({...routeProps, ...props})(ViewComparableSale)()} />
                         <Route path={`${this.props.match.path}/discounted_cash_flow`} render={(props) => withProps({...routeProps, ...props})(ViewDiscountedCashFlow)()} />
@@ -87,6 +88,7 @@ class ViewAppraisal extends React.Component
                         <Route path={`${this.props.match.path}/expenses`} render={(props) => withProps({...routeProps, ...props})(ViewExpenses)()} />
                         <Route path={`${this.props.match.path}/comparable_leases`} render={(props) => withProps({...routeProps, ...props})(ViewComparableLeases)()} />
                         <Route path={`${this.props.match.path}/direct_comparison_valuation`} render={(props) => withProps({...routeProps, ...props})(ViewDirectComparisonValuation)()} />
+                        <Route path={`${this.props.match.path}/capitalization_valuation`} render={(props) => withProps({...routeProps, ...props})(ViewCapitalizationValuation)()} />
                     </Switch>
                 </div>
             </ContentWrapper> : null

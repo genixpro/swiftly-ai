@@ -8,7 +8,7 @@ import _ from 'underscore';
 import AppraisalContentHeader from "./components/AppraisalContentHeader";
 import UnitsTable from "./components/UnitsTable";
 
-class ViewStabilizedStatementValuation extends React.Component
+class ViewStabilizedStatement extends React.Component
 {
     state = {
         capitalizationRate: 8.4
@@ -18,53 +18,7 @@ class ViewStabilizedStatementValuation extends React.Component
     {
 
     }
-
-    computeGroupTotals()
-    {
-        if (!this.props.appraisal.incomeStatement)
-        {
-            return
-        }
-
-        const year = this.props.appraisal.incomeStatement.years[this.props.appraisal.incomeStatement.years.length - 1];
-
-        let incomeTotal = 0;
-        let expenseTotal = 0;
-
-        if (this.props.appraisal.incomeStatement.incomes)
-        {
-            this.props.appraisal.incomeStatement.incomes.forEach((income) =>
-            {
-                incomeTotal += income.yearlyAmounts[year];
-            });
-        }
-
-        if (this.props.appraisal.incomeStatement.expenses)
-        {
-            this.props.appraisal.incomeStatement.expenses.forEach((expense) =>
-            {
-                expenseTotal += expense.yearlyAmounts[year];
-            });
-        }
-
-        let operatingIncome = incomeTotal - expenseTotal;
-        let valuation = operatingIncome / (this.state.capitalizationRate / 100.0);
-        this.setState({incomeTotal, expenseTotal, operatingIncome, valuation});
-    }
-
-    saveDocument(newAppraisal)
-    {
-        axios.post(`/appraisal/${this.props.match.params.id}`, newAppraisal).then((response) =>
-        {
-            // this.setState({financialStatement: newLease})
-        });
-    }
-
-    changeCapitalization(newValue)
-    {
-        this.setState({capitalizationRate: newValue}, () => this.computeGroupTotals());
-    }
-
+    
 
     changeStabilizedInput(field, newValue)
     {
@@ -268,59 +222,8 @@ class ViewStabilizedStatementValuation extends React.Component
                                             />
                                         </td>
                                     </tr>
-                                    {/*<tr className={"data-row"}>*/}
-                                        {/*<td className={"label-column"}>NOI per square foot</td>*/}
-                                        {/*<td className={"amount-column"}></td>*/}
-                                        {/*<td className={"amount-total-column"}>todo</td>*/}
-                                    {/*</tr>*/}
-                                    <tr className={"data-row capitalization-row"}>
-                                        <td className={"label-column"}>
-                                            <span>Capitalized @</span>
-                                            <FieldDisplayEdit
-                                                type={"percent"}
-                                                placeholder={"Capitalization Rate"}
-                                                value={this.props.appraisal.stabilizedStatementInputs ? this.props.appraisal.stabilizedStatementInputs.capitalizationRate : 5.0}
-                                                onChange={(newValue) => this.changeStabilizedInput("capitalizationRate", newValue)}
-                                            />
-                                        </td>
-                                        <td className={"amount-column"}></td>
-                                        <td className={"amount-total-column"}>
-                                                $<NumberFormat
-                                                value={this.props.appraisal.stabilizedStatement.valuation}
-                                                displayType={'text'}
-                                                thousandSeparator={', '}
-                                                decimalScale={2}
-                                                fixedDecimalScale={true}
-                                            />
-                                        </td>
-                                    </tr>
-                                    <tr className={"data-row rounding-row"}>
-                                        <td className={"label-column"}>
-                                            <span>Rounded</span>
-                                        </td>
-                                        <td className={"amount-column"}></td>
-                                        <td className={"amount-total-column"}>
-                                                $<NumberFormat
-                                                value={this.props.appraisal.stabilizedStatement.valuationRounded}
-                                                displayType={'text'}
-                                                thousandSeparator={', '}
-                                                decimalScale={2}
-                                                fixedDecimalScale={true}
-                                            />
-                                        </td>
-                                    </tr>
                                     </tbody>
                                 </Table>
-                                <br/>
-                                <br/>
-                                <h4 className={"final-valuation"}>Value by the Income Approach ... $<NumberFormat
-                                        value={this.props.appraisal.stabilizedStatement.valuationRounded}
-                                        displayType={'text'}
-                                        thousandSeparator={', '}
-                                        decimalScale={2}
-                                        fixedDecimalScale={true}
-                                    />
-                                </h4>
                             </div>
                         </CardBody>
                     </Card>
@@ -330,4 +233,4 @@ class ViewStabilizedStatementValuation extends React.Component
     }
 }
 
-export default ViewStabilizedStatementValuation;
+export default ViewStabilizedStatement;

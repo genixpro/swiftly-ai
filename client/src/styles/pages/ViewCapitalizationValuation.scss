@@ -1,0 +1,137 @@
+
+
+.view-capitalization-valuation
+{
+  .stabilized-statement-centered
+  {
+    position: relative;
+    width: 70%;
+    left: 15%;
+
+    h3, h4 {
+      text-align: center;
+    }
+
+    .final-valuation
+    {
+      font-family: monospace, sans-serif;
+      letter-spacing: -2px;
+      font-style: italic;
+      font-weight: bolder;
+      color: black;
+      text-decoration: underline;
+    }
+  }
+
+  .title {
+    font-weight: bold;
+    font-size: 150%;
+  }
+
+  .statement-table
+  {
+    margin-left: auto;
+    margin-right: auto;
+    width: auto;
+
+    td {
+      vertical-align: middle;
+    }
+
+    .title-row
+    {
+
+    }
+
+    .data-row
+    {
+      font-family: monospace, serif;
+    }
+
+    tr:not(.title-row)
+    {
+      td.label-column
+      {
+        padding-left: 25px;
+      }
+    }
+
+    td.amount-column
+    {
+      padding-left: 20px;
+      font-family: monospace, serif;
+      text-align: right;
+    }
+
+    td.amount-total-column
+    {
+      padding-left: 20px;
+      font-family: monospace, serif;
+      text-align: right;
+    }
+
+    td.label-column
+    {
+      padding-right: 50px;
+    }
+
+    tr.statement-sum-after-row td.amount-column
+    {
+      border-bottom: 1px solid grey;
+    }
+
+    tr.statement-total-sum-row td.amount-total-column {
+      border-bottom: 1px solid grey;
+    }
+
+    tr.statement-sum-row td, tr.statement-total-sum-row td
+    {
+      padding-top: 25px;
+    }
+
+    tr.title-row td
+    {
+      padding-top: 25px;
+      &.amount-total-column
+      {
+        font-weight: bold;
+        color: black;
+      }
+    }
+
+    tr.rounding-row
+    {
+      td.amount-total-column
+      {
+        font-weight: bold;
+        color: black;
+      }
+    }
+
+    tr.capitalization-row, tr.vacancy-row
+    {
+      td.label-column
+      {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+
+        span
+        {
+          white-space: nowrap;
+        }
+
+        .field-display-edit
+        {
+          flex-grow: 1;
+          flex-shrink: 1;
+        }
+      }
+    }
+
+    td {
+      padding: 2px;
+      border: 0;
+    }
+  }
+}
