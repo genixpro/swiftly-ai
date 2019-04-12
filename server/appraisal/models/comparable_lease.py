@@ -43,6 +43,12 @@ class ComparableLease(Document):
     # Retail type
     retailLocationType = StringField(choices=["street_front", "upper_level", ""], default="street_front")
 
+    # Clear Ceiling Height
+    clearCeilingHeight = FloatField()
+
+    # Shipping Doors
+    shippingDoors = FloatField()
+
     # The date of the lease
     leaseDate = ConvertingDateField()
 

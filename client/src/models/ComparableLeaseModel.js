@@ -30,6 +30,8 @@ class ComparableLeaseModel extends BaseModel
 
     static floorNumber = new GenericField();
     static retailLocationType = new GenericField();
+    static clearCeilingHeight = new GenericField();
+    static shippingDoors = new GenericField();
 
     static sortComparables(comparables, sort)
     {

@@ -310,6 +310,31 @@ class ComparableLeaseListItem extends React.Component
                                             ] : null
                                     }
 
+                                    {
+                                        comparableLease.propertyType === 'industrial' ?
+                                            [
+                                                <span className={"comparable-field-label"} key={1} >Clear Ceiling Height:</span>,
+                                                <FieldDisplayEdit
+                                                    key={2}
+                                                    type={"length"}
+                                                    edit={this.props.edit}
+                                                    placeholder={"Clear Ceiling Height"}
+                                                    value={comparableLease.clearCeilingHeight}
+                                                    onChange={(newValue) => this.changeComparableField('clearCeilingHeight', newValue)}
+                                                />,
+                                                <span className={"comparable-field-label"} key={3} >Shipping Doors:</span>,
+                                                <FieldDisplayEdit
+                                                    key={4}
+                                                    type={"number"}
+                                                    edit={this.props.edit}
+                                                    placeholder={"Shipping Doors"}
+                                                    value={comparableLease.shippingDoors}
+                                                    onChange={(newValue) => this.changeComparableField('shippingDoors', newValue)}
+                                                />
+
+                                            ] : null
+                                    }
+
                                     <span className={"comparable-field-label"}>Tenant Name:</span>
 
                                     <FieldDisplayEdit
