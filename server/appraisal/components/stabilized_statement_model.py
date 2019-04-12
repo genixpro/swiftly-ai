@@ -112,7 +112,7 @@ class StabilizedStatementModel:
         total = 0
 
         for expense in appraisal.incomeStatement.expenses:
-            if expense.incomeStatementItemType == 'operating_expense' or expense.incomeStatementItemType == 'non_recoverable_expense':
+            if expense.incomeStatementItemType == 'operating_expense':
                 total += self.getLatestAmount(expense)
 
         return total

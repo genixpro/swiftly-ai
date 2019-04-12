@@ -166,6 +166,13 @@ class ComparableLeaseList extends React.Component
                                     </Col>
                                     <Col xs={2} className={"header-field-column"}>
                                         Rent ($)
+                                        <br/>
+                                        Free Rent
+                                    </Col>
+                                    <Col xs={2} className={"header-field-column"}>
+                                        TMI ($)
+                                        <br/>
+                                        Inducements
                                     </Col>
                                 </Row>
                             </CardTitle>

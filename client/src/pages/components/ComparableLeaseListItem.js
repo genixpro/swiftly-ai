@@ -174,6 +174,13 @@ class ComparableLeaseListItem extends React.Component
                                         </Col>
                                         <Col xs={2} className={"header-field-column"}>
                                             {comparableLease.yearlyRent ? <CurrencyFormat value={comparableLease.yearlyRent} /> : <span className={"no-data"}>No Rent</span>}
+                                            <br/>
+                                            {comparableLease.freeRent}
+                                        </Col>
+                                        <Col xs={2} className={"header-field-column"}>
+                                            {comparableLease.taxesMaintenanceInsurance ? <CurrencyFormat value={comparableLease.taxesMaintenanceInsurance} /> : <span className={"no-data"}>No TMI</span>}
+                                            <br/>
+                                            {comparableLease.tenantInducements}
                                         </Col>
                                     </Row>
                                 </CardTitle>
