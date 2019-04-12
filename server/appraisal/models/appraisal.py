@@ -8,6 +8,8 @@ from .appraisal_validation_result import AppraisalValidationResult
 from .comparable_sale import ComparableSale
 from .stabilized_statement import StabilizedStatement
 from .stabilized_statement_inputs import StabilizedStatementInputs
+from .direct_comparison_valuation import DirectComparisonValuation
+from .direct_comparison_valuation_inputs import DirectComparisonValuationInputs
 
 class Appraisal(Document):
     meta = {'collection': 'appraisals', 'strict': False}
@@ -71,4 +73,10 @@ class Appraisal(Document):
 
     # This the stabilized statement
     stabilizedStatement = EmbeddedDocumentField(StabilizedStatement, default=StabilizedStatement)
+
+    # These are the inputs that are put into the stabilized statement
+    directComparisonInputs = EmbeddedDocumentField(DirectComparisonValuationInputs, default=DirectComparisonValuationInputs, null=False)
+
+    # This the stabilized statement
+    directComparisonValuation = EmbeddedDocumentField(DirectComparisonValuation, default=DirectComparisonValuation)
 

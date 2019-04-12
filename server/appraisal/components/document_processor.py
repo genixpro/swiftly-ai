@@ -11,6 +11,7 @@ from .income_statement_data_extractor import IncomeStatementDataExtractor
 from .discounted_cash_flow_model import DiscountedCashFlowModel
 from .appraisal_validator import AppraisalValidator
 from .stabilized_statement_model import StabilizedStatementModel
+from .direct_comparison_valuation_model import DirectComparisonValuationModel
 
 class DocumentProcessor:
     """
@@ -28,6 +29,7 @@ class DocumentProcessor:
         self.discountedCashFlow = DiscountedCashFlowModel()
         self.appraisalValidator = AppraisalValidator()
         self.stabilizedStatement = StabilizedStatementModel()
+        self.dcaModel = DirectComparisonValuationModel()
 
 
     def processFileUpload(self, fileName, fileData, appraisal):
@@ -139,6 +141,9 @@ class DocumentProcessor:
 
         stabilizedStatement = self.stabilizedStatement.createStabilizedStatement(appraisal)
         appraisal.stabilizedStatement = stabilizedStatement
+
+        directComparisonValuation = self.dcaModel.createDirectComparisonValuation(appraisal)
+        appraisal.directComparisonValuation = directComparisonValuation
 
         validationResult = self.appraisalValidator.validateAppraisal(appraisal)
         appraisal.validationResult = validationResult

@@ -9,6 +9,8 @@ import DiscountedCashFlowModel from "./DiscountedCashFlowModel";
 import AppraisalValidationResultModel from "./AppraisalValidationResultModel";
 import StabilizedStatementInputsModel from "./StabilizedStatementInputsModel";
 import StabilizedStatementModel from "./StabilizedStatementModel";
+import DirectComparisonValuationModel from "./DirectComparisonValuationModel";
+import DirectComparisonInputsModel from "./DirectComparisonInputsModel";
 import BaseModel from "./BaseModel";
 
 class AppraisalModel extends BaseModel
@@ -33,7 +35,9 @@ class AppraisalModel extends BaseModel
     static comparableSales = new ListField(new GenericField());
     static comparableLeases = new ListField(new GenericField());
     static stabilizedStatementInputs = new ModelField(StabilizedStatementInputsModel);
-    static stabilizedStatement = new ModelField(StabilizedStatementModel)
+    static stabilizedStatement = new ModelField(StabilizedStatementModel);
+    static directComparisonInputs = new ModelField(DirectComparisonInputsModel);
+    static directComparisonValuation = new ModelField(DirectComparisonValuationModel);
 }
 
 export default AppraisalModel;

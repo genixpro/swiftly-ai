@@ -48,10 +48,40 @@ class ViewDirectComparisonValuation extends React.Component
     }
 
 
-    changeStabilizedInput(field, newValue)
+    changeDirectComparisonInput(field, newValue)
     {
-        this.props.appraisal.stabilizedStatementInputs[field] = newValue;
+        this.props.appraisal.directComparisonInputs[field] = newValue;
         this.props.saveDocument(this.props.appraisal, true);
+    }
+
+
+    changeModifier(index, field, newValue)
+    {
+        this.props.appraisal.directComparisonInputs.modifiers[index][field] = newValue;
+        this.props.saveDocument(this.props.appraisal, true);
+    }
+
+
+
+    createNewModifier(field, newValue)
+    {
+        if (newValue)
+        {
+            if (!this.props.appraisal.directComparisonInputs.modifiers)
+            {
+                this.props.appraisal.directComparisonInputs.modifiers = [];
+            }
+
+            const object = {
+                name: "Modification",
+                amount: 0
+            };
+
+            object[field] = newValue;
+
+            this.props.appraisal.directComparisonInputs.modifiers.push(object);
+            this.props.saveDocument(this.props.appraisal, true);
+        }
     }
 
 
@@ -59,7 +89,7 @@ class ViewDirectComparisonValuation extends React.Component
     {
         return [
             <AppraisalContentHeader appraisal={this.props.appraisal} title="Capitalization Valuation"/>,
-            <Row className={"view-capitalization-valuation"}>
+            <Row className={"view-direct-comparison-valuation"}>
                 <Col xs={12}>
                     <Card className="card-default">
                         <CardBody>
@@ -80,19 +110,6 @@ class ViewDirectComparisonValuation extends React.Component
 
                                 <Table className={"statement-table "}>
                                     <tbody>
-                                    <tr className={"title-row"}>
-                                        <td className={"label-column"}><span className={"title"}>Net Operating Income</span></td>
-                                        <td className={"amount-column"} />
-                                        <td className={"amount-total-column"}>
-                                            $<NumberFormat
-                                            value={this.props.appraisal.stabilizedStatement.netOperatingIncome}
-                                            displayType={'text'}
-                                            thousandSeparator={', '}
-                                            decimalScale={2}
-                                            fixedDecimalScale={true}
-                                        />
-                                        </td>
-                                    </tr>
                                     {/*<tr className={"data-row"}>*/}
                                     {/*<td className={"label-column"}>NOI per square foot</td>*/}
                                     {/*<td className={"amount-column"}></td>*/}
@@ -100,18 +117,26 @@ class ViewDirectComparisonValuation extends React.Component
                                     {/*</tr>*/}
                                     <tr className={"data-row capitalization-row"}>
                                         <td className={"label-column"}>
-                                            <span>Capitalized @</span>
+                                            <span>
+                                                <NumberFormat
+                                                    value={this.props.appraisal.sizeOfBuilding || 0}
+                                                    displayType={'text'}
+                                                    thousandSeparator={', '}
+                                                    decimalScale={2}
+                                                    fixedDecimalScale={true}
+                                                /> @
+                                            </span>
                                             <FieldDisplayEdit
-                                                type={"percent"}
-                                                placeholder={"Capitalization Rate"}
-                                                value={this.props.appraisal.stabilizedStatementInputs ? this.props.appraisal.stabilizedStatementInputs.capitalizationRate : 5.0}
-                                                onChange={(newValue) => this.changeStabilizedInput("capitalizationRate", newValue)}
+                                                type={"currency"}
+                                                placeholder={"Price Per Square Foot"}
+                                                value={this.props.appraisal.directComparisonInputs ? this.props.appraisal.directComparisonInputs.pricePerSquareFoot : null}
+                                                onChange={(newValue) => this.changeDirectComparisonInput("pricePerSquareFoot", newValue)}
                                             />
                                         </td>
                                         <td className={"amount-column"}></td>
                                         <td className={"amount-total-column"}>
                                             $<NumberFormat
-                                            value={this.props.appraisal.stabilizedStatement.valuation}
+                                            value={this.props.appraisal.directComparisonValuation.comparativeValue}
                                             displayType={'text'}
                                             thousandSeparator={', '}
                                             decimalScale={2}
@@ -119,6 +144,68 @@ class ViewDirectComparisonValuation extends React.Component
                                         />
                                         </td>
                                     </tr>
+                                    {
+                                        this.props.appraisal.directComparisonInputs.modifiers ? this.props.appraisal.directComparisonInputs.modifiers.map((modifier, index) =>
+                                        {
+                                            return <tr className={"data-row modifier-row"} key={index}>
+                                                <td className={"label-column"}>
+                                                    <span><FieldDisplayEdit
+                                                        type={"text"}
+                                                        placeholder={"Add/Remove ($)"}
+                                                        value={modifier.name}
+                                                        onChange={(newValue) => this.changeModifier(index, "name", newValue)}
+                                                    /></span>
+                                                </td>
+                                                <td className={"amount-column"}></td>
+                                                <td className={"amount-total-column"}>
+                                                    <FieldDisplayEdit
+                                                        hideIcon={true}
+                                                        type={"currency"}
+                                                        placeholder={"Amount"}
+                                                        value={modifier.amount}
+                                                        onChange={(newValue) => this.changeModifier(index, "amount", newValue)}
+                                                    />
+                                                </td>
+                                            </tr>
+                                        }) : null
+                                    }
+                                    <tr className={"data-row"}>
+                                        <td className={"label-column"}>
+                                            <span><FieldDisplayEdit
+                                                type={"text"}
+                                                placeholder={"Add/Remove ($)"}
+                                                // value={modifier.name}
+                                                onChange={(newValue) => this.createNewModifier("name", newValue)}
+                                            /></span>
+                                        </td>
+                                        <td className={"amount-column"}></td>
+                                        <td className={"amount-total-column"}>
+                                            <FieldDisplayEdit
+                                                type={"currency"}
+                                                placeholder={"Amount"}
+                                                hideIcon={true}
+                                                // value={modifier.amount}
+                                                onChange={(newValue) => this.createNewModifier("amount", newValue)}
+                                            />
+                                        </td>
+                                    </tr>
+
+                                    <tr className={"data-row valuation-row"}>
+                                        <td className={"label-column"}>
+                                            <span>Valuation</span>
+                                        </td>
+                                        <td className={"amount-column"}></td>
+                                        <td className={"amount-total-column"}>
+                                            $<NumberFormat
+                                            value={this.props.appraisal.directComparisonValuation.valuation}
+                                            displayType={'text'}
+                                            thousandSeparator={', '}
+                                            decimalScale={2}
+                                            fixedDecimalScale={true}
+                                        />
+                                        </td>
+                                    </tr>
+
                                     <tr className={"data-row rounding-row"}>
                                         <td className={"label-column"}>
                                             <span>Rounded</span>
@@ -126,7 +213,7 @@ class ViewDirectComparisonValuation extends React.Component
                                         <td className={"amount-column"}></td>
                                         <td className={"amount-total-column"}>
                                             $<NumberFormat
-                                            value={this.props.appraisal.stabilizedStatement.valuationRounded}
+                                            value={this.props.appraisal.directComparisonValuation.valuationRounded}
                                             displayType={'text'}
                                             thousandSeparator={', '}
                                             decimalScale={2}
@@ -138,8 +225,8 @@ class ViewDirectComparisonValuation extends React.Component
                                 </Table>
                                 <br/>
                                 <br/>
-                                <h4 className={"final-valuation"}>Value by the Income Approach ... $<NumberFormat
-                                    value={this.props.appraisal.stabilizedStatement.valuationRounded}
+                                <h4 className={"final-valuation"}>Value by the Direct Comparison Approach ... $<NumberFormat
+                                    value={this.props.appraisal.directComparisonValuation.valuationRounded}
                                     displayType={'text'}
                                     thousandSeparator={', '}
                                     decimalScale={2}
