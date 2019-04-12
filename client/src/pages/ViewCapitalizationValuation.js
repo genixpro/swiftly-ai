@@ -65,20 +65,23 @@ class ViewCapitalizationValuation extends React.Component
 
     createNewModifier(field, newValue)
     {
-        if (!this.props.appraisal.stabilizedStatementInputs.modifiers)
+        if (newValue)
         {
-            this.props.appraisal.stabilizedStatementInputs.modifiers = [];
+            if (!this.props.appraisal.stabilizedStatementInputs.modifiers)
+            {
+                this.props.appraisal.stabilizedStatementInputs.modifiers = [];
+            }
+
+            const object = {
+                name: "Modification",
+                amount: 0
+            };
+
+            object[field] = newValue;
+
+            this.props.appraisal.stabilizedStatementInputs.modifiers.push(object);
+            this.props.saveDocument(this.props.appraisal, true);
         }
-
-        const object = {
-            name: "Modification",
-            amount: 0
-        };
-
-        object[field] = newValue;
-
-        this.props.appraisal.stabilizedStatementInputs.modifiers.push(object);
-        this.props.saveDocument(this.props.appraisal, true);
     }
 
 

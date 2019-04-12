@@ -82,7 +82,15 @@ class FieldDisplayEdit extends React.Component
         else if (this.props.type === 'currency')
         {
             try {
-                return "$" + this.numberWithCommas(Number(value).toFixed(2).toString());
+                if (Number(value) < 0)
+                {
+                    return "($" + this.numberWithCommas(Number(-value).toFixed(2).toString()) + ")";
+                }
+                else
+                {
+                    return "$" + this.numberWithCommas(Number(value).toFixed(2).toString());
+                }
+
             }
             catch(err) {
                 return "$" + this.numberWithCommas(value.toString());
@@ -133,7 +141,9 @@ class FieldDisplayEdit extends React.Component
     {
         if (this.props.type === 'currency' || this.props.type === 'number' || this.props.type === 'percent' || this.props.type === 'length' || this.props.type === 'area')
         {
-            const cleanText = value.toString().replace(/[^0-9\.-]/g, "");
+            const isNegative = value.toString().indexOf("-") !== -1 || value.toString().indexOf("(") !== -1 || value.toString().indexOf(")") !== -1;
+
+            const cleanText = value.toString().replace(/[^0-9\.]/g, "");
 
             if (cleanText === "")
             {
@@ -141,7 +151,14 @@ class FieldDisplayEdit extends React.Component
             }
 
             try {
-                return Number(cleanText);
+                if (isNegative)
+                {
+                    return -Number(cleanText);
+                }
+                else
+                {
+                    return Number(cleanText);
+                }
             }
             catch(err) {
                 return null;
