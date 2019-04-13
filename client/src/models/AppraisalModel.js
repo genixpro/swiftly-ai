@@ -19,6 +19,7 @@ class AppraisalModel extends BaseModel
     static appraisalName = new GenericField("name");
     static address = new GenericField();
     static location = new GenericField();
+    static imageUrl = new GenericField();
     static propertyType = new GenericField();
     static industrialSubType = new GenericField();
     static landSubType = new GenericField();

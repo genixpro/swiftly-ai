@@ -29,7 +29,8 @@ requires = [
     'gunicorn',
     'scipy',
     'scikit-learn',
-    'openpyxl'
+    'openpyxl',
+    "scikit-image"
 ]
 
 tests_require = [

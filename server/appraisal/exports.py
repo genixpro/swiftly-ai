@@ -9,6 +9,7 @@ import json
 from base64 import b64encode
 import re
 import requests
+import base64
 import bson
 from PIL import Image
 import hashlib
@@ -46,6 +47,57 @@ class ExportAPI(object):
         regex = re.compile(r"\B(?=(\d{3})+(?!\d))")
         return regex.sub(", ", number)
 
+
+    def renderTemplate(self, templateName, data):
+        wordDocFolder = os.path.join(os.getcwd(), "appraisal", "word_documents")
+
+        with tempfile.TemporaryDirectory() as tempDir:
+            with tempfile.NamedTemporaryFile(suffix=".html", dir=tempDir) as temp:
+                data["fileName"] = temp.name
+
+                renderHtml = subprocess.run(args=["npm",  "run-script", templateName], cwd=wordDocFolder, input=bytes(json.dumps(data), 'utf8'), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+
+                stdout = str(renderHtml.stdout, 'utf8')
+                stderr = str(renderHtml.stderr, 'utf8')
+
+                if renderHtml.returncode != 0 or stderr != "":
+                    raise Exception(stderr)
+
+                with open("data.html", "wt") as testFile:
+                    testFile.write(open(temp.name, "rt").read())
+
+                odtFileName = temp.name.replace(".html", ".odt")
+                docxFileName = temp.name.replace(".html", ".docx")
+
+                convertOdt = subprocess.run(args=["libreoffice", "--norestore", "--headless", "--convert-to", "odt", temp.name], cwd=tempDir, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+
+                stdout = str(convertOdt.stdout, 'utf8')
+                stderr = str(convertOdt.stderr, 'utf8')
+
+                if convertOdt.returncode != 0:
+                    raise Exception(stderr)
+
+
+                convertDocx = subprocess.run(args=["libreoffice", "--norestore", "--headless", "--convert-to", "docx", odtFileName], cwd=tempDir, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+
+                stdout = str(convertDocx.stdout, 'utf8')
+                stderr = str(convertDocx.stderr, 'utf8')
+
+                if convertDocx.returncode != 0:
+                    raise Exception(stderr)
+
+                file = open(docxFileName, 'rb')
+
+                buffer = io.BytesIO()
+                buffer.write(file.read())
+                buffer.seek(0)
+
+                file.close()
+
+                os.unlink(odtFileName)
+                os.unlink(docxFileName)
+
+                return buffer
 
 @resource(path='/appraisal/{appraisalId}/comparable_sales/excel', cors_enabled=True, cors_origins="*")
 class ComparableSalesExcelFile(ExportAPI):
@@ -117,11 +169,6 @@ class ComparableSalesWordFile(ExportAPI):
     def __acl__(self):
         return [(Allow, Everyone, 'everything')]
 
-
-    def addHeaderFormatting(self, cell):
-        self.addBackground(cell, "33339A")
-        self.addFontColor(cell, 255, 255, 255)
-
     def get(self):
         appraisalId = self.request.matchdict['appraisalId']
 
@@ -129,49 +176,12 @@ class ComparableSalesWordFile(ExportAPI):
 
         comparables = ComparableSale.objects(id__in=appraisal.comparableSales)
 
-        document = Document()
+        data = {
+            "appraisal": json.loads(appraisal.to_json()),
+            "comparableSales": [json.loads(comp.to_json()) for comp in comparables]
+        }
 
-        document.add_heading('Comparable Sales', 0)
-
-        table = document.add_table(rows=1, cols=5)
-        table.style = 'TableGrid'
-
-        hdr_cells = table.rows[0].cells
-        hdr_cells[0].text = 'Date'
-        hdr_cells[1].text = 'Address'
-        hdr_cells[2].text = 'Consideration'
-        hdr_cells[3].text = 'Description'
-        hdr_cells[4].text = 'Cap Rate'
-        for cell in hdr_cells:
-            self.addHeaderFormatting(cell)
-
-        document.add_page_break()
-
-        for comp in comparables:
-            row_cells = table.add_row().cells
-            if comp.saleDate is not None:
-                row_cells[0].text = comp.saleDate.strftime("%m/%y")
-            if comp.address is not None:
-                row_cells[1].text = comp.address
-            if comp.salePrice is not None:
-                row_cells[2].text = "$" + self.formatAmount(comp.salePrice)
-            if comp.description is not None:
-                row_cells[3].text = comp.description
-            if comp.capitalizationRate is not None:
-                row_cells[4].text = self.formatAmount(comp.capitalizationRate) + "%"
-
-            for cell in row_cells:
-                self.addBackground(cell, "FFFDF3")
-
-        table.columns[0].width = Inches(0.75)
-        table.columns[1].width = Inches(1.5)
-        table.columns[2].width = Inches(1)
-        table.columns[3].width = Inches(2.0)
-        table.columns[4].width = Inches(0.75)
-
-        buffer = io.BytesIO()
-        document.save(buffer)
-        buffer.seek(0)
+        buffer = self.renderTemplate("comparable_sales_summary_word", data)
 
         response = Response()
         response.body_file = buffer
@@ -201,63 +211,24 @@ class ComparableSalesDetailedWordFile(ExportAPI):
 
         comparables = ComparableSale.objects(id__in=appraisal.comparableSales)
 
-        document = Document()
+        comparables = [comp for comp in comparables]
 
-        document.add_heading('Comparable Sales', 0)
 
         for comp in comparables:
-            image = requests.get(f"https://maps.googleapis.com/maps/api/streetview?key=AIzaSyBRmZ2N4EhJjXmC29t3VeiLUQssNG-MY1I&size=640x480&source=outdoor&location={comp.address}")
+            if comp.imageUrl == "" or comp.imageUrl is None:
+                image = requests.get(f"https://maps.googleapis.com/maps/api/streetview?key=AIzaSyBRmZ2N4EhJjXmC29t3VeiLUQssNG-MY1I&size=640x480&source=outdoor&location={comp.address}").content
+            else:
+                image = requests.get(comp.imageUrl).content
 
-            document.add_picture(io.BytesIO(image.content), width=Inches(6))
+            data64 = u''.join(str(base64.encodebytes(image), 'utf8'))
+            comp.imageUrl = u'data:%s;base64,%s' % ("image/jpeg", data64)
 
-            table = document.add_table(rows=0, cols=3)
+        data = {
+            "appraisal": json.loads(appraisal.to_json()),
+            "comparableSales": [json.loads(comp.to_json()) for comp in comparables]
+        }
 
-            if comp.saleDate is not None:
-                row = table.add_row()
-                row.cells[0].text = 'Date of Sale'
-                row.cells[2].text = comp.saleDate.strftime("%B %d, %Y")
-
-            if comp.address is not None:
-                row = table.add_row()
-                row.cells[0].text = 'Address'
-                row.cells[2].text = comp.address
-
-            if comp.salePrice is not None:
-                row = table.add_row()
-                row.cells[0].text = 'Consideration'
-                row.cells[2].text = "$" + self.formatAmount(comp.salePrice)
-
-            if comp.description is not None:
-                row = table.add_row()
-                row.cells[0].text = 'Description'
-                row.cells[2].text = comp.description
-
-            if comp.sizeSquareFootage is not None:
-                row = table.add_row()
-                row.cells[0].text = 'Building Size'
-                row.cells[2].text = self.formatAmount(comp.sizeSquareFootage) + " square feet"
-
-            if comp.salePrice is not None and comp.sizeSquareFootage is not None:
-                row = table.add_row()
-                row.cells[0].text = 'Price PSF of Building'
-                row.cells[2].text = "$" + self.formatAmount(comp.salePrice / comp.sizeSquareFootage)
-
-            for cell in table.columns[0].cells:
-                self.addHeaderFormatting(cell)
-
-            for cell in table.columns[1].cells:
-                cell.text = ':'
-                self.addHeaderFormatting(cell)
-
-            table.columns[0].width = Inches(1.5)
-            table.columns[1].width = Inches(0.3)
-            table.columns[2].width = Inches(4.2)
-
-            document.add_page_break()
-
-        buffer = io.BytesIO()
-        document.save(buffer)
-        buffer.seek(0)
+        buffer = self.renderTemplate("comparable_sales_detailed_word", data)
 
         response = Response()
         response.body_file = buffer
@@ -395,6 +366,95 @@ class ComparableLeasesWordFile(ExportAPI):
         response.body_file = buffer
         response.content_type = "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
         response.content_disposition = "attachment; filename=\"ComparableLeases.docx\""
+        return response
+
+
+
+@resource(path='/appraisal/{appraisalId}/rent_roll/word', cors_enabled=True, cors_origins="*")
+class RentRollWordFile(ExportAPI):
+
+    def __init__(self, request, context=None):
+        self.request = request
+
+    def __acl__(self):
+        return [(Allow, Everyone, 'everything')]
+
+
+    def addHeaderFormatting(self, cell):
+        self.addBackground(cell, "33339A")
+        self.addFontColor(cell, 255, 255, 255)
+
+    def get(self):
+        appraisalId = self.request.matchdict['appraisalId']
+
+        appraisal = Appraisal.objects(id=appraisalId).first()
+
+        data = {
+            "appraisal": json.loads(appraisal.to_json())
+        }
+
+        buffer = self.renderTemplate("rent_roll_summary_word", data)
+
+        response = Response()
+        response.body_file = buffer
+        response.content_type = "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+        response.content_disposition = "attachment; filename=\"RentRoll.docx\""
+        return response
+
+
+
+@resource(path='/appraisal/{appraisalId}/rent_roll/excel', cors_enabled=True, cors_origins="*")
+class RentRollExcelFile(ExportAPI):
+
+    def __init__(self, request, context=None):
+        self.request = request
+
+    def __acl__(self):
+        return [(Allow, Everyone, 'everything')]
+
+    def get(self):
+        appraisalId = self.request.matchdict['appraisalId']
+
+        appraisal = Appraisal.objects(id=appraisalId).first()
+
+        wb = Workbook()
+
+        ws1 = wb.active
+        ws1.title = "Rent Roll"
+
+        ws1.append([
+            "Unit Number",
+            "Size (sqft)",
+            "Tenant Name",
+            "Yearly Rent ($)",
+            "Remarks"
+        ])
+
+        for unit in appraisal.units:
+            name = ""
+            if unit.currentTenancy is not None:
+                name = unit.currentTenancy.name
+
+            yearlyRent = ""
+            if unit.currentTenancy is not None:
+                yearlyRent = unit.currentTenancy.yearlyRent
+
+            ws1.append([
+                unit.unitNumber,
+                unit.squareFootage,
+                name,
+                yearlyRent,
+                unit.remarks
+            ])
+
+        buffer = io.BytesIO()
+        wb.save(buffer)
+        buffer.seek(0)
+
+        response = Response()
+        response.body_file = buffer
+        response.content_type = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+        response.content_disposition = "attachment; filename=\"RentRoll.xlsx\""
         return response
 
 

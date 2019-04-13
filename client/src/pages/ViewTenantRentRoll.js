@@ -1,5 +1,5 @@
 import React from 'react';
-import { Row, Col, Card, CardBody, CardHeader, Table, Button, NavItem, Nav, Navbar, NavLink } from 'reactstrap';
+import { Row, Col, Card, CardBody, CardHeader, Table, Button, NavItem, Nav, Navbar, NavLink, DropdownItem, DropdownToggle, Dropdown, DropdownMenu } from 'reactstrap';
 import { NavLink as RRNavLink } from 'react-router-dom';
 import NumberFormat from 'react-number-format';
 import axios from "axios/index";
@@ -227,6 +227,12 @@ class ViewTenantsRentRoll extends React.Component
         this.props.saveDocument(this.props.appraisal);
     }
 
+    toggleDownload()
+    {
+        this.setState({downloadDropdownOpen: !this.state.downloadDropdownOpen})
+    }
+
+
     changeTenancyField(unitInfo, tenantInfo, field, newValue)
     {
         tenantInfo[field] = newValue;
@@ -246,10 +252,31 @@ class ViewTenantsRentRoll extends React.Component
         this.props.saveDocument(this.props.appraisal);
     }
 
+    downloadWordRentRoll()
+    {
+        window.location = `${process.env.VALUATE_ENVIRONMENT.REACT_APP_SERVER_URL}appraisal/${this.props.appraisal._id}/rent_roll/word`;
+    }
+
+
     render() {
         return (
             (this.props.appraisal) ?
                 <div id={"view-tenants-rent-roll"} className={"view-tenants-rent-roll"}>
+                    <Row>
+                        <Col xs={10}>
+                            <h3>View Tenants</h3>
+                        </Col>
+                        <Col xs={2}>
+                            <Dropdown isOpen={this.state.downloadDropdownOpen} toggle={this.toggleDownload.bind(this)}>
+                                <DropdownToggle caret color={"primary"} className={"download-dropdown-button"}>
+                                    Download
+                                </DropdownToggle>
+                                <DropdownMenu>
+                                    <DropdownItem onClick={() => this.downloadWordRentRoll()}>Rent Roll (docx)</DropdownItem>
+                                </DropdownMenu>
+                            </Dropdown>
+                        </Col>
+                    </Row>
                     <Row>
                         <Col xs={5} md={5} lg={5} xl={5}>
                             <UnitsTable
