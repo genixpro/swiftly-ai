@@ -12,6 +12,9 @@ class ComparableSale(Document):
     # This provides the GPS coordinates of the comparable
     location = PointField()
 
+    # This provides the url for the image of this comp
+    imageUrl = StringField()
+
     # The description of the comparable
     description = StringField()
 

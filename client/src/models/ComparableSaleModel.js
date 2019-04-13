@@ -9,6 +9,8 @@ import _ from "underscore";
 class ComparableSaleModel extends EquationMdoel
 {
     static _id = new IdField();
+
+    static imageUrl = new GenericField();
     static comparableName = new GenericField("name");
     static address = new GenericField();
     static location = new GenericField();

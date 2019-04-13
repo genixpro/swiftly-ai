@@ -63,9 +63,17 @@ class ViewBuildingInformation extends React.Component
                                                     </td>
                                                     <td>
                                                         {
-                                                            (this.props.appraisal.address && this.props.appraisal.address !== "") ?
-                                                                <UploadableImage value={`https://maps.googleapis.com/maps/api/streetview?key=AIzaSyBRmZ2N4EhJjXmC29t3VeiLUQssNG-MY1I&size=640x480&source=outdoor&location=${this.props.appraisal.address}`} />
-                                                                : <UploadableImage />
+                                                            (this.props.appraisal.imageUrl) ?
+                                                                <UploadableImage
+                                                                    editable={this.props.edit}
+                                                                    value={this.props.appraisal.imageUrl}
+                                                                    onChange={(newUrl) => this.changeAppraisalField('imageUrl', newUrl)} />
+                                                                :
+                                                                    (this.props.appraisal.address && this.props.appraisal.address !== "") ?
+                                                                        <UploadableImage value={`https://maps.googleapis.com/maps/api/streetview?key=AIzaSyBRmZ2N4EhJjXmC29t3VeiLUQssNG-MY1I&size=640x480&source=outdoor&location=${this.props.appraisal.address}`}
+                                                                                         onChange={(newUrl) => this.changeAppraisalField('imageUrl', newUrl)}
+                                                                        />
+                                                                        : <UploadableImage />
                                                         }
                                                     </td>
                                                 </tr>

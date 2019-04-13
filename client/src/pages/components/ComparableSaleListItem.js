@@ -290,9 +290,19 @@ class ComparableSaleListItem extends React.Component
                     <Collapse isOpen={this.state.detailsOpen}>
                         <div className={`card-body comparable-sale-list-item-body ${editableClass}`}>
                             {
-                                (comparableSale.address && comparableSale.address !== "") ?
-                                    <UploadableImage editable={this.props.edit} value={`https://maps.googleapis.com/maps/api/streetview?key=AIzaSyBRmZ2N4EhJjXmC29t3VeiLUQssNG-MY1I&size=640x480&source=outdoor&location=${comparableSale.address}`} />
-                                    : <UploadableImage  />
+                                (comparableSale.imageUrl) ?
+                                    <UploadableImage
+                                        editable={this.props.edit}
+                                        value={comparableSale.imageUrl}
+                                        onChange={(newUrl) => this.changeComparableField('imageUrl', newUrl)} />
+                                    :
+                                        (comparableSale.address && comparableSale.address !== "") ?
+                                            <UploadableImage
+                                                editable={this.props.edit}
+                                                value={`https://maps.googleapis.com/maps/api/streetview?key=AIzaSyBRmZ2N4EhJjXmC29t3VeiLUQssNG-MY1I&size=640x480&source=outdoor&location=${comparableSale.address}`}
+                                                onChange={(newUrl) => this.changeComparableField('imageUrl', newUrl)}
+                                            />
+                                            : <UploadableImage  />
                             }
                             <div className={`comparable-sale-content`}>
                                 <div className={"comparable-fields-area"}>

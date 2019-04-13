@@ -23,6 +23,9 @@ class Appraisal(Document):
     # The location of the building on a map
     location = PointField()
 
+    # The URL for the image of this building
+    imageUrl = StringField()
+
     # The type of property this is.
     propertyType = StringField()
 
