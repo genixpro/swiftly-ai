@@ -7,7 +7,7 @@ import _ from 'underscore';
 import AppraisalContentHeader from "./components/AppraisalContentHeader";
 
 
-class ViewExpenses extends React.Component
+class ViewAdditionalIncomes extends React.Component
 {
     state = {
     };
@@ -23,30 +23,30 @@ class ViewExpenses extends React.Component
         this.setState({downloadDropdownOpen: !this.state.downloadDropdownOpen})
     }
 
-    downloadWordExpenses()
+    downloadWordAdditionalIncomes()
     {
-        window.location = `${process.env.VALUATE_ENVIRONMENT.REACT_APP_SERVER_URL}appraisal/${this.props.appraisal._id}/expenses/word`;
+        window.location = `${process.env.VALUATE_ENVIRONMENT.REACT_APP_SERVER_URL}appraisal/${this.props.appraisal._id}/additional_incomes/word`;
     }
 
-    downloadExcelExpenses()
+    downloadExcelAdditionalIncomes()
     {
-        window.location = `${process.env.VALUATE_ENVIRONMENT.REACT_APP_SERVER_URL}appraisal/${this.props.appraisal._id}/expenses/excel`;
+        window.location = `${process.env.VALUATE_ENVIRONMENT.REACT_APP_SERVER_URL}appraisal/${this.props.appraisal._id}/additional_incomes/excel`;
     }
 
     render()
     {
         return (
-            <div className={"view-expenses"}>
-                <AppraisalContentHeader appraisal={this.props.appraisal} title="Expenses"/>,
+            <div className={"view-additional-incomes"}>
+                <AppraisalContentHeader appraisal={this.props.appraisal} title="Additional Incomes"/>,
                 <Row>
                     <Col xs={12}>
                         <Card className="card-default">
                             <CardBody>
                                 {/*{(this.props.appraisal && this.props.appraisal.incomeStatement) ?*/}
-                                <div id={"view-expenses-body"} className={"view-expenses-body"}>
+                                <div id={"view-additional-incomes-body"} className={"view-additional-incomes-body"}>
                                     <Row>
                                         <Col xs={10}>
-                                            <h3>Expenses</h3>
+                                            <h3>Additional Incomes</h3>
                                         </Col>
                                         <Col xs={2}>
                                             <Dropdown isOpen={this.state.downloadDropdownOpen} toggle={this.toggleDownload.bind(this)}>
@@ -54,8 +54,8 @@ class ViewExpenses extends React.Component
                                                     Download
                                                 </DropdownToggle>
                                                 <DropdownMenu>
-                                                    <DropdownItem onClick={() => this.downloadWordExpenses()}>Expenses Summary (docx)</DropdownItem>
-                                                    <DropdownItem onClick={() => this.downloadExcelExpenses()}>Expenses Spreadsheet (xlsx)</DropdownItem>
+                                                    <DropdownItem onClick={() => this.downloadWordAdditionalIncomes()}>Additional Income Summary (docx)</DropdownItem>
+                                                    <DropdownItem onClick={() => this.downloadExcelAdditionalIncomes()}>Additioanl Income Spreadsheet (xlsx)</DropdownItem>
                                                 </DropdownMenu>
                                             </Dropdown>
                                         </Col>
@@ -63,16 +63,12 @@ class ViewExpenses extends React.Component
 
                                     <IncomeStatementEditor
                                         appraisal={this.props.appraisal}
-                                        field={"expenses"}
+                                        field={"incomes"}
                                         groups={{
-                                            "operating_expense": "Operating Expense",
-                                            "management_expense": "Management Expense",
-                                            "taxes": "Taxes"
+                                            "additional_income": "Additional Income"
                                         }}
                                         saveDocument={this.props.saveDocument}
                                     />
-
-
                                 </div>
                                 {/*: null}*/}
                             </CardBody>
@@ -84,4 +80,4 @@ class ViewExpenses extends React.Component
     }
 }
 
-export default ViewExpenses;
+export default ViewAdditionalIncomes;
