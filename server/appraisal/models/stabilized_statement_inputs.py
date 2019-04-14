@@ -14,6 +14,8 @@ class StabilizedStatementInputs(EmbeddedDocument):
     # The vacancy rate for the stabilized statement
     vacancyRate = FloatField(default=4.0)
 
+    structuralAllowancePercent = FloatField(default=2.0)
+
     # This is the discount rate for market rent differentials
     marketRentDifferentialDiscountRate = FloatField(default=5.0)
 

@@ -9,6 +9,8 @@ class StabilizedStatementInputsModel extends BaseModel
     static capitalizationRate = new GenericField();
     static vacancyRate = new GenericField();
 
+    static structuralAllowancePercent = new GenericField();
+
     static modifiers = new GenericField();
 
     static marketRentDifferentialDiscountRate = new GenericField();

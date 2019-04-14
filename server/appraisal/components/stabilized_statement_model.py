@@ -33,7 +33,7 @@ class StabilizedStatementModel:
 
         statement.managementExpenses = self.computeManagementFees(appraisal)
 
-        statement.structuralAllowance = self.computeStructuralAllowance(appraisal)
+        statement.structuralAllowance = statement.effectiveGrossIncome * (appraisal.stabilizedStatementInputs.structuralAllowancePercent / 100.0)
 
         statement.totalExpenses = statement.operatingExpenses + statement.taxes + statement.managementExpenses + statement.structuralAllowance
 
@@ -73,7 +73,7 @@ class StabilizedStatementModel:
         totalDifferential = 0
 
         for unit in appraisal.units:
-            if unit.yearlyRent and unit.squareFootage and unit.marketRent and self.getMarketRent(appraisal, unit.marketRent):
+            if unit.currentTenancy and unit.currentTenancy.yearlyRent and unit.squareFootage and unit.marketRent and self.getMarketRent(appraisal, unit.marketRent):
                 presentDifferentialPSF = (unit.currentTenancy.yearlyRent / unit.squareFootage) - self.getMarketRent(appraisal, unit.marketRent)
 
                 monthlyDifferentialCashflow = (presentDifferentialPSF * unit.squareFootage) / 12.0
@@ -174,14 +174,6 @@ class StabilizedStatementModel:
         return total
 
 
-    def computeStructuralAllowance(self, appraisal):
-        total = 0
-
-        for expense in appraisal.incomeStatement.expenses:
-            if expense.incomeStatementItemType == 'structural_allowance':
-                total += self.getLatestAmount(expense)
-
-        return total
 
 
 

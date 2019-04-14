@@ -182,18 +182,27 @@ class ViewStabilizedStatement extends React.Component
                                         </td>
                                         <td className={"amount-total-column"}></td>
                                     </tr>
-                                    <tr className={"data-row statement-sum-after-row"}>
-                                        <td className={"label-column"}>Structural Allowance</td>
-                                        <td className={"amount-column"}>
-                                                $<NumberFormat
-                                                value={this.props.appraisal.stabilizedStatement.structuralAllowance}
-                                                displayType={'text'}
-                                                thousandSeparator={', '}
-                                                decimalScale={2}
-                                                fixedDecimalScale={true}
+
+                                    <tr className={"statement-sum-after-row data-row vacancy-row"}>
+                                        <td className={"label-column"}>
+                                            <span>Structural Allowance @</span>
+                                            <FieldDisplayEdit
+                                                type={"percent"}
+                                                placeholder={"Structural Allowance Rate"}
+                                                value={this.props.appraisal.stabilizedStatementInputs ? this.props.appraisal.stabilizedStatementInputs.structuralAllowancePercent : 2.0}
+                                                onChange={(newValue) => this.changeStabilizedInput("structuralAllowancePercent", newValue)}
                                             />
                                         </td>
-                                        <td className={"amount-total-column"}></td>
+                                        <td className={"amount-column"}>
+                                            $<NumberFormat
+                                            value={this.props.appraisal.stabilizedStatement.structuralAllowance}
+                                            displayType={'text'}
+                                            thousandSeparator={', '}
+                                            decimalScale={2}
+                                            fixedDecimalScale={true}
+                                        />
+                                        </td>
+                                        <td className={"amount-total-column"}/>
                                     </tr>
                                     <tr className={"data-row statement-total-sum-row"}>
                                         <td className={"label-column"}>Total Expenses</td>
