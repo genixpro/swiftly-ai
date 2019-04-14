@@ -65,7 +65,7 @@ class ViewTenantsLeasingCosts extends React.Component
                                 </tr>
                                 <tr>
                                     <td>
-                                        <strong>Renewal Period</strong>
+                                        <strong>Lag Vacancy (Months)</strong>
                                     </td>
                                     <td>
                                         <FieldDisplayEdit value={this.props.appraisal.discountedCashFlowInputs.renewalPeriod} onChange={(newValue) => this.changeDCFInput('renewalPeriod', newValue)}/>

@@ -1,5 +1,5 @@
 import React from 'react';
-import {Row, Col, Card, CardBody, CardHeader, Table, Button, Popover, PopoverHeader, PopoverBody, DropdownItem, DropdownToggle, Dropdown, DropdownMenu } from 'reactstrap';
+import {Badge, Row, Col, Card, CardBody, CardHeader, Table, Button, Popover, PopoverHeader, PopoverBody, DropdownItem, DropdownToggle, Dropdown, DropdownMenu } from 'reactstrap';
 import axios from "axios/index";
 import AnnotationUtilities from './AnnotationUtilities';
 import FieldDisplayEdit from './components/FieldDisplayEdit';
@@ -94,7 +94,11 @@ class ViewExpenses extends React.Component
                                         title={"Pin Column"}
                                         style={{"float": "left"}}
                                     >
-                                        <em className="icon-pin" />
+                                        {
+                                            this.state.pinnedYear === null ?
+                                                <em className="icon-magnifier-add" />
+                                                : <em className="icon-magnifier-remove" />
+                                        }
                                     </Button>
                                     {
                                         this.state.pinnedYear === null ? <div className={"remove-column-button-wrapper"}><Button
@@ -105,7 +109,7 @@ class ViewExpenses extends React.Component
                                             title={"Remove Column"}
                                             style={{"float": "left"}}
                                         >
-                                            <i className="fa fa-minus-square" />
+                                            <i className="fa fa-times" />
                                         </Button>
                                                 <Popover placement="bottom" isOpen={this.state.deleteYearPopoverShowing[value.toString() + year.toString()]} target={() => document.getElementById(`remove-year-${year.toString()}`)} toggle={() => this.toggleDeleteYearPopover(value, year)}>
                                                     <PopoverHeader>Delete Year</PopoverHeader>

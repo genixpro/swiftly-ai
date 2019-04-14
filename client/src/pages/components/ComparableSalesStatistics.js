@@ -214,7 +214,7 @@ class ComparableSalesStatistics extends React.Component
                                             }
                                         </Col>
                                         <Col xs={4}>
-                                            <strong>Floor Space Index Range</strong>&nbsp;&nbsp;&nbsp;
+                                            <strong>Floor Space Index Average</strong>&nbsp;&nbsp;&nbsp;
                                             {
                                                 stats.averageFSI ? <span>{stats.averageFSI}</span> : null
                                             }
@@ -240,7 +240,7 @@ class ComparableSalesStatistics extends React.Component
                                         <Col xs={4}>
                                             <strong>Price per Acre Land Range ($)</strong>&nbsp;&nbsp;&nbsp;
                                             {
-                                                stats.minPricePerAcreLand ? <span><CurrencyFormat value={stats.minPricePerAcreLand} /> - <CurrencyFormat value={stats.maxPricePerAcreLand} /></span> : null
+                                                stats.minPricePerAcreLand ? <span><CurrencyFormat value={stats.minPricePerAcreLand} cents={false} /> - <CurrencyFormat value={stats.maxPricePerAcreLand} cents={false} /></span> : null
                                             }
                                         </Col>
                                     </Row> : null
@@ -257,7 +257,7 @@ class ComparableSalesStatistics extends React.Component
                                         <Col xs={4}>
                                             <strong>Price per Acre Land Average ($)</strong>&nbsp;&nbsp;&nbsp;
                                             {
-                                                stats.averagePricePerAcreLand ? <span><CurrencyFormat value={stats.averagePricePerAcreLand} /></span> : null
+                                                stats.averagePricePerAcreLand ? <span><CurrencyFormat value={stats.averagePricePerAcreLand} cents={false} /></span> : null
                                             }
                                         </Col>
                                     </Row> : null

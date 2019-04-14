@@ -9,6 +9,7 @@ import PropertyTypeSelector from './PropertyTypeSelector';
 import CurrencyFormat from './CurrencyFormat';
 import IntegerFormat from './IntegerFormat';
 import AreaFormat from './AreaFormat';
+import UploadableImage from "./UploadableImage";
 
 class ComparableLeaseListItem extends React.Component
 {
@@ -188,6 +189,16 @@ class ComparableLeaseListItem extends React.Component
                     }
                     <Collapse isOpen={this.state.detailsOpen}>
                         <div className={`card-body comparable-lease-list-item-body ${editableClass}`}>
+                            {
+                                    (comparableLease.address && comparableLease.address !== "") ?
+                                        <UploadableImage
+                                            editable={this.props.edit}
+                                            value={`https://maps.googleapis.com/maps/api/streetview?key=AIzaSyBRmZ2N4EhJjXmC29t3VeiLUQssNG-MY1I&size=640x480&source=outdoor&location=${comparableLease.address}`}
+                                            onChange={(newUrl) => this.changeComparableField('imageUrl', newUrl)}
+                                        />
+                                        : <UploadableImage  />
+                            }
+
                             <div className={`comparable-lease-content`}>
                                 <div className={"comparable-fields-area"}>
                                     <span className={"comparable-field-label"}>Address:</span>
@@ -365,15 +376,15 @@ class ComparableLeaseListItem extends React.Component
                                         onChange={(newValue) => this.changeComparableField('propertyTags', newValue)}
                                     />
 
-                                    <span className={"comparable-field-label"}>Description:</span>
+                                    {/*<span className={"comparable-field-label"}>Description:</span>*/}
 
-                                    <FieldDisplayEdit
-                                        type={"textbox"}
-                                        edit={this.props.edit}
-                                        placeholder={"Description..."}
-                                        value={comparableLease.description}
-                                        onChange={(newValue) => this.changeComparableField('description', newValue)}
-                                    />
+                                    {/*<FieldDisplayEdit*/}
+                                        {/*type={"textbox"}*/}
+                                        {/*edit={this.props.edit}*/}
+                                        {/*placeholder={"Description..."}*/}
+                                        {/*value={comparableLease.description}*/}
+                                        {/*onChange={(newValue) => this.changeComparableField('description', newValue)}*/}
+                                    {/*/>*/}
                                 </div>
                             </div>
                         </div>

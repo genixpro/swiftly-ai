@@ -10,6 +10,7 @@ from .stabilized_statement import StabilizedStatement
 from .stabilized_statement_inputs import StabilizedStatementInputs
 from .direct_comparison_valuation import DirectComparisonValuation
 from .direct_comparison_valuation_inputs import DirectComparisonValuationInputs
+from .market_rents import MarketRent
 
 class Appraisal(Document):
     meta = {'collection': 'appraisals', 'strict': False}
@@ -82,4 +83,7 @@ class Appraisal(Document):
 
     # This the stabilized statement
     directComparisonValuation = EmbeddedDocumentField(DirectComparisonValuation, default=DirectComparisonValuation)
+
+    # This is the market rent
+    marketRents = ListField(EmbeddedDocumentField(MarketRent))
 

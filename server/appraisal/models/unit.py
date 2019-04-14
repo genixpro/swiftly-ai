@@ -36,6 +36,8 @@ class Tenancy(EmbeddedDocument):
 
 
 class Unit(EmbeddedDocument):
+    meta = {'strict': False}
+
     # The number of the unit, as it is used in the building.
     unitNumber = StringField()
 
@@ -49,6 +51,9 @@ class Unit(EmbeddedDocument):
     tenancies = ListField(EmbeddedDocumentField(Tenancy))
 
     currentTenancy = EmbeddedDocumentField(Tenancy)
+
+    # Market Rent
+    marketRent = StringField()
 
     # General comments on the unit
     remarks = StringField()

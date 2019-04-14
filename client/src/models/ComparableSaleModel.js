@@ -55,6 +55,7 @@ class ComparableSaleModel extends EquationMdoel
     static pricePerSquareFootBuildableArea = new GenericField();
     static pricePerAcreBuildableArea = new GenericField();
     static floorSpaceIndex = new GenericField();
+    static finishedOfficePercent = new GenericField();
 
     static equations = {
         "netOperatingIncome": [

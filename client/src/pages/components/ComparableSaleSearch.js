@@ -56,6 +56,7 @@ class ComparableSaleSearch extends React.Component
                                         <td>
                                             {
                                                 <FieldDisplayEdit
+                                                    isSearch={true}
                                                     type={"date"}
                                                     value={this.state.search.saleDateFrom}
                                                     onChange={(newValue) => this.changeSearchField("saleDateFrom", newValue)}
@@ -72,6 +73,7 @@ class ComparableSaleSearch extends React.Component
                                         <td>
                                             {
                                                 <FieldDisplayEdit
+                                                    isSearch={true}
                                                     type={"date"}
                                                     value={this.state.search.saleDateTo}
                                                     onChange={(newValue) => this.changeSearchField("saleDateTo", newValue)}
@@ -88,6 +90,7 @@ class ComparableSaleSearch extends React.Component
                                         <td>
                                             {
                                                 <FieldDisplayEdit
+                                                    isSearch={true}
                                                     type={"number"}
                                                     value={this.state.search.capitalizationRateFrom}
                                                     onChange={(newValue) => this.changeSearchField("capitalizationRateFrom", newValue)}
@@ -104,6 +107,7 @@ class ComparableSaleSearch extends React.Component
                                         <td>
                                             {
                                                 <FieldDisplayEdit
+                                                    isSearch={true}
                                                     type={"number"}
                                                     value={this.state.search.capitalizationRateTo}
                                                     onChange={(newValue) => this.changeSearchField("capitalizationRateTo", newValue)}
@@ -122,6 +126,7 @@ class ComparableSaleSearch extends React.Component
                                                 <td>
                                                     {
                                                         <FieldDisplayEdit
+                                                            isSearch={true}
                                                             type={"length"}
                                                             value={this.state.search.clearCeilingHeightFrom}
                                                             onChange={(newValue) => this.changeSearchField("clearCeilingHeightFrom", newValue)}
@@ -142,6 +147,7 @@ class ComparableSaleSearch extends React.Component
                                                 <td>
                                                     {
                                                         <FieldDisplayEdit
+                                                            isSearch={true}
                                                             type={"length"}
                                                             value={this.state.search.clearCeilingHeightTo}
                                                             onChange={(newValue) => this.changeSearchField("clearCeilingHeightTo", newValue)}
@@ -164,6 +170,7 @@ class ComparableSaleSearch extends React.Component
                                         <td>
                                             {
                                                 <FieldDisplayEdit
+                                                    isSearch={true}
                                                     type={"currency"}
                                                     value={this.state.search.salePriceFrom}
                                                     onChange={(newValue) => this.changeSearchField("salePriceFrom", newValue)}
@@ -180,6 +187,7 @@ class ComparableSaleSearch extends React.Component
                                         <td>
                                             {
                                                 <FieldDisplayEdit
+                                                    isSearch={true}
                                                     type={"currency"}
                                                     value={this.state.search.salePriceTo}
                                                     onChange={(newValue) => this.changeSearchField("salePriceTo", newValue)}
@@ -197,6 +205,7 @@ class ComparableSaleSearch extends React.Component
                                         <td>
                                             {
                                                 <FieldDisplayEdit
+                                                    isSearch={true}
                                                     type={"propertyType"}
                                                     value={this.state.search.propertyType}
                                                     onChange={(newValue) => this.changeSearchField("propertyType", newValue)}
@@ -213,6 +222,7 @@ class ComparableSaleSearch extends React.Component
                                         <td>
                                             {
                                                 <FieldDisplayEdit
+                                                    isSearch={true}
                                                     type={"tags"}
                                                     value={this.state.search.propertyTags}
                                                     onChange={(newValue) => this.changeSearchField("propertyTags", newValue)}
@@ -231,6 +241,7 @@ class ComparableSaleSearch extends React.Component
                                                 <td>
                                                     {
                                                         <FieldDisplayEdit
+                                                            isSearch={true}
                                                             type={"number"}
                                                             value={this.state.search.shippingDoorsFrom}
                                                             onChange={(newValue) => this.changeSearchField("shippingDoorsFrom", newValue)}
@@ -251,6 +262,7 @@ class ComparableSaleSearch extends React.Component
                                                 <td>
                                                     {
                                                         <FieldDisplayEdit
+                                                            isSearch={true}
                                                             type={"number"}
                                                             value={this.state.search.shippingDoorsTo}
                                                             onChange={(newValue) => this.changeSearchField("shippingDoorsTo", newValue)}
@@ -273,6 +285,7 @@ class ComparableSaleSearch extends React.Component
                                         <td>
                                             {
                                                 <FieldDisplayEdit
+                                                    isSearch={true}
                                                     type={"number"}
                                                     value={this.state.search.leasableAreaFrom}
                                                     onChange={(newValue) => this.changeSearchField("leasableAreaFrom", newValue)}
@@ -289,6 +302,7 @@ class ComparableSaleSearch extends React.Component
                                         <td>
                                             {
                                                 <FieldDisplayEdit
+                                                    isSearch={true}
                                                     type={"number"}
                                                     value={this.state.search.leasableAreaTo}
                                                     onChange={(newValue) => this.changeSearchField("leasableAreaTo", newValue)}
@@ -306,6 +320,7 @@ class ComparableSaleSearch extends React.Component
                                         <td>
                                             {
                                                 <FieldDisplayEdit
+                                                    isSearch={true}
                                                     type={"number"}
                                                     value={this.state.search.pricePerSquareFootFrom}
                                                     onChange={(newValue) => this.changeSearchField("pricePerSquareFootFrom", newValue)}
@@ -322,6 +337,7 @@ class ComparableSaleSearch extends React.Component
                                         <td>
                                             {
                                                 <FieldDisplayEdit
+                                                    isSearch={true}
                                                     type={"number"}
                                                     value={this.state.search.pricePerSquareFootTo}
                                                     onChange={(newValue) => this.changeSearchField("pricePerSquareFootTo", newValue)}
@@ -341,6 +357,7 @@ class ComparableSaleSearch extends React.Component
                                                 <td>
                                                     {
                                                         <FieldDisplayEdit
+                                                            isSearch={true}
                                                             type={"number"}
                                                             value={this.state.search.siteCoverageFrom}
                                                             onChange={(newValue) => this.changeSearchField("siteCoverageFrom", newValue)}
@@ -361,6 +378,7 @@ class ComparableSaleSearch extends React.Component
                                                 <td>
                                                     {
                                                         <FieldDisplayEdit
+                                                            isSearch={true}
                                                             type={"number"}
                                                             value={this.state.search.siteCoverageTo}
                                                             onChange={(newValue) => this.changeSearchField("siteCoverageTo", newValue)}

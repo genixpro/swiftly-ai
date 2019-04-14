@@ -56,6 +56,7 @@ class ComparableLeaseSearch extends React.Component
                                         <td>
                                             {
                                                 <FieldDisplayEdit
+                                                    isSearch={true}
                                                     type={"date"}
                                                     value={this.state.search.leaseDateFrom}
                                                     onChange={(newValue) => this.changeSearchField("leaseDateFrom", newValue)}
@@ -72,6 +73,7 @@ class ComparableLeaseSearch extends React.Component
                                         <td>
                                             {
                                                 <FieldDisplayEdit
+                                                    isSearch={true}
                                                     type={"date"}
                                                     value={this.state.search.leaseDateTo}
                                                     onChange={(newValue) => this.changeSearchField("leaseDateTo", newValue)}
@@ -88,6 +90,7 @@ class ComparableLeaseSearch extends React.Component
                                         <td>
                                             {
                                                 <FieldDisplayEdit
+                                                    isSearch={true}
                                                     type={"propertyType"}
                                                     value={this.state.search.propertyType}
                                                     onChange={(newValue) => this.changeSearchField("propertyType", newValue)}
@@ -104,6 +107,7 @@ class ComparableLeaseSearch extends React.Component
                                         <td>
                                             {
                                                 <FieldDisplayEdit
+                                                    isSearch={true}
                                                     type={"tags"}
                                                     value={this.state.search.propertyTags}
                                                     onChange={(newValue) => this.changeSearchField("propertyTags", newValue)}
@@ -124,6 +128,7 @@ class ComparableLeaseSearch extends React.Component
                                         <td>
                                             {
                                                 <FieldDisplayEdit
+                                                    isSearch={true}
                                                     type={"number"}
                                                     value={this.state.search.sizeOfUnitFrom}
                                                     onChange={(newValue) => this.changeSearchField("sizeOfUnitFrom", newValue)}
@@ -140,6 +145,7 @@ class ComparableLeaseSearch extends React.Component
                                         <td>
                                             {
                                                 <FieldDisplayEdit
+                                                    isSearch={true}
                                                     type={"number"}
                                                     value={this.state.search.sizeOfUnitTo}
                                                     onChange={(newValue) => this.changeSearchField("sizeOfUnitTo", newValue)}
@@ -157,6 +163,7 @@ class ComparableLeaseSearch extends React.Component
                                         <td>
                                             {
                                                 <FieldDisplayEdit
+                                                    isSearch={true}
                                                     type={"rentType"}
                                                     value={this.state.search.rentType}
                                                     onChange={(newValue) => this.changeSearchField("rentType", newValue)}
@@ -173,6 +180,7 @@ class ComparableLeaseSearch extends React.Component
                                         <td>
                                             {
                                                 <FieldDisplayEdit
+                                                    isSearch={true}
                                                     type={"text"}
                                                     value={this.state.search.tenantName}
                                                     onChange={(newValue) => this.changeSearchField("tenantName", newValue)}
@@ -193,6 +201,7 @@ class ComparableLeaseSearch extends React.Component
                                         <td>
                                             {
                                                 <FieldDisplayEdit
+                                                    isSearch={true}
                                                     type={"currency"}
                                                     value={this.state.search.yearlyRentFrom}
                                                     onChange={(newValue) => this.changeSearchField("yearlyRentFrom", newValue)}
@@ -209,6 +218,7 @@ class ComparableLeaseSearch extends React.Component
                                         <td>
                                             {
                                                 <FieldDisplayEdit
+                                                    isSearch={true}
                                                     type={"currency"}
                                                     value={this.state.search.yearlyRentTo}
                                                     onChange={(newValue) => this.changeSearchField("yearlyRentTo", newValue)}
@@ -226,6 +236,7 @@ class ComparableLeaseSearch extends React.Component
                                         <td>
                                             {
                                                 <FieldDisplayEdit
+                                                    isSearch={true}
                                                     type={"currency"}
                                                     value={this.state.search.taxesMaintenanceInsuranceFrom}
                                                     onChange={(newValue) => this.changeSearchField("taxesMaintenanceInsuranceFrom", newValue)}
@@ -242,6 +253,7 @@ class ComparableLeaseSearch extends React.Component
                                         <td>
                                             {
                                                 <FieldDisplayEdit
+                                                    isSearch={true}
                                                     type={"currency"}
                                                     value={this.state.search.taxesMaintenanceInsuranceTo}
                                                     onChange={(newValue) => this.changeSearchField("taxesMaintenanceInsuranceTo", newValue)}

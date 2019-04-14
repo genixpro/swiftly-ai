@@ -95,5 +95,8 @@ class ComparableSale(Document):
 
     floorSpaceIndex = FloatField()
 
+    # The percentage of the building that is finished office space, for industrial comps
+    finishedOfficePercent = FloatField()
+
 
 

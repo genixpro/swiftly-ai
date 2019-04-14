@@ -11,6 +11,7 @@ import StabilizedStatementInputsModel from "./StabilizedStatementInputsModel";
 import StabilizedStatementModel from "./StabilizedStatementModel";
 import DirectComparisonValuationModel from "./DirectComparisonValuationModel";
 import DirectComparisonInputsModel from "./DirectComparisonInputsModel";
+import MarketRentModel from "./MarketRentModel";
 import BaseModel from "./BaseModel";
 
 class AppraisalModel extends BaseModel
@@ -39,6 +40,7 @@ class AppraisalModel extends BaseModel
     static stabilizedStatement = new ModelField(StabilizedStatementModel);
     static directComparisonInputs = new ModelField(DirectComparisonInputsModel);
     static directComparisonValuation = new ModelField(DirectComparisonValuationModel);
+    static marketRents = new ListField(new ModelField(MarketRentModel));
 }
 
 export default AppraisalModel;

@@ -5,6 +5,7 @@ import Geosuggest from 'react-geosuggest';
 import Datetime from 'react-datetime';
 import PropertyTypeSelector from './PropertyTypeSelector';
 import RentTypeSelector from './RentTypeSelector';
+import MarketRentSelector from './MarketRentSelector';
 import RetailLocationTypeSelector from './RetailLocationTypeSelector';
 import history from "../../history";
 import ZoneSelector from "./ZoneSelector";
@@ -137,6 +138,15 @@ class FieldDisplayEdit extends React.Component
         {
             try {
                 return this.numberWithCommas(Number(value).toFixed(0).toString()) + " sqft";
+            }
+            catch(err) {
+                return this.numberWithCommas(value.toString());
+            }
+        }
+        else if (this.props.type === 'acres')
+        {
+            try {
+                return this.numberWithCommas(Number(value).toFixed(2).toString()) + " ac";
             }
             catch(err) {
                 return this.numberWithCommas(value.toString());
@@ -316,6 +326,7 @@ class FieldDisplayEdit extends React.Component
                     this.props.type === "float" ||
                     this.props.type === "percent" || this.props.type === "text" ||
                     this.props.type === "length" || this.props.type === "area" ||
+                    this.props.type === "acres" ||
                     !this.props.type ?
                         <Input placeholder={this.props.placeholder}
                                disabled={!this.props.edit}
@@ -346,6 +357,7 @@ class FieldDisplayEdit extends React.Component
                             disabled={!this.props.edit}
                             onChange={(newValue) => this.propertyTypeInputUpdated(newValue) }
                             onBlur={() => this.finishEditing()}
+                            isSearch={this.props.isSearch}
                             innerRef={(inputElem) => this.inputElem = inputElem}
                         /> : null
                 }
@@ -375,6 +387,17 @@ class FieldDisplayEdit extends React.Component
                         <RetailLocationTypeSelector
                             value={this.state.isEditing ? this.state.value : this.props.value}
                             disabled={!this.props.edit}
+                            onChange={(newValue) => this.inputUpdated(newValue) }
+                            onBlur={() => this.finishEditing()}
+                            innerRef={(inputElem) => this.inputElem = inputElem}
+                        /> : null
+                }
+                {
+                    this.props.type === "marketRent" ?
+                        <MarketRentSelector
+                            value={this.state.isEditing ? this.state.value : this.props.value}
+                            disabled={!this.props.edit}
+                            marketRents={this.props.marketRents}
                             onChange={(newValue) => this.inputUpdated(newValue) }
                             onBlur={() => this.finishEditing()}
                             innerRef={(inputElem) => this.inputElem = inputElem}

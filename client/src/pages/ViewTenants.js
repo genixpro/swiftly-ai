@@ -4,6 +4,7 @@ import axios from 'axios';
 import ViewTenantsRentRoll from "./ViewTenantRentRoll";
 import ViewTenantsLeasingCosts from "./ViewTenantLeasingCosts";
 import ViewVacancySchedule from "./ViewVacancySchedule";
+import ViewMarketRents from "./ViewMarketRents";
 import {NavLink as RRNavLink} from 'react-router-dom';
 import {Switch, Route} from 'react-router-dom';
 import AppraisalContentHeader from "./components/AppraisalContentHeader";
@@ -35,6 +36,10 @@ class ViewTenants extends React.Component
                                          tag={RRNavLink}>Rent Roll</NavLink>
                             </NavItem>
                             <NavItem>
+                                <NavLink to={`${this.props.match.url}/market_rents`} activeClassName="active"
+                                         tag={RRNavLink}>Market Rents</NavLink>
+                            </NavItem>
+                            <NavItem>
                                 <NavLink to={`${this.props.match.url}/leasing_costs`} activeClassName="active"
                                          tag={RRNavLink}>Leasing Costs</NavLink>
                             </NavItem>
@@ -54,6 +59,7 @@ class ViewTenants extends React.Component
                                         <Route path={`${this.props.match.url}/rent_roll`} render={(props) => withProps({...routeProps, ...props})(ViewTenantsRentRoll)()} />
                                         <Route path={`${this.props.match.url}/leasing_costs`} render={(props) => withProps({...routeProps, ...props})(ViewTenantsLeasingCosts)()} />
                                         <Route path={`${this.props.match.url}/vacancy_schedule`} render={(props) => withProps({...routeProps, ...props})(ViewVacancySchedule)()} />
+                                        <Route path={`${this.props.match.url}/market_rents`} render={(props) => withProps({...routeProps, ...props})(ViewMarketRents)()} />
                                     </Switch>
                                 </div>
                             </CardBody>

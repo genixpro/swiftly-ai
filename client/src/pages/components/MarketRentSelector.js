@@ -2,7 +2,7 @@ import React from 'react';
 import { FormGroup } from 'reactstrap';
 
 
-class PropertyTypeSelector extends React.Component
+class MarketRentSelector extends React.Component
 {
     onChangeValue(newValue)
     {
@@ -44,19 +44,15 @@ class PropertyTypeSelector extends React.Component
                 style={{"color": !this.props.value ? "lightgrey" : ""}}
             >
                 {
-                    this.props.isSearch ?
-                        <option value={""}>All</option>
-                        : <option value={""}>Property Type</option>
+                    this.props.marketRents.map((rent) =>
+                    {
+                        return <option key={rent.name} value={rent.name}>{rent.name}</option>
+                    })
                 }
-                <option value={"office"}>Office</option>
-                <option value={"industrial"}>Industrial</option>
-                <option value={"residential"}>Residential</option>
-                <option value={"retail"}>Retail</option>
-                <option value={"land"}>Land</option>
             </select>
         );
     }
 }
 
 
-export default PropertyTypeSelector;
+export default MarketRentSelector;

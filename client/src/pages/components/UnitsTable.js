@@ -55,7 +55,7 @@ class UnitsTable extends React.Component
                 fixedDecimalScale={true}
             /></td>
             <td className={"rent-column"}>$<NumberFormat
-                value={unitInfo.currentTenancy.yearlyRentPSF}
+                value={unitInfo.currentTenancy.yearlyRentPSF || unitInfo.marketRent}
                 displayType={'text'}
                 thousandSeparator={', '}
                 decimalScale={2}

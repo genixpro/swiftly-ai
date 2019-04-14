@@ -1,5 +1,5 @@
 import React from 'react';
-import { Row, Col, Card, CardBody, CardHeader, Table, Button, NavItem, Nav, Navbar, NavLink, DropdownItem, DropdownToggle, Dropdown, DropdownMenu } from 'reactstrap';
+import { Row, Col, Card, CardBody, CardHeader, Table, Button, NavItem, Nav, Navbar, NavLink, DropdownItem, DropdownToggle, Dropdown, DropdownMenu, Alert } from 'reactstrap';
 import { NavLink as RRNavLink } from 'react-router-dom';
 import NumberFormat from 'react-number-format';
 import axios from "axios/index";
@@ -283,6 +283,14 @@ class ViewTenantsRentRoll extends React.Component
                             </Dropdown>
                         </Col>
                     </Row>
+                    {
+                        this.props.appraisal.units.length === 0 ?
+
+                            <Alert color="danger">
+                                There is no Rent Roll on file.
+                            </Alert>
+                             : null
+                    }
                     <Row>
                         <Col xs={5} md={5} lg={5} xl={5}>
                             <UnitsTable
@@ -332,6 +340,14 @@ class ViewTenantsRentRoll extends React.Component
                                                     </td>
                                                     <td>
                                                         <FieldDisplayEdit type="rentType" value={this.state.selectedUnit.currentTenancy.rentType} onChange={(newValue) => this.changeAllTenantField(this.state.selectedUnit, this.state.selectedUnit.currentTenancy, 'rentType', newValue)}/>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>
+                                                        <strong>Market Rent</strong>
+                                                    </td>
+                                                    <td>
+                                                        <FieldDisplayEdit type="marketRent" marketRents={this.props.appraisal.marketRents} value={this.state.selectedUnit.marketRent} onChange={(newValue) => this.changeUnitField(this.state.selectedUnit, 'marketRent', newValue)}/>
                                                     </td>
                                                 </tr>
                                                 <tr>

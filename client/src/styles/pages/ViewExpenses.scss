@@ -152,18 +152,22 @@
     &.amount-column:not(.psf) {
       div.header-wrapper {
         padding-left: 10px;
-        //padding-right: 60px;
+        padding-right: 25px;
       }
     }
   }
 
   .remove-column-button-wrapper
   {
-    float: left;
+    position: absolute;
+    top: calc(-50% + 20px);
+    left: calc(100% - 20px);
+    //float: right;
     height: 100%;
+    z-index: 1;
   }
 
-  .pin-column-button, .remove-column-button {
+  .pin-column-button {
     border-left: 0;
     border-top: 0;
     border-bottom: 0;
@@ -173,5 +177,25 @@
     padding-left: 0.5vw;
     padding-right: 0.5vw;
     font-size: 0.8vw;
+  }
+
+   .remove-column-button {
+     &:not(:hover)
+     {
+       background: transparent;
+     }
+    //border-left: 0;
+    border-top: 0;
+    //border-bottom: 0;
+    border-right: 0;
+    //height: 100%;
+    padding-top: 0.4vh;
+    padding-bottom: 0.2vh;
+    padding-left: 0.3vw;
+    padding-right: 0.3vw;
+     //.badge {
+       color: red;
+       font-size: 13px;
+     //}
   }
 }
