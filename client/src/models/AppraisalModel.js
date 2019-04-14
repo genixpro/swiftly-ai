@@ -13,6 +13,7 @@ import DirectComparisonValuationModel from "./DirectComparisonValuationModel";
 import DirectComparisonInputsModel from "./DirectComparisonInputsModel";
 import MarketRentModel from "./MarketRentModel";
 import BaseModel from "./BaseModel";
+import AmortizationScheduleModel from "./AmortizationScheduleModel";
 
 class AppraisalModel extends BaseModel
 {
@@ -41,6 +42,7 @@ class AppraisalModel extends BaseModel
     static directComparisonInputs = new ModelField(DirectComparisonInputsModel);
     static directComparisonValuation = new ModelField(DirectComparisonValuationModel);
     static marketRents = new ListField(new ModelField(MarketRentModel));
+    static amortizationSchedule = new ModelField(AmortizationScheduleModel);
 }
 
 export default AppraisalModel;

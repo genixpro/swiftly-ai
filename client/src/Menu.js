@@ -40,6 +40,10 @@ const Menu = [
                 path: '/appraisal/:appraisalId/additional_income',
             },
             {
+                name: 'Amortization',
+                path: '/appraisal/:appraisalId/amortization',
+            },
+            {
                 name: 'Comparable Sales',
                 path: '/appraisal/:appraisalId/comparable_sales/database',
                 match: '/appraisal/:appraisalId/comparable_sales',

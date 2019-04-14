@@ -37,7 +37,7 @@ class ViewAdditionalIncomes extends React.Component
     {
         return (
             <div className={"view-additional-incomes"}>
-                <AppraisalContentHeader appraisal={this.props.appraisal} title="Additional Incomes"/>,
+                <AppraisalContentHeader appraisal={this.props.appraisal} title="Additional Incomes"/>
                 <Row>
                     <Col xs={12}>
                         <Card className="card-default">

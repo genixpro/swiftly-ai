@@ -21,6 +21,7 @@ import ViewExpenses from "./ViewExpenses";
 import ViewComparableLeases from "./ViewComparableLeases";
 import ViewCapitalizationValuation from "./ViewCapitalizationValuation";
 import ViewAdditionalIncome from "./ViewAdditionalIncomes";
+import ViewAmortization from "./ViewAmortization";
 import axios from "axios/index";
 import AppraisalModel from "../models/AppraisalModel";
 
@@ -91,6 +92,7 @@ class ViewAppraisal extends React.Component
                         <Route path={`${this.props.match.path}/direct_comparison_valuation`} render={(props) => withProps({...routeProps, ...props})(ViewDirectComparisonValuation)()} />
                         <Route path={`${this.props.match.path}/capitalization_valuation`} render={(props) => withProps({...routeProps, ...props})(ViewCapitalizationValuation)()} />
                         <Route path={`${this.props.match.path}/additional_income`} render={(props) => withProps({...routeProps, ...props})(ViewAdditionalIncome)()} />
+                        <Route path={`${this.props.match.path}/amortization`} render={(props) => withProps({...routeProps, ...props})(ViewAmortization)()} />
                     </Switch>
                 </div>
             </ContentWrapper> : null

@@ -11,6 +11,7 @@ from .stabilized_statement_inputs import StabilizedStatementInputs
 from .direct_comparison_valuation import DirectComparisonValuation
 from .direct_comparison_valuation_inputs import DirectComparisonValuationInputs
 from .market_rents import MarketRent
+from .amortization_schedule import AmortizationSchedule
 
 class Appraisal(Document):
     meta = {'collection': 'appraisals', 'strict': False}
@@ -71,6 +72,9 @@ class Appraisal(Document):
 
     # A list of comparable leases that are attached to this appraisal
     comparableLeases = ListField(StringField())
+
+    # This is the amortization schedule
+    amortizationSchedule = EmbeddedDocumentField(AmortizationSchedule, default=AmortizationSchedule)
 
     # These are the inputs that are put into the stabilized statement
     stabilizedStatementInputs = EmbeddedDocumentField(StabilizedStatementInputs, default=StabilizedStatementInputs, null=False)
