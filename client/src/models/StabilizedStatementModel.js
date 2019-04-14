@@ -39,6 +39,8 @@ class StabilizedStatementModel extends BaseModel
     static valuation = new GenericField();
 
     static valuationRounded = new GenericField();
+
+    static marketRentDifferential = new GenericField();
 }
 
 export default StabilizedStatementModel;

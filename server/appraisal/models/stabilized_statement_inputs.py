@@ -14,6 +14,9 @@ class StabilizedStatementInputs(EmbeddedDocument):
     # The vacancy rate for the stabilized statement
     vacancyRate = FloatField(default=4.0)
 
+    # This is the discount rate for market rent differentials
+    marketRentDifferentialDiscountRate = FloatField(default=5.0)
+
     # This is a dictionary mapping the modifiers that are added to the final valuation
     modifiers = ListField(EmbeddedDocumentField(StabilizedStatementModifier), default=[])
 

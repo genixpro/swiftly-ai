@@ -10,6 +10,8 @@ class StabilizedStatementInputsModel extends BaseModel
     static vacancyRate = new GenericField();
 
     static modifiers = new GenericField();
+
+    static marketRentDifferentialDiscountRate = new GenericField();
 }
 
 export default StabilizedStatementInputsModel;

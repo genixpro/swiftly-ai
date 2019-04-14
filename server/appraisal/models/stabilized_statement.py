@@ -3,7 +3,6 @@ import datetime
 from .extraction_reference import ExtractionReference
 
 
-
 class StabilizedStatement(EmbeddedDocument):
     rentalIncome = FloatField()
 
@@ -34,6 +33,8 @@ class StabilizedStatement(EmbeddedDocument):
     netOperatingIncomePSF = FloatField()
 
     capitalization = FloatField()
+
+    marketRentDifferential = FloatField()
 
     valuation = FloatField()
 

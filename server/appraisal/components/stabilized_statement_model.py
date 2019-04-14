@@ -41,7 +41,9 @@ class StabilizedStatementModel:
 
         statement.capitalization = statement.netOperatingIncome / (appraisal.stabilizedStatementInputs.capitalizationRate / 100.0)
 
-        statement.valuation = statement.capitalization
+        statement.marketRentDifferential = self.computeMarketRentDifferentials(appraisal)
+
+        statement.valuation = statement.capitalization + statement.marketRentDifferential
 
         for modifier in appraisal.stabilizedStatementInputs.modifiers:
             if modifier.amount:
@@ -60,6 +62,40 @@ class StabilizedStatementModel:
         if len(years) == 0:
             return 0
         return incomeStatementItem.yearlyAmounts[years[-1]]
+
+    def getMarketRent(self, appraisal, name):
+        for marketRent in appraisal.marketRents:
+            if marketRent.name == name:
+                return marketRent.amountPSF
+
+
+    def computeMarketRentDifferentials(self, appraisal):
+        totalDifferential = 0
+
+        for unit in appraisal.units:
+            if unit.yearlyRent and unit.squareFootage and unit.marketRent and self.getMarketRent(appraisal, unit.marketRent):
+                presentDifferentialPSF = (unit.currentTenancy.yearlyRent / unit.squareFootage) - self.getMarketRent(appraisal, unit.marketRent)
+
+                monthlyDifferentialCashflow = (presentDifferentialPSF * unit.squareFootage) / 12.0
+
+                startDate = datetime.datetime.now()
+                endDate = unit.currentTenancy.endDate
+
+                currentDate = copy.copy(startDate)
+
+                monthlyDiscount = math.pow(1.0 + (appraisal.stabilizedStatementInputs.marketRentDifferentialDiscountRate / 100), 1 / 12.0)
+
+                month = 0
+
+                while currentDate < endDate:
+                    totalDiscount = monthlyDiscount ** month
+
+                    totalDifferential += monthlyDifferentialCashflow / totalDiscount
+
+                    currentDate = currentDate + relativedelta(months=1)
+                    month += 1
+
+        return float(totalDifferential)
 
 
     def computeRecoverablePercentage(self, appraisal):
