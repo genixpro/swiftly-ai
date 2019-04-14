@@ -458,3 +458,106 @@ class RentRollExcelFile(ExportAPI):
         return response
 
 
+
+@resource(path='/appraisal/{appraisalId}/expenses/word', cors_enabled=True, cors_origins="*")
+class ExpensesWordFile(ExportAPI):
+
+    def __init__(self, request, context=None):
+        self.request = request
+
+    def __acl__(self):
+        return [(Allow, Everyone, 'everything')]
+
+    def get(self):
+        appraisalId = self.request.matchdict['appraisalId']
+
+        appraisal = Appraisal.objects(id=appraisalId).first()
+
+        data = {
+            "appraisal": json.loads(appraisal.to_json())
+        }
+
+        buffer = self.renderTemplate("expenses_summary_word", data)
+
+        response = Response()
+        response.body_file = buffer
+        response.content_type = "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+        response.content_disposition = "attachment; filename=\"Expenses.docx\""
+        return response
+
+
+@resource(path='/appraisal/{appraisalId}/expenses/excel', cors_enabled=True, cors_origins="*")
+class ExpensesExcelFile(ExportAPI):
+
+    def __init__(self, request, context=None):
+        self.request = request
+
+    def __acl__(self):
+        return [(Allow, Everyone, 'everything')]
+
+    def get(self):
+        appraisalId = self.request.matchdict['appraisalId']
+
+        appraisal = Appraisal.objects(id=appraisalId).first()
+
+        wb = Workbook()
+
+        ws1 = wb.active
+        ws1.title = "Expenses"
+
+        headers = [""]
+
+        for year in appraisal.incomeStatement.years:
+            headers.append(str(year))
+
+        headers[0] = "Operating Expenses"
+        ws1.append(headers)
+
+        operatingExpenses = [expense for expense in appraisal.incomeStatement.expenses if expense.incomeStatementItemType == 'operating_expense']
+        managementExpenses = [expense for expense in appraisal.incomeStatement.expenses if expense.incomeStatementItemType == 'management_expense']
+        taxExpenses = [expense for expense in appraisal.incomeStatement.expenses if expense.incomeStatementItemType == 'taxes']
+
+        for expense in operatingExpenses:
+            row = [expense.name]
+
+            for year in appraisal.incomeStatement.years:
+                row.append(expense.yearlyAmounts.get(str(year)))
+
+            ws1.append(row)
+
+        ws1.append([""] * len(headers))
+        ws1.append([""] * len(headers))
+        headers[0] = "Management Expenses"
+        ws1.append(headers)
+
+        for expense in managementExpenses:
+            row = [expense.name]
+
+            for year in appraisal.incomeStatement.years:
+                row.append(expense.yearlyAmounts.get(str(year)))
+
+            ws1.append(row)
+
+        ws1.append([""] * len(headers))
+        ws1.append([""] * len(headers))
+        headers[0] = "Tax Expenses"
+        ws1.append(headers)
+
+        for expense in taxExpenses:
+            row = [expense.name]
+
+            for year in appraisal.incomeStatement.years:
+                row.append(expense.yearlyAmounts.get(str(year)))
+
+            ws1.append(row)
+
+        buffer = io.BytesIO()
+        wb.save(buffer)
+        buffer.seek(0)
+
+        response = Response()
+        response.body_file = buffer
+        response.content_type = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+        response.content_disposition = "attachment; filename=\"Expenses.xlsx\""
+        return response
+

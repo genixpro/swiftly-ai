@@ -26,6 +26,78 @@ var flattenObject = function(ob) {
     return toReturn;
 };
 
+class Row extends React.Component
+{
+    render()
+    {
+        const tableBodyStyle = {
+            "borderLeft": "0px solid lightgrey",
+            "borderRight": "0px solid lightgrey",
+            "borderBottom": "1px solid lightgrey",
+            "backgroundColor": "#FFFDF3",
+            "color": "black"
+        };
+
+        if (this.props.total)
+        {
+            tableBodyStyle['fontWeight'] = "bold";
+        }
+
+        const tableBodyStyleLeft = _.extend({}, tableBodyStyle, {"borderLeft": "2px solid lightgrey"});
+
+        const tableBodyStyleRight = _.extend({}, tableBodyStyle, {"borderRight": "2px solid lightgrey"});
+
+
+        const tableBottomStyle = _.extend({}, tableBodyStyle, {
+            "borderTop": "0px solid lightgrey",
+            "borderBottom": "2px solid lightgrey"
+        });
+
+        const tableBottomStyleLeft = _.extend({}, tableBottomStyle, {"borderLeft": "2px solid lightgrey"});
+
+        const tableBottomStyleRight = _.extend({}, tableBottomStyle, {"borderRight": "2px solid lightgrey"});
+
+        const row = flattenObject(this.props.row);
+
+        let style = tableBodyStyle;
+        let styleLeft = tableBodyStyleLeft;
+        let styleRight = tableBodyStyleRight;
+
+        if (this.props.isLast)
+        {
+            style = tableBottomStyle;
+            styleLeft = tableBottomStyleLeft;
+            styleRight = tableBottomStyleRight;
+        }
+
+        return <tr key={this.props.index}>
+            {
+                Object.keys(this.props.fields).map((key, keyIndex) =>
+                {
+                    if (keyIndex === 0)
+                    {
+                        return <td key={keyIndex} style={styleLeft} width="10%">
+                            {this.props.fields[key](row[key])}
+                        </td>
+                    }
+                    else if (keyIndex === (Object.keys(this.props.fields).length - 1))
+                    {
+                        return <td key={keyIndex} style={styleRight} width="10%">
+                            {this.props.fields[key](row[key])}
+                        </td>
+                    }
+                    else
+                    {
+                        return <td key={keyIndex} style={style} width="10%">
+                            {this.props.fields[key](row[key])}
+                        </td>
+                    }
+                })
+            }
+        </tr>
+        }
+}
+
 
 class CustomTable extends React.Component {
     render()
@@ -47,28 +119,6 @@ class CustomTable extends React.Component {
         const tableHeaderLeftStyle = _.extend({}, tableHeaderStyle, {"borderLeft": "2px solid lightgrey"});
 
         const tableHeaderRightStyle = _.extend({}, tableHeaderStyle, {"borderRight": "2px solid lightgrey"});
-
-        const tableBodyStyle = {
-            "borderLeft": "0px solid lightgrey",
-            "borderRight": "0px solid lightgrey",
-            "borderBottom": "1px solid lightgrey",
-            "backgroundColor": "#FFFDF3",
-            "color": "black"
-        };
-
-        const tableBodyStyleLeft = _.extend({}, tableBodyStyle, {"borderLeft": "2px solid lightgrey"});
-
-        const tableBodyStyleRight = _.extend({}, tableBodyStyle, {"borderRight": "2px solid lightgrey"});
-
-
-        const tableBottomStyle = _.extend({}, tableBodyStyle, {
-            "borderTop": "0px solid lightgrey",
-            "borderBottom": "2px solid lightgrey"
-        });
-
-        const tableBottomStyleLeft = _.extend({}, tableBottomStyle, {"borderLeft": "2px solid lightgrey"});
-
-        const tableBottomStyleRight = _.extend({}, tableBottomStyle, {"borderRight": "2px solid lightgrey"});
 
         const leftAlign = (style) => _.extend({}, style, {"textAlign": "left"});
         const rightAlign = (style) => _.extend({}, style, {"textAlign": "right"});
@@ -108,45 +158,14 @@ class CustomTable extends React.Component {
                 {
                     this.props.rows.map((baseRow, rowIndex) =>
                     {
-                        const row = flattenObject(baseRow);
-
-                        let style = tableBodyStyle;
-                        let styleLeft = tableBodyStyleLeft;
-                        let styleRight = tableBodyStyleRight;
-
-                        if (rowIndex === (this.props.rows.length-1))
-                        {
-                            style = tableBottomStyle;
-                            styleLeft = tableBottomStyleLeft;
-                            styleRight = tableBottomStyleRight;
-                        }
-
-                        return <tr key={rowIndex}>
-                            {
-                                Object.keys(this.props.fields).map((key, keyIndex) =>
-                                {
-                                    if (keyIndex === 0)
-                                    {
-                                        return <td key={keyIndex} style={styleLeft} width="10%">
-                                            {this.props.fields[key](row[key])}
-                                        </td>
-                                    }
-                                    else if (keyIndex === (Object.keys(this.props.fields).length - 1))
-                                    {
-                                        return <td key={keyIndex} style={styleRight} width="10%">
-                                            {this.props.fields[key](row[key])}
-                                        </td>
-                                    }
-                                    else
-                                    {
-                                        return <td key={keyIndex} style={style} width="10%">
-                                            {this.props.fields[key](row[key])}
-                                        </td>
-                                    }
-                                })
-                            }
-                        </tr>
+                        return <Row key={rowIndex} row={baseRow} fields={this.props.fields} index={rowIndex} isLast={rowIndex === (this.props.rows.length-1)}/>
                     })
+                }
+                {
+                    this.props.totals ? this.props.totals.map((row, rowIndex) =>
+                    {
+                        return <Row key={rowIndex} total row={row} fields={this.props.fields} index={rowIndex} isLast={rowIndex === (this.props.rows.length-1)}/>
+                    }) : null
                 }
                 </tbody>
             </table>

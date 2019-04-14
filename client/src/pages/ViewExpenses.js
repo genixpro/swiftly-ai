@@ -1,5 +1,5 @@
 import React from 'react';
-import {Row, Col, Card, CardBody, CardHeader, Table, Button, Popover, PopoverHeader, PopoverBody } from 'reactstrap';
+import {Row, Col, Card, CardBody, CardHeader, Table, Button, Popover, PopoverHeader, PopoverBody, DropdownItem, DropdownToggle, Dropdown, DropdownMenu } from 'reactstrap';
 import axios from "axios/index";
 import AnnotationUtilities from './AnnotationUtilities';
 import FieldDisplayEdit from './components/FieldDisplayEdit';
@@ -809,6 +809,21 @@ class ViewExpenses extends React.Component
         }
     }
 
+    toggleDownload()
+    {
+        this.setState({downloadDropdownOpen: !this.state.downloadDropdownOpen})
+    }
+
+    downloadWordExpenses()
+    {
+        window.location = `${process.env.VALUATE_ENVIRONMENT.REACT_APP_SERVER_URL}appraisal/${this.props.appraisal._id}/expenses/word`;
+    }
+
+    downloadExcelExpenses()
+    {
+        window.location = `${process.env.VALUATE_ENVIRONMENT.REACT_APP_SERVER_URL}appraisal/${this.props.appraisal._id}/expenses/excel`;
+    }
+
     render()
     {
         return (
@@ -820,6 +835,22 @@ class ViewExpenses extends React.Component
                             <CardBody>
                                 {/*{(this.props.appraisal && this.props.appraisal.incomeStatement) ?*/}
                                 <div id={"view-expenses-body"} className={"view-expenses-body"}>
+                                    <Row>
+                                        <Col xs={10}>
+                                            <h3>Expenses</h3>
+                                        </Col>
+                                        <Col xs={2}>
+                                            <Dropdown isOpen={this.state.downloadDropdownOpen} toggle={this.toggleDownload.bind(this)}>
+                                                <DropdownToggle caret color={"primary"} className={"download-dropdown-button"}>
+                                                    Download
+                                                </DropdownToggle>
+                                                <DropdownMenu>
+                                                    <DropdownItem onClick={() => this.downloadWordExpenses()}>Expenses Summary (docx)</DropdownItem>
+                                                    <DropdownItem onClick={() => this.downloadExcelExpenses()}>Expenses Spreadsheet (xlsx)</DropdownItem>
+                                                </DropdownMenu>
+                                            </Dropdown>
+                                        </Col>
+                                    </Row>
                                     <Row>
                                         <Col xs={this.state.pinnedYear !== null ? 5 : 7} md={this.state.pinnedYear !== null ? 5 : 7} lg={this.state.pinnedYear !== null ? 4 : 7} xl={this.state.pinnedYear !== null ? 3 : 7}>
 
