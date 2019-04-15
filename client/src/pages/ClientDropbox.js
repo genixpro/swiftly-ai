@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
-import { Link } from 'react-router-dom';
-import { Input, Col, Row} from 'reactstrap';
+import { Col, Row} from 'reactstrap';
 import Dropzone from 'react-dropzone';
 import axios from "axios/index";
 import Promise from "bluebird";
@@ -113,9 +112,9 @@ class ClientDropBox extends Component {
             <div className="block-center mt-4 wd-xl">
                 <div className="card card-flat">
                     <div className="card-header text-center">
-                        <a href="">
+                        {/*<a href="">*/}
                             <img className="block-center rounded" src="img/test-client-logo.png" alt="Logo"/>
-                        </a>
+                        {/*</a>*/}
                     </div>
                     <div className="card-body">
                         <p className="text-center py-2">Please Upload Your Documents</p>

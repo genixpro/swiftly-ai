@@ -1,8 +1,6 @@
 import React from 'react';
 import {Row, Col, Card, CardBody} from 'reactstrap';
 import FieldDisplayEdit from "./FieldDisplayEdit";
-import Datetime from 'react-datetime';
-import PropertyTypeSelector from './PropertyTypeSelector';
 import _ from 'underscore';
 
 class ComparableLeaseSearch extends React.Component

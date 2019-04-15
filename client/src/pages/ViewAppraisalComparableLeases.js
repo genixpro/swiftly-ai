@@ -1,15 +1,11 @@
 import React from 'react';
-import {Row, Col, Card, CardBody, DropdownMenu, Dropdown, DropdownToggle, DropdownItem} from 'reactstrap';
+import {Row, Col, DropdownMenu, Dropdown, DropdownToggle, DropdownItem} from 'reactstrap';
 import axios from 'axios';
-import ComparableSaleList from "./components/ComparableSaleList";
 import Promise from 'bluebird';
 import _ from 'underscore';
-import AppraisalContentHeader from "./components/AppraisalContentHeader";
-import ComparableSaleSearch from './components/ComparableSaleSearch';
 import ComparableLeaseList from "./components/ComparableLeaseList";
 import ComparableLeasesMap from "./components/ComparableLeasesMap";
 import ComparableLeaseModel from "../models/ComparableLeaseModel";
-import ComparableSaleModel from "../models/ComparableSaleModel";
 
 
 class ViewAppraisalComparableLeases extends React.Component {

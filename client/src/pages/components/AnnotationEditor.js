@@ -186,10 +186,10 @@ class AnnotationEditor extends React.Component
         if (this.selecting)
         {
             const startWord = this.state.document.words[this.selectStart];
-            const startWordToken = this.tokens[this.selectStart];
+            // const startWordToken = this.tokens[this.selectStart];
 
             const endWord = this.state.document.words[wordIndex];
-            const endWordToken = this.tokens[wordIndex];
+            // const endWordToken = this.tokens[wordIndex];
 
             const selectTop = Math.min(startWord.top, endWord.top);
             const selectBottom = Math.max(startWord.bottom, endWord.bottom);

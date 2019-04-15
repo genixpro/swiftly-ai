@@ -1,8 +1,6 @@
 import React from 'react';
 import { Row, Col, Card, CardBody, CardHeader, Table } from 'reactstrap';
 import NumberFormat from 'react-number-format';
-import axios from "axios/index";
-import AnnotationUtilities from './AnnotationUtilities';
 import _ from 'underscore';
 import FieldDisplayEdit from "./components/FieldDisplayEdit";
 import AppraisalContentHeader from "./components/AppraisalContentHeader";
@@ -28,7 +26,7 @@ class ViewDiscountedCashFlow extends React.Component
         const incomes = [];
         const expenses = [];
 
-        Object.values(grouped).map((cashFlows) =>
+        Object.values(grouped).forEach((cashFlows) =>
         {
             if (cashFlows[0].cashFlowType === 'income')
             {

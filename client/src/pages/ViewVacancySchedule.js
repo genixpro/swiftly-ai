@@ -1,14 +1,6 @@
 import React from 'react';
-import { Row, Col, Card, CardBody, CardHeader, Table, Button, NavItem, Nav, Navbar, NavLink, Progress } from 'reactstrap';
-import { NavLink as RRNavLink } from 'react-router-dom';
-import NumberFormat from 'react-number-format';
-import axios from "axios/index";
-import AnnotationUtilities from './AnnotationUtilities';
-import _ from 'underscore';
-import FieldDisplayEdit from './components/FieldDisplayEdit';
-import Datetime from 'react-datetime';
+import { Row, Col, Table, Progress } from 'reactstrap';
 import 'react-datetime/css/react-datetime.css'
-import { Switch, Route } from 'react-router-dom';
 import moment from 'moment';
 
 class ViewVacancySchedule extends React.Component

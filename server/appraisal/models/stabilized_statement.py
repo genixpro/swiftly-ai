@@ -20,6 +20,8 @@ class StabilizedStatement(EmbeddedDocument):
 
     operatingExpenses = FloatField()
 
+    tmiTotal = FloatField()
+
     taxes = FloatField()
 
     managementExpenses = FloatField()

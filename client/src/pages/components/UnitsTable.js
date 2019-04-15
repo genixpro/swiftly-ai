@@ -1,14 +1,9 @@
 import React from 'react';
-import { Row, Col, Card, CardBody, CardHeader, Table, Button, NavItem, Nav, Navbar, NavLink } from 'reactstrap';
-import { NavLink as RRNavLink } from 'react-router-dom';
+import {Table, Button } from 'reactstrap';
 import NumberFormat from 'react-number-format';
-import axios from "axios/index";
 import _ from 'underscore';
-import Moment from 'react-moment';
 import FieldDisplayEdit from './FieldDisplayEdit';
-import Datetime from 'react-datetime';
 import 'react-datetime/css/react-datetime.css'
-import { Switch, Route } from 'react-router-dom';
 
 class UnitsTable extends React.Component
 {

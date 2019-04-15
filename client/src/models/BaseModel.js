@@ -137,7 +137,6 @@ class BaseModel extends Object
     getUpdates()
     {
         const updates = {};
-        const modelClass = this.constructor;
 
         Object.keys(this[BaseModel.dirtyFieldsSymbol]).forEach((key) =>
         {

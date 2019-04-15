@@ -1,5 +1,4 @@
 import React from 'react';
-import { FormGroup } from 'reactstrap';
 
 
 class YearlySourceTypeFormat extends React.Component

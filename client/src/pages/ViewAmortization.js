@@ -1,16 +1,8 @@
 import React from 'react';
-import { Row, Col, Card, CardBody, CardHeader, Table, Button, NavItem, Nav, Navbar, NavLink, DropdownItem, DropdownToggle, Dropdown, DropdownMenu, Alert } from 'reactstrap';
-import { NavLink as RRNavLink } from 'react-router-dom';
-import NumberFormat from 'react-number-format';
-import axios from "axios/index";
-import AnnotationUtilities from './AnnotationUtilities';
+import { Row, Col, Card, CardBody, Button } from 'reactstrap';
 import _ from 'underscore';
-import Moment from 'react-moment';
 import FieldDisplayEdit from './components/FieldDisplayEdit';
-import Datetime from 'react-datetime';
 import 'react-datetime/css/react-datetime.css'
-import { Switch, Route } from 'react-router-dom';
-import UnitsTable from "./components/UnitsTable";
 import AppraisalContentHeader from "./components/AppraisalContentHeader";
 
 class ViewAmortization extends React.Component

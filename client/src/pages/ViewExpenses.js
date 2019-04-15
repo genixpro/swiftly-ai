@@ -1,9 +1,6 @@
 import React from 'react';
-import {Badge, Row, Col, Card, CardBody, CardHeader, Table, Button, Popover, PopoverHeader, PopoverBody, DropdownItem, DropdownToggle, Dropdown, DropdownMenu } from 'reactstrap';
-import axios from "axios/index";
-import AnnotationUtilities from './AnnotationUtilities';
+import { Row, Col, Card, CardBody, Button, DropdownItem, DropdownToggle, Dropdown, DropdownMenu, Alert } from 'reactstrap';
 import IncomeStatementEditor from './components/IncomeStatementEditor';
-import _ from 'underscore';
 import AppraisalContentHeader from "./components/AppraisalContentHeader";
 
 
@@ -12,10 +9,12 @@ class ViewExpenses extends React.Component
     state = {
     };
 
-    constructor()
+    componentDidMount()
     {
-        super();
-
+        if (this.props.appraisal.stabilizedStatementInputs.expensesMode === 'tmi')
+        {
+            this.props.history.push(`/appraisal/${this.props.appraisal._id}/expenses_tmi`);
+        }
     }
 
     toggleDownload()
@@ -33,6 +32,13 @@ class ViewExpenses extends React.Component
         window.location = `${process.env.VALUATE_ENVIRONMENT.REACT_APP_SERVER_URL}appraisal/${this.props.appraisal._id}/expenses/excel`;
     }
 
+    changeExpenseMode()
+    {
+        this.props.appraisal.stabilizedStatementInputs.expensesMode = "tmi";
+        this.props.saveDocument(this.props.appraisal);
+        this.props.history.push(`/appraisal/${this.props.appraisal._id}/expenses_tmi`);
+    }
+
     render()
     {
         return (
@@ -42,6 +48,17 @@ class ViewExpenses extends React.Component
                     <Col xs={12}>
                         <Card className="card-default">
                             <CardBody>
+                                {
+                                    !this.props.appraisal.validationResult.hasIncomeStatement ?
+                                        <Alert color={"warning"}>
+                                            <span>You have not uploaded any expenses for this appraisal. Would you like to set expenses based on TMI rates?</span>
+                                            &nbsp;
+                                            &nbsp;
+                                            &nbsp;
+                                            <Button color={"primary"} onClick={() => this.changeExpenseMode()}>Set Expenses Based on TMI</Button>
+                                        </Alert>
+                                        : null
+                                }
                                 {/*{(this.props.appraisal && this.props.appraisal.incomeStatement) ?*/}
                                 <div id={"view-expenses-body"} className={"view-expenses-body"}>
                                     <Row>

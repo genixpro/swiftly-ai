@@ -1,11 +1,6 @@
 import React from 'react';
-import {Table} from 'reactstrap';
 import ComparableSaleListItem from './ComparableSaleListItem';
-import {Dropdown, DropdownItem, DropdownMenu, DropdownToggle, Row, Col, CardHeader, CardTitle} from 'reactstrap';
-import FieldDisplayEdit from "./FieldDisplayEdit";
-import _ from 'underscore';
-import Promise from 'bluebird';
-import axios from "axios/index";
+import {Row, Col, CardHeader, CardTitle} from 'reactstrap';
 import ComparableSalesStatistics from "./ComparableSalesStatistics"
 import { Button, Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
 import SortDirection from "./SortDirection";

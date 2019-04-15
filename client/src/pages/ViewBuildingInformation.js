@@ -1,15 +1,9 @@
 import React from 'react';
-import { Row, Col, Card, CardBody, CardHeader, Table } from 'reactstrap';
-import NumberFormat from 'react-number-format';
-import axios from "axios/index";
-import AnnotationUtilities from './AnnotationUtilities';
-import _ from 'underscore';
+import { Row, Col, Card, CardBody } from 'reactstrap';
 import FieldDisplayEdit from "./components/FieldDisplayEdit";
 import AppraisalContentHeader from "./components/AppraisalContentHeader";
-import PropertyTypeSelector from "./components/PropertyTypeSelector";
 import IndustrialSubtypeSelector from "./components/IndustrialSubtypeSelector";
 import LandSubtypeSelector from "./components/LandSubtypeSelector";
-import ZoneSelector from "./components/ZoneSelector";
 import ZoneDescriptionEditor from "./components/ZoneDescriptionEditor";
 import UploadableImage from "./components/UploadableImage";
 

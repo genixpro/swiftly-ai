@@ -1,6 +1,5 @@
 import React from 'react';
 import {Row, Col, Card, CardBody, Nav, NavItem, NavLink} from 'reactstrap';
-import axios from 'axios';
 import ViewTenantsRentRoll from "./ViewTenantRentRoll";
 import ViewTenantsLeasingCosts from "./ViewTenantLeasingCosts";
 import ViewVacancySchedule from "./ViewVacancySchedule";

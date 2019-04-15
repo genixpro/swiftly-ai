@@ -19,9 +19,17 @@ class StabilizedStatementModel:
 
         statement.rentalIncome = self.computeRentalIncome(appraisal)
         statement.additionalIncome = self.computeAdditionalIncome(appraisal)
-        statement.managementExpenses = self.computeManagementFees(appraisal)
-        statement.operatingExpenses = self.computeTotalOperatingExpenses(appraisal)
-        statement.taxes = self.computeTaxes(appraisal)
+
+        if appraisal.stabilizedStatementInputs.expensesMode == 'income_statement':
+            statement.managementExpenses = self.computeManagementFees(appraisal)
+            statement.operatingExpenses = self.computeTotalOperatingExpenses(appraisal)
+            statement.taxes = self.computeTaxes(appraisal)
+        elif appraisal.stabilizedStatementInputs.expensesMode == 'tmi':
+            if appraisal.sizeOfBuilding:
+                statement.tmiTotal = appraisal.stabilizedStatementInputs.tmiRatePSF * appraisal.sizeOfBuilding
+            else:
+                statement.tmiTotal = 0
+
         statement.marketRentDifferential = self.computeMarketRentDifferentials(appraisal)
         statement.freeRentDifferential = self.computeFreeRentDifferentials(appraisal)
         statement.vacantUnitDifferential = self.computeVacantUnitDifferential(appraisal)
@@ -35,7 +43,10 @@ class StabilizedStatementModel:
 
         statement.structuralAllowance = statement.effectiveGrossIncome * (appraisal.stabilizedStatementInputs.structuralAllowancePercent / 100.0)
 
-        statement.totalExpenses = statement.operatingExpenses + statement.taxes + statement.managementExpenses + statement.structuralAllowance
+        if appraisal.stabilizedStatementInputs.expensesMode == 'income_statement':
+            statement.totalExpenses = statement.operatingExpenses + statement.taxes + statement.managementExpenses + statement.structuralAllowance
+        elif appraisal.stabilizedStatementInputs.expensesMode == 'tmi' and appraisal.sizeOfBuilding:
+            statement.totalExpenses = statement.tmiTotal + statement.structuralAllowance
 
         statement.netOperatingIncome = statement.effectiveGrossIncome - statement.totalExpenses
 
@@ -129,7 +140,7 @@ class StabilizedStatementModel:
         for unit in appraisal.units:
             totalSize += unit.squareFootage
 
-            if unit.currentTenancy.rentType == 'net':
+            if unit.currentTenancy and unit.currentTenancy.rentType == 'net':
                 totalNetSize += unit.squareFootage
 
         if totalSize == 0:
@@ -142,7 +153,7 @@ class StabilizedStatementModel:
         total = 0
 
         for unit in appraisal.units:
-            if unit.currentTenancy.yearlyRent is not None:
+            if unit.currentTenancy and unit.currentTenancy.yearlyRent is not None:
                 total += self.getStabilizedRent(appraisal, unit)
 
         return total
@@ -216,7 +227,7 @@ class StabilizedStatementModel:
         total = 0
 
         for unit in appraisal.units:
-            if unit.isVacantInFirstYear and unit.squareFootage and unit.marketRent:
+            if unit.isVacantInFirstYear and unit.squareFootage and unit.marketRent and self.getMarketRent(appraisal, unit.marketRent):
                 total += appraisal.discountedCashFlowInputs.tenantInducementsPSF * unit.squareFootage + appraisal.discountedCashFlowInputs.leasingCommission + self.getMarketRent(appraisal, unit.marketRent) * unit.squareFootage
 
         return -total

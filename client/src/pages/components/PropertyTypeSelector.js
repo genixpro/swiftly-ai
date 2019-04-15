@@ -1,5 +1,4 @@
 import React from 'react';
-import { FormGroup } from 'reactstrap';
 
 
 class PropertyTypeSelector extends React.Component

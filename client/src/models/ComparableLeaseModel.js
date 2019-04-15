@@ -1,6 +1,5 @@
 import IdField from "./IdField";
 import GenericField from "./GenericField";
-import ModelField from "./ModelField";
 import ListField from "./ListField";
 import DateField from "./DateField";
 import BaseModel from "./BaseModel";

@@ -1,13 +1,9 @@
 import React from 'react';
-import {Row, Col, Card, CardBody, Popover, PopoverBody, PopoverHeader} from 'reactstrap';
+import {Row, Col} from 'reactstrap';
 import axios from 'axios';
 import ComparableSaleList from "./components/ComparableSaleList";
-import Promise from 'bluebird';
 import _ from 'underscore';
-import AppraisalContentHeader from "./components/AppraisalContentHeader";
 import ComparableSaleSearch from "./components/ComparableSaleSearch";
-import GoogleMapReact from 'google-map-react';
-import ComparableSaleListItem from "./components/ComparableSaleListItem"
 import ComparableSalesMap from "./components/ComparableSalesMap"
 import ComparableSalesModel from "../models/ComparableSaleModel"
 

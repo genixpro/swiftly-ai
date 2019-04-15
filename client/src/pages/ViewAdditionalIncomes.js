@@ -1,9 +1,6 @@
 import React from 'react';
-import {Badge, Row, Col, Card, CardBody, CardHeader, Table, Button, Popover, PopoverHeader, PopoverBody, DropdownItem, DropdownToggle, Dropdown, DropdownMenu } from 'reactstrap';
-import axios from "axios/index";
-import AnnotationUtilities from './AnnotationUtilities';
+import {Row, Col, Card, CardBody, DropdownItem, DropdownToggle, Dropdown, DropdownMenu } from 'reactstrap';
 import IncomeStatementEditor from './components/IncomeStatementEditor';
-import _ from 'underscore';
 import AppraisalContentHeader from "./components/AppraisalContentHeader";
 
 
@@ -11,12 +8,6 @@ class ViewAdditionalIncomes extends React.Component
 {
     state = {
     };
-
-    constructor()
-    {
-        super();
-
-    }
 
     toggleDownload()
     {

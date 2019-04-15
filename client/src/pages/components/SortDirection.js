@@ -1,5 +1,4 @@
 import React from 'react';
-import { FormGroup } from 'reactstrap';
 
 
 class SortDirection extends React.Component
@@ -15,11 +14,11 @@ class SortDirection extends React.Component
         {
             if (this.props.sort.toString().indexOf("-") !== -1)
             {
-                return <i className={"fa fa-arrow-down"} style={{"padding-left": "10px"}}></i>
+                return <i className={"fa fa-arrow-down"} style={{"paddingLeft": "10px"}}></i>
             }
             else if (this.props.sort.toString().indexOf("+") !== -1)
             {
-                return <i className={"fa fa-arrow-up"} style={{"padding-left": "10px"}}></i>
+                return <i className={"fa fa-arrow-up"} style={{"paddingLeft": "10px"}}></i>
             }
             else
             {

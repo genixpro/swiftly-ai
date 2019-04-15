@@ -1,15 +1,13 @@
 import React from 'react';
-import {Row, Col, Card, CardBody, CardHeader, Table, Button} from 'reactstrap';
+import {Row, Col, Card, CardBody, Table} from 'reactstrap';
 import NumberFormat from 'react-number-format';
 import axios from "axios/index";
-import AnnotationUtilities from './AnnotationUtilities';
 import FieldDisplayEdit from './components/FieldDisplayEdit';
-import _ from 'underscore';
 import AppraisalContentHeader from "./components/AppraisalContentHeader";
 import ComparableSaleList from "./components/ComparableSaleList";
 import ComparableSaleModel from "../models/ComparableSaleModel";
 import Promise from "bluebird";
-import ComparableLeaseModel from "../models/ComparableLeaseModel";
+import {DirectComparisonModifier} from "../models/DirectComparisonInputsModel";
 
 class ViewDirectComparisonValuation extends React.Component
 {
@@ -88,10 +86,10 @@ class ViewDirectComparisonValuation extends React.Component
                 this.props.appraisal.directComparisonInputs.modifiers = [];
             }
 
-            const object = {
+            const object = new DirectComparisonModifier({
                 name: "Modification",
                 amount: 0
-            };
+            });
 
             object[field] = newValue;
 

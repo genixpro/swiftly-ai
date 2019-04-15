@@ -1,9 +1,6 @@
 import React from 'react';
-import {Table} from 'reactstrap';
 import ComparableLeaseListItem from './ComparableLeaseListItem';
-import {Dropdown, DropdownItem, DropdownMenu, DropdownToggle, Row, Col, Card, CardHeader, CardTitle} from 'reactstrap';
-import FieldDisplayEdit from "./FieldDisplayEdit";
-import _ from 'underscore';
+import {Row, Col, CardHeader, CardTitle} from 'reactstrap';
 import Promise from 'bluebird';
 import axios from "axios/index";
 import ComparableLeasesStatistics from "./ComparableLeasesStatistics";

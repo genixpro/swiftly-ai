@@ -1,6 +1,4 @@
 import React from 'react';
-import Select from 'react-select';
-import AsyncCreatable from 'react-select/lib/AsyncCreatable';
 import FieldDisplayEdit from "./FieldDisplayEdit";
 import axios from "axios/index";
 import ZoneModel from "../../models/ZoneModel";

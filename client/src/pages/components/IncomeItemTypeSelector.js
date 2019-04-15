@@ -1,5 +1,4 @@
 import React from 'react';
-import { FormGroup } from 'reactstrap';
 
 
 class IncomeItemTypeSelector extends React.Component

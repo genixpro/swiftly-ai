@@ -1,11 +1,7 @@
 import React from 'react';
-import { Dropdown, DropdownItem, DropdownMenu, DropdownToggle, Button, CardFooter, Collapse, CardHeader, CardTitle, Row, Col} from 'reactstrap';
+import { Button, Collapse, CardHeader, CardTitle, Row, Col} from 'reactstrap';
 import FieldDisplayEdit from "./FieldDisplayEdit";
-import _ from 'underscore';
 import axios from "axios/index";
-import Datetime from 'react-datetime';
-import PropertyTypeSelector from './PropertyTypeSelector';
-import ComparableLeaseListItem from "./ComparableLeaseListItem";
 import UploadableImage from "./UploadableImage";
 import NumberFormat from 'react-number-format';
 

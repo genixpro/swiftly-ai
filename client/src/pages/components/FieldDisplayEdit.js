@@ -1,5 +1,5 @@
 import React from 'react';
-import { Table, Button } from 'reactstrap';
+import { Button } from 'reactstrap';
 import _ from 'underscore';
 import Geosuggest from 'react-geosuggest';
 import Datetime from 'react-datetime';
@@ -7,7 +7,6 @@ import PropertyTypeSelector from './PropertyTypeSelector';
 import RentTypeSelector from './RentTypeSelector';
 import MarketRentSelector from './MarketRentSelector';
 import RetailLocationTypeSelector from './RetailLocationTypeSelector';
-import history from "../../history";
 import ZoneSelector from "./ZoneSelector";
 import TagEditor from "./TagEditor";
 import ManagementRecoveryFieldSelector from "./ManagementRecoveryFieldSelector";
@@ -164,7 +163,7 @@ class FieldDisplayEdit extends React.Component
         {
             const isNegative = value.toString().indexOf("-") !== -1 || value.toString().indexOf("(") !== -1 || value.toString().indexOf(")") !== -1;
 
-            const cleanText = value.toString().replace(/[^0-9\.]/g, "");
+            const cleanText = value.toString().replace(/[^0-9.]/g, "");
 
             if (cleanText === "")
             {

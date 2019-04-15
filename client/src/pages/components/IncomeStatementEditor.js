@@ -1,5 +1,5 @@
 import React from 'react';
-import {Badge, Row, Col, Card, CardBody, CardHeader, Table, Button, Popover, PopoverHeader, PopoverBody, DropdownItem, DropdownToggle, Dropdown, DropdownMenu } from 'reactstrap';
+import {Row, Col, Button, Popover, PopoverHeader, PopoverBody} from 'reactstrap';
 import axios from "axios/index";
 import FieldDisplayEdit from './FieldDisplayEdit';
 import _ from 'underscore';
@@ -362,7 +362,7 @@ class IncomeStatementEditor extends React.Component
     cleanNumericalValue(value)
     {
         value = value.toString();
-        const cleanText = value.replace(/[^0-9\.]/g, "");
+        const cleanText = value.replace(/[^0-9.]/g, "");
         const isNegative = value.indexOf("-") !== -1 || value.indexOf("(") !== -1 || value.indexOf(")") !== -1;
 
         if (cleanText === "")
@@ -704,9 +704,7 @@ class IncomeStatementEditor extends React.Component
         for (let group of Object.keys(this.props.groups))
         {
             let header = currentIndex;
-            let itemsStart = currentIndex + 1;
             let itemsEnd = currentIndex + expensedGrouped[group];
-            let newItemRow = itemsEnd + 1;
             let statsRow = itemsEnd + 2;
 
             if ((groupIndex === 0 && newIndex <= statsRow)
@@ -734,9 +732,10 @@ class IncomeStatementEditor extends React.Component
         else
         {
             let start = 1;
+            const expenseFilter = (expense) => expense[sortableIndex] === newIndex-start;
             while (origNewIndex === -1 && (newIndex-start) > 0)
             {
-                origNewIndex = _.indexOf(expensesSorted, _.filter(expensesSorted, (expense) => expense[sortableIndex] === newIndex-start)[0]);
+                origNewIndex = _.indexOf(expensesSorted, _.filter(expensesSorted, expenseFilter())[0]);
                 start += 1;
             }
         }

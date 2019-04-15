@@ -1,8 +1,6 @@
 import React from 'react';
 import ContentWrapper from '../components/Layout/ContentWrapper';
-import { Row, Col, Nav, NavItem, NavLink, Card, CardBody, CardHeader, Collapse } from 'reactstrap';
 import { Switch, Route } from 'react-router-dom';
-import { NavLink as RRNavLink } from 'react-router-dom';
 import {withProps} from 'recompose';
 
 import UploadFiles from "./UploadFiles";
@@ -22,6 +20,7 @@ import ViewComparableLeases from "./ViewComparableLeases";
 import ViewCapitalizationValuation from "./ViewCapitalizationValuation";
 import ViewAdditionalIncome from "./ViewAdditionalIncomes";
 import ViewAmortization from "./ViewAmortization";
+import ViewExpensesTMI from "./ViewExpensesTMI";
 import axios from "axios/index";
 import AppraisalModel from "../models/AppraisalModel";
 
@@ -54,14 +53,18 @@ class ViewAppraisal extends React.Component
     {
         this.setState({appraisal: this.state.appraisal});
 
-        axios.post(`/appraisal/${this.props.match.params.id}`, this.state.appraisal.getUpdates()).then((response) =>
+        const updates = this.state.appraisal.getUpdates();
+        if (Object.keys(updates).length > 0)
         {
-            this.state.appraisal.clearUpdates();
-            if (updateStateAfterSave)
+            axios.post(`/appraisal/${this.props.match.params.id}`, this.state.appraisal.getUpdates()).then((response) =>
             {
-                this.reloadAppraisal();
-            }
-        });
+                this.state.appraisal.clearUpdates();
+                if (updateStateAfterSave)
+                {
+                    this.reloadAppraisal();
+                }
+            });
+        }
     }
 
     render() {
@@ -93,6 +96,7 @@ class ViewAppraisal extends React.Component
                         <Route path={`${this.props.match.path}/capitalization_valuation`} render={(props) => withProps({...routeProps, ...props})(ViewCapitalizationValuation)()} />
                         <Route path={`${this.props.match.path}/additional_income`} render={(props) => withProps({...routeProps, ...props})(ViewAdditionalIncome)()} />
                         <Route path={`${this.props.match.path}/amortization`} render={(props) => withProps({...routeProps, ...props})(ViewAmortization)()} />
+                        <Route path={`${this.props.match.path}/expenses_tmi`} render={(props) => withProps({...routeProps, ...props})(ViewExpensesTMI)()} />
                     </Switch>
                 </div>
             </ContentWrapper> : null

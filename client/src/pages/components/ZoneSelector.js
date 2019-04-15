@@ -1,8 +1,5 @@
-
 import React from 'react';
-import Select from 'react-select';
 import AsyncCreatable from 'react-select/lib/AsyncCreatable';
-import FileModel from "../../models/FileModel";
 import axios from "axios/index";
 
 

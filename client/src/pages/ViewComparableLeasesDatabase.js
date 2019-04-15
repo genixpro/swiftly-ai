@@ -1,13 +1,9 @@
 import React from 'react';
-import {Row, Col, Card, CardBody, Popover, PopoverBody, PopoverHeader} from 'reactstrap';
+import {Row, Col} from 'reactstrap';
 import axios from 'axios';
 import ComparableLeaseList from "./components/ComparableLeaseList";
-import Promise from 'bluebird';
 import _ from 'underscore';
-import AppraisalContentHeader from "./components/AppraisalContentHeader";
 import ComparableLeaseSearch from "./components/ComparableLeaseSearch";
-import GoogleMapReact from 'google-map-react';
-import ComparableLeaseListItem from "./components/ComparableLeaseListItem"
 import ComparableLeasesMap from "./components/ComparableLeasesMap";
 import ComparableLeaseModel from "../models/ComparableLeaseModel";
 
@@ -38,7 +34,14 @@ class ViewComparableLeasesDatabase extends React.Component {
             defaultSearch["sizeOfUnitTo"] = Math.round(_.max(unitsWithSize, (unit) => unit.squareFootage).squareFootage * 1.2 / 100) * 100;
         }
 
-        const unitsWithSizeRent = _.filter(unitsWithSize, (unit) => _.isNumber(unit.squareFootage) && !_.isUndefined(unit.currentTenancy) && !_.isNull(unit.currentTenancy));
+        const unitsWithSizeRent = _.filter(unitsWithSize, (unit) =>
+            _.isNumber(unit.squareFootage) &&
+            !_.isUndefined(unit.currentTenancy) &&
+            !_.isNull(unit.currentTenancy) &&
+            _.isNumber(unit.currentTenancy.yearlyRent) &&
+            unit.currentTenancy.yearlyRent > 0
+        );
+
         if (unitsWithSizeRent.length > 0)
         {
             const minRentUnit = _.min(unitsWithSizeRent, (unit) => unit.currentTenancy.yearlyRent / unit.squareFootage);

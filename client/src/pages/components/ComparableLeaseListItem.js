@@ -1,14 +1,10 @@
 import React from 'react';
-import { Dropdown, DropdownItem, DropdownMenu, DropdownToggle, Button, CardFooter, Collapse, CardTitle, CardHeader, Row, Col} from 'reactstrap';
+import { Button, Collapse, CardTitle, CardHeader, Row, Col} from 'reactstrap';
 import FieldDisplayEdit from "./FieldDisplayEdit";
 import _ from 'underscore';
-import NumberFormat from 'react-number-format';
 import axios from "axios/index";
-import Datetime from 'react-datetime';
-import PropertyTypeSelector from './PropertyTypeSelector';
 import CurrencyFormat from './CurrencyFormat';
 import IntegerFormat from './IntegerFormat';
-import AreaFormat from './AreaFormat';
 import UploadableImage from "./UploadableImage";
 
 class ComparableLeaseListItem extends React.Component

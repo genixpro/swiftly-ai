@@ -1,10 +1,8 @@
 import React from 'react';
-import {Row, Col, Card, CardBody, CardHeader, Table, Button} from 'reactstrap';
+import {Row, Col, Card, CardBody, Table} from 'reactstrap';
 import NumberFormat from 'react-number-format';
 import axios from "axios/index";
-import AnnotationUtilities from './AnnotationUtilities';
 import FieldDisplayEdit from './components/FieldDisplayEdit';
-import _ from 'underscore';
 import AppraisalContentHeader from "./components/AppraisalContentHeader";
 import ComparableSaleList from "./components/ComparableSaleList";
 import ComparableSaleModel from "../models/ComparableSaleModel";

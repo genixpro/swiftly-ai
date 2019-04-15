@@ -1,9 +1,5 @@
 import React from 'react';
 import {Row, Col, Card, CardBody, Nav, NavItem, NavLink} from 'reactstrap';
-import axios from 'axios';
-import ComparableSaleList from "./components/ComparableSaleList";
-import Promise from 'bluebird';
-import _ from 'underscore';
 import AppraisalContentHeader from "./components/AppraisalContentHeader";
 import {withProps} from "recompose";
 import ViewComparableSalesDatabase from "./ViewComparableSalesDatabase";

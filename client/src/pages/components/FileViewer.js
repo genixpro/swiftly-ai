@@ -1,12 +1,6 @@
 import React from 'react';
-import { Badge, Row, Col, Card, CardBody, CardHeader, FormGroup, Table } from 'reactstrap';
-import ResizeObserver from 'resize-observer-polyfill';
+import { Row, Col } from 'reactstrap';
 import _ from 'underscore';
-import { ContextMenu, MenuItem, SubMenu } from "react-contextmenu";
-import AnnotationExtractionToken from './AnnotationExtractionToken';
-import { Progress } from 'reactstrap';
-import NumberFormat from 'react-number-format';
-import FieldDisplayEdit from "./FieldDisplayEdit";
 import { DragSource } from 'react-dnd'
 
 /**
@@ -136,7 +130,6 @@ class FileViewer extends React.Component
 
     zoomIn(evt)
     {
-        const body = document.getElementById(`main-body`);
         const image = document.getElementById(`file-viewer-image`);
         const imageContainer = document.getElementById("file-viewer-image-outer-container");
 
@@ -182,7 +175,6 @@ class FileViewer extends React.Component
 
     zoomOut(evt)
     {
-        const body = document.getElementById(`main-body`);
         const image = document.getElementById(`file-viewer-image`);
         const imageContainer = document.getElementById("file-viewer-image-outer-container");
 
@@ -228,7 +220,6 @@ class FileViewer extends React.Component
 
     startImageDrag(evt)
     {
-        const element = document.getElementById('file-viewer-image-outer-container');
         this.dragStartElementScrollX = this.state.innerScrollLeft;
         this.dragStartElementScrollY = this.state.innerScrollTop;
 
@@ -256,7 +247,6 @@ class FileViewer extends React.Component
 
     hilightWords(words)
     {
-        const imageContainer = document.getElementById("file-viewer-image-outer-container");
         const firstWord = this.props.document.words[words[0]];
         const newPage = firstWord.page;
 

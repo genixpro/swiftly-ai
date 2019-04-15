@@ -2,7 +2,6 @@ import React from 'react';
 import {Row, Col, Card, CardBody, Nav, NavItem, NavLink} from 'reactstrap';
 import axios from 'axios';
 import ViewFinancialStatementExtractions from "./ViewFinancialStatementExtractions";
-import ViewFinancialStatementReport from "./ViewFinancialStatementReport";
 import ViewFinancialStatementAudit from "./ViewFinancialStatementAudit";
 import {NavLink as RRNavLink} from 'react-router-dom';
 import {Switch, Route} from 'react-router-dom';

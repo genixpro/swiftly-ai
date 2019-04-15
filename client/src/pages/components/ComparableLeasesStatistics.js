@@ -1,13 +1,7 @@
 import React from 'react';
 import {Row, Col, Card, CardBody} from 'reactstrap';
-import FieldDisplayEdit from "./FieldDisplayEdit";
-import Datetime from 'react-datetime';
-import PropertyTypeSelector from './PropertyTypeSelector';
 import _ from 'underscore';
 import CurrencyFormat from "./CurrencyFormat";
-import PercentFormat from "./PercentFormat";
-import IntegerFormat from "./IntegerFormat";
-import LengthFormat from "./LengthFormat";
 import AreaFormat from "./AreaFormat";
 
 class ComparableLeasesStatistics extends React.Component

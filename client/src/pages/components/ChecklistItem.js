@@ -1,5 +1,5 @@
 import React from 'react';
-import {Row, Col, Card, CardBody, CardHeader, Table, Button, CardTitle, Collapse } from 'reactstrap';
+import {Card, CardBody, CardHeader, CardTitle, Collapse } from 'reactstrap';
 
 class ChecklistItem extends React.Component {
     state = {
@@ -32,7 +32,7 @@ class ChecklistItem extends React.Component {
             <Card className="checklist-item">
                 <CardHeader onClick={() => this.toggleAccordion()}>
                     <CardTitle tag="h4">
-                        <a className="text-inherit">
+                        {/*<a className="text-inherit">*/}
                             {
                                 this.props.completed ?
                                     <small>
@@ -45,7 +45,7 @@ class ChecklistItem extends React.Component {
                             &nbsp;
                             &nbsp;
                             <span>{this.props.title}</span>
-                        </a>
+                        {/*</a>*/}
                     </CardTitle>
                 </CardHeader>
                 <Collapse isOpen={this.state.detailsOpen}>

@@ -1,6 +1,4 @@
 import GenericField from "./GenericField";
-import ModelField from "./ModelField";
-import ListField from "./ListField";
 import BaseModel from "./BaseModel";
 
 
@@ -27,6 +25,8 @@ class StabilizedStatementModel extends BaseModel
     static managementExpenses = new GenericField();
 
     static structuralAllowance = new GenericField();
+
+    static tmiTotal = new GenericField();
 
     static totalExpenses = new GenericField();
 

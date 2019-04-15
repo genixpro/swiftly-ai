@@ -1,11 +1,8 @@
 import React, { Component } from 'react';
 import pubsub from 'pubsub-js';
-import { Link } from 'react-router-dom';
-import { UncontrolledDropdown, DropdownToggle, DropdownMenu, DropdownItem, ListGroup, ListGroupItem } from 'reactstrap';
 
 import ToggleState from '../Common/ToggleState';
 import TriggerResize from '../Common/TriggerResize';
-import ToggleFullscreen from '../Common/ToggleFullscreen';
 import HeaderRun from './Header.run'
 
 class Header extends Component {

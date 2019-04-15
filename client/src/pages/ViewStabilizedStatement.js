@@ -1,12 +1,10 @@
 import React from 'react';
-import {Row, Col, Card, CardBody, CardHeader, Table, Button} from 'reactstrap';
+import {Row, Col, Card, CardBody, Table} from 'reactstrap';
 import NumberFormat from 'react-number-format';
-import axios from "axios/index";
-import AnnotationUtilities from './AnnotationUtilities';
 import FieldDisplayEdit from './components/FieldDisplayEdit';
-import _ from 'underscore';
 import AppraisalContentHeader from "./components/AppraisalContentHeader";
 import UnitsTable from "./components/UnitsTable";
+import AreaFormat from "./components/AreaFormat";
 
 class ViewStabilizedStatement extends React.Component
 {
@@ -14,9 +12,9 @@ class ViewStabilizedStatement extends React.Component
         capitalizationRate: 8.4
     };
 
-    componentDidUpdate()
+    componentDidMount()
     {
-
+        this.props.reloadAppraisal();
     }
 
 
@@ -143,46 +141,79 @@ class ViewStabilizedStatement extends React.Component
                                         <td className={"amount-column"}></td>
                                         <td className={"amount-total-column"}></td>
                                     </tr>
-                                    <tr className={"data-row"}>
-                                        <td className={"label-column"}>Operating Costs</td>
-                                        <td className={"amount-column"}>
-                                                $<NumberFormat
-                                                value={this.props.appraisal.stabilizedStatement.operatingExpenses}
-                                                displayType={'text'}
-                                                thousandSeparator={', '}
-                                                decimalScale={2}
-                                                fixedDecimalScale={true}
-                                            />
-                                        </td>
-                                        <td className={"amount-total-column"}></td>
-                                    </tr>
-                                    <tr className={"data-row"}>
-                                        <td className={"label-column"}>Taxes</td>
-                                        <td className={"amount-column"}>
-                                                $<NumberFormat
-                                                value={this.props.appraisal.stabilizedStatement.taxes}
-                                                displayType={'text'}
-                                                thousandSeparator={', '}
-                                                decimalScale={2}
-                                                fixedDecimalScale={true}
-                                            />
-                                        </td>
-                                        <td className={"amount-total-column"}></td>
-                                    </tr>
-                                    <tr className={"data-row"}>
-                                        <td className={"label-column"}>Management Expenses</td>
-                                        <td className={"amount-column"}>
-                                                $<NumberFormat
-                                                value={this.props.appraisal.stabilizedStatement.managementExpenses}
-                                                displayType={'text'}
-                                                thousandSeparator={', '}
-                                                decimalScale={2}
-                                                fixedDecimalScale={true}
-                                            />
-                                        </td>
-                                        <td className={"amount-total-column"}></td>
-                                    </tr>
-
+                                    {
+                                        this.props.appraisal.stabilizedStatement.operatingExpenses ?
+                                            <tr className={"data-row"}>
+                                                <td className={"label-column"}>Operating Costs</td>
+                                                <td className={"amount-column"}>
+                                                    $<NumberFormat
+                                                    value={this.props.appraisal.stabilizedStatement.operatingExpenses}
+                                                    displayType={'text'}
+                                                    thousandSeparator={', '}
+                                                    decimalScale={2}
+                                                    fixedDecimalScale={true}
+                                                />
+                                                </td>
+                                                <td className={"amount-total-column"}></td>
+                                            </tr> : null
+                                    }
+                                    {
+                                        this.props.appraisal.stabilizedStatement.taxes ?
+                                            <tr className={"data-row"}>
+                                                <td className={"label-column"}>Taxes</td>
+                                                <td className={"amount-column"}>
+                                                    $<NumberFormat
+                                                    value={this.props.appraisal.stabilizedStatement.taxes}
+                                                    displayType={'text'}
+                                                    thousandSeparator={', '}
+                                                    decimalScale={2}
+                                                    fixedDecimalScale={true}
+                                                />
+                                                </td>
+                                                <td className={"amount-total-column"}></td>
+                                            </tr> : null
+                                    }
+                                    {
+                                        this.props.appraisal.stabilizedStatement.managementExpenses ?
+                                            <tr className={"data-row"}>
+                                                <td className={"label-column"}>Management Expenses</td>
+                                                <td className={"amount-column"}>
+                                                    $<NumberFormat
+                                                    value={this.props.appraisal.stabilizedStatement.managementExpenses}
+                                                    displayType={'text'}
+                                                    thousandSeparator={', '}
+                                                    decimalScale={2}
+                                                    fixedDecimalScale={true}
+                                                />
+                                                </td>
+                                                <td className={"amount-total-column"}></td>
+                                            </tr> : null
+                                    }
+                                    {
+                                        this.props.appraisal.stabilizedStatement.tmiTotal ?
+                                            <tr className={"data-row vacancy-row"}>
+                                                <td className={"label-column"}>
+                                                    <span>TMI</span>&nbsp;
+                                                    <AreaFormat spaces={false} value={this.props.appraisal.sizeOfBuilding}/>&nbsp;@
+                                                    <FieldDisplayEdit
+                                                        type={"currency"}
+                                                        placeholder={"TMI Rate (psf)"}
+                                                        value={this.props.appraisal.stabilizedStatementInputs ? this.props.appraisal.stabilizedStatementInputs.tmiRatePSF : 0}
+                                                        onChange={(newValue) => this.changeStabilizedInput("tmiRatePSF", newValue)}
+                                                    />
+                                                </td>
+                                                <td className={"amount-column"}>
+                                                    $<NumberFormat
+                                                    value={this.props.appraisal.stabilizedStatement.tmiTotal}
+                                                    displayType={'text'}
+                                                    thousandSeparator={', '}
+                                                    decimalScale={2}
+                                                    fixedDecimalScale={true}
+                                                />
+                                                </td>
+                                                <td className={"amount-total-column"}></td>
+                                            </tr> : null
+                                    }
                                     <tr className={"statement-sum-after-row data-row vacancy-row"}>
                                         <td className={"label-column"}>
                                             <span>Structural Allowance @</span>

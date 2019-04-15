@@ -1,8 +1,5 @@
 import React from 'react';
-import {Row, Col, Card, CardBody, Button, Popover, PopoverBody, PopoverHeader} from 'reactstrap';
-import axios from 'axios';
-import Promise from 'bluebird';
-import _ from 'underscore';
+import { Button, Popover, PopoverBody} from 'reactstrap';
 import GoogleMapReact from 'google-map-react';
 import ComparableSaleListItem from "./ComparableSaleListItem"
 
@@ -105,7 +102,7 @@ class ComparableSalesMap extends React.Component {
                                 >
                                     <span>Subject</span>
                                 </div>
-                                <img src={"img/button.svg"} style={{"width": "15px", "position": "relative", "top": "-7.5px", "left": "-7.5px"}}/>
+                                <img alt={"Subject"} src={"img/button.svg"} style={{"width": "15px", "position": "relative", "top": "-7.5px", "left": "-7.5px"}}/>
                             </div> : null
                     }
                     {
@@ -113,7 +110,7 @@ class ComparableSalesMap extends React.Component {
                         {
                             if (!comp.location)
                             {
-                                return;
+                                return null;
                             }
 
                             const id = "comp-" + comp._id;
@@ -123,6 +120,7 @@ class ComparableSalesMap extends React.Component {
                                 lng={comp.location.coordinates[0]}
                             >
                                 <img
+                                    alt={"Comparable Sale Icon"}
                                     id={id}
                                     className={"building-map-icon"}
                                     src={"/img/building-icon.png"}

@@ -1,7 +1,4 @@
 import React from 'react';
-import {Row, Col, Card, CardBody, CardHeader, Table, Button, CardTitle, Collapse} from 'reactstrap';
-import NumberFormat from 'react-number-format';
-import axios from "axios/index";
 import ChecklistItem from "./ChecklistItem";
 
 class Checklist extends React.Component {
