@@ -22,7 +22,7 @@ class ViewAllAppraisals extends React.Component {
     {
         axios.get("/appraisal/").then((response) =>
         {
-            this.setState({appraisals: response.data.appraisals.map((appraisal) => new AppraisalModel(appraisal))});
+            this.setState({appraisals: response.data.appraisals.map((appraisal) => AppraisalModel.create(appraisal))});
         });
     }
 

@@ -8,11 +8,13 @@ class ModelField extends BaseField
         super(fieldName);
 
         this.model = model;
+
+        this.fieldName = fieldName;
     }
 
     toObject(value, parent)
     {
-        return new this.model(value, parent);
+        return this.model.create(value, parent, this.fieldName || this.keyName);
     }
 }
 

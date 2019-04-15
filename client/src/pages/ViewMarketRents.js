@@ -78,7 +78,7 @@ class ViewMarketRents extends React.Component
                 // alert('loading');
                 return axios.get(`/comparable_leases/` + comparableLeaseId).then((response) =>
                 {
-                    this.loadedComparables[comparableLeaseId] = new ComparableLeaseModel(response.data.comparableLease);
+                    this.loadedComparables[comparableLeaseId] = ComparableLeaseModel.create(response.data.comparableLease);
                     return this.loadedComparables[comparableLeaseId];
                 });
             }

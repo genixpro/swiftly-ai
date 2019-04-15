@@ -580,7 +580,7 @@ class IncomeStatementEditor extends React.Component
 
     createNewIncomeItem(field, value, incomeStatementItemType, extractionReferences)
     {
-        const newItem = new IncomeStatementItemModel({
+        const newItem = IncomeStatementItemModel.create({
             cashFlowType: "expense",
             incomeStatementItemType: incomeStatementItemType
         }, this.props.appraisal.incomeStatement);
@@ -797,7 +797,7 @@ class IncomeStatementEditor extends React.Component
         {
             axios.get(`/appraisal/${this.props.appraisal._id}/files/${fileId}`).then((response) =>
             {
-                this.setState({file: new FileModel(response.data.file)});
+                this.setState({file: FileModel.create(response.data.file)});
             });
         }
     }

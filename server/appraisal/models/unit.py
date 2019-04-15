@@ -25,7 +25,7 @@ class Tenancy(EmbeddedDocument):
     managementRecoveryField = StringField()
 
     # This specifies the rent-type. This can be either "NET" or "GROSS"
-    rentType = StringField(choices=["net", "gross"], default="net")
+    rentType = StringField(choices=["net", "gross", "", None], default="net", null=True)
 
     # The start date of the tenancy.
     startDate = ConvertingDateField()

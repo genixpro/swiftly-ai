@@ -22,7 +22,7 @@ class ComparableSaleList extends React.Component
 
     state = {
         comparableSales: [],
-        newComparableSale: new ComparableSaleModel({}),
+        newComparableSale: ComparableSaleModel.create({}),
         isCreatingNewItem: false
     };
 
@@ -54,7 +54,7 @@ class ComparableSaleList extends React.Component
     addNewComparable(newComparable)
     {
         this.props.onNewComparable(newComparable);
-        this.setState({isCreatingNewItem: false, newComparableSale: new ComparableSaleModel({})})
+        this.setState({isCreatingNewItem: false, newComparableSale: ComparableSaleModel.create({})})
     }
 
     updateComparable(changedComp, index)

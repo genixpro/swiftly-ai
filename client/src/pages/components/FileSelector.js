@@ -19,7 +19,7 @@ class FileSelector extends React.Component
     {
         axios.get(`/appraisal/${this.props.appraisalId}/files`).then((response) =>
         {
-            this.setState({files: response.data.files.map((file) => new FileModel(file)) });
+            this.setState({files: response.data.files.map((file) => FileModel.create(file)) });
             this.onChangeValue(response.data.files[0]._id['$oid'])
         });
     }

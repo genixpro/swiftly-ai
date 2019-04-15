@@ -20,7 +20,7 @@ class ComparableLeaseList extends React.Component
 
     state = {
         comparableLeases: [],
-        newComparableLease: new ComparableLeaseModel({
+        newComparableLease: ComparableLeaseModel.create({
             rentType: "net"
         }),
         isCreatingNewItem: false
@@ -68,7 +68,7 @@ class ComparableLeaseList extends React.Component
                         // alert('loading');
                         return axios.get(`/comparable_leases/` + comparableLeaseId).then((response) =>
                         {
-                            this.loadedComparables[comparableLeaseId] = new ComparableLeaseModel(response.data.comparableLease);
+                            this.loadedComparables[comparableLeaseId] = ComparableLeaseModel.create(response.data.comparableLease);
                             return response.data.comparableLease;
                         });
                     }
@@ -92,7 +92,7 @@ class ComparableLeaseList extends React.Component
         // comparables.push(newComparable);
 
         this.props.onNewComparable(newComparable);
-        this.setState({isCreatingNewItem: false, newComparableLease: new ComparableLeaseModel({})})
+        this.setState({isCreatingNewItem: false, newComparableLease: ComparableLeaseModel.create({})})
     }
 
     updateComparable(changedComp, index)

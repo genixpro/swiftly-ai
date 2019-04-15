@@ -24,7 +24,7 @@ class UploadedFileList extends React.Component
     {
         axios.get(`/appraisal/${this.props.appraisalId}/files`).then((response) =>
         {
-            this.setState({files: response.data.files.map((file) => new FileModel(file))})
+            this.setState({files: response.data.files.map((file) => FileModel.create(file))})
         });
     }
 

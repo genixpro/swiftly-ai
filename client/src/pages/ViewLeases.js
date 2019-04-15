@@ -15,7 +15,7 @@ class ViewLeases extends React.Component
     {
         axios.get(`/appraisal/${this.props.match.params._id}/files?type=lease`).then((response) =>
         {
-            this.setState({leases: response.data.files.map((file) => new FileModel(file))})
+            this.setState({leases: response.data.files.map((file) => FileModel.create(file))})
         });
     }
 

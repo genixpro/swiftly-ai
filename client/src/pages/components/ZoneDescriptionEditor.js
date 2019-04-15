@@ -23,7 +23,7 @@ class ZoneDescriptionEditor extends React.Component {
     {
         axios.get(`/zone/${this.props.zoneId}`).then((response) =>
         {
-            this.setState({zone: new ZoneModel(response.data.zone)})
+            this.setState({zone: ZoneModel.create(response.data.zone)})
         });
     }
 

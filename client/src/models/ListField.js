@@ -10,9 +10,23 @@ class ListField extends BaseField
         this.subField = subField;
     }
 
+    set keyName(value)
+    {
+        this.subField.keyName = value
+    }
+
+    get keyName()
+    {
+        return this.subField.keyName;
+    }
+
     toObject(value, parent)
     {
         if (!_.isArray(value))
+        {
+            return null;
+        }
+        else if (_.isUndefined(value))
         {
             return null;
         }

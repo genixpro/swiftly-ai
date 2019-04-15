@@ -230,23 +230,7 @@ class FieldDisplayEdit extends React.Component
         }
     }
 
-    propertyTypeInputUpdated(newValue)
-    {
-        // if (newValue)
-        // {
-        this.setState({value: newValue}, () => this.finishEditing());
-        // }
-    }
-
-    rentTypeInputUpdated(newValue)
-    {
-        // if (newValue)
-        // {
-        this.setState({value: newValue}, () => this.finishEditing());
-        // }
-    }
-
-    incomeItemTypeInputUpdated(newValue)
+    selectInputUpdated(newValue)
     {
         this.setState({value: newValue}, () => this.finishEditing());
     }
@@ -356,7 +340,7 @@ class FieldDisplayEdit extends React.Component
                         <PropertyTypeSelector
                             value={this.state.isEditing ? this.state.value : this.props.value}
                             disabled={!this.props.edit}
-                            onChange={(newValue) => this.propertyTypeInputUpdated(newValue) }
+                            onChange={(newValue) => this.selectInputUpdated(newValue) }
                             onBlur={() => this.finishEditing()}
                             isSearch={this.props.isSearch}
                             innerRef={(inputElem) => this.inputElem = inputElem}
@@ -367,7 +351,7 @@ class FieldDisplayEdit extends React.Component
                         <RentTypeSelector
                             value={this.state.isEditing ? this.state.value : this.props.value}
                             disabled={!this.props.edit}
-                            onChange={(newValue) => this.rentTypeInputUpdated(newValue) }
+                            onChange={(newValue) => this.selectInputUpdated(newValue) }
                             onBlur={() => this.finishEditing()}
                             innerRef={(inputElem) => this.inputElem = inputElem}
                         /> : null
@@ -378,7 +362,7 @@ class FieldDisplayEdit extends React.Component
                             value={this.state.isEditing ? this.state.value : this.props.value}
                             disabled={!this.props.edit}
                             cashFlowType={this.props.cashFlowType}
-                            onChange={(newValue) => this.incomeItemTypeInputUpdated(newValue) }
+                            onChange={(newValue) => this.selectInputUpdated(newValue) }
                             onBlur={() => this.finishEditing()}
                             innerRef={(inputElem) => this.inputElem = inputElem}
                         /> : null
@@ -388,7 +372,7 @@ class FieldDisplayEdit extends React.Component
                         <RetailLocationTypeSelector
                             value={this.state.isEditing ? this.state.value : this.props.value}
                             disabled={!this.props.edit}
-                            onChange={(newValue) => this.inputUpdated(newValue) }
+                            onChange={(newValue) => this.selectInputUpdated(newValue) }
                             onBlur={() => this.finishEditing()}
                             innerRef={(inputElem) => this.inputElem = inputElem}
                         /> : null
@@ -396,10 +380,10 @@ class FieldDisplayEdit extends React.Component
                 {
                     this.props.type === "marketRent" ?
                         <MarketRentSelector
-                            value={this.state.isEditing ? this.state.value : this.props.value}
+                            value={this.props.value}
                             disabled={!this.props.edit}
                             marketRents={this.props.marketRents}
-                            onChange={(newValue) => this.inputUpdated(newValue) }
+                            onChange={(newValue) => this.selectInputUpdated(newValue) }
                             onBlur={() => this.finishEditing()}
                             innerRef={(inputElem) => this.inputElem = inputElem}
                         /> : null
@@ -409,7 +393,7 @@ class FieldDisplayEdit extends React.Component
                         <ManagementRecoveryFieldSelector
                             value={this.state.isEditing ? this.state.value : this.props.value}
                             disabled={!this.props.edit}
-                            onChange={(newValue) => this.inputUpdated(newValue) }
+                            onChange={(newValue) => this.selectInputUpdated(newValue) }
                             onBlur={() => this.finishEditing()}
                             innerRef={(inputElem) => this.inputElem = inputElem}
                         /> : null

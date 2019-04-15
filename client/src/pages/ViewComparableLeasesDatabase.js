@@ -65,7 +65,7 @@ class ViewComparableLeasesDatabase extends React.Component {
 
         axios.get(`/comparable_leases`, {params: params}).then((response) => {
             // console.log(response.data.comparableLeases);
-            this.setState({comparableLeases: response.data.comparableLeases.map((lease) => new ComparableLeaseModel(lease))})
+            this.setState({comparableLeases: response.data.comparableLeases.map((lease) => ComparableLeaseModel.create(lease))})
         });
     }
 

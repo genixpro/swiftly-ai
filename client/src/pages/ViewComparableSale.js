@@ -15,7 +15,7 @@ class ViewComparableSale extends React.Component {
 
     componentDidMount() {
         axios.get(`/appraisal/${this.props.match.params._id}/comparable_sales/${this.props.match.params.comparableSaleId}`).then((response) => {
-            this.setState({comparableSale: new ComparableSaleModel(response.data.comparableSale)})
+            this.setState({comparableSale: ComparableSaleModel.create(response.data.comparableSale)})
         });
     }
 

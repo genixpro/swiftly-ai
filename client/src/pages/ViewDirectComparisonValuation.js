@@ -36,7 +36,7 @@ class ViewDirectComparisonValuation extends React.Component
                 {
                     if (response.data.comparableSale)
                     {
-                        this.loadedComparables[comparableSaleId] = new ComparableSaleModel(response.data.comparableSale);
+                        this.loadedComparables[comparableSaleId] = ComparableSaleModel.create(response.data.comparableSale);
                         return this.loadedComparables[comparableSaleId];
                     }
                 });

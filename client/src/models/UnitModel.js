@@ -34,9 +34,9 @@ class TenancyModel extends BaseModel
 
 class UnitModel extends BaseModel
 {
-    constructor(data, parent)
+    constructor(data, parent, fieldName)
     {
-        super(data, parent);
+        super(data, parent, fieldName);
 
         if (this.tenancies.length === 0)
         {
@@ -49,8 +49,7 @@ class UnitModel extends BaseModel
     static floorNumber = new GenericField();
     static squareFootage = new GenericField();
     static tenancies = new ListField(new ModelField(TenancyModel));
-    static currentTenancy = new ModelField(TenancyModel);
-    static marketRent = new StringField();
+    static marketRent = new GenericField();
     static remarks = new StringField();
 
     get currentTenancy()

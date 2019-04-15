@@ -41,7 +41,7 @@ class ViewAppraisal extends React.Component
         {
             try
             {
-                this.setState({appraisal: new AppraisalModel(response.data.appraisal)})
+                this.setState({appraisal: AppraisalModel.create(response.data.appraisal)})
             }
             catch(err)
             {
@@ -53,11 +53,13 @@ class ViewAppraisal extends React.Component
     saveDocument(newAppraisal, updateStateAfterSave)
     {
         this.setState({appraisal: this.state.appraisal});
-        axios.post(`/appraisal/${this.props.match.params.id}`, newAppraisal).then((response) =>
+
+        axios.post(`/appraisal/${this.props.match.params.id}`, this.state.appraisal.getUpdates()).then((response) =>
         {
+            this.state.appraisal.clearUpdates();
             if (updateStateAfterSave)
             {
-                this.setState({appraisal: new AppraisalModel(response.data.appraisal)})
+                this.reloadAppraisal();
             }
         });
     }
@@ -68,8 +70,6 @@ class ViewAppraisal extends React.Component
             saveDocument: this.saveDocument.bind(this),
             reloadAppraisal: this.reloadAppraisal.bind(this)
         };
-
-        console.log(this.state.appraisal);
 
         return (
             this.state.appraisal ?

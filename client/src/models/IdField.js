@@ -5,7 +5,10 @@ class IdField extends BaseField
 {
     toObject(value, parent)
     {
-        return value['$oid'];
+        if (value)
+        {
+            return value['$oid'];
+        }
     }
 }
 

@@ -17,7 +17,7 @@ class ViewFinancialStatement extends React.Component {
 
     componentDidMount() {
         axios.get(`/appraisal/${this.props.match.params.id}/files/${this.props.match.params.financialStatementId}`).then((response) => {
-            this.setState({financialStatement: new FileModel(response.data.file)})
+            this.setState({financialStatement: FileModel.create(response.data.file)})
         });
     }
 
@@ -27,7 +27,7 @@ class ViewFinancialStatement extends React.Component {
 
     saveFinancialStatementData(newLease) {
         axios.post(`/appraisal/${this.props.match.params.id}/files/${this.props.match.params.financialStatementId}`, newLease).then((response) => {
-            this.setState({financialStatement: new FileModel(newLease)})
+            this.setState({financialStatement: FileModel.create(newLease)})
         });
     }
 

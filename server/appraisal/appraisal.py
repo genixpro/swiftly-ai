@@ -82,7 +82,7 @@ class AppraisalAPI(object):
 
         appraisal.save()
 
-        return {"appraisal": json.loads(appraisal.to_json())}
+        return {}
 
 
 
