@@ -26,7 +26,7 @@ class StabilizedStatementModel(ValuationModelBase):
             statement.operatingExpenses = self.computeTotalOperatingExpenses(appraisal)
             statement.taxes = self.computeTaxes(appraisal)
         elif appraisal.stabilizedStatementInputs.expensesMode == 'tmi':
-            if appraisal.sizeOfBuilding:
+            if appraisal.sizeOfBuilding and appraisal.stabilizedStatementInputs.tmiRatePSF:
                 statement.tmiTotal = appraisal.stabilizedStatementInputs.tmiRatePSF * appraisal.sizeOfBuilding
             else:
                 statement.tmiTotal = 0
