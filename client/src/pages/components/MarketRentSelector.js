@@ -43,6 +43,7 @@ class MarketRentSelector extends React.Component
                 disabled={this.props.disabled}
                 style={{"color": !this.props.value ? "lightgrey" : ""}}
             >
+                <option value={""}>Market Rent</option>
                 {
                     this.props.marketRents.map((rent) =>
                     {

@@ -36,6 +36,8 @@ class StabilizedStatement(EmbeddedDocument):
 
     marketRentDifferential = FloatField()
 
+    freeRentDifferential = FloatField()
+
     valuation = FloatField()
 
     valuationRounded = FloatField()

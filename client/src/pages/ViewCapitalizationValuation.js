@@ -176,27 +176,48 @@ class ViewCapitalizationValuation extends React.Component
                                         />
                                         </td>
                                     </tr>
-                                    <tr className={"data-row capitalization-row"}>
-                                        <td className={"label-column"}>
-                                            <span>Market Rent Differential, Discounted @</span>
-                                            <FieldDisplayEdit
-                                                type={"percent"}
-                                                placeholder={"Market Rent Differential Discount Rate"}
-                                                value={this.props.appraisal.stabilizedStatementInputs ? this.props.appraisal.stabilizedStatementInputs.marketRentDifferentialDiscountRate : 5.0}
-                                                onChange={(newValue) => this.changeStabilizedInput("marketRentDifferentialDiscountRate", newValue)}
-                                            />
-                                        </td>
-                                        <td className={"amount-column"}></td>
-                                        <td className={"amount-total-column"}>
-                                            $<NumberFormat
-                                            value={this.props.appraisal.stabilizedStatement.marketRentDifferential}
-                                            displayType={'text'}
-                                            thousandSeparator={', '}
-                                            decimalScale={2}
-                                            fixedDecimalScale={true}
-                                        />
-                                        </td>
-                                    </tr>
+                                    {
+                                        this.props.appraisal.stabilizedStatement.marketRentDifferential ?
+                                            <tr className={"data-row capitalization-row"}>
+                                                <td className={"label-column"}>
+                                                    <span>Market Rent Differential, Discounted @</span>
+                                                    <FieldDisplayEdit
+                                                        type={"percent"}
+                                                        placeholder={"Market Rent Differential Discount Rate"}
+                                                        value={this.props.appraisal.stabilizedStatementInputs ? this.props.appraisal.stabilizedStatementInputs.marketRentDifferentialDiscountRate : 5.0}
+                                                        onChange={(newValue) => this.changeStabilizedInput("marketRentDifferentialDiscountRate", newValue)}
+                                                    />
+                                                </td>
+                                                <td className={"amount-column"}></td>
+                                                <td className={"amount-total-column"}>
+                                                    $<NumberFormat
+                                                    value={this.props.appraisal.stabilizedStatement.marketRentDifferential}
+                                                    displayType={'text'}
+                                                    thousandSeparator={', '}
+                                                    decimalScale={2}
+                                                    fixedDecimalScale={true}
+                                                />
+                                                </td>
+                                            </tr> : null
+                                    }
+                                    {
+                                        this.props.appraisal.stabilizedStatement.freeRentDifferential ?
+                                            <tr className={"data-row capitalization-row"}>
+                                                <td className={"label-column"}>
+                                                    <span>Free Rent Differential</span>
+                                                </td>
+                                                <td className={"amount-column"}></td>
+                                                <td className={"amount-total-column"}>
+                                                    $<NumberFormat
+                                                    value={this.props.appraisal.stabilizedStatement.freeRentDifferential}
+                                                    displayType={'text'}
+                                                    thousandSeparator={', '}
+                                                    decimalScale={2}
+                                                    fixedDecimalScale={true}
+                                                />
+                                                </td>
+                                            </tr> : null
+                                    }
                                     {
                                         this.props.appraisal.stabilizedStatementInputs.modifiers ? this.props.appraisal.stabilizedStatementInputs.modifiers.map((modifier, index) =>
                                         {

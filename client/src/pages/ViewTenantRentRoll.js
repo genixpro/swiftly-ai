@@ -315,7 +315,7 @@ class ViewTenantsRentRoll extends React.Component
                                                         <strong>Unit Number</strong>
                                                     </td>
                                                     <td>
-                                                        <FieldDisplayEdit value={this.state.selectedUnit.unitNumber} onChange={(newValue) => this.changeUnitField(this.state.selectedUnit, 'unitNumber', newValue)}/>
+                                                        <FieldDisplayEdit placeholder={"Unit Number"} value={this.state.selectedUnit.unitNumber} onChange={(newValue) => this.changeUnitField(this.state.selectedUnit, 'unitNumber', newValue)}/>
                                                     </td>
                                                 </tr>
                                                 <tr>
@@ -323,7 +323,7 @@ class ViewTenantsRentRoll extends React.Component
                                                         <strong>Floor Number</strong>
                                                     </td>
                                                     <td>
-                                                        <FieldDisplayEdit value={this.state.selectedUnit.floorNumber} onChange={(newValue) => this.changeUnitField(this.state.selectedUnit, 'floorNumber', newValue)}/>
+                                                        <FieldDisplayEdit placeholder={"Floor Number"} value={this.state.selectedUnit.floorNumber} onChange={(newValue) => this.changeUnitField(this.state.selectedUnit, 'floorNumber', newValue)}/>
                                                     </td>
                                                 </tr>
                                                 <tr>
@@ -331,7 +331,7 @@ class ViewTenantsRentRoll extends React.Component
                                                         <strong>Tenant Name</strong>
                                                     </td>
                                                     <td>
-                                                        <FieldDisplayEdit value={this.state.selectedUnit.currentTenancy.name} onChange={(newValue) => this.changeAllTenantField(this.state.selectedUnit, this.state.selectedUnit.currentTenancy, 'name', newValue)}/>
+                                                        <FieldDisplayEdit placeholder={"Tenant Name"} value={this.state.selectedUnit.currentTenancy.name} onChange={(newValue) => this.changeAllTenantField(this.state.selectedUnit, this.state.selectedUnit.currentTenancy, 'name', newValue)}/>
                                                     </td>
                                                 </tr>
                                                 <tr>
@@ -347,7 +347,15 @@ class ViewTenantsRentRoll extends React.Component
                                                         <strong>Market Rent</strong>
                                                     </td>
                                                     <td>
-                                                        <FieldDisplayEdit type="marketRent" marketRents={this.props.appraisal.marketRents} value={this.state.selectedUnit.marketRent} onChange={(newValue) => this.changeUnitField(this.state.selectedUnit, 'marketRent', newValue)}/>
+                                                        <FieldDisplayEdit type="marketRent" placeholder={"Market Rent"} marketRents={this.props.appraisal.marketRents} value={this.state.selectedUnit.marketRent} onChange={(newValue) => this.changeUnitField(this.state.selectedUnit, 'marketRent', newValue)}/>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>
+                                                        <strong>Free Rent Period (months)</strong>
+                                                    </td>
+                                                    <td>
+                                                        <FieldDisplayEdit type="number" placeholder={"Free Rent Period (months)"} value={this.state.selectedUnit.currentTenancy.freeRentMonths} onChange={(newValue) => this.changeTenancyField(this.state.selectedUnit, this.state.selectedUnit.currentTenancy, 'freeRentMonths', newValue)}/>
                                                     </td>
                                                 </tr>
                                                 <tr>
@@ -355,7 +363,7 @@ class ViewTenantsRentRoll extends React.Component
                                                         <strong>Remarks</strong>
                                                     </td>
                                                     <td>
-                                                        <FieldDisplayEdit value={this.state.selectedUnit.remarks} onChange={(newValue) => this.changeUnitField(this.state.selectedUnit, 'remarks', newValue)}/>
+                                                        <FieldDisplayEdit value={this.state.selectedUnit.remarks} placeholder={"Remarks"} onChange={(newValue) => this.changeUnitField(this.state.selectedUnit, 'remarks', newValue)}/>
                                                     </td>
                                                 </tr>
                                                 <tr>

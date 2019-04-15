@@ -43,7 +43,9 @@ class StabilizedStatementModel:
 
         statement.marketRentDifferential = self.computeMarketRentDifferentials(appraisal)
 
-        statement.valuation = statement.capitalization + statement.marketRentDifferential
+        statement.freeRentDifferential = self.computeFreeRentDifferentials(appraisal)
+
+        statement.valuation = statement.capitalization + statement.marketRentDifferential + statement.freeRentDifferential
 
         for modifier in appraisal.stabilizedStatementInputs.modifiers:
             if modifier.amount:
@@ -96,6 +98,22 @@ class StabilizedStatementModel:
                     month += 1
 
         return float(totalDifferential)
+
+
+    def computeFreeRentDifferentials(self, appraisal):
+        totalDifferential = 0
+
+        for unit in appraisal.units:
+            if unit.currentTenancy and unit.currentTenancy.yearlyRent and unit.currentTenancy.freeRentMonths:
+                monthsFromStart = (datetime.datetime.now() - unit.currentTenancy.startDate).total_seconds() / (60 * 60 * 24 * 30.3)
+
+                freeRentMonthsRemaining = int(max(unit.currentTenancy.freeRentMonths - monthsFromStart, 0))
+
+                differential = freeRentMonthsRemaining * unit.currentTenancy.yearlyRent / 12.0
+
+                totalDifferential += differential
+
+        return -float(totalDifferential)
 
 
     def computeRecoverablePercentage(self, appraisal):

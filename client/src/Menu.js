@@ -40,7 +40,7 @@ const Menu = [
                 path: '/appraisal/:appraisalId/additional_income',
             },
             {
-                name: 'Amortization',
+                name: 'Amortization Schedule',
                 path: '/appraisal/:appraisalId/amortization',
             },
             {

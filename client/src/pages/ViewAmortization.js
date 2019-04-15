@@ -131,9 +131,9 @@ class ViewAmortization extends React.Component
             newAmortization['startDate'] = new Date();
         }
 
-        if (_.isUndefined(newAmortization['period']))
+        if (_.isUndefined(newAmortization['periodMonths']))
         {
-            newAmortization['period'] = 1;
+            newAmortization['periodMonths'] = 1;
         }
 
         this.props.appraisal.amortizationSchedule.items.push(newAmortization);
@@ -226,7 +226,7 @@ class ViewAmortization extends React.Component
     render() {
         return (
             <div id={"view-amortization"} className={"view-amortization"}>
-                <AppraisalContentHeader key={1} appraisal={this.props.appraisal} title="Comparable Leases" />
+                <AppraisalContentHeader key={1} appraisal={this.props.appraisal} title="Amortization Schedule" />
                 <Row key={3}>
                     <Col xs={12}>
                         <Card className="card-default">
@@ -234,7 +234,7 @@ class ViewAmortization extends React.Component
 
                                 <Row>
                                     <Col xs={10}>
-                                        <h3>Amortization</h3>
+                                        <h3>Amortization Schedule</h3>
                                     </Col>
                                     {/*<Col xs={2}>*/}
                                         {/*<Dropdown isOpen={this.state.downloadDropdownOpen} toggle={this.toggleDownload.bind(this)}>*/}

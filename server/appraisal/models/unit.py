@@ -13,6 +13,9 @@ class Tenancy(EmbeddedDocument):
     # The yearly rent the tenant is paying.
     yearlyRent = FloatField()
 
+    # The free rent period in months
+    freeRentMonths = FloatField()
+
     # This specifies the rent-type. This can be either "NET" or "GROSS"
     rentType = StringField(choices=["net", "gross"], default="net")
 
@@ -50,36 +53,33 @@ class Unit(EmbeddedDocument):
     # A list of occupants of this unit over various periods of time
     tenancies = ListField(EmbeddedDocumentField(Tenancy))
 
-    currentTenancy = EmbeddedDocumentField(Tenancy)
-
     # Market Rent
     marketRent = StringField()
 
     # General comments on the unit
     remarks = StringField()
 
-    def findTenancyAtDate(self, tenancyDate):
-        for tenancy in self.tenancies:
-            if tenancy.startDate and tenancy.startDate <= tenancyDate and tenancy.endDate and tenancy.endDate >= tenancyDate:
-                return tenancy
-        return None
-
-
-
-    def updateCurrentTenancy(self):
+    @property
+    def currentTenancy(self):
         currentDateTime = datetime.datetime.now()
 
         if len(self.tenancies) > 0:
             for tenancy in self.tenancies:
                 if tenancy.startDate is not None and currentDateTime >= tenancy.startDate and tenancy.endDate is not None and currentDateTime <= tenancy.endDate:
-                    self.currentTenancy = tenancy
-                    return
+                    return tenancy
 
             sortedTenancies = sorted(self.tenancies, key=lambda tenancy: (tenancy.startDate if tenancy.startDate is not None else currentDateTime) )
 
-            self.currentTenancy = sortedTenancies[-1]
+            return sortedTenancies[-1]
         else:
-            self.currentTenancy = None
+            return None
+
+
+    def findTenancyAtDate(self, tenancyDate):
+        for tenancy in self.tenancies:
+            if tenancy.startDate and tenancy.startDate <= tenancyDate and tenancy.endDate and tenancy.endDate >= tenancyDate:
+                return tenancy
+        return None
 
 
     def mergeOtherUnitInfo(self, otherUnitInfo):
@@ -100,4 +100,3 @@ class Unit(EmbeddedDocument):
             if overlapTenancy is None:
                 self.tenancies.append(tenancy)
 
-        self.updateCurrentTenancy()
