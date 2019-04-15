@@ -2,7 +2,7 @@ import React from 'react';
 import { FormGroup } from 'reactstrap';
 
 
-class MarketRentSelector extends React.Component
+class ManagementRecoveryFieldSelector extends React.Component
 {
     onChangeValue(newValue)
     {
@@ -39,21 +39,18 @@ class MarketRentSelector extends React.Component
                 onChange={(evt) => this.onChangeValue(evt.target.value)}
                 onBlur={(evt) => this.onBlur()}
                 ref={(ref) => this.onRef(ref)}
-                value={this.props.value ? this.props.value : ""}
+                value={this.props.value}
                 disabled={this.props.disabled}
                 style={{"color": !this.props.value ? "lightgrey" : ""}}
             >
-                <option value={""}>Market Rent</option>
-                {
-                    this.props.marketRents.map((rent) =>
-                    {
-                        return <option key={rent.name} value={rent.name}>{rent.name}</option>
-                    })
-                }
+                <option value={""}>&nbsp;</option>
+                <option value={"operatingExpenses"}>Operating Expenses</option>
+                <option value={"managementExpenses"}>Management Expenses</option>
+                <option value={"rentalIncome"}>Rental Income</option>
             </select>
         );
     }
 }
 
 
-export default MarketRentSelector;
+export default ManagementRecoveryFieldSelector;

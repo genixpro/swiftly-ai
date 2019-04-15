@@ -10,6 +10,7 @@ import RetailLocationTypeSelector from './RetailLocationTypeSelector';
 import history from "../../history";
 import ZoneSelector from "./ZoneSelector";
 import TagEditor from "./TagEditor";
+import ManagementRecoveryFieldSelector from "./ManagementRecoveryFieldSelector";
 
 import {
     Input,
@@ -398,6 +399,16 @@ class FieldDisplayEdit extends React.Component
                             value={this.state.isEditing ? this.state.value : this.props.value}
                             disabled={!this.props.edit}
                             marketRents={this.props.marketRents}
+                            onChange={(newValue) => this.inputUpdated(newValue) }
+                            onBlur={() => this.finishEditing()}
+                            innerRef={(inputElem) => this.inputElem = inputElem}
+                        /> : null
+                }
+                {
+                    this.props.type === "managementRecoveryField" ?
+                        <ManagementRecoveryFieldSelector
+                            value={this.state.isEditing ? this.state.value : this.props.value}
+                            disabled={!this.props.edit}
                             onChange={(newValue) => this.inputUpdated(newValue) }
                             onBlur={() => this.finishEditing()}
                             innerRef={(inputElem) => this.inputElem = inputElem}

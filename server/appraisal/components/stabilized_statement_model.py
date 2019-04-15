@@ -19,19 +19,18 @@ class StabilizedStatementModel:
 
         statement.rentalIncome = self.computeRentalIncome(appraisal)
         statement.additionalIncome = self.computeAdditionalIncome(appraisal)
-        statement.recoverableIncome = self.computeRecoverableOperatingExpenses(appraisal) * self.computeRecoverablePercentage(appraisal)
+        statement.managementExpenses = self.computeManagementFees(appraisal)
+        statement.operatingExpenses = self.computeTotalOperatingExpenses(appraisal)
+        statement.taxes = self.computeTaxes(appraisal)
+        statement.marketRentDifferential = self.computeMarketRentDifferentials(appraisal)
+        statement.freeRentDifferential = self.computeFreeRentDifferentials(appraisal)
+        statement.recoverableIncome = self.computeRecoverableOperatingExpenses(appraisal) * self.computeRecoverablePercentage(appraisal) + self.computeManagementRecoveries(appraisal, statement)
 
         statement.potentialGrossIncome = statement.rentalIncome + statement.additionalIncome + statement.recoverableIncome
 
         statement.vacancyDeduction = statement.potentialGrossIncome * (appraisal.stabilizedStatementInputs.vacancyRate / 100.0)
 
         statement.effectiveGrossIncome = statement.potentialGrossIncome - statement.vacancyDeduction
-
-        statement.operatingExpenses = self.computeTotalOperatingExpenses(appraisal)
-
-        statement.taxes = self.computeTaxes(appraisal)
-
-        statement.managementExpenses = self.computeManagementFees(appraisal)
 
         statement.structuralAllowance = statement.effectiveGrossIncome * (appraisal.stabilizedStatementInputs.structuralAllowancePercent / 100.0)
 
@@ -40,10 +39,6 @@ class StabilizedStatementModel:
         statement.netOperatingIncome = statement.effectiveGrossIncome - statement.totalExpenses
 
         statement.capitalization = statement.netOperatingIncome / (appraisal.stabilizedStatementInputs.capitalizationRate / 100.0)
-
-        statement.marketRentDifferential = self.computeMarketRentDifferentials(appraisal)
-
-        statement.freeRentDifferential = self.computeFreeRentDifferentials(appraisal)
 
         statement.valuation = statement.capitalization + statement.marketRentDifferential + statement.freeRentDifferential
 
@@ -188,6 +183,23 @@ class StabilizedStatementModel:
         for expense in appraisal.incomeStatement.expenses:
             if expense.incomeStatementItemType == 'management_expense':
                 total += self.getLatestAmount(expense)
+
+        return total
+
+
+    def computeManagementRecoveries(self, appraisal, statement):
+        total = 0
+
+        for unit in appraisal.units:
+            if unit.currentTenancy and unit.currentTenancy.managementRecoveryPercentage and unit.currentTenancy.managementRecoveryField:
+                if unit.currentTenancy.managementRecoveryField == "operatingExpenses":
+                    total += (unit.currentTenancy.managementRecoveryPercentage / 100.0) * statement.operatingExpenses
+                if unit.currentTenancy.managementRecoveryField == "managementExpenses":
+                    total += (unit.currentTenancy.managementRecoveryPercentage / 100.0) * statement.managementExpenses
+                if unit.currentTenancy.managementRecoveryField == "rentalIncome":
+                    total += (unit.currentTenancy.managementRecoveryPercentage / 100.0) * statement.rentalIncome
+
+        print(total)
 
         return total
 

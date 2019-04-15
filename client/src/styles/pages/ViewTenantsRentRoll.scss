@@ -6,6 +6,26 @@
     padding: 0;
   }
 
+  .management-expense-field
+  {
+    display: flex;
+    flex-direction: row;
+    justify-items: center;
+    align-items: center;
+
+    span.seperator
+    {
+      padding-left: 10px;
+      padding-right: 10px;
+    }
+
+    .field-display-edit
+    {
+
+    }
+
+  }
+
   .tenancies-table {
     .action-column {
       opacity: 0;

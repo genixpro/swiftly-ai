@@ -360,6 +360,16 @@ class ViewTenantsRentRoll extends React.Component
                                                 </tr>
                                                 <tr>
                                                     <td>
+                                                        <strong>Management Recoveries</strong>
+                                                    </td>
+                                                    <td className={"management-expense-field"}>
+                                                        <FieldDisplayEdit type="percent" placeholder={"Management Expense %"} value={this.state.selectedUnit.currentTenancy.managementRecoveryPercentage} onChange={(newValue) => this.changeAllTenantField(this.state.selectedUnit, this.state.selectedUnit.currentTenancy, 'managementRecoveryPercentage', newValue)}/>
+                                                        <span className={"seperator"}>of</span>
+                                                        <FieldDisplayEdit type="managementRecoveryField" placeholder={"Expense Calculation Field"} value={this.state.selectedUnit.currentTenancy.managementRecoveryField} onChange={(newValue) => this.changeAllTenantField(this.state.selectedUnit, this.state.selectedUnit.currentTenancy, 'managementRecoveryField', newValue)}/>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>
                                                         <strong>Remarks</strong>
                                                     </td>
                                                     <td>

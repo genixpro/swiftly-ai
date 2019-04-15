@@ -23,6 +23,7 @@ class ViewDirectComparisonValuation extends React.Component
 
     componentDidMount()
     {
+        this.props.reloadAppraisal();
         Promise.map(this.props.appraisal.comparableSales, (comparableSaleId) =>
         {
             if (this.loadedComparables[comparableSaleId])

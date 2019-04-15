@@ -16,6 +16,8 @@ class TenancyModel extends BaseModel
     static startDate = new DateField();
     static endDate = new DateField();
     static freeRentMonths = new GenericField();
+    static managementRecoveryPercentage = new GenericField();
+    static managementRecoveryField = new GenericField();
 
     get yearlyRentPSF()
     {

@@ -4,6 +4,8 @@ from .date_field import ConvertingDateField
 import dateparser
 
 class Tenancy(EmbeddedDocument):
+    meta = {'strict': False}
+
     # The name of the tenant.
     name = StringField()
 
@@ -15,6 +17,12 @@ class Tenancy(EmbeddedDocument):
 
     # The free rent period in months
     freeRentMonths = FloatField()
+
+    # This gives what percentage the unit pays in management expenses
+    managementRecoveryPercentage = FloatField()
+
+    # This gives the field that the management expense is calculated based on
+    managementRecoveryField = StringField()
 
     # This specifies the rent-type. This can be either "NET" or "GROSS"
     rentType = StringField(choices=["net", "gross"], default="net")
