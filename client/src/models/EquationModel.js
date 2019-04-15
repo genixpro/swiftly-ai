@@ -1,4 +1,4 @@
-import BaseModel from "./BaseModel";
+import BaseModel from "../orm/BaseModel";
 import _ from 'underscore';
 
 

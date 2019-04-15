@@ -1,18 +1,21 @@
-import GenericField from "./GenericField";
-import ModelField from "./ModelField";
-import ListField from "./ListField";
-import BaseModel from "./BaseModel";
+import GenericField from "../orm/GenericField";
+import ModelField from "../orm/ModelField";
+import ListField from "../orm/ListField";
+import BaseModel from "../orm/BaseModel";
 import _ from "underscore";
+import StringField from "../orm/StringField";
+import DictField from "../orm/DictField";
+import FloatField from "../orm/FloatField";
 
 
 class IncomeStatementItemModel extends BaseModel
 {
-    static itemName = new GenericField("name");
-    static yearlyAmounts = new GenericField();
-    static yearlySourceTypes = new GenericField();
-    static extractionReferences = new GenericField();
-    static cashFlowType = new GenericField();
-    static incomeStatementItemType = new GenericField();
+    static itemName = new StringField("name");
+    static yearlyAmounts = new DictField(new FloatField());
+    static yearlySourceTypes = new StringField();
+    static extractionReferences = new DictField(new DictField(new GenericField()));
+    static cashFlowType = new StringField();
+    static incomeStatementItemType = new StringField();
 
     get yearlyAmountsPSF()
     {
@@ -59,8 +62,8 @@ class IncomeStatementItemModel extends BaseModel
 
 class IncomeStatementModel extends BaseModel
 {
-    static years = new ListField(new GenericField());
-    static yearlySourceTypes = new GenericField();
+    static years = new ListField(new FloatField());
+    static yearlySourceTypes = new DictField(new StringField());
     static incomes = new ListField(new ModelField(IncomeStatementItemModel));
     static expenses = new ListField(new ModelField(IncomeStatementItemModel));
 

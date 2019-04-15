@@ -1,11 +1,13 @@
-import GenericField from "./GenericField";
-import BaseModel from "./BaseModel";
+import GenericField from "../orm/GenericField";
+import BaseModel from "../orm/BaseModel";
+import StringField from "../orm/StringField";
+import FloatField from "../orm/FloatField";
 
 
 class MarketRentModel extends BaseModel
 {
-    static marketRentName = new GenericField("name");
-    static amountPSF = new GenericField();
+    static marketRentName = new StringField("name");
+    static amountPSF = new FloatField();
 }
 
 export default MarketRentModel;

@@ -1,12 +1,13 @@
-import IdField from "./IdField";
-import GenericField from "./GenericField";
-import BaseModel from "./BaseModel";
+import IdField from "../orm/IdField";
+import GenericField from "../orm/GenericField";
+import BaseModel from "../orm/BaseModel";
+import StringField from "../orm/StringField";
 
 class ZoneModel extends BaseModel
 {
     static _id = new IdField();
-    static zoneName = new GenericField();
-    static description = new GenericField();
+    static zoneName = new StringField();
+    static description = new StringField();
 }
 
 export default ZoneModel;

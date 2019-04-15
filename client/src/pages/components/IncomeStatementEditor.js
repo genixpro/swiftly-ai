@@ -8,7 +8,7 @@ import arrayMove from "array-move";
 import FileViewer from "./FileViewer"
 import FileSelector from "./FileSelector"
 import {IncomeStatementItemModel} from "../../models/IncomeStatementModel";
-import FileModel from "../../models/FileModel";
+import FileModel from "../../orm/FileModel";
 import CurrencyFormat from "./CurrencyFormat";
 import YearlySourceTypeFormat from "./YearlySourceTypeFormat";
 import { DropTarget } from 'react-dnd';

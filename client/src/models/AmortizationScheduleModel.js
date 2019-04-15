@@ -1,23 +1,25 @@
-import GenericField from "./GenericField";
-import ModelField from "./ModelField";
-import ListField from "./ListField";
-import DateField from "./DateField";
-import BaseModel from "./BaseModel";
+import GenericField from "../orm/GenericField";
+import ModelField from "../orm/ModelField";
+import ListField from "../orm/ListField";
+import DateField from "../orm/DateField";
+import BaseModel from "../orm/BaseModel";
+import StringField from "../orm/StringField";
+import FloatField from "../orm/FloatField";
 
 
 class AmortizationItem extends BaseModel
 {
-    static itemName = new GenericField('name');
+    static itemName = new StringField('name');
 
-    static amount = new GenericField();
+    static amount = new FloatField();
 
-    static interest = new GenericField();
+    static interest = new FloatField();
 
-    static discountRate = new GenericField();
+    static discountRate = new FloatField();
 
     static startDate = new DateField();
 
-    static periodMonths = new GenericField();
+    static periodMonths = new FloatField();
 }
 
 

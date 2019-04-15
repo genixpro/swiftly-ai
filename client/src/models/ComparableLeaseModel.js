@@ -1,36 +1,38 @@
-import IdField from "./IdField";
-import GenericField from "./GenericField";
-import ListField from "./ListField";
-import DateField from "./DateField";
-import BaseModel from "./BaseModel";
+import IdField from "../orm/IdField";
+import GenericField from "../orm/GenericField";
+import ListField from "../orm/ListField";
+import DateField from "../orm/DateField";
+import BaseModel from "../orm/BaseModel";
 import _ from "underscore";
+import StringField from "../orm/StringField";
+import FloatField from "../orm/FloatField";
 
 class ComparableLeaseModel extends BaseModel
 {
     static _id = new IdField();
-    static comparableName = new GenericField("name");
-    static address = new GenericField();
+    static comparableName = new StringField("name");
+    static address = new StringField();
     static location = new GenericField();
-    static propertyType = new GenericField();
-    static sizeOfUnit = new GenericField();
-    static yearlyRent = new GenericField();
-    static description = new GenericField();
+    static propertyType = new StringField();
+    static sizeOfUnit = new FloatField();
+    static yearlyRent = new FloatField();
+    static description = new StringField();
     static leaseDate = new DateField();
-    static rentType = new GenericField();
-    static tenantName = new GenericField();
-    static propertyTags = new ListField(new GenericField());
+    static rentType = new StringField();
+    static tenantName = new StringField();
+    static propertyTags = new ListField(new StringField());
 
-    static taxesMaintenanceInsurance = new GenericField();
+    static taxesMaintenanceInsurance = new FloatField();
 
-    static tenantInducements = new GenericField();
-    static freeRent = new GenericField();
+    static tenantInducements = new StringField();
+    static freeRent = new StringField();
 
-    static escalations = new GenericField();
+    static escalations = new StringField();
 
-    static floorNumber = new GenericField();
-    static retailLocationType = new GenericField();
-    static clearCeilingHeight = new GenericField();
-    static shippingDoors = new GenericField();
+    static floorNumber = new FloatField();
+    static retailLocationType = new StringField();
+    static clearCeilingHeight = new StringField();
+    static shippingDoors = new StringField();
 
     static sortComparables(comparables, sort)
     {

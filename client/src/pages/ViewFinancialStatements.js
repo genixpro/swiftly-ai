@@ -2,7 +2,7 @@ import React from 'react';
 import {Row, Col, Card, CardBody} from 'reactstrap';
 import axios from 'axios';
 import FinancialStatementList from "./components/FinancialStatementList"
-import FileModel from "../models/FileModel";
+import FileModel from "../orm/FileModel";
 
 class ViewFinancialStatements extends React.Component {
     state = {

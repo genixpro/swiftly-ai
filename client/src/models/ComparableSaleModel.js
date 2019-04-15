@@ -1,60 +1,62 @@
-import IdField from "./IdField";
-import GenericField from "./GenericField";
-import ListField from "./ListField";
+import IdField from "../orm/IdField";
+import GenericField from "../orm/GenericField";
+import ListField from "../orm/ListField";
 import EquationMdoel from "./EquationModel";
-import DateField from "./DateField";
+import DateField from "../orm/DateField";
 import _ from "underscore";
+import StringField from "../orm/StringField";
+import FloatField from "../orm/FloatField";
 
 class ComparableSaleModel extends EquationMdoel
 {
     static _id = new IdField();
 
-    static imageUrl = new GenericField();
-    static comparableName = new GenericField("name");
-    static address = new GenericField();
+    static imageUrl = new StringField();
+    static comparableName = new StringField("name");
+    static address = new StringField();
     static location = new GenericField();
-    static propertyType = new GenericField();
+    static propertyType = new StringField();
 
-    static netOperatingIncome = new GenericField();
-    static capitalizationRate = new GenericField();
-    static salePrice = new GenericField();
-    static sizeSquareFootage = new GenericField();
-    static pricePerSquareFoot = new GenericField();
-    static occupancyRate = new GenericField();
+    static netOperatingIncome = new FloatField();
+    static capitalizationRate = new FloatField();
+    static salePrice = new FloatField();
+    static sizeSquareFootage = new FloatField();
+    static pricePerSquareFoot = new FloatField();
+    static occupancyRate = new FloatField();
     static saleDate = new DateField();
-    static propertyTags = new ListField(new GenericField());
-    static purchaser = new GenericField();
+    static propertyTags = new ListField(new StringField());
+    static purchaser = new StringField();
 
-    static vendor = new GenericField();
+    static vendor = new StringField();
 
-    static tenants = new GenericField();
+    static tenants = new StringField();
 
-    static additionalInfo = new GenericField();
+    static additionalInfo = new StringField();
     static constructionDate = new DateField();
 
-    static siteArea = new GenericField();
+    static siteArea = new FloatField();
 
-    static parking = new GenericField();
+    static parking = new StringField();
 
-    static description = new GenericField();
+    static description = new StringField();
 
-    static clearCeilingHeight = new GenericField();
-    static shippingDoors = new GenericField();
-    static siteCoverage = new GenericField();
+    static clearCeilingHeight = new FloatField();
+    static shippingDoors = new FloatField();
+    static siteCoverage = new FloatField();
 
 
-    static zoning = new GenericField();
-    static developmentProposals = new GenericField();
-    static sizeOfLandSqft = new GenericField();
-    static sizeOfLandAcres = new GenericField();
-    static sizeOfBuildableAreaSqft = new GenericField();
-    static sizeOfBuildableAreaAcres = new GenericField();
-    static pricePerSquareFootLand = new GenericField();
-    static pricePerAcreLand = new GenericField();
-    static pricePerSquareFootBuildableArea = new GenericField();
-    static pricePerAcreBuildableArea = new GenericField();
-    static floorSpaceIndex = new GenericField();
-    static finishedOfficePercent = new GenericField();
+    static zoning = new StringField();
+    static developmentProposals = new StringField();
+    static sizeOfLandSqft = new FloatField();
+    static sizeOfLandAcres = new FloatField();
+    static sizeOfBuildableAreaSqft = new FloatField();
+    static sizeOfBuildableAreaAcres = new FloatField();
+    static pricePerSquareFootLand = new FloatField();
+    static pricePerAcreLand = new FloatField();
+    static pricePerSquareFootBuildableArea = new FloatField();
+    static pricePerAcreBuildableArea = new FloatField();
+    static floorSpaceIndex = new FloatField();
+    static finishedOfficePercent = new FloatField();
 
     static equations = {
         "netOperatingIncome": [

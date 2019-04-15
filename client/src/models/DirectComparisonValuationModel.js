@@ -1,12 +1,13 @@
-import GenericField from "./GenericField";
-import BaseModel from "./BaseModel";
+import GenericField from "../orm/GenericField";
+import BaseModel from "../orm/BaseModel";
+import FloatField from "../orm/FloatField";
 
 
 class DirectComparisonValuation extends BaseModel
 {
-    static comparativeValue = new GenericField();
-    static valuation = new GenericField();
-    static valuationRounded = new GenericField();
+    static comparativeValue = new FloatField();
+    static valuation = new FloatField();
+    static valuationRounded = new FloatField();
 }
 
 export default DirectComparisonValuation;

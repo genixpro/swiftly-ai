@@ -1,50 +1,51 @@
-import GenericField from "./GenericField";
-import BaseModel from "./BaseModel";
+import GenericField from "../orm/GenericField";
+import BaseModel from "../orm/BaseModel";
+import FloatField from "../orm/FloatField";
 
 
 class StabilizedStatementModel extends BaseModel
 {
-    static rentalIncome = new GenericField();
+    static rentalIncome = new FloatField();
 
-    static additionalIncome = new GenericField();
+    static additionalIncome = new FloatField();
 
-    static recoverableIncome = new GenericField();
+    static recoverableIncome = new FloatField();
 
-    static potentialGrossIncome = new GenericField();
+    static potentialGrossIncome = new FloatField();
 
-    static grossIncome = new GenericField();
+    static grossIncome = new FloatField();
 
-    static vacancyDeduction = new GenericField();
+    static vacancyDeduction = new FloatField();
 
-    static effectiveGrossIncome = new GenericField();
+    static effectiveGrossIncome = new FloatField();
 
-    static operatingExpenses = new GenericField();
+    static operatingExpenses = new FloatField();
 
-    static taxes = new GenericField();
+    static taxes = new FloatField();
 
-    static managementExpenses = new GenericField();
+    static managementExpenses = new FloatField();
 
-    static structuralAllowance = new GenericField();
+    static structuralAllowance = new FloatField();
 
-    static tmiTotal = new GenericField();
+    static tmiTotal = new FloatField();
 
-    static totalExpenses = new GenericField();
+    static totalExpenses = new FloatField();
 
-    static netOperatingIncome = new GenericField();
+    static netOperatingIncome = new FloatField();
 
-    static netOperatingIncomePSF = new GenericField();
+    static netOperatingIncomePSF = new FloatField();
 
-    static capitalization = new GenericField();
+    static capitalization = new FloatField();
 
-    static valuation = new GenericField();
+    static valuation = new FloatField();
 
-    static valuationRounded = new GenericField();
+    static valuationRounded = new FloatField();
 
-    static marketRentDifferential = new GenericField();
+    static marketRentDifferential = new FloatField();
 
-    static freeRentDifferential = new GenericField();
+    static freeRentDifferential = new FloatField();
 
-    static vacantUnitDifferential = new GenericField();
+    static vacantUnitDifferential = new FloatField();
 }
 
 export default StabilizedStatementModel;

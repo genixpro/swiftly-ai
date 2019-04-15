@@ -1,28 +1,30 @@
-import GenericField from "./GenericField";
-import BaseModel from "./BaseModel";
-import ListField from "./ListField";
-import ModelField from "./ModelField";
+import GenericField from "../orm/GenericField";
+import BaseModel from "../orm/BaseModel";
+import ListField from "../orm/ListField";
+import ModelField from "../orm/ModelField";
+import StringField from "../orm/StringField";
+import FloatField from "../orm/FloatField";
 
 class StabilizedStatementModifier extends BaseModel
 {
-    static modifierName = new GenericField("name");
-    static amount = new GenericField();
+    static modifierName = new StringField("name");
+    static amount = new FloatField();
 }
 
 class StabilizedStatementInputsModel extends BaseModel
 {
-    static capitalizationRate = new GenericField();
-    static vacancyRate = new GenericField();
+    static capitalizationRate = new FloatField();
+    static vacancyRate = new FloatField();
 
-    static structuralAllowancePercent = new GenericField();
+    static structuralAllowancePercent = new FloatField();
 
     static modifiers = new ListField(new ModelField(StabilizedStatementModifier));
 
-    static marketRentDifferentialDiscountRate = new GenericField();
+    static marketRentDifferentialDiscountRate = new FloatField();
 
-    static expensesMode = new GenericField();
+    static expensesMode = new StringField();
 
-    static tmiRatePSF = new GenericField();
+    static tmiRatePSF = new FloatField();
 }
 
 export default StabilizedStatementInputsModel;

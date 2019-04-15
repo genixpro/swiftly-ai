@@ -1,15 +1,16 @@
-import GenericField from "./GenericField";
-import BaseModel from "./BaseModel";
+import GenericField from "../orm/GenericField";
+import BaseModel from "../orm/BaseModel";
+import FloatField from "../orm/FloatField";
 
 
 class DiscountedCashFlowInputsModel extends BaseModel
 {
-    static inflation = new GenericField();
-    static discountRate = new GenericField();
-    static  leasingCommission = new GenericField();
-    static tenantInducementsPSF = new GenericField();
-    static renewalPeriod = new GenericField();
-    static leasingPeriod = new GenericField();
+    static inflation = new FloatField();
+    static discountRate = new FloatField();
+    static  leasingCommission = new FloatField();
+    static tenantInducementsPSF = new FloatField();
+    static renewalPeriod = new FloatField();
+    static leasingPeriod = new FloatField();
 }
 
 export default DiscountedCashFlowInputsModel;

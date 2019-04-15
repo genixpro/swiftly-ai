@@ -1,16 +1,19 @@
-import GenericField from "./GenericField";
-import ModelField from "./ModelField";
-import ListField from "./ListField";
-import BaseModel from "./BaseModel";
+import GenericField from "../orm/GenericField";
+import ModelField from "../orm/ModelField";
+import ListField from "../orm/ListField";
+import BaseModel from "../orm/BaseModel";
+import StringField from "../orm/StringField";
+import FloatField from "../orm/FloatField";
+import DictField from "../orm/DictField";
 
 
 class YearlyCashFlowItemModel extends BaseModel
 {
-    static itemName = new GenericField("name");
-    static year = new GenericField();
-    static relativeYear = new GenericField();
-    static amount = new GenericField();
-    static cashFlowType = new GenericField();
+    static itemName = new StringField("name");
+    static year = new FloatField();
+    static relativeYear = new FloatField();
+    static amount = new FloatField();
+    static cashFlowType = new StringField();
 
     get name()
     {
@@ -27,14 +30,14 @@ class YearlyCashFlowItemModel extends BaseModel
 
 class DiscountedCashFlowSummaryItemModel extends BaseModel
 {
-    static itemName = new GenericField("name");
-    static amounts = new GenericField();
+    static itemName = new StringField("name");
+    static amounts = new DictField(new FloatField());
 }
 
 
 class DiscountedCashFlowSummaryModel extends BaseModel
 {
-    static years = new ListField(new GenericField());
+    static years = new ListField(new FloatField());
 
     static incomes = new ListField(new ModelField(DiscountedCashFlowSummaryItemModel));
     static expenses = new ListField(new ModelField(DiscountedCashFlowSummaryItemModel));

@@ -5,7 +5,7 @@ import ViewLeaseExtractions from "./ViewLeaseExtractions";
 import ViewLeaseReport from "./ViewLeaseReport";
 import {NavLink as RRNavLink} from 'react-router-dom';
 import {Switch, Route} from 'react-router-dom';
-import FileModel from "../models/FileModel";
+import FileModel from "../orm/FileModel";
 
 
 class ViewLease extends React.Component {

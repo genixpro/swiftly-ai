@@ -1,23 +1,24 @@
-import GenericField from "./GenericField";
-import ModelField from "./ModelField";
-import ListField from "./ListField";
-import BaseModel from "./BaseModel";
-import StringField from "./StringField";
-import DateField from "./DateField";
+import GenericField from "../orm/GenericField";
+import ModelField from "../orm/ModelField";
+import ListField from "../orm/ListField";
+import BaseModel from "../orm/BaseModel";
+import StringField from "../orm/StringField";
+import DateField from "../orm/DateField";
 import _ from "underscore";
+import FloatField from "../orm/FloatField";
 
 
 class TenancyModel extends BaseModel
 {
     static tenantName = new StringField("name");
-    static monthlyRent = new GenericField();
-    static yearlyRent = new GenericField();
+    static monthlyRent = new FloatField();
+    static yearlyRent = new FloatField();
     static rentType = new StringField();
     static startDate = new DateField();
     static endDate = new DateField();
-    static freeRentMonths = new GenericField();
-    static managementRecoveryPercentage = new GenericField();
-    static managementRecoveryField = new GenericField();
+    static freeRentMonths = new FloatField();
+    static managementRecoveryPercentage = new FloatField();
+    static managementRecoveryField = new FloatField();
 
     get yearlyRentPSF()
     {
@@ -46,10 +47,10 @@ class UnitModel extends BaseModel
     }
 
     static unitNumber = new StringField();
-    static floorNumber = new GenericField();
-    static squareFootage = new GenericField();
+    static floorNumber = new FloatField();
+    static squareFootage = new FloatField();
     static tenancies = new ListField(new ModelField(TenancyModel));
-    static marketRent = new GenericField();
+    static marketRent = new FloatField();
     static remarks = new StringField();
 
     get currentTenancy()
