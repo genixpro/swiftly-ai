@@ -170,6 +170,85 @@ class ViewDirectComparisonValuation extends React.Component
                                         />
                                         </td>
                                     </tr>
+
+                                    {
+                                        this.props.appraisal.directComparisonValuation.marketRentDifferential ?
+                                            <tr className={"data-row capitalization-row"}>
+                                                <td className={"label-column"}>
+                                                    <span>Market Rent Differential, Discounted @</span>
+                                                    <FieldDisplayEdit
+                                                        type={"percent"}
+                                                        placeholder={"Market Rent Differential Discount Rate"}
+                                                        value={this.props.appraisal.directComparisonValuationInputs ? this.props.appraisal.directComparisonValuationInputs.marketRentDifferentialDiscountRate : 5.0}
+                                                        onChange={(newValue) => this.changeStabilizedInput("marketRentDifferentialDiscountRate", newValue)}
+                                                    />
+                                                </td>
+                                                <td className={"amount-column"}></td>
+                                                <td className={"amount-total-column"}>
+                                                    $<NumberFormat
+                                                    value={this.props.appraisal.directComparisonValuation.marketRentDifferential}
+                                                    displayType={'text'}
+                                                    thousandSeparator={', '}
+                                                    decimalScale={2}
+                                                    fixedDecimalScale={true}
+                                                />
+                                                </td>
+                                            </tr> : null
+                                    }
+                                    {
+                                        this.props.appraisal.directComparisonValuation.freeRentDifferential ?
+                                            <tr className={"data-row capitalization-row"}>
+                                                <td className={"label-column"}>
+                                                    <span>Free Rent Differential</span>
+                                                </td>
+                                                <td className={"amount-column"}></td>
+                                                <td className={"amount-total-column"}>
+                                                    $<NumberFormat
+                                                    value={this.props.appraisal.directComparisonValuation.freeRentDifferential}
+                                                    displayType={'text'}
+                                                    thousandSeparator={', '}
+                                                    decimalScale={2}
+                                                    fixedDecimalScale={true}
+                                                />
+                                                </td>
+                                            </tr> : null
+                                    }
+                                    {
+                                        this.props.appraisal.directComparisonValuation.vacantUnitDifferential ?
+                                            <tr className={"data-row capitalization-row"}>
+                                                <td className={"label-column"}>
+                                                    <span>Vacant Unit Differential</span>
+                                                </td>
+                                                <td className={"amount-column"}></td>
+                                                <td className={"amount-total-column"}>
+                                                    $<NumberFormat
+                                                    value={this.props.appraisal.directComparisonValuation.vacantUnitDifferential}
+                                                    displayType={'text'}
+                                                    thousandSeparator={', '}
+                                                    decimalScale={2}
+                                                    fixedDecimalScale={true}
+                                                />
+                                                </td>
+                                            </tr> : null
+                                    }
+                                    {
+                                        this.props.appraisal.directComparisonValuation.amortizationDifferential ?
+                                            <tr className={"data-row capitalization-row"}>
+                                                <td className={"label-column"}>
+                                                    <span>Amortized Capital Investment</span>
+                                                </td>
+                                                <td className={"amount-column"}></td>
+                                                <td className={"amount-total-column"}>
+                                                    $<NumberFormat
+                                                    value={this.props.appraisal.directComparisonValuation.amortizationDifferential}
+                                                    displayType={'text'}
+                                                    thousandSeparator={', '}
+                                                    decimalScale={2}
+                                                    fixedDecimalScale={true}
+                                                />
+                                                </td>
+                                            </tr> : null
+                                    }
                                     {
                                         this.props.appraisal.directComparisonInputs.modifiers ? this.props.appraisal.directComparisonInputs.modifiers.map((modifier, index) =>
                                         {

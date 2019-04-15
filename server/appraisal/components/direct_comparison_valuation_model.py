@@ -7,10 +7,10 @@ import numpy
 import copy
 import math
 from pprint import pprint
-from ..models.discounted_cash_flow import MonthlyCashFlowItem, YearlyCashFlowItem, DiscountedCashFlow, DiscountedCashFlowSummary, DiscountedCashFlowSummaryItem
 from ..models.direct_comparison_valuation import DirectComparisonValuation
+from .valuation_model_base import ValuationModelBase
 
-class DirectComparisonValuationModel:
+class DirectComparisonValuationModel(ValuationModelBase):
     """ This class encapsulates the code required for producing a stabilized statement"""
 
 
@@ -26,7 +26,12 @@ class DirectComparisonValuationModel:
 
         dca.comparativeValue = appraisal.sizeOfBuilding * appraisal.directComparisonInputs.pricePerSquareFoot
 
-        dca.valuation = dca.comparativeValue
+        dca.marketRentDifferential = self.computeMarketRentDifferentials(appraisal)
+        dca.freeRentDifferential = self.computeFreeRentDifferentials(appraisal)
+        dca.vacantUnitDifferential = self.computeVacantUnitDifferential(appraisal)
+        dca.amortizationDifferential = self.computeAmortizationDifferential(appraisal)
+
+        dca.valuation = dca.comparativeValue + dca.marketRentDifferential + dca.freeRentDifferential + dca.vacantUnitDifferential + dca.amortizationDifferential
 
         for modifier in appraisal.directComparisonInputs.modifiers:
             if modifier.amount:

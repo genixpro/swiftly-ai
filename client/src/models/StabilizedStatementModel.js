@@ -46,6 +46,8 @@ class StabilizedStatementModel extends BaseModel
     static freeRentDifferential = new FloatField();
 
     static vacantUnitDifferential = new FloatField();
+
+    static amortizationDifferential = new FloatField();
 }
 
 export default StabilizedStatementModel;

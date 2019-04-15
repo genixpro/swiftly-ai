@@ -1,5 +1,5 @@
 import React from 'react';
-import { Row, Col, Card, CardBody, Button, DropdownItem, DropdownToggle, Dropdown, DropdownMenu, Alert } from 'reactstrap';
+import { Row, Col, Card, CardBody, Button, ButtonGroup, DropdownItem, DropdownToggle, Dropdown, DropdownMenu, Alert } from 'reactstrap';
 import IncomeStatementEditor from './components/IncomeStatementEditor';
 import AppraisalContentHeader from "./components/AppraisalContentHeader";
 
@@ -62,19 +62,23 @@ class ViewExpenses extends React.Component
                                 {/*{(this.props.appraisal && this.props.appraisal.incomeStatement) ?*/}
                                 <div id={"view-expenses-body"} className={"view-expenses-body"}>
                                     <Row>
-                                        <Col xs={10}>
+                                        <Col xs={9}>
                                             <h3>Expenses</h3>
                                         </Col>
-                                        <Col xs={2}>
-                                            <Dropdown isOpen={this.state.downloadDropdownOpen} toggle={this.toggleDownload.bind(this)}>
-                                                <DropdownToggle caret color={"primary"} className={"download-dropdown-button"}>
-                                                    Download
-                                                </DropdownToggle>
-                                                <DropdownMenu>
-                                                    <DropdownItem onClick={() => this.downloadWordExpenses()}>Expenses Summary (docx)</DropdownItem>
-                                                    <DropdownItem onClick={() => this.downloadExcelExpenses()}>Expenses Spreadsheet (xlsx)</DropdownItem>
-                                                </DropdownMenu>
-                                            </Dropdown>
+                                        <Col xs={3}>
+                                            <ButtonGroup style={{"float": "right"}}>
+                                                <Button color={"primary"} onClick={() => this.changeExpenseMode()}>Set Expenses Based on TMI</Button>
+                                                &nbsp;
+                                                <Dropdown isOpen={this.state.downloadDropdownOpen} toggle={this.toggleDownload.bind(this)}>
+                                                    <DropdownToggle caret color={"primary"} className={"download-dropdown-button"}>
+                                                        Download
+                                                    </DropdownToggle>
+                                                    <DropdownMenu>
+                                                        <DropdownItem onClick={() => this.downloadWordExpenses()}>Expenses Summary (docx)</DropdownItem>
+                                                        <DropdownItem onClick={() => this.downloadExcelExpenses()}>Expenses Spreadsheet (xlsx)</DropdownItem>
+                                                    </DropdownMenu>
+                                                </Dropdown>
+                                            </ButtonGroup>
                                         </Col>
                                     </Row>
 

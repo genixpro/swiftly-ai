@@ -42,6 +42,8 @@ class StabilizedStatement(EmbeddedDocument):
 
     vacantUnitDifferential = FloatField()
 
+    amortizationDifferential = FloatField()
+
     valuation = FloatField()
 
     valuationRounded = FloatField()

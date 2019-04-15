@@ -236,6 +236,24 @@ class ViewCapitalizationValuation extends React.Component
                                             </tr> : null
                                     }
                                     {
+                                        this.props.appraisal.stabilizedStatement.amortizationDifferential ?
+                                            <tr className={"data-row capitalization-row"}>
+                                                <td className={"label-column"}>
+                                                    <span>Amortized Capital Investment</span>
+                                                </td>
+                                                <td className={"amount-column"}></td>
+                                                <td className={"amount-total-column"}>
+                                                    $<NumberFormat
+                                                    value={this.props.appraisal.stabilizedStatement.amortizationDifferential}
+                                                    displayType={'text'}
+                                                    thousandSeparator={', '}
+                                                    decimalScale={2}
+                                                    fixedDecimalScale={true}
+                                                />
+                                                </td>
+                                            </tr> : null
+                                    }
+                                    {
                                         this.props.appraisal.stabilizedStatementInputs.modifiers ? this.props.appraisal.stabilizedStatementInputs.modifiers.map((modifier, index) =>
                                         {
                                             return <tr className={"data-row modifier-row"} key={index}>

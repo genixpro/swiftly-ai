@@ -90,6 +90,11 @@ class ViewAmortization extends React.Component
 
     createNewAmortization(field, value)
     {
+        if (!value)
+        {
+            return;
+        }
+
         const newAmortization = {
         };
 

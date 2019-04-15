@@ -5,11 +5,12 @@ import datetime
 import re
 import numpy
 import copy
+from .valuation_model_base import ValuationModelBase
 import math
 from pprint import pprint
 from ..models.discounted_cash_flow import MonthlyCashFlowItem, YearlyCashFlowItem, DiscountedCashFlow, DiscountedCashFlowSummary, DiscountedCashFlowSummaryItem
 
-class DiscountedCashFlowModel:
+class DiscountedCashFlowModel(ValuationModelBase):
     """ This class encapsulated the information for a discounted cash flow model of an appraisal. """
 
     def __init__(self):
