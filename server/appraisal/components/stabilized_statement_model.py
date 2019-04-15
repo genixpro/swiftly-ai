@@ -24,6 +24,7 @@ class StabilizedStatementModel:
         statement.taxes = self.computeTaxes(appraisal)
         statement.marketRentDifferential = self.computeMarketRentDifferentials(appraisal)
         statement.freeRentDifferential = self.computeFreeRentDifferentials(appraisal)
+        statement.vacantUnitDifferential = self.computeVacantUnitDifferential(appraisal)
         statement.recoverableIncome = self.computeRecoverableOperatingExpenses(appraisal) * self.computeRecoverablePercentage(appraisal) + self.computeManagementRecoveries(appraisal, statement)
 
         statement.potentialGrossIncome = statement.rentalIncome + statement.additionalIncome + statement.recoverableIncome
@@ -40,7 +41,7 @@ class StabilizedStatementModel:
 
         statement.capitalization = statement.netOperatingIncome / (appraisal.stabilizedStatementInputs.capitalizationRate / 100.0)
 
-        statement.valuation = statement.capitalization + statement.marketRentDifferential + statement.freeRentDifferential
+        statement.valuation = statement.capitalization + statement.marketRentDifferential + statement.freeRentDifferential + statement.vacantUnitDifferential
 
         for modifier in appraisal.stabilizedStatementInputs.modifiers:
             if modifier.amount:
@@ -64,6 +65,16 @@ class StabilizedStatementModel:
         for marketRent in appraisal.marketRents:
             if marketRent.name == name:
                 return marketRent.amountPSF
+
+
+    def getStabilizedRent(self, appraisal, unit):
+        if unit.currentTenancy and unit.currentTenancy.yearlyRent:
+            return unit.currentTenancy.yearlyRent
+        else:
+            rent = self.getMarketRent(appraisal, unit.marketRent)
+            if rent:
+                return rent
+            return 0
 
 
     def computeMarketRentDifferentials(self, appraisal):
@@ -132,7 +143,7 @@ class StabilizedStatementModel:
 
         for unit in appraisal.units:
             if unit.currentTenancy.yearlyRent is not None:
-                total += unit.currentTenancy.yearlyRent
+                total += self.getStabilizedRent(appraisal, unit)
 
         return total
 
@@ -199,11 +210,16 @@ class StabilizedStatementModel:
                 if unit.currentTenancy.managementRecoveryField == "rentalIncome":
                     total += (unit.currentTenancy.managementRecoveryPercentage / 100.0) * statement.rentalIncome
 
-        print(total)
-
         return total
 
+    def computeVacantUnitDifferential(self, appraisal):
+        total = 0
 
+        for unit in appraisal.units:
+            if unit.isVacantInFirstYear and unit.squareFootage and unit.marketRent:
+                total += appraisal.discountedCashFlowInputs.tenantInducementsPSF * unit.squareFootage + appraisal.discountedCashFlowInputs.leasingCommission + self.getMarketRent(appraisal, unit.marketRent) * unit.squareFootage
+
+        return -total
 
 
 

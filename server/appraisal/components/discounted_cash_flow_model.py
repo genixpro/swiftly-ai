@@ -26,7 +26,22 @@ class DiscountedCashFlowModel:
         return dcf
 
 
-    def projectRentalCashFlows(self, unitInfo, startYear, endYear, discountCashFlowInputs):
+    def getMarketRent(self, appraisal, name):
+        for marketRent in appraisal.marketRents:
+            if marketRent.name == name:
+                return marketRent.amountPSF
+
+
+    def getStabilizedRent(self, appraisal, unit):
+        if unit.currentTenancy and unit.currentTenancy.yearlyRent:
+            return unit.currentTenancy.yearlyRent
+        else:
+            rent = self.getMarketRent(appraisal, unit.marketRent)
+            if rent:
+                return rent
+            return 0
+
+    def projectRentalCashFlows(self, appraisal, unitInfo, startYear, endYear, discountCashFlowInputs):
         startDate = datetime.datetime(year=startYear, month=1, day=1)
         endDate = datetime.datetime(year=endYear, month=12, day=1)
 
@@ -63,14 +78,14 @@ class DiscountedCashFlowModel:
             elif mode == 'vacancy' and vacancyMonths == discountCashFlowInputs.renewalPeriod:
                 mode = "market_rents"
 
-                rentAmount = discountCashFlowInputs.marketRentPSF * unitInfo.squareFootage * totalInflation
+                rentAmount = self.getStabilizedRent(appraisal, unitInfo) * unitInfo.squareFootage * totalInflation
                 inducementAmount = discountCashFlowInputs.leasingCommission * totalInflation
                 leasingCommissionAmount = discountCashFlowInputs.tenantInducementsPSF * unitInfo.squareFootage * totalInflation
 
             elif mode == 'market_rents':
                 mode = "market_rents"
 
-                rentAmount = discountCashFlowInputs.marketRentPSF * unitInfo.squareFootage * totalInflation
+                rentAmount = self.getStabilizedRent(appraisal, unitInfo) * unitInfo.squareFootage * totalInflation
                 inducementAmount = 0
                 leasingCommissionAmount = 0
 
@@ -145,7 +160,7 @@ class DiscountedCashFlowModel:
         cashFlows = []
 
         for unit in appraisal.units:
-            cashFlows.extend(self.projectRentalCashFlows(unit, startYear=datetime.datetime.now().year, endYear=datetime.datetime.now().year + 10, discountCashFlowInputs=appraisal.discountedCashFlowInputs))
+            cashFlows.extend(self.projectRentalCashFlows(appraisal, unit, startYear=datetime.datetime.now().year, endYear=datetime.datetime.now().year + 10, discountCashFlowInputs=appraisal.discountedCashFlowInputs))
 
         # Group by month, year, and name
         grouped = {}

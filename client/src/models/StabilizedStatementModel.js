@@ -43,6 +43,8 @@ class StabilizedStatementModel extends BaseModel
     static marketRentDifferential = new GenericField();
 
     static freeRentDifferential = new GenericField();
+
+    static vacantUnitDifferential = new GenericField();
 }
 
 export default StabilizedStatementModel;

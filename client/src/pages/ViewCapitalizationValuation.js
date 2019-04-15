@@ -135,7 +135,7 @@ class ViewCapitalizationValuation extends React.Component
                                                     // onRemoveComparableClicked={(comp) => this.removeComparableFromAppraisal(comp)}
                                                     // onChange={(comps) => this.onComparablesChanged(comps)}
                                 />
-
+                                <h3>Valuation</h3>
                                 <Table className={"statement-table "}>
                                     <tbody>
                                     <tr className={"title-row"}>
@@ -211,6 +211,24 @@ class ViewCapitalizationValuation extends React.Component
                                                 <td className={"amount-total-column"}>
                                                     $<NumberFormat
                                                     value={this.props.appraisal.stabilizedStatement.freeRentDifferential}
+                                                    displayType={'text'}
+                                                    thousandSeparator={', '}
+                                                    decimalScale={2}
+                                                    fixedDecimalScale={true}
+                                                />
+                                                </td>
+                                            </tr> : null
+                                    }
+                                    {
+                                        this.props.appraisal.stabilizedStatement.vacantUnitDifferential ?
+                                            <tr className={"data-row capitalization-row"}>
+                                                <td className={"label-column"}>
+                                                    <span>Vacant Unit Differential</span>
+                                                </td>
+                                                <td className={"amount-column"}></td>
+                                                <td className={"amount-total-column"}>
+                                                    $<NumberFormat
+                                                    value={this.props.appraisal.stabilizedStatement.vacantUnitDifferential}
                                                     displayType={'text'}
                                                     thousandSeparator={', '}
                                                     decimalScale={2}

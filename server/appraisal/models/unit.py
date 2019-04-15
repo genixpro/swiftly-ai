@@ -82,6 +82,28 @@ class Unit(EmbeddedDocument):
         else:
             return None
 
+    @property
+    def isVacantInFirstYear(self):
+        # We check to see if it is vacant within the first year, and if so,
+        oneYearDateTime = datetime.datetime.now() + datetime.timedelta(days=365)
+
+        if len(self.tenancies) > 0:
+            for tenancy in self.tenancies:
+                if tenancy.startDate is not None and oneYearDateTime >= tenancy.startDate and tenancy.endDate is not None and oneYearDateTime <= tenancy.endDate:
+                    if tenancy.yearlyRent and tenancy.yearlyRent > 0:
+                        return False
+
+            sortedTenancies = sorted(self.tenancies, key=lambda tenancy: (tenancy.startDate if tenancy.startDate is not None else oneYearDateTime) )
+
+            firstTenancy = sortedTenancies[-1]
+
+            if firstTenancy.yearlyRent and firstTenancy.yearlyRent > 0:
+                return False
+
+            return True
+        else:
+            return True
+
 
     def findTenancyAtDate(self, tenancyDate):
         for tenancy in self.tenancies:

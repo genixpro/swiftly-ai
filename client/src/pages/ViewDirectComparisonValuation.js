@@ -135,6 +135,7 @@ class ViewDirectComparisonValuation extends React.Component
                                     // onChange={(comps) => this.onComparablesChanged(comps)}
                                 />
 
+                                <h3>Valuation</h3>
                                 <Table className={"statement-table "}>
                                     <tbody>
                                     {/*<tr className={"data-row"}>*/}

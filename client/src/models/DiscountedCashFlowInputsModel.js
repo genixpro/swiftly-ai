@@ -12,7 +12,6 @@ class DiscountedCashFlowInputsModel extends BaseModel
     static tenantInducementsPSF = new GenericField();
     static renewalPeriod = new GenericField();
     static leasingPeriod = new GenericField();
-    static marketRentPSF = new GenericField();
 }
 
 export default DiscountedCashFlowInputsModel;

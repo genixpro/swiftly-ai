@@ -38,6 +38,8 @@ class StabilizedStatement(EmbeddedDocument):
 
     freeRentDifferential = FloatField()
 
+    vacantUnitDifferential = FloatField()
+
     valuation = FloatField()
 
     valuationRounded = FloatField()

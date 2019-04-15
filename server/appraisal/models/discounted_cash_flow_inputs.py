@@ -3,6 +3,8 @@ import datetime
 
 
 class DiscountedCashFlowInputs(EmbeddedDocument):
+    meta = {'strict': False}
+
     # The inflation rate that will be applied to this model
     inflation = FloatField(default=2.0)
 
@@ -20,8 +22,5 @@ class DiscountedCashFlowInputs(EmbeddedDocument):
 
     # This is the period of time, in months, that a typical tenant will lease the space for
     leasingPeriod = IntField(default=60)
-
-    # This is the market rent for a given property, given as rent per square foot
-    marketRentPSF = FloatField(default=10)
 
 
