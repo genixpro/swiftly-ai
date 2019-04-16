@@ -93,23 +93,23 @@ class AppraisalValidator:
 
 
     def checkExpenses(self, appraisal):
-        if appraisal.stabilizedStatement.operatingExpenses > 0:
+        if appraisal.stabilizedStatement.operatingExpenses and appraisal.stabilizedStatement.operatingExpenses > 0:
             return True
         return False
 
 
     def checkTaxes(self, appraisal):
-        if appraisal.stabilizedStatement.taxes > 0:
+        if appraisal.stabilizedStatement.taxes and appraisal.stabilizedStatement.taxes > 0:
             return True
         return False
 
     def checkAdditionalIncome(self, appraisal):
-        if appraisal.stabilizedStatement.additionalIncome > 0:
+        if appraisal.stabilizedStatement.additionalIncome and appraisal.stabilizedStatement.additionalIncome > 0:
             return True
         return False
 
     def checkAmortization(self, appraisal):
-        if appraisal.stabilizedStatement.amortizationDifferential > 0:
+        if appraisal.stabilizedStatement.amortizationDifferential and appraisal.stabilizedStatement.amortizationDifferential > 0:
             return True
         return False
 
