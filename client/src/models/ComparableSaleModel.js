@@ -12,7 +12,6 @@ class ComparableSaleModel extends EquationMdoel
     static _id = new IdField();
 
     static imageUrl = new StringField();
-    static comparableName = new StringField("name");
     static address = new StringField();
     static location = new GenericField();
     static propertyType = new StringField();

@@ -4,6 +4,16 @@ from .unit import Unit
 from .date_field import ConvertingDateField
 
 
+class RentEscalation(EmbeddedDocument):
+    meta = {'strict': False}
+
+    startYear = FloatField()
+
+    endYear = FloatField()
+
+    yearlyRent = FloatField()
+
+
 class ComparableLease(Document):
     meta = {'collection': 'comparable_leases', 'strict': False}
 
@@ -22,17 +32,14 @@ class ComparableLease(Document):
     # The size of the unit in square-feet
     sizeOfUnit = FloatField()
 
-    # The yearly rent for the unit
-    yearlyRent = FloatField()
+    # The rent escalations for this lease
+    rentEscalations = ListField(EmbeddedDocumentField(RentEscalation))
 
     # Tenant inducements in plain text
     tenantInducements = StringField()
 
     # Free rent in plain text
     freeRent = StringField()
-
-    # Escalations described in plain text
-    escalations = StringField()
 
     # The description of the comparable
     description = StringField()

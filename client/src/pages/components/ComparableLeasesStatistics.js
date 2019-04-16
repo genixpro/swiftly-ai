@@ -45,19 +45,19 @@ class ComparableLeasesStatistics extends React.Component
                 sizeCount += 1;
             }
 
-            if (_.isNumber(comparable.yearlyRent))
+            if (_.isNumber(comparable.startingYearlyRent))
             {
-                if (minRent === null || comparable.yearlyRent < minRent)
+                if (minRent === null || comparable.startingYearlyRent < minRent)
                 {
-                    minRent = comparable.yearlyRent;
+                    minRent = comparable.startingYearlyRent;
                 }
 
-                if (maxRent === null || comparable.yearlyRent > maxRent)
+                if (maxRent === null || comparable.startingYearlyRent > maxRent)
                 {
-                    maxRent = comparable.yearlyRent;
+                    maxRent = comparable.startingYearlyRent;
                 }
 
-                totalRent += comparable.yearlyRent;
+                totalRent += comparable.startingYearlyRent;
                 rentCount += 1;
             }
 

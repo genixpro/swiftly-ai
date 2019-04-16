@@ -24,9 +24,9 @@ class ComparableLeaseAPI(object):
         if 'sizeOfUnitTo' in self.request.GET:
             query['sizeOfUnit__lt'] = self.request.GET['sizeOfUnitTo']
         if 'yearlyRentFrom' in self.request.GET:
-            query['yearlyRent__gt'] = self.request.GET['yearlyRentFrom']
+            query['rentEscalations__0__yearlyRent__gt'] = self.request.GET['yearlyRentFrom']
         if 'yearlyRentTo' in self.request.GET:
-            query['yearlyRent__lt'] = self.request.GET['yearlyRentTo']
+            query['rentEscalations__0__yearlyRent__lt'] = self.request.GET['yearlyRentTo']
         if 'leaseDateFrom' in self.request.GET:
             query['leaseDate__gt'] = self.request.GET['leaseDateFrom']
         if 'leaseDateTo' in self.request.GET:

@@ -39,17 +39,6 @@ class ComparableSaleListItem extends React.Component
         });
     }
 
-    createNewComparable(newComparable)
-    {
-        axios.post(`/comparable_sales`, newComparable).then((response) =>
-        {
-            const comparable = this.state.comparableSale;
-            comparable["_id"] = response.data._id;
-            comparable[ComparableSaleListItem._newSale] = true;
-            this.props.onChange(comparable);
-        });
-    }
-
 
     changeComparableField(field, newValue)
     {
@@ -68,7 +57,7 @@ class ComparableSaleListItem extends React.Component
         }
         else
         {
-            this.createNewComparable(comparable);
+            this.props.onChange(comparable);
         }
     }
 

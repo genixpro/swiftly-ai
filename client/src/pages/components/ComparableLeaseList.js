@@ -85,11 +85,14 @@ class ComparableLeaseList extends React.Component
 
     addNewComparable(newComparable)
     {
-        // const comparables = this.props.comparableLeases;
-        // comparables.push(newComparable);
+        axios.post(`/comparable_leases`, newComparable).then((response) =>
+        {
+            newComparable["_id"] = response.data._id;
+            newComparable[ComparableLeaseListItem._newLease] = true;
 
-        this.props.onNewComparable(newComparable);
-        this.setState({isCreatingNewItem: false, newComparableLease: ComparableLeaseModel.create({})})
+            this.props.onNewComparable(newComparable);
+            this.setState({isCreatingNewItem: false, newComparableLease: ComparableLeaseModel.create({})})
+        });
     }
 
     updateComparable(changedComp, index)
@@ -189,8 +192,8 @@ class ComparableLeaseList extends React.Component
                                     <Col xs={2} className={"header-field-column"} onClick={() => this.changeSortColumn("sizeOfUnit")}>
                                         Size (sf) <SortDirection field={"sizeOfUnit"} sort={this.props.sort} />
                                     </Col>
-                                    <Col xs={2} className={"header-field-column"} onClick={() => this.changeSortColumn("yearlyRent")}>
-                                        Rent ($) <SortDirection field={"yearlyRent"} sort={this.props.sort} />
+                                    <Col xs={2} className={"header-field-column"} onClick={() => this.changeSortColumn("rentEscalations")}>
+                                        Rent ($) <SortDirection field={"rentEscalations"} sort={this.props.sort} />
                                         <br/>
                                         Free Rent
                                     </Col>

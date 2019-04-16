@@ -5,6 +5,7 @@ import ComparableSalesStatistics from "./ComparableSalesStatistics"
 import { Button, Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
 import SortDirection from "./SortDirection";
 import ComparableSaleModel from "../../models/ComparableSaleModel";
+import axios from "axios/index";
 
 
 class ComparableSaleList extends React.Component
@@ -48,8 +49,14 @@ class ComparableSaleList extends React.Component
 
     addNewComparable(newComparable)
     {
-        this.props.onNewComparable(newComparable);
-        this.setState({isCreatingNewItem: false, newComparableSale: ComparableSaleModel.create({})})
+        axios.post(`/comparable_sales`, newComparable).then((response) =>
+        {
+            newComparable["_id"] = response.data._id;
+            newComparable[ComparableSaleListItem._newSale] = true;
+
+            this.props.onNewComparable(newComparable);
+            this.setState({isCreatingNewItem: false, newComparableSale: ComparableSaleModel.create({})})
+        });
     }
 
     updateComparable(changedComp, index)
