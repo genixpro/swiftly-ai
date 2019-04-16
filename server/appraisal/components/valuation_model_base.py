@@ -1,6 +1,9 @@
 from dateutil.relativedelta import relativedelta
 import datetime
 import math
+import copy
+import dateutil
+
 
 class ValuationModelBase:
     """ Base class for valuation models, with some common functionality. """
@@ -50,7 +53,7 @@ class ValuationModelBase:
 
         for unit in appraisal.units:
             if unit.currentTenancy and unit.currentTenancy.yearlyRent and unit.currentTenancy.freeRentMonths:
-                monthsFromStart = dateutil.relativedelta(datetime.datetime.now(), unit.currentTenancy.startDate).months()
+                monthsFromStart = relativedelta(datetime.datetime.now(), unit.currentTenancy.startDate).months
                 freeRentMonthsRemaining = int(max(unit.currentTenancy.freeRentMonths - monthsFromStart, 0))
 
                 differential = freeRentMonthsRemaining * unit.currentTenancy.yearlyRent / 12.0

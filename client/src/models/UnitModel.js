@@ -29,6 +29,7 @@ class TenancyModel extends BaseModel
     {
         this.yearlyRent = newValue * this.parent.squareFootage;
         this.monthlyRent = this.yearlyRent / 12.0;
+        this.setDirtyField("yearlyRent");
     }
 }
 
@@ -50,7 +51,7 @@ class UnitModel extends BaseModel
     static floorNumber = new FloatField();
     static squareFootage = new FloatField();
     static tenancies = new ListField(new ModelField(TenancyModel));
-    static marketRent = new FloatField();
+    static marketRent = new StringField();
     static remarks = new StringField();
 
     get currentTenancy()

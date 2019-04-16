@@ -12,7 +12,7 @@ class IncomeStatementItemModel extends BaseModel
 {
     static itemName = new StringField("name");
     static yearlyAmounts = new DictField(new FloatField());
-    static yearlySourceTypes = new StringField();
+    static yearlySourceTypes = new DictField(new StringField());
     static extractionReferences = new DictField(new DictField(new GenericField()));
     static cashFlowType = new StringField();
     static incomeStatementItemType = new StringField();
@@ -56,6 +56,7 @@ class IncomeStatementItemModel extends BaseModel
         });
 
         this.yearlyAmounts = yearly;
+        this.setDirtyField("yearlyAmounts");
     }
 }
 

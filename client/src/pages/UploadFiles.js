@@ -18,6 +18,7 @@ class UploadFiles extends React.Component {
 
     componentDidMount()
     {
+        this.props.reloadAppraisal();
         this.appraisalId = this.props.match.params['id'];
     }
 

@@ -18,5 +18,32 @@ class AppraisalValidationResult(EmbeddedDocument):
 
     hasRentRoll = BooleanField(default=False)
 
-    hasIncomeStatement = BooleanField(default=False)
+    hasFinancialInfo = BooleanField(default=False)
 
+    hasExpenses = BooleanField(default=False)
+
+    hasTaxes = BooleanField(default=False)
+
+    hasAdditionalIncome = BooleanField(default=False)
+
+    hasAmortizations = BooleanField(default=False)
+
+    hasEscalations = BooleanField(default=False)
+
+    hasRents = BooleanField(default=False)
+
+    hasTenantNames = BooleanField(default=False)
+
+    hasUnitSizes = BooleanField(default=False)
+
+    hasLeaseTerms = BooleanField(default=False)
+
+    hasPropertyType = BooleanField(default=False)
+
+    hasBuildingSize = BooleanField(default=False)
+
+    hasLotSize = BooleanField(default=False)
+
+    hasZoning = BooleanField(default=False)
+
+    hasAddress = BooleanField(default=False)

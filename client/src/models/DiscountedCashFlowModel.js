@@ -23,6 +23,7 @@ class YearlyCashFlowItemModel extends BaseModel
     set name(val)
     {
         this.itemName = val;
+        this.setDirtyField("name");
     }
 }
 
