@@ -49,7 +49,7 @@ class ViewExpenses extends React.Component
                         <Card className="card-default">
                             <CardBody>
                                 {
-                                    !this.props.appraisal.validationResult.hasFinancialInfo ?
+                                    !this.props.appraisal.validationResult.hasExpenses ?
                                         <Alert color={"warning"}>
                                             <span>You have not uploaded any expenses for this appraisal. Would you like to set expenses based on TMI rates?</span>
                                             &nbsp;
