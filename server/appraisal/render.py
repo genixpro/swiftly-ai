@@ -5,9 +5,11 @@ import collada, collada.source
 import io
 import pkg_resources
 from .models.appraisal import Appraisal
+from pyramid.security import Authenticated
+from pyramid.authorization import Allow, Deny, Everyone
 
 
-@resource(path='/appraisal/{appraisalId}/building', renderer='bson', cors_enabled=True, cors_origins="*")
+@resource(path='/appraisal/{appraisalId}/building', renderer='bson', cors_enabled=True, cors_origins="*", permission="everything")
 class BuildingModelAPI(object):
 
     def __init__(self, request, context=None):

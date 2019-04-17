@@ -29,6 +29,8 @@ from docx.enum.dml import MSO_THEME_COLOR
 from docx.oxml.ns import nsdecls
 from docx.oxml import parse_xml
 import docx
+from pyramid.security import Authenticated
+from pyramid.authorization import Allow, Deny, Everyone
 
 
 class ExportAPI(object):
@@ -99,14 +101,17 @@ class ExportAPI(object):
 
                 return buffer
 
-@resource(path='/appraisal/{appraisalId}/comparable_sales/excel', cors_enabled=True, cors_origins="*")
+@resource(path='/appraisal/{appraisalId}/comparable_sales/excel', cors_enabled=True, cors_origins="*", permission="everything")
 class ComparableSalesExcelFile(ExportAPI):
 
     def __init__(self, request, context=None):
         self.request = request
 
     def __acl__(self):
-        return [(Allow, Everyone, 'everything')]
+        return [
+            (Allow, Authenticated, 'everything'),
+            (Deny, Everyone, 'everything')
+        ]
 
     def get(self):
         appraisalId = self.request.matchdict['appraisalId']
@@ -160,14 +165,17 @@ class ComparableSalesExcelFile(ExportAPI):
 
 
 
-@resource(path='/appraisal/{appraisalId}/comparable_sales/word', cors_enabled=True, cors_origins="*")
+@resource(path='/appraisal/{appraisalId}/comparable_sales/word', cors_enabled=True, cors_origins="*", permission="everything")
 class ComparableSalesWordFile(ExportAPI):
 
     def __init__(self, request, context=None):
         self.request = request
 
     def __acl__(self):
-        return [(Allow, Everyone, 'everything')]
+        return [
+            (Allow, Authenticated, 'everything'),
+            (Deny, Everyone, 'everything')
+        ]
 
     def get(self):
         appraisalId = self.request.matchdict['appraisalId']
@@ -191,14 +199,17 @@ class ComparableSalesWordFile(ExportAPI):
 
 
 
-@resource(path='/appraisal/{appraisalId}/comparable_sales/detailed_word', cors_enabled=True, cors_origins="*")
+@resource(path='/appraisal/{appraisalId}/comparable_sales/detailed_word', cors_enabled=True, cors_origins="*", permission="everything")
 class ComparableSalesDetailedWordFile(ExportAPI):
 
     def __init__(self, request, context=None):
         self.request = request
 
     def __acl__(self):
-        return [(Allow, Everyone, 'everything')]
+        return [
+            (Allow, Authenticated, 'everything'),
+            (Deny, Everyone, 'everything')
+        ]
 
 
     def addHeaderFormatting(self, cell):
@@ -239,14 +250,17 @@ class ComparableSalesDetailedWordFile(ExportAPI):
 
 
 
-@resource(path='/appraisal/{appraisalId}/comparable_leases/excel', cors_enabled=True, cors_origins="*")
+@resource(path='/appraisal/{appraisalId}/comparable_leases/excel', cors_enabled=True, cors_origins="*", permission="everything")
 class ComparableLeasesExcelFile(ExportAPI):
 
     def __init__(self, request, context=None):
         self.request = request
 
     def __acl__(self):
-        return [(Allow, Everyone, 'everything')]
+        return [
+            (Allow, Authenticated, 'everything'),
+            (Deny, Everyone, 'everything')
+        ]
 
     def get(self):
         appraisalId = self.request.matchdict['appraisalId']
@@ -295,15 +309,18 @@ class ComparableLeasesExcelFile(ExportAPI):
 
 
 
-@resource(path='/appraisal/{appraisalId}/comparable_leases/word', cors_enabled=True, cors_origins="*")
+@resource(path='/appraisal/{appraisalId}/comparable_leases/word', cors_enabled=True, cors_origins="*", permission="everything")
 class ComparableLeasesWordFile(ExportAPI):
 
     def __init__(self, request, context=None):
         self.request = request
 
-    def __acl__(self):
-        return [(Allow, Everyone, 'everything')]
 
+    def __acl__(self):
+        return [
+            (Allow, Authenticated, 'everything'),
+            (Deny, Everyone, 'everything')
+        ]
 
     def addHeaderFormatting(self, cell):
         self.addBackground(cell, "33339A")
@@ -370,14 +387,17 @@ class ComparableLeasesWordFile(ExportAPI):
 
 
 
-@resource(path='/appraisal/{appraisalId}/rent_roll/word', cors_enabled=True, cors_origins="*")
+@resource(path='/appraisal/{appraisalId}/rent_roll/word', cors_enabled=True, cors_origins="*", permission="everything")
 class RentRollWordFile(ExportAPI):
 
     def __init__(self, request, context=None):
         self.request = request
 
     def __acl__(self):
-        return [(Allow, Everyone, 'everything')]
+        return [
+            (Allow, Authenticated, 'everything'),
+            (Deny, Everyone, 'everything')
+        ]
 
 
     def addHeaderFormatting(self, cell):
@@ -403,14 +423,17 @@ class RentRollWordFile(ExportAPI):
 
 
 
-@resource(path='/appraisal/{appraisalId}/rent_roll/excel', cors_enabled=True, cors_origins="*")
+@resource(path='/appraisal/{appraisalId}/rent_roll/excel', cors_enabled=True, cors_origins="*", permission="everything")
 class RentRollExcelFile(ExportAPI):
 
     def __init__(self, request, context=None):
         self.request = request
 
     def __acl__(self):
-        return [(Allow, Everyone, 'everything')]
+        return [
+            (Allow, Authenticated, 'everything'),
+            (Deny, Everyone, 'everything')
+        ]
 
     def get(self):
         appraisalId = self.request.matchdict['appraisalId']
@@ -459,14 +482,17 @@ class RentRollExcelFile(ExportAPI):
 
 
 
-@resource(path='/appraisal/{appraisalId}/expenses/word', cors_enabled=True, cors_origins="*")
+@resource(path='/appraisal/{appraisalId}/expenses/word', cors_enabled=True, cors_origins="*", permission="everything")
 class ExpensesWordFile(ExportAPI):
 
     def __init__(self, request, context=None):
         self.request = request
 
     def __acl__(self):
-        return [(Allow, Everyone, 'everything')]
+        return [
+            (Allow, Authenticated, 'everything'),
+            (Deny, Everyone, 'everything')
+        ]
 
     def get(self):
         appraisalId = self.request.matchdict['appraisalId']
@@ -486,15 +512,17 @@ class ExpensesWordFile(ExportAPI):
         return response
 
 
-@resource(path='/appraisal/{appraisalId}/expenses/excel', cors_enabled=True, cors_origins="*")
+@resource(path='/appraisal/{appraisalId}/expenses/excel', cors_enabled=True, cors_origins="*", permission="everything")
 class ExpensesExcelFile(ExportAPI):
 
     def __init__(self, request, context=None):
         self.request = request
 
     def __acl__(self):
-        return [(Allow, Everyone, 'everything')]
-
+        return [
+            (Allow, Authenticated, 'everything'),
+            (Deny, Everyone, 'everything')
+        ]
     def get(self):
         appraisalId = self.request.matchdict['appraisalId']
 

@@ -5,9 +5,11 @@ import bson
 import tempfile
 import subprocess
 import os
+from pyramid.security import Authenticated
+from pyramid.authorization import Allow, Deny, Everyone
 
 
-@resource(collection_path='/appraisal/{appraisalId}/financial_statements', path='/appraisal/{appraisalId}/financial_statements/{id}', renderer='bson', cors_enabled=True, cors_origins="*")
+@resource(collection_path='/appraisal/{appraisalId}/financial_statements', path='/appraisal/{appraisalId}/financial_statements/{id}', renderer='bson', cors_enabled=True, cors_origins="*", permission="everything")
 class FinancialStatementAPI(object):
 
     def __init__(self, request, context=None):
@@ -16,7 +18,10 @@ class FinancialStatementAPI(object):
         self.appraisalsCollection = request.registry.db['appraisals']
 
     def __acl__(self):
-        return [(Allow, Everyone, 'everything')]
+        return [
+            (Allow, Authenticated, 'everything'),
+            (Deny, Everyone, 'everything')
+        ]
 
     def collection_get(self):
         appraisalId = self.request.matchdict['appraisalId']

@@ -30,7 +30,14 @@ axios.defaults.baseURL = process.env.VALUATE_ENVIRONMENT.REACT_APP_SERVER_URL;
 axios.interceptors.response.use(function (response) {
     // Do something with response data
     return response;
-}, function (error) {
+}, function (error)
+{
+    if (error.response.status === 401)
+    {
+        Auth.logout();
+        return (Promise.reject(error));
+    }
+
     console.log(error.toString());
     alert(error.toString());
     // Do something with response error

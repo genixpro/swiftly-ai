@@ -30,7 +30,8 @@ requires = [
     'scipy',
     'scikit-learn',
     'openpyxl',
-    "scikit-image"
+    "scikit-image",
+    "jwcrypto"
 ]
 
 tests_require = [

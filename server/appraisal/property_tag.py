@@ -7,9 +7,11 @@ import tempfile
 import subprocess
 import os
 import json
+from pyramid.security import Authenticated
+from pyramid.authorization import Allow, Deny, Everyone
 
 
-@resource(collection_path='/property_tags', path='/property_tag/{id}', renderer='bson', cors_enabled=True, cors_origins="*")
+@resource(collection_path='/property_tags', path='/property_tag/{id}', renderer='bson', cors_enabled=True, cors_origins="*", permission="everything")
 class PropertyTagAPI(object):
 
     def __init__(self, request, context=None):
@@ -17,7 +19,10 @@ class PropertyTagAPI(object):
 
 
     def __acl__(self):
-        return [(Allow, Everyone, 'everything')]
+        return [
+            (Allow, Authenticated, 'everything'),
+            (Deny, Everyone, 'everything')
+        ]
 
     def collection_get(self):
         query = {}

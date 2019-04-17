@@ -7,15 +7,21 @@ import subprocess
 import json
 import os
 from .models.comparable_sale import ComparableSale
+from pyramid.security import Authenticated
+from pyramid.authorization import Allow, Deny, Everyone
 
-@resource(collection_path='/comparable_sales', path='/comparable_sales/{id}', renderer='bson', cors_enabled=True, cors_origins="*")
+@resource(collection_path='/comparable_sales', path='/comparable_sales/{id}', renderer='bson', cors_enabled=True, cors_origins="*", permission="everything")
 class ComparableSaleAPI(object):
 
     def __init__(self, request, context=None):
         self.request = request
 
+
     def __acl__(self):
-        return [(Allow, Everyone, 'everything')]
+        return [
+            (Allow, Authenticated, 'everything'),
+            (Deny, Everyone, 'everything')
+        ]
 
     def collection_get(self):
         query = {}

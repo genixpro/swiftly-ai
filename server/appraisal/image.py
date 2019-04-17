@@ -9,15 +9,20 @@ import os
 import io
 import skimage.io
 from .models.image import Image
+from pyramid.security import Authenticated
+from pyramid.authorization import Allow, Deny, Everyone
 
-@resource(collection_path='/images', path='/images/{id}', renderer='bson', cors_enabled=True, cors_origins="*")
+@resource(collection_path='/images', path='/images/{id}', renderer='bson', cors_enabled=True, cors_origins="*", permission="everything")
 class ImageAPI(object):
 
     def __init__(self, request, context=None):
         self.request = request
 
     def __acl__(self):
-        return [(Allow, Everyone, 'everything')]
+        return [
+            (Allow, Authenticated, 'everything'),
+            (Deny, Everyone, 'everything')
+        ]
 
     def collection_post(self):
         # Get the data for the file out from the request object

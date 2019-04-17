@@ -7,15 +7,21 @@ import subprocess
 import json
 import os
 from .models.comparable_lease import ComparableLease
+from pyramid.security import Authenticated
+from pyramid.authorization import Allow, Deny, Everyone
 
-@resource(collection_path='/comparable_leases', path='/comparable_leases/{id}', renderer='bson', cors_enabled=True, cors_origins="*")
+@resource(collection_path='/comparable_leases', path='/comparable_leases/{id}', renderer='bson', cors_enabled=True, cors_origins="*", permission="everything")
 class ComparableLeaseAPI(object):
 
     def __init__(self, request, context=None):
         self.request = request
 
+
     def __acl__(self):
-        return [(Allow, Everyone, 'everything')]
+        return [
+            (Allow, Authenticated, 'everything'),
+            (Deny, Everyone, 'everything')
+        ]
 
     def collection_get(self):
         query = {}

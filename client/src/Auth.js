@@ -1,9 +1,11 @@
 import auth0 from 'auth0-js';
 // src/Auth/Auth.js
+import axios from "axios";
 
 import history from './history';
 
-class Auth {
+class Auth
+{
     accessToken;
     idToken;
     expiresAt;
@@ -13,15 +15,18 @@ class Auth {
         domain: 'swiftlyai.auth0.com',
         clientID: 't0b5CDsYetGq67O5oM3KNzeZYZSfdVEF',
         redirectUri: 'http://localhost:3000/callback',
+        audience: process.env.VALUATE_ENVIRONMENT.REACT_APP_SERVER_URL.replace("https://", "http://"),
         responseType: 'token id_token',
-        scope: 'openid'
+        scope: 'openid email profile'
     });
 
-    login() {
+    login()
+    {
         this.auth0.authorize();
     }
 
-    constructor() {
+    constructor()
+    {
         this.login = this.login.bind(this);
         this.logout = this.logout.bind(this);
         this.handleAuthentication = this.handleAuthentication.bind(this);
@@ -31,12 +36,16 @@ class Auth {
         this.renewSession = this.renewSession.bind(this);
     }
 
-    handleAuthentication(done) {
-        this.auth0.parseHash((err, authResult) => {
-            if (authResult && authResult.accessToken && authResult.idToken) {
+    handleAuthentication(done)
+    {
+        this.auth0.parseHash((err, authResult) =>
+        {
+            if (authResult && authResult.accessToken && authResult.idToken)
+            {
                 this.setSession(authResult);
                 done();
-            } else if (err) {
+            } else if (err)
+            {
                 history.replace('/appraisals');
                 console.log(err);
                 alert(`Error: ${err.error}. Check the console for further details.`);
@@ -44,15 +53,31 @@ class Auth {
         });
     }
 
-    getAccessToken() {
+    updateAxiosToken()
+    {
+        if (this.accessToken)
+        {
+            axios.defaults.headers.common['Authorization'] = 'Basic ' + btoa(this.userId + ':' + this.accessToken);
+            // axios.defaults.headers.common['Authorization'] = 'Bearer testing';
+        }
+        else
+        {
+            axios.defaults.headers.common['Authorization'] = '';
+        }
+    }
+
+    getAccessToken()
+    {
         return this.accessToken;
     }
 
-    getIdToken() {
+    getIdToken()
+    {
         return this.idToken;
     }
 
-    setSession(authResult) {
+    setSession(authResult)
+    {
         // Set isLoggedIn flag in localStorage
         localStorage.setItem('isLoggedIn', true);
 
@@ -61,27 +86,37 @@ class Auth {
         this.accessToken = authResult.accessToken;
         this.idToken = authResult.idToken;
         this.expiresAt = expiresAt;
+        this.userId = (authResult.idTokenPayload.sub || authResult.idTokenPayload.user_id);
+
 
         localStorage.setItem('accessToken', this.accessToken);
         localStorage.setItem('idToken', this.idToken);
         localStorage.setItem('expiresAt', this.expiresAt);
+        localStorage.setItem('userId', this.userId);
+        this.updateAxiosToken();
     }
 
     loadSession()
     {
-        if(localStorage.getItem("isLoggedIn"))
+        if (localStorage.getItem("isLoggedIn"))
         {
             this.accessToken = localStorage.getItem("accessToken");
             this.idToken = localStorage.getItem("idToken");
             this.expiresAt = localStorage.getItem("expiresAt");
+            this.userId = localStorage.getItem("userId");
+            this.updateAxiosToken();
         }
     }
 
-    renewSession() {
-        this.auth0.checkSession({}, (err, authResult) => {
-            if (authResult && authResult.accessToken && authResult.idToken) {
+    renewSession()
+    {
+        this.auth0.checkSession({}, (err, authResult) =>
+        {
+            if (authResult && authResult.accessToken && authResult.idToken)
+            {
                 this.setSession(authResult);
-            } else if (err) {
+            } else if (err)
+            {
                 this.logout();
                 console.log(err);
                 alert(`Could not get a new token (${err.error}: ${err.error_description}).`);
