@@ -1,7 +1,7 @@
 import React from 'react';
 
 
-class ManagementRecoveryFieldSelector extends React.Component
+class RecoveryStructureSelector extends React.Component
 {
     onChangeValue(newValue)
     {
@@ -32,6 +32,19 @@ class ManagementRecoveryFieldSelector extends React.Component
 
     render()
     {
+        if (!this.props.recoveryStructures)
+        {
+            return null;
+        }
+
+        const options = [
+            <option value={""} key={"blank"}>Recovery Structure</option>
+        ].concat(
+            this.props.recoveryStructures.map((recovery) =>
+            {
+                return <option key={recovery.name} value={recovery.name}>{recovery.name}</option>
+            }));
+
         return (
             <select
                 className="custom-select"
@@ -42,14 +55,11 @@ class ManagementRecoveryFieldSelector extends React.Component
                 disabled={this.props.disabled}
                 style={{"color": !this.props.value ? "lightgrey" : ""}}
             >
-                <option value={""}>&nbsp;</option>
-                <option value={"operatingExpenses"}>Operating Expenses</option>
-                <option value={"managementExpenses"}>Management Expenses</option>
-                <option value={"rentalIncome"}>Rental Income</option>
+                {options}
             </select>
         );
     }
 }
 
 
-export default ManagementRecoveryFieldSelector;
+export default RecoveryStructureSelector;

@@ -61,13 +61,13 @@ class ViewExpensesTMI extends React.Component
     {
         const appraisal = this.props.appraisal;
         appraisal.stabilizedStatementInputs[key] = newValue;
-        this.props.saveDocument(appraisal);
+        this.props.saveAppraisal(appraisal);
     }
 
     changeExpenseMode()
     {
         this.props.appraisal.stabilizedStatementInputs.expensesMode = "income_statement";
-        this.props.saveDocument(this.props.appraisal);
+        this.props.saveAppraisal(this.props.appraisal);
         this.props.history.push(`/appraisal/${this.props.appraisal._id}/expenses`);
     }
 

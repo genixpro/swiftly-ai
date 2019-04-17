@@ -18,7 +18,7 @@ class ViewComparableLeases extends React.Component {
         const routeProps = {
             appraisalId: this.props.match.params.id,
             appraisal: this.props.appraisal,
-            saveDocument: this.props.saveDocument,
+            saveAppraisal: this.props.saveAppraisal,
         };
 
         return [

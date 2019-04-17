@@ -1,0 +1,65 @@
+
+
+.recovery-structures-list
+{
+  display: flex;
+  flex-direction: column;
+  justify-items: stretch;
+  justify-content: stretch;
+  width: fit-content;
+}
+
+.recovery-structure-editor
+{
+  border: 1px solid lightgray;
+  width: fit-content;
+
+  .label-column
+  {
+    padding-right: 15px;
+  }
+
+  .seperator {
+    padding-left: 15px;
+    padding-right: 15px;
+  }
+
+  .size-note
+  {
+    flex-grow: 1;
+    white-space: nowrap;
+    padding-right: 15px;
+  }
+
+
+  .delete-button
+  {
+    float: right;
+    margin-top: 10px;
+  }
+
+  .recovery-structure-table
+  {
+    .rule-description-column
+    {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+    }
+  }
+}
+
+.new-recovery-structure
+{
+  border: 0;
+  .btn {
+    border: 1px solid lightgray;
+    padding-top: 20px;
+
+    padding-bottom: 20px;
+    width: 100%;
+    height: 100%;
+    font-size: 16px;
+    color: #777;
+  }
+}

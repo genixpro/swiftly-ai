@@ -12,6 +12,7 @@ from .direct_comparison_valuation import DirectComparisonValuation
 from .direct_comparison_valuation_inputs import DirectComparisonValuationInputs
 from .market_rents import MarketRent
 from .amortization_schedule import AmortizationSchedule
+from .recovery_structure import RecoveryStructure
 
 class Appraisal(Document):
     meta = {'collection': 'appraisals', 'strict': False}
@@ -93,4 +94,7 @@ class Appraisal(Document):
 
     # This is the market rent
     marketRents = ListField(EmbeddedDocumentField(MarketRent))
+
+    # A list of recovery structures for this building
+    recoveryStructures = ListField(EmbeddedDocumentField(RecoveryStructure))
 

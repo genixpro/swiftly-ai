@@ -58,7 +58,7 @@ class ViewAdditionalIncomes extends React.Component
                                         groups={{
                                             "additional_income": "Additional Income"
                                         }}
-                                        saveDocument={this.props.saveDocument}
+                                        saveAppraisal={this.props.saveAppraisal}
                                     />
                                 </div>
                                 {/*: null}*/}

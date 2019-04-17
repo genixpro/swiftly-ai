@@ -13,7 +13,7 @@ class ViewTenantsLeasingCosts extends React.Component
     changeDCFInput(field, newValue)
     {
         this.props.appraisal.discountedCashFlowInputs[field] = newValue;
-        this.props.saveDocument(this.props.appraisal);
+        this.props.saveAppraisal(this.props.appraisal);
     }
 
 

@@ -21,21 +21,21 @@ class ViewTenantsRentRoll extends React.Component
     onRemoveUnit(unitIndex)
     {
         this.props.appraisal.units.splice(unitIndex, 1);
-        this.props.saveDocument(this.props.appraisal);
+        this.props.saveAppraisal(this.props.appraisal);
     }
 
 
     onCreateUnit(newUnit)
     {
         this.props.appraisal.units.push(newUnit);
-        this.props.saveDocument(this.props.appraisal);
+        this.props.saveAppraisal(this.props.appraisal);
 
     }
 
     removeTenancy(unitInfo, tenancyInfo, tenancyIndex)
     {
         unitInfo.tenancies.splice(tenancyIndex, 1);
-        this.props.saveDocument(this.props.appraisal);
+        this.props.saveAppraisal(this.props.appraisal);
     }
 
     renderTenancy(unitInfo, tenantInfo, tenancyIndex)
@@ -47,34 +47,31 @@ class ViewTenantsRentRoll extends React.Component
             <td>
                 <FieldDisplayEdit
                     type='text'
+                    hideIcon={true}
                     value={tenantInfo.name}
                     placeholder={"name"}
                     onChange={(newValue) => this.changeTenancyField(this.state.selectedUnit, tenantInfo, 'name', newValue)}/>
             </td>
             <td>
-                {
-                    tenantInfo.startDate ? <Datetime
-                        inputProps={{className: 'form-control'}}
-                        dateFormat={"YYYY/MM/DD"}
-                        timeFormat={false}
-                        onChange={(newValue) => newValue.toDate ? this.changeTenancyField(this.state.selectedUnit, tenantInfo, 'startDate', newValue.toDate()) : null }
-                        value={tenantInfo.startDate.$date || tenantInfo.startDate}
-                    /> : null
-                }
+                <FieldDisplayEdit
+                    type='date'
+                    hideIcon={true}
+                    value={tenantInfo.startDate}
+                    placeholder={"Start Date"}
+                    onChange={(newValue) => this.changeTenancyField(this.state.selectedUnit, tenantInfo, 'startDate', newValue)}/>
             </td>
             <td>
-                {
-                    tenantInfo.endDate ? <Datetime
-                        inputProps={{className: 'form-control'}}
-                        dateFormat={"YYYY/MM/DD"}
-                        timeFormat={false}
-                        onChange={(newValue) => newValue.toDate ? this.changeTenancyField(this.state.selectedUnit, tenantInfo, 'endDate', newValue.toDate()) : null }
-                        value={tenantInfo.endDate.$date || tenantInfo.endDate}/> : null
-                }
+                <FieldDisplayEdit
+                    type='date'
+                    hideIcon={true}
+                    value={tenantInfo.endDate}
+                    placeholder={"End Date"}
+                    onChange={(newValue) => this.changeTenancyField(this.state.selectedUnit, tenantInfo, 'endDate', newValue)}/>
             </td>
             <td>
                 <FieldDisplayEdit
                     type='rentType'
+                    hideIcon={true}
                     value={tenantInfo.rentType}
                     placeholder={"gross/net"}
                     onChange={(newValue) => this.changeTenancyField(this.state.selectedUnit, tenantInfo, 'rentType', newValue)}/>
@@ -82,6 +79,7 @@ class ViewTenantsRentRoll extends React.Component
             <td>
                 <FieldDisplayEdit
                     type='currency'
+                    hideIcon={true}
                     value={tenantInfo.yearlyRentPSF}
                     placeholder={"yearly rent (psf)"}
                     onChange={(newValue) => this.changeTenancyField(this.state.selectedUnit, tenantInfo, 'yearlyRentPSF', newValue)}/>
@@ -125,6 +123,11 @@ class ViewTenantsRentRoll extends React.Component
             newTenancy['yearlyRent'] = 0;
         }
 
+        if (_.isUndefined(newTenancy['rentType']))
+        {
+            newTenancy['rentType'] = 'net';
+        }
+
         if (_.isUndefined(newTenancy['startDate']))
         {
             newTenancy['startDate'] = new Date();
@@ -136,7 +139,7 @@ class ViewTenantsRentRoll extends React.Component
         }
 
         this.state.selectedUnit.tenancies.push(newTenancy);
-        this.props.saveDocument(this.props.appraisal);
+        this.props.saveAppraisal(this.props.appraisal);
     }
 
 
@@ -152,31 +155,30 @@ class ViewTenantsRentRoll extends React.Component
                     onChange={_.once((newValue) => this.createNewTenancy("name", newValue))}
                 />
             </td>
+
             <td>
-                {
-                    <Datetime
-                        inputProps={{className: 'form-control'}}
-                        dateFormat={"YYYY/MM/DD"}
-                        timeFormat={false}
-                        onChange={(newValue) => newValue.toDate ? this.createNewTenancy('startDate', newValue.toDate()) : null }
+                <FieldDisplayEdit
+                    type='date'
+                    placeholder={"Start Date"}
+                    hideIcon={true}
+
+                    onChange={(newValue) => newValue.toDate ? this.createNewTenancy('startDate', newValue.toDate()) : null }
                     />
-                }
             </td>
             <td>
-                {
-                    <Datetime
-                        inputProps={{className: 'form-control'}}
-                        dateFormat={"YYYY/MM/DD"}
-                        timeFormat={false}
-                        onChange={(newValue) => newValue.toDate ? this.createNewTenancy('endDate', newValue.toDate()) : null }
+                <FieldDisplayEdit
+                    type='date'
+                    placeholder={"End Date"}
+                    hideIcon={true}
+                    onChange={(newValue) => newValue.toDate ? this.createNewTenancy('endDate', newValue.toDate()) : null }
                     />
-                }
             </td>
             <td>
                 <FieldDisplayEdit
                     type='currency'
                     value={""}
                     placeholder={"monthly rent"}
+                    hideIcon={true}
                     onChange={(newValue) => this.createNewTenancy('monthlyRent', newValue)}/>
             </td>
 
@@ -202,7 +204,7 @@ class ViewTenantsRentRoll extends React.Component
             }
         });
 
-        this.props.saveDocument(this.props.appraisal);
+        this.props.saveAppraisal(this.props.appraisal);
     }
 
     changeAllTenantField(unitInfo, tenantInfo, field, newValue)
@@ -219,7 +221,7 @@ class ViewTenantsRentRoll extends React.Component
             }
         });
 
-        this.props.saveDocument(this.props.appraisal);
+        this.props.saveAppraisal(this.props.appraisal);
     }
 
     toggleDownload()
@@ -244,7 +246,7 @@ class ViewTenantsRentRoll extends React.Component
         //     }
         // });
 
-        this.props.saveDocument(this.props.appraisal);
+        this.props.saveAppraisal(this.props.appraisal);
     }
 
     downloadWordRentRoll()
@@ -323,6 +325,14 @@ class ViewTenantsRentRoll extends React.Component
                                                 </tr>
                                                 <tr>
                                                     <td>
+                                                        <strong>Unit Size</strong>
+                                                    </td>
+                                                    <td>
+                                                        <FieldDisplayEdit placeholder={"Unit Size"} value={this.state.selectedUnit.squareFootage} onChange={(newValue) => this.changeUnitField(this.state.selectedUnit, 'squareFootage', newValue)}/>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>
                                                         <strong>Tenant Name</strong>
                                                     </td>
                                                     <td>
@@ -355,12 +365,10 @@ class ViewTenantsRentRoll extends React.Component
                                                 </tr>
                                                 <tr>
                                                     <td>
-                                                        <strong>Management Recoveries</strong>
+                                                        <strong>Recovery Structure</strong>
                                                     </td>
-                                                    <td className={"management-expense-field"}>
-                                                        <FieldDisplayEdit type="percent" placeholder={"Management Expense %"} value={this.state.selectedUnit.currentTenancy.managementRecoveryPercentage} onChange={(newValue) => this.changeAllTenantField(this.state.selectedUnit, this.state.selectedUnit.currentTenancy, 'managementRecoveryPercentage', newValue)}/>
-                                                        <span className={"seperator"}>of</span>
-                                                        <FieldDisplayEdit type="managementRecoveryField" placeholder={"Expense Calculation Field"} value={this.state.selectedUnit.currentTenancy.managementRecoveryField} onChange={(newValue) => this.changeAllTenantField(this.state.selectedUnit, this.state.selectedUnit.currentTenancy, 'managementRecoveryField', newValue)}/>
+                                                    <td>
+                                                        <FieldDisplayEdit type="recoveryStructure" placeholder={"Recovery Structure"} recoveryStructures={this.props.appraisal.recoveryStructures} value={this.state.selectedUnit.currentTenancy.recoveryStructure} onChange={(newValue) => this.changeTenancyField(this.state.selectedUnit, this.state.selectedUnit.currentTenancy, 'recoveryStructure', newValue)} />
                                                     </td>
                                                 </tr>
                                                 <tr>

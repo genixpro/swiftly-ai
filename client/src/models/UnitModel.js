@@ -17,8 +17,7 @@ class TenancyModel extends BaseModel
     static startDate = new DateField();
     static endDate = new DateField();
     static freeRentMonths = new FloatField();
-    static managementRecoveryPercentage = new FloatField();
-    static managementRecoveryField = new FloatField();
+    static recoveryStructure = new StringField();
 
     get yearlyRentPSF()
     {
@@ -42,9 +41,12 @@ class UnitModel extends BaseModel
 
         if (this.tenancies.length === 0)
         {
-            this.tenancies.push(new TenancyModel({}, this))
+            this.tenancies.push(new TenancyModel({
+                rentType: "net'"
+            }, this, "tenancies"))
         }
 
+        this.setDirtyField("tenancies");
     }
 
     static unitNumber = new StringField();

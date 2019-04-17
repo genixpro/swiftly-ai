@@ -4,7 +4,7 @@ import AnnotationEditor from './components/AnnotationEditor';
 
 class ViewComparableSaleExtractions extends React.Component
 {
-    saveDocument(newFinancialStatement)
+    saveAppraisal(newFinancialStatement)
     {
         this.props.saveComparableSaleData(newFinancialStatement);
     }
@@ -12,7 +12,7 @@ class ViewComparableSaleExtractions extends React.Component
 
     render() {
         return (
-            <AnnotationEditor saveDocument={(doc) => this.saveDocument(doc)} document={this.props.comparableSale} annotationFields={ComparableSaleFields} />
+            <AnnotationEditor saveAppraisal={(doc) => this.saveAppraisal(doc)} document={this.props.comparableSale} annotationFields={ComparableSaleFields} />
         );
     }
 }

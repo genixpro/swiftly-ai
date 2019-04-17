@@ -68,7 +68,7 @@ class ViewDiscountedCashFlow extends React.Component
     changeDCFInput(field, newValue)
     {
         this.props.appraisal.discountedCashFlowInputs[field] = newValue;
-        this.props.saveDocument(this.props.appraisal, true);
+        this.props.saveAppraisal(this.props.appraisal, true);
     }
 
     render() {

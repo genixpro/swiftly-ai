@@ -12,6 +12,7 @@ import StabilizedStatementModel from "./StabilizedStatementModel";
 import DirectComparisonValuationModel from "./DirectComparisonValuationModel";
 import DirectComparisonInputsModel from "./DirectComparisonInputsModel";
 import MarketRentModel from "./MarketRentModel";
+import RecoveryStructureModel from "./RecoveryStructureModel";
 import BaseModel from "../orm/BaseModel";
 import AmortizationScheduleModel from "./AmortizationScheduleModel";
 import StringField from "../orm/StringField";
@@ -44,6 +45,7 @@ class AppraisalModel extends BaseModel
     static directComparisonInputs = new ModelField(DirectComparisonInputsModel);
     static directComparisonValuation = new ModelField(DirectComparisonValuationModel);
     static marketRents = new ListField(new ModelField(MarketRentModel));
+    static recoveryStructures = new ListField(new ModelField(RecoveryStructureModel));
     static amortizationSchedule = new ModelField(AmortizationScheduleModel);
 }
 

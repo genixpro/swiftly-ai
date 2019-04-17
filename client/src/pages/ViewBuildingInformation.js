@@ -18,7 +18,7 @@ class ViewBuildingInformation extends React.Component
     {
         const appraisal = this.props.appraisal;
         appraisal[field] = newValue;
-        this.props.saveDocument(appraisal);
+        this.props.saveAppraisal(appraisal);
     }
 
     renderFieldRow(title, fieldName, fieldType)

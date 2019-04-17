@@ -14,7 +14,7 @@ class ViewAmortization extends React.Component
     removeAmortization(amortizationIndex)
     {
         this.props.appraisal.amortizationSchedule.items.splice(amortizationIndex, 1);
-        this.props.saveDocument(this.props.appraisal);
+        this.props.saveAppraisal(this.props.appraisal);
     }
 
     renderAmortization(amortization, amortizationIndex)
@@ -134,7 +134,7 @@ class ViewAmortization extends React.Component
         }
 
         this.props.appraisal.amortizationSchedule.items.push(newAmortization);
-        this.props.saveDocument(this.props.appraisal);
+        this.props.saveAppraisal(this.props.appraisal);
     }
 
 
@@ -216,7 +216,7 @@ class ViewAmortization extends React.Component
     {
         amortization[field] = newValue;
 
-        this.props.saveDocument(this.props.appraisal);
+        this.props.saveAppraisal(this.props.appraisal);
     }
 
 

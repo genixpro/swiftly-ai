@@ -441,9 +441,9 @@ class AnnotationEditor extends React.Component
         this.setState({extractedData: extractedData});
     }
 
-    saveDocument()
+    saveAppraisal()
     {
-        this.props.saveDocument(this.state.document);
+        this.props.saveAppraisal(this.state.document);
     }
 
 
@@ -514,7 +514,7 @@ class AnnotationEditor extends React.Component
     {
         const document = this.state.document;
         document.pageTypes[page] = newPageType;
-        this.setState({document: document}, () => this.saveDocument());
+        this.setState({document: document}, () => this.saveAppraisal());
     }
 
 

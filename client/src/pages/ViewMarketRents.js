@@ -32,7 +32,7 @@ class ViewMarketRents extends React.Component
 
         marketRent[field] = newValue;
 
-        this.props.saveDocument(this.props.appraisal);
+        this.props.saveAppraisal(this.props.appraisal);
     }
 
     newMarketRent(field, newValue)
@@ -50,7 +50,7 @@ class ViewMarketRents extends React.Component
 
         this.props.appraisal.marketRents.push(marketRent);
 
-        this.props.saveDocument(this.props.appraisal);
+        this.props.saveAppraisal(this.props.appraisal);
     }
 
     componentDidMount()

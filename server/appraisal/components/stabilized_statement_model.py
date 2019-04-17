@@ -35,7 +35,7 @@ class StabilizedStatementModel(ValuationModelBase):
         statement.freeRentDifferential = self.computeFreeRentDifferentials(appraisal)
         statement.vacantUnitDifferential = self.computeVacantUnitDifferential(appraisal)
         statement.amortizationDifferential = self.computeAmortizationDifferential(appraisal)
-        statement.recoverableIncome = self.computeRecoverableOperatingExpenses(appraisal) * self.computeRecoverablePercentage(appraisal) + self.computeManagementRecoveries(appraisal, statement)
+        statement.recoverableIncome = self.computeOperatingExpenseRecoveries(appraisal) + self.computeManagementRecoveries(appraisal)
 
         statement.potentialGrossIncome = statement.rentalIncome + statement.additionalIncome + statement.recoverableIncome
 
@@ -79,21 +79,11 @@ class StabilizedStatementModel(ValuationModelBase):
             return 0
 
 
-
-    def computeRecoverablePercentage(self, appraisal):
-        totalSize = 0
-        totalNetSize = 0
-
-        for unit in appraisal.units:
-            totalSize += unit.squareFootage
-
-            if unit.currentTenancy and unit.currentTenancy.rentType == 'net':
-                totalNetSize += unit.squareFootage
-
-        if totalSize == 0:
-            return 1.0
-
-        return float(totalNetSize) / float(totalSize)
+    def getRecoveryStructure(self, appraisal, name):
+        for recovery in appraisal.recoveryStructures:
+            if recovery.name == name:
+                return recovery
+        return None
 
 
     def computeRentalIncome(self, appraisal):
@@ -155,17 +145,46 @@ class StabilizedStatementModel(ValuationModelBase):
 
         return total
 
+    def getRecoveryField(self, appraisal, name):
+        if name == "operatingExpenses":
+            return self.computeTotalOperatingExpenses(appraisal)
+        if name == "managementExpenses":
+            return self.computeManagementFees(appraisal)
+        if name == "rentalIncome":
+            return self.computeRentalIncome(appraisal)
 
-    def computeManagementRecoveries(self, appraisal, statement):
+    def computeManagementRecoveries(self, appraisal):
         total = 0
 
         for unit in appraisal.units:
-            if unit.currentTenancy and unit.currentTenancy.managementRecoveryPercentage and unit.currentTenancy.managementRecoveryField:
-                if unit.currentTenancy.managementRecoveryField == "operatingExpenses":
-                    total += (unit.currentTenancy.managementRecoveryPercentage / 100.0) * statement.operatingExpenses
-                if unit.currentTenancy.managementRecoveryField == "managementExpenses":
-                    total += (unit.currentTenancy.managementRecoveryPercentage / 100.0) * statement.managementExpenses
-                if unit.currentTenancy.managementRecoveryField == "rentalIncome":
-                    total += (unit.currentTenancy.managementRecoveryPercentage / 100.0) * statement.rentalIncome
+            if unit.currentTenancy and unit.currentTenancy.recoveryStructure and self.getRecoveryStructure(appraisal, unit.currentTenancy.recoveryStructure) is not None:
+                recoveryStructure = self.getRecoveryStructure(appraisal, unit.currentTenancy.recoveryStructure)
+
+                if recoveryStructure.managementRecoveryRule and recoveryStructure.managementRecoveryRule.percentage and recoveryStructure.managementRecoveryRule.field:
+                    percentage = (recoveryStructure.managementRecoveryRule.percentage / 100.0)
+
+                    if recoveryStructure.baseOnUnitSize and unit.squareFootage and appraisal.sizeOfBuilding:
+                        percentage = unit.squareFootage / appraisal.sizeOfBuilding
+
+                    total += percentage * self.getRecoveryField(appraisal, recoveryStructure.managementRecoveryRule.field)
+
+        return total
+
+
+    def computeOperatingExpenseRecoveries(self, appraisal):
+        total = 0
+
+        for unit in appraisal.units:
+            if unit.currentTenancy and unit.currentTenancy.recoveryStructure and self.getRecoveryStructure(appraisal, unit.currentTenancy.recoveryStructure) is not None:
+                recoveryStructure = self.getRecoveryStructure(appraisal, unit.currentTenancy.recoveryStructure)
+
+                for rule in recoveryStructure.expenseRecoveryRules:
+                    if rule.percentage and rule.field:
+                        percentage = (rule.percentage / 100.0)
+
+                        if recoveryStructure.baseOnUnitSize and unit.squareFootage and appraisal.sizeOfBuilding:
+                            percentage = unit.squareFootage / appraisal.sizeOfBuilding
+
+                        total += percentage * self.getRecoveryField(appraisal, rule.field)
 
         return total

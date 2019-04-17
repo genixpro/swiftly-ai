@@ -346,11 +346,14 @@ class IncomeStatementEditor extends React.Component
         {
             this.props.appraisal.incomeStatement[this.props.field].forEach((expense) =>
             {
-                for (let year of Object.keys(expense.yearlyAmounts))
+                if (expense.yearlyAmounts)
                 {
-                    if (Object.keys(this.props.groups).indexOf(expense.incomeStatementItemType) !== -1)
+                    for (let year of Object.keys(expense.yearlyAmounts))
                     {
-                        totals[expense.incomeStatementItemType + "_total"][year] += expense.yearlyAmounts[year];
+                        if (Object.keys(this.props.groups).indexOf(expense.incomeStatementItemType) !== -1)
+                        {
+                            totals[expense.incomeStatementItemType + "_total"][year] += expense.yearlyAmounts[year];
+                        }
                     }
                 }
             });
@@ -406,7 +409,7 @@ class IncomeStatementEditor extends React.Component
         }
 
         this.computeExpenseTotals();
-        this.props.saveDocument(this.props.appraisal)
+        this.props.saveAppraisal(this.props.appraisal)
     }
 
 
@@ -433,32 +436,37 @@ class IncomeStatementEditor extends React.Component
         }
 
         this.computeExpenseTotals();
-        this.props.saveDocument(this.props.appraisal)
+        this.props.saveAppraisal(this.props.appraisal)
     }
 
 
     changeIncomeItemType(item, newType)
     {
         item['incomeStatementItemType'] = newType;
-        this.props.saveDocument(this.props.appraisal)
+        this.props.saveAppraisal(this.props.appraisal)
     }
 
 
     changeIncomeItemName(item, newName)
     {
         item['name'] = newName;
-        this.props.saveDocument(this.props.appraisal)
+        this.props.saveAppraisal(this.props.appraisal)
     }
 
     createNewYear()
     {
-        const currentYear = this.props.appraisal.incomeStatement.latestYear;
+        const currentYear = this.props.appraisal.incomeStatement.latestYear || new Date().getFullYear();
         const newYear = currentYear + 1;
         this.props.appraisal.incomeStatement.years.push(newYear);
         this.props.appraisal.incomeStatement.yearlySourceTypes[newYear] = 'user';
 
         const adjustFunction = (expense) =>
         {
+            if (!expense.yearlyAmounts)
+            {
+                expense.yearlyAmounts = {};
+            }
+
             if (expense.yearlyAmounts[currentYear])
             {
                 expense.yearlyAmounts[newYear] = expense.yearlyAmounts[currentYear] * (1 + this.state.newYearGrowthPercent/100.0);
@@ -472,7 +480,7 @@ class IncomeStatementEditor extends React.Component
         this.props.appraisal.incomeStatement.incomes.forEach(adjustFunction);
         this.props.appraisal.incomeStatement.expenses.forEach(adjustFunction);
 
-        this.props.saveDocument(this.props.appraisal);
+        this.props.saveAppraisal(this.props.appraisal);
     }
 
     removeYear(year)
@@ -491,7 +499,7 @@ class IncomeStatementEditor extends React.Component
         this.props.appraisal.incomeStatement.incomes.forEach(deleteFunction);
         this.props.appraisal.incomeStatement.expenses.forEach(deleteFunction);
 
-        this.props.saveDocument(this.props.appraisal);
+        this.props.saveAppraisal(this.props.appraisal);
     }
 
 
@@ -506,7 +514,7 @@ class IncomeStatementEditor extends React.Component
         this.props.appraisal.incomeStatement[this.props.field] = expensesSorted;
 
         this.computeExpenseTotals();
-        this.props.saveDocument(this.props.appraisal);
+        this.props.saveAppraisal(this.props.appraisal);
     }
 
 
@@ -613,7 +621,7 @@ class IncomeStatementEditor extends React.Component
         this.props.appraisal.incomeStatement[this.props.field].push(newItem);
 
         this.computeExpenseTotals();
-        this.props.saveDocument(this.props.appraisal)
+        this.props.saveAppraisal(this.props.appraisal)
 
     }
 
@@ -766,7 +774,7 @@ class IncomeStatementEditor extends React.Component
 
         appraisal.incomeStatement[this.props.field] = expensesSorted;
 
-        this.props.saveDocument(appraisal);
+        this.props.saveAppraisal(appraisal);
         this.computeExpenseTotals();
 
         // this.setState({appraisal: appraisal});

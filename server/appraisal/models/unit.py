@@ -18,11 +18,7 @@ class Tenancy(EmbeddedDocument):
     # The free rent period in months
     freeRentMonths = FloatField()
 
-    # This gives what percentage the unit pays in management expenses
-    managementRecoveryPercentage = FloatField()
-
-    # This gives the field that the management expense is calculated based on
-    managementRecoveryField = StringField()
+    recoveryStructure = StringField()
 
     # This specifies the rent-type. This can be either "NET" or "GROSS"
     rentType = StringField(choices=["net", "gross", "", None], default="net", null=True)

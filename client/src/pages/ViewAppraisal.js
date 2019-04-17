@@ -50,7 +50,7 @@ class ViewAppraisal extends React.Component
         });
     }
 
-    saveDocument(newAppraisal, updateStateAfterSave)
+    saveAppraisal(newAppraisal, updateStateAfterSave)
     {
         this.setState({appraisal: this.state.appraisal});
 
@@ -71,7 +71,7 @@ class ViewAppraisal extends React.Component
     render() {
         const routeProps = {
             appraisal: this.state.appraisal,
-            saveDocument: this.saveDocument.bind(this),
+            saveAppraisal: this.saveAppraisal.bind(this),
             reloadAppraisal: this.reloadAppraisal.bind(this)
         };
 

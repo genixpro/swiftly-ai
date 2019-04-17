@@ -56,7 +56,7 @@ class ViewAppraisalComparableLeases extends React.Component {
         const appraisal = this.props.appraisal;
         appraisal.comparableLeases.push(comp._id);
         appraisal.comparableLeases = _.clone(appraisal.comparableLeases);
-        this.props.saveDocument(appraisal);
+        this.props.saveAppraisal(appraisal);
     }
 
 
@@ -74,7 +74,7 @@ class ViewAppraisalComparableLeases extends React.Component {
             }
         }
         appraisal.comparableLeases = _.clone(appraisal.comparableLeases);
-        this.props.saveDocument(appraisal);
+        this.props.saveAppraisal(appraisal);
         this.setState({comparableLeases: comparables});
     }
 

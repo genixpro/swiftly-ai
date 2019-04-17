@@ -137,8 +137,9 @@ class DocumentProcessor:
 
 
     def processAppraisalResults(self, appraisal):
-        discountedCashFlow = self.discountedCashFlow.createDiscountedCashFlow(appraisal)
-        appraisal.discountedCashFlow = discountedCashFlow
+        # discountedCashFlow = self.discountedCashFlow.createDiscountedCashFlow(appraisal)
+        # appraisal.discountedCashFlow = discountedCashFlow
+        appraisal.discountedCashFlow = None
 
         stabilizedStatement = self.stabilizedStatement.createStabilizedStatement(appraisal)
         appraisal.stabilizedStatement = stabilizedStatement

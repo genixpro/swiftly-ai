@@ -9,7 +9,7 @@ import MarketRentSelector from './MarketRentSelector';
 import RetailLocationTypeSelector from './RetailLocationTypeSelector';
 import ZoneSelector from "./ZoneSelector";
 import TagEditor from "./TagEditor";
-import ManagementRecoveryFieldSelector from "./ManagementRecoveryFieldSelector";
+import RecoveryFieldSelector from "./RecoveryFieldSelector";
 
 import {
     Input,
@@ -17,6 +17,7 @@ import {
     InputGroupAddon
 } from 'reactstrap';
 import IncomeItemTypeSelector from "./IncomeItemTypeSelector";
+import RecoveryStructureSelector from "./RecoveryStructureSelector";
 
 class FieldDisplayEdit extends React.Component
 {
@@ -388,8 +389,30 @@ class FieldDisplayEdit extends React.Component
                         /> : null
                 }
                 {
+                    this.props.type === "recoveryStructure" ?
+                        <RecoveryStructureSelector
+                            value={this.props.value}
+                            disabled={!this.props.edit}
+                            recoveryStructures={this.props.recoveryStructures}
+                            onChange={(newValue) => this.selectInputUpdated(newValue) }
+                            onBlur={() => this.finishEditing()}
+                            innerRef={(inputElem) => this.inputElem = inputElem}
+                        /> : null
+                }
+                {
+                    this.props.type === "boolean" ?
+                        <input
+                            type={"checkbox"}
+                            checked={this.props.value}
+                            disabled={!this.props.edit}
+                            onChange={(evt) => this.selectInputUpdated(!this.props.value) }
+                            onBlur={() => this.finishEditing()}
+                            ref={(inputElem) => this.inputElem = inputElem}
+                        /> : null
+                }
+                {
                     this.props.type === "managementRecoveryField" ?
-                        <ManagementRecoveryFieldSelector
+                        <RecoveryFieldSelector
                             value={this.state.isEditing ? this.state.value : this.props.value}
                             disabled={!this.props.edit}
                             onChange={(newValue) => this.selectInputUpdated(newValue) }
@@ -401,7 +424,7 @@ class FieldDisplayEdit extends React.Component
                     this.props.type === "zone" ?
                         <ZoneSelector
                             value={this.state.isEditing ? this.state.value : this.props.value}
-                            onChange={(newValue) => this.inputUpdated(newValue) }
+                            onChange={(newValue) => this.selectInputUpdated(newValue) }
                             onBlur={() => this.finishEditing()}
                         /> : null
                 }

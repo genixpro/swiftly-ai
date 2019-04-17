@@ -1,7 +1,7 @@
 import React from 'react';
 
 
-class MarketRentSelector extends React.Component
+class RecoveryFieldSelector extends React.Component
 {
     onChangeValue(newValue)
     {
@@ -32,19 +32,6 @@ class MarketRentSelector extends React.Component
 
     render()
     {
-        if (!this.props.marketRents)
-        {
-            return null;
-        }
-
-        const options = [
-            <option value={""} key={"blank"}>Market Rent</option>
-        ].concat(
-            this.props.marketRents.map((rent, index) =>
-            {
-                return <option key={index} value={rent.name}>{rent.name}</option>
-            }));
-
         return (
             <select
                 className="custom-select"
@@ -55,11 +42,14 @@ class MarketRentSelector extends React.Component
                 disabled={this.props.disabled}
                 style={{"color": !this.props.value ? "lightgrey" : ""}}
             >
-                {options}
+                <option value={""}>&nbsp;</option>
+                <option value={"operatingExpenses"}>Operating Expenses</option>
+                <option value={"managementExpenses"}>Management Expenses</option>
+                <option value={"rentalIncome"}>Rental Income</option>
             </select>
         );
     }
 }
 
 
-export default MarketRentSelector;
+export default RecoveryFieldSelector;

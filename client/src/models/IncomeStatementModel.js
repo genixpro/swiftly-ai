@@ -70,6 +70,10 @@ class IncomeStatementModel extends BaseModel
 
     get latestYear()
     {
+        if (this.years.length === 0)
+        {
+            return null;
+        }
         return _.max(this.years);
     }
 }

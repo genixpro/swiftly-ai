@@ -35,7 +35,7 @@ class ViewExpenses extends React.Component
     changeExpenseMode()
     {
         this.props.appraisal.stabilizedStatementInputs.expensesMode = "tmi";
-        this.props.saveDocument(this.props.appraisal);
+        this.props.saveAppraisal(this.props.appraisal);
         this.props.history.push(`/appraisal/${this.props.appraisal._id}/expenses_tmi`);
     }
 
@@ -90,7 +90,7 @@ class ViewExpenses extends React.Component
                                             "management_expense": "Management Expense",
                                             "taxes": "Taxes"
                                         }}
-                                        saveDocument={this.props.saveDocument}
+                                        saveAppraisal={this.props.saveAppraisal}
                                     />
 
 

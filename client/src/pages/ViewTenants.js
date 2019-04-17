@@ -4,6 +4,7 @@ import ViewTenantsRentRoll from "./ViewTenantRentRoll";
 import ViewTenantsLeasingCosts from "./ViewTenantLeasingCosts";
 import ViewVacancySchedule from "./ViewVacancySchedule";
 import ViewMarketRents from "./ViewMarketRents";
+import ViewRecoveryStructures from "./ViewRecoveryStructures";
 import {NavLink as RRNavLink} from 'react-router-dom';
 import {Switch, Route} from 'react-router-dom';
 import AppraisalContentHeader from "./components/AppraisalContentHeader";
@@ -21,7 +22,7 @@ class ViewTenants extends React.Component
         const routeProps = {
             appraisalId: this.props.match.params.id,
             appraisal: this.props.appraisal,
-            saveDocument: this.props.saveDocument,
+            saveAppraisal: this.props.saveAppraisal,
         };
 
         return (
@@ -37,6 +38,10 @@ class ViewTenants extends React.Component
                             <NavItem>
                                 <NavLink to={`${this.props.match.url}/market_rents`} activeClassName="active"
                                          tag={RRNavLink}>Market Rents</NavLink>
+                            </NavItem>
+                            <NavItem>
+                                <NavLink to={`${this.props.match.url}/recovery_structures`} activeClassName="active"
+                                         tag={RRNavLink}>Recovery Structures</NavLink>
                             </NavItem>
                             <NavItem>
                                 <NavLink to={`${this.props.match.url}/leasing_costs`} activeClassName="active"
@@ -59,6 +64,7 @@ class ViewTenants extends React.Component
                                         <Route path={`${this.props.match.url}/leasing_costs`} render={(props) => withProps({...routeProps, ...props})(ViewTenantsLeasingCosts)()} />
                                         <Route path={`${this.props.match.url}/vacancy_schedule`} render={(props) => withProps({...routeProps, ...props})(ViewVacancySchedule)()} />
                                         <Route path={`${this.props.match.url}/market_rents`} render={(props) => withProps({...routeProps, ...props})(ViewMarketRents)()} />
+                                        <Route path={`${this.props.match.url}/recovery_structures`} render={(props) => withProps({...routeProps, ...props})(ViewRecoveryStructures)()} />
                                     </Switch>
                                 </div>
                             </CardBody>

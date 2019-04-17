@@ -4,7 +4,7 @@ import AnnotationEditor from './components/AnnotationEditor';
 
 class ViewLeaseExtractions extends React.Component
 {
-    saveDocument(newLease)
+    saveAppraisal(newLease)
     {
         this.props.saveLeaseData(newLease);
     }
@@ -12,7 +12,7 @@ class ViewLeaseExtractions extends React.Component
 
     render() {
         return (
-            <AnnotationEditor saveDocument={(doc) => this.saveDocument(doc)} document={this.props.lease} annotationFields={LeaseFields} />
+            <AnnotationEditor saveAppraisal={(doc) => this.saveAppraisal(doc)} document={this.props.lease} annotationFields={LeaseFields} />
         );
     }
 }
