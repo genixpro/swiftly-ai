@@ -12,9 +12,9 @@ class Auth
 
 
     auth0 = new auth0.WebAuth({
-        domain: 'swiftlyai.auth0.com',
-        clientID: 't0b5CDsYetGq67O5oM3KNzeZYZSfdVEF',
-        redirectUri: 'http://localhost:3000/callback',
+        domain: process.env.VALUATE_ENVIRONMENT.REACT_APP_AUTH_0_DOMAIN,
+        clientID: process.env.VALUATE_ENVIRONMENT.REACT_APP_AUTH_0_CLIENT,
+        redirectUri: process.env.VALUATE_ENVIRONMENT.REACT_APP_LOCAL_URL+'/app/callback',
         audience: process.env.VALUATE_ENVIRONMENT.REACT_APP_SERVER_URL.replace("https://", "http://"),
         responseType: 'token id_token',
         scope: 'openid email profile'
