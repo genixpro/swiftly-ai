@@ -75,6 +75,7 @@ class ViewBuildingInformation extends React.Component
 
                                                 {this.renderFieldRow("Name", "name")}
                                                 {this.renderFieldRow("Address", "address", "address")}
+                                                {this.renderFieldRow("Effective Date", "effectiveDate", "date")}
                                                 {this.renderFieldRow("Property Type", "propertyType", "propertyType")}
                                                 {
                                                     this.props.appraisal.propertyType === 'industrial' ?

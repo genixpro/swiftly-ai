@@ -17,6 +17,7 @@ import BaseModel from "../orm/BaseModel";
 import AmortizationScheduleModel from "./AmortizationScheduleModel";
 import StringField from "../orm/StringField";
 import FloatField from "../orm/FloatField";
+import DateField from "../orm/DateField";
 
 class AppraisalModel extends BaseModel
 {
@@ -25,6 +26,7 @@ class AppraisalModel extends BaseModel
     static address = new StringField();
     static location = new GenericField();
     static imageUrl = new StringField();
+    static effectiveDate = new DateField();
     static propertyType = new StringField();
     static industrialSubType = new StringField();
     static landSubType = new StringField();

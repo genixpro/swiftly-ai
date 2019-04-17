@@ -13,6 +13,7 @@ from .direct_comparison_valuation_inputs import DirectComparisonValuationInputs
 from .market_rents import MarketRent
 from .amortization_schedule import AmortizationSchedule
 from .recovery_structure import RecoveryStructure
+from .date_field import ConvertingDateField
 
 class Appraisal(Document):
     meta = {'collection': 'appraisals', 'strict': False}
@@ -31,6 +32,9 @@ class Appraisal(Document):
 
     # The URL for the image of this building
     imageUrl = StringField()
+
+    # The Effective Date for this appraisal
+    effectiveDate = ConvertingDateField()
 
     # The type of property this is.
     propertyType = StringField()

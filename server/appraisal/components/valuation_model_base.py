@@ -8,6 +8,11 @@ import dateutil
 class ValuationModelBase:
     """ Base class for valuation models, with some common functionality. """
 
+    def getEffectiveDate(self, appraisal):
+        effectiveDate = appraisal.effectiveDate if appraisal.effectiveDate else datetime.datetime.now()
+
+        return effectiveDate
+
     def getLatestAmount(self, incomeStatementItem):
         years = sorted(incomeStatementItem.yearlyAmounts.keys(), key=lambda x: float(x))
         if len(years) == 0:
@@ -28,7 +33,7 @@ class ValuationModelBase:
 
                 monthlyDifferentialCashflow = (presentDifferentialPSF * unit.squareFootage) / 12.0
 
-                startDate = datetime.datetime.now()
+                startDate = self.getEffectiveDate(appraisal)
                 endDate = unit.currentTenancy.endDate
 
                 currentDate = copy.copy(startDate)
@@ -53,7 +58,7 @@ class ValuationModelBase:
 
         for unit in appraisal.units:
             if unit.currentTenancy and unit.currentTenancy.yearlyRent and unit.currentTenancy.freeRentMonths:
-                monthsFromStart = relativedelta(datetime.datetime.now(), unit.currentTenancy.startDate).months
+                monthsFromStart = relativedelta(self.getEffectiveDate(appraisal), unit.currentTenancy.startDate).months
                 freeRentMonthsRemaining = int(max(unit.currentTenancy.freeRentMonths - monthsFromStart, 0))
 
                 differential = freeRentMonthsRemaining * unit.currentTenancy.yearlyRent / 12.0
@@ -78,7 +83,7 @@ class ValuationModelBase:
 
         for item in appraisal.amortizationSchedule.items:
             if item.startDate and item.periodMonths and item.amount and item.interest and item.discountRate:
-                monthsFromStart = relativedelta(datetime.datetime.now(), item.startDate).months
+                monthsFromStart = relativedelta(self.getEffectiveDate(appraisal), item.startDate).months
                 monthsRemaining = item.periodMonths - monthsFromStart
 
                 monthlyInterest = math.pow(1.0 + (item.interest / 100), 1 / 12.0)

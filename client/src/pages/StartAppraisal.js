@@ -87,6 +87,18 @@ class StartAppraisal extends React.Component {
                                         />
                                     </FormGroup>
                                     <FormGroup>
+                                        <label>Effective Date</label>
+                                        <FieldDisplayEdit
+                                            type={"date"}
+                                            edit={this.props.edit}
+                                            hideInput={false}
+                                            hideIcon={true}
+                                            placeholder={"Effective Date"}
+                                            value={this.state.newAppraisal.effectiveDate}
+                                            onChange={(newValue) => this.updateValue('effectiveDate', newValue)}
+                                        />
+                                    </FormGroup>
+                                    <FormGroup>
                                         <label>Property Type</label>
                                         <FieldDisplayEdit
                                             type={"propertyType"}

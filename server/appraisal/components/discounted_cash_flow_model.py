@@ -161,7 +161,7 @@ class DiscountedCashFlowModel(ValuationModelBase):
         cashFlows = []
 
         for unit in appraisal.units:
-            cashFlows.extend(self.projectRentalCashFlows(appraisal, unit, startYear=datetime.datetime.now().year, endYear=datetime.datetime.now().year + 10, discountCashFlowInputs=appraisal.discountedCashFlowInputs))
+            cashFlows.extend(self.projectRentalCashFlows(appraisal, unit, startYear=self.getEffectiveDate(appraisal).year, endYear=self.getEffectiveDate(appraisal).year + 10, discountCashFlowInputs=appraisal.discountedCashFlowInputs))
 
         # Group by month, year, and name
         grouped = {}
@@ -193,9 +193,9 @@ class DiscountedCashFlowModel(ValuationModelBase):
     def getMonthlyCashFlowItems(self, appraisal):
         cashFlows = []
         for item in appraisal.incomeStatement.incomes:
-            cashFlows.extend(self.projectCashFlows(incomeStatementItem=item, startYear=datetime.datetime.now().year, endYear=datetime.datetime.now().year + 10, discountCashFlowInputs=appraisal.discountedCashFlowInputs))
+            cashFlows.extend(self.projectCashFlows(incomeStatementItem=item, startYear=self.getEffectiveDate(appraisal).year, endYear=self.getEffectiveDate(appraisal).year + 10, discountCashFlowInputs=appraisal.discountedCashFlowInputs))
         for item in appraisal.incomeStatement.expenses:
-            cashFlows.extend(self.projectCashFlows(incomeStatementItem=item, startYear=datetime.datetime.now().year, endYear=datetime.datetime.now().year + 10, discountCashFlowInputs=appraisal.discountedCashFlowInputs))
+            cashFlows.extend(self.projectCashFlows(incomeStatementItem=item, startYear=self.getEffectiveDate(appraisal).year, endYear=self.getEffectiveDate(appraisal).year + 10, discountCashFlowInputs=appraisal.discountedCashFlowInputs))
 
         return cashFlows
 
