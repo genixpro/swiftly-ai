@@ -9,6 +9,8 @@ import os
 import json
 from pyramid.security import Authenticated
 from pyramid.authorization import Allow, Deny, Everyone
+from .authorization import checkUserOwnsObject
+from pyramid.httpexceptions import HTTPForbidden
 
 
 @resource(collection_path='/property_tags', path='/property_tag/{id}', renderer='bson', cors_enabled=True, cors_origins="*", permission="everything")
@@ -30,6 +32,9 @@ class PropertyTagAPI(object):
         if "name" in self.request.GET:
             query['name__icontains'] = self.request.GET['name']
 
+        if "admin" not in self.request.effective_principals:
+            query["owner"] = self.request.authenticated_userid
+
         propertyTags = PropertyTag.objects(**query).limit(10)
 
         return {"tags": list([json.loads(propertyTag.to_json()) for propertyTag in propertyTags])}
@@ -39,10 +44,16 @@ class PropertyTagAPI(object):
 
         propertyTag = PropertyTag.objects(id=propertyTagId).first()
 
+        auth = checkUserOwnsObject(self.request.authenticated_userid, self.request.effective_principals, propertyTag)
+        if not auth:
+            raise HTTPForbidden("You do not have access to this property tag")
+
         return {"tag": json.loads(propertyTag.to_json())}
 
     def collection_post(self):
         data = self.request.json_body
+
+        data["owner"] = self.request.authenticated_userid
 
         propertyTag = PropertyTag(**data)
         propertyTag.save()
@@ -59,6 +70,11 @@ class PropertyTagAPI(object):
             del data['_id']
 
         propertyTag = PropertyTag.objects(id=propertyTagId).first()
+
+        auth = checkUserOwnsObject(self.request.authenticated_userid, self.request.effective_principals, propertyTag)
+        if not auth:
+            raise HTTPForbidden("You do not have access to this property tag")
+
         propertyTag.modify(**data)
 
         propertyTag.save()
@@ -69,6 +85,11 @@ class PropertyTagAPI(object):
         propertyTagId = self.request.matchdict['id']
 
         propertyTag = PropertyTag.objects(id=propertyTagId).first()
+
+        auth = checkUserOwnsObject(self.request.authenticated_userid, self.request.effective_principals, propertyTag)
+        if not auth:
+            raise HTTPForbidden("You do not have access to this property tag")
+
         propertyTag.delete()
 
 

@@ -42,7 +42,9 @@ def main(global_config, **settings):
                     print("Access token id doesn't match basic auth")
                     raise HTTPUnauthorized('The ID on the access token does not match the provided ID in Basic Auth.')
 
-                return [claims['sub']]
+                groups = claims[f'{apiUrl.replace("https://", "http://")}groups']
+
+                return [claims['sub']] + groups
             except ValueError as e:
                 print(e)
                 raise HTTPUnauthorized('The access token is invalid')

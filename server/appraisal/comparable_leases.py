@@ -9,6 +9,8 @@ import os
 from .models.comparable_lease import ComparableLease
 from pyramid.security import Authenticated
 from pyramid.authorization import Allow, Deny, Everyone
+from .authorization import checkUserOwnsObject
+from pyramid.httpexceptions import HTTPForbidden
 
 @resource(collection_path='/comparable_leases', path='/comparable_leases/{id}', renderer='bson', cors_enabled=True, cors_origins="*", permission="everything")
 class ComparableLeaseAPI(object):
@@ -57,6 +59,10 @@ class ComparableLeaseAPI(object):
                 (float(self.request.GET['locationRight']), float(self.request.GET['locationTop']))
             ]
 
+
+        if "admin" not in self.request.effective_principals:
+            query["owner"] = self.request.authenticated_userid
+
         comparableLeases = ComparableLease.objects(**query)
 
         if 'sort' in self.request.GET:
@@ -69,10 +75,16 @@ class ComparableLeaseAPI(object):
 
         comparableLease = ComparableLease.objects(id=comparableId).first()
 
+        auth = checkUserOwnsObject(self.request.authenticated_userid, self.request.effective_principals, comparableLease)
+        if not auth:
+            raise HTTPForbidden("You do not have access to this comparable lease.")
+
         return {"comparableLease": json.loads(comparableLease.to_json())}
 
     def collection_post(self):
         data = self.request.json_body
+
+        data['owner'] = self.request.authenticated_userid
 
         comparable = ComparableLease(**data)
         comparable.save()
@@ -89,6 +101,11 @@ class ComparableLeaseAPI(object):
             del data['_id']
 
         comparable = ComparableLease.objects(id=comparableId).first()
+
+        auth = checkUserOwnsObject(self.request.authenticated_userid, self.request.effective_principals, comparable)
+        if not auth:
+            raise HTTPForbidden("You do not have access to this comparable lease.")
+
         comparable.modify(**data)
 
         comparable.save()
@@ -98,5 +115,10 @@ class ComparableLeaseAPI(object):
     def delete(self):
         fileId = self.request.matchdict['id']
 
-        sale = ComparableLease.objects(id=fileId).first()
-        sale.delete()
+        comparable = ComparableLease.objects(id=fileId).first()
+
+        auth = checkUserOwnsObject(self.request.authenticated_userid, self.request.effective_principals, comparable)
+        if not auth:
+            raise HTTPForbidden("You do not have access to this comparable lease.")
+
+            comparable.delete()

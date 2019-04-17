@@ -31,6 +31,8 @@ from docx.oxml import parse_xml
 import docx
 from pyramid.security import Authenticated
 from pyramid.authorization import Allow, Deny, Everyone
+from .authorization import checkUserOwnsObject
+from pyramid.httpexceptions import HTTPForbidden
 
 
 class ExportAPI(object):
@@ -118,7 +120,16 @@ class ComparableSalesExcelFile(ExportAPI):
 
         appraisal = Appraisal.objects(id=appraisalId).first()
 
-        comparables = ComparableSale.objects(id__in=appraisal.comparableSales)
+        auth = checkUserOwnsObject(self.request.authenticated_userid, self.request.effective_principals, appraisal)
+        if not auth:
+            raise HTTPForbidden("You do not have access to this appraisal.")
+
+        query = {"id__in": appraisal.comparableSales}
+
+        if "admin" not in self.request.effective_principals:
+            query["owner"] = self.request.authenticated_userid
+
+        comparables = ComparableSale.objects(**query)
 
         wb = Workbook()
 
@@ -182,7 +193,16 @@ class ComparableSalesWordFile(ExportAPI):
 
         appraisal = Appraisal.objects(id=appraisalId).first()
 
-        comparables = ComparableSale.objects(id__in=appraisal.comparableSales)
+        auth = checkUserOwnsObject(self.request.authenticated_userid, self.request.effective_principals, appraisal)
+        if not auth:
+            raise HTTPForbidden("You do not have access to this appraisal.")
+
+        query = {"id__in": appraisal.comparableSales}
+
+        if "admin" not in self.request.effective_principals:
+            query["owner"] = self.request.authenticated_userid
+
+        comparables = ComparableSale.objects(**query)
 
         data = {
             "appraisal": json.loads(appraisal.to_json()),
@@ -220,7 +240,16 @@ class ComparableSalesDetailedWordFile(ExportAPI):
 
         appraisal = Appraisal.objects(id=appraisalId).first()
 
-        comparables = ComparableSale.objects(id__in=appraisal.comparableSales)
+        auth = checkUserOwnsObject(self.request.authenticated_userid, self.request.effective_principals, appraisal)
+        if not auth:
+            raise HTTPForbidden("You do not have access to this appraisal.")
+
+        query = {"id__in": appraisal.comparableSales}
+
+        if "admin" not in self.request.effective_principals:
+            query["owner"] = self.request.authenticated_userid
+
+        comparables = ComparableSale.objects(**query)
 
         comparables = [comp for comp in comparables]
 
@@ -267,7 +296,16 @@ class ComparableLeasesExcelFile(ExportAPI):
 
         appraisal = Appraisal.objects(id=appraisalId).first()
 
-        comparables = ComparableLease.objects(id__in=appraisal.comparableLeases)
+        auth = checkUserOwnsObject(self.request.authenticated_userid, self.request.effective_principals, appraisal)
+        if not auth:
+            raise HTTPForbidden("You do not have access to this appraisal.")
+
+        query = {"id__in": appraisal.comparableLeases}
+
+        if "admin" not in self.request.effective_principals:
+            query["owner"] = self.request.authenticated_userid
+
+        comparables = ComparableLease.objects(**query)
 
         wb = Workbook()
 
@@ -331,7 +369,16 @@ class ComparableLeasesWordFile(ExportAPI):
 
         appraisal = Appraisal.objects(id=appraisalId).first()
 
-        comparables = ComparableLease.objects(id__in=appraisal.comparableLeases)
+        auth = checkUserOwnsObject(self.request.authenticated_userid, self.request.effective_principals, appraisal)
+        if not auth:
+            raise HTTPForbidden("You do not have access to this appraisal.")
+
+        query = {"id__in": appraisal.comparableLeases}
+
+        if "admin" not in self.request.effective_principals:
+            query["owner"] = self.request.authenticated_userid
+
+        comparables = ComparableLease.objects(**query)
 
         document = Document()
 
@@ -409,6 +456,10 @@ class RentRollWordFile(ExportAPI):
 
         appraisal = Appraisal.objects(id=appraisalId).first()
 
+        auth = checkUserOwnsObject(self.request.authenticated_userid, self.request.effective_principals, appraisal)
+        if not auth:
+            raise HTTPForbidden("You do not have access to this appraisal.")
+
         data = {
             "appraisal": json.loads(appraisal.to_json())
         }
@@ -439,6 +490,10 @@ class RentRollExcelFile(ExportAPI):
         appraisalId = self.request.matchdict['appraisalId']
 
         appraisal = Appraisal.objects(id=appraisalId).first()
+
+        auth = checkUserOwnsObject(self.request.authenticated_userid, self.request.effective_principals, appraisal)
+        if not auth:
+            raise HTTPForbidden("You do not have access to this appraisal.")
 
         wb = Workbook()
 
@@ -499,6 +554,10 @@ class ExpensesWordFile(ExportAPI):
 
         appraisal = Appraisal.objects(id=appraisalId).first()
 
+        auth = checkUserOwnsObject(self.request.authenticated_userid, self.request.effective_principals, appraisal)
+        if not auth:
+            raise HTTPForbidden("You do not have access to this appraisal.")
+
         data = {
             "appraisal": json.loads(appraisal.to_json())
         }
@@ -527,6 +586,10 @@ class ExpensesExcelFile(ExportAPI):
         appraisalId = self.request.matchdict['appraisalId']
 
         appraisal = Appraisal.objects(id=appraisalId).first()
+
+        auth = checkUserOwnsObject(self.request.authenticated_userid, self.request.effective_principals, appraisal)
+        if not auth:
+            raise HTTPForbidden("You do not have access to this appraisal.")
 
         wb = Workbook()
 

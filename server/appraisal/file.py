@@ -19,6 +19,8 @@ from .models.file import File, Word
 from .models.appraisal import Appraisal
 from pyramid.security import Authenticated
 from pyramid.authorization import Allow, Deny, Everyone
+from .authorization import checkUserOwnsObject, checkUserOwnsAppraisalId
+from pyramid.httpexceptions import HTTPForbidden
 
 @resource(collection_path='/appraisal/{appraisalId}/files', path='/appraisal/{appraisalId}/files/{id}', renderer='bson', cors_enabled=True, cors_origins="*", permission="everything")
 class FileAPI(object):
@@ -36,9 +38,16 @@ class FileAPI(object):
     def collection_get(self):
         appraisalId = self.request.matchdict['appraisalId']
 
+        auth = checkUserOwnsAppraisalId(self.request.authenticated_userid, self.request.effective_principals, appraisalId)
+        if not auth:
+            raise HTTPForbidden("You do not have access to upload, modify or delete files on this appraisal")
+
         query = self.request.GET
 
         query["appraisalId"] = appraisalId
+
+        if "admin" not in self.request.effective_principals:
+            query["owner"] = self.request.authenticated_userid
 
         files = File.objects(**query).only('fileName', 'fileType')
 
@@ -46,9 +55,18 @@ class FileAPI(object):
 
     def get(self):
         appraisalId = self.request.matchdict['appraisalId']
+
+        auth = checkUserOwnsAppraisalId(self.request.authenticated_userid, self.request.effective_principals, appraisalId)
+        if not auth:
+            raise HTTPForbidden("You do not have access to upload, modify or delete files on this appraisal")
+
         fileId = self.request.matchdict['id']
 
         file = File.objects(id=fileId).first()
+
+        auth = checkUserOwnsObject(self.request.authenticated_userid, self.request.effective_principals, file)
+        if not auth:
+            raise HTTPForbidden("You do not have access to this file.")
 
         return {"file": json.loads(file.to_json())}
 
@@ -58,10 +76,18 @@ class FileAPI(object):
         appraisalId = self.request.matchdict['appraisalId']
         fileId = self.request.matchdict['id']
 
+        auth = checkUserOwnsAppraisalId(self.request.authenticated_userid, self.request.effective_principals, appraisalId)
+        if not auth:
+            raise HTTPForbidden("You do not have access to upload files to this appraisal")
+
         if '_id' in data:
             del data['_id']
 
         file = File.objects(id=fileId).first()
+
+        auth = checkUserOwnsObject(self.request.authenticated_userid, self.request.effective_principals, file)
+        if not auth:
+            raise HTTPForbidden("You do not have access to this file.")
 
         file.modify(**data)
         file.save()
@@ -73,9 +99,19 @@ class FileAPI(object):
 
     def delete(self):
         appraisalId = self.request.matchdict['appraisalId']
+
+        auth = checkUserOwnsAppraisalId(self.request.authenticated_userid, self.request.effective_principals, appraisalId)
+        if not auth:
+            raise HTTPForbidden("You do not have access to upload, modify or delete files on this appraisal")
+
         fileId = self.request.matchdict['id']
 
         file = File.objects(id=fileId).first()
+
+        auth = checkUserOwnsObject(self.request.authenticated_userid, self.request.effective_principals, file)
+        if not auth:
+            raise HTTPForbidden("You do not have access to this file.")
+
         file.delete()
 
     def convertOldWord(self, word):
@@ -99,6 +135,10 @@ class FileAPI(object):
         input_file_name = request.POST['fileName']
 
         appraisalId = self.request.matchdict['appraisalId']
+
+        auth = checkUserOwnsAppraisalId(self.request.authenticated_userid, self.request.effective_principals, appraisalId)
+        if not auth:
+            raise HTTPForbidden("You do not have access to upload, modify or delete files on this appraisal")
 
         appraisal = Appraisal.objects(id=appraisalId).first()
 

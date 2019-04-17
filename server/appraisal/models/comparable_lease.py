@@ -17,6 +17,9 @@ class RentEscalation(EmbeddedDocument):
 class ComparableLease(Document):
     meta = {'collection': 'comparable_leases', 'strict': False}
 
+    # The owner of this comparable lease
+    owner = StringField()
+
     # The address of the comparable. This is the full address, including city and region in a single string
     address = StringField()
 

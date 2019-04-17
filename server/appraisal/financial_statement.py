@@ -7,6 +7,8 @@ import subprocess
 import os
 from pyramid.security import Authenticated
 from pyramid.authorization import Allow, Deny, Everyone
+from .authorization import checkUserOwnsObject
+from pyramid.httpexceptions import HTTPForbidden
 
 
 @resource(collection_path='/appraisal/{appraisalId}/financial_statements', path='/appraisal/{appraisalId}/financial_statements/{id}', renderer='bson', cors_enabled=True, cors_origins="*", permission="everything")
@@ -26,7 +28,12 @@ class FinancialStatementAPI(object):
     def collection_get(self):
         appraisalId = self.request.matchdict['appraisalId']
 
-        financial_statements = self.financialStatementsCollection.find({"appraisalId": appraisalId})
+        query = {"appraisalId": appraisalId}
+
+        if "admin" not in self.request.effective_principals:
+            query["owner"] = self.request.authenticated_userid
+
+        financial_statements = self.financialStatementsCollection.find(query)
 
         return {"financial_statements": list(financial_statements)}
 
@@ -36,6 +43,10 @@ class FinancialStatementAPI(object):
 
         financial_statement = self.financialStatementsCollection.find_one({"_id": bson.ObjectId(leaseId), "appraisalId": appraisalId})
 
+        auth = checkUserOwnsObject(self.request.authenticated_userid, self.request.effective_principals, financial_statement)
+        if not auth:
+            raise HTTPForbidden("You do not have access to this file.")
+
         return {"financialStatement": financial_statement}
 
     def collection_post(self):
@@ -43,6 +54,7 @@ class FinancialStatementAPI(object):
 
         appraisalId = self.request.matchdict['appraisalId']
         data["appraisalId"] = appraisalId
+        data['owner'] = self.request.authenticated_userid
 
         result = self.financialStatementsCollection.insert_one(data)
 
@@ -59,14 +71,14 @@ class FinancialStatementAPI(object):
         if '_id' in data:
             del data['_id']
 
-        self.financialStatementsCollection.update_one({"_id": bson.ObjectId(statementId)}, {"$set": data})
+        self.financialStatementsCollection.update_one({"_id": bson.ObjectId(statementId), "owner": self.request.authenticated_userid}, {"$set": data})
 
         self.updateStabilizedStatement(appraisalId)
 
         return {"_id": str(id)}
 
     def updateStabilizedStatement(self, appraisalId):
-        financialStatements = self.financialStatementsCollection.find({"appraisalId": appraisalId})
+        financialStatements = self.financialStatementsCollection.find({"appraisalId": appraisalId, "owner": self.request.authenticated_userid})
 
         expenses = []
         incomes = []

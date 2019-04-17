@@ -45,6 +45,7 @@ class DocumentProcessor:
         # Create an initial file object
         file = File()
         file.fileName = fileName
+        file.owner = appraisal.owner
         file.appraisalId = str(appraisal.id)
         file.save()
         fileId = str(file.id)

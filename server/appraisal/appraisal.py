@@ -8,7 +8,8 @@ from .models.appraisal import Appraisal
 from .models.file import File
 from pyramid.security import Authenticated
 from pyramid.authorization import Allow, Deny, Everyone
-
+from .authorization import checkUserOwnsObject
+from pyramid.httpexceptions import HTTPForbidden
 
 @resource(collection_path='/appraisal/', path='/appraisal/{id}', renderer='bson', cors_enabled=True, cors_origins="*", permission="everything")
 class AppraisalAPI(object):
@@ -25,12 +26,19 @@ class AppraisalAPI(object):
         ]
 
     def collection_get(self):
-        appraisals = Appraisal.objects().only('name', 'address')
+        query = {}
+
+        if "admin" not in self.request.effective_principals:
+            query["owner"] = self.request.authenticated_userid
+
+        appraisals = Appraisal.objects(**query).only('name', 'address')
 
         return {"appraisals": [json.loads(appraisal.to_json()) for appraisal in appraisals]}
 
     def collection_post(self):
         data = self.request.json_body
+
+        data['owner'] = self.request.authenticated_userid
 
         appraisal = Appraisal(**data)
         appraisal.save()
@@ -42,6 +50,10 @@ class AppraisalAPI(object):
         appraisalId = self.request.matchdict['id']
 
         appraisal = Appraisal.objects(id=appraisalId).first()
+
+        auth = checkUserOwnsObject(self.request.authenticated_userid, self.request.effective_principals, appraisal)
+        if not auth:
+            raise HTTPForbidden("You do not have access to this appraisal.")
 
         # files = File.objects(appraisalId=appraisalId)
         #
@@ -67,6 +79,10 @@ class AppraisalAPI(object):
 
         appraisal = Appraisal.objects(id=appraisalId).first()
 
+        auth = checkUserOwnsObject(self.request.authenticated_userid, self.request.effective_principals, appraisal)
+        if not auth:
+            raise HTTPForbidden("You do not have access to this appraisal.")
+
         appraisal.delete()
 
         return {}
@@ -81,6 +97,11 @@ class AppraisalAPI(object):
             del data['_id']
 
         appraisal = Appraisal.objects(id=appraisalId).first()
+
+        auth = checkUserOwnsObject(self.request.authenticated_userid, self.request.effective_principals, appraisal)
+        if not auth:
+            raise HTTPForbidden("You do not have access to this appraisal.")
+
         appraisal.modify(**data)
 
         self.processor.processAppraisalResults(appraisal)

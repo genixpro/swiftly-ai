@@ -11,6 +11,8 @@ import skimage.io
 from .models.image import Image
 from pyramid.security import Authenticated
 from pyramid.authorization import Allow, Deny, Everyone
+from .authorization import checkUserOwnsObject
+from pyramid.httpexceptions import HTTPForbidden
 
 @resource(collection_path='/images', path='/images/{id}', renderer='bson', cors_enabled=True, cors_origins="*", permission="everything")
 class ImageAPI(object):
@@ -36,6 +38,7 @@ class ImageAPI(object):
 
         image.fileName = str(image.id) + "-uploaded-image.png"
         image.url = self.request.registry.storageUrl + image.fileName
+        image.owner = self.request.authenticated_userid
         image.save()
 
         result = self.request.registry.azureBlobStorage.create_blob_from_bytes('files', image.fileName, input_file)
@@ -70,24 +73,3 @@ class ImageAPI(object):
 
         return {"_id": str(image.id), "url": image.url}
 
-
-    def post(self):
-        data = self.request.json_body
-
-        comparableId = self.request.matchdict['id']
-
-        if '_id' in data:
-            del data['_id']
-
-        comparable = ComparableLease.objects(id=comparableId).first()
-        comparable.modify(**data)
-
-        comparable.save()
-
-        return {"_id": str(comparableId)}
-
-    def delete(self):
-        fileId = self.request.matchdict['id']
-
-        sale = ComparableLease.objects(id=fileId).first()
-        sale.delete()

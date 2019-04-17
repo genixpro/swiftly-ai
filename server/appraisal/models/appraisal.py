@@ -16,6 +16,9 @@ from .amortization_schedule import AmortizationSchedule
 class Appraisal(Document):
     meta = {'collection': 'appraisals', 'strict': False}
 
+    # The owner of the appraisal
+    owner = StringField()
+
     # The name of this appraisal. Arbitrary and chosen by the user
     name = StringField()
 

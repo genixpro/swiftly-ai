@@ -9,6 +9,8 @@ import os
 from .models.comparable_sale import ComparableSale
 from pyramid.security import Authenticated
 from pyramid.authorization import Allow, Deny, Everyone
+from .authorization import checkUserOwnsObject
+from pyramid.httpexceptions import HTTPForbidden
 
 @resource(collection_path='/comparable_sales', path='/comparable_sales/{id}', renderer='bson', cors_enabled=True, cors_origins="*", permission="everything")
 class ComparableSaleAPI(object):
@@ -77,6 +79,9 @@ class ComparableSaleAPI(object):
                 (float(self.request.GET['locationRight']), float(self.request.GET['locationTop']))
             ]
 
+        if "admin" not in self.request.effective_principals:
+            query["owner"] = self.request.authenticated_userid
+
         comparableSales = ComparableSale.objects(**query)
 
         if 'sort' in self.request.GET:
@@ -89,6 +94,10 @@ class ComparableSaleAPI(object):
 
         comparableSale = ComparableSale.objects(id=comparableId).first()
 
+        auth = checkUserOwnsObject(self.request.authenticated_userid, self.request.effective_principals, comparableSale)
+        if not auth:
+            raise HTTPForbidden("You do not have access to this comparable sale.")
+
         if comparableSale is None:
             return {"comparableSale": None}
 
@@ -96,6 +105,8 @@ class ComparableSaleAPI(object):
 
     def collection_post(self):
         data = self.request.json_body
+
+        data['owner'] = self.request.authenticated_userid
 
         comparable = ComparableSale(**data)
         comparable.save()
@@ -112,6 +123,11 @@ class ComparableSaleAPI(object):
             del data['_id']
 
         comparable = ComparableSale.objects(id=comparableId).first()
+
+        auth = checkUserOwnsObject(self.request.authenticated_userid, self.request.effective_principals, comparable)
+        if not auth:
+            raise HTTPForbidden("You do not have access to this comparable sale.")
+
         comparable.modify(**data)
 
         comparable.save()
@@ -121,5 +137,10 @@ class ComparableSaleAPI(object):
     def delete(self):
         fileId = self.request.matchdict['id']
 
-        sale = ComparableSale.objects(id=fileId).first()
-        sale.delete()
+        comparable = ComparableSale.objects(id=fileId).first()
+
+        auth = checkUserOwnsObject(self.request.authenticated_userid, self.request.effective_principals, comparable)
+        if not auth:
+            raise HTTPForbidden("You do not have access to this comparable sale.")
+
+        comparable.delete()
