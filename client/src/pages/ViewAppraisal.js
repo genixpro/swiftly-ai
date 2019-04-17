@@ -21,6 +21,7 @@ import ViewCapitalizationValuation from "./ViewCapitalizationValuation";
 import ViewAdditionalIncome from "./ViewAdditionalIncomes";
 import ViewAmortization from "./ViewAmortization";
 import ViewExpensesTMI from "./ViewExpensesTMI";
+import Logout from "./Logout";
 import axios from "axios/index";
 import AppraisalModel from "../models/AppraisalModel";
 
@@ -97,6 +98,7 @@ class ViewAppraisal extends React.Component
                         <Route path={`${this.props.match.path}/additional_income`} render={(props) => withProps({...routeProps, ...props})(ViewAdditionalIncome)()} />
                         <Route path={`${this.props.match.path}/amortization`} render={(props) => withProps({...routeProps, ...props})(ViewAmortization)()} />
                         <Route path={`${this.props.match.path}/expenses_tmi`} render={(props) => withProps({...routeProps, ...props})(ViewExpensesTMI)()} />
+                        <Route path={`${this.props.match.path}/logout`} render={(props) => withProps({...routeProps, ...props})(Logout)()} />
                     </Switch>
                 </div>
             </ContentWrapper> : null

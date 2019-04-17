@@ -11,6 +11,9 @@ import StartAppraisal from './pages/StartAppraisal';
 import ViewAppraisal from './pages/ViewAppraisal';
 import ViewAllAppraisals from './pages/ViewAllAppraisals';
 import ClientDropbox from './pages/ClientDropbox';
+import Logout from './pages/Logout';
+
+import Auth from "./Auth";
 
 // import SubMenu from './components/SubMenu/SubMenu';
 
@@ -22,9 +25,24 @@ const listofPages = [
     /* See full project for reference */
 ];
 
+
+const AuthenticationCallback = (props) =>
+{
+    Auth.handleAuthentication(() => props.history.push("/appraisals"));
+    return <span>Authenticating...</span>;
+};
+
+
+
 const Routes = ({ location }) => {
     const currentKey = location.pathname.split('/')[1] || '/';
     const timeout = { enter: 500, exit: 500 };
+
+    if (!Auth.isAuthenticated() && window.location.pathname.substr(0, "/callback".length) !== "/callback")
+    {
+        Auth.login();
+        return null;
+    }
 
     // Animations supported
     //      'rag-fadeIn'
@@ -57,6 +75,8 @@ const Routes = ({ location }) => {
                             <Route path="/appraisal/new" component={StartAppraisal} history={history}/>
                             <Route path="/appraisal/:id" component={ViewAppraisal} history={history}/>
                             <Route path="/appraisals/" component={ViewAllAppraisals} history={history}/>
+                            <Route path="/callback" component={AuthenticationCallback} history={history}/>
+                            <Route path="/logout/" component={Logout} history={history}/>
 
                             <Redirect to="/appraisals/"/>
                         </Switch>

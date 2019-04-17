@@ -23,6 +23,7 @@ import './styles/app.scss'
 import axios from 'axios';
 import { DragDropContextProvider } from 'react-dnd'
 import HTML5Backend from 'react-dnd-html5-backend'
+import Auth from './Auth';
 
 axios.defaults.baseURL = process.env.VALUATE_ENVIRONMENT.REACT_APP_SERVER_URL;
 

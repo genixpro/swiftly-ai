@@ -71,7 +71,12 @@ const Menu = [
             //     path: '/appraisal/:appraisalId/discounted_cash_flow',
             // }
         ]
-    }
+    },
+    {
+        name: 'Log Out',
+        path: '/logout',
+        icon : 'fa fa-door-open',
+    },
 ];
 
 export default Menu;
