@@ -14,7 +14,7 @@ class Auth
     auth0 = new auth0.WebAuth({
         domain: process.env.VALUATE_ENVIRONMENT.REACT_APP_AUTH_0_DOMAIN,
         clientID: process.env.VALUATE_ENVIRONMENT.REACT_APP_AUTH_0_CLIENT,
-        redirectUri: process.env.VALUATE_ENVIRONMENT.REACT_APP_LOCAL_URL+'/app/callback',
+        redirectUri: process.env.VALUATE_ENVIRONMENT.REACT_APP_LOCAL_URL+'/callback',
         audience: process.env.VALUATE_ENVIRONMENT.REACT_APP_SERVER_URL.replace("https://", "http://"),
         responseType: 'token id_token',
         scope: 'openid email profile'
