@@ -22,7 +22,13 @@ class Auth
 
     login()
     {
-        this.auth0.authorize();
+        const nonce = Math.random().toString();
+
+        // Set the nonce and redirect uri
+        localStorage.setItem('redirectNonce', nonce);
+        localStorage.setItem('redirectUri', history.location.pathname);
+
+        this.auth0.authorize({nonce: nonce});
     }
 
     constructor()
@@ -43,7 +49,20 @@ class Auth
             if (authResult && authResult.accessToken && authResult.idToken)
             {
                 this.setSession(authResult);
-                done();
+
+                if (localStorage.getItem("redirectNonce") === authResult.idTokenPayload.nonce)
+                {
+                    const uri = localStorage.getItem("redirectUri");
+
+                    localStorage.removeItem('redirectUri');
+                    localStorage.removeItem('redirectNonce');
+
+                    done(uri);
+                }
+                else
+                {
+                    done("/appraisals");
+                }
             } else if (err)
             {
                 history.replace('/appraisals');

@@ -28,7 +28,7 @@ const listofPages = [
 
 const AuthenticationCallback = (props) =>
 {
-    Auth.handleAuthentication(() => props.history.push("/appraisals"));
+    Auth.handleAuthentication((redirect) => props.history.push(redirect));
     return <span>Authenticating...</span>;
 };
 
