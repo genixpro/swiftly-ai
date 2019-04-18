@@ -135,7 +135,8 @@ class RecoveryStructureEditor extends React.Component
                                     <div className={"size-note"}>(% sqft) of</div>
                             }
                             <FieldDisplayEdit
-                                type="managementRecoveryField"
+                                type="recoveryField"
+                                expenses={this.props.expenses}
                                 placeholder={"Expense Calculation Field"}
                                 value={recovery.managementRecoveryRule.field}
                                 hideInput={false}
@@ -169,7 +170,8 @@ class RecoveryStructureEditor extends React.Component
                                                 : <div className={"size-note"}>(% sqft) of</div>
                                         }
                                         <FieldDisplayEdit
-                                            type="managementRecoveryField"
+                                            type="recoveryField"
+                                            expenses={this.props.expenses}
                                             placeholder={"Calculated On"}
                                             value={recovery.expenseRecoveryRules[0].field}
                                             hideInput={false}
@@ -218,7 +220,8 @@ class RecoveryStructureEditor extends React.Component
                                     }
 
                                     <FieldDisplayEdit
-                                        type="managementRecoveryField"
+                                        type="recoveryField"
+                                        expenses={this.props.expenses}
                                         placeholder={"Calculated On"}
                                         value={rule.field}
                                         hideInput={false}
@@ -252,7 +255,8 @@ class RecoveryStructureEditor extends React.Component
                                             ] : <div className={"size-note"}>(% sqft) of</div>
                                     }
                                     <FieldDisplayEdit
-                                        type="managementRecoveryField"
+                                        type="recoveryField"
+                                        expenses={this.props.expenses}
                                         placeholder={"Calculated On"}
                                         hideInput={false}
                                         hideIcon={true}
@@ -334,6 +338,7 @@ class ViewRecoveryStructures extends React.Component
                                 this.props.appraisal.recoveryStructures.map((recovery, recoveryIndex) =>
                                 {
                                     return <RecoveryStructureEditor
+                                        expenses={this.props.appraisal.incomeStatement.expenses}
                                         recovery={recovery}
                                         appraisal={this.props.appraisal}
                                         onChange={(newValue) => this.onRecoveryChanged(newValue, recoveryIndex)}

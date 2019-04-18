@@ -32,6 +32,22 @@ class RecoveryFieldSelector extends React.Component
 
     render()
     {
+        if (!this.props.expenses)
+        {
+            return null;
+        }
+
+        const options = [
+            <option value={""} key={"blank"}>&nbsp;</option>,
+            <option value={"operatingExpenses"} key={"operatingExpenses"}>Operating Expenses</option>,
+            <option value={"managementExpenses"} key={"managementExpenses"}>Management Expenses</option>,
+            <option value={"rentalIncome"} key={"rentalIncome"}>Rental Income</option>
+        ].concat(
+            this.props.expenses.map((expense) =>
+            {
+                return <option key={expense.name} value={expense.name}>{expense.name}</option>
+            }));
+
         return (
             <select
                 className="custom-select"
@@ -42,10 +58,7 @@ class RecoveryFieldSelector extends React.Component
                 disabled={this.props.disabled}
                 style={{"color": !this.props.value ? "lightgrey" : ""}}
             >
-                <option value={""}>&nbsp;</option>
-                <option value={"operatingExpenses"}>Operating Expenses</option>
-                <option value={"managementExpenses"}>Management Expenses</option>
-                <option value={"rentalIncome"}>Rental Income</option>
+                {options}
             </select>
         );
     }

@@ -423,8 +423,9 @@ class FieldDisplayEdit extends React.Component
                         /> : null
                 }
                 {
-                    this.props.type === "managementRecoveryField" ?
+                    this.props.type === "recoveryField" ?
                         <RecoveryFieldSelector
+                            expenses={this.props.expenses}
                             value={this.state.isEditing ? this.state.value : this.props.value}
                             disabled={!this.props.edit}
                             onChange={(newValue) => this.selectInputUpdated(newValue) }

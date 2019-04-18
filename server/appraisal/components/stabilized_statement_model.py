@@ -153,6 +153,10 @@ class StabilizedStatementModel(ValuationModelBase):
         if name == "rentalIncome":
             return self.computeRentalIncome(appraisal)
 
+        for expense in appraisal.incomeStatement.expenses:
+            if expense.name == name:
+                return expense.getLatestAmount()
+
     def computeManagementRecoveries(self, appraisal):
         total = 0
 
