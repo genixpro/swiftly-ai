@@ -13,6 +13,7 @@ from .direct_comparison_valuation_inputs import DirectComparisonValuationInputs
 from .market_rents import MarketRent
 from .amortization_schedule import AmortizationSchedule
 from .recovery_structure import RecoveryStructure
+from .leasing_cost_structure import LeasingCostStructure
 from .date_field import ConvertingDateField
 
 class Appraisal(Document):
@@ -101,4 +102,7 @@ class Appraisal(Document):
 
     # A list of recovery structures for this building
     recoveryStructures = ListField(EmbeddedDocumentField(RecoveryStructure))
+
+    # A list of recovery structures for this building
+    leasingCosts = ListField(EmbeddedDocumentField(LeasingCostStructure), default=[LeasingCostStructure(name="Default Leasing Costs")])
 

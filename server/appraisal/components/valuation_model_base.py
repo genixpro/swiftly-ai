@@ -3,6 +3,7 @@ import datetime
 import math
 import copy
 import dateutil
+from ..models.leasing_cost_structure import LeasingCostStructure
 
 
 class ValuationModelBase:
@@ -23,6 +24,17 @@ class ValuationModelBase:
         for marketRent in appraisal.marketRents:
             if marketRent.name == name:
                 return marketRent.amountPSF
+
+    def getLeasingCosts(self, appraisal, name):
+        for leasingCost in appraisal.leasingCosts:
+            if leasingCost.name == name:
+                return leasingCost
+
+        for leasingCost in appraisal.leasingCosts:
+            if leasingCost.name.lower() == "default":
+                return leasingCost
+
+        return LeasingCostStructure()
 
     def computeMarketRentDifferentials(self, appraisal):
         totalDifferential = 0
@@ -73,7 +85,9 @@ class ValuationModelBase:
 
         for unit in appraisal.units:
             if unit.isVacantInFirstYear and unit.squareFootage and unit.marketRent and self.getMarketRent(appraisal, unit.marketRent):
-                total += appraisal.discountedCashFlowInputs.tenantInducementsPSF * unit.squareFootage + appraisal.discountedCashFlowInputs.leasingCommission + self.getMarketRent(appraisal, unit.marketRent) * unit.squareFootage
+                leasingCosts = self.getLeasingCosts(appraisal, unit.leasingCostStructure)
+
+                total += leasingCosts.tenantInducementsPSF * unit.squareFootage + leasingCosts.leasingCommission + self.getMarketRent(appraisal, unit.marketRent) * unit.squareFootage
 
         return -total
 

@@ -54,6 +54,7 @@ class UnitModel extends BaseModel
     static squareFootage = new FloatField();
     static tenancies = new ListField(new ModelField(TenancyModel));
     static marketRent = new StringField();
+    static leasingCostStructure = new StringField();
     static remarks = new StringField();
 
     get currentTenancy()

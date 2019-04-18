@@ -248,7 +248,7 @@ class RecoveryStructureEditor extends React.Component
                                                     hideIcon={true}
                                                     onChange={(newValue) => this.newExpenseRecoveryRule('percentage', newValue)}
                                                 />,
-                                                <span key={2} className = {"seperator"} > of < /span>
+                                                <span key={2} className = {"seperator"} > of </span>
                                             ] : <div className={"size-note"}>(% sqft) of</div>
                                     }
                                     <FieldDisplayEdit

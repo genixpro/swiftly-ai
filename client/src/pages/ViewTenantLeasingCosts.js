@@ -1,81 +1,187 @@
 import React from 'react';
-import { Row, Col } from 'reactstrap';
+import { Row, Col, Card, CardBody, CardHeader, Button} from 'reactstrap';
 import FieldDisplayEdit from './components/FieldDisplayEdit';
 import 'react-datetime/css/react-datetime.css'
+import LeasingCostStructureModel from "../models/LeasingCostStructureModel";
+
+
+class LeasingCostStructureEditor extends React.Component
+{
+    changeField(field, newValue)
+    {
+        const leasingCostStructure = this.props.leasingCostStructure;
+
+        if (field === "name")
+        {
+            // Go through the appraisal units and update any which are attached to this rent name
+            this.props.appraisal.units.forEach((unit) =>
+            {
+                if (unit.leasingCostStructure === leasingCostStructure.name)
+                {
+                    unit.leasingCostStructure = newValue;
+                }
+            });
+        }
+
+        if (newValue !== leasingCostStructure[field])
+        {
+            leasingCostStructure[field] = newValue;
+            this.props.onChange(leasingCostStructure);
+        }
+    }
+
+    render()
+    {
+        const leasingCostStructure = this.props.leasingCostStructure;
+
+        return <Card className={"leasing-cost-structure-editor"}>
+            <CardBody>
+                <table className="leasing-cost-structure-table">
+                    <tbody>
+                    <tr>
+                        <td colSpan={2}>
+                            <FieldDisplayEdit
+                                type="text"
+                                placeholder="Leasing Cost Structure Name"
+                                value={leasingCostStructure.name}
+                                onChange={(newValue) => this.changeField('name', newValue)}
+                                hideInput={false}
+                                hideIcon={true}
+
+                            />
+                        </td>
+                    </tr>
+                    <tr className={"leasing-cost-row"}>
+                        <td className={"label-column"}>
+                            <strong>Tenant Inducments (psf)</strong>
+                        </td>
+                        <td className={"value-column"}>
+                            <FieldDisplayEdit
+                                type="currency"
+                                value={leasingCostStructure.tenantInducementsPSF}
+                                hideInput={false}
+                                hideIcon={true}
+                                onChange={(newValue) => this.changeField('tenantInducementsPSF', newValue)}
+                            />
+                        </td>
+                    </tr>
+                    <tr className={"leasing-cost-row"}>
+                        <td className={"label-column"}>
+                            <strong>Leasing Commission (total)</strong>
+                        </td>
+                        <td className={"value-column"}>
+                            <FieldDisplayEdit
+                                type="currency"
+                                value={leasingCostStructure.leasingCommission}
+                                hideInput={false}
+                                hideIcon={true}
+                                onChange={(newValue) => this.changeField('leasingCommission', newValue)}
+                            />
+                        </td>
+                    </tr>
+                    <tr className={"leasing-cost-row"}>
+                        <td className={"label-column"}>
+                            <strong>Renewal Period</strong>
+                        </td>
+                        <td className={"value-column"}>
+                            <FieldDisplayEdit
+                                type="currency"
+                                value={leasingCostStructure.renewalPeriod}
+                                hideInput={false}
+                                hideIcon={true}
+                                onChange={(newValue) => this.changeField('renewalPeriod', newValue)}
+                            />
+                        </td>
+                    </tr>
+                    <tr className={"leasing-cost-row"}>
+                        <td className={"label-column"}>
+                            <strong>Leasing Period</strong>
+                        </td>
+                        <td className={"value-column"}>
+                            <FieldDisplayEdit
+                                type="currency"
+                                value={leasingCostStructure.leasingPeriod}
+                                hideInput={false}
+                                hideIcon={true}
+                                onChange={(newValue) => this.changeField('leasingPeriod', newValue)}
+                            />
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+
+                <Button color={"danger"} className={"delete-button"} onClick={() => this.props.onDeleteLeasingCosts(this.props.leasingCostStructure)}>Delete</Button>
+            </CardBody>
+        </Card>
+    }
+}
+
 
 class ViewTenantsLeasingCosts extends React.Component
 {
     state = {
-        capitalizationRate: 8.4,
-        selectedUnit: null
+
     };
 
-    changeDCFInput(field, newValue)
+    defaultLeasingCostStructureData = {
+        name: "New Leasing Structure",
+        leasingCommission: 0,
+        tenantInducementsPSF: 0,
+        renewalPeriod: 0,
+        leasingPeriod: 0
+    };
+
+    componentDidMount()
     {
-        this.props.appraisal.discountedCashFlowInputs[field] = newValue;
+
+    }
+
+    onLeasingStructureChanged(leasingCosts, leasingCostsIndex)
+    {
+        this.props.appraisal.leasingCosts[leasingCostsIndex] = leasingCosts;
         this.props.saveAppraisal(this.props.appraisal);
     }
 
+    onNewLeasingStructure(newLeasingCosts)
+    {
+        this.props.appraisal.leasingCosts.push(newLeasingCosts);
+        this.props.saveAppraisal(this.props.appraisal);
+    }
+
+    onDeleteLeasingStructure(leasingCostsIndex)
+    {
+        this.props.appraisal.leasingCosts.splice(leasingCostsIndex, 1);
+        this.props.saveAppraisal(this.props.appraisal);
+    }
 
     render() {
         return (
             (this.props.appraisal) ?
-                <div id={"view-tenants"} className={"view-tenants"}>
+                <div id={"view-leasing-cost-structures"} className={"view-leasing-cost-structures"}>
+                    <h2>Leasing Cost Structures</h2>
+
                     <Row>
-                        <Col xs={12}>
-                            <h3>View Leasing Costs</h3>
-                        </Col>
-                    </Row>
-                    <Row>
-                        <Col xs={12} sm={6} md={4}>
-                            <table className="table">
-                                <tbody>
-                                <tr>
-                                    <td>
-                                        <strong>Leasing Commission Costs (Per Lease)</strong>
-                                    </td>
-                                    <td>
-                                        <FieldDisplayEdit type={"currency"} value={this.props.appraisal.discountedCashFlowInputs.leasingCommission} onChange={(newValue) => this.changeDCFInput('leasingCommission', newValue)}/>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <strong>Tenant Inducement Costs (Per Square Foot)</strong>
-                                    </td>
-                                    <td>
-                                        <FieldDisplayEdit type={"currency"} value={this.props.appraisal.discountedCashFlowInputs.tenantInducementsPSF} onChange={(newValue) => this.changeDCFInput('tenantInducementsPSF', newValue)}/>
-                                    </td>
-                                </tr>
-                                </tbody>
-                            </table>
-                        </Col>
-                        <Col xs={12} sm={6} md={4}>
-                            <table className="table">
-                                <tbody>
-                                <tr>
-                                    <td>
-                                        <strong>Leasing Period (Months)</strong>
-                                    </td>
-                                    <td>
-                                        <FieldDisplayEdit type={"number"} value={this.props.appraisal.discountedCashFlowInputs.leasingPeriod} onChange={(newValue) => this.changeDCFInput('leasingPeriod', newValue)}/>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <strong>Lag Vacancy (Months)</strong>
-                                    </td>
-                                    <td>
-                                        <FieldDisplayEdit type={"number"} value={this.props.appraisal.discountedCashFlowInputs.renewalPeriod} onChange={(newValue) => this.changeDCFInput('renewalPeriod', newValue)}/>
-                                    </td>
-                                </tr>
-                                </tbody>
-                            </table>
-                        </Col>
-                        <Col xs={12} sm={6} md={4}>
-                            <table className="table">
-                                <tbody>
-                                </tbody>
-                            </table>
+                        <Col>
+                            <div className={"leasing-cost-structures-list"}>
+                                {
+                                    this.props.appraisal.leasingCosts.map((leasingCostStructure, leasingCostStructureIndex) =>
+                                    {
+                                        return <LeasingCostStructureEditor
+                                            leasingCostStructure={leasingCostStructure}
+                                            appraisal={this.props.appraisal}
+                                            onChange={(newValue) => this.onLeasingStructureChanged(newValue, leasingCostStructureIndex)}
+                                            onDeleteLeasingStructure={() => this.onDeleteLeasingStructure(leasingCostStructureIndex)}
+                                        />
+                                    })
+                                }
+                                {
+                                    <div className={"new-leasing-cost-structure"}>
+                                        <Button onClick={() => this.onNewLeasingStructure(new LeasingCostStructureModel(this.defaultLeasingCostStructureData))}>
+                                            <span>Create a new leasing cost structure</span>
+                                        </Button>
+                                    </div>
+                                }
+                            </div>
                         </Col>
                     </Row>
                 </div>

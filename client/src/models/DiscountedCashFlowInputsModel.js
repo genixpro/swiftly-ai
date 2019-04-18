@@ -7,10 +7,6 @@ class DiscountedCashFlowInputsModel extends BaseModel
 {
     static inflation = new FloatField();
     static discountRate = new FloatField();
-    static  leasingCommission = new FloatField();
-    static tenantInducementsPSF = new FloatField();
-    static renewalPeriod = new FloatField();
-    static leasingPeriod = new FloatField();
 }
 
 export default DiscountedCashFlowInputsModel;

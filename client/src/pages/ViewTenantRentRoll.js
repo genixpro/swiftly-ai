@@ -368,7 +368,15 @@ class ViewTenantsRentRoll extends React.Component
                                                         <strong>Recovery Structure</strong>
                                                     </td>
                                                     <td>
-                                                        <FieldDisplayEdit type="recoveryStructure" placeholder={"Recovery Structure"} recoveryStructures={this.props.appraisal.recoveryStructures} value={this.state.selectedUnit.currentTenancy.recoveryStructure} onChange={(newValue) => this.changeTenancyField(this.state.selectedUnit, this.state.selectedUnit.currentTenancy, 'recoveryStructure', newValue)} />
+                                                        <FieldDisplayEdit type="recoveryStructure" placeholder={"Recovery Structure"} recoveryStructures={this.props.appraisal.recoveryStructures} value={this.state.selectedUnit.currentTenancy.recoveryStructure} onChange={(newValue) => this.changeAllTenantField(this.state.selectedUnit, this.state.selectedUnit.currentTenancy, 'recoveryStructure', newValue)} />
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>
+                                                        <strong>Leasing Cost Structure</strong>
+                                                    </td>
+                                                    <td>
+                                                        <FieldDisplayEdit type="leasingCostStructure" placeholder={"Leasing Cost Structure"} leasingCostStructures={this.props.appraisal.leasingCosts} value={this.state.selectedUnit.leasingCostStructure} onChange={(newValue) => this.changeUnitField(this.state.selectedUnit, 'leasingCostStructure', newValue)} />
                                                     </td>
                                                 </tr>
                                                 <tr>

@@ -18,6 +18,7 @@ import AmortizationScheduleModel from "./AmortizationScheduleModel";
 import StringField from "../orm/StringField";
 import FloatField from "../orm/FloatField";
 import DateField from "../orm/DateField";
+import LeasingCostStructureModel from "./LeasingCostStructureModel";
 
 class AppraisalModel extends BaseModel
 {
@@ -49,6 +50,7 @@ class AppraisalModel extends BaseModel
     static marketRents = new ListField(new ModelField(MarketRentModel));
     static recoveryStructures = new ListField(new ModelField(RecoveryStructureModel));
     static amortizationSchedule = new ModelField(AmortizationScheduleModel);
+    static leasingCosts = new ListField(new ModelField(LeasingCostStructureModel));
 }
 
 export default AppraisalModel;

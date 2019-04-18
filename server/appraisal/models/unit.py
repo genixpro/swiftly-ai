@@ -60,6 +60,9 @@ class Unit(EmbeddedDocument):
     # Market Rent
     marketRent = StringField()
 
+    # The Leasing Cost Structure
+    leasingCostStructure = StringField(default="Default Leasing Costs")
+
     # General comments on the unit
     remarks = StringField()
 

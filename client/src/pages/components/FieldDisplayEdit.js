@@ -10,6 +10,7 @@ import RetailLocationTypeSelector from './RetailLocationTypeSelector';
 import ZoneSelector from "./ZoneSelector";
 import TagEditor from "./TagEditor";
 import RecoveryFieldSelector from "./RecoveryFieldSelector";
+import LeasingCostsSelector from "./LeasingCostsSelector";
 
 import {
     Input,
@@ -394,6 +395,17 @@ class FieldDisplayEdit extends React.Component
                             value={this.props.value}
                             disabled={!this.props.edit}
                             recoveryStructures={this.props.recoveryStructures}
+                            onChange={(newValue) => this.selectInputUpdated(newValue) }
+                            onBlur={() => this.finishEditing()}
+                            innerRef={(inputElem) => this.inputElem = inputElem}
+                        /> : null
+                }
+                {
+                    this.props.type === "leasingCostStructure" ?
+                        <LeasingCostsSelector
+                            value={this.props.value}
+                            disabled={!this.props.edit}
+                            leasingCostStructures={this.props.leasingCostStructures}
                             onChange={(newValue) => this.selectInputUpdated(newValue) }
                             onBlur={() => this.finishEditing()}
                             innerRef={(inputElem) => this.inputElem = inputElem}
