@@ -1,9 +1,10 @@
 import React from 'react';
-import { Row, Col, Card, CardBody, Button } from 'reactstrap';
+import { Row, Col, Card, CardBody, Button, DropdownItem, DropdownToggle, Dropdown, DropdownMenu } from 'reactstrap';
 import _ from 'underscore';
 import FieldDisplayEdit from './components/FieldDisplayEdit';
 import 'react-datetime/css/react-datetime.css'
 import AppraisalContentHeader from "./components/AppraisalContentHeader";
+import Auth from "../Auth";
 
 class ViewAmortization extends React.Component
 {
@@ -219,6 +220,16 @@ class ViewAmortization extends React.Component
         this.props.saveAppraisal(this.props.appraisal);
     }
 
+    downloadWordAmortizationSchedule()
+    {
+        window.location = `${process.env.VALUATE_ENVIRONMENT.REACT_APP_SERVER_URL}appraisal/${this.props.appraisal._id}/amortization_schedule/word?access_token=${Auth.getAccessToken()}`;
+    }
+
+    downloadExcelAmortizationSchedule()
+    {
+        window.location = `${process.env.VALUATE_ENVIRONMENT.REACT_APP_SERVER_URL}appraisal/${this.props.appraisal._id}/amortization_schedule/excel?access_token=${Auth.getAccessToken()}`;
+    }
+
 
     render() {
         return (
@@ -233,17 +244,17 @@ class ViewAmortization extends React.Component
                                     <Col xs={10}>
                                         <h3>Amortization Schedule</h3>
                                     </Col>
-                                    {/*<Col xs={2}>*/}
-                                        {/*<Dropdown isOpen={this.state.downloadDropdownOpen} toggle={this.toggleDownload.bind(this)}>*/}
-                                            {/*<DropdownToggle caret color={"primary"} className={"download-dropdown-button"}>*/}
-                                                {/*Download*/}
-                                            {/*</DropdownToggle>*/}
-                                            {/*<DropdownMenu>*/}
-                                                {/*<DropdownItem onClick={() => this.downloadWordRentRoll()}>Rent Roll Summary (docx)</DropdownItem>*/}
-                                                {/*<DropdownItem onClick={() => this.downloadExcelRentRoll()}>Rent Roll Spreadsheet (xlsx)</DropdownItem>*/}
-                                            {/*</DropdownMenu>*/}
-                                        {/*</Dropdown>*/}
-                                    {/*</Col>*/}
+                                    <Col xs={2}>
+                                        <Dropdown isOpen={this.state.downloadDropdownOpen} toggle={this.toggleDownload.bind(this)}>
+                                            <DropdownToggle caret color={"primary"} className={"download-dropdown-button"}>
+                                                Download
+                                            </DropdownToggle>
+                                            <DropdownMenu>
+                                                <DropdownItem onClick={() => this.downloadWordAmortizationSchedule()}>Amortization Schedule Summary (docx)</DropdownItem>
+                                                <DropdownItem onClick={() => this.downloadExcelAmortizationSchedule()}>Amortization Schedule Spreadsheet (xlsx)</DropdownItem>
+                                            </DropdownMenu>
+                                        </Dropdown>
+                                    </Col>
                                 </Row>
                                 <Row>
                                     <Col xs={12} md={12} lg={12} xl={12}>

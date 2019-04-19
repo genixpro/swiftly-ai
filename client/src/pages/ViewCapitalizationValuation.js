@@ -1,5 +1,5 @@
 import React from 'react';
-import {Row, Col, Card, CardBody, Table} from 'reactstrap';
+import {Row, Col, Card, CardBody, Table, Dropdown, DropdownItem, DropdownMenu, DropdownToggle} from 'reactstrap';
 import NumberFormat from 'react-number-format';
 import axios from "axios/index";
 import FieldDisplayEdit from './components/FieldDisplayEdit';
@@ -7,6 +7,7 @@ import AppraisalContentHeader from "./components/AppraisalContentHeader";
 import ComparableSaleList from "./components/ComparableSaleList";
 import ComparableSaleModel from "../models/ComparableSaleModel";
 import Promise from "bluebird";
+import Auth from "../Auth";
 
 class ViewCapitalizationValuation extends React.Component
 {
@@ -107,6 +108,24 @@ class ViewCapitalizationValuation extends React.Component
     }
 
 
+    toggle()
+    {
+        this.setState({downloadDropdownOpen: !this.state.downloadDropdownOpen})
+    }
+
+
+    downloadWordSummary()
+    {
+        window.location = `${process.env.VALUATE_ENVIRONMENT.REACT_APP_SERVER_URL}appraisal/${this.props.appraisal._id}/capitalization_valuation/word?access_token=${Auth.getAccessToken()}`;
+    }
+
+
+    downloadExcelSummary()
+    {
+        window.location = `${process.env.VALUATE_ENVIRONMENT.REACT_APP_SERVER_URL}appraisal/${this.props.appraisal._id}/capitalization_valuation/excel?access_token=${Auth.getAccessToken()}`;
+    }
+
+
     render()
     {
         return [
@@ -115,6 +134,16 @@ class ViewCapitalizationValuation extends React.Component
                 <Col xs={12}>
                     <Card className="card-default">
                         <CardBody>
+                            <Dropdown isOpen={this.state.downloadDropdownOpen} toggle={this.toggle.bind(this)}>
+                                <DropdownToggle caret color={"primary"} className={"download-dropdown-button"}>
+                                    Download
+                                </DropdownToggle>
+                                <DropdownMenu>
+                                    <DropdownItem onClick={() => this.downloadWordSummary()}>Capitalization Valuation Summary (docx)</DropdownItem>
+                                    <DropdownItem onClick={() => this.downloadExcelSummary()}>Capitalization Valuation Spreadshseet (xlsx)</DropdownItem>
+                                </DropdownMenu>
+                            </Dropdown>
+
                             <div className={"stabilized-statement-centered"}>
                                 <h3>Capitalization Valuation</h3>
                                 <h4>{this.props.appraisal.address}</h4>

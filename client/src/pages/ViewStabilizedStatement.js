@@ -1,10 +1,11 @@
 import React from 'react';
-import {Row, Col, Card, CardBody, Table} from 'reactstrap';
+import {Row, Col, Card, CardBody, Table, Dropdown, DropdownItem, DropdownMenu, DropdownToggle} from 'reactstrap';
 import NumberFormat from 'react-number-format';
 import FieldDisplayEdit from './components/FieldDisplayEdit';
 import AppraisalContentHeader from "./components/AppraisalContentHeader";
 import UnitsTable from "./components/UnitsTable";
 import AreaFormat from "./components/AreaFormat";
+import Auth from "../Auth";
 
 class ViewStabilizedStatement extends React.Component
 {
@@ -25,6 +26,24 @@ class ViewStabilizedStatement extends React.Component
     }
 
 
+    toggle()
+    {
+        this.setState({downloadDropdownOpen: !this.state.downloadDropdownOpen})
+    }
+
+
+    downloadWordSummary()
+    {
+        window.location = `${process.env.VALUATE_ENVIRONMENT.REACT_APP_SERVER_URL}appraisal/${this.props.appraisal._id}/stabilized_statement/word?access_token=${Auth.getAccessToken()}`;
+    }
+
+
+    downloadExcelSummary()
+    {
+        window.location = `${process.env.VALUATE_ENVIRONMENT.REACT_APP_SERVER_URL}appraisal/${this.props.appraisal._id}/stabilized_statement/excel?access_token=${Auth.getAccessToken()}`;
+    }
+
+
     render()
     {
         return [
@@ -33,7 +52,17 @@ class ViewStabilizedStatement extends React.Component
                 <Col xs={12}>
                     <Card className="card-default">
                         <CardBody>
+                            <Dropdown isOpen={this.state.downloadDropdownOpen} toggle={this.toggle.bind(this)}>
+                                <DropdownToggle caret color={"primary"} className={"download-dropdown-button"}>
+                                    Download
+                                </DropdownToggle>
+                                <DropdownMenu>
+                                    <DropdownItem onClick={() => this.downloadWordSummary()}>Stabilized Statement Summary (docx)</DropdownItem>
+                                    <DropdownItem onClick={() => this.downloadExcelSummary()}>Stabilized Statement Spreadsheet (xlsx)</DropdownItem>
+                                </DropdownMenu>
+                            </Dropdown>
                             <div className={"stabilized-statement-centered"}>
+
                                 <h3>Stabilized Income & Expense Statement</h3>
                                 <h4>{this.props.appraisal.address}</h4>
                                 <UnitsTable

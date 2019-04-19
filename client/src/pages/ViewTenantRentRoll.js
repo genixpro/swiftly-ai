@@ -6,6 +6,7 @@ import FieldDisplayEdit from './components/FieldDisplayEdit';
 import Datetime from 'react-datetime';
 import 'react-datetime/css/react-datetime.css'
 import UnitsTable from "./components/UnitsTable";
+import Auth from "../Auth";
 
 class ViewTenantsRentRoll extends React.Component
 {
@@ -251,12 +252,12 @@ class ViewTenantsRentRoll extends React.Component
 
     downloadWordRentRoll()
     {
-        window.location = `${process.env.VALUATE_ENVIRONMENT.REACT_APP_SERVER_URL}appraisal/${this.props.appraisal._id}/rent_roll/word`;
+        window.location = `${process.env.VALUATE_ENVIRONMENT.REACT_APP_SERVER_URL}appraisal/${this.props.appraisal._id}/rent_roll/word?access_token=${Auth.getAccessToken()}`;
     }
 
     downloadExcelRentRoll()
     {
-        window.location = `${process.env.VALUATE_ENVIRONMENT.REACT_APP_SERVER_URL}appraisal/${this.props.appraisal._id}/rent_roll/excel`;
+        window.location = `${process.env.VALUATE_ENVIRONMENT.REACT_APP_SERVER_URL}appraisal/${this.props.appraisal._id}/rent_roll/excel?access_token=${Auth.getAccessToken()}`;
     }
 
 

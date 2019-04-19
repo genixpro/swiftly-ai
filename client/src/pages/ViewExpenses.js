@@ -2,6 +2,7 @@ import React from 'react';
 import { Row, Col, Card, CardBody, Button, ButtonGroup, DropdownItem, DropdownToggle, Dropdown, DropdownMenu, Alert } from 'reactstrap';
 import IncomeStatementEditor from './components/IncomeStatementEditor';
 import AppraisalContentHeader from "./components/AppraisalContentHeader";
+import Auth from "../Auth";
 
 
 class ViewExpenses extends React.Component
@@ -24,12 +25,12 @@ class ViewExpenses extends React.Component
 
     downloadWordExpenses()
     {
-        window.location = `${process.env.VALUATE_ENVIRONMENT.REACT_APP_SERVER_URL}appraisal/${this.props.appraisal._id}/expenses/word`;
+        window.location = `${process.env.VALUATE_ENVIRONMENT.REACT_APP_SERVER_URL}appraisal/${this.props.appraisal._id}/expenses/word?access_token=${Auth.getAccessToken()}`;
     }
 
     downloadExcelExpenses()
     {
-        window.location = `${process.env.VALUATE_ENVIRONMENT.REACT_APP_SERVER_URL}appraisal/${this.props.appraisal._id}/expenses/excel`;
+        window.location = `${process.env.VALUATE_ENVIRONMENT.REACT_APP_SERVER_URL}appraisal/${this.props.appraisal._id}/expenses/excel?access_token=${Auth.getAccessToken()}`;
     }
 
     changeExpenseMode()

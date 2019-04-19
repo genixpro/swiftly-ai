@@ -9,6 +9,7 @@ import NumberFormat from 'react-number-format';
 import FieldsTable from "./fields_table";
 import {Value, CurrencyValue, PercentValue, IntegerValue, AreaValue} from "./value";
 import {Spacer} from "./spacer";
+import renderDocument from "./render_doc";
 
 
 class App extends React.Component {
@@ -80,29 +81,11 @@ class App extends React.Component {
     }
 }
 
-// Add something to the event loop. We just use a timeout with an absurdly long time
-// Its quick and easy
-const timeout = setTimeout(function() { }, 3600000);
-
-(async () => {
-    try
-    {
-        // Render the HTML
-        const data = await readJSONInput();
-        const html = renderToString(
-            <App
-                appraisal={data.appraisal}
-                comparableSales={data.comparableSales}
-            />
-        );
-
-        fs.writeFileSync(data.fileName, html);
-        clearTimeout(timeout);
-    }
-    catch(err)
-    {
-        console.error(err);
-        clearTimeout(timeout);
-    }
-})();
+renderDocument((data) =>
+{
+    return <App
+        appraisal={data.appraisal}
+        comparableSales={data.comparableSales}
+    />;
+});
 

@@ -1,5 +1,5 @@
 import React from 'react';
-import {Row, Col, Card, CardBody, Table} from 'reactstrap';
+import {Row, Col, Card, CardBody, Table, Dropdown, DropdownItem, DropdownMenu, DropdownToggle} from 'reactstrap';
 import NumberFormat from 'react-number-format';
 import axios from "axios/index";
 import FieldDisplayEdit from './components/FieldDisplayEdit';
@@ -8,6 +8,7 @@ import ComparableSaleList from "./components/ComparableSaleList";
 import ComparableSaleModel from "../models/ComparableSaleModel";
 import Promise from "bluebird";
 import {DirectComparisonModifier} from "../models/DirectComparisonInputsModel";
+import Auth from "../Auth";
 
 class ViewDirectComparisonValuation extends React.Component
 {
@@ -107,14 +108,43 @@ class ViewDirectComparisonValuation extends React.Component
     }
 
 
+    toggle()
+    {
+        this.setState({downloadDropdownOpen: !this.state.downloadDropdownOpen})
+    }
+
+
+    downloadWordSummary()
+    {
+        window.location = `${process.env.VALUATE_ENVIRONMENT.REACT_APP_SERVER_URL}appraisal/${this.props.appraisal._id}/direct_comparison_valuation/word?access_token=${Auth.getAccessToken()}`;
+    }
+
+
+    downloadExcelSummary()
+    {
+        window.location = `${process.env.VALUATE_ENVIRONMENT.REACT_APP_SERVER_URL}appraisal/${this.props.appraisal._id}/direct_comparison_valuation/excel?access_token=${Auth.getAccessToken()}`;
+    }
+
+
     render()
     {
         return [
-            <AppraisalContentHeader appraisal={this.props.appraisal} title="Capitalization Valuation"/>,
+            <AppraisalContentHeader appraisal={this.props.appraisal} title="Direct Comparison Valuation"/>,
             <Row className={"view-direct-comparison-valuation"}>
                 <Col xs={12}>
                     <Card className="card-default">
                         <CardBody>
+
+                            <Dropdown isOpen={this.state.downloadDropdownOpen} toggle={this.toggle.bind(this)}>
+                                <DropdownToggle caret color={"primary"} className={"download-dropdown-button"}>
+                                    Download
+                                </DropdownToggle>
+                                <DropdownMenu>
+                                    <DropdownItem onClick={() => this.downloadWordSummary()}>Direct Comparison Valuation Summary (docx)</DropdownItem>
+                                    <DropdownItem onClick={() => this.downloadExcelSummary()}>Direct Comparison Valuation Spreadsheet (xlsx)</DropdownItem>
+                                </DropdownMenu>
+                            </Dropdown>
+
                             <div className={"stabilized-statement-centered"}>
                                 <h3>Direct Comparison Valuation</h3>
                                 <h4>{this.props.appraisal.address}</h4>

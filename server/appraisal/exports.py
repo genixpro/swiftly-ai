@@ -652,3 +652,493 @@ class ExpensesExcelFile(ExportAPI):
         response.content_disposition = "attachment; filename=\"Expenses.xlsx\""
         return response
 
+
+@resource(path='/appraisal/{appraisalId}/stabilized_statement/word', cors_enabled=True, cors_origins="*", permission="everything")
+class StabilizedStatementWordFile(ExportAPI):
+
+    def __init__(self, request, context=None):
+        self.request = request
+
+    def __acl__(self):
+        return [
+            (Allow, Authenticated, 'everything'),
+            (Deny, Everyone, 'everything')
+        ]
+
+    def get(self):
+        appraisalId = self.request.matchdict['appraisalId']
+
+        appraisal = Appraisal.objects(id=appraisalId).first()
+
+        auth = checkUserOwnsObject(self.request.authenticated_userid, self.request.effective_principals, appraisal)
+        if not auth:
+            raise HTTPForbidden("You do not have access to this appraisal.")
+
+        data = {
+            "appraisal": json.loads(appraisal.to_json())
+        }
+
+        buffer = self.renderTemplate("stabilized_statement_word", data)
+
+        response = Response()
+        response.body_file = buffer
+        response.content_type = "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+        response.content_disposition = "attachment; filename=\"StabilizedStatement.docx\""
+        return response
+
+
+@resource(path='/appraisal/{appraisalId}/stabilized_statement/excel', cors_enabled=True, cors_origins="*", permission="everything")
+class StabilizedStatementExcelFile(ExportAPI):
+
+    def __init__(self, request, context=None):
+        self.request = request
+
+    def __acl__(self):
+        return [
+            (Allow, Authenticated, 'everything'),
+            (Deny, Everyone, 'everything')
+        ]
+
+    def get(self):
+        appraisalId = self.request.matchdict['appraisalId']
+
+        appraisal = Appraisal.objects(id=appraisalId).first()
+
+        auth = checkUserOwnsObject(self.request.authenticated_userid, self.request.effective_principals, appraisal)
+        if not auth:
+            raise HTTPForbidden("You do not have access to this appraisal.")
+
+        wb = Workbook()
+
+        ws1 = wb.active
+        ws1.title = "Stabilized Statement"
+
+        headers = ["Stabilized Statement"]
+
+        ws1.append(headers)
+
+        ws1.append(["Revenue", "", ""])
+
+        ws1.append(["Stabilized Rental Income", appraisal.stabilizedStatement.rentalIncome, ""])
+
+        ws1.append(["Additional Income", appraisal.stabilizedStatement.additionalIncome, ""])
+
+        ws1.append(["Recoverable Income", appraisal.stabilizedStatement.recoverableIncome, ""])
+
+        ws1.append(["Potential Gross Income", appraisal.stabilizedStatement.potentialGrossIncome, ""])
+
+        ws1.append([f"Less Vacancy @ {appraisal.stabilizedStatementInputs.vacancyRate}", appraisal.stabilizedStatement.vacancyDeduction, ""])
+
+        ws1.append([f"Effective Gross Income", "", appraisal.stabilizedStatement.effectiveGrossIncome])
+
+        ws1.append([""])
+
+        ws1.append(["Expenses"])
+
+        if appraisal.stabilizedStatement.operatingExpenses:
+            ws1.append(["Operating Expenses", appraisal.stabilizedStatement.operatingExpenses, ""])
+
+        if appraisal.stabilizedStatement.taxes:
+            ws1.append(["Taxes", appraisal.stabilizedStatement.taxes, ""])
+
+        if appraisal.stabilizedStatement.taxes:
+            ws1.append(["Management Expenses", appraisal.stabilizedStatement.managementExpenses, ""])
+
+        if appraisal.stabilizedStatement.tmiTotal:
+            ws1.append([f"TMI {appraisal.sizeOfBuilding} sqft @ ${appraisal.stabilizedStatementInputs.tmiRatePSF}", appraisal.stabilizedStatement.tmiTotal, ""])
+
+        ws1.append([f"Structural Allowance @ {appraisal.stabilizedStatementInputs.structuralAllowancePercent}%", appraisal.stabilizedStatement.structuralAllowance, ""])
+
+
+        ws1.append([f"Total Expenses", "", appraisal.stabilizedStatement.totalExpenses])
+
+        ws1.append([f"Net Operating Income", "", appraisal.stabilizedStatement.netOperatingIncome])
+
+        buffer = io.BytesIO()
+        wb.save(buffer)
+        buffer.seek(0)
+
+        response = Response()
+        response.body_file = buffer
+        response.content_type = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+        response.content_disposition = "attachment; filename=\"StabilizedStatement.xlsx\""
+        return response
+
+
+
+@resource(path='/appraisal/{appraisalId}/capitalization_valuation/word', cors_enabled=True, cors_origins="*", permission="everything")
+class CapitalizationValuationWordFile(ExportAPI):
+
+    def __init__(self, request, context=None):
+        self.request = request
+
+    def __acl__(self):
+        return [
+            (Allow, Authenticated, 'everything'),
+            (Deny, Everyone, 'everything')
+        ]
+
+    def get(self):
+        appraisalId = self.request.matchdict['appraisalId']
+
+        appraisal = Appraisal.objects(id=appraisalId).first()
+
+        auth = checkUserOwnsObject(self.request.authenticated_userid, self.request.effective_principals, appraisal)
+        if not auth:
+            raise HTTPForbidden("You do not have access to this appraisal.")
+
+        data = {
+            "appraisal": json.loads(appraisal.to_json())
+        }
+
+        buffer = self.renderTemplate("capitalization_valuation_word", data)
+
+        response = Response()
+        response.body_file = buffer
+        response.content_type = "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+        response.content_disposition = "attachment; filename=\"CapitalizationValuation.docx\""
+        return response
+
+
+@resource(path='/appraisal/{appraisalId}/capitalization_valuation/excel', cors_enabled=True, cors_origins="*", permission="everything")
+class CapitalizationValuationExcelFile(ExportAPI):
+
+    def __init__(self, request, context=None):
+        self.request = request
+
+    def __acl__(self):
+        return [
+            (Allow, Authenticated, 'everything'),
+            (Deny, Everyone, 'everything')
+        ]
+
+    def get(self):
+        appraisalId = self.request.matchdict['appraisalId']
+
+        appraisal = Appraisal.objects(id=appraisalId).first()
+
+        auth = checkUserOwnsObject(self.request.authenticated_userid, self.request.effective_principals, appraisal)
+        if not auth:
+            raise HTTPForbidden("You do not have access to this appraisal.")
+
+        wb = Workbook()
+
+        ws1 = wb.active
+        ws1.title = "Capitalization Valuation"
+
+        headers = ["Capitalization Valuation"]
+
+        ws1.append(headers)
+
+        ws1.append(["Net Operating Income", appraisal.stabilizedStatement.netOperatingIncome, ""])
+
+        ws1.append([f"Capitalized @ {appraisal.stabilizedStatementInputs.capitalizationRate}%", appraisal.stabilizedStatement.capitalization, ""])
+
+        if appraisal.stabilizedStatement.marketRentDifferential:
+            ws1.append(["Market Rent Differential", appraisal.stabilizedStatement.marketRentDifferential, ""])
+
+        if appraisal.stabilizedStatement.vacantUnitDifferential:
+            ws1.append(["Vacant Unit Differential", appraisal.stabilizedStatement.vacantUnitDifferential, ""])
+
+        if appraisal.stabilizedStatement.freeRentDifferential:
+            ws1.append(["Free Rent Differential", appraisal.stabilizedStatement.freeRentDifferential, ""])
+
+        if appraisal.stabilizedStatement.amortizationDifferential:
+            ws1.append(["Amortization Differential", appraisal.stabilizedStatement.amortizationDifferential, ""])
+
+        for modifier in appraisal.stabilizedStatementInputs.modifiers:
+            ws1.append([modifier.name, modifier.amount, ""])
+
+        ws1.append([f"Valuation", "", appraisal.stabilizedStatement.valuation])
+
+        ws1.append([f"Rounded", "", appraisal.stabilizedStatement.valuationRounded])
+
+        buffer = io.BytesIO()
+        wb.save(buffer)
+        buffer.seek(0)
+
+        response = Response()
+        response.body_file = buffer
+        response.content_type = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+        response.content_disposition = "attachment; filename=\"CapitalizationValuation.xlsx\""
+        return response
+
+
+
+
+
+@resource(path='/appraisal/{appraisalId}/direct_comparison_valuation/word', cors_enabled=True, cors_origins="*", permission="everything")
+class DirectComparisonValuationWordFile(ExportAPI):
+
+    def __init__(self, request, context=None):
+        self.request = request
+
+    def __acl__(self):
+        return [
+            (Allow, Authenticated, 'everything'),
+            (Deny, Everyone, 'everything')
+        ]
+
+    def get(self):
+        appraisalId = self.request.matchdict['appraisalId']
+
+        appraisal = Appraisal.objects(id=appraisalId).first()
+
+        auth = checkUserOwnsObject(self.request.authenticated_userid, self.request.effective_principals, appraisal)
+        if not auth:
+            raise HTTPForbidden("You do not have access to this appraisal.")
+
+        data = {
+            "appraisal": json.loads(appraisal.to_json())
+        }
+
+        buffer = self.renderTemplate("direct_comparison_valuation_word", data)
+
+        response = Response()
+        response.body_file = buffer
+        response.content_type = "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+        response.content_disposition = "attachment; filename=\"DirectComparisonValuation.docx\""
+        return response
+
+
+
+@resource(path='/appraisal/{appraisalId}/direct_comparison_valuation/excel', cors_enabled=True, cors_origins="*", permission="everything")
+class DirectComparisonValuationExcelFile(ExportAPI):
+
+    def __init__(self, request, context=None):
+        self.request = request
+
+    def __acl__(self):
+        return [
+            (Allow, Authenticated, 'everything'),
+            (Deny, Everyone, 'everything')
+        ]
+
+    def get(self):
+        appraisalId = self.request.matchdict['appraisalId']
+
+        appraisal = Appraisal.objects(id=appraisalId).first()
+
+        auth = checkUserOwnsObject(self.request.authenticated_userid, self.request.effective_principals, appraisal)
+        if not auth:
+            raise HTTPForbidden("You do not have access to this appraisal.")
+
+        wb = Workbook()
+
+        ws1 = wb.active
+        ws1.title = "Direct Comparison Valuation"
+
+        headers = ["Direct Comparison Valuation"]
+
+        ws1.append(headers)
+
+        ws1.append([f"{appraisal.sizeOfBuilding} sqft @ {appraisal.directComparisonInputs.pricePerSquareFoot}%", appraisal.directComparisonValuation.comparativeValue, ""])
+
+        if appraisal.directComparisonValuation.marketRentDifferential:
+            ws1.append(["Market Rent Differential", appraisal.directComparisonValuation.marketRentDifferential, ""])
+
+        if appraisal.directComparisonValuation.vacantUnitDifferential:
+            ws1.append(["Vacant Unit Differential", appraisal.directComparisonValuation.vacantUnitDifferential, ""])
+
+        if appraisal.directComparisonValuation.freeRentDifferential:
+            ws1.append(["Free Rent Differential", appraisal.directComparisonValuation.freeRentDifferential, ""])
+
+        if appraisal.directComparisonValuation.amortizationDifferential:
+            ws1.append(["Amortization Differential", appraisal.directComparisonValuation.amortizationDifferential, ""])
+
+        for modifier in appraisal.directComparisonInputs.modifiers:
+            ws1.append([modifier.name, modifier.amount, ""])
+
+        ws1.append([f"Valuation", "", appraisal.directComparisonValuation.valuation])
+
+        ws1.append([f"Rounded", "", appraisal.directComparisonValuation.valuationRounded])
+
+        buffer = io.BytesIO()
+        wb.save(buffer)
+        buffer.seek(0)
+
+        response = Response()
+        response.body_file = buffer
+        response.content_type = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+        response.content_disposition = "attachment; filename=\"DirectComparisonValuation.xlsx\""
+        return response
+
+
+
+
+@resource(path='/appraisal/{appraisalId}/additional_incomes/word', cors_enabled=True, cors_origins="*", permission="everything")
+class AdditionalIncomeWordFile(ExportAPI):
+
+    def __init__(self, request, context=None):
+        self.request = request
+
+    def __acl__(self):
+        return [
+            (Allow, Authenticated, 'everything'),
+            (Deny, Everyone, 'everything')
+        ]
+
+    def get(self):
+        appraisalId = self.request.matchdict['appraisalId']
+
+        appraisal = Appraisal.objects(id=appraisalId).first()
+
+        auth = checkUserOwnsObject(self.request.authenticated_userid, self.request.effective_principals, appraisal)
+        if not auth:
+            raise HTTPForbidden("You do not have access to this appraisal.")
+
+        data = {
+            "appraisal": json.loads(appraisal.to_json())
+        }
+
+        buffer = self.renderTemplate("additional_income_word", data)
+
+        response = Response()
+        response.body_file = buffer
+        response.content_type = "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+        response.content_disposition = "attachment; filename=\"AdditionalIncome.docx\""
+        return response
+
+
+
+@resource(path='/appraisal/{appraisalId}/additional_incomes/excel', cors_enabled=True, cors_origins="*", permission="everything")
+class AdditionalIncomeExcelFile(ExportAPI):
+
+    def __init__(self, request, context=None):
+        self.request = request
+
+    def __acl__(self):
+        return [
+            (Allow, Authenticated, 'everything'),
+            (Deny, Everyone, 'everything')
+        ]
+    def get(self):
+        appraisalId = self.request.matchdict['appraisalId']
+
+        appraisal = Appraisal.objects(id=appraisalId).first()
+
+        auth = checkUserOwnsObject(self.request.authenticated_userid, self.request.effective_principals, appraisal)
+        if not auth:
+            raise HTTPForbidden("You do not have access to this appraisal.")
+
+        wb = Workbook()
+
+        ws1 = wb.active
+        ws1.title = "Additional Income"
+
+        headers = [""]
+
+        for year in appraisal.incomeStatement.years:
+            headers.append(str(year))
+
+        headers[0] = "Additional Income"
+        ws1.append(headers)
+
+        operatingIncomes = [income for income in appraisal.incomeStatement.incomes if income.incomeStatementItemType == 'additional_income']
+
+        for income in operatingIncomes:
+            row = [income.name]
+
+            for year in appraisal.incomeStatement.years:
+                row.append(income.yearlyAmounts.get(str(year)))
+
+            ws1.append(row)
+
+        buffer = io.BytesIO()
+        wb.save(buffer)
+        buffer.seek(0)
+
+        response = Response()
+        response.body_file = buffer
+        response.content_type = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+        response.content_disposition = "attachment; filename=\"AdditionalIncome.xlsx\""
+        return response
+
+
+
+@resource(path='/appraisal/{appraisalId}/amortization_schedule/word', cors_enabled=True, cors_origins="*", permission="everything")
+class AmortizationScheduleWordFile(ExportAPI):
+
+    def __init__(self, request, context=None):
+        self.request = request
+
+    def __acl__(self):
+        return [
+            (Allow, Authenticated, 'everything'),
+            (Deny, Everyone, 'everything')
+        ]
+
+    def get(self):
+        appraisalId = self.request.matchdict['appraisalId']
+
+        appraisal = Appraisal.objects(id=appraisalId).first()
+
+        auth = checkUserOwnsObject(self.request.authenticated_userid, self.request.effective_principals, appraisal)
+        if not auth:
+            raise HTTPForbidden("You do not have access to this appraisal.")
+
+        data = {
+            "appraisal": json.loads(appraisal.to_json())
+        }
+
+        buffer = self.renderTemplate("amortization_schedule_word", data)
+
+        response = Response()
+        response.body_file = buffer
+        response.content_type = "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+        response.content_disposition = "attachment; filename=\"AmortizationSchedule.docx\""
+        return response
+
+
+
+@resource(path='/appraisal/{appraisalId}/amortization_schedule/excel', cors_enabled=True, cors_origins="*", permission="everything")
+class AmortizationScheduleExcelFile(ExportAPI):
+
+    def __init__(self, request, context=None):
+        self.request = request
+
+    def __acl__(self):
+        return [
+            (Allow, Authenticated, 'everything'),
+            (Deny, Everyone, 'everything')
+        ]
+    def get(self):
+        appraisalId = self.request.matchdict['appraisalId']
+
+        appraisal = Appraisal.objects(id=appraisalId).first()
+
+        auth = checkUserOwnsObject(self.request.authenticated_userid, self.request.effective_principals, appraisal)
+        if not auth:
+            raise HTTPForbidden("You do not have access to this appraisal.")
+
+        wb = Workbook()
+
+        ws1 = wb.active
+        ws1.title = "Amortization Schedule"
+
+        headers = ["Name", "Amount", "Interest", "Discount Rate", "Start Date", "Period (months)"]
+
+        ws1.append(headers)
+
+        for item in appraisal.amortizationSchedule.items:
+            row = [
+                item.name,
+                item.amount,
+                item.interest,
+                item.discountRate,
+                str(item.startDate),
+                item.periodMonths
+            ]
+
+            ws1.append(row)
+
+        buffer = io.BytesIO()
+        wb.save(buffer)
+        buffer.seek(0)
+
+        response = Response()
+        response.body_file = buffer
+        response.content_type = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+        response.content_disposition = "attachment; filename=\"AmortizationSchedule.xlsx\""
+        return response
+

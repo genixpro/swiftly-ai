@@ -2,6 +2,7 @@ import React from 'react';
 import {Row, Col, Card, CardBody, DropdownItem, DropdownToggle, Dropdown, DropdownMenu } from 'reactstrap';
 import IncomeStatementEditor from './components/IncomeStatementEditor';
 import AppraisalContentHeader from "./components/AppraisalContentHeader";
+import Auth from "../Auth";
 
 
 class ViewAdditionalIncomes extends React.Component
@@ -16,12 +17,12 @@ class ViewAdditionalIncomes extends React.Component
 
     downloadWordAdditionalIncomes()
     {
-        window.location = `${process.env.VALUATE_ENVIRONMENT.REACT_APP_SERVER_URL}appraisal/${this.props.appraisal._id}/additional_incomes/word`;
+        window.location = `${process.env.VALUATE_ENVIRONMENT.REACT_APP_SERVER_URL}appraisal/${this.props.appraisal._id}/additional_incomes/word?access_token=${Auth.getAccessToken()}`;
     }
 
     downloadExcelAdditionalIncomes()
     {
-        window.location = `${process.env.VALUATE_ENVIRONMENT.REACT_APP_SERVER_URL}appraisal/${this.props.appraisal._id}/additional_incomes/excel`;
+        window.location = `${process.env.VALUATE_ENVIRONMENT.REACT_APP_SERVER_URL}appraisal/${this.props.appraisal._id}/additional_incomes/excel?access_token=${Auth.getAccessToken()}`;
     }
 
     render()

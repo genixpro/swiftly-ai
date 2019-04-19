@@ -6,6 +6,7 @@ import Promise from 'bluebird';
 import _ from 'underscore';
 import ComparableSalesMap from './components/ComparableSalesMap';
 import ComparableSaleModel from "../models/ComparableSaleModel";
+import Auth from "../Auth";
 
 
 class ViewAppraisalComparableSales extends React.Component {
@@ -81,19 +82,19 @@ class ViewAppraisalComparableSales extends React.Component {
 
     downloadExcelSummary()
     {
-        window.location = `${process.env.VALUATE_ENVIRONMENT.REACT_APP_SERVER_URL}appraisal/${this.props.appraisal._id}/comparable_sales/excel`;
+        window.location = `${process.env.VALUATE_ENVIRONMENT.REACT_APP_SERVER_URL}appraisal/${this.props.appraisal._id}/comparable_sales/excel?access_token=${Auth.getAccessToken()}`;
     }
 
 
     downloadWordSummary()
     {
-        window.location = `${process.env.VALUATE_ENVIRONMENT.REACT_APP_SERVER_URL}appraisal/${this.props.appraisal._id}/comparable_sales/word`;
+        window.location = `${process.env.VALUATE_ENVIRONMENT.REACT_APP_SERVER_URL}appraisal/${this.props.appraisal._id}/comparable_sales/word?access_token=${Auth.getAccessToken()}`;
     }
 
 
     downloadDetailedSummary()
     {
-        window.location = `${process.env.VALUATE_ENVIRONMENT.REACT_APP_SERVER_URL}appraisal/${this.props.appraisal._id}/comparable_sales/detailed_word`;
+        window.location = `${process.env.VALUATE_ENVIRONMENT.REACT_APP_SERVER_URL}appraisal/${this.props.appraisal._id}/comparable_sales/detailed_word?access_token=${Auth.getAccessToken()}`;
     }
 
     onSortChanged(newSort)

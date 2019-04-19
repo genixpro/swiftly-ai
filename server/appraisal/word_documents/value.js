@@ -36,18 +36,29 @@ class CurrencyValue extends React.Component {
             return null;
         }
 
-        const style = {};
+        const style = this.props.style || {};
 
         if (this.props.left)
         {
             style["textAlign"] = "left";
+        }
+        else if(this.props.center)
+        {
+            style["textAlign"] = "center";
         }
         else
         {
             style["textAlign"] = "right";
         }
 
-        return <Value style={style}>$<NumberFormat value={this.props.children} displayType={"text"} decimalScale={2} thousandSeparator={", "} /></Value>;
+        let decimalScale = 2;
+
+        if (this.props.cents === false)
+        {
+            decimalScale = 0;
+        }
+
+        return <Value style={style}>$<NumberFormat value={this.props.children} displayType={"text"} decimalScale={decimalScale} thousandSeparator={", "} /></Value>;
     }
 }
 
@@ -59,11 +70,15 @@ class PercentValue extends React.Component {
             return null;
         }
 
-        const style = {};
+        const style = this.props.style || {};
 
         if (this.props.left)
         {
             style["textAlign"] = "left";
+        }
+        else if(this.props.center)
+        {
+            style["textAlign"] = "center";
         }
         else
         {
@@ -83,11 +98,15 @@ class IntegerValue extends React.Component {
             return null;
         }
 
-        const style = {};
+        const style = this.props.style || {};
 
         if (this.props.left)
         {
             style["textAlign"] = "left";
+        }
+        else if(this.props.center)
+        {
+            style["textAlign"] = "center";
         }
         else
         {
@@ -107,11 +126,15 @@ class AreaValue extends React.Component {
             return null;
         }
 
-        const style = {};
+        const style = this.props.style || {};
 
         if (this.props.left)
         {
             style["textAlign"] = "left";
+        }
+        else if(this.props.center)
+        {
+            style["textAlign"] = "center";
         }
         else
         {

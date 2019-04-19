@@ -6,6 +6,7 @@ import _ from 'underscore';
 import ComparableLeaseList from "./components/ComparableLeaseList";
 import ComparableLeasesMap from "./components/ComparableLeasesMap";
 import ComparableLeaseModel from "../models/ComparableLeaseModel";
+import Auth from "../Auth";
 
 
 class ViewAppraisalComparableLeases extends React.Component {
@@ -86,13 +87,13 @@ class ViewAppraisalComparableLeases extends React.Component {
 
     downloadExcelSummary()
     {
-        window.location = `${process.env.VALUATE_ENVIRONMENT.REACT_APP_SERVER_URL}appraisal/${this.props.appraisal._id}/comparable_leases/excel`;
+        window.location = `${process.env.VALUATE_ENVIRONMENT.REACT_APP_SERVER_URL}appraisal/${this.props.appraisal._id}/comparable_leases/excel?access_token=${Auth.getAccessToken()}`;
     }
 
 
     downloadWordSummary()
     {
-        window.location = `${process.env.VALUATE_ENVIRONMENT.REACT_APP_SERVER_URL}appraisal/${this.props.appraisal._id}/comparable_leases/word`;
+        window.location = `${process.env.VALUATE_ENVIRONMENT.REACT_APP_SERVER_URL}appraisal/${this.props.appraisal._id}/comparable_leases/word?access_token=${Auth.getAccessToken()}`;
     }
 
     onSortChanged(newSort)

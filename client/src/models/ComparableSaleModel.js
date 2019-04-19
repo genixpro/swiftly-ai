@@ -33,7 +33,7 @@ class ComparableSaleModel extends EquationMdoel
     static additionalInfo = new StringField();
     static constructionDate = new DateField();
 
-    static siteArea = new FloatField();
+    static siteArea = new StringField();
 
     static parking = new StringField();
 

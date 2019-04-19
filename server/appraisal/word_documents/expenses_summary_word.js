@@ -5,9 +5,10 @@ import fs from "fs";
 import Moment from 'react-moment';
 import _ from "underscore";
 import NumberFormat from 'react-number-format';
-import CustomTable from "./custom_table";
+import CustomTable from "./styled_table";
 import {Value, CurrencyValue, PercentValue} from "./value";
 import Spacer from "./spacer";
+import renderDocument from "./render_doc";
 
 class App extends React.Component {
 
@@ -94,28 +95,10 @@ class App extends React.Component {
     }
 }
 
-// Add something to the event loop. We just use a timeout with an absurdly long time
-// Its quick and easy
-const timeout = setTimeout(function() { }, 3600000);
-
-(async () => {
-    try
-    {
-        // Render the HTML
-        const data = await readJSONInput();
-        const html = renderToString(
-            <App
-                appraisal={data.appraisal}
-            />
-        );
-
-        fs.writeFileSync(data.fileName, html);
-        clearTimeout(timeout);
-    }
-    catch(err)
-    {
-        console.error(err);
-        clearTimeout(timeout);
-    }
-})();
+renderDocument((data) =>
+{
+    return <App
+        appraisal={data.appraisal}
+    />;
+});
 

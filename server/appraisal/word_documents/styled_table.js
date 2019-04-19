@@ -99,7 +99,7 @@ class Row extends React.Component
 }
 
 
-class CustomTable extends React.Component {
+class StyledTable extends React.Component {
     render()
     {
         const tableStyle = {
@@ -173,4 +173,4 @@ class CustomTable extends React.Component {
     }
 }
 
-export default CustomTable;
+export default StyledTable;

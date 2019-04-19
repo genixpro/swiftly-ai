@@ -2,9 +2,15 @@
 
 .view-appraisal-comparable-sales
 {
-  .dropdown
-  {
-    float: right;
+}
 
-  }
+.download-dropdown-button
+{
+  float: right;
+
+}
+
+.dropdown-menu
+{
+  z-index: 1001;
 }
