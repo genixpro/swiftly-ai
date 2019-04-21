@@ -4,7 +4,7 @@ import AnnotationEditor from './components/AnnotationEditor';
 
 class ViewFinancialStatementExtractions extends React.Component
 {
-    saveAppraisal(newFinancialStatement)
+    saveFile(newFinancialStatement)
     {
         this.props.saveFinancialStatementData(newFinancialStatement);
     }
@@ -12,7 +12,7 @@ class ViewFinancialStatementExtractions extends React.Component
 
     render() {
         return (
-            <AnnotationEditor saveAppraisal={(doc) => this.saveAppraisal(doc)} document={this.props.financialStatement} annotationFields={FinancialStatementsFields} />
+            <AnnotationEditor saveFile={(doc) => this.saveFile(doc)} document={this.props.financialStatement} annotationFields={FinancialStatementsFields} />
         );
     }
 }

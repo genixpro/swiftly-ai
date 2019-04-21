@@ -10,6 +10,8 @@ import NumberFormat from 'react-number-format';
 
 class AnnotationEditor extends React.Component
 {
+    static _hover = Symbol("hover");
+
     constructor()
     {
         super();
@@ -115,7 +117,7 @@ class AnnotationEditor extends React.Component
                     hoverFieldName = word.classification;
                 }
 
-                if((word.hover || this.hoveredFields.indexOf(hoverFieldName) !== -1) && fieldElement !== null)
+                if((word[AnnotationEditor._hover] || this.hoveredFields.indexOf(hoverFieldName) !== -1) && fieldElement !== null)
                 {
                     ctx.moveTo(x + width, y + height/2);
                     ctx.strokeStyle = "#0000ff55";
@@ -162,17 +164,28 @@ class AnnotationEditor extends React.Component
 
     onClick(evt)
     {
-        if (evt.button === 0)
+        const button = evt.button;
+        if (!this.selecting)
         {
-            Object.values(this.tokens).forEach((wordToken) =>
+            setTimeout(() =>
             {
-                if (wordToken.state.selected)
+                if (button === 0)
                 {
-                    wordToken.setState({selected: false});
-                    this.updateCanvas();
+                    if (!this.selecting)
+                    {
+                        Object.values(this.tokens).forEach((wordToken) =>
+                        {
+                            if (wordToken.state.selected)
+                            {
+                                console.log("selected");
+                                wordToken.setState({selected: false});
+                                this.updateCanvas();
+                            }
+                        });
+                        this.selecting = false;
+                    }
                 }
-            });
-            this.selecting = false;
+            }, 250);
         }
     }
 
@@ -216,7 +229,7 @@ class AnnotationEditor extends React.Component
             });
         }
 
-        word.hover = true;
+        word[AnnotationEditor._hover] = true;
         wordToken.setState({word: word});
         this.updateCanvas();
     }
@@ -226,7 +239,7 @@ class AnnotationEditor extends React.Component
         const word = this.state.document.words[wordIndex];
         const wordToken = this.tokens[wordIndex];
 
-        word.hover = false;
+        word[AnnotationEditor._hover] = false;
         wordToken.setState({word: word});
         this.updateCanvas();
     }
@@ -259,6 +272,7 @@ class AnnotationEditor extends React.Component
         });
         this.updateExtractedData();
         this.updateCanvas();
+        this.props.saveFile(this.state.document);
     }
 
     changeWordClassification(evt, newClass)
@@ -276,6 +290,7 @@ class AnnotationEditor extends React.Component
         });
         this.updateExtractedData();
         this.updateCanvas();
+        this.props.saveFile(this.state.document);
     }
 
 
@@ -303,6 +318,7 @@ class AnnotationEditor extends React.Component
         });
         this.updateExtractedData();
         this.updateCanvas();
+        this.props.saveFile(this.state.document);
     }
 
 
@@ -330,6 +346,7 @@ class AnnotationEditor extends React.Component
         });
         this.updateExtractedData();
         this.updateCanvas();
+        this.props.saveFile(this.state.document);
     }
 
     getFieldInformation(classification)
@@ -441,9 +458,9 @@ class AnnotationEditor extends React.Component
         this.setState({extractedData: extractedData});
     }
 
-    saveAppraisal()
+    saveFile()
     {
-        this.props.saveAppraisal(this.state.document);
+        this.props.saveFile(this.state.document);
     }
 
 
@@ -514,13 +531,13 @@ class AnnotationEditor extends React.Component
     {
         const document = this.state.document;
         document.pageTypes[page] = newPageType;
-        this.setState({document: document}, () => this.saveAppraisal());
+        this.setState({document: document}, () => this.saveFile());
     }
 
 
     render() {
         return (
-            <div id={"annotation-editor-extractions"} onMouseUp={this.onMouseUp.bind(this)} onClick={this.onClick.bind(this)} onMouseMove={this.onMouseMove.bind(this)}>
+            <div id={"annotation-editor-extractions"} onMouseUp={this.onMouseUp.bind(this)} onMouseDown={this.onClick.bind(this)} onMouseMove={this.onMouseMove.bind(this)}>
                 <Row>
                     <Col xs={2}>
                         {
@@ -539,7 +556,7 @@ class AnnotationEditor extends React.Component
 
                                         <select className="custom-select" value={this.state.document.pageTypes[page]} onChange={(evt) => this.onPageTypeChanged(page, evt.target.value)}>
                                             {
-                                                this.pageTypes.map((pageType) => <option value={pageType}>{this.humanFriendlyPageType[pageType]}</option>)
+                                                this.pageTypes.map((pageType) => <option  key={pageType} value={pageType}>{this.humanFriendlyPageType[pageType]}</option>)
                                             }
                                         </select>
 
@@ -558,7 +575,7 @@ class AnnotationEditor extends React.Component
                             <div>
                                 <select className="custom-select" value={this.state.document.pageTypes[this.state.currentPage]} onChange={(evt) => this.onPageTypeChanged(this.state.currentPage, evt.target.value)}>
                                     {
-                                        this.pageTypes.map((pageType) => <option value={pageType}>{this.humanFriendlyPageType[pageType]}</option>)
+                                        this.pageTypes.map((pageType) => <option key={pageType} value={pageType}>{this.humanFriendlyPageType[pageType]}</option>)
                                     }
                                 </select>
                             </div>
@@ -623,11 +640,11 @@ class AnnotationEditor extends React.Component
                                                 <p>Modifiers: {this.state.selectedWord.modifiers && this.state.selectedWord.modifiers.map((item, itemIndex) => {
                                                     if (itemIndex === this.state.selectedWord.modifiers.length - 1)
                                                     {
-                                                        return <span>{item}</span>
+                                                        return <span key={itemIndex}>{item}</span>
                                                     }
                                                     else
                                                     {
-                                                        return <span>{item}, </span>
+                                                        return <span key={itemIndex}>{item}, </span>
                                                     }
                                                 })}</p>
 
@@ -756,15 +773,15 @@ class AnnotationEditor extends React.Component
                         this.props.annotationFields.map((group) => {
                             return <SubMenu title={group.name} key={group.name}>
                                 {group.fields && group.fields.map((field) => {
-                                    return <MenuItem onClick={(evt, data) => this.changeWordClassification(evt, field.field)} key={field.field}>
+                                    return <MenuItem onMouseDown={(evt, data) => this.changeWordClassification(evt, field.field)} key={field.field}>
                                         {field.name}
                                     </MenuItem>
                                 })
                                 }
                                 {group.modifiers && group.modifiers.map((field) => {
-                                    return [<MenuItem onClick={(evt, data) => this.addWordModifiers(evt, field.field)} key={field.field}>
+                                    return [<MenuItem onMouseDown={(evt, data) => this.addWordModifiers(evt, field.field)} key={field.field+"+"}>
                                         +{field.name}
-                                    </MenuItem>,<MenuItem onClick={(evt, data) => this.removeWordModifiers(evt, field.field)} key={field.field}>
+                                    </MenuItem>,<MenuItem onMouseDown={(evt, data) => this.removeWordModifiers(evt, field.field)} key={field.field+"-"}>
                                         -{field.name}
                                     </MenuItem>]
                                 })
