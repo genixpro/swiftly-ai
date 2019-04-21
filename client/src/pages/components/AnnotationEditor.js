@@ -162,31 +162,18 @@ class AnnotationEditor extends React.Component
         this.isDraggingImage = false;
     }
 
-    onClick(evt)
+    clearSelection()
     {
-        const button = evt.button;
-        if (!this.selecting)
+        Object.values(this.tokens).forEach((wordToken) =>
         {
-            setTimeout(() =>
+            if (wordToken.state.selected)
             {
-                if (button === 0)
-                {
-                    if (!this.selecting)
-                    {
-                        Object.values(this.tokens).forEach((wordToken) =>
-                        {
-                            if (wordToken.state.selected)
-                            {
-                                console.log("selected");
-                                wordToken.setState({selected: false});
-                                this.updateCanvas();
-                            }
-                        });
-                        this.selecting = false;
-                    }
-                }
-            }, 250);
-        }
+                console.log("selected");
+                wordToken.setState({selected: false});
+                this.updateCanvas();
+            }
+        });
+        this.selecting = false;
     }
 
     onWordHoverStart(wordIndex)
@@ -508,13 +495,18 @@ class AnnotationEditor extends React.Component
 
     startImageDrag(evt)
     {
-        const element = document.getElementById('annotation-editor-image-outer-container');
-        this.dragStartElementScrollX = element.scrollLeft;
-        this.dragStartElementScrollY = element.scrollTop;
+        if (evt.button === 0)
+        {
+            this.clearSelection();
 
-        this.dragStartX = evt.clientX;
-        this.dragStartY = evt.clientY;
-        this.isDraggingImage = true;
+            const element = document.getElementById('annotation-editor-image-outer-container');
+            this.dragStartElementScrollX = element.scrollLeft;
+            this.dragStartElementScrollY = element.scrollTop;
+
+            this.dragStartX = evt.clientX;
+            this.dragStartY = evt.clientY;
+            this.isDraggingImage = true;
+        }
     }
 
     onMouseMove(evt)
@@ -537,7 +529,7 @@ class AnnotationEditor extends React.Component
 
     render() {
         return (
-            <div id={"annotation-editor-extractions"} onMouseUp={this.onMouseUp.bind(this)} onMouseDown={this.onClick.bind(this)} onMouseMove={this.onMouseMove.bind(this)}>
+            <div id={"annotation-editor-extractions"} onMouseUp={this.onMouseUp.bind(this)} onMouseMove={this.onMouseMove.bind(this)}>
                 <Row>
                     <Col xs={2}>
                         {
@@ -773,15 +765,15 @@ class AnnotationEditor extends React.Component
                         this.props.annotationFields.map((group) => {
                             return <SubMenu title={group.name} key={group.name}>
                                 {group.fields && group.fields.map((field) => {
-                                    return <MenuItem onMouseDown={(evt, data) => this.changeWordClassification(evt, field.field)} key={field.field}>
+                                    return <MenuItem onClick={(evt, data) => this.changeWordClassification(evt, field.field)} key={field.field}>
                                         {field.name}
                                     </MenuItem>
                                 })
                                 }
                                 {group.modifiers && group.modifiers.map((field) => {
-                                    return [<MenuItem onMouseDown={(evt, data) => this.addWordModifiers(evt, field.field)} key={field.field+"+"}>
+                                    return [<MenuItem onClick={(evt, data) => this.addWordModifiers(evt, field.field)} key={field.field+"+"}>
                                         +{field.name}
-                                    </MenuItem>,<MenuItem onMouseDown={(evt, data) => this.removeWordModifiers(evt, field.field)} key={field.field+"-"}>
+                                    </MenuItem>,<MenuItem onClick={(evt, data) => this.removeWordModifiers(evt, field.field)} key={field.field+"-"}>
                                         -{field.name}
                                     </MenuItem>]
                                 })
