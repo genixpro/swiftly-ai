@@ -1,6 +1,6 @@
 from mongoengine import *
 import datetime
-from .date_field import ConvertingDateField
+from appraisal.models.date_field import ConvertingDateField
 import dateparser
 
 class Tenancy(EmbeddedDocument):
@@ -52,7 +52,7 @@ class Unit(EmbeddedDocument):
     floorNumber = IntField()
 
     # This is the size of the unit in square feet.
-    squareFootage = IntField()
+    squareFootage = FloatField()
 
     # A list of occupants of this unit over various periods of time
     tenancies = ListField(EmbeddedDocumentField(Tenancy))

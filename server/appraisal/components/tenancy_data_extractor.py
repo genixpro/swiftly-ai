@@ -1,5 +1,5 @@
-from .data_extractor import  DataExtractor
-from ..models.unit import Unit, Tenancy
+from appraisal.components.data_extractor import  DataExtractor
+from appraisal.models.unit import Unit, Tenancy
 import dateparser
 import re
 

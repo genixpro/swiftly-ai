@@ -1,11 +1,14 @@
 import React from 'react';
-import { Badge, Row, Col, Card, CardBody, CardHeader, FormGroup, Table } from 'reactstrap';
+import { Badge, Row, Col, Card, CardBody, CardHeader, FormGroup, Table, Button } from 'reactstrap';
 import ResizeObserver from 'resize-observer-polyfill';
 import _ from 'underscore';
 import { ContextMenu, MenuItem, SubMenu } from "react-contextmenu";
 import AnnotationExtractionToken from './AnnotationExtractionToken';
 import { Progress } from 'reactstrap';
+import ActionButton from "./ActionButton";
 import NumberFormat from 'react-number-format';
+import FileModel from "../../orm/FileModel";
+import axios from "axios/index";
 
 
 class AnnotationEditor extends React.Component
@@ -526,6 +529,11 @@ class AnnotationEditor extends React.Component
         this.setState({document: document}, () => this.saveFile());
     }
 
+    reprocessFile()
+    {
+        return this.props.reprocessFile();
+    }
+
 
     render() {
         return (
@@ -561,6 +569,9 @@ class AnnotationEditor extends React.Component
                     <Col xs={7}>
                         <canvas id="annotation-editor-canvas" className={"annotation-editor-canvas"} width={this.state.canvasWidth} height={this.state.canvasHeight} />
                         <div className={"extractions-toolbar"}>
+                            <div>
+                                <ActionButton onClick={() => this.reprocessFile()}> Reprocess </ActionButton>
+                            </div>
                             <div className={"toolbar-label"}>
                                 <span>Page Type</span>
                             </div>

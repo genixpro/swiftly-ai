@@ -2,13 +2,13 @@ from cornice.resource import resource
 from pyramid.authorization import Allow, Everyone
 import bson
 import json
-from .components.document_processor import DocumentProcessor
+from appraisal.components.document_processor import DocumentProcessor
 from pprint import pprint
-from .models.appraisal import Appraisal
-from .models.file import File
+from appraisal.models.appraisal import Appraisal
+from appraisal.models.file import File
 from pyramid.security import Authenticated
 from pyramid.authorization import Allow, Deny, Everyone
-from .authorization import checkUserOwnsObject
+from appraisal.authorization import checkUserOwnsObject
 from pyramid.httpexceptions import HTTPForbidden
 
 @resource(collection_path='/appraisal/', path='/appraisal/{id}', renderer='bson', cors_enabled=True, cors_origins="*", permission="everything")

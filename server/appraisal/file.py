@@ -14,12 +14,12 @@ import hashlib
 from pprint import pprint
 import concurrent.futures
 import filetype
-from .components.document_processor import DocumentProcessor
-from .models.file import File, Word
-from .models.appraisal import Appraisal
+from appraisal.components.document_processor import DocumentProcessor
+from appraisal.models.file import File, Word
+from appraisal.models.appraisal import Appraisal
 from pyramid.security import Authenticated
 from pyramid.authorization import Allow, Deny, Everyone
-from .authorization import checkUserOwnsObject, checkUserOwnsAppraisalId
+from appraisal.authorization import checkUserOwnsObject, checkUserOwnsAppraisalId
 from pyramid.httpexceptions import HTTPForbidden
 
 @resource(collection_path='/appraisal/{appraisalId}/files', path='/appraisal/{appraisalId}/files/{id}', renderer='bson', cors_enabled=True, cors_origins="*", permission="everything")
@@ -159,3 +159,36 @@ class FileAPI(object):
 
         return extractedData, extractedWords
 
+
+@resource(path='/appraisal/{appraisalId}/files/{id}/reprocess', renderer='bson', cors_enabled=True, cors_origins="*", permission="everything")
+class ReprocessFileAPI(object):
+
+    def __init__(self, request, context=None):
+        self.request = request
+        self.processor = DocumentProcessor(request.registry.db, request.registry.azureBlobStorage)
+
+    def __acl__(self):
+        return [
+            (Allow, Authenticated, 'everything'),
+            (Deny, Everyone, 'everything')
+        ]
+
+    def post(self):
+        appraisalId = self.request.matchdict['appraisalId']
+        fileId = self.request.matchdict['id']
+
+        auth = checkUserOwnsAppraisalId(self.request.authenticated_userid, self.request.effective_principals, appraisalId)
+        if not auth:
+            raise HTTPForbidden("You do not have access to reprocess this appraisal")
+
+        appraisal = Appraisal.objects(id=appraisalId).first()
+        file = File.objects(id=fileId).first()
+
+        self.processor.extractAndMergeAppraisalData(file, appraisal)
+        self.processor.processAppraisalResults(appraisal)
+
+        appraisal.save()
+
+        # self.updateStabilizedStatement(appraisalId)
+
+        return {"_id": str(id)}

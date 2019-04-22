@@ -1,4 +1,4 @@
-from .document_extractor_dataset import DocumentExtractorDataset
+from appraisal.components.document_extractor_dataset import DocumentExtractorDataset
 import dateparser
 from dateutil.relativedelta import relativedelta
 import datetime
@@ -7,8 +7,8 @@ import numpy
 import copy
 import math
 from pprint import pprint
-from ..models.direct_comparison_valuation import DirectComparisonValuation
-from .valuation_model_base import ValuationModelBase
+from appraisal.models.direct_comparison_valuation import DirectComparisonValuation
+from appraisal.components.valuation_model_base import ValuationModelBase
 
 class DirectComparisonValuationModel(ValuationModelBase):
     """ This class encapsulates the code required for producing a stabilized statement"""

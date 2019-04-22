@@ -1,20 +1,20 @@
 from mongoengine import *
 import datetime
-from .unit import Unit
-from .income_statement import IncomeStatement
-from .discounted_cash_flow import DiscountedCashFlow
-from .discounted_cash_flow_inputs import DiscountedCashFlowInputs
-from .appraisal_validation_result import AppraisalValidationResult
-from .comparable_sale import ComparableSale
-from .stabilized_statement import StabilizedStatement
-from .stabilized_statement_inputs import StabilizedStatementInputs
-from .direct_comparison_valuation import DirectComparisonValuation
-from .direct_comparison_valuation_inputs import DirectComparisonValuationInputs
-from .market_rents import MarketRent
-from .amortization_schedule import AmortizationSchedule
-from .recovery_structure import RecoveryStructure
-from .leasing_cost_structure import LeasingCostStructure
-from .date_field import ConvertingDateField
+from appraisal.models.unit import Unit
+from appraisal.models.income_statement import IncomeStatement
+from appraisal.models.discounted_cash_flow import DiscountedCashFlow
+from appraisal.models.discounted_cash_flow_inputs import DiscountedCashFlowInputs
+from appraisal.models.appraisal_validation_result import AppraisalValidationResult
+from appraisal.models.comparable_sale import ComparableSale
+from appraisal.models.stabilized_statement import StabilizedStatement
+from appraisal.models.stabilized_statement_inputs import StabilizedStatementInputs
+from appraisal.models.direct_comparison_valuation import DirectComparisonValuation
+from appraisal.models.direct_comparison_valuation_inputs import DirectComparisonValuationInputs
+from appraisal.models.market_rents import MarketRent
+from appraisal.models.amortization_schedule import AmortizationSchedule
+from appraisal.models.recovery_structure import RecoveryStructure, RecoveryRule
+from appraisal.models.leasing_cost_structure import LeasingCostStructure
+from appraisal.models.date_field import ConvertingDateField
 
 class Appraisal(Document):
     meta = {'collection': 'appraisals', 'strict': False}
@@ -101,7 +101,15 @@ class Appraisal(Document):
     marketRents = ListField(EmbeddedDocumentField(MarketRent))
 
     # A list of recovery structures for this building
-    recoveryStructures = ListField(EmbeddedDocumentField(RecoveryStructure))
+    recoveryStructures = ListField(EmbeddedDocumentField(RecoveryStructure), default=[
+        RecoveryStructure(name="Default Recovery Structure",
+                          baseOnUnitSize=True,
+                          managementRecoveryRule=RecoveryRule(percentage=15, field="managementExpenses"),
+                          expenseRecoveryRules=[
+                              RecoveryRule(percentage=100, field="operatingExpenses"),
+                              RecoveryRule(percentage=100, field="taxes"),
+                          ])
+    ])
 
     # A list of recovery structures for this building
     leasingCosts = ListField(EmbeddedDocumentField(LeasingCostStructure), default=[LeasingCostStructure(name="Default Leasing Costs")])

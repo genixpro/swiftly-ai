@@ -1,5 +1,6 @@
 import mongoengine.fields
 import datetime
+import dateparser
 
 
 class ConvertingDateField(mongoengine.fields.DateTimeField):
@@ -19,10 +20,14 @@ class ConvertingDateField(mongoengine.fields.DateTimeField):
         if value == "" or value is None:
             return None
 
+        if isinstance(value, str):
+            value = dateparser.parse(value)
+
         value = super(ConvertingDateField, self).to_mongo(value)
         # drop hours, minutes, seconds
         if isinstance(value, datetime.datetime):
             value = datetime.datetime(value.year, value.month, value.day)
+
         return value
 
     def to_python(self, value):
@@ -30,5 +35,9 @@ class ConvertingDateField(mongoengine.fields.DateTimeField):
         # convert datetime to date
         if isinstance(value, datetime.datetime):
             value = datetime.datetime(value.year, value.month, value.day)
+
+        if isinstance(value, str):
+            value = dateparser.parse(value)
+
         return value
 

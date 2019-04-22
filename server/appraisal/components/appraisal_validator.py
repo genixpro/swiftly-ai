@@ -1,6 +1,6 @@
 import subprocess
 import copy
-from ..models.appraisal_validation_result import AppraisalValidationResult
+from appraisal.models.appraisal_validation_result import AppraisalValidationResult
 
 class AppraisalValidator:
     def __init__(self):

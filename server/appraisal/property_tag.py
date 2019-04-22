@@ -2,14 +2,14 @@ from cornice.resource import resource
 from pyramid.authorization import Allow, Everyone
 import pymongo
 import bson
-from .models.property_tag import PropertyTag
+from appraisal.models.property_tag import PropertyTag
 import tempfile
 import subprocess
 import os
 import json
 from pyramid.security import Authenticated
 from pyramid.authorization import Allow, Deny, Everyone
-from .authorization import checkUserOwnsObject
+from appraisal.authorization import checkUserOwnsObject
 from pyramid.httpexceptions import HTTPForbidden
 
 

@@ -1,4 +1,4 @@
-from .models.appraisal import Appraisal
+from appraisal.models.appraisal import Appraisal
 from pyramid.authentication import extract_http_basic_credentials, CallbackAuthenticationPolicy
 from pyramid.httpexceptions import HTTPInternalServerError,HTTPBadRequest, HTTPRedirection, HTTPNotFound,HTTPUnauthorized,HTTPForbidden
 from jwcrypto.jws import JWS, JWSHeaderRegistry, JWK, InvalidJWSSignature, InvalidJWSObject, InvalidJWSOperation

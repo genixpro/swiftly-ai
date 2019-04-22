@@ -3,7 +3,7 @@ import datetime
 import math
 import copy
 import dateutil
-from ..models.leasing_cost_structure import LeasingCostStructure
+from appraisal.models.leasing_cost_structure import LeasingCostStructure
 
 
 class ValuationModelBase:
@@ -87,7 +87,7 @@ class ValuationModelBase:
             if unit.isVacantInFirstYear and unit.squareFootage and unit.marketRent and self.getMarketRent(appraisal, unit.marketRent):
                 leasingCosts = self.getLeasingCosts(appraisal, unit.leasingCostStructure)
 
-                total += leasingCosts.tenantInducementsPSF * unit.squareFootage + leasingCosts.leasingCommission + self.getMarketRent(appraisal, unit.marketRent) * unit.squareFootage
+                total += leasingCosts.tenantInducementsPSF * unit.squareFootage + leasingCosts.leasingCommission * unit.squareFootage + (self.getMarketRent(appraisal, unit.marketRent) * unit.squareFootage) / 12.0 * leasingCosts.renewalPeriod
 
         return -total
 

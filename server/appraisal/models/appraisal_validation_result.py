@@ -1,9 +1,9 @@
 from mongoengine import *
 import datetime
-from .unit import Unit
-from .income_statement import IncomeStatement
-from .discounted_cash_flow import DiscountedCashFlow
-from .discounted_cash_flow_inputs import DiscountedCashFlowInputs
+from appraisal.models.unit import Unit
+from appraisal.models.income_statement import IncomeStatement
+from appraisal.models.discounted_cash_flow import DiscountedCashFlow
+from appraisal.models.discounted_cash_flow_inputs import DiscountedCashFlowInputs
 
 
 

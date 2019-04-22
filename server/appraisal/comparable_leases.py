@@ -6,10 +6,10 @@ import tempfile
 import subprocess
 import json
 import os
-from .models.comparable_lease import ComparableLease
+from appraisal.models.comparable_lease import ComparableLease
 from pyramid.security import Authenticated
 from pyramid.authorization import Allow, Deny, Everyone
-from .authorization import checkUserOwnsObject
+from appraisal.authorization import checkUserOwnsObject
 from pyramid.httpexceptions import HTTPForbidden
 
 @resource(collection_path='/comparable_leases', path='/comparable_leases/{id}', renderer='bson', cors_enabled=True, cors_origins="*", permission="everything")

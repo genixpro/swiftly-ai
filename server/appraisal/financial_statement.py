@@ -7,7 +7,7 @@ import subprocess
 import os
 from pyramid.security import Authenticated
 from pyramid.authorization import Allow, Deny, Everyone
-from .authorization import checkUserOwnsObject
+from appraisal.authorization import checkUserOwnsObject
 from pyramid.httpexceptions import HTTPForbidden
 
 

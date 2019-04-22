@@ -18,7 +18,7 @@ import numpy
 import math
 import scipy.signal
 from sklearn.neighbors.kde import KernelDensity
-from ..models.file import Word
+from appraisal.models.file import Word
 
 class DocumentParser:
 

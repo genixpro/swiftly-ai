@@ -1,7 +1,7 @@
 import subprocess
 import copy
 import tensorflow as tf
-from .document_generator import DocumentGenerator
+from appraisal.components.document_generator import DocumentGenerator
 import numpy
 import pickle
 import random
@@ -10,7 +10,7 @@ from pprint import pprint
 import copy
 import multiprocessing
 import functools
-from ..models.file import File
+from appraisal.models.file import File
 
 globalVectorProcess = None
 

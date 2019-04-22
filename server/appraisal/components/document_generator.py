@@ -5,7 +5,7 @@ import math
 from pprint import pprint
 import docx
 import io
-from .document_parser import DocumentParser
+from appraisal.components.document_parser import DocumentParser
 
 class DocumentGenerator:
     def __init__(self):

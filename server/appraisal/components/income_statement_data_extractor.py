@@ -1,8 +1,8 @@
-from .data_extractor import  DataExtractor
-from ..models.unit import Unit, Tenancy
+from appraisal.components.data_extractor import  DataExtractor
+from appraisal.models.unit import Unit, Tenancy
 import dateparser
 import re
-from ..models.income_statement import IncomeStatement, IncomeStatementItem
+from appraisal.models.income_statement import IncomeStatement, IncomeStatementItem
 from pprint import pprint
 import json
 
@@ -35,6 +35,8 @@ class IncomeStatementDataExtractor(DataExtractor):
 
         incomeStatement.years = sorted([int(year) for year in years])
         incomeStatement.yearlySourceTypes = yearTypes
+
+        # pprint(json.loads(incomeStatement.to_json()))
 
         return incomeStatement
 

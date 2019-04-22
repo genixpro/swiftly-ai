@@ -1,7 +1,7 @@
 from mongoengine import *
 import datetime
-from .extraction_reference import ExtractionReference
-from .date_field import ConvertingDateField
+from appraisal.models.extraction_reference import ExtractionReference
+from appraisal.models.date_field import ConvertingDateField
 
 class AmortizationItem(EmbeddedDocument):
     meta = {'strict': False}

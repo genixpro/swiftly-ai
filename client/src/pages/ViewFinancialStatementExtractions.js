@@ -12,7 +12,12 @@ class ViewFinancialStatementExtractions extends React.Component
 
     render() {
         return (
-            <AnnotationEditor saveFile={(doc) => this.saveFile(doc)} document={this.props.financialStatement} annotationFields={FinancialStatementsFields} />
+            <AnnotationEditor
+                saveFile={(doc) => this.saveFile(doc)}
+                document={this.props.financialStatement}
+                annotationFields={FinancialStatementsFields}
+                reprocessFile={this.props.reprocessFile}
+            />
         );
     }
 }

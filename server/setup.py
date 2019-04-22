@@ -61,6 +61,11 @@ setup(
     extras_require={
         'testing': tests_require,
     },
+    package_data={
+        'appraisal': [
+            'tests/data/*.json'
+        ]
+    },
     install_requires=requires,
     entry_points={
         'paste.app_factory': [
@@ -71,7 +76,8 @@ setup(
             'appraisal_generate_documents = appraisal.bin.generate_documents:main',
             'appraisal_generate_extraction_data = appraisal.bin.generate_extraction_data:main',
             'appraisal_train_extractor = appraisal.bin.train_document_extractor:main',
-            'appraisal_train_page_classifier = appraisal.bin.train_page_classifier:main'
+            'appraisal_train_page_classifier = appraisal.bin.train_page_classifier:main',
+            'appraisal_run_tests = appraisal.bin.run_tests:main'
         ]
     },
 )

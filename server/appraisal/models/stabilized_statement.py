@@ -1,6 +1,6 @@
 from mongoengine import *
 import datetime
-from .extraction_reference import ExtractionReference
+from appraisal.models.extraction_reference import ExtractionReference
 
 
 class StabilizedStatement(EmbeddedDocument):
@@ -12,7 +12,9 @@ class StabilizedStatement(EmbeddedDocument):
 
     potentialGrossIncome = FloatField()
 
-    grossIncome = FloatField()
+    managementRecovery = FloatField()
+
+    operatingExpenseRecovery = FloatField()
 
     vacancyDeduction = FloatField()
 

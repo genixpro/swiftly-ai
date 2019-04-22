@@ -1,17 +1,17 @@
-from .document_classifier import DocumentClassifier
-from .document_parser import DocumentParser
-from .document_extractor import DocumentExtractor
-from .page_classifier import PageClassifier
-from ..models.file import File, Word
+from appraisal.components.document_classifier import DocumentClassifier
+from appraisal.components.document_parser import DocumentParser
+from appraisal.components.document_extractor import DocumentExtractor
+from appraisal.components.page_classifier import PageClassifier
+from appraisal.models.file import File, Word
 import filetype
 import re
 from pprint import pprint
-from .tenancy_data_extractor import TenancyDataExtractor
-from .income_statement_data_extractor import IncomeStatementDataExtractor
-from .discounted_cash_flow_model import DiscountedCashFlowModel
-from .appraisal_validator import AppraisalValidator
-from .stabilized_statement_model import StabilizedStatementModel
-from .direct_comparison_valuation_model import DirectComparisonValuationModel
+from appraisal.components.tenancy_data_extractor import TenancyDataExtractor
+from appraisal.components.income_statement_data_extractor import IncomeStatementDataExtractor
+from appraisal.components.discounted_cash_flow_model import DiscountedCashFlowModel
+from appraisal.components.appraisal_validator import AppraisalValidator
+from appraisal.components.stabilized_statement_model import StabilizedStatementModel
+from appraisal.components.direct_comparison_valuation_model import DirectComparisonValuationModel
 
 class DocumentProcessor:
     """

@@ -1,6 +1,6 @@
 from pyramid.config import Configurator
 import pymongo
-from .authorization import CustomAuthenticationPolicy
+from appraisal.authorization import CustomAuthenticationPolicy
 from pyramid.authorization import ACLAuthorizationPolicy
 from mongoengine import connect
 from azure.storage.blob import BlockBlobService, PublicAccess

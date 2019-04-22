@@ -1,7 +1,7 @@
 from mongoengine import *
 import datetime
-from .unit import Unit
-from .date_field import ConvertingDateField
+from appraisal.models.unit import Unit
+from appraisal.models.date_field import ConvertingDateField
 
 
 class RentEscalation(EmbeddedDocument):

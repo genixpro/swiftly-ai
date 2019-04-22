@@ -299,7 +299,11 @@ class ViewRecoveryStructures extends React.Component
         expenseRecoveryRules: [{
             percentage: 100,
             field: "operatingExpenses"
-        }]
+        },
+            {
+                percentage: 100,
+                field: "taxes"
+            }]
     };
 
     componentDidMount()

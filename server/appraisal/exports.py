@@ -16,10 +16,10 @@ import hashlib
 from pprint import pprint
 import concurrent.futures
 import filetype
-from .components.document_processor import DocumentProcessor
-from .models.comparable_sale import ComparableSale
-from .models.comparable_lease import ComparableLease
-from .models.appraisal import Appraisal
+from appraisal.components.document_processor import DocumentProcessor
+from appraisal.models.comparable_sale import ComparableSale
+from appraisal.models.comparable_lease import ComparableLease
+from appraisal.models.appraisal import Appraisal
 from openpyxl import Workbook
 from openpyxl.utils import get_column_letter
 from docx import Document
@@ -31,7 +31,7 @@ from docx.oxml import parse_xml
 import docx
 from pyramid.security import Authenticated
 from pyramid.authorization import Allow, Deny, Everyone
-from .authorization import checkUserOwnsObject
+from appraisal.authorization import checkUserOwnsObject
 from pyramid.httpexceptions import HTTPForbidden
 
 

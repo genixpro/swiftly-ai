@@ -1,4 +1,4 @@
-from .document_extractor_dataset import DocumentExtractorDataset
+from appraisal.components.document_extractor_dataset import DocumentExtractorDataset
 import dateparser
 from dateutil.relativedelta import relativedelta
 import datetime
@@ -7,9 +7,9 @@ import numpy
 import copy
 import math
 from pprint import pprint
-from ..models.discounted_cash_flow import MonthlyCashFlowItem, YearlyCashFlowItem, DiscountedCashFlow, DiscountedCashFlowSummary, DiscountedCashFlowSummaryItem
-from ..models.stabilized_statement import StabilizedStatement
-from .valuation_model_base import ValuationModelBase
+from appraisal.models.discounted_cash_flow import MonthlyCashFlowItem, YearlyCashFlowItem, DiscountedCashFlow, DiscountedCashFlowSummary, DiscountedCashFlowSummaryItem
+from appraisal.models.stabilized_statement import StabilizedStatement
+from appraisal.components.valuation_model_base import ValuationModelBase
 
 class StabilizedStatementModel(ValuationModelBase):
     """ This class encapsulates the code required for producing a stabilized statement"""
@@ -35,7 +35,9 @@ class StabilizedStatementModel(ValuationModelBase):
         statement.freeRentDifferential = self.computeFreeRentDifferentials(appraisal)
         statement.vacantUnitDifferential = self.computeVacantUnitDifferential(appraisal)
         statement.amortizationDifferential = self.computeAmortizationDifferential(appraisal)
-        statement.recoverableIncome = self.computeOperatingExpenseRecoveries(appraisal) + self.computeManagementRecoveries(appraisal)
+        statement.managementRecovery = self.computeManagementRecoveries(appraisal)
+        statement.operatingExpenseRecovery = self.computeOperatingExpenseRecoveries(appraisal)
+        statement.recoverableIncome = statement.managementRecovery + statement.operatingExpenseRecovery
 
         statement.potentialGrossIncome = statement.rentalIncome + statement.additionalIncome + statement.recoverableIncome
 
@@ -43,7 +45,7 @@ class StabilizedStatementModel(ValuationModelBase):
 
         statement.effectiveGrossIncome = statement.potentialGrossIncome - statement.vacancyDeduction
 
-        statement.structuralAllowance = statement.effectiveGrossIncome * (appraisal.stabilizedStatementInputs.structuralAllowancePercent / 100.0)
+        statement.structuralAllowance = statement.potentialGrossIncome * (appraisal.stabilizedStatementInputs.structuralAllowancePercent / 100.0)
 
         if appraisal.stabilizedStatementInputs.expensesMode == 'income_statement':
             statement.totalExpenses = statement.operatingExpenses + statement.taxes + statement.managementExpenses + statement.structuralAllowance
@@ -73,7 +75,7 @@ class StabilizedStatementModel(ValuationModelBase):
         if unit.currentTenancy and unit.currentTenancy.yearlyRent:
             return unit.currentTenancy.yearlyRent
         else:
-            rent = self.getMarketRent(appraisal, unit.marketRent)
+            rent = self.getMarketRent(appraisal, unit.marketRent) * unit.squareFootage
             if rent:
                 return rent
             return 0
@@ -85,13 +87,19 @@ class StabilizedStatementModel(ValuationModelBase):
                 return recovery
         return None
 
+    def getDefaultRecoveryStructure(self, appraisal):
+        for recovery in appraisal.recoveryStructures:
+            if 'default' in recovery.name.lower():
+                return recovery
+        return appraisal.recoveryStructures[0]
+
+
 
     def computeRentalIncome(self, appraisal):
         total = 0
 
         for unit in appraisal.units:
-            if unit.currentTenancy and unit.currentTenancy.yearlyRent is not None:
-                total += self.getStabilizedRent(appraisal, unit)
+            total += self.getStabilizedRent(appraisal, unit)
 
         return total
 
@@ -150,6 +158,8 @@ class StabilizedStatementModel(ValuationModelBase):
             return self.computeTotalOperatingExpenses(appraisal)
         if name == "managementExpenses":
             return self.computeManagementFees(appraisal)
+        if name == "taxes":
+            return self.computeTaxes(appraisal)
         if name == "rentalIncome":
             return self.computeRentalIncome(appraisal)
 
@@ -163,32 +173,39 @@ class StabilizedStatementModel(ValuationModelBase):
         for unit in appraisal.units:
             if unit.currentTenancy and unit.currentTenancy.recoveryStructure and self.getRecoveryStructure(appraisal, unit.currentTenancy.recoveryStructure) is not None:
                 recoveryStructure = self.getRecoveryStructure(appraisal, unit.currentTenancy.recoveryStructure)
+            else:
+                recoveryStructure = self.getDefaultRecoveryStructure(appraisal)
 
-                if recoveryStructure.managementRecoveryRule and recoveryStructure.managementRecoveryRule.percentage and recoveryStructure.managementRecoveryRule.field:
-                    percentage = (recoveryStructure.managementRecoveryRule.percentage / 100.0)
+            if recoveryStructure.managementRecoveryRule and recoveryStructure.managementRecoveryRule.percentage and recoveryStructure.managementRecoveryRule.field:
+                percentage = (recoveryStructure.managementRecoveryRule.percentage / 100.0)
 
-                    if recoveryStructure.baseOnUnitSize and unit.squareFootage and appraisal.sizeOfBuilding:
-                        percentage = unit.squareFootage / appraisal.sizeOfBuilding
+                if recoveryStructure.baseOnUnitSize and unit.squareFootage and appraisal.sizeOfBuilding:
+                    percentage *= unit.squareFootage / appraisal.sizeOfBuilding
 
-                    total += percentage * self.getRecoveryField(appraisal, recoveryStructure.managementRecoveryRule.field)
+                total += percentage * self.getRecoveryField(appraisal, recoveryStructure.managementRecoveryRule.field)
 
         return total
 
 
     def computeOperatingExpenseRecoveries(self, appraisal):
         total = 0
+        totalSize = 0
 
         for unit in appraisal.units:
             if unit.currentTenancy and unit.currentTenancy.recoveryStructure and self.getRecoveryStructure(appraisal, unit.currentTenancy.recoveryStructure) is not None:
                 recoveryStructure = self.getRecoveryStructure(appraisal, unit.currentTenancy.recoveryStructure)
+            else:
+                recoveryStructure = self.getDefaultRecoveryStructure(appraisal)
 
-                for rule in recoveryStructure.expenseRecoveryRules:
-                    if rule.percentage and rule.field:
-                        percentage = (rule.percentage / 100.0)
+            totalSize += unit.squareFootage
 
-                        if recoveryStructure.baseOnUnitSize and unit.squareFootage and appraisal.sizeOfBuilding:
-                            percentage = unit.squareFootage / appraisal.sizeOfBuilding
+            for rule in recoveryStructure.expenseRecoveryRules:
+                if rule.percentage and rule.field:
+                    percentage = (rule.percentage / 100.0)
 
-                        total += percentage * self.getRecoveryField(appraisal, rule.field)
+                    if recoveryStructure.baseOnUnitSize and unit.squareFootage and appraisal.sizeOfBuilding:
+                        percentage *= unit.squareFootage / appraisal.sizeOfBuilding
+
+                    total += percentage * self.getRecoveryField(appraisal, rule.field)
 
         return total
