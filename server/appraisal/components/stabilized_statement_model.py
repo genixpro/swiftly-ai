@@ -52,6 +52,8 @@ class StabilizedStatementModel(ValuationModelBase):
             statement.totalExpenses = statement.operatingExpenses + statement.taxes + statement.managementExpenses + statement.structuralAllowance
         elif appraisal.stabilizedStatementInputs.expensesMode == 'tmi' and appraisal.sizeOfBuilding:
             statement.totalExpenses = statement.tmiTotal + statement.structuralAllowance
+        else:
+            statement.totalExpenses = 0
 
         statement.netOperatingIncome = statement.effectiveGrossIncome - statement.totalExpenses
 
