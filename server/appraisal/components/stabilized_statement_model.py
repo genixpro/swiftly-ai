@@ -50,7 +50,7 @@ class StabilizedStatementModel(ValuationModelBase):
 
         if appraisal.stabilizedStatementInputs.expensesMode == 'income_statement':
             statement.totalExpenses = statement.operatingExpenses + statement.taxes + statement.managementExpenses + statement.structuralAllowance
-        elif appraisal.stabilizedStatementInputs.expensesMode == 'tmi' and appraisal.sizeOfBuilding:
+        elif appraisal.stabilizedStatementInputs.expensesMode == 'tmi':
             statement.totalExpenses = statement.tmiTotal + statement.structuralAllowance
         else:
             statement.totalExpenses = 0
