@@ -22,7 +22,13 @@ class ViewTenantsRentRoll extends React.Component
 
     onRemoveUnit(unitIndex)
     {
+        if (this.props.appraisal.units[unitIndex] === this.state.selectedUnit)
+        {
+            this.setState({selectedUnit: null});
+        }
+
         this.props.appraisal.units.splice(unitIndex, 1);
+
         this.props.saveAppraisal(this.props.appraisal);
     }
 

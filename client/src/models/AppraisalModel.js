@@ -25,6 +25,7 @@ class AppraisalModel extends BaseModel
     static _id = new IdField();
     static appraisalName = new StringField("name");
     static address = new StringField();
+    static owner = new StringField();
     static location = new GenericField();
     static imageUrl = new StringField();
     static effectiveDate = new DateField();

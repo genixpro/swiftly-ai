@@ -251,6 +251,28 @@ class IncomeStatementEditor extends React.Component
                     {others.map((value, index) => (
                         <this.SortableItem key={`item-${value[sortableIndex]}`} index={value[sortableIndex]} value={value}/>
                     ))}
+                    {
+                        others.length === 0 ?
+                            <li className={"row expense-row"} index={increment + 1}>
+                                {this.renderHiddenHandleColumn()}
+                                <Col className={"name-column"}>&nbsp;No entries
+                                </Col>
+
+                                {
+                                    this.props.appraisal.incomeStatement.years.map((year) =>
+                                    {
+                                        if (this.state.pinnedYear !== null && year !== this.state.pinnedYear)
+                                        {
+                                            return null;
+                                        }
+
+                                        return <Col key={year.toString() + "1"} className={"amount-column"} />
+                                    })
+                                }
+                                {this.state.pinnedYear === null ? this.renderHiddenActionColumn() : null}
+                            </li>
+                            : null
+                    }
 
                 </ul>
             );

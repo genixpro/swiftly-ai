@@ -18,6 +18,7 @@ class RentEscalation extends BaseModel
 class ComparableLeaseModel extends BaseModel
 {
     static _id = new IdField();
+    static owner = new StringField();
     static address = new StringField();
     static location = new GenericField();
     static propertyType = new StringField();

@@ -27,7 +27,7 @@ class FileSelector extends React.Component
     {
         if (this.props.onChange)
         {
-            if (newValue !== this.props.value)
+            if (newValue !== this.props.value && newValue !== "")
             {
                 this.props.onChange(newValue);
             }
@@ -61,8 +61,13 @@ class FileSelector extends React.Component
                 ref={(ref) => this.onRef(ref)}
                 value={this.props.value}
                 disabled={this.props.disabled}
-
+                style={this.state.files.length === 0 ? {"color": "lightgray"} : null}
             >
+                {
+                    this.state.files.length === 0 ?
+                        <option value={""}>No files attached to appraisal</option>
+                        : null
+                }
                 {
                     this.state.files.map((file) =>
                         <option value={file._id} key={file._id}>{file.fileName}</option>

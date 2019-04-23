@@ -91,49 +91,27 @@ class UnitsTable extends React.Component
                 newUnit[field] = value;
             }
 
-            this.props.onCreateUnit(new UnitModel(newUnit));
+            const newUnitObj = new UnitModel(newUnit);
+
+            newUnitObj.unitNumber += " " + this.props.appraisal.units.length.toString();
+
+            this.props.onCreateUnit(newUnitObj);
+            this.props.onUnitClicked(newUnitObj);
         }
     }
 
 
     renderNewUnitRow()
     {
-        return <tr className={"unit-row"}>
-            <td>
-                <FieldDisplayEdit
-                    hideIcon={true}
-                    value={""}
-                    onChange={_.once((newValue) => this.createNewUnit("unitNumber", newValue))}
-                />
-            </td>
-            <td>
-                <FieldDisplayEdit
-                    hideIcon={true}
-                    value={""}
-                    onChange={_.once((newValue) => this.createNewUnit("currentTenancy", {name: newValue}))}
-                />
-            </td>
-            <td>
-                <FieldDisplayEdit
-                    hideIcon={true}
-                    value={""}
-                    onChange={_.once((newValue) => this.createNewUnit("squareFootage", newValue))}
-                />
-            </td>
-            <td>
-                <FieldDisplayEdit
-                    hideIcon={true}
-                    value={""}
-                    onChange={_.once((newValue) => this.createNewUnit("currentTenancy", {yearlyRent: newValue}))}
-                />
-            </td>
-            <td className={"action-column"}>
+        return <tr className={"new-unit-row"}>
+            <td colSpan={5}>
                 <Button
+                    className={"new-unit-button"}
                     color="secondary"
                     onClick={(evt) => this.createNewUnit()}
                     title={"New Unit"}
                 >
-                    <i className="fa fa-plus-square"></i>
+                    Create a New Unit
                 </Button>
             </td>
         </tr>;
@@ -268,11 +246,6 @@ class UnitsTable extends React.Component
                         })
                     }
                     {
-                        this.props.appraisal && this.props.allowNewUnit ?
-                            this.renderNewUnitRow()
-                            : null
-                    }
-                    {
                         this.props.statsMode === 'total' || this.props.statsMode === 'all' ?
                             <tr className={"first-total-row " + (this.props.statsMode === 'total' ? "last-total-row" : "")}>
                                 <td></td>
@@ -352,6 +325,11 @@ class UnitsTable extends React.Component
                                 />
                                 </td>
                             </tr> : null
+                    }
+                    {
+                        this.props.appraisal && this.props.allowNewUnit ?
+                            this.renderNewUnitRow()
+                            : null
                     }
                     </tbody>
                 </Table>

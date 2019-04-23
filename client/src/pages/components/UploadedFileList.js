@@ -29,6 +29,11 @@ class UploadedFileList extends React.Component
     }
 
     render() {
+        if (this.state.files.length === 0)
+        {
+            return null;
+        }
+
         return (
             <Table striped bordered hover responsive>
                 <thead>
