@@ -9,6 +9,10 @@ class StabilizedStatementModel extends BaseModel
 
     static additionalIncome = new FloatField();
 
+    static managementRecovery = new FloatField();
+
+    static operatingExpenseRecovery = new FloatField();
+
     static recoverableIncome = new FloatField();
 
     static potentialGrossIncome = new FloatField();

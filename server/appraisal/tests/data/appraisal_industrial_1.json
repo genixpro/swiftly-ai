@@ -1,0 +1,345 @@
+{
+  "name": "Industrial 1",
+  "address": "205 Industrial Parkway, Aurora",
+  "location": null,
+  "imageUrl": null,
+  "effectiveDate": "January 1, 2019",
+  "propertyType": "industrial",
+  "industrialSubType": "singleTenant",
+  "landSubType": null,
+  "sizeOfBuilding": 174710.5,
+  "sizeOfLand": null,
+  "legalDescription": null,
+  "zoning": null,
+  "propertyTags": [],
+  "marketRents": [
+    {
+      "name": "Default",
+      "amountPSF": 11.00
+    }
+  ],
+  "leasingCosts": [
+    {
+      "name": "Default",
+      "leasingCommission": 0.5,
+      "tenantInducementsPSF": 1.5,
+      "renewalPeriod": 6,
+      "leasingPeriod": 60
+    }
+  ],
+  "recoveryStructures": [
+    {
+      "name": "Default",
+      "baseOnUnitSize": true,
+      "managementRecoveryRule": {
+        "percentage": 15,
+        "field": "operatingExpenses"
+      },
+      "expenseRecoveryRules": [
+        {
+          "percentage": 100,
+          "field": "operatingExpenses"
+        },
+        {
+          "percentage": 100,
+          "field": "taxes"
+        }
+      ]
+    }
+  ],
+  "units": [
+    {
+      "unitNumber": "1",
+      "floorNumber": 1,
+      "squareFootage": 10873,
+      "tenancies": [],
+      "marketRent": "Default",
+      "leasingCostStructure": "Default",
+      "remarks": ""
+    },
+    {
+      "unitNumber": "2",
+      "floorNumber": 1,
+      "squareFootage": 15377,
+      "tenancies": [
+        {
+          "name": "Tenant 1",
+          "startDate": "July 1, 2017",
+          "endDate": "June 30, 2022",
+          "yearlyRent": 168378.15,
+          "recoveryStructure": "Default",
+          "freeRentMonths": 0,
+          "rentType": "net"
+        }
+      ],
+      "marketRent": null,
+      "leasingCostStructure": "Default",
+      "remarks": ""
+    },
+    {
+      "unitNumber": "3",
+      "floorNumber": 1,
+      "squareFootage": 5031,
+      "tenancies": [
+        {
+          "name": "Tenant 2",
+          "startDate": "July 1, 2017",
+          "endDate": "June 30, 2022",
+          "yearlyRent": 55089.45,
+          "recoveryStructure": "Default",
+          "freeRentMonths": 0,
+          "rentType": "net"
+        }
+      ],
+      "marketRent": null,
+      "leasingCostStructure": "Default",
+      "remarks": ""
+    },
+    {
+      "unitNumber": "4",
+      "floorNumber": 1,
+      "squareFootage": 5866,
+      "tenancies": [
+        {
+          "name": "Tenant 3",
+          "startDate": "November 1, 2018",
+          "endDate": "July 31, 2019",
+          "yearlyRent": 70098,
+          "recoveryStructure": "Default",
+          "freeRentMonths": 0,
+          "rentType": "net"
+        }
+      ],
+      "marketRent": null,
+      "leasingCostStructure": "Default",
+      "remarks": ""
+    },
+    {
+      "unitNumber": "5",
+      "floorNumber": 1,
+      "squareFootage": 35032.2,
+      "tenancies": [
+        {
+          "name": "Tenant 4",
+          "startDate": "September 1, 2018",
+          "endDate": "August 31, 2023",
+          "yearlyRent": 475036.63,
+          "recoveryStructure": "Default",
+          "freeRentMonths": 0,
+          "rentType": "net"
+        }
+      ],
+      "marketRent": null,
+      "leasingCostStructure": "Default",
+      "remarks": ""
+    },
+    {
+      "unitNumber": "6",
+      "floorNumber": 1,
+      "squareFootage": 915.3,
+      "tenancies": [
+        {
+          "name": "Tenant 5",
+          "startDate": "September 1, 2018",
+          "endDate": "August 31, 2023",
+          "yearlyRent": 12411.47,
+          "recoveryStructure": "Default",
+          "freeRentMonths": 0,
+          "rentType": "net"
+        }
+      ],
+      "marketRent": null,
+      "leasingCostStructure": "Default",
+      "remarks": ""
+    },
+    {
+      "unitNumber": "7",
+      "floorNumber": 1,
+      "squareFootage": 5568,
+      "tenancies": [
+        {
+          "name": "Tenant 6",
+          "startDate": "June 1, 2016",
+          "endDate": "August 31, 2023",
+          "yearlyRent": 66816.00,
+          "recoveryStructure": "Default",
+          "freeRentMonths": 0,
+          "rentType": "net"
+        }
+      ],
+      "marketRent": null,
+      "leasingCostStructure": "Default",
+      "remarks": ""
+    },
+    {
+      "unitNumber": "8",
+      "floorNumber": 1,
+      "squareFootage": 14432,
+      "tenancies": [],
+      "marketRent": "Default",
+      "leasingCostStructure": "Default",
+      "remarks": ""
+    },
+    {
+      "unitNumber": "9",
+      "floorNumber": 1,
+      "squareFootage": 20433,
+      "tenancies": [
+        {
+          "name": "Tenant 7",
+          "startDate": "December 1, 2018",
+          "endDate": "November 30, 2023",
+          "yearlyRent": 286062.00,
+          "recoveryStructure": "Default",
+          "freeRentMonths": 0,
+          "rentType": "net"
+        }
+      ],
+      "marketRent": null,
+      "leasingCostStructure": "Default",
+      "remarks": ""
+    },
+    {
+      "unitNumber": "10",
+      "floorNumber": 1,
+      "squareFootage": 61183,
+      "tenancies": [
+        {
+          "name": "Tenant 8",
+          "startDate": "August 1, 2018",
+          "endDate": "May 31, 2022",
+          "yearlyRent": 703604.50,
+          "recoveryStructure": "Default",
+          "freeRentMonths": 0,
+          "rentType": "net"
+        }
+      ],
+      "marketRent": null,
+      "leasingCostStructure": "Default",
+      "remarks": ""
+    }
+  ],
+  "incomeStatement": {
+    "expenses": [
+      {
+        "name": "Utilities",
+        "yearlyAmounts": {
+          "2018": 417420,
+          "2019": 426811.95
+        },
+        "yearlySourceTypes": {
+          "2018": "actual",
+          "2019": "user"
+        },
+        "extractionReferences": null,
+        "cashFlowType": "expense",
+        "incomeStatementItemType": "operating_expense"
+      },
+      {
+        "name": "Cleaning",
+        "yearlyAmounts": {
+          "2018": 29600,
+          "2019": 30266
+        },
+        "yearlySourceTypes": {
+          "2018": "actual",
+          "2019": "user"
+        },
+        "extractionReferences": null,
+        "cashFlowType": "expense",
+        "incomeStatementItemType": "operating_expense"
+      },
+      {
+        "name": "Expected Operating Expense",
+        "yearlyAmounts": {
+          "2018": 290734,
+          "2019": 297275.515
+        },
+        "yearlySourceTypes": {
+          "2018": "actual",
+          "2019": "user"
+        },
+        "extractionReferences": null,
+        "cashFlowType": "expense",
+        "incomeStatementItemType": "operating_expense"
+      },
+      {
+        "name": "Insurance",
+        "yearlyAmounts": {
+          "2018": 31474,
+          "2019": 32182.165
+        },
+        "yearlySourceTypes": {
+          "2018": "actual",
+          "2019": "user"
+        },
+        "extractionReferences": null,
+        "cashFlowType": "expense",
+        "incomeStatementItemType": "operating_expense"
+      },
+      {
+        "name": "Realty Taxes",
+        "yearlyAmounts": {
+          "2018": 846369,
+          "2019": 865412.30
+        },
+        "yearlySourceTypes": {
+          "2018": "actual",
+          "2019": "user"
+        },
+        "extractionReferences": null,
+        "cashFlowType": "expense",
+        "incomeStatementItemType": "taxes"
+      },
+      {
+        "name": "Total Expected Administrative",
+        "yearlyAmounts": {
+          "2018": 191168.00,
+          "2019": 195469.28
+        },
+        "yearlySourceTypes": {
+          "2018": "actual",
+          "2019": "user"
+        },
+        "extractionReferences": null,
+        "cashFlowType": "expense",
+        "incomeStatementItemType": "management_expense"
+      }
+    ],
+    "incomes": []
+  },
+  "stabilizedStatementInputs": {
+    "capitalizationRate" : 5,
+    "vacancyRate" : 3,
+    "structuralAllowancePercent" : 0.5,
+    "marketRentDifferentialDiscountRate" : 5,
+    "modifiers" : [],
+    "expensesMode" : "income_statement",
+    "tmiRatePSF" : 5
+  },
+  "stabilizedStatement": {
+    "rentalIncome": 2115851.90,
+    "additionalIncome": 0,
+    "managementRecovery": 117980.34,
+    "operatingExpenseRecovery": 1651947.93,
+    "recoverableIncome": 1769928.28,
+    "potentialGrossIncome":  3885780.18,
+    "vacancyDeduction": 116573.41,
+    "effectiveGrossIncome":  3769206.77,
+    "operatingExpenses": 786535.63,
+    "tmiTotal": null,
+    "taxes": 865412.30,
+    "managementExpenses": 195469.28,
+    "structuralAllowance":  19428.90,
+    "totalExpenses":  1866846.11,
+    "netOperatingIncome":  1902360.66,
+    "netOperatingIncomePSF": null,
+    "capitalization": 0,
+    "marketRentDifferential": 0,
+    "freeRentDifferential": 0,
+    "vacantUnitDifferential": -189787.50,
+    "amortizationDifferential": 0,
+    "valuation": 0,
+    "valuationRounded": 0
+  }
+}

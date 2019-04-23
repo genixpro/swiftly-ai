@@ -17,9 +17,13 @@ class GenericStabilizedStatementTest:
         processedAppraisal = cls.loadAppraisal()
         originalAppraisal = cls.loadAppraisal()
 
+        originalAppraisal.validate()
+
         processor = DocumentProcessor(None, None)
 
         processor.processAppraisalResults(processedAppraisal)
+
+        processedAppraisal.validate()
 
         cls.processedAppraisal = processedAppraisal
 

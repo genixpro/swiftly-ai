@@ -77,7 +77,8 @@ setup(
             'appraisal_generate_extraction_data = appraisal.bin.generate_extraction_data:main',
             'appraisal_train_extractor = appraisal.bin.train_document_extractor:main',
             'appraisal_train_page_classifier = appraisal.bin.train_page_classifier:main',
-            'appraisal_run_tests = appraisal.bin.run_tests:main'
+            'appraisal_run_tests = appraisal.bin.run_tests:main',
+            'appraisal_load_test_cases = appraisal.bin.load_test_cases:main'
         ]
     },
 )

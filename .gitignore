@@ -3,4 +3,4 @@ client/.idea
 server/.idea
 .idea
 extension/.idea
-data
+server/data

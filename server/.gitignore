@@ -18,10 +18,9 @@ Data.fs*
 .sw?
 .DS_Store
 coverage
-test
 venv
 dump
-data
+server/data
 *.bin
 *.vec
 server/models
