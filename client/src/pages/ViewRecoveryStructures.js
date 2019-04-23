@@ -171,6 +171,14 @@ class RecoveryStructureEditor extends React.Component
                             <strong>Operating Expense Recoveries</strong>
                         </td>
                         {
+                            this.operatingExpenses().length === 0 ?
+                                [
+                                    <td className={"rule-percentage-column"} key={1} colSpan={2}>
+                                        No expenses found. Please go to "Expenses" or upload an Income Statement.
+                                    </td>,
+                                ] : null
+                        }
+                        {
                             this.operatingExpenses().length > 0 ?
                                 <ExpensePercentageEditor
                                     expense={this.operatingExpenses()[0]}

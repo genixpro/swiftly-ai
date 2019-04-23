@@ -5,6 +5,8 @@ import _ from 'underscore';
 import FieldDisplayEdit from './FieldDisplayEdit';
 import 'react-datetime/css/react-datetime.css'
 import UnitModel from "../../models/UnitModel";
+import CurrencyFormat from "./CurrencyFormat";
+import AreaFormat from "./AreaFormat";
 
 class UnitsTable extends React.Component
 {
@@ -43,21 +45,11 @@ class UnitsTable extends React.Component
         return <tr onClick={(evt) => this.onUnitClicked(unitInfo.unitNumber)} className={"unit-row " + selectedClass} key={unitIndex}>
             <td>{unitInfo.unitNumber}</td>
             <td>{unitInfo.currentTenancy.name}</td>
-            <td className={"square-footage-column"}><NumberFormat
-                value={unitInfo.squareFootage}
-                displayType={'text'}
-                thousandSeparator={', '}
-                decimalScale={0}
-                fixedDecimalScale={true}
-            /></td>
-            <td className={"rent-column"}>$<NumberFormat
-                value={unitInfo.currentTenancy.yearlyRentPSF || unitInfo.marketRent}
-                displayType={'text'}
-                thousandSeparator={', '}
-                decimalScale={2}
-                fixedDecimalScale={true}
-            /></td>
-            <td className={"action-column"}>
+            <td className={"square-footage-column"}><AreaFormat value={unitInfo.squareFootage}/></td>
+            <td className={"rent-column"}>
+                <CurrencyFormat value={unitInfo.currentTenancy.yearlyRentPSF || unitInfo.marketRent} />
+            </td>
+            {this.props.allowSelection ? <td className={"action-column"}>
                 <Button
                     color="secondary"
                     onClick={(evt) => this.removeUnit(unitInfo, unitIndex)}
@@ -65,7 +57,7 @@ class UnitsTable extends React.Component
                 >
                     <i className="fa fa-trash-alt"></i>
                 </Button>
-            </td>
+            </td> : null}
         </tr>;
     }
 
@@ -235,7 +227,7 @@ class UnitsTable extends React.Component
                         <td><strong>Tenant Name</strong></td>
                         <td className={"square-footage-column"}><strong>Size (sf)</strong></td>
                         <td className={"rent-column"}><strong>Annual Net Rent (psf)</strong></td>
-                        <td className={"action-column"} />
+                        {this.props.allowSelection ? <td className={"action-column"} /> : null}
                     </tr>
 
                     </thead>
@@ -251,13 +243,7 @@ class UnitsTable extends React.Component
                                 <td></td>
                                 <td><strong>Total</strong></td>
                                 <td className={"square-footage-column"}>
-                                    <NumberFormat
-                                        value={this.getTotalSize()}
-                                        displayType={'text'}
-                                        thousandSeparator={', '}
-                                        decimalScale={0}
-                                        fixedDecimalScale={true}
-                                    />
+                                    <AreaFormat value={this.getTotalSize()}/>
                                 </td>
                                 <td className={"rent-column"}></td>
                             </tr> : null
@@ -268,22 +254,10 @@ class UnitsTable extends React.Component
                                 <td></td>
                                 <td><strong>Average</strong></td>
                                 <td className={"square-footage-column"}>
-                                    <NumberFormat
-                                        value={this.getAverageSize()}
-                                        displayType={'text'}
-                                        thousandSeparator={', '}
-                                        decimalScale={0}
-                                        fixedDecimalScale={true}
-                                    />
+                                    <AreaFormat value={this.getAverageSize()}/>
                                 </td>
                                 <td className={"rent-column"}>
-                                    $<NumberFormat
-                                    value={this.getAverageRentPSF()}
-                                    displayType={'text'}
-                                    thousandSeparator={', '}
-                                    decimalScale={2}
-                                    fixedDecimalScale={true}
-                                />
+                                    <CurrencyFormat value={this.getAverageRentPSF()} />
                                 </td>
                             </tr> : null
                     }
@@ -293,36 +267,12 @@ class UnitsTable extends React.Component
                                 <td></td>
                                 <td><strong>Range</strong></td>
                                 <td className={"square-footage-column"}>
-                                    <NumberFormat
-                                        value={this.getMinimumSize()}
-                                        displayType={'text'}
-                                        thousandSeparator={', '}
-                                        decimalScale={0}
-                                        fixedDecimalScale={true}
-                                    />&nbsp;-&nbsp;
-                                    <NumberFormat
-                                        value={this.getMaximumSize()}
-                                        displayType={'text'}
-                                        thousandSeparator={', '}
-                                        decimalScale={0}
-                                        fixedDecimalScale={true}
-                                    />
+                                    <AreaFormat value={this.getMinimumSize()}/>&nbsp;-&nbsp;
+                                    <AreaFormat value={this.getMaximumSize()}/>
                                 </td>
                                 <td className={"rent-column"}>
-                                    $<NumberFormat
-                                    value={this.getMinimumRentPSF()}
-                                    displayType={'text'}
-                                    thousandSeparator={', '}
-                                    decimalScale={2}
-                                    fixedDecimalScale={true}
-                                />&nbsp;-&nbsp;
-                                    $<NumberFormat
-                                    value={this.getMaximumRentPSF()}
-                                    displayType={'text'}
-                                    thousandSeparator={', '}
-                                    decimalScale={2}
-                                    fixedDecimalScale={true}
-                                />
+                                    <CurrencyFormat value={this.getMinimumRentPSF()}/>&nbsp;-&nbsp;
+                                    <CurrencyFormat value={this.getMaximumRentPSF()}/>
                                 </td>
                             </tr> : null
                     }
