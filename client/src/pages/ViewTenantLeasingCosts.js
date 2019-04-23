@@ -67,15 +67,15 @@ class LeasingCostStructureEditor extends React.Component
                     </tr>
                     <tr className={"leasing-cost-row"}>
                         <td className={"label-column"}>
-                            <strong>Leasing Commission (total)</strong>
+                            <strong>Leasing Commission (psf)</strong>
                         </td>
                         <td className={"value-column"}>
                             <FieldDisplayEdit
                                 type="currency"
-                                value={leasingCostStructure.leasingCommission}
+                                value={leasingCostStructure.leasingCommissionPSF}
                                 hideInput={false}
                                 hideIcon={true}
-                                onChange={(newValue) => this.changeField('leasingCommission', newValue)}
+                                onChange={(newValue) => this.changeField('leasingCommissionPSF', newValue)}
                             />
                         </td>
                     </tr>
@@ -125,7 +125,7 @@ class ViewTenantsLeasingCosts extends React.Component
 
     defaultLeasingCostStructureData = {
         name: "New Leasing Structure",
-        leasingCommission: 0,
+        leasingCommissionPSF: 0,
         tenantInducementsPSF: 0,
         renewalPeriod: 0,
         leasingPeriod: 0

@@ -9,10 +9,10 @@ class LeasingCostStructure(EmbeddedDocument):
     name = StringField()
 
     # The cost of making a new lease
-    leasingCommission = FloatField(default=1000)
+    leasingCommissionPSF = FloatField(default=1.5)
 
     # The cost of tenant inducements for new tenants
-    tenantInducementsPSF = FloatField(default=1000)
+    tenantInducementsPSF = FloatField(default=0.5)
 
     # This is the period of time, in months, that it takes to find a new tenant
     renewalPeriod = IntField(default=3)

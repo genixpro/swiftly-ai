@@ -342,7 +342,6 @@ class ViewStabilizedStatement extends React.Component
                                                                 <FieldDisplayEdit
                                                                     type={"percent"}
                                                                     placeholder={"Percent Of"}
-                                                                    hideInput={false}
                                                                     hideIcon={true}
                                                                     value={this.props.appraisal.stabilizedStatementInputs ? this.props.appraisal.stabilizedStatementInputs.managementExpenseCalculationRule.percentage : null}
                                                                     onChange={(newValue) => this.changeManagementExpenseCalculationRuleField("percentage", newValue)}
@@ -353,7 +352,6 @@ class ViewStabilizedStatement extends React.Component
                                                                     expenses={this.props.appraisal.incomeStatement.expenses}
                                                                     placeholder={"Expense Calculation Field"}
                                                                     value={this.props.appraisal.stabilizedStatementInputs ? this.props.appraisal.stabilizedStatementInputs.managementExpenseCalculationRule.field : null}
-                                                                    hideInput={false}
                                                                     hideIcon={true}
                                                                     onChange={(newValue) => this.changeManagementExpenseCalculationRuleField('field', newValue)}
                                                                 />

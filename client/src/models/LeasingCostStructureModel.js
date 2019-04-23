@@ -12,7 +12,7 @@ class LeasingCostStructureModel extends BaseModel
 {
     static leasingCostStructureName = new StringField("name");
 
-    static leasingCommission = new FloatField();
+    static leasingCommissionPSF = new FloatField();
     static tenantInducementsPSF = new FloatField();
     static renewalPeriod = new FloatField();
     static leasingPeriod = new FloatField();

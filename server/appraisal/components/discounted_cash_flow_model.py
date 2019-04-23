@@ -80,7 +80,7 @@ class DiscountedCashFlowModel(ValuationModelBase):
                 mode = "market_rents"
 
                 rentAmount = self.getStabilizedRent(appraisal, unitInfo) * unitInfo.squareFootage * totalInflation
-                inducementAmount = discountCashFlowInputs.leasingCommission * totalInflation
+                inducementAmount = discountCashFlowInputs.leasingCommissionPSF * totalInflation
                 leasingCommissionAmount = discountCashFlowInputs.tenantInducementsPSF * unitInfo.squareFootage * totalInflation
 
             elif mode == 'market_rents':

@@ -21,7 +21,7 @@
   "leasingCosts": [
     {
       "name": "Default",
-      "leasingCommission": 0.5,
+      "leasingCommissionPSF": 0.5,
       "tenantInducementsPSF": 1.5,
       "renewalPeriod": 6,
       "leasingPeriod": 60

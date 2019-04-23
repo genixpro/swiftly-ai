@@ -87,7 +87,7 @@ class ValuationModelBase:
             if unit.isVacantInFirstYear and unit.squareFootage and unit.marketRent and self.getMarketRent(appraisal, unit.marketRent):
                 leasingCosts = self.getLeasingCosts(appraisal, unit.leasingCostStructure)
 
-                total += leasingCosts.tenantInducementsPSF * unit.squareFootage + leasingCosts.leasingCommission * unit.squareFootage + (self.getMarketRent(appraisal, unit.marketRent) * unit.squareFootage) / 12.0 * leasingCosts.renewalPeriod
+                total += leasingCosts.tenantInducementsPSF * unit.squareFootage + leasingCosts.leasingCommissionPSF * unit.squareFootage + (self.getMarketRent(appraisal, unit.marketRent) * unit.squareFootage) / 12.0 * leasingCosts.renewalPeriod
 
         return -total
 
