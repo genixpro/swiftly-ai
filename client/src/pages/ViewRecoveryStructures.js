@@ -272,7 +272,7 @@ class ViewRecoveryStructures extends React.Component
 
     onNewRecovery(newRecovery)
     {
-        newRecovery.name = newRecovery.name + " " + this.props.appraisal.recoveryStructure.length.toString();
+        newRecovery.name = newRecovery.name + " " + this.props.appraisal.recoveryStructures.length.toString();
         this.props.appraisal.recoveryStructures.push(newRecovery);
         this.props.saveAppraisal(this.props.appraisal);
     }
