@@ -39,7 +39,10 @@ axios.interceptors.response.use(function (response) {
     }
 
     console.log(error.toString());
-    alert(error.toString());
+    if (process.env.VALUATE_ENVIRONMENT.REACT_APP_DEBUG)
+    {
+        alert(error.toString());
+    }
     // Do something with response error
     return (Promise.reject(error));
 });

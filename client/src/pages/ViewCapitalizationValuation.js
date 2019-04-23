@@ -45,7 +45,10 @@ class ViewCapitalizationValuation extends React.Component
             this.setState({comparableSales: ComparableSaleModel.sortComparables(comparableSales.filter((item) => item), this.state.sort)})
         }).catch((err) =>
         {
-            alert("Error: " + err.toString());
+            if (process.env.VALUATE_ENVIRONMENT.REACT_APP_DEBUG)
+            {
+                alert("Error: " + err.toString());
+            }
         })
     }
 

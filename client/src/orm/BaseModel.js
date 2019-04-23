@@ -90,7 +90,10 @@ class BaseModel extends Object
         {
             console.log("Error loading BaseModel subclass fields.");
             console.log(err);
-            alert(err);
+            if (process.env.VALUATE_ENVIRONMENT.REACT_APP_DEBUG)
+            {
+                alert(err);
+            }
         }
     }
 

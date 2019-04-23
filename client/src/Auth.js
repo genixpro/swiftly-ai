@@ -67,7 +67,10 @@ class Auth
             {
                 history.replace('/appraisals');
                 console.log(err);
-                alert(`Error: ${err.error}. Check the console for further details.`);
+                if (process.env.VALUATE_ENVIRONMENT.REACT_APP_DEBUG)
+                {
+                    alert(`Error: ${err.error}. Check the console for further details.`);
+                }
             }
         });
     }
@@ -138,7 +141,10 @@ class Auth
             {
                 this.logout();
                 console.log(err);
-                alert(`Could not get a new token (${err.error}: ${err.error_description}).`);
+                if (process.env.VALUATE_ENVIRONMENT.REACT_APP_DEBUG)
+                {
+                    alert(`Could not get a new token (${err.error}: ${err.error_description}).`);
+                }
             }
         });
     }
