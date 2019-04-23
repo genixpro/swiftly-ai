@@ -50,6 +50,7 @@ class LeasingCostSelector extends React.Component
                 className="custom-select"
                 onChange={(evt) => this.onChangeValue(evt.target.value)}
                 onBlur={(evt) => this.onBlur()}
+                title={this.props.title || this.props.placeholder}
                 ref={(ref) => this.onRef(ref)}
                 value={this.props.value}
                 disabled={this.props.disabled}

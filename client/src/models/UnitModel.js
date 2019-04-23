@@ -42,7 +42,8 @@ class UnitModel extends BaseModel
         if (this.tenancies.length === 0)
         {
             this.tenancies.push(new TenancyModel({
-                rentType: "net"
+                rentType: "net",
+                recoveryStructure: "Default"
             }, this, "tenancies"))
         }
 

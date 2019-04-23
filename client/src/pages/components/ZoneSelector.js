@@ -62,6 +62,7 @@ class ZoneSelector extends React.Component {
                 classNamePrefix={"zone-selector"}
                 value={this.state.zone}
                 cacheOptions
+                title={this.props.title || this.props.placeholder}
                 loadOptions={this.loadOptions}
                 onCreateOption={(data) => this.onCreateZone(data)}
                 noOptionsMessage={() => <span>Search for a Zone</span>}

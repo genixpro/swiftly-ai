@@ -14,7 +14,8 @@ class LandSubtypeSelector extends React.Component
     render()
     {
         return (
-            <select defaultValue="" className="custom-select mb-3" onClick={(evt) => this.onChangeValue(evt.target.value)} value={this.props.value}>
+            <select defaultValue="" className="custom-select mb-3" onClick={(evt) => this.onChangeValue(evt.target.value)} value={this.props.value}
+                    title={this.props.title || this.props.placeholder}>
                 <option value={"residential"}>Residential Land</option>
                 <option value={"commercial"}>Commercial Land</option>
             </select>

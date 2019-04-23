@@ -53,6 +53,7 @@ class CalculationFieldSelector extends React.Component
         return (
             <select
                 className="custom-select"
+                title={this.props.title || this.props.placeholder}
                 onChange={(evt) => this.onChangeValue(evt.target.value)}
                 onBlur={(evt) => this.onBlur()}
                 ref={(ref) => this.onRef(ref)}

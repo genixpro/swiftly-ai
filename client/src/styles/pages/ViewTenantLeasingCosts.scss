@@ -14,6 +14,12 @@
   border: 1px solid lightgray;
   width: fit-content;
 
+
+  .title
+  {
+    font-size: 150%;
+  }
+
   .label-column
   {
     padding-right: 15px;
@@ -29,7 +35,11 @@
   {
     .value-column
     {
-
+      display: flex;
+      flex-direction: row;
+      white-space: nowrap;
+      justify-content: space-between;
+      width: 100%;
     }
   }
 }

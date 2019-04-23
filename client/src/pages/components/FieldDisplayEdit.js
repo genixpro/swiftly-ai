@@ -293,12 +293,14 @@ class FieldDisplayEdit extends React.Component
         return (
             <InputGroup className={`field-display-edit ${editStateClass} ${customClass} ${editableClass} ${hideInput}`}
                         onFocus={(evt) => this.startEditing()}
+                        title={this.props.title || this.props.placeholder}
                         style={this.props.style}
             >
                 {
                     this.props.type === "textbox" ?
                         <textarea
                             placeholder={this.props.placeholder}
+                            title={this.props.title || this.props.placeholder}
                             disabled={!this.props.edit}
                             value={this.state.isEditing ? this.state.value : this.formatValue(this.props.value)}
                             onChange={(evt) => this.inputUpdated(evt.target.value)}
@@ -317,6 +319,7 @@ class FieldDisplayEdit extends React.Component
                     !this.props.type ?
                         <Input placeholder={this.props.placeholder}
                                disabled={!this.props.edit}
+                               title={this.props.title || this.props.placeholder}
                                value={this.state.isEditing ? this.state.value : this.formatValue(this.props.value)}
                                onChange={(evt) => this.inputUpdated(evt.target.value)}
                                innerRef={(inputElem) => this.inputElem = inputElem}
@@ -329,6 +332,7 @@ class FieldDisplayEdit extends React.Component
                         <Datetime
                             inputProps={{className: 'form-control', disabled: !this.props.edit, placeholder: this.props.placeholder}}
                             dateFormat={"YYYY/MM/DD"}
+                            title={this.props.title || this.props.placeholder}
                             timeFormat={false}
                             input={true}
                             closeOnSelect={true}
@@ -341,6 +345,7 @@ class FieldDisplayEdit extends React.Component
                     this.props.type === "propertyType" ?
                         <PropertyTypeSelector
                             value={this.state.isEditing ? this.state.value : this.props.value}
+                            title={this.props.title || this.props.placeholder}
                             disabled={!this.props.edit}
                             onChange={(newValue) => this.selectInputUpdated(newValue) }
                             onBlur={() => this.finishEditing()}
@@ -352,6 +357,7 @@ class FieldDisplayEdit extends React.Component
                     this.props.type === "rentType" ?
                         <RentTypeSelector
                             value={this.state.isEditing ? this.state.value : this.props.value}
+                            title={this.props.title || this.props.placeholder}
                             disabled={!this.props.edit}
                             onChange={(newValue) => this.selectInputUpdated(newValue) }
                             onBlur={() => this.finishEditing()}
@@ -362,6 +368,7 @@ class FieldDisplayEdit extends React.Component
                     this.props.type === "incomeItemType" ?
                         <IncomeItemTypeSelector
                             value={this.state.isEditing ? this.state.value : this.props.value}
+                            title={this.props.title || this.props.placeholder}
                             disabled={!this.props.edit}
                             cashFlowType={this.props.cashFlowType}
                             onChange={(newValue) => this.selectInputUpdated(newValue) }
@@ -373,6 +380,7 @@ class FieldDisplayEdit extends React.Component
                     this.props.type === "retailLocationType" ?
                         <RetailLocationTypeSelector
                             value={this.state.isEditing ? this.state.value : this.props.value}
+                            title={this.props.title || this.props.placeholder}
                             disabled={!this.props.edit}
                             onChange={(newValue) => this.selectInputUpdated(newValue) }
                             onBlur={() => this.finishEditing()}
@@ -383,6 +391,7 @@ class FieldDisplayEdit extends React.Component
                     this.props.type === "marketRent" ?
                         <MarketRentSelector
                             value={this.props.value}
+                            title={this.props.title || this.props.placeholder}
                             disabled={!this.props.edit}
                             marketRents={this.props.marketRents}
                             onChange={(newValue) => this.selectInputUpdated(newValue) }
@@ -395,6 +404,7 @@ class FieldDisplayEdit extends React.Component
                         <RecoveryStructureSelector
                             value={this.props.value}
                             disabled={!this.props.edit}
+                            title={this.props.title || this.props.placeholder}
                             recoveryStructures={this.props.recoveryStructures}
                             onChange={(newValue) => this.selectInputUpdated(newValue) }
                             onBlur={() => this.finishEditing()}
@@ -406,6 +416,7 @@ class FieldDisplayEdit extends React.Component
                         <LeasingCostsSelector
                             value={this.props.value}
                             disabled={!this.props.edit}
+                            title={this.props.title || this.props.placeholder}
                             leasingCostStructures={this.props.leasingCostStructures}
                             onChange={(newValue) => this.selectInputUpdated(newValue) }
                             onBlur={() => this.finishEditing()}
@@ -418,6 +429,7 @@ class FieldDisplayEdit extends React.Component
                             type={"checkbox"}
                             checked={this.props.value}
                             disabled={!this.props.edit}
+                            title={this.props.title || this.props.placeholder}
                             onChange={(evt) => this.selectInputUpdated(!this.props.value) }
                             onBlur={() => this.finishEditing()}
                             ref={(inputElem) => this.inputElem = inputElem}
@@ -429,6 +441,7 @@ class FieldDisplayEdit extends React.Component
                             expenses={this.props.expenses}
                             value={this.state.isEditing ? this.state.value : this.props.value}
                             disabled={!this.props.edit}
+                            title={this.props.title || this.props.placeholder}
                             onChange={(newValue) => this.selectInputUpdated(newValue) }
                             onBlur={() => this.finishEditing()}
                             innerRef={(inputElem) => this.inputElem = inputElem}
@@ -439,6 +452,7 @@ class FieldDisplayEdit extends React.Component
                         <ManagementExpenseModeSelector
                             value={this.state.isEditing ? this.state.value : this.props.value}
                             disabled={!this.props.edit}
+                            title={this.props.title || this.props.placeholder}
                             onChange={(newValue) => this.selectInputUpdated(newValue) }
                             onBlur={() => this.finishEditing()}
                             innerRef={(inputElem) => this.inputElem = inputElem}
@@ -447,6 +461,7 @@ class FieldDisplayEdit extends React.Component
                 {
                     this.props.type === "zone" ?
                         <ZoneSelector
+                            title={this.props.title || this.props.placeholder}
                             value={this.state.isEditing ? this.state.value : this.props.value}
                             onChange={(newValue) => this.selectInputUpdated(newValue) }
                             onBlur={() => this.finishEditing()}
@@ -455,6 +470,7 @@ class FieldDisplayEdit extends React.Component
                 {
                     this.props.type === "tags" ?
                         <TagEditor
+                            title={this.props.title || this.props.placeholder}
                             value={this.state.isEditing ? this.state.value : this.props.value}
                             onChange={(newValue) => this.tagInputUpdated(newValue) }
                             onBlur={() => this.finishEditing()}
@@ -463,6 +479,7 @@ class FieldDisplayEdit extends React.Component
                 {
                     this.props.type === "address" ?
                         <Geosuggest
+                            title={this.props.title || this.props.placeholder}
                             types={["geocode"]}
                             placeholder={this.props.placeholder}
                             disabled={!this.props.edit}

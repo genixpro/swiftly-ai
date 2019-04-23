@@ -9,10 +9,16 @@
   width: fit-content;
 }
 
+
 .recovery-structure-editor
 {
   border: 1px solid lightgray;
   width: fit-content;
+
+  .title
+  {
+    font-size: 150%;
+  }
 
   .label-column
   {
@@ -22,6 +28,17 @@
   .seperator {
     padding-left: 15px;
     padding-right: 15px;
+  }
+
+  .expense-name
+  {
+    flex-grow: 1;
+    white-space: nowrap;
+  }
+
+  .label-row td
+  {
+    padding-top: 25px;
   }
 
   .size-note
@@ -38,9 +55,19 @@
     margin-top: 10px;
   }
 
+  .units-applicable-table
+  {
+    width: 100%;
+  }
+
   .recovery-structure-table
   {
-    .rule-description-column
+    .rule-percentage-column
+    {
+
+    }
+
+    .rule-field-column
     {
       display: flex;
       flex-direction: row;

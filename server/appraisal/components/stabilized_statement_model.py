@@ -11,6 +11,7 @@ from appraisal.models.discounted_cash_flow import MonthlyCashFlowItem, YearlyCas
 from appraisal.models.stabilized_statement import StabilizedStatement
 from appraisal.components.valuation_model_base import ValuationModelBase
 
+
 class StabilizedStatementModel(ValuationModelBase):
     """ This class encapsulates the code required for producing a stabilized statement"""
 
@@ -192,10 +193,18 @@ class StabilizedStatementModel(ValuationModelBase):
             else:
                 recoveryStructure = self.getDefaultRecoveryStructure(appraisal)
 
+            # TODO: This is a weird edge case. Because effectiveGrossIncome is itself dependent upon management recoveries, if management recoveries are based on
+            # management expenses and management expenses are based on a number that is dependent upon management recoveries, we have a circular logic that leads
+            # to infinite recursion and an unsolvable set of rules. We'll need a better way to catch this in the future.
+            if recoveryStructure.managementCalculationRule.field == 'managementExpenses' and \
+                    appraisal.stabilizedStatementInputs.managementExpenseMode == 'rule' and \
+                    appraisal.stabilizedStatementInputs.managementExpenseCalculationRule.field == 'effectiveGrossIncome':
+                continue
+
             if recoveryStructure.managementCalculationRule and recoveryStructure.managementCalculationRule.percentage and recoveryStructure.managementCalculationRule.field:
                 percentage = (recoveryStructure.managementCalculationRule.percentage / 100.0)
 
-                if recoveryStructure.baseOnUnitSize and unit.squareFootage and appraisal.sizeOfBuilding:
+                if unit.squareFootage and appraisal.sizeOfBuilding:
                     percentage *= unit.squareFootage / appraisal.sizeOfBuilding
 
                 total += percentage * self.getCalculationField(appraisal, recoveryStructure.managementCalculationRule.field)
@@ -205,7 +214,6 @@ class StabilizedStatementModel(ValuationModelBase):
 
     def computeOperatingExpenseRecoveries(self, appraisal):
         total = 0
-        totalSize = 0
 
         for unit in appraisal.units:
             if unit.currentTenancy and unit.currentTenancy.recoveryStructure and self.getRecoveryStructure(appraisal, unit.currentTenancy.recoveryStructure) is not None:
@@ -213,15 +221,13 @@ class StabilizedStatementModel(ValuationModelBase):
             else:
                 recoveryStructure = self.getDefaultRecoveryStructure(appraisal)
 
-            totalSize += unit.squareFootage
+            for expense in appraisal.incomeStatement.expenses:
+                if expense.incomeStatementItemType == 'operating_expense' or expense.incomeStatementItemType == 'taxes':
+                    percentage = (recoveryStructure.expenseRecoveries.get(expense.name, 100)) / 100.0
 
-            for rule in recoveryStructure.expenseCalculationRules:
-                if rule.percentage and rule.field:
-                    percentage = (rule.percentage / 100.0)
-
-                    if recoveryStructure.baseOnUnitSize and unit.squareFootage and appraisal.sizeOfBuilding:
+                    if unit.squareFootage and appraisal.sizeOfBuilding:
                         percentage *= unit.squareFootage / appraisal.sizeOfBuilding
 
-                    total += percentage * self.getCalculationField(appraisal, rule.field)
+                    total += percentage * expense.getLatestAmount()
 
         return total

@@ -35,17 +35,7 @@
         "percentage": 15,
         "field": "operatingExpenses"
       },
-      "expenseCalculationRules": [
-        {
-          "percentage": 100,
-          "field": "operatingExpenses"
-        },
-        {
-          "percentage": 100,
-          "field": "taxes"
-        }
-      ]
-    }
+      "expenseRecoveries": {}
   ],
   "units": [
     {
@@ -220,6 +210,7 @@
     }
   ],
   "incomeStatement": {
+    "years": [2018, 2019],
     "expenses": [
       {
         "name": "Utilities",

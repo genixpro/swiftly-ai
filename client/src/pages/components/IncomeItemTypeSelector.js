@@ -39,6 +39,7 @@ class IncomeItemTypeSelector extends React.Component
                 onBlur={(evt) => this.onBlur()}
                 ref={(ref) => this.onRef(ref)}
                 value={this.props.value}
+                title={this.props.title || this.props.placeholder}
                 disabled={this.props.disabled}
 
             >

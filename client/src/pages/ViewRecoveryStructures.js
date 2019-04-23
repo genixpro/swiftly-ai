@@ -5,6 +5,48 @@ import FieldDisplayEdit from './components/FieldDisplayEdit';
 import 'react-datetime/css/react-datetime.css'
 import NumberFormat from "react-number-format";
 import RecoveryStructureModel from "../models/RecoveryStructureModel";
+import _ from "underscore";
+
+class ExpensePercentageEditor extends React.Component
+{
+    render()
+    {
+        return [<td className={"rule-percentage-column"}>
+            <FieldDisplayEdit
+                key={1}
+                type="percent"
+                placeholder={"Expense %"}
+                value={_.isNumber(this.props.recovery.expenseRecoveries[this.props.expense.name]) ? this.props.recovery.expenseRecoveries[this.props.expense.name] : 100}
+                hideInput={false}
+                hideIcon={true}
+                onChange={(newValue) => this.props.onChange(newValue)}
+            />
+        </td>,
+            <td className={"rule-field-column"}>
+                <span key={2} className={"seperator"}>of</span>
+                <div className={"expense-name"}>{this.props.expense.name}</div>
+            </td>]
+    }
+}
+
+class TenantApplicableEditor extends React.Component
+{
+    render()
+    {
+        return [<td className={"rule-percentage-column"}>
+            {this.props.unit.currentTenancy.name || `Unit ${this.props.unit.unitNumber}`}
+        </td>,
+            <td className={"rule-field-column"}>
+                <FieldDisplayEdit
+                    type={"boolean"}
+                    hideIcon={true}
+                    value={this.props.unit.currentTenancy.recoveryStructure === this.props.recovery.name}
+                    onChange={() => this.props.onChange()}
+                    placeholder={"Does recovery structure apply to this tenancy"}
+                />
+            </td>]
+    }
+}
 
 
 
@@ -14,20 +56,20 @@ class RecoveryStructureEditor extends React.Component
     {
         const recoveryStructure = this.props.recovery;
 
-        if (field === "name")
-        {
-            // Go through the appraisal units and update any which are attached to this rent name
-            this.props.appraisal.units.forEach((unit) =>
-            {
-                if (unit.recoveryStructure === recoveryStructure.name)
-                {
-                    unit.recoveryStructure = newValue;
-                }
-            });
-        }
-
         if (newValue !== recoveryStructure[field])
         {
+            if (field === "name")
+            {
+                // Go through the appraisal units and update any which are attached to this rent name
+                this.props.appraisal.units.forEach((unit) =>
+                {
+                    if (unit.currentTenancy.recoveryStructure === recoveryStructure.name)
+                    {
+                        unit.currentTenancy.recoveryStructure = newValue;
+                    }
+                });
+            }
+
             recoveryStructure[field] = newValue;
             this.props.onChange(recoveryStructure);
         }
@@ -42,37 +84,33 @@ class RecoveryStructureEditor extends React.Component
         }
     }
 
-    deleteCalculationRule(ruleIndex)
+    changeOperatingExpenseRecovery(expenseName, newValue)
     {
-        const recoveryStructure = this.props.recovery;
-
-        recoveryStructure.expenseCalculationRules.splice(ruleIndex, 1);
-
-        this.props.onChange(recoveryStructure);
+        if (newValue !== this.props.recovery.expenseRecoveries[expenseName])
+        {
+            this.props.recovery.expenseRecoveries[expenseName] = newValue;
+            this.props.onChange(this.props.recovery);
+        }
     }
 
-    newExpenseCalculationRule(field, newValue)
+    changeUnitRecoveryStructure(unit)
     {
-        if (!newValue)
+        if (unit.currentTenancy.recoveryStructure === this.props.recovery.name)
         {
-            return
+            unit.currentTenancy.recoveryStructure = "Default";
         }
-
-        const recoveryStructure = this.props.recovery;
-
-        const newRule = {
-            percentage: 100,
-            field: "operatingExpenses"
-        };
-
-        if (field !== null)
+        else
         {
-            newRule[field] = newValue;
+            unit.currentTenancy.recoveryStructure = this.props.recovery.name;
         }
+        this.props.onChange(this.props.recovery);
+    }
 
-        recoveryStructure.expenseCalculationRules.push(newRule);
 
-        this.props.onChange(recoveryStructure);
+
+    operatingExpenses()
+    {
+        return this.props.expenses.filter((expense) => expense.incomeStatementItemType === "operating_expense" || expense.incomeStatementItemType === "taxes")
     }
 
     render()
@@ -84,56 +122,39 @@ class RecoveryStructureEditor extends React.Component
                 <table className="recovery-structure-table">
                     <tbody>
                     <tr>
-                        <td colSpan={2}>
-                            <FieldDisplayEdit
-                                type="text"
-                                placeholder="Recovery Structure Name"
-                                value={recovery.name}
-                                onChange={(newValue) => this.changeRecoveryStructureField('name', newValue)}
-                                hideInput={false}
-                                hideIcon={true}
-
-                            />
+                        <td colSpan={4}>
+                            {
+                                recovery.name !== "Default" ?
+                                    <FieldDisplayEdit
+                                        type="text"
+                                        placeholder="Recovery Structure Name"
+                                        value={recovery.name}
+                                        onChange={(newValue) => this.changeRecoveryStructureField('name', newValue)}
+                                        hideInput={false}
+                                        hideIcon={true}
+                                    />
+                                    : <strong className={"title"}>{recovery.name}</strong>
+                            }
                         </td>
                         <td />
                     </tr>
-                    <tr className={"recovery-rule"}>
-                        <td className={"label-column"}>
-                            <strong>Base Recovery on Size of Unit / Building Size?</strong>
-                        </td>
-                        <td className={"rule-description-column"}>
-                            <FieldDisplayEdit
-                                type="boolean"
-                                value={recovery.baseOnUnitSize}
-                                hideInput={false}
-                                hideIcon={true}
-                                onChange={(newValue) => this.changeRecoveryStructureField('baseOnUnitSize', newValue)}
-                            />
-                        </td>
-                        <td />
-                    </tr>
-                    <tr className={"recovery-rule"}>
+                    <tr className={"recovery-rule label-row"}>
                         <td className={"label-column"}>
                             <strong>Management Recoveries</strong>
                         </td>
-                        <td className={"rule-description-column"}>
-                            {
-                                !recovery.baseOnUnitSize ?
-                                    [
-                                        <FieldDisplayEdit
-                                            key={1}
-                                            type="percent"
-                                                          placeholder={"Management Expense %"}
-                                                          value={recovery.managementCalculationRule.percentage}
-                                                          hideInput={false}
-                                                          hideIcon={true}
-                                                          onChange={(newValue) => this.changeCalculationRuleField(recovery.managementCalculationRule, 'percentage', newValue)}
-                                        />,
-                                        <span key={2} className={"seperator"}>of</span>
-                                    ]
-                                    :
-                                    <div className={"size-note"}>(% sqft) of</div>
-                            }
+                        <td className={"rule-percentage-column"}>
+                            <FieldDisplayEdit
+                                key={1}
+                                type="percent"
+                                              placeholder={"Management Expense %"}
+                                              value={recovery.managementCalculationRule.percentage}
+                                              hideInput={false}
+                                              hideIcon={true}
+                                              onChange={(newValue) => this.changeCalculationRuleField(recovery.managementCalculationRule, 'percentage', newValue)}
+                            />
+                        </td>
+                        <td className={"rule-field-column"}>
+                            <span key={2} className={"seperator"}>of</span>
                             <FieldDisplayEdit
                                 type="calculationField"
                                 expenses={this.props.expenses}
@@ -144,138 +165,78 @@ class RecoveryStructureEditor extends React.Component
                                 onChange={(newValue) => this.changeCalculationRuleField(recovery.managementCalculationRule, 'field', newValue)}
                             />
                         </td>
-                        <td />
                     </tr>
-                    <tr className={"recovery-rule"}>
+                    <tr className={"recovery-rule label-row"}>
                         <td className={"label-column"}>
                             <strong>Operating Expense Recoveries</strong>
                         </td>
                         {
-                            recovery.expenseCalculationRules.length > 0 ?
-                                    <td className={"rule-description-column"}>
-                                        {
-                                            !recovery.baseOnUnitSize ?
-                                                [
-                                                    <FieldDisplayEdit
-                                                        key={1}
-                                                        type="percent"
-                                                        placeholder={"Expense %"}
-                                                        value={recovery.expenseCalculationRules[0].percentage}
-                                                        hideInput={false}
-                                                        hideIcon={true}
-                                                        onChange={(newValue) => this.changeCalculationRuleField(recovery.expenseCalculationRules[0], 'percentage', newValue)}
-                                                    />,
-                                                    <span key={2} className={"seperator"}>of</span>
-                                                ]
-                                                : <div className={"size-note"}>(% sqft) of</div>
-                                        }
-                                        <FieldDisplayEdit
-                                            type="calculationField"
-                                            expenses={this.props.expenses}
-                                            placeholder={"Calculated On"}
-                                            value={recovery.expenseCalculationRules[0].field}
-                                            hideInput={false}
-                                            hideIcon={true}
-                                            onChange={(newValue) => this.changeCalculationRuleField(recovery.expenseCalculationRules[0], 'field', newValue)}
-                                        />
-                                    </td>
-                                : <td />
-                        }
-                        {
-                            recovery.expenseCalculationRules.length > 0 ?
-                                <td>
-                                    <Button color={"secondary"} onClick={() => this.deleteCalculationRule(0)}>
-                                        <i className={"fa fa-trash-alt"}/>
-                                    </Button>
-                                </td> : null
+                            this.operatingExpenses().length > 0 ?
+                                <ExpensePercentageEditor
+                                    expense={this.operatingExpenses()[0]}
+                                    recovery={recovery}
+                                    onChange={(newValue) => this.changeOperatingExpenseRecovery(this.operatingExpenses()[0].name, newValue)}
+                                />
+                                : null
                         }
                     </tr>
                     {
-                        recovery.expenseCalculationRules.map((rule, ruleIndex) => {
-                            if (ruleIndex === 0)
+                        this.operatingExpenses().map((expense, expenseIndex) =>
+                        {
+                            if (expenseIndex === 0)
                             {
                                 return null;
                             }
 
-                            return <tr key={ruleIndex} className={"recovery-rule"}>
+                            return <tr className={"recovery-rule"} key={expenseIndex}>
                                 <td className={"label-column"}>
                                 </td>
-                                <td className={"rule-description-column"}>
-
-                                    {
-                                        !recovery.baseOnUnitSize ?
-                                            [
-                                                <FieldDisplayEdit
-                                                    key={1}
-                                                    type="percent"
-                                                    placeholder={"Expense %"}
-                                                    value={rule.percentage}
-                                                    hideInput={false}
-                                                    hideIcon={true}
-                                                    onChange={(newValue) => this.changeCalculationRuleField(rule, 'percentage', newValue)}
-                                                />,
-                                                <span key={2} className={"seperator"}>of</span>
-                                            ]
-                                            : <div className={"size-note"}>(% sqft) of</div>
-                                    }
-
-                                    <FieldDisplayEdit
-                                        type="calculationField"
-                                        expenses={this.props.expenses}
-                                        placeholder={"Calculated On"}
-                                        value={rule.field}
-                                        hideInput={false}
-                                        hideIcon={true}
-                                        onChange={(newValue) => this.changeCalculationRuleField(rule, 'field', newValue)}
-                                    />
-                                </td>
-                                <td>
-                                    <Button color={"secondary"} onClick={() => this.deleteCalculationRule(ruleIndex)}>
-                                        <i className={"fa fa-trash-alt"} />
-                                    </Button>
-                                </td>
+                                <ExpensePercentageEditor
+                                    expense={expense}
+                                    recovery={recovery}
+                                    onChange={(newValue) => this.changeOperatingExpenseRecovery(expense.name, newValue)}
+                                />
                             </tr>
-                        }).concat([
-                            <tr key={recovery.expenseCalculationRules.length + 1} className={"recovery-rule"}>
+                        })
+                    }
+                    {
+                        recovery.name !== "Default" ? [
+                            <tr className={"recovery-rule label-row"}>
                                 <td className={"label-column"}>
+                                    <strong>Tenants Applied To</strong>
                                 </td>
-                                <td className={"rule-description-column"}>
-                                    {
-                                        !recovery.baseOnUnitSize ?
-                                            [
-                                                <FieldDisplayEdit
-                                                    key={1}
-                                                    type="percent"
-                                                    placeholder={"Add Expense Recovery"}
-                                                    hideInput={false}
-                                                    hideIcon={true}
-                                                    onChange={(newValue) => this.newExpenseCalculationRule('percentage', newValue)}
-                                                />,
-                                                <span key={2} className = {"seperator"} > of </span>
-                                            ] : <div className={"size-note"}>(% sqft) of</div>
-                                    }
-                                    <FieldDisplayEdit
-                                        type="calculationField"
-                                        expenses={this.props.expenses}
-                                        placeholder={"Calculated On"}
-                                        hideInput={false}
-                                        hideIcon={true}
-                                        onChange={(newValue) => this.newExpenseCalculationRule('field', newValue)}
-                                    />
-                                </td>
-                                <td>
-                                    <Button color={"secondary"} onClick={() => this.newExpenseCalculationRule("percentage", 100)}>
-                                        <i className={"fa fa-plus"} />
-                                    </Button>
-                                </td>
-                            </tr>
-                        ])
+                                {
+                                    this.props.units.length > 0 ?
+                                        <TenantApplicableEditor unit={this.props.units[0]} recovery={recovery} onChange={() => this.changeUnitRecoveryStructure(this.props.units[0])}/>
+                                        : null
+                                }
+                            </tr>,
+                                this.props.units.map((unit, unitIndex) =>
+                            {
+                                if (unitIndex === 0)
+                                {
+                                    return null;
+                                }
+
+                                return <tr className={"recovery-rule"} key={unitIndex}>
+                                    <td className={"label-column"} />
+                                    <TenantApplicableEditor unit={unit} recovery={recovery} onChange={() => this.changeUnitRecoveryStructure(unit)}/>
+                                </tr>
+                            })
+                        ] : null
                     }
                     </tbody>
                 </table>
+                <table className="units-applicable-table">
+                    <tbody>
+                    </tbody>
+                </table>
+                {
+                    recovery.name !== "Default" ?
+                        <Button color={"danger"} className={"delete-button"} onClick={() => this.props.onDeleteRecovery(this.props.recovery)}>Delete</Button>
+                        : null
+                }
 
-
-                <Button color={"danger"} className={"delete-button"} onClick={() => this.props.onDeleteRecovery(this.props.recovery)}>Delete</Button>
             </CardBody>
         </Card>
     }
@@ -290,20 +251,12 @@ class ViewRecoveryStructures extends React.Component
     };
 
     defaultRecoveryStructureData = {
-        name: "",
-        baseOnUnitSize: true,
+        name: "New Recovery Structure",
         managementCalculationRule: {
             percentage: 100,
             field: "managementExpenses"
         },
-        expenseCalculationRules: [{
-            percentage: 100,
-            field: "operatingExpenses"
-        },
-            {
-                percentage: 100,
-                field: "taxes"
-            }]
+        expenseRecoveries: {}
     };
 
     componentDidMount()
@@ -319,13 +272,25 @@ class ViewRecoveryStructures extends React.Component
 
     onNewRecovery(newRecovery)
     {
+        newRecovery.name = newRecovery.name + " " + this.props.appraisal.recoveryStructure.length.toString();
         this.props.appraisal.recoveryStructures.push(newRecovery);
         this.props.saveAppraisal(this.props.appraisal);
     }
 
     onDeleteRecovery(recoveryIndex)
     {
+        const recoveryStructure = this.props.appraisal.recoveryStructures[recoveryIndex];
         this.props.appraisal.recoveryStructures.splice(recoveryIndex, 1);
+
+        // Go through the appraisal units and update any which are attached to this rent name
+        this.props.appraisal.units.forEach((unit) =>
+        {
+            if (unit.currentTenancy.recoveryStructure === recoveryStructure.name)
+            {
+                unit.currentTenancy.recoveryStructure = "Default";
+            }
+        });
+
         this.props.saveAppraisal(this.props.appraisal);
     }
 
@@ -343,6 +308,7 @@ class ViewRecoveryStructures extends React.Component
                                 {
                                     return <RecoveryStructureEditor
                                         expenses={this.props.appraisal.incomeStatement.expenses}
+                                        units={this.props.appraisal.units}
                                         recovery={recovery}
                                         appraisal={this.props.appraisal}
                                         onChange={(newValue) => this.onRecoveryChanged(newValue, recoveryIndex)}

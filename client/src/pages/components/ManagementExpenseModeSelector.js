@@ -40,6 +40,7 @@ class ManagementExpenseModeSelector extends React.Component
                 ref={(ref) => this.onRef(ref)}
                 value={this.props.value}
                 disabled={this.props.disabled}
+                title={this.props.title || this.props.placeholder}
                 style={{"color": !this.props.value ? "lightgrey" : ""}}
             >
                 <option value={"income_statement"}>Base Management on Income Statement</option>
