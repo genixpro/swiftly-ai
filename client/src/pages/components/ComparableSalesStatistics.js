@@ -118,19 +118,19 @@ class ComparableSalesStatistics extends React.Component
                                             <strong>Cap Rate Range (%)</strong>&nbsp;&nbsp;&nbsp;
                                             {
                                                 stats.minCapRate ? <span>
-                                            <PercentFormat value={stats.minCapRate} /> - <PercentFormat value={stats.maxCapRate}/></span> : null
+                                            <PercentFormat value={stats.minCapRate} /> - <PercentFormat value={stats.maxCapRate}/></span> : <span>n/a</span>
                                             }
                                         </Col>
                                         <Col xs={4}>
                                             <strong>Price Per Square Foot Range ($)</strong>&nbsp;&nbsp;&nbsp;
                                             {
-                                                stats.minPPS ? <span><CurrencyFormat value={stats.minPPS} cents={false} /> - <CurrencyFormat value={stats.maxPPS} cents={false} /></span> : null
+                                                stats.minPPS ? <span><CurrencyFormat value={stats.minPPS} cents={false} /> - <CurrencyFormat value={stats.maxPPS} cents={false} /></span> : <span>n/a</span>
                                             }
                                         </Col>
                                         <Col xs={4}>
                                             <strong>Building Size Range (sq)</strong>&nbsp;&nbsp;&nbsp;
                                             {
-                                                stats.minSize ? <span><IntegerFormat value={stats.minSize} /> - <IntegerFormat value={stats.maxSize} /></span> : null
+                                                stats.minSize ? <span><IntegerFormat value={stats.minSize} /> - <IntegerFormat value={stats.maxSize} /></span> : <span>n/a</span>
                                             }
                                         </Col>
                                     </Row> : null
@@ -141,19 +141,19 @@ class ComparableSalesStatistics extends React.Component
                                         <Col xs={4}>
                                             <strong>Cap Rate Average (%)</strong>&nbsp;&nbsp;&nbsp;
                                             {
-                                                stats.averageCapRate ? <PercentFormat value={stats.averageCapRate}/> : null
+                                                stats.averageCapRate ? <PercentFormat value={stats.averageCapRate}/> : <span>n/a</span>
                                             }
                                         </Col>
                                         <Col xs={4}>
                                             <strong>Price Per Square Average ($)</strong>&nbsp;&nbsp;&nbsp;
                                             {
-                                                stats.averagePPS ? <CurrencyFormat value={stats.averagePPS} cents={false}/> : null
+                                                stats.averagePPS ? <CurrencyFormat value={stats.averagePPS} cents={false}/> : <span>n/a</span>
                                             }
                                         </Col>
                                         <Col xs={4}>
                                             <strong>Building Size Average (sq)</strong>&nbsp;&nbsp;&nbsp;
                                             {
-                                                stats.sizeAverage ? <IntegerFormat value={stats.sizeAverage}/> : null
+                                                stats.sizeAverage ? <IntegerFormat value={stats.sizeAverage}/> : <span>n/a</span>
                                             }
                                         </Col>
                                     </Row> : null
@@ -164,7 +164,7 @@ class ComparableSalesStatistics extends React.Component
                                         <Col xs={4}>
                                             <strong>Clear Ceiling Height Range</strong>&nbsp;&nbsp;&nbsp;
                                             {
-                                                stats.minClearCeilingHeight ? <span><IntegerFormat value={stats.minClearCeilingHeight} /> - <LengthFormat value={stats.maxClearCeilingHeight} /></span> : null
+                                                stats.minClearCeilingHeight ? <span><IntegerFormat value={stats.minClearCeilingHeight} /> - <LengthFormat value={stats.maxClearCeilingHeight} /></span> : <span>n/a</span>
                                             }
                                         </Col>
                                     </Row> : null
@@ -175,7 +175,7 @@ class ComparableSalesStatistics extends React.Component
                                         <Col xs={4}>
                                             <strong>Clear Ceiling Height Average</strong>&nbsp;&nbsp;&nbsp;
                                             {
-                                                stats.averageClearCeilingHeight ? <LengthFormat value={stats.averageClearCeilingHeight} /> : null
+                                                stats.averageClearCeilingHeight ? <LengthFormat value={stats.averageClearCeilingHeight} /> : <span>n/a</span>
                                             }
                                         </Col>
                                     </Row> : null
@@ -187,19 +187,19 @@ class ComparableSalesStatistics extends React.Component
                                             <strong>Size of Land  (acres) Range </strong>&nbsp;&nbsp;&nbsp;
                                             {
                                                 stats.minSizeOfLand ? <span>
-                                            <IntegerFormat value={stats.minSizeOfLand} /> - <IntegerFormat value={stats.maxSizeOfLand}/></span> : null
+                                            <IntegerFormat value={stats.minSizeOfLand} /> - <IntegerFormat value={stats.maxSizeOfLand}/></span> : <span>n/a</span>
                                             }
                                         </Col>
                                         <Col xs={4}>
                                             <strong>Floor Space Index Range</strong>&nbsp;&nbsp;&nbsp;
                                             {
-                                                stats.minFSI ? <span>{stats.minFSI.toFixed(2)} - {stats.maxFSI.toFixed(2)}</span> : null
+                                                stats.minFSI ? <span>{stats.minFSI.toFixed(2)} - {stats.maxFSI.toFixed(2)}</span> : <span>n/a</span>
                                             }
                                         </Col>
                                         <Col xs={4}>
                                             <strong>PPS of Land ($)</strong>&nbsp;&nbsp;&nbsp;
                                             {
-                                                stats.minPPSLand ? <span><CurrencyFormat value={stats.minPPSLand} /> - <CurrencyFormat value={stats.maxPPSLand} /></span> : null
+                                                stats.minPPSLand ? <span><CurrencyFormat value={stats.minPPSLand} /> - <CurrencyFormat value={stats.maxPPSLand} /></span> : <span>n/a</span>
                                             }
                                         </Col>
                                     </Row> : null
@@ -210,19 +210,19 @@ class ComparableSalesStatistics extends React.Component
                                         <Col xs={4}>
                                             <strong>Size of Land (acres) Average </strong>&nbsp;&nbsp;&nbsp;
                                             {
-                                                stats.averageSizeOfLand ? <span><IntegerFormat value={stats.averageSizeOfLand} /></span> : null
+                                                stats.averageSizeOfLand ? <span><IntegerFormat value={stats.averageSizeOfLand} /></span> : <span>n/a</span>
                                             }
                                         </Col>
                                         <Col xs={4}>
                                             <strong>Floor Space Index Average</strong>&nbsp;&nbsp;&nbsp;
                                             {
-                                                stats.averageFSI ? <span>{stats.averageFSI}</span> : null
+                                                stats.averageFSI ? <span>{stats.averageFSI}</span> : <span>n/a</span>
                                             }
                                         </Col>
                                         <Col xs={4}>
                                             <strong>PPS of Land ($)</strong>&nbsp;&nbsp;&nbsp;
                                             {
-                                                stats.averagePPSLand ? <span><CurrencyFormat value={stats.averagePPSLand} /></span> : null
+                                                stats.averagePPSLand ? <span><CurrencyFormat value={stats.averagePPSLand} /></span> : <span>n/a</span>
                                             }
                                         </Col>
                                     </Row> : null
@@ -234,13 +234,13 @@ class ComparableSalesStatistics extends React.Component
                                             <strong>PPS of Buildable Area Range ($/sqft) </strong>&nbsp;&nbsp;&nbsp;
                                             {
                                                 stats.minPPSBuildableArea ? <span>
-                                            <CurrencyFormat value={stats.minPPSBuildableArea} /> - <CurrencyFormat value={stats.maxPPSBuildableArea}/></span> : null
+                                            <CurrencyFormat value={stats.minPPSBuildableArea} /> - <CurrencyFormat value={stats.maxPPSBuildableArea}/></span> : <span>n/a</span>
                                             }
                                         </Col>
                                         <Col xs={4}>
                                             <strong>Price per Acre Land Range ($)</strong>&nbsp;&nbsp;&nbsp;
                                             {
-                                                stats.minPricePerAcreLand ? <span><CurrencyFormat value={stats.minPricePerAcreLand} cents={false} /> - <CurrencyFormat value={stats.maxPricePerAcreLand} cents={false} /></span> : null
+                                                stats.minPricePerAcreLand ? <span><CurrencyFormat value={stats.minPricePerAcreLand} cents={false} /> - <CurrencyFormat value={stats.maxPricePerAcreLand} cents={false} /></span> : <span>n/a</span>
                                             }
                                         </Col>
                                     </Row> : null
@@ -251,13 +251,13 @@ class ComparableSalesStatistics extends React.Component
                                         <Col xs={4}>
                                             <strong>PPS of Buildable Area Average ($/sqft) </strong>&nbsp;&nbsp;&nbsp;
                                             {
-                                                stats.averagePPSBuildableArea ? <span><CurrencyFormat value={stats.averagePPSBuildableArea}/></span> : null
+                                                stats.averagePPSBuildableArea ? <span><CurrencyFormat value={stats.averagePPSBuildableArea}/></span> : <span>n/a</span>
                                             }
                                         </Col>
                                         <Col xs={4}>
                                             <strong>Price per Acre Land Average ($)</strong>&nbsp;&nbsp;&nbsp;
                                             {
-                                                stats.averagePricePerAcreLand ? <span><CurrencyFormat value={stats.averagePricePerAcreLand} cents={false} /></span> : null
+                                                stats.averagePricePerAcreLand ? <span><CurrencyFormat value={stats.averagePricePerAcreLand} cents={false} /></span> : <span>n/a</span>
                                             }
                                         </Col>
                                     </Row> : null

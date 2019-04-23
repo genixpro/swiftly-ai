@@ -114,19 +114,19 @@ class ComparableLeasesStatistics extends React.Component
                                 <Col xs={4}>
                                     <strong>Size Range</strong>&nbsp;&nbsp;&nbsp;
                                     {
-                                        stats.minSize ? <span><AreaFormat value={stats.minSize} /> - <AreaFormat value={stats.maxSize} /></span> : null
+                                        stats.minSize ? <span><AreaFormat value={stats.minSize} /> - <AreaFormat value={stats.maxSize} /></span> : <span>n/a</span>
                                     }
                                 </Col>
                                 <Col xs={4}>
                                     <strong>Yearly Rent Range</strong>&nbsp;&nbsp;&nbsp;
                                     {
-                                        stats.minRent ? <span><CurrencyFormat value={stats.minRent} /> - <CurrencyFormat value={stats.maxRent} /></span> : null
+                                        stats.minRent ? <span><CurrencyFormat value={stats.minRent} /> - <CurrencyFormat value={stats.maxRent} /></span> : <span>n/a</span>
                                     }
                                 </Col>
                                 <Col xs={4}>
                                     <strong>TMI Range</strong>&nbsp;&nbsp;&nbsp;
                                     {
-                                        stats.minTMI ? <span><CurrencyFormat value={stats.minTMI} /> - <CurrencyFormat value={stats.maxTMI} /></span> : null
+                                        stats.minTMI ? <span><CurrencyFormat value={stats.minTMI} /> - <CurrencyFormat value={stats.maxTMI} /></span> : <span>n/a</span>
                                     }
                                 </Col>
                             </Row>
@@ -134,19 +134,19 @@ class ComparableLeasesStatistics extends React.Component
                                 <Col xs={4}>
                                     <strong>Size Average</strong>&nbsp;&nbsp;&nbsp;
                                     {
-                                        stats.averageSize ? <span><AreaFormat value={stats.averageSize} /></span> : null
+                                        stats.averageSize ? <span><AreaFormat value={stats.averageSize} /></span> : <span>n/a</span>
                                     }
                                 </Col>
                                 <Col xs={4}>
                                     <strong>Yearly Rent Average</strong>&nbsp;&nbsp;&nbsp;
                                     {
-                                        stats.averageRent ? <span><CurrencyFormat value={stats.averageRent} /></span> : null
+                                        stats.averageRent ? <span><CurrencyFormat value={stats.averageRent} /></span> : <span>n/a</span>
                                     }
                                 </Col>
                                 <Col xs={4}>
                                     <strong>TMI Average</strong>&nbsp;&nbsp;&nbsp;
                                     {
-                                        stats.averageTMI ? <span><CurrencyFormat value={stats.averageTMI} /></span> : null
+                                        stats.averageTMI ? <span><CurrencyFormat value={stats.averageTMI} /></span> : <span>n/a</span>
                                     }
                                 </Col>
                             </Row>

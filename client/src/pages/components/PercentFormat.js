@@ -9,7 +9,7 @@ class PercentFormat extends React.Component
     {
         if (_.isUndefined(this.props.value) || _.isNull(this.props.value))
         {
-            return null;
+            return <span>n/a</span>;
         }
 
         return <span><NumberFormat
