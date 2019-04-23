@@ -1,12 +1,7 @@
 from mongoengine import *
 import datetime
-from appraisal.models.extraction_reference import ExtractionReference
+from appraisal.models.calculation_rule import CalculationRule
 
-
-class RecoveryRule(EmbeddedDocument):
-    percentage = FloatField()
-
-    field = StringField()
 
 
 
@@ -15,7 +10,7 @@ class RecoveryStructure(EmbeddedDocument):
 
     baseOnUnitSize = BooleanField()
 
-    managementRecoveryRule = EmbeddedDocumentField(RecoveryRule, default=RecoveryRule(percentage=100, field="managementExpenses"))
+    managementCalculationRule = EmbeddedDocumentField(CalculationRule, default=CalculationRule(percentage=100, field="managementExpenses"))
 
-    expenseRecoveryRules = EmbeddedDocumentListField(RecoveryRule, default=[RecoveryRule(percentage=100, field="operatingExpenses")])
+    expenseCalculationRules = EmbeddedDocumentListField(CalculationRule, default=[CalculationRule(percentage=100, field="operatingExpenses")])
 

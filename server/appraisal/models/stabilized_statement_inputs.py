@@ -1,5 +1,6 @@
 from mongoengine import *
 import datetime
+from appraisal.models.calculation_rule import CalculationRule
 
 
 class StabilizedStatementModifier(EmbeddedDocument):
@@ -24,6 +25,11 @@ class StabilizedStatementInputs(EmbeddedDocument):
 
     # This specifies whether expenses are taken from the income statement or calculated based on TMI rates
     expensesMode = StringField(default="income_statement", choices=["income_statement", "tmi"])
+
+    # This specifies whether mangemgent expenses are taken from the income statement, or based on a calculation rule
+    managementExpenseMode = StringField(default="income_statement", choices=["income_statement", "rule"])
+
+    managementExpenseCalculationRule = EmbeddedDocumentField(CalculationRule, default=CalculationRule(percentage=3, field="effectiveGrossIncome"))
 
     # This provides the user-selected TMI rates for the expenses
     tmiRatePSF = FloatField()

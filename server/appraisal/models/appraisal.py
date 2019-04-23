@@ -12,7 +12,7 @@ from appraisal.models.direct_comparison_valuation import DirectComparisonValuati
 from appraisal.models.direct_comparison_valuation_inputs import DirectComparisonValuationInputs
 from appraisal.models.market_rents import MarketRent
 from appraisal.models.amortization_schedule import AmortizationSchedule
-from appraisal.models.recovery_structure import RecoveryStructure, RecoveryRule
+from appraisal.models.recovery_structure import RecoveryStructure, CalculationRule
 from appraisal.models.leasing_cost_structure import LeasingCostStructure
 from appraisal.models.date_field import ConvertingDateField
 
@@ -104,10 +104,10 @@ class Appraisal(Document):
     recoveryStructures = ListField(EmbeddedDocumentField(RecoveryStructure), default=[
         RecoveryStructure(name="Default Recovery Structure",
                           baseOnUnitSize=True,
-                          managementRecoveryRule=RecoveryRule(percentage=15, field="managementExpenses"),
-                          expenseRecoveryRules=[
-                              RecoveryRule(percentage=100, field="operatingExpenses"),
-                              RecoveryRule(percentage=100, field="taxes"),
+                          managementCalculationRule=CalculationRule(percentage=15, field="managementExpenses"),
+                          expenseCalculationRules=[
+                              CalculationRule(percentage=100, field="operatingExpenses"),
+                              CalculationRule(percentage=100, field="taxes"),
                           ])
     ])
 

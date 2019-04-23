@@ -37,13 +37,13 @@ class StabilizedStatementModel(ValuationModelBase):
         statement.amortizationDifferential = self.computeAmortizationDifferential(appraisal)
         statement.managementRecovery = self.computeManagementRecoveries(appraisal)
         statement.operatingExpenseRecovery = self.computeOperatingExpenseRecoveries(appraisal)
-        statement.recoverableIncome = statement.managementRecovery + statement.operatingExpenseRecovery
+        statement.recoverableIncome = self.computeTotalRecoverableIncome(appraisal)
+        
+        statement.potentialGrossIncome = self.computePotentialGrossIncome(appraisal)
 
-        statement.potentialGrossIncome = statement.rentalIncome + statement.additionalIncome + statement.recoverableIncome
+        statement.vacancyDeduction = self.computeVacancyDeduction(appraisal)
 
-        statement.vacancyDeduction = statement.potentialGrossIncome * (appraisal.stabilizedStatementInputs.vacancyRate / 100.0)
-
-        statement.effectiveGrossIncome = statement.potentialGrossIncome - statement.vacancyDeduction
+        statement.effectiveGrossIncome = self.computeEffectiveGrossIncome(appraisal)
 
         statement.structuralAllowance = statement.potentialGrossIncome * (appraisal.stabilizedStatementInputs.structuralAllowancePercent / 100.0)
 
@@ -70,6 +70,17 @@ class StabilizedStatementModel(ValuationModelBase):
         return statement
 
 
+    def computeTotalRecoverableIncome(self, appraisal):
+        return self.computeManagementRecoveries(appraisal) + self.computeOperatingExpenseRecoveries(appraisal)
+
+    def computePotentialGrossIncome(self, appraisal):
+        return self.computeRentalIncome(appraisal) + self.computeAdditionalIncome(appraisal) + self.computeTotalRecoverableIncome(appraisal)
+
+    def computeVacancyDeduction(self, appraisal):
+        return self.computePotentialGrossIncome(appraisal) * (appraisal.stabilizedStatementInputs.vacancyRate / 100.0)
+
+    def computeEffectiveGrossIncome(self, appraisal):
+        return self.computePotentialGrossIncome(appraisal) - self.computeVacancyDeduction(appraisal)
 
     def getStabilizedRent(self, appraisal, unit):
         if unit.currentTenancy and unit.currentTenancy.yearlyRent:
@@ -147,13 +158,16 @@ class StabilizedStatementModel(ValuationModelBase):
     def computeManagementFees(self, appraisal):
         total = 0
 
-        for expense in appraisal.incomeStatement.expenses:
-            if expense.incomeStatementItemType == 'management_expense':
-                total += self.getLatestAmount(expense)
+        if appraisal.stabilizedStatementInputs.managementExpenseMode == 'income_statement':
+            for expense in appraisal.incomeStatement.expenses:
+                if expense.incomeStatementItemType == 'management_expense':
+                    total += self.getLatestAmount(expense)
+        elif appraisal.stabilizedStatementInputs.managementExpenseMode == 'rule':
+            total = (appraisal.stabilizedStatementInputs.managementExpenseCalculationRule.percentage / 100.0) * self.getCalculationField(appraisal, appraisal.stabilizedStatementInputs.managementExpenseCalculationRule.field)
 
         return total
 
-    def getRecoveryField(self, appraisal, name):
+    def getCalculationField(self, appraisal, name):
         if name == "operatingExpenses":
             return self.computeTotalOperatingExpenses(appraisal)
         if name == "managementExpenses":
@@ -162,6 +176,8 @@ class StabilizedStatementModel(ValuationModelBase):
             return self.computeTaxes(appraisal)
         if name == "rentalIncome":
             return self.computeRentalIncome(appraisal)
+        if name == "effectiveGrossIncome":
+            return self.computeEffectiveGrossIncome(appraisal)
 
         for expense in appraisal.incomeStatement.expenses:
             if expense.name == name:
@@ -176,13 +192,13 @@ class StabilizedStatementModel(ValuationModelBase):
             else:
                 recoveryStructure = self.getDefaultRecoveryStructure(appraisal)
 
-            if recoveryStructure.managementRecoveryRule and recoveryStructure.managementRecoveryRule.percentage and recoveryStructure.managementRecoveryRule.field:
-                percentage = (recoveryStructure.managementRecoveryRule.percentage / 100.0)
+            if recoveryStructure.managementCalculationRule and recoveryStructure.managementCalculationRule.percentage and recoveryStructure.managementCalculationRule.field:
+                percentage = (recoveryStructure.managementCalculationRule.percentage / 100.0)
 
                 if recoveryStructure.baseOnUnitSize and unit.squareFootage and appraisal.sizeOfBuilding:
                     percentage *= unit.squareFootage / appraisal.sizeOfBuilding
 
-                total += percentage * self.getRecoveryField(appraisal, recoveryStructure.managementRecoveryRule.field)
+                total += percentage * self.getCalculationField(appraisal, recoveryStructure.managementCalculationRule.field)
 
         return total
 
@@ -199,13 +215,13 @@ class StabilizedStatementModel(ValuationModelBase):
 
             totalSize += unit.squareFootage
 
-            for rule in recoveryStructure.expenseRecoveryRules:
+            for rule in recoveryStructure.expenseCalculationRules:
                 if rule.percentage and rule.field:
                     percentage = (rule.percentage / 100.0)
 
                     if recoveryStructure.baseOnUnitSize and unit.squareFootage and appraisal.sizeOfBuilding:
                         percentage *= unit.squareFootage / appraisal.sizeOfBuilding
 
-                    total += percentage * self.getRecoveryField(appraisal, rule.field)
+                    total += percentage * self.getCalculationField(appraisal, rule.field)
 
         return total

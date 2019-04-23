@@ -33,25 +33,25 @@ class RecoveryStructureEditor extends React.Component
         }
     }
 
-    changeRecoveryRuleField(recoveryRule, field, newValue)
+    changeCalculationRuleField(calculationRule, field, newValue)
     {
-        if (newValue !== recoveryRule[field])
+        if (newValue !== calculationRule[field])
         {
-            recoveryRule[field] = newValue;
+            calculationRule[field] = newValue;
             this.props.onChange(this.props.recovery);
         }
     }
 
-    deleteRecoveryRule(ruleIndex)
+    deleteCalculationRule(ruleIndex)
     {
         const recoveryStructure = this.props.recovery;
 
-        recoveryStructure.expenseRecoveryRules.splice(ruleIndex, 1);
+        recoveryStructure.expenseCalculationRules.splice(ruleIndex, 1);
 
         this.props.onChange(recoveryStructure);
     }
 
-    newExpenseRecoveryRule(field, newValue)
+    newExpenseCalculationRule(field, newValue)
     {
         if (!newValue)
         {
@@ -70,7 +70,7 @@ class RecoveryStructureEditor extends React.Component
             newRule[field] = newValue;
         }
 
-        recoveryStructure.expenseRecoveryRules.push(newRule);
+        recoveryStructure.expenseCalculationRules.push(newRule);
 
         this.props.onChange(recoveryStructure);
     }
@@ -124,10 +124,10 @@ class RecoveryStructureEditor extends React.Component
                                             key={1}
                                             type="percent"
                                                           placeholder={"Management Expense %"}
-                                                          value={recovery.managementRecoveryRule.percentage}
+                                                          value={recovery.managementCalculationRule.percentage}
                                                           hideInput={false}
                                                           hideIcon={true}
-                                                          onChange={(newValue) => this.changeRecoveryRuleField(recovery.managementRecoveryRule, 'percentage', newValue)}
+                                                          onChange={(newValue) => this.changeCalculationRuleField(recovery.managementCalculationRule, 'percentage', newValue)}
                                         />,
                                         <span key={2} className={"seperator"}>of</span>
                                     ]
@@ -138,10 +138,10 @@ class RecoveryStructureEditor extends React.Component
                                 type="recoveryField"
                                 expenses={this.props.expenses}
                                 placeholder={"Expense Calculation Field"}
-                                value={recovery.managementRecoveryRule.field}
+                                value={recovery.managementCalculationRule.field}
                                 hideInput={false}
                                 hideIcon={true}
-                                onChange={(newValue) => this.changeRecoveryRuleField(recovery.managementRecoveryRule, 'field', newValue)}
+                                onChange={(newValue) => this.changeCalculationRuleField(recovery.managementCalculationRule, 'field', newValue)}
                             />
                         </td>
                         <td />
@@ -151,7 +151,7 @@ class RecoveryStructureEditor extends React.Component
                             <strong>Operating Expense Recoveries</strong>
                         </td>
                         {
-                            recovery.expenseRecoveryRules.length > 0 ?
+                            recovery.expenseCalculationRules.length > 0 ?
                                     <td className={"rule-description-column"}>
                                         {
                                             !recovery.baseOnUnitSize ?
@@ -160,10 +160,10 @@ class RecoveryStructureEditor extends React.Component
                                                         key={1}
                                                         type="percent"
                                                         placeholder={"Expense %"}
-                                                        value={recovery.expenseRecoveryRules[0].percentage}
+                                                        value={recovery.expenseCalculationRules[0].percentage}
                                                         hideInput={false}
                                                         hideIcon={true}
-                                                        onChange={(newValue) => this.changeRecoveryRuleField(recovery.expenseRecoveryRules[0], 'percentage', newValue)}
+                                                        onChange={(newValue) => this.changeCalculationRuleField(recovery.expenseCalculationRules[0], 'percentage', newValue)}
                                                     />,
                                                     <span key={2} className={"seperator"}>of</span>
                                                 ]
@@ -173,25 +173,25 @@ class RecoveryStructureEditor extends React.Component
                                             type="recoveryField"
                                             expenses={this.props.expenses}
                                             placeholder={"Calculated On"}
-                                            value={recovery.expenseRecoveryRules[0].field}
+                                            value={recovery.expenseCalculationRules[0].field}
                                             hideInput={false}
                                             hideIcon={true}
-                                            onChange={(newValue) => this.changeRecoveryRuleField(recovery.expenseRecoveryRules[0], 'field', newValue)}
+                                            onChange={(newValue) => this.changeCalculationRuleField(recovery.expenseCalculationRules[0], 'field', newValue)}
                                         />
                                     </td>
                                 : <td />
                         }
                         {
-                            recovery.expenseRecoveryRules.length > 0 ?
+                            recovery.expenseCalculationRules.length > 0 ?
                                 <td>
-                                    <Button color={"secondary"} onClick={() => this.deleteRecoveryRule(0)}>
+                                    <Button color={"secondary"} onClick={() => this.deleteCalculationRule(0)}>
                                         <i className={"fa fa-trash-alt"}/>
                                     </Button>
                                 </td> : null
                         }
                     </tr>
                     {
-                        recovery.expenseRecoveryRules.map((rule, ruleIndex) => {
+                        recovery.expenseCalculationRules.map((rule, ruleIndex) => {
                             if (ruleIndex === 0)
                             {
                                 return null;
@@ -212,7 +212,7 @@ class RecoveryStructureEditor extends React.Component
                                                     value={rule.percentage}
                                                     hideInput={false}
                                                     hideIcon={true}
-                                                    onChange={(newValue) => this.changeRecoveryRuleField(rule, 'percentage', newValue)}
+                                                    onChange={(newValue) => this.changeCalculationRuleField(rule, 'percentage', newValue)}
                                                 />,
                                                 <span key={2} className={"seperator"}>of</span>
                                             ]
@@ -226,17 +226,17 @@ class RecoveryStructureEditor extends React.Component
                                         value={rule.field}
                                         hideInput={false}
                                         hideIcon={true}
-                                        onChange={(newValue) => this.changeRecoveryRuleField(rule, 'field', newValue)}
+                                        onChange={(newValue) => this.changeCalculationRuleField(rule, 'field', newValue)}
                                     />
                                 </td>
                                 <td>
-                                    <Button color={"secondary"} onClick={() => this.deleteRecoveryRule(ruleIndex)}>
+                                    <Button color={"secondary"} onClick={() => this.deleteCalculationRule(ruleIndex)}>
                                         <i className={"fa fa-trash-alt"} />
                                     </Button>
                                 </td>
                             </tr>
                         }).concat([
-                            <tr key={recovery.expenseRecoveryRules.length + 1} className={"recovery-rule"}>
+                            <tr key={recovery.expenseCalculationRules.length + 1} className={"recovery-rule"}>
                                 <td className={"label-column"}>
                                 </td>
                                 <td className={"rule-description-column"}>
@@ -249,7 +249,7 @@ class RecoveryStructureEditor extends React.Component
                                                     placeholder={"Add Expense Recovery"}
                                                     hideInput={false}
                                                     hideIcon={true}
-                                                    onChange={(newValue) => this.newExpenseRecoveryRule('percentage', newValue)}
+                                                    onChange={(newValue) => this.newExpenseCalculationRule('percentage', newValue)}
                                                 />,
                                                 <span key={2} className = {"seperator"} > of </span>
                                             ] : <div className={"size-note"}>(% sqft) of</div>
@@ -260,11 +260,11 @@ class RecoveryStructureEditor extends React.Component
                                         placeholder={"Calculated On"}
                                         hideInput={false}
                                         hideIcon={true}
-                                        onChange={(newValue) => this.newExpenseRecoveryRule('field', newValue)}
+                                        onChange={(newValue) => this.newExpenseCalculationRule('field', newValue)}
                                     />
                                 </td>
                                 <td>
-                                    <Button color={"secondary"} onClick={() => this.newExpenseRecoveryRule("percentage", 100)}>
+                                    <Button color={"secondary"} onClick={() => this.newExpenseCalculationRule("percentage", 100)}>
                                         <i className={"fa fa-plus"} />
                                     </Button>
                                 </td>
@@ -292,11 +292,11 @@ class ViewRecoveryStructures extends React.Component
     defaultRecoveryStructureData = {
         name: "",
         baseOnUnitSize: true,
-        managementRecoveryRule: {
+        managementCalculationRule: {
             percentage: 100,
             field: "managementExpenses"
         },
-        expenseRecoveryRules: [{
+        expenseCalculationRules: [{
             percentage: 100,
             field: "operatingExpenses"
         },

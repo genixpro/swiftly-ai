@@ -31,11 +31,11 @@
     {
       "name": "Default",
       "baseOnUnitSize": true,
-      "managementRecoveryRule": {
+      "managementCalculationRule": {
         "percentage": 15,
         "field": "operatingExpenses"
       },
-      "expenseRecoveryRules": [
+      "expenseCalculationRules": [
         {
           "percentage": 100,
           "field": "operatingExpenses"
@@ -315,6 +315,11 @@
     "marketRentDifferentialDiscountRate" : 5,
     "modifiers" : [],
     "expensesMode" : "income_statement",
+    "managementExpenseMode": "rule",
+    "managementExpenseCalculationRule": {
+      "percentage": 3,
+      "field": "effectiveGrossIncome"
+    },
     "tmiRatePSF" : 5
   },
   "stabilizedStatement": {
@@ -329,10 +334,10 @@
     "operatingExpenses": 786535.63,
     "tmiTotal": null,
     "taxes": 865412.30,
-    "managementExpenses": 195469.28,
+    "managementExpenses": 113076.20,
     "structuralAllowance":  19428.90,
-    "totalExpenses":  1866846.11,
-    "netOperatingIncome":  1902360.66,
+    "totalExpenses":  1784453.04,
+    "netOperatingIncome":  1984753.74,
     "netOperatingIncomePSF": null,
     "capitalization": 0,
     "marketRentDifferential": 0,

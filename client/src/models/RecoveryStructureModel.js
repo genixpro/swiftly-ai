@@ -4,13 +4,7 @@ import FloatField from "../orm/FloatField";
 import ModelField from "../orm/ModelField";
 import ListField from "../orm/ListField";
 import BoolField from "../orm/BoolField";
-
-
-class RecoveryRuleModel extends BaseModel
-{
-    static percentage = new FloatField();
-    static field = new StringField();
-}
+import CalculationRuleModel from "./CalculationRuleModel";
 
 class RecoveryStructureModel extends BaseModel
 {
@@ -18,9 +12,9 @@ class RecoveryStructureModel extends BaseModel
 
     static baseOnUnitSize = new BoolField();
 
-    static managementRecoveryRule = new ModelField(RecoveryRuleModel);
+    static managementCalculationRule = new ModelField(CalculationRuleModel);
 
-    static expenseRecoveryRules = new ListField(new ModelField(RecoveryRuleModel));
+    static expenseCalculationRules = new ListField(new ModelField(CalculationRuleModel));
 }
 
 export default RecoveryStructureModel;
