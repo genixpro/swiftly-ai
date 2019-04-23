@@ -8,6 +8,7 @@ import ComparableSaleList from "./components/ComparableSaleList";
 import ComparableSaleModel from "../models/ComparableSaleModel";
 import Promise from "bluebird";
 import Auth from "../Auth";
+import PercentFormat from "./components/PercentFormat";
 
 class ViewCapitalizationValuation extends React.Component
 {
@@ -144,232 +145,263 @@ class ViewCapitalizationValuation extends React.Component
                                 </DropdownMenu>
                             </Dropdown>
 
-                            <div className={"stabilized-statement-centered"}>
-                                <h3>Capitalization Valuation</h3>
-                                <h4>{this.props.appraisal.address}</h4>
-                                <ComparableSaleList comparableSales={this.state.comparableSales}
-                                                    statsTitle={""}
-                                                    statsPosition={"below"}
-                                                    showPropertyTypeInHeader={false}
-                                                    allowNew={false}
-                                                    sort={this.state.sort}
-                                                    noCompMessage={"There are no comparables attached to this appraisal. Please go to the comparables database and select comparables from there."}
-                                                    onSortChanged={(newSort) => this.onSortChanged(newSort)}
-                                                    history={this.props.history}
-                                                    appraisal={this.props.appraisal}
-                                                    appraisalId={this.props.match.params._id}
-                                                    appraisalComparables={this.props.appraisal.comparableSales}
-                                                    // onRemoveComparableClicked={(comp) => this.removeComparableFromAppraisal(comp)}
-                                                    // onChange={(comps) => this.onComparablesChanged(comps)}
-                                />
-                                <h3>Valuation</h3>
-                                <Table className={"statement-table "}>
-                                    <tbody>
-                                    <tr className={"title-row"}>
-                                        <td className={"label-column"}><span className={"title"}>Net Operating Income</span></td>
-                                        <td className={"amount-column"} />
-                                        <td className={"amount-total-column"}>
-                                            $<NumberFormat
-                                            value={this.props.appraisal.stabilizedStatement.netOperatingIncome}
-                                            displayType={'text'}
-                                            thousandSeparator={', '}
-                                            decimalScale={2}
-                                            fixedDecimalScale={true}
+                            <Row>
+                                <Col xs={8}>
+                                    <div className={"stabilized-statement-centered"}>
+                                        <h3>Capitalization Valuation</h3>
+                                        <h4>{this.props.appraisal.address}</h4>
+                                        <ComparableSaleList comparableSales={this.state.comparableSales}
+                                                            statsTitle={""}
+                                                            statsPosition={"below"}
+                                                            showPropertyTypeInHeader={false}
+                                                            allowNew={false}
+                                                            sort={this.state.sort}
+                                                            noCompMessage={"There are no comparables attached to this appraisal. Please go to the comparables database and select comparables from there."}
+                                                            onSortChanged={(newSort) => this.onSortChanged(newSort)}
+                                                            history={this.props.history}
+                                                            appraisal={this.props.appraisal}
+                                                            appraisalId={this.props.match.params._id}
+                                                            appraisalComparables={this.props.appraisal.comparableSales}
+                                                            // onRemoveComparableClicked={(comp) => this.removeComparableFromAppraisal(comp)}
+                                                            // onChange={(comps) => this.onComparablesChanged(comps)}
                                         />
-                                        </td>
-                                    </tr>
-                                    {/*<tr className={"data-row"}>*/}
-                                    {/*<td className={"label-column"}>NOI per square foot</td>*/}
-                                    {/*<td className={"amount-column"}></td>*/}
-                                    {/*<td className={"amount-total-column"}>todo</td>*/}
-                                    {/*</tr>*/}
-                                    <tr className={"data-row capitalization-row"}>
-                                        <td className={"label-column"}>
-                                            <span>Capitalized @</span>
-                                            <FieldDisplayEdit
-                                                type={"percent"}
-                                                placeholder={"Capitalization Rate"}
-                                                value={this.props.appraisal.stabilizedStatementInputs ? this.props.appraisal.stabilizedStatementInputs.capitalizationRate : 5.0}
-                                                onChange={(newValue) => this.changeStabilizedInput("capitalizationRate", newValue)}
-                                            />
-                                        </td>
-                                        <td className={"amount-column"}></td>
-                                        <td className={"amount-total-column"}>
-                                            $<NumberFormat
-                                            value={this.props.appraisal.stabilizedStatement.capitalization}
-                                            displayType={'text'}
-                                            thousandSeparator={', '}
-                                            decimalScale={2}
-                                            fixedDecimalScale={true}
-                                        />
-                                        </td>
-                                    </tr>
-                                    {
-                                        this.props.appraisal.stabilizedStatement.marketRentDifferential ?
-                                            <tr className={"data-row capitalization-row"}>
-                                                <td className={"label-column"}>
-                                                    <span>Market Rent Differential, Discounted @</span>
-                                                    <FieldDisplayEdit
-                                                        type={"percent"}
-                                                        placeholder={"Market Rent Differential Discount Rate"}
-                                                        value={this.props.appraisal.stabilizedStatementInputs ? this.props.appraisal.stabilizedStatementInputs.marketRentDifferentialDiscountRate : 5.0}
-                                                        onChange={(newValue) => this.changeStabilizedInput("marketRentDifferentialDiscountRate", newValue)}
-                                                    />
-                                                </td>
-                                                <td className={"amount-column"}></td>
+                                    </div>
+                                </Col>
+                            </Row>
+                            <Row>
+                                <Col xs={8}>
+                                    <div className={"stabilized-statement-centered"}>
+                                        <h3>Valuation</h3>
+                                        <Table className={"statement-table "}>
+                                            <tbody>
+                                            <tr className={"title-row"}>
+                                                <td className={"label-column"}><span className={"title"}>Net Operating Income</span></td>
+                                                <td className={"amount-column"} />
                                                 <td className={"amount-total-column"}>
                                                     $<NumberFormat
-                                                    value={this.props.appraisal.stabilizedStatement.marketRentDifferential}
+                                                    value={this.props.appraisal.stabilizedStatement.netOperatingIncome}
                                                     displayType={'text'}
                                                     thousandSeparator={', '}
                                                     decimalScale={2}
                                                     fixedDecimalScale={true}
                                                 />
                                                 </td>
-                                            </tr> : null
-                                    }
-                                    {
-                                        this.props.appraisal.stabilizedStatement.freeRentDifferential ?
+                                            </tr>
+                                            {/*<tr className={"data-row"}>*/}
+                                            {/*<td className={"label-column"}>NOI per square foot</td>*/}
+                                            {/*<td className={"amount-column"}></td>*/}
+                                            {/*<td className={"amount-total-column"}>todo</td>*/}
+                                            {/*</tr>*/}
                                             <tr className={"data-row capitalization-row"}>
                                                 <td className={"label-column"}>
-                                                    <span>Free Rent Differential</span>
+                                                    <span>Capitalized @ <PercentFormat value={this.props.appraisal.stabilizedStatementInputs.capitalizationRate}/></span>
                                                 </td>
                                                 <td className={"amount-column"}></td>
                                                 <td className={"amount-total-column"}>
                                                     $<NumberFormat
-                                                    value={this.props.appraisal.stabilizedStatement.freeRentDifferential}
+                                                    value={this.props.appraisal.stabilizedStatement.capitalization}
                                                     displayType={'text'}
                                                     thousandSeparator={', '}
                                                     decimalScale={2}
                                                     fixedDecimalScale={true}
                                                 />
                                                 </td>
-                                            </tr> : null
-                                    }
-                                    {
-                                        this.props.appraisal.stabilizedStatement.vacantUnitDifferential ?
-                                            <tr className={"data-row capitalization-row"}>
-                                                <td className={"label-column"}>
-                                                    <span>Vacant Unit Differential</span>
-                                                </td>
-                                                <td className={"amount-column"}></td>
-                                                <td className={"amount-total-column"}>
-                                                    $<NumberFormat
-                                                    value={this.props.appraisal.stabilizedStatement.vacantUnitDifferential}
-                                                    displayType={'text'}
-                                                    thousandSeparator={', '}
-                                                    decimalScale={2}
-                                                    fixedDecimalScale={true}
-                                                />
-                                                </td>
-                                            </tr> : null
-                                    }
-                                    {
-                                        this.props.appraisal.stabilizedStatement.amortizationDifferential ?
-                                            <tr className={"data-row capitalization-row"}>
-                                                <td className={"label-column"}>
-                                                    <span>Amortized Capital Investment</span>
-                                                </td>
-                                                <td className={"amount-column"}></td>
-                                                <td className={"amount-total-column"}>
-                                                    $<NumberFormat
-                                                    value={this.props.appraisal.stabilizedStatement.amortizationDifferential}
-                                                    displayType={'text'}
-                                                    thousandSeparator={', '}
-                                                    decimalScale={2}
-                                                    fixedDecimalScale={true}
-                                                />
-                                                </td>
-                                            </tr> : null
-                                    }
-                                    {
-                                        this.props.appraisal.stabilizedStatementInputs.modifiers ? this.props.appraisal.stabilizedStatementInputs.modifiers.map((modifier, index) =>
-                                        {
-                                            return <tr className={"data-row modifier-row"} key={index}>
+                                            </tr>
+                                            {
+                                                this.props.appraisal.stabilizedStatement.marketRentDifferential ?
+                                                    <tr className={"data-row capitalization-row"}>
+                                                        <td className={"label-column"}>
+                                                            <span>Market Rent Differential, Discounted @ <PercentFormat value={this.props.appraisal.stabilizedStatementInputs.marketRentDifferentialDiscountRate}/></span>
+                                                        </td>
+                                                        <td className={"amount-column"}></td>
+                                                        <td className={"amount-total-column"}>
+                                                            $<NumberFormat
+                                                            value={this.props.appraisal.stabilizedStatement.marketRentDifferential}
+                                                            displayType={'text'}
+                                                            thousandSeparator={', '}
+                                                            decimalScale={2}
+                                                            fixedDecimalScale={true}
+                                                        />
+                                                        </td>
+                                                    </tr> : null
+                                            }
+                                            {
+                                                this.props.appraisal.stabilizedStatement.freeRentDifferential ?
+                                                    <tr className={"data-row capitalization-row"}>
+                                                        <td className={"label-column"}>
+                                                            <span>Free Rent Differential</span>
+                                                        </td>
+                                                        <td className={"amount-column"}></td>
+                                                        <td className={"amount-total-column"}>
+                                                            $<NumberFormat
+                                                            value={this.props.appraisal.stabilizedStatement.freeRentDifferential}
+                                                            displayType={'text'}
+                                                            thousandSeparator={', '}
+                                                            decimalScale={2}
+                                                            fixedDecimalScale={true}
+                                                        />
+                                                        </td>
+                                                    </tr> : null
+                                            }
+                                            {
+                                                this.props.appraisal.stabilizedStatement.vacantUnitDifferential ?
+                                                    <tr className={"data-row capitalization-row"}>
+                                                        <td className={"label-column"}>
+                                                            <span>Vacant Unit Differential</span>
+                                                        </td>
+                                                        <td className={"amount-column"}></td>
+                                                        <td className={"amount-total-column"}>
+                                                            $<NumberFormat
+                                                            value={this.props.appraisal.stabilizedStatement.vacantUnitDifferential}
+                                                            displayType={'text'}
+                                                            thousandSeparator={', '}
+                                                            decimalScale={2}
+                                                            fixedDecimalScale={true}
+                                                        />
+                                                        </td>
+                                                    </tr> : null
+                                            }
+                                            {
+                                                this.props.appraisal.stabilizedStatement.amortizationDifferential ?
+                                                    <tr className={"data-row capitalization-row"}>
+                                                        <td className={"label-column"}>
+                                                            <span>Amortized Capital Investment</span>
+                                                        </td>
+                                                        <td className={"amount-column"}></td>
+                                                        <td className={"amount-total-column"}>
+                                                            $<NumberFormat
+                                                            value={this.props.appraisal.stabilizedStatement.amortizationDifferential}
+                                                            displayType={'text'}
+                                                            thousandSeparator={', '}
+                                                            decimalScale={2}
+                                                            fixedDecimalScale={true}
+                                                        />
+                                                        </td>
+                                                    </tr> : null
+                                            }
+                                            {
+                                                this.props.appraisal.stabilizedStatementInputs.modifiers ? this.props.appraisal.stabilizedStatementInputs.modifiers.map((modifier, index) =>
+                                                {
+                                                    return <tr className={"data-row modifier-row"} key={index}>
+                                                        <td className={"label-column"}>
+                                                            <span><FieldDisplayEdit
+                                                                type={"text"}
+                                                                placeholder={"Add/Remove ($)"}
+                                                                value={modifier.name}
+                                                                onChange={(newValue) => this.changeStabilizedModifier(index, "name", newValue)}
+                                                            /></span>
+                                                        </td>
+                                                        <td className={"amount-column"}></td>
+                                                        <td className={"amount-total-column"}>
+                                                            <FieldDisplayEdit
+                                                                hideIcon={true}
+                                                                type={"currency"}
+                                                                placeholder={"Amount"}
+                                                                value={modifier.amount}
+                                                                onChange={(newValue) => this.changeStabilizedModifier(index, "amount", newValue)}
+                                                            />
+                                                        </td>
+                                                    </tr>
+                                                }) : null
+                                            }
+                                            <tr className={"data-row"}>
                                                 <td className={"label-column"}>
                                                     <span><FieldDisplayEdit
                                                         type={"text"}
                                                         placeholder={"Add/Remove ($)"}
-                                                        value={modifier.name}
-                                                        onChange={(newValue) => this.changeStabilizedModifier(index, "name", newValue)}
+                                                        // value={modifier.name}
+                                                        onChange={(newValue) => this.createNewModifier("name", newValue)}
                                                     /></span>
                                                 </td>
                                                 <td className={"amount-column"}></td>
                                                 <td className={"amount-total-column"}>
                                                     <FieldDisplayEdit
-                                                        hideIcon={true}
                                                         type={"currency"}
                                                         placeholder={"Amount"}
-                                                        value={modifier.amount}
-                                                        onChange={(newValue) => this.changeStabilizedModifier(index, "amount", newValue)}
+                                                        hideIcon={true}
+                                                        // value={modifier.amount}
+                                                        onChange={(newValue) => this.createNewModifier("amount", newValue)}
                                                     />
                                                 </td>
                                             </tr>
-                                        }) : null
-                                    }
-                                    <tr className={"data-row"}>
-                                        <td className={"label-column"}>
-                                            <span><FieldDisplayEdit
-                                                type={"text"}
-                                                placeholder={"Add/Remove ($)"}
-                                                // value={modifier.name}
-                                                onChange={(newValue) => this.createNewModifier("name", newValue)}
-                                            /></span>
-                                        </td>
-                                        <td className={"amount-column"}></td>
-                                        <td className={"amount-total-column"}>
-                                            <FieldDisplayEdit
-                                                type={"currency"}
-                                                placeholder={"Amount"}
-                                                hideIcon={true}
-                                                // value={modifier.amount}
-                                                onChange={(newValue) => this.createNewModifier("amount", newValue)}
-                                            />
-                                        </td>
-                                    </tr>
-                                    <tr className={"data-row rounding-row"}>
-                                        <td className={"label-column"}>
-                                            <span>Estimated Value</span>
-                                        </td>
-                                        <td className={"amount-column"}></td>
-                                        <td className={"amount-total-column"}>
-                                            $<NumberFormat
-                                            value={this.props.appraisal.stabilizedStatement.valuation}
-                                            displayType={'text'}
-                                            thousandSeparator={', '}
-                                            decimalScale={2}
-                                            fixedDecimalScale={true}
-                                        />
-                                        </td>
-                                    </tr>
-                                    <tr className={"data-row rounding-row"}>
-                                        <td className={"label-column"}>
-                                            <span>Rounded</span>
-                                        </td>
-                                        <td className={"amount-column"}></td>
-                                        <td className={"amount-total-column"}>
-                                            $<NumberFormat
+                                            <tr className={"data-row rounding-row"}>
+                                                <td className={"label-column"}>
+                                                    <span>Estimated Value</span>
+                                                </td>
+                                                <td className={"amount-column"}></td>
+                                                <td className={"amount-total-column"}>
+                                                    $<NumberFormat
+                                                    value={this.props.appraisal.stabilizedStatement.valuation}
+                                                    displayType={'text'}
+                                                    thousandSeparator={', '}
+                                                    decimalScale={2}
+                                                    fixedDecimalScale={true}
+                                                />
+                                                </td>
+                                            </tr>
+                                            <tr className={"data-row rounding-row"}>
+                                                <td className={"label-column"}>
+                                                    <span>Rounded</span>
+                                                </td>
+                                                <td className={"amount-column"}></td>
+                                                <td className={"amount-total-column"}>
+                                                    $<NumberFormat
+                                                    value={this.props.appraisal.stabilizedStatement.valuationRounded}
+                                                    displayType={'text'}
+                                                    thousandSeparator={', '}
+                                                    decimalScale={2}
+                                                    fixedDecimalScale={true}
+                                                />
+                                                </td>
+                                            </tr>
+                                            </tbody>
+                                        </Table>
+                                        <br/>
+                                        <br/>
+                                        <h4 className={"final-valuation"}>Value by the Overall Capitalization Rate Method ... $<NumberFormat
                                             value={this.props.appraisal.stabilizedStatement.valuationRounded}
                                             displayType={'text'}
                                             thousandSeparator={', '}
                                             decimalScale={2}
                                             fixedDecimalScale={true}
                                         />
-                                        </td>
-                                    </tr>
-                                    </tbody>
-                                </Table>
-                                <br/>
-                                <br/>
-                                <h4 className={"final-valuation"}>Value by the Overall Capitalization Rate Method ... $<NumberFormat
-                                    value={this.props.appraisal.stabilizedStatement.valuationRounded}
-                                    displayType={'text'}
-                                    thousandSeparator={', '}
-                                    decimalScale={2}
-                                    fixedDecimalScale={true}
-                                />
-                                </h4>
-                            </div>
+                                        </h4>
+                                    </div>
+                                </Col>
+                                <Col xs={4}>
+                                    <Card className={"capitalization-valuation-inputs"} outline>
+                                        <CardBody>
+                                            <h3>Inputs</h3>
+
+                                            <Table>
+                                                <tr>
+                                                    <td>Discount Rate for Market Rent Differential</td>
+                                                    <td>
+                                                        <FieldDisplayEdit
+                                                            type={"percent"}
+                                                            placeholder={"Market Rent Differential Discount Rate"}
+                                                            value={this.props.appraisal.stabilizedStatementInputs ? this.props.appraisal.stabilizedStatementInputs.marketRentDifferentialDiscountRate : 5.0}
+                                                            onChange={(newValue) => this.changeStabilizedInput("marketRentDifferentialDiscountRate", newValue)}
+                                                        />
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Capitalization Rate</td>
+                                                    <td>
+                                                        <FieldDisplayEdit
+                                                            type={"percent"}
+                                                            placeholder={"Capitalization Rate"}
+                                                            value={this.props.appraisal.stabilizedStatementInputs ? this.props.appraisal.stabilizedStatementInputs.capitalizationRate : 5.0}
+                                                            onChange={(newValue) => this.changeStabilizedInput("capitalizationRate", newValue)}
+                                                        />
+                                                    </td>
+                                                </tr>
+                                            </Table>
+
+                                        </CardBody>
+                                    </Card>
+                                </Col>
+                            </Row>
                         </CardBody>
                     </Card>
                 </Col>

@@ -5,8 +5,7 @@
   .stabilized-statement-centered
   {
     position: relative;
-    width: 70%;
-    left: 15%;
+    min-width: 70%;
 
     h3, h4 {
       text-align: center;
@@ -21,6 +20,12 @@
       color: black;
       text-decoration: underline;
     }
+  }
+
+  .capitalization-valuation-inputs
+  {
+    border: 1px solid lightgray;
+    float: right;
   }
 
   .title {

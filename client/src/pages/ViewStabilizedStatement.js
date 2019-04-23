@@ -6,6 +6,8 @@ import AppraisalContentHeader from "./components/AppraisalContentHeader";
 import UnitsTable from "./components/UnitsTable";
 import AreaFormat from "./components/AreaFormat";
 import Auth from "../Auth";
+import PercentFormat from "./components/PercentFormat";
+import CurrencyFormat from "./components/CurrencyFormat";
 
 class ViewStabilizedStatement extends React.Component
 {
@@ -148,13 +150,7 @@ class ViewStabilizedStatement extends React.Component
                                             </tr>
                                             <tr className={"statement-sum-after-row data-row vacancy-row"}>
                                                 <td className={"label-column"}>
-                                                    <span>Less Vacancy @</span>
-                                                    <FieldDisplayEdit
-                                                        type={"percent"}
-                                                        placeholder={"Vacancy Rate"}
-                                                        value={this.props.appraisal.stabilizedStatementInputs ? this.props.appraisal.stabilizedStatementInputs.vacancyRate : 5.0}
-                                                        onChange={(newValue) => this.changeStabilizedInput("vacancyRate", newValue)}
-                                                    />
+                                                    <span>Less Vacancy @ <PercentFormat value={this.props.appraisal.stabilizedStatementInputs ? this.props.appraisal.stabilizedStatementInputs.vacancyRate : 5.0}/></span>
                                                 </td>
                                                 <td className={"amount-column"}>
                                                     $<NumberFormat
@@ -238,13 +234,8 @@ class ViewStabilizedStatement extends React.Component
                                                     <tr className={"data-row vacancy-row"}>
                                                         <td className={"label-column"}>
                                                             <span>TMI</span>&nbsp;
-                                                            <AreaFormat spaces={false} value={this.props.appraisal.sizeOfBuilding}/>&nbsp;@
-                                                            <FieldDisplayEdit
-                                                                type={"currency"}
-                                                                placeholder={"TMI Rate (psf)"}
-                                                                value={this.props.appraisal.stabilizedStatementInputs ? this.props.appraisal.stabilizedStatementInputs.tmiRatePSF : 0}
-                                                                onChange={(newValue) => this.changeStabilizedInput("tmiRatePSF", newValue)}
-                                                            />
+                                                            <AreaFormat spaces={false} value={this.props.appraisal.sizeOfBuilding}/>&nbsp;@&nbsp;
+                                                            <CurrencyFormat value={this.props.appraisal.stabilizedStatementInputs.tmiRatePSF}/>
                                                         </td>
                                                         <td className={"amount-column"}>
                                                             $<NumberFormat
@@ -260,13 +251,7 @@ class ViewStabilizedStatement extends React.Component
                                             }
                                             <tr className={"statement-sum-after-row data-row vacancy-row"}>
                                                 <td className={"label-column"}>
-                                                    <span>Structural Allowance @</span>
-                                                    <FieldDisplayEdit
-                                                        type={"percent"}
-                                                        placeholder={"Structural Allowance Rate"}
-                                                        value={this.props.appraisal.stabilizedStatementInputs ? this.props.appraisal.stabilizedStatementInputs.structuralAllowancePercent : 2.0}
-                                                        onChange={(newValue) => this.changeStabilizedInput("structuralAllowancePercent", newValue)}
-                                                    />
+                                                    <span>Structural Allowance @ <PercentFormat value={this.props.appraisal.stabilizedStatementInputs ? this.props.appraisal.stabilizedStatementInputs.structuralAllowancePercent : 2.0}/></span>
                                                 </td>
                                                 <td className={"amount-column"}>
                                                     $<NumberFormat
@@ -375,6 +360,23 @@ class ViewStabilizedStatement extends React.Component
                                                             </td>
                                                         </tr>
                                                         : null
+                                                }
+                                                {
+                                                    this.props.appraisal.stabilizedStatementInputs.expensesMode === 'tmi'  ?
+                                                        <tr className={"data-row vacancy-row"}>
+                                                            <td>
+                                                                <span>TMI (psf)</span>&nbsp;
+
+                                                            </td>
+                                                            <td>
+                                                                <FieldDisplayEdit
+                                                                    type={"currency"}
+                                                                    placeholder={"TMI Rate (psf)"}
+                                                                    value={this.props.appraisal.stabilizedStatementInputs ? this.props.appraisal.stabilizedStatementInputs.tmiRatePSF : 0}
+                                                                    onChange={(newValue) => this.changeStabilizedInput("tmiRatePSF", newValue)}
+                                                                />
+                                                            </td>
+                                                        </tr> : null
                                                 }
                                             </Table>
 

@@ -9,6 +9,8 @@ import ComparableSaleModel from "../models/ComparableSaleModel";
 import Promise from "bluebird";
 import {DirectComparisonModifier} from "../models/DirectComparisonInputsModel";
 import Auth from "../Auth";
+import PercentFormat from "./components/PercentFormat";
+import CurrencyFormat from "./components/CurrencyFormat";
 
 class ViewDirectComparisonValuation extends React.Component
 {
@@ -145,6 +147,9 @@ class ViewDirectComparisonValuation extends React.Component
                                 </DropdownMenu>
                             </Dropdown>
 
+
+                            <Row>
+                                <Col xs={8}>
                             <div className={"stabilized-statement-centered"}>
                                 <h3>Direct Comparison Valuation</h3>
                                 <h4>{this.props.appraisal.address}</h4>
@@ -162,7 +167,13 @@ class ViewDirectComparisonValuation extends React.Component
                                     // onRemoveComparableClicked={(comp) => this.removeComparableFromAppraisal(comp)}
                                     // onChange={(comps) => this.onComparablesChanged(comps)}
                                 />
+                            </div>
+                                </Col>
+                            </Row>
 
+                            <Row>
+                                <Col xs={8}>
+                                    <div className={"stabilized-statement-centered"}>
                                 <h3>Valuation</h3>
                                 <Table className={"statement-table "}>
                                     <tbody>
@@ -180,14 +191,8 @@ class ViewDirectComparisonValuation extends React.Component
                                                     thousandSeparator={', '}
                                                     decimalScale={0}
                                                     fixedDecimalScale={true}
-                                                /> sqft @
+                                                /> sqft @ <CurrencyFormat value={this.props.appraisal.directComparisonInputs.pricePerSquareFoot}/>
                                             </span>
-                                            <FieldDisplayEdit
-                                                type={"currency"}
-                                                placeholder={"Price Per Square Foot"}
-                                                value={this.props.appraisal.directComparisonInputs ? this.props.appraisal.directComparisonInputs.pricePerSquareFoot : null}
-                                                onChange={(newValue) => this.changeDirectComparisonInput("pricePerSquareFoot", newValue)}
-                                            />
                                         </td>
                                         <td className={"amount-column"}></td>
                                         <td className={"amount-total-column"}>
@@ -205,13 +210,7 @@ class ViewDirectComparisonValuation extends React.Component
                                         this.props.appraisal.directComparisonValuation.marketRentDifferential ?
                                             <tr className={"data-row capitalization-row"}>
                                                 <td className={"label-column"}>
-                                                    <span>Market Rent Differential, Discounted @</span>
-                                                    <FieldDisplayEdit
-                                                        type={"percent"}
-                                                        placeholder={"Market Rent Differential Discount Rate"}
-                                                        value={this.props.appraisal.directComparisonValuationInputs ? this.props.appraisal.directComparisonValuationInputs.marketRentDifferentialDiscountRate : 5.0}
-                                                        onChange={(newValue) => this.changeStabilizedInput("marketRentDifferentialDiscountRate", newValue)}
-                                                    />
+                                                    <span>Market Rent Differential, Discounted @ <PercentFormat value={this.props.appraisal.directComparisonValuationInputs.marketRentDifferentialDiscountRate}/></span>
                                                 </td>
                                                 <td className={"amount-column"}></td>
                                                 <td className={"amount-total-column"}>
@@ -369,6 +368,41 @@ class ViewDirectComparisonValuation extends React.Component
                                 />
                                 </h4>
                             </div>
+                                </Col>
+                                <Col xs={4}>
+                                    <Card className={"direct-comparison-valuation-inputs"} outline>
+                                        <CardBody>
+                                            <h3>Inputs</h3>
+
+                                            <Table>
+                                                <tr>
+                                                    <td>Discount Rate for Market Rent Differential</td>
+                                                    <td>
+                                                        <FieldDisplayEdit
+                                                            type={"percent"}
+                                                            placeholder={"Market Rent Differential Discount Rate"}
+                                                            value={this.props.appraisal.directComparisonValuationInputs ? this.props.appraisal.directComparisonValuationInputs.marketRentDifferentialDiscountRate : 5.0}
+                                                            onChange={(newValue) => this.changeStabilizedInput("marketRentDifferentialDiscountRate", newValue)}
+                                                        />
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Price Per Square Foot</td>
+                                                    <td>
+                                                        <FieldDisplayEdit
+                                                            type={"currency"}
+                                                            placeholder={"Price Per Square Foot"}
+                                                            value={this.props.appraisal.directComparisonInputs ? this.props.appraisal.directComparisonInputs.pricePerSquareFoot : null}
+                                                            onChange={(newValue) => this.changeDirectComparisonInput("pricePerSquareFoot", newValue)}
+                                                        />
+                                                    </td>
+                                                </tr>
+                                            </Table>
+
+                                        </CardBody>
+                                    </Card>
+                                </Col>
+                            </Row>
                         </CardBody>
                     </Card>
                 </Col>
