@@ -153,7 +153,7 @@ class LeasingCostStructureEditor extends React.Component
                                 {
                                     this.props.appraisal.units.length > 0 ?
                                         <TenantApplicableEditor unit={this.props.appraisal.units[0]} leasingCostStructure={leasingCostStructure}
-                                                                onChange={() => this.changeUnitLeasingCostStructure(this.props.units[0])}/>
+                                                                onChange={() => this.changeUnitLeasingCostStructure(this.props.appraisal.units[0])}/>
                                         : null
                                 }
                             </tr>,
