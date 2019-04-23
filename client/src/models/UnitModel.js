@@ -10,14 +10,14 @@ import FloatField from "../orm/FloatField";
 
 class TenancyModel extends BaseModel
 {
-    static tenantName = new StringField("name");
-    static monthlyRent = new FloatField();
-    static yearlyRent = new FloatField();
-    static rentType = new StringField();
-    static startDate = new DateField();
-    static endDate = new DateField();
-    static freeRentMonths = new FloatField();
-    static recoveryStructure = new StringField();
+    static tenantName = new StringField("name", "New Tenant");
+    static monthlyRent = new FloatField("monthlyRent", 0);
+    static yearlyRent = new FloatField("yearlyRent", 0);
+    static rentType = new StringField("rentType", "net");
+    static startDate = new DateField("startDate", () => new Date());
+    static endDate = new DateField("endDate", () => new Date());
+    static freeRentMonths = new FloatField("freeRentMonths", 0);
+    static recoveryStructure = new StringField("recoveryStructure", "Default");
 
     get yearlyRentPSF()
     {
@@ -41,21 +41,18 @@ class UnitModel extends BaseModel
 
         if (this.tenancies.length === 0)
         {
-            this.tenancies.push(new TenancyModel({
-                rentType: "net",
-                recoveryStructure: "Default"
-            }, this, "tenancies"))
+            this.tenancies.push(new TenancyModel({name: "Vacant"}, this, "tenancies"))
         }
 
         this.setDirtyField("tenancies");
     }
 
-    static unitNumber = new StringField();
-    static floorNumber = new FloatField();
-    static squareFootage = new FloatField();
+    static unitNumber = new StringField("unitNumber", "new");
+    static floorNumber = new FloatField("floorNumber", 1);
+    static squareFootage = new FloatField("squareFootage", 1);
     static tenancies = new ListField(new ModelField(TenancyModel));
     static marketRent = new StringField();
-    static leasingCostStructure = new StringField();
+    static leasingCostStructure = new StringField("leasingCostStructure", "Default");
     static remarks = new StringField();
 
     get currentTenancy()
@@ -74,5 +71,5 @@ class UnitModel extends BaseModel
 }
 
 export default UnitModel;
-
+export {UnitModel, TenancyModel}
 

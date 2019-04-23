@@ -2,7 +2,7 @@
 
 class BaseField
 {
-    constructor(fieldName)
+    constructor(fieldName, defaultValue)
     {
         this.fieldName = fieldName;
     }

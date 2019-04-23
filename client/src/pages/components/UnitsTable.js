@@ -4,6 +4,7 @@ import NumberFormat from 'react-number-format';
 import _ from 'underscore';
 import FieldDisplayEdit from './FieldDisplayEdit';
 import 'react-datetime/css/react-datetime.css'
+import UnitModel from "../../models/UnitModel";
 
 class UnitsTable extends React.Component
 {
@@ -82,8 +83,7 @@ class UnitsTable extends React.Component
         if (this.props.onCreateUnit)
         {
             const newUnit = {
-                tenancies: [],
-                currentTenancy: {}
+                tenancies: []
             };
 
             if (field)
@@ -91,22 +91,7 @@ class UnitsTable extends React.Component
                 newUnit[field] = value;
             }
 
-            if (_.isUndefined(newUnit['unitNumber']))
-            {
-                newUnit['unitNumber'] = 'new';
-            }
-
-            if (_.isUndefined(newUnit['floorNumber']))
-            {
-                newUnit['floorNumber'] = 1;
-            }
-
-            if (_.isUndefined(newUnit['squareFootage']))
-            {
-                newUnit['squareFootage'] = 1;
-            }
-
-            this.props.onCreateUnit(newUnit);
+            this.props.onCreateUnit(new UnitModel(newUnit));
         }
     }
 

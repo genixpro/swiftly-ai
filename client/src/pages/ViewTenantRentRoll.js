@@ -7,6 +7,7 @@ import Datetime from 'react-datetime';
 import 'react-datetime/css/react-datetime.css'
 import UnitsTable from "./components/UnitsTable";
 import Auth from "../Auth";
+import {TenancyModel} from "../models/UnitModel";
 
 class ViewTenantsRentRoll extends React.Component
 {
@@ -109,37 +110,7 @@ class ViewTenantsRentRoll extends React.Component
             newTenancy[field] = value;
         }
 
-        if (_.isUndefined(newTenancy['name']))
-        {
-            newTenancy['name'] = 'New Tenant';
-        }
-
-        if (_.isUndefined(newTenancy['monthlyRent']))
-        {
-            newTenancy['monthlyRent'] = 0;
-        }
-
-        if (_.isUndefined(newTenancy['yearlyRent']))
-        {
-            newTenancy['yearlyRent'] = 0;
-        }
-
-        if (_.isUndefined(newTenancy['rentType']))
-        {
-            newTenancy['rentType'] = 'net';
-        }
-
-        if (_.isUndefined(newTenancy['startDate']))
-        {
-            newTenancy['startDate'] = new Date();
-        }
-
-        if (_.isUndefined(newTenancy['endDate']))
-        {
-            newTenancy['endDate'] = new Date();
-        }
-
-        this.state.selectedUnit.tenancies.push(newTenancy);
+        this.state.selectedUnit.tenancies.push(new TenancyModel(newTenancy));
         this.props.saveAppraisal(this.props.appraisal);
     }
 
