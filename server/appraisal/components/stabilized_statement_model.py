@@ -88,10 +88,9 @@ class StabilizedStatementModel(ValuationModelBase):
     def getStabilizedRent(self, appraisal, unit):
         if unit.currentTenancy and unit.currentTenancy.yearlyRent:
             return unit.currentTenancy.yearlyRent
+        elif unit.squareFootage and unit.marketRent and self.getMarketRent(appraisal, unit.marketRent):
+            return self.getMarketRent(appraisal, unit.marketRent) * unit.squareFootage
         else:
-            rent = self.getMarketRent(appraisal, unit.marketRent) * unit.squareFootage
-            if rent:
-                return rent
             return 0
 
 
