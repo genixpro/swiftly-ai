@@ -6,6 +6,8 @@ from appraisal.models.calculation_rule import CalculationRule
 
 
 class RecoveryStructure(EmbeddedDocument):
+    meta = {'strict': False}
+
     name = StringField()
 
     baseOnUnitSize = BooleanField()

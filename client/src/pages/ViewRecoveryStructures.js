@@ -135,7 +135,7 @@ class RecoveryStructureEditor extends React.Component
                                     <div className={"size-note"}>(% sqft) of</div>
                             }
                             <FieldDisplayEdit
-                                type="recoveryField"
+                                type="calculationField"
                                 expenses={this.props.expenses}
                                 placeholder={"Expense Calculation Field"}
                                 value={recovery.managementCalculationRule.field}
@@ -170,7 +170,7 @@ class RecoveryStructureEditor extends React.Component
                                                 : <div className={"size-note"}>(% sqft) of</div>
                                         }
                                         <FieldDisplayEdit
-                                            type="recoveryField"
+                                            type="calculationField"
                                             expenses={this.props.expenses}
                                             placeholder={"Calculated On"}
                                             value={recovery.expenseCalculationRules[0].field}
@@ -220,7 +220,7 @@ class RecoveryStructureEditor extends React.Component
                                     }
 
                                     <FieldDisplayEdit
-                                        type="recoveryField"
+                                        type="calculationField"
                                         expenses={this.props.expenses}
                                         placeholder={"Calculated On"}
                                         value={rule.field}
@@ -255,7 +255,7 @@ class RecoveryStructureEditor extends React.Component
                                             ] : <div className={"size-note"}>(% sqft) of</div>
                                     }
                                     <FieldDisplayEdit
-                                        type="recoveryField"
+                                        type="calculationField"
                                         expenses={this.props.expenses}
                                         placeholder={"Calculated On"}
                                         hideInput={false}

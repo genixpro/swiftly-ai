@@ -1,7 +1,7 @@
 import React from 'react';
 
 
-class RecoveryFieldSelector extends React.Component
+class CalculationFieldSelector extends React.Component
 {
     onChangeValue(newValue)
     {
@@ -41,6 +41,8 @@ class RecoveryFieldSelector extends React.Component
             <option value={""} key={"blank"}>&nbsp;</option>,
             <option value={"operatingExpenses"} key={"operatingExpenses"}>Operating Expenses</option>,
             <option value={"managementExpenses"} key={"managementExpenses"}>Management Expenses</option>,
+            <option value={"taxes"} key={"taxes"}>Taxes</option>,
+            <option value={"effectiveGrossIncome"} key={"effectiveGrossIncome"}>Effective Gross Income</option>,
             <option value={"rentalIncome"} key={"rentalIncome"}>Rental Income</option>
         ].concat(
             this.props.expenses.map((expense) =>
@@ -65,4 +67,4 @@ class RecoveryFieldSelector extends React.Component
 }
 
 
-export default RecoveryFieldSelector;
+export default CalculationFieldSelector;

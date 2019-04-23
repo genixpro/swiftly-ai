@@ -5,8 +5,7 @@
   .stabilized-statement-centered
   {
     position: relative;
-    width: 50%;
-    left: 25%;
+    min-width: 50%;
 
     h3, h4 {
       text-align: center;
@@ -20,6 +19,28 @@
       font-weight: bolder;
       color: black;
       text-decoration: underline;
+    }
+  }
+
+  .stabilized-statement-inputs
+  {
+    border: 1px solid lightgray;
+    float: right;
+
+    .management-expense-rule
+    {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+
+      .spacer {
+        margin-left: 10px;
+        margin-right: 10px;
+      }
+
+      .field-display-edit {
+        flex-shrink: 1;
+      }
     }
   }
 

@@ -9,7 +9,7 @@ import MarketRentSelector from './MarketRentSelector';
 import RetailLocationTypeSelector from './RetailLocationTypeSelector';
 import ZoneSelector from "./ZoneSelector";
 import TagEditor from "./TagEditor";
-import RecoveryFieldSelector from "./RecoveryFieldSelector";
+import CalculationFieldSelector from "./CalculationFieldSelector";
 import LeasingCostsSelector from "./LeasingCostsSelector";
 
 import {
@@ -19,6 +19,7 @@ import {
 } from 'reactstrap';
 import IncomeItemTypeSelector from "./IncomeItemTypeSelector";
 import RecoveryStructureSelector from "./RecoveryStructureSelector";
+import ManagementExpenseModeSelector from "./ManagementExpenseModeSelector";
 
 class FieldDisplayEdit extends React.Component
 {
@@ -423,9 +424,19 @@ class FieldDisplayEdit extends React.Component
                         /> : null
                 }
                 {
-                    this.props.type === "recoveryField" ?
-                        <RecoveryFieldSelector
+                    this.props.type === "calculationField" ?
+                        <CalculationFieldSelector
                             expenses={this.props.expenses}
+                            value={this.state.isEditing ? this.state.value : this.props.value}
+                            disabled={!this.props.edit}
+                            onChange={(newValue) => this.selectInputUpdated(newValue) }
+                            onBlur={() => this.finishEditing()}
+                            innerRef={(inputElem) => this.inputElem = inputElem}
+                        /> : null
+                }
+                {
+                    this.props.type === "managementExpenseMode" ?
+                        <ManagementExpenseModeSelector
                             value={this.state.isEditing ? this.state.value : this.props.value}
                             disabled={!this.props.edit}
                             onChange={(newValue) => this.selectInputUpdated(newValue) }
