@@ -115,7 +115,14 @@ class AppraisalAPI(object):
 
         diff = jsondiff.diff(origJson, newJson)
 
-        return diff
+        return self.cleanDiffKeys(diff)
 
 
 
+    def cleanDiffKeys(self, d):
+        new = {}
+        for k, v in d.items():
+            if isinstance(v, dict):
+                v = self.cleanDiffKeys(v)
+            new[str(k)] = v
+        return new
