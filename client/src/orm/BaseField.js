@@ -6,6 +6,11 @@ class BaseField
     {
         this.fieldName = fieldName;
     }
+
+    applyDiff(oldValue, newValue, parent)
+    {
+        return newValue;
+    }
 }
 
 

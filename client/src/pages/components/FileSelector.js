@@ -1,6 +1,6 @@
 import React from 'react';
 import axios from "axios/index";
-import FileModel from "../../orm/FileModel";
+import FileModel from "../../models/FileModel";
 
 
 class FileSelector extends React.Component

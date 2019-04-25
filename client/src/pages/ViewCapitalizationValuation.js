@@ -58,7 +58,7 @@ class ViewCapitalizationValuation extends React.Component
     changeStabilizedInput(field, newValue)
     {
         this.props.appraisal.stabilizedStatementInputs[field] = newValue;
-        this.props.saveAppraisal(this.props.appraisal, true);
+        this.props.saveAppraisal(this.props.appraisal);
     }
 
 
@@ -71,7 +71,7 @@ class ViewCapitalizationValuation extends React.Component
         else
         {
             this.props.appraisal.stabilizedStatementInputs.modifiers[index][field] = newValue;
-            this.props.saveAppraisal(this.props.appraisal, true);
+            this.props.saveAppraisal(this.props.appraisal);
         }
     }
 
@@ -79,7 +79,7 @@ class ViewCapitalizationValuation extends React.Component
     removeModifier(index)
     {
         this.props.appraisal.stabilizedStatementInputs.modifiers.splice(index, 1);
-        this.props.saveAppraisal(this.props.appraisal, true);
+        this.props.saveAppraisal(this.props.appraisal);
     }
 
 
@@ -101,7 +101,7 @@ class ViewCapitalizationValuation extends React.Component
             object[field] = newValue;
 
             this.props.appraisal.stabilizedStatementInputs.modifiers.push(object);
-            this.props.saveAppraisal(this.props.appraisal, true);
+            this.props.saveAppraisal(this.props.appraisal);
         }
     }
 

@@ -70,6 +70,32 @@ class ListField extends BaseField
             return proxy;
         }
     }
+
+    applyDiff(oldValue, diffValue, parent)
+    {
+        Object.keys(diffValue).forEach((key) =>
+        {
+            if (key === 'delete')
+            {
+                if (oldValue[key])
+                {
+                    delete oldValue[key];
+                }
+            }
+            else if (key === 'insert')
+            {
+                for (let insertDiff of diffValue['insert'])
+                {
+                    oldValue.splice(insertDiff[0], 0, this.subField.toObject(insertDiff[1], parent))
+                }
+            }
+            else
+            {
+                oldValue[key] = this.subField.applyDiff(oldValue[key], diffValue[key], parent);
+            }
+        });
+        return oldValue;
+    }
 }
 
 export default ListField;

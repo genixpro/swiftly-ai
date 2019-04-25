@@ -18,6 +18,11 @@ class BoolField extends BaseField
             return false;
         }
     }
+
+    applyDiff(oldValue, diffValue, parent)
+    {
+        return this.toObject(diffValue);
+    }
 }
 
 export default BoolField;

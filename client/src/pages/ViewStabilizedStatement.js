@@ -25,14 +25,14 @@ class ViewStabilizedStatement extends React.Component
     changeStabilizedInput(field, newValue)
     {
         this.props.appraisal.stabilizedStatementInputs[field] = newValue;
-        this.props.saveAppraisal(this.props.appraisal, true);
+        this.props.saveAppraisal(this.props.appraisal);
     }
 
 
     changeManagementExpenseCalculationRuleField(field, newValue)
     {
         this.props.appraisal.stabilizedStatementInputs.managementExpenseCalculationRule[field] = newValue;
-        this.props.saveAppraisal(this.props.appraisal, true);
+        this.props.saveAppraisal(this.props.appraisal);
     }
 
 

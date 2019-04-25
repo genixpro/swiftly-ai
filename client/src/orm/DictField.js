@@ -54,6 +54,25 @@ class DictField extends BaseField
             });
         }
     }
+
+    applyDiff(oldValue, diffValue, parent)
+    {
+        Object.keys(diffValue).forEach((key) =>
+        {
+            if (key === 'delete')
+            {
+                if (oldValue[key])
+                {
+                    delete oldValue[key];
+                }
+            }
+            else
+            {
+                oldValue[key] = this.subField.applyDiff(oldValue[key], diffValue[key], parent);
+            }
+        });
+        return oldValue;
+    }
 }
 
 export default DictField;

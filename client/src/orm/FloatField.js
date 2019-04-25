@@ -44,6 +44,11 @@ class FloatField extends BaseField
             }
         }
     }
+
+    applyDiff(oldValue, diffValue, parent)
+    {
+        return diffValue;
+    }
 }
 
 export default FloatField;

@@ -10,6 +10,7 @@ from pyramid.security import Authenticated
 from pyramid.authorization import Allow, Deny, Everyone
 from appraisal.authorization import checkUserOwnsObject
 from pyramid.httpexceptions import HTTPForbidden
+import jsondiff
 
 @resource(collection_path='/appraisal/', path='/appraisal/{id}', renderer='bson', cors_enabled=True, cors_origins="*", permission="everything")
 class AppraisalAPI(object):
@@ -104,11 +105,17 @@ class AppraisalAPI(object):
 
         appraisal.modify(**data)
 
+        origJson = json.loads(appraisal.to_json())
+
         self.processor.processAppraisalResults(appraisal)
 
         appraisal.save()
 
-        return {}
+        newJson = json.loads(appraisal.to_json())
+
+        diff = jsondiff.diff(origJson, newJson)
+
+        return diff
 
 
 

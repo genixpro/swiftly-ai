@@ -31,7 +31,8 @@ requires = [
     'scikit-learn',
     'openpyxl',
     "scikit-image",
-    "jwcrypto"
+    "jwcrypto",
+    "jsondiff"
 ]
 
 tests_require = [

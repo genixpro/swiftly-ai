@@ -16,6 +16,12 @@ class ModelField extends BaseField
     {
         return this.model.create(value, parent, this.fieldName || this.keyName);
     }
+
+    applyDiff(oldValue, diffValue, parent)
+    {
+        oldValue.applyDiff(diffValue);
+        return oldValue;
+    }
 }
 
 export default ModelField;

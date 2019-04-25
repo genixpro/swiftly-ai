@@ -5,7 +5,7 @@ import ViewFinancialStatementExtractions from "./ViewFinancialStatementExtractio
 import ViewFinancialStatementAudit from "./ViewFinancialStatementAudit";
 import {NavLink as RRNavLink} from 'react-router-dom';
 import {Switch, Route} from 'react-router-dom';
-import FileModel from "../orm/FileModel";
+import FileModel from "../models/FileModel";
 
 
 class ViewFinancialStatement extends React.Component {

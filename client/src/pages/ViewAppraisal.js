@@ -50,9 +50,9 @@ class ViewAppraisal extends React.Component
         });
     }
 
-    saveAppraisal(newAppraisal, updateStateAfterSave)
+    saveAppraisal(newAppraisal)
     {
-        this.setState({appraisal: this.state.appraisal});
+        this.setState({appraisal: newAppraisal});
 
         const updates = this.state.appraisal.getUpdates();
         if (Object.keys(updates).length > 0)
@@ -60,10 +60,10 @@ class ViewAppraisal extends React.Component
             axios.post(`/appraisal/${this.props.match.params.id}`, this.state.appraisal.getUpdates()).then((response) =>
             {
                 this.state.appraisal.clearUpdates();
-                if (updateStateAfterSave)
-                {
-                    this.reloadAppraisal();
-                }
+
+                newAppraisal.applyDiff(response.data);
+
+                this.setState({appraisal: newAppraisal});
             });
         }
     }

@@ -35,6 +35,11 @@ class StringField extends BaseField
             return value.toString();
         }
     }
+
+    applyDiff(oldValue, diffValue, parent)
+    {
+        return diffValue;
+    }
 }
 
 export default StringField;

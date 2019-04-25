@@ -392,14 +392,14 @@ class ViewRecoveryStructures extends React.Component
     onRecoveryChanged(recovery, recoveryIndex)
     {
         this.props.appraisal.recoveryStructures[recoveryIndex] = recovery;
-        this.props.saveAppraisal(this.props.appraisal, true);
+        this.props.saveAppraisal(this.props.appraisal);
     }
 
     onNewRecovery(newRecovery)
     {
         newRecovery.name = newRecovery.name + " " + this.props.appraisal.recoveryStructures.length.toString();
         this.props.appraisal.recoveryStructures.push(newRecovery);
-        this.props.saveAppraisal(this.props.appraisal, true);
+        this.props.saveAppraisal(this.props.appraisal);
     }
 
     onDeleteRecovery(recoveryIndex)
@@ -416,7 +416,7 @@ class ViewRecoveryStructures extends React.Component
             }
         });
 
-        this.props.saveAppraisal(this.props.appraisal, true);
+        this.props.saveAppraisal(this.props.appraisal);
     }
 
     render() {

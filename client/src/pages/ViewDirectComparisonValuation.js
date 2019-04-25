@@ -59,7 +59,7 @@ class ViewDirectComparisonValuation extends React.Component
     changeDirectComparisonInput(field, newValue)
     {
         this.props.appraisal.directComparisonInputs[field] = newValue;
-        this.props.saveAppraisal(this.props.appraisal, true);
+        this.props.saveAppraisal(this.props.appraisal);
     }
 
 
@@ -72,7 +72,7 @@ class ViewDirectComparisonValuation extends React.Component
         else
         {
             this.props.appraisal.directComparisonInputs.modifiers[index][field] = newValue;
-            this.props.saveAppraisal(this.props.appraisal, true);
+            this.props.saveAppraisal(this.props.appraisal);
         }
     }
 
@@ -80,7 +80,7 @@ class ViewDirectComparisonValuation extends React.Component
     removeModifier(index)
     {
         this.props.appraisal.directComparisonInputs.modifiers.splice(index, 1);
-        this.props.saveAppraisal(this.props.appraisal, true);
+        this.props.saveAppraisal(this.props.appraisal);
     }
 
 
@@ -101,7 +101,7 @@ class ViewDirectComparisonValuation extends React.Component
             object[field] = newValue;
 
             this.props.appraisal.directComparisonInputs.modifiers.push(object);
-            this.props.saveAppraisal(this.props.appraisal, true);
+            this.props.saveAppraisal(this.props.appraisal);
         }
     }
 

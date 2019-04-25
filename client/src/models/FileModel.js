@@ -1,8 +1,8 @@
-import IdField from "./IdField";
-import GenericField from "./GenericField";
-import ModelField from "./ModelField";
-import ListField from "./ListField";
-import BaseModel from "./BaseModel";
+import IdField from "../orm/IdField";
+import GenericField from "../orm/GenericField";
+import ModelField from "../orm/ModelField";
+import ListField from "../orm/ListField";
+import BaseModel from "../orm/BaseModel";
 
 class WordModel extends BaseModel
 {

@@ -39,6 +39,11 @@ class DateField extends BaseField
             return value;
         }
     }
+
+    applyDiff(oldValue, diffValue, parent)
+    {
+        return this.toObject(diffValue);
+    }
 }
 
 export default DateField;

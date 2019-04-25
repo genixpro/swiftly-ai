@@ -31,21 +31,21 @@ class ViewTenantsRentRoll extends React.Component
 
         this.props.appraisal.units.splice(unitIndex, 1);
 
-        this.props.saveAppraisal(this.props.appraisal, true);
+        this.props.saveAppraisal(this.props.appraisal);
     }
 
 
     onCreateUnit(newUnit)
     {
         this.props.appraisal.units.push(newUnit);
-        this.props.saveAppraisal(this.props.appraisal, true);
+        this.props.saveAppraisal(this.props.appraisal);
 
     }
 
     removeTenancy(unitInfo, tenancyInfo, tenancyIndex)
     {
         unitInfo.tenancies.splice(tenancyIndex, 1);
-        this.props.saveAppraisal(this.props.appraisal, true);
+        this.props.saveAppraisal(this.props.appraisal);
     }
 
     renderTenancy(unitInfo, tenantInfo, tenancyIndex)
@@ -127,7 +127,7 @@ class ViewTenantsRentRoll extends React.Component
         }
 
         this.props.appraisal.units[this.state.selectedUnitIndex].tenancies.push(newTenancy);
-        this.props.saveAppraisal(this.props.appraisal, true);
+        this.props.saveAppraisal(this.props.appraisal);
     }
 
 
@@ -207,7 +207,7 @@ class ViewTenantsRentRoll extends React.Component
             }
         });
 
-        this.props.saveAppraisal(this.props.appraisal, true);
+        this.props.saveAppraisal(this.props.appraisal);
     }
 
     changeAllTenantField(unitInfo, tenantInfo, field, newValue)
@@ -224,7 +224,7 @@ class ViewTenantsRentRoll extends React.Component
             }
         });
 
-        this.props.saveAppraisal(this.props.appraisal, true);
+        this.props.saveAppraisal(this.props.appraisal);
     }
 
     toggleDownload()
@@ -249,7 +249,7 @@ class ViewTenantsRentRoll extends React.Component
         //     }
         // });
 
-        this.props.saveAppraisal(this.props.appraisal, true);
+        this.props.saveAppraisal(this.props.appraisal);
     }
 
     downloadWordRentRoll()

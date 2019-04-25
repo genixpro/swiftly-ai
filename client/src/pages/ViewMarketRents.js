@@ -259,14 +259,14 @@ class ViewMarketRents extends React.Component
     onMarketRentChanged(marketRent, marketRentIndex)
     {
         this.props.appraisal.marketRents[marketRentIndex] = marketRent;
-        this.props.saveAppraisal(this.props.appraisal, true);
+        this.props.saveAppraisal(this.props.appraisal);
     }
 
     onNewMarketRent(newMarketRent)
     {
         newMarketRent.name = newMarketRent.name + " " + this.props.appraisal.marketRents.length.toString();
         this.props.appraisal.marketRents.push(newMarketRent);
-        this.props.saveAppraisal(this.props.appraisal, true);
+        this.props.saveAppraisal(this.props.appraisal);
     }
 
     onDeleteMarketRent(marketRentIndex)
@@ -283,7 +283,7 @@ class ViewMarketRents extends React.Component
             }
         });
 
-        this.props.saveAppraisal(this.props.appraisal, true);
+        this.props.saveAppraisal(this.props.appraisal);
     }
 
     componentDidMount()

@@ -7,7 +7,7 @@ import AnnotationExtractionToken from './AnnotationExtractionToken';
 import { Progress } from 'reactstrap';
 import ActionButton from "./ActionButton";
 import NumberFormat from 'react-number-format';
-import FileModel from "../../orm/FileModel";
+import FileModel from "../../models/FileModel";
 import axios from "axios/index";
 
 

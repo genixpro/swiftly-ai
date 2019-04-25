@@ -2,7 +2,7 @@ import React from 'react';
 import { Table } from 'reactstrap';
 import UploadedFileListItem from './UploadedFileListItem';
 import axios from "axios";
-import FileModel from "../../orm/FileModel";
+import FileModel from "../../models/FileModel";
 
 class UploadedFileList extends React.Component
 {

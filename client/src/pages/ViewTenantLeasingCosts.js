@@ -385,14 +385,14 @@ class ViewTenantsLeasingCosts extends React.Component
     onLeasingStructureChanged(leasingCosts, leasingCostsIndex)
     {
         this.props.appraisal.leasingCosts[leasingCostsIndex] = leasingCosts;
-        this.props.saveAppraisal(this.props.appraisal, true);
+        this.props.saveAppraisal(this.props.appraisal);
     }
 
     onNewLeasingStructure(newLeasingCosts)
     {
         newLeasingCosts.name = newLeasingCosts.name + " " + this.props.appraisal.leasingCosts.length.toString();
         this.props.appraisal.leasingCosts.push(newLeasingCosts);
-        this.props.saveAppraisal(this.props.appraisal, true);
+        this.props.saveAppraisal(this.props.appraisal);
     }
 
     onDeleteLeasingStructure(leasingCostsIndex)
@@ -409,7 +409,7 @@ class ViewTenantsLeasingCosts extends React.Component
             }
         });
 
-        this.props.saveAppraisal(this.props.appraisal, true);
+        this.props.saveAppraisal(this.props.appraisal);
     }
 
     render() {

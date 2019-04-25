@@ -158,6 +158,51 @@ class BaseModel extends Object
         this[BaseModel.dirtyFieldsSymbol] = {};
     }
 
+
+    applyDiff(diff)
+    {
+        const modelClass = this.constructor;
+
+        // Then copy in data
+        Object.keys(modelClass).forEach((key) =>
+        {
+            if (modelClass[key] instanceof BaseField)
+            {
+                const field = modelClass[key];
+
+                field.keyName = key;
+
+                if (field.fieldName)
+                {
+                    let diffValue = diff[field.fieldName];
+                    if (diffValue)
+                    {
+                        this[field.fieldName] = modelClass[key].applyDiff(this[field.fieldName], diffValue, this);
+                    }
+
+                    if (diff['delete'] && diff['delete'].indexOf(field.fieldName) !== -1)
+                    {
+                        this[field.fieldName] = null;
+                    }
+                }
+                else
+                {
+                    let diffValue = diff[key];
+
+                    if (diffValue)
+                    {
+                        this[key] = modelClass[key].applyDiff(this[key], diffValue, this);
+                    }
+
+                    if (diff['delete'] && diff['delete'].indexOf(field.fieldName) !== -1)
+                    {
+                        this[field.fieldName] = null;
+                    }
+                }
+            }
+        });
+    }
+
     // We use a getter like this with a javascript Symbol, so that the parent reference doesn't get serialized if this object is converted back into JSON
     get parent()
     {
