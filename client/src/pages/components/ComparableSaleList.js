@@ -193,13 +193,13 @@ class ComparableSaleList extends React.Component
                                                 <Col xs={2} className={"header-field-column"} onClick={() => this.changeSortColumn("capitalizationRate")}>
                                                     Cap Rate (%) <SortDirection field={"capitalizationRate"} sort={this.props.sort} />
                                                     <br/>
-                                                    PPS ($)
+                                                    PSF ($)
                                                 </Col> : [
                                                     <Col key={1} xs={2} className={"header-field-column"} onClick={() => this.changeSortColumn("capitalizationRate")}>
                                                         Cap Rate (%) <SortDirection field={"capitalizationRate"} sort={this.props.sort} />
                                                     </Col>,
                                                     <Col key={2} xs={2} className={"header-field-column"} onClick={() => this.changeSortColumn("pricePerSquareFoot")}>
-                                                        PPS ($) <SortDirection field={"pricePerSquareFoot"} sort={this.props.sort} />
+                                                        PSF ($) <SortDirection field={"pricePerSquareFoot"} sort={this.props.sort} />
                                                     </Col>
                                                 ]
                                             : null
@@ -208,15 +208,15 @@ class ComparableSaleList extends React.Component
                                         this.props.appraisal.propertyType === "land" ?
                                             this.props.showPropertyTypeInHeader ?
                                                 <Col xs={2} className={"header-field-column"} onClick={() => this.changeSortColumn("pricePerAcreLand")}>
-                                                    PPA Land ($) <SortDirection field={"pricePerAcreLand"} sort={this.props.sort} />
+                                                    Price Per Acre ($) <SortDirection field={"pricePerAcreLand"} sort={this.props.sort} />
                                                     <br/>
-                                                    PPS Buildable Area ($)
+                                                    PSF Buildable Area ($)
                                                 </Col> : [
                                                     <Col key={1} xs={2} className={"header-field-column"} onClick={() => this.changeSortColumn("pricePerAcreLand")}>
-                                                        PPA Land ($) <SortDirection field={"pricePerAcreLand"} sort={this.props.sort} />
+                                                        Price Per Acre ($) <SortDirection field={"pricePerAcreLand"} sort={this.props.sort} />
                                                     </Col>,
                                                     <Col key={2} xs={2} className={"header-field-column"} onClick={() => this.changeSortColumn("pricePerSquareFootBuildableArea")}>
-                                                        PPS Buildable Area ($) <SortDirection field={"pricePerSquareFootBuildableArea"} sort={this.props.sort} />
+                                                        PSF Buildable Area ($) <SortDirection field={"pricePerSquareFootBuildableArea"} sort={this.props.sort} />
                                                     </Col>
                                                 ]
                                             : null

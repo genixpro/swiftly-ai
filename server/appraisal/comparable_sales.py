@@ -70,8 +70,21 @@ class ComparableSaleAPI(object):
             query['propertyType'] = self.request.GET['propertyType']
 
 
-        if 'propertyTags' in self.request.GET:
-            query['propertyTags__all'] = self.request.GET['propertyTags']
+        if 'pricePerAcreLandFrom' in self.request.GET:
+            query['pricePerAcreLand__gt'] = self.request.GET['pricePerAcreLandFrom']
+        if 'pricePerAcreLandTo' in self.request.GET:
+            query['pricePerAcreLand__lt'] = self.request.GET['pricePerAcreLandTo']
+
+
+        if 'pricePerSquareFootBuildableAreaFrom' in self.request.GET:
+            query['pricePerSquareFootBuildableArea__gt'] = self.request.GET['pricePerSquareFootBuildableAreaFrom']
+        if 'pricePerSquareFootBuildableAreaTo' in self.request.GET:
+            query['pricePerSquareFootBuildableArea__lt'] = self.request.GET['pricePerSquareFootBuildableAreaTo']
+
+
+
+        if 'propertyTags[]' in self.request.GET:
+            query['propertyTags__all'] = [value for key, value in self.request.GET.items() if key == 'propertyTags[]']
 
         if 'locationTop' in self.request.GET:
             query['location__geo_within_box'] = [

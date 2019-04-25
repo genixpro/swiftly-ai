@@ -54,7 +54,7 @@ class LeasingCostStructureEditor extends React.Component
     {
         if (unit.leasingCostStructure === this.props.leasingCostStructure.name)
         {
-            unit.leasingCostStructure = "Default";
+            unit.leasingCostStructure = "Standard";
         }
         else
         {
@@ -74,7 +74,7 @@ class LeasingCostStructureEditor extends React.Component
                     <tr>
                         <td colSpan={2}>
                             {
-                                this.props.leasingCostStructure.name !== "Default" ?
+                                this.props.leasingCostStructure.name !== "Standard" ?
                                     <FieldDisplayEdit
                                         type="text"
                                         placeholder="Leasing Cost Structure Name"
@@ -122,7 +122,7 @@ class LeasingCostStructureEditor extends React.Component
                         </td>
                         <td className={"value-column"}>
                             <FieldDisplayEdit
-                                type="currency"
+                                type="number"
                                 value={leasingCostStructure.renewalPeriod}
                                 hideInput={false}
                                 hideIcon={true}
@@ -136,7 +136,7 @@ class LeasingCostStructureEditor extends React.Component
                         </td>
                         <td className={"value-column"}>
                             <FieldDisplayEdit
-                                type="currency"
+                                type="number"
                                 value={leasingCostStructure.leasingPeriod}
                                 hideInput={false}
                                 hideIcon={true}
@@ -145,7 +145,7 @@ class LeasingCostStructureEditor extends React.Component
                         </td>
                     </tr>
                     {
-                        leasingCostStructure.name !== "Default" ? [
+                        leasingCostStructure.name !== "Standard" ? [
                             <tr className={"leasing-cost-row"}>
                                 <td className={"label-column"}>
                                     <strong>Tenants Applied To</strong>
@@ -176,7 +176,7 @@ class LeasingCostStructureEditor extends React.Component
                 </table>
 
                 {
-                    this.props.leasingCostStructure.name !== "Default" ?
+                    this.props.leasingCostStructure.name !== "Standard" ?
                         <Button color={"danger"} className={"delete-button"} onClick={() => this.props.onDeleteLeasingStructure(this.props.leasingCostStructure)}>Delete</Button>
                         : null
                 }
@@ -227,7 +227,7 @@ class ViewTenantsLeasingCosts extends React.Component
         {
             if (unit.leasingCostStructure === leasingCostStructure.name)
             {
-                unit.leasingCostStructure = "Default";
+                unit.leasingCostStructure = "Standard";
             }
         });
 

@@ -1,6 +1,7 @@
 import React from 'react';
 import {Row, Col, Card, CardBody, Table, Dropdown, DropdownItem, DropdownMenu, DropdownToggle} from 'reactstrap';
 import NumberFormat from 'react-number-format';
+import {Link} from 'react-router-dom';
 import axios from "axios/index";
 import FieldDisplayEdit from './components/FieldDisplayEdit';
 import AppraisalContentHeader from "./components/AppraisalContentHeader";
@@ -9,6 +10,7 @@ import ComparableSaleModel from "../models/ComparableSaleModel";
 import Promise from "bluebird";
 import Auth from "../Auth";
 import PercentFormat from "./components/PercentFormat";
+import CurrencyFormat from "./components/CurrencyFormat";
 
 class ViewCapitalizationValuation extends React.Component
 {
@@ -133,7 +135,7 @@ class ViewCapitalizationValuation extends React.Component
     render()
     {
         return [
-            <AppraisalContentHeader appraisal={this.props.appraisal} title="Capitalization Valuation"/>,
+            <AppraisalContentHeader appraisal={this.props.appraisal} title="Capitalization Approach"/>,
             <Row className={"view-capitalization-valuation"}>
                 <Col xs={12}>
                     <Card className="card-default">
@@ -151,7 +153,7 @@ class ViewCapitalizationValuation extends React.Component
                             <Row>
                                 <Col xs={8}>
                                     <div className={"stabilized-statement-centered"}>
-                                        <h3>Capitalization Valuation</h3>
+                                        <h3>Capitalization Approach</h3>
                                         <h4>{this.props.appraisal.address}</h4>
                                         <ComparableSaleList comparableSales={this.state.comparableSales}
                                                             statsTitle={""}
@@ -181,13 +183,7 @@ class ViewCapitalizationValuation extends React.Component
                                                 <td className={"label-column"}><span className={"title"}>Net Operating Income</span></td>
                                                 <td className={"amount-column"} />
                                                 <td className={"amount-total-column"}>
-                                                    $<NumberFormat
-                                                    value={this.props.appraisal.stabilizedStatement.netOperatingIncome}
-                                                    displayType={'text'}
-                                                    thousandSeparator={', '}
-                                                    decimalScale={2}
-                                                    fixedDecimalScale={true}
-                                                />
+                                                    <CurrencyFormat value={this.props.appraisal.stabilizedStatement.netOperatingIncome} />
                                                 </td>
                                             </tr>
                                             {/*<tr className={"data-row"}>*/}
@@ -201,30 +197,22 @@ class ViewCapitalizationValuation extends React.Component
                                                 </td>
                                                 <td className={"amount-column"}></td>
                                                 <td className={"amount-total-column"}>
-                                                    $<NumberFormat
-                                                    value={this.props.appraisal.stabilizedStatement.capitalization}
-                                                    displayType={'text'}
-                                                    thousandSeparator={', '}
-                                                    decimalScale={2}
-                                                    fixedDecimalScale={true}
-                                                />
+                                                    <CurrencyFormat value={this.props.appraisal.stabilizedStatement.capitalization} />
                                                 </td>
                                             </tr>
                                             {
                                                 this.props.appraisal.stabilizedStatement.marketRentDifferential ?
                                                     <tr className={"data-row capitalization-row"}>
                                                         <td className={"label-column"}>
-                                                            <span>Market Rent Differential, Discounted @ <PercentFormat value={this.props.appraisal.stabilizedStatementInputs.marketRentDifferentialDiscountRate}/></span>
+                                                            <Link to={`/appraisal/${this.props.appraisal._id}/tenants/market_rents`}>
+                                                                <span>Market Rent Differential, Discounted @ <PercentFormat value={this.props.appraisal.stabilizedStatementInputs.marketRentDifferentialDiscountRate}/></span>
+                                                            </Link>
                                                         </td>
                                                         <td className={"amount-column"}></td>
                                                         <td className={"amount-total-column"}>
-                                                            $<NumberFormat
-                                                            value={this.props.appraisal.stabilizedStatement.marketRentDifferential}
-                                                            displayType={'text'}
-                                                            thousandSeparator={', '}
-                                                            decimalScale={2}
-                                                            fixedDecimalScale={true}
-                                                        />
+                                                            <Link to={`/appraisal/${this.props.appraisal._id}/tenants/market_rents`}>
+                                                                <CurrencyFormat value={this.props.appraisal.stabilizedStatement.marketRentDifferential} />
+                                                            </Link>
                                                         </td>
                                                     </tr> : null
                                             }
@@ -236,13 +224,7 @@ class ViewCapitalizationValuation extends React.Component
                                                         </td>
                                                         <td className={"amount-column"}></td>
                                                         <td className={"amount-total-column"}>
-                                                            $<NumberFormat
-                                                            value={this.props.appraisal.stabilizedStatement.freeRentDifferential}
-                                                            displayType={'text'}
-                                                            thousandSeparator={', '}
-                                                            decimalScale={2}
-                                                            fixedDecimalScale={true}
-                                                        />
+                                                            <CurrencyFormat value={this.props.appraisal.stabilizedStatement.freeRentDifferential} />
                                                         </td>
                                                     </tr> : null
                                             }
@@ -250,17 +232,15 @@ class ViewCapitalizationValuation extends React.Component
                                                 this.props.appraisal.stabilizedStatement.vacantUnitDifferential ?
                                                     <tr className={"data-row capitalization-row"}>
                                                         <td className={"label-column"}>
-                                                            <span>Vacant Unit Differential</span>
+                                                            <Link to={`/appraisal/${this.props.appraisal._id}/tenants/leasing_costs`}>
+                                                                <span>Leaseup Costs</span>
+                                                            </Link>
                                                         </td>
                                                         <td className={"amount-column"}></td>
                                                         <td className={"amount-total-column"}>
-                                                            $<NumberFormat
-                                                            value={this.props.appraisal.stabilizedStatement.vacantUnitDifferential}
-                                                            displayType={'text'}
-                                                            thousandSeparator={', '}
-                                                            decimalScale={2}
-                                                            fixedDecimalScale={true}
-                                                        />
+                                                            <Link to={`/appraisal/${this.props.appraisal._id}/tenants/leasing_costs`}>
+                                                                <CurrencyFormat value={this.props.appraisal.stabilizedStatement.vacantUnitDifferential}/>
+                                                            </Link>
                                                         </td>
                                                     </tr> : null
                                             }
@@ -268,17 +248,15 @@ class ViewCapitalizationValuation extends React.Component
                                                 this.props.appraisal.stabilizedStatement.amortizationDifferential ?
                                                     <tr className={"data-row capitalization-row"}>
                                                         <td className={"label-column"}>
-                                                            <span>Amortized Capital Investment</span>
+                                                            <Link to={`/appraisal/${this.props.appraisal._id}/tenants/amortization`}>
+                                                                <span>Amortized Capital Investment</span>
+                                                            </Link>
                                                         </td>
                                                         <td className={"amount-column"}></td>
                                                         <td className={"amount-total-column"}>
-                                                            $<NumberFormat
-                                                            value={this.props.appraisal.stabilizedStatement.amortizationDifferential}
-                                                            displayType={'text'}
-                                                            thousandSeparator={', '}
-                                                            decimalScale={2}
-                                                            fixedDecimalScale={true}
-                                                        />
+                                                            <Link to={`/appraisal/${this.props.appraisal._id}/tenants/amortization`}>
+                                                                <CurrencyFormat value={this.props.appraisal.stabilizedStatement.amortizationDifferential} />
+                                                            </Link>
                                                         </td>
                                                     </tr> : null
                                             }
@@ -333,13 +311,7 @@ class ViewCapitalizationValuation extends React.Component
                                                 </td>
                                                 <td className={"amount-column"}></td>
                                                 <td className={"amount-total-column"}>
-                                                    $<NumberFormat
-                                                    value={this.props.appraisal.stabilizedStatement.valuation}
-                                                    displayType={'text'}
-                                                    thousandSeparator={', '}
-                                                    decimalScale={2}
-                                                    fixedDecimalScale={true}
-                                                />
+                                                    <CurrencyFormat value={this.props.appraisal.stabilizedStatement.valuation} />
                                                 </td>
                                             </tr>
                                             <tr className={"data-row rounding-row"}>
@@ -348,13 +320,7 @@ class ViewCapitalizationValuation extends React.Component
                                                 </td>
                                                 <td className={"amount-column"}></td>
                                                 <td className={"amount-total-column"}>
-                                                    $<NumberFormat
-                                                    value={this.props.appraisal.stabilizedStatement.valuationRounded}
-                                                    displayType={'text'}
-                                                    thousandSeparator={', '}
-                                                    decimalScale={2}
-                                                    fixedDecimalScale={true}
-                                                />
+                                                    <CurrencyFormat value={this.props.appraisal.stabilizedStatement.valuationRounded} />
                                                 </td>
                                             </tr>
                                             </tbody>

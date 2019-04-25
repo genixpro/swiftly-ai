@@ -97,7 +97,7 @@ class RecoveryStructureEditor extends React.Component
     {
         if (unit.currentTenancy.recoveryStructure === this.props.recovery.name)
         {
-            unit.currentTenancy.recoveryStructure = "Default";
+            unit.currentTenancy.recoveryStructure = "Standard";
         }
         else
         {
@@ -124,7 +124,7 @@ class RecoveryStructureEditor extends React.Component
                     <tr>
                         <td colSpan={4}>
                             {
-                                recovery.name !== "Default" ?
+                                recovery.name !== "Standard" ?
                                     <FieldDisplayEdit
                                         type="text"
                                         placeholder="Recovery Structure Name"
@@ -208,7 +208,7 @@ class RecoveryStructureEditor extends React.Component
                         })
                     }
                     {
-                        recovery.name !== "Default" ? [
+                        recovery.name !== "Standard" ? [
                             <tr className={"recovery-rule label-row"}>
                                 <td className={"label-column"}>
                                     <strong>Tenants Applied To</strong>
@@ -240,7 +240,7 @@ class RecoveryStructureEditor extends React.Component
                     </tbody>
                 </table>
                 {
-                    recovery.name !== "Default" ?
+                    recovery.name !== "Standard" ?
                         <Button color={"danger"} className={"delete-button"} onClick={() => this.props.onDeleteRecovery(this.props.recovery)}>Delete</Button>
                         : null
                 }
@@ -295,7 +295,7 @@ class ViewRecoveryStructures extends React.Component
         {
             if (unit.currentTenancy.recoveryStructure === recoveryStructure.name)
             {
-                unit.currentTenancy.recoveryStructure = "Default";
+                unit.currentTenancy.recoveryStructure = "Standard";
             }
         });
 

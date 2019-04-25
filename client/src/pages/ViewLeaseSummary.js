@@ -51,7 +51,7 @@ class ViewLeaseExtractions extends React.Component
                                 <form>
                                     <FormGroup>
                                         <label>Price per square Foot</label>
-                                        <Input type="number" placeholder="PPS ($)"/>
+                                        <Input type="number" placeholder="PSF ($)"/>
                                     </FormGroup>
                                 </form>
                             </CardBody>

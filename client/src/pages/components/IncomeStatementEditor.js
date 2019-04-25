@@ -237,7 +237,7 @@ class IncomeStatementEditor extends React.Component
                                     <this.SortableItem key={`item-${value[sortableIndex]}`} index={value[sortableIndex]} value={value}/>
                                 )),
                                 <this.SortableNewItemRow key={groupType + "new"} index={increment + groupItems.length + 1} value={groupType} />,
-                                <this.SortableStats key={groupType + "stats"} name="Stats" index={increment + groupItems.length + 2} field={groupType + "_total"} />
+                                <this.SortableStats key={groupType + "stats"} name="Totals" index={increment + groupItems.length + 2} field={groupType + "_total"} />
                             ];
 
                             increment += groupItems.length + 3;
@@ -246,33 +246,33 @@ class IncomeStatementEditor extends React.Component
                         })
                     }
 
-                    <this.SortableHeader value="Ignored" index={increment}> </this.SortableHeader>
+                    {/*<this.SortableHeader value="Not Included" index={increment}> </this.SortableHeader>*/}
 
-                    {others.map((value, index) => (
-                        <this.SortableItem key={`item-${value[sortableIndex]}`} index={value[sortableIndex]} value={value}/>
-                    ))}
-                    {
-                        others.length === 0 ?
-                            <li className={"row expense-row"} index={increment + 1}>
-                                {this.renderHiddenHandleColumn()}
-                                <Col className={"name-column"}>&nbsp;No entries
-                                </Col>
+                    {/*{others.map((value, index) => (*/}
+                        {/*<this.SortableItem key={`item-${value[sortableIndex]}`} index={value[sortableIndex]} value={value}/>*/}
+                    {/*))}*/}
+                    {/*{*/}
+                        {/*others.length === 0 ?*/}
+                            {/*<li className={"row expense-row"} index={increment + 1}>*/}
+                                {/*{this.renderHiddenHandleColumn()}*/}
+                                {/*<Col className={"name-column"}>&nbsp;No entries*/}
+                                {/*</Col>*/}
 
-                                {
-                                    this.props.appraisal.incomeStatement.years.map((year) =>
-                                    {
-                                        if (this.state.pinnedYear !== null && year !== this.state.pinnedYear)
-                                        {
-                                            return null;
-                                        }
+                                {/*{*/}
+                                    {/*this.props.appraisal.incomeStatement.years.map((year) =>*/}
+                                    {/*{*/}
+                                        {/*if (this.state.pinnedYear !== null && year !== this.state.pinnedYear)*/}
+                                        {/*{*/}
+                                            {/*return null;*/}
+                                        {/*}*/}
 
-                                        return <Col key={year.toString() + "1"} className={"amount-column"} />
-                                    })
-                                }
-                                {this.state.pinnedYear === null ? this.renderHiddenActionColumn() : null}
-                            </li>
-                            : null
-                    }
+                                        {/*return <Col key={year.toString() + "1"} className={"amount-column"} />*/}
+                                    {/*})*/}
+                                {/*}*/}
+                                {/*{this.state.pinnedYear === null ? this.renderHiddenActionColumn() : null}*/}
+                            {/*</li>*/}
+                            {/*: null*/}
+                    {/*}*/}
 
                 </ul>
             );

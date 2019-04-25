@@ -58,7 +58,7 @@ const Menu = [
                 path: '/appraisal/:appraisalId/stabilized_statement_valuation',
             },
             {
-                name: 'Capitalization Valuation',
+                name: 'Capitalization Approach',
                 path: '/appraisal/:appraisalId/capitalization_valuation',
             },
             {

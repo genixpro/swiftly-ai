@@ -70,3 +70,6 @@ class ComparableLease(Document):
 
     # The TMI (taxes maintenance insurance) for the property
     taxesMaintenanceInsurance = FloatField()
+
+    # Shipping Doors
+    remarks = StringField()

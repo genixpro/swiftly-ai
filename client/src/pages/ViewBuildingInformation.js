@@ -77,33 +77,10 @@ class ViewBuildingInformation extends React.Component
                                                 {this.renderFieldRow("Address", "address", "address")}
                                                 {this.renderFieldRow("Effective Date", "effectiveDate", "date")}
                                                 {this.renderFieldRow("Property Type", "propertyType", "propertyType")}
-                                                {
-                                                    this.props.appraisal.propertyType === 'industrial' ?
-                                                        <tr>
-                                                            <td>
-                                                                <strong>Sub-type</strong>
-                                                            </td>
-                                                            <td>
-                                                                <IndustrialSubtypeSelector value={this.props.appraisal.industrialSubType}  onChange={(newValue) => this.changeAppraisalField('industrialSubType', newValue)}/>
-                                                            </td>
-                                                        </tr> : null
-                                                }
-                                                {                                                   this.props.appraisal.propertyType === 'land' ?
-                                                        <tr>
-                                                            <td>
-                                                                <strong>Sub-type</strong>
-                                                            </td>
-                                                            <td>
-                                                                <LandSubtypeSelector
-                                                                    value={this.props.appraisal.landSubType}
-                                                                    onChange={(newValue) => this.changeAppraisalField('landSubType', newValue)}/>
-                                                            </td>
-                                                        </tr> : null
-                                                }
-                                                {this.renderFieldRow("Size of Building", "sizeOfBuilding", "area")}
-                                                {this.renderFieldRow("Lot Size", "sizeOfLand", "number")}
-                                                {this.renderFieldRow("Legal Description", "legalDescription")}
-                                                {this.renderFieldRow("Tags", "propertyTags", "tags")}
+                                                {this.renderFieldRow("Sub Type", "propertyTags", "tags")}
+                                                {this.renderFieldRow("Building Size", "sizeOfBuilding", "area")}
+                                                {this.renderFieldRow("Lot Size", "sizeOfLand", "acres")}
+                                                {/*{this.renderFieldRow("Legal Description", "legalDescription")}*/}
                                                 {this.renderFieldRow("Zoning", "zoning", "zone")}
 
                                                 {

@@ -192,15 +192,15 @@ class ComparableLeaseList extends React.Component
                                     <Col xs={2} className={"header-field-column"} onClick={() => this.changeSortColumn("sizeOfUnit")}>
                                         Size (sf) <SortDirection field={"sizeOfUnit"} sort={this.props.sort} />
                                     </Col>
-                                    <Col xs={2} className={"header-field-column"} onClick={() => this.changeSortColumn("rentEscalations")}>
-                                        Rent ($) <SortDirection field={"rentEscalations"} sort={this.props.sort} />
-                                        <br/>
-                                        Free Rent
+                                    <Col xs={2} className={"header-field-column"} onClick={() => this.changeSortColumn("rentEscalations[0].yearlyRent")}>
+                                        Rent ($) <SortDirection field={"rentEscalations[0].yearlyRent"} sort={this.props.sort} />
                                     </Col>
                                     <Col xs={2} className={"header-field-column"} onClick={() => this.changeSortColumn("taxesMaintenanceInsurance")}>
                                         TMI ($) <SortDirection field={"taxesMaintenanceInsurance"} sort={this.props.sort} />
                                         <br/>
                                         Inducements
+                                        <br/>
+                                        Free Rent
                                     </Col>
                                 </Row>
                             </CardTitle>

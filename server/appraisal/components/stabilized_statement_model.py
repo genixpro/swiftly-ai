@@ -181,6 +181,9 @@ class StabilizedStatementModel(ValuationModelBase):
         if name == "effectiveGrossIncome":
             return self.computeEffectiveGrossIncome(appraisal)
 
+        if name == "operatingExpensesAndTaxes":
+            return self.computeTotalOperatingExpenses(appraisal) + self.computeTaxes(appraisal)
+
         for expense in appraisal.incomeStatement.expenses:
             if expense.name == name:
                 return expense.getLatestAmount()

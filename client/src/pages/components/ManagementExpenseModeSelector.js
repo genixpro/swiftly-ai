@@ -43,8 +43,8 @@ class ManagementExpenseModeSelector extends React.Component
                 title={this.props.title || this.props.placeholder}
                 style={{"color": !this.props.value ? "lightgrey" : ""}}
             >
-                <option value={"income_statement"}>Base Management on Income Statement</option>
-                <option value={"rule"}>Base Management on Industry Rate</option>
+                <option value={"income_statement"}>Base on Expense Statement</option>
+                <option value={"rule"}>Base on Industry Rate</option>
             </select>
         );
     }

@@ -258,13 +258,13 @@ class ViewAmortization extends React.Component
                                 </Row>
                                 <Row>
                                     <Col xs={12} md={12} lg={12} xl={12}>
-                                        <table className="table tenancies-table">
+                                        <table className="table amortization-table">
                                             <thead>
                                                 <tr>
                                                     <td>Name</td>
-                                                    <td>Amount</td>
-                                                    <td>Interest</td>
-                                                    <td>Discount Rate</td>
+                                                    <td>Amount ($)</td>
+                                                    <td>Interest (%)</td>
+                                                    <td>Discount Rate (%)</td>
                                                     <td>Start Date</td>
                                                     <td>Period</td>
                                                     <td className="action-column" />

@@ -157,6 +157,12 @@ class ComparableSaleModel extends EquationMdoel
                 inputs: ['salePrice', 'sizeOfBuildableAreaAcres'],
                 equation: (salePrice, sizeOfBuildableAreaAcres) => salePrice / sizeOfBuildableAreaAcres
             }
+        ],
+        "floorSpaceIndex": [
+            {
+                inputs: ['sizeOfBuildableAreaSqft', 'sizeOfLandSqft'],
+                equation: (sizeOfBuildableAreaSqft, sizeOfLandSqft) => sizeOfBuildableAreaSqft / sizeOfLandSqft
+            }
         ]
     };
 

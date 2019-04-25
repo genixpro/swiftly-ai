@@ -92,7 +92,14 @@ class ViewTenantsRentRoll extends React.Component
                     placeholder={"yearly rent (psf)"}
                     onChange={(newValue) => this.changeTenancyField(this.state.selectedUnit, tenantInfo, 'yearlyRentPSF', newValue)}/>
             </td>
-
+            <td>
+                <FieldDisplayEdit
+                    type='currency'
+                    hideIcon={true}
+                    value={tenantInfo.yearlyRent}
+                    placeholder={"yearly rent"}
+                    onChange={(newValue) => this.changeTenancyField(this.state.selectedUnit, tenantInfo, 'yearlyRent', newValue)}/>
+            </td>
             <td className={"action-column"}>
                 <Button
                     color="secondary"
@@ -153,11 +160,27 @@ class ViewTenantsRentRoll extends React.Component
             </td>
             <td>
                 <FieldDisplayEdit
+                    type='rentType'
+                    value={""}
+                    placeholder={"net vs gross"}
+                    hideIcon={true}
+                    onChange={(newValue) => this.createNewTenancy('rentType', newValue)}/>
+            </td>
+            <td>
+                <FieldDisplayEdit
                     type='currency'
                     value={""}
-                    placeholder={"monthly rent"}
+                    placeholder={"annual rent psf"}
                     hideIcon={true}
-                    onChange={(newValue) => this.createNewTenancy('monthlyRent', newValue)}/>
+                    onChange={(newValue) => this.createNewTenancy('yearlyRentPSF', newValue)}/>
+            </td>
+            <td>
+                <FieldDisplayEdit
+                    type='currency'
+                    value={""}
+                    placeholder={"annual rent"}
+                    hideIcon={true}
+                    onChange={(newValue) => this.createNewTenancy('yearlyRent', newValue)}/>
             </td>
 
             <td className={"action-column"}>
@@ -306,7 +329,7 @@ class ViewTenantsRentRoll extends React.Component
                                                         <strong>Unit Size</strong>
                                                     </td>
                                                     <td>
-                                                        <FieldDisplayEdit placeholder={"Unit Size"} value={this.state.selectedUnit.squareFootage} onChange={(newValue) => this.changeUnitField(this.state.selectedUnit, 'squareFootage', newValue)}/>
+                                                        <FieldDisplayEdit type="area" placeholder={"Unit Size"} value={this.state.selectedUnit.squareFootage} onChange={(newValue) => this.changeUnitField(this.state.selectedUnit, 'squareFootage', newValue)}/>
                                                     </td>
                                                 </tr>
                                                 <tr>
@@ -370,13 +393,15 @@ class ViewTenantsRentRoll extends React.Component
                                                         <strong>Current Yearly Rent (psf)</strong>
                                                     </td>
                                                     <td>
-                                                        $<NumberFormat
-                                                        value={this.state.selectedUnit.currentTenancy.yearlyRentPSF}
-                                                        displayType={'text'}
-                                                        thousandSeparator={', '}
-                                                        decimalScale={2}
-                                                        fixedDecimalScale={true}
-                                                    />
+                                                        <span  style={{"marginLeft": "10px"}}>
+                                                            $<NumberFormat
+                                                            value={this.state.selectedUnit.currentTenancy.yearlyRentPSF}
+                                                            displayType={'text'}
+                                                            thousandSeparator={', '}
+                                                            decimalScale={2}
+                                                            fixedDecimalScale={true}
+                                                        />
+                                                        </span>
                                                     </td>
                                                 </tr>
                                                 </tbody>
@@ -395,7 +420,8 @@ class ViewTenantsRentRoll extends React.Component
                                                     <td>Term Start</td>
                                                     <td>Term End</td>
                                                     <td>Net / Gross</td>
-                                                    <td>Yearly Rent (psf)</td>
+                                                    <td>Annual Rent (psf) </td>
+                                                    <td>Annual Rent </td>
                                                     <td className="action-column" />
                                                 </tr>
                                                 </thead>

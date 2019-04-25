@@ -31,7 +31,7 @@ class ValuationModelBase:
                 return leasingCost
 
         for leasingCost in appraisal.leasingCosts:
-            if leasingCost.name.lower() == "default":
+            if leasingCost.name.lower() == "standard":
                 return leasingCost
 
         return LeasingCostStructure()

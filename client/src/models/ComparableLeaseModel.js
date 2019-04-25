@@ -41,6 +41,8 @@ class ComparableLeaseModel extends BaseModel
     static clearCeilingHeight = new StringField();
     static shippingDoors = new StringField();
 
+    static remarks = new StringField();
+
     get startingYearlyRent()
     {
         if (this.rentEscalations && this.rentEscalations.length > 0 && this.rentEscalations[0].yearlyRent)

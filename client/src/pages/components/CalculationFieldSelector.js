@@ -40,15 +40,18 @@ class CalculationFieldSelector extends React.Component
         const options = [
             <option value={""} key={"blank"}>&nbsp;</option>,
             <option value={"operatingExpenses"} key={"operatingExpenses"}>Operating Expenses</option>,
+            <option value={"operatingExpensesAndTaxes"} key={"operatingExpensesAndTaxes"}>Operating Expenses & Taxes</option>,
             <option value={"managementExpenses"} key={"managementExpenses"}>Management Expenses</option>,
             <option value={"taxes"} key={"taxes"}>Taxes</option>,
             <option value={"effectiveGrossIncome"} key={"effectiveGrossIncome"}>Effective Gross Income</option>,
             <option value={"rentalIncome"} key={"rentalIncome"}>Rental Income</option>
-        ].concat(
-            this.props.expenses.map((expense) =>
-            {
-                return <option key={expense.name} value={expense.name}>{expense.name}</option>
-            }));
+        ];
+
+        // .concat(
+        //     this.props.expenses.map((expense) =>
+        //     {
+        //         return <option key={expense.name} value={expense.name}>{expense.name}</option>
+        //     }));
 
         return (
             <select

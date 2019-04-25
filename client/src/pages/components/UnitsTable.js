@@ -49,6 +49,9 @@ class UnitsTable extends React.Component
             <td className={"rent-column"}>
                 <CurrencyFormat value={unitInfo.currentTenancy.yearlyRentPSF || unitInfo.marketRent} />
             </td>
+            <td className={"rent-column"}>
+                <CurrencyFormat value={unitInfo.currentTenancy.yearlyRent || unitInfo.marketRent * unitInfo.squareFootage} cents={false} />
+            </td>
             {this.props.allowSelection ? <td className={"action-column"}>
                 <Button
                     color="secondary"
@@ -226,7 +229,8 @@ class UnitsTable extends React.Component
                         <td><strong>Unit Number</strong></td>
                         <td><strong>Tenant Name</strong></td>
                         <td className={"square-footage-column"}><strong>Size (sf)</strong></td>
-                        <td className={"rent-column"}><strong>Annual Net Rent (psf)</strong></td>
+                        <td className={"rent-column"}><strong>Rent (psf)</strong></td>
+                        <td className={"rent-column"}><strong>Annual Rent</strong></td>
                         {this.props.allowSelection ? <td className={"action-column"} /> : null}
                     </tr>
 
@@ -246,6 +250,7 @@ class UnitsTable extends React.Component
                                     <AreaFormat value={this.getTotalSize()}/>
                                 </td>
                                 <td className={"rent-column"}></td>
+                                <td className={"rent-column"}></td>
                             </tr> : null
                     }
                     {
@@ -257,25 +262,28 @@ class UnitsTable extends React.Component
                                     <AreaFormat value={this.getAverageSize()}/>
                                 </td>
                                 <td className={"rent-column"}>
-                                    <CurrencyFormat value={this.getAverageRentPSF()} />
-                                </td>
-                            </tr> : null
-                    }
-                    {
-                        this.props.statsMode === 'all' ?
-                            <tr className={"last-total-row"}>
-                                <td></td>
-                                <td><strong>Range</strong></td>
-                                <td className={"square-footage-column"}>
-                                    <AreaFormat value={this.getMinimumSize()}/>&nbsp;-&nbsp;
-                                    <AreaFormat value={this.getMaximumSize()}/>
+                                    <CurrencyFormat value={this.getAverageRentPSF()} cents={false} />
                                 </td>
                                 <td className={"rent-column"}>
-                                    <CurrencyFormat value={this.getMinimumRentPSF()}/>&nbsp;-&nbsp;
-                                    <CurrencyFormat value={this.getMaximumRentPSF()}/>
+                                    {/*<CurrencyFormat value={this.getAverageRentPSF()} cents={false} />*/}
                                 </td>
                             </tr> : null
                     }
+                    {/*{*/}
+                        {/*this.props.statsMode === 'all' ?*/}
+                            {/*<tr className={"last-total-row"}>*/}
+                                {/*<td></td>*/}
+                                {/*<td><strong>Range</strong></td>*/}
+                                {/*<td className={"square-footage-column"}>*/}
+                                    {/*<AreaFormat value={this.getMinimumSize()}/>&nbsp;-&nbsp;*/}
+                                    {/*<AreaFormat value={this.getMaximumSize()}/>*/}
+                                {/*</td>*/}
+                                {/*<td className={"rent-column"}>*/}
+                                    {/*<CurrencyFormat value={this.getMinimumRentPSF()} cents={false}/>&nbsp;-&nbsp;*/}
+                                    {/*<CurrencyFormat value={this.getMaximumRentPSF()} cents={false}/>*/}
+                                {/*</td>*/}
+                            {/*</tr> : null*/}
+                    {/*}*/}
                     {
                         this.props.appraisal && this.props.allowNewUnit ?
                             this.renderNewUnitRow()

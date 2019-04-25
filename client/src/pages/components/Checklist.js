@@ -8,7 +8,7 @@ class Checklist extends React.Component {
             (this.props.appraisal) ?
                 <div id={"appraisal-checklist"} className={"appraisal-checklist"}>
                     <ChecklistGroup title={"Building Information"}
-                                   description={"Basic information on the building - such as its address."}
+                                   description={""}
                                    completed={this.props.appraisal.validationResult.hasBuildingInformation}
                     >
                         <ChecklistItem title={"Address"}
@@ -33,32 +33,32 @@ class Checklist extends React.Component {
                         />
                     </ChecklistGroup>
                     <ChecklistGroup title={"Rent Roll"}
-                                   description={"The Rent-Rolls with information about your tenants"}
+                                   description={""}
                                    completed={this.props.appraisal.validationResult.hasRentRoll}
                     >
-                        <ChecklistItem title={"Tenant Names"}
+                        <ChecklistItem title={"Tenant Name"}
                                        description={"The names of tenants for all occupied units."}
                                        completed={this.props.appraisal.validationResult.hasTenantNames}
                         />
-                        <ChecklistItem title={"Rents"}
-                                       description={"Yearly rent for all occupied units"}
-                                       completed={this.props.appraisal.validationResult.hasRents}
-                        />
-                        <ChecklistItem title={"Unit Sizes"}
+                        <ChecklistItem title={"Unit Size"}
                                        description={"The size in square feet for all units"}
                                        completed={this.props.appraisal.validationResult.hasUnitSizes}
+                        />
+                        <ChecklistItem title={"Current Rent"}
+                                       description={"Yearly rent for all occupied units"}
+                                       completed={this.props.appraisal.validationResult.hasRents}
                         />
                         <ChecklistItem title={"Escalations"}
                                        description={"Escalations on rents where appropriate."}
                                        completed={this.props.appraisal.validationResult.hasEscalations}
                         />
-                        <ChecklistItem title={"Terms"}
+                        <ChecklistItem title={"Term"}
                                        description={"Has lease start and end dates for all occupied units."}
                                        completed={this.props.appraisal.validationResult.hasLeaseTerms}
                         />
                     </ChecklistGroup>
                     <ChecklistGroup title={"Financial Information"}
-                                   description={"The financial information, such as revenues and expenses."}
+                                   description={""}
                                    completed={this.props.appraisal.validationResult.hasFinancialInfo}
                      >
 
@@ -66,7 +66,7 @@ class Checklist extends React.Component {
                                        description={"The operating expenses for the building"}
                                        completed={this.props.appraisal.validationResult.hasExpenses}
                         />
-                        <ChecklistItem title={"Taxes"}
+                        <ChecklistItem title={"Realty Taxes"}
                                        description={"The tax bill for this building"}
                                        completed={this.props.appraisal.validationResult.hasTaxes}
                         />

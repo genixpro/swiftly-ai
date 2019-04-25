@@ -258,13 +258,13 @@ class ComparableSaleListItem extends React.Component
                                             <Col className={"header-field-column small-header-column middle-col"}>
                                                 {comparableSale.pricePerAcreLand ? ("$" + comparableSale.pricePerAcreLand.toFixed(2)) : <span className={"no-data"}>No PPA</span>}
                                                 <br/>
-                                                {(comparableSale.pricePerSquareFootBuildableArea) ?  "$" + (comparableSale.pricePerSquareFootBuildableArea).toFixed(2) : <span className={"no-data"}>No Buildable PPS</span>}
+                                                {(comparableSale.pricePerSquareFootBuildableArea) ?  "$" + (comparableSale.pricePerSquareFootBuildableArea).toFixed(2) : <span className={"no-data"}>No Buildable PSF</span>}
                                             </Col> : [
                                                 <Col key={1} className={"header-field-column small-header-column middle-col"}>
                                                     {comparableSale.pricePerAcreLand ? ("$" + comparableSale.pricePerAcreLand.toFixed(2)) : <span className={"no-data"}>No PPA</span>}
                                                 </Col>,
                                                 <Col key={2} className={"header-field-column small-header-column middle-col"}>
-                                                    {(comparableSale.pricePerSquareFootBuildableArea) ?  "$" + (comparableSale.pricePerSquareFootBuildableArea).toFixed(2) : <span className={"no-data"}>No Buildable PPS</span>}
+                                                    {(comparableSale.pricePerSquareFootBuildableArea) ?  "$" + (comparableSale.pricePerSquareFootBuildableArea).toFixed(2) : <span className={"no-data"}>No Buildable PSF</span>}
                                                 </Col>
                                             ] : null
                                     }
@@ -414,8 +414,11 @@ class ComparableSaleListItem extends React.Component
                                     }
 
 
-                                    <h4 className={"group-heading"}>Building Information</h4>
-                                    <span className={"group-heading"}></span>
+                                    {
+                                        comparableSale.propertyType === 'land' ?
+                                            <h4 className={"group-heading"}>Property Information</h4>
+                                            : <h4 className={"group-heading"}>Building Information</h4>
+                                    }
 
                                     {
                                         comparableSale.propertyType !== "land" ? [
@@ -586,7 +589,7 @@ class ComparableSaleListItem extends React.Component
                                                     key={14}
                                                     type={"currency"}
                                                     edit={this.props.edit}
-                                                    placeholder={"PPS of Land"}
+                                                    placeholder={"PSF of Land"}
                                                     value={comparableSale.pricePerSquareFootLand}
                                                     onChange={(newValue) => this.changeComparableField('pricePerSquareFootLand', newValue)}
                                                 />,
@@ -604,7 +607,7 @@ class ComparableSaleListItem extends React.Component
                                                     key={18}
                                                     type={"currency"}
                                                     edit={this.props.edit}
-                                                    placeholder={"PPS of Buildable Area"}
+                                                    placeholder={"PSF of Buildable Area"}
                                                     value={comparableSale.pricePerSquareFootBuildableArea}
                                                     onChange={(newValue) => this.changeComparableField('pricePerSquareFootBuildableArea', newValue)}
                                                 />,

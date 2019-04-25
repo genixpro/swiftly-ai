@@ -1,6 +1,7 @@
 import React from 'react';
-import {Row, Col, Card, CardBody, Table, Dropdown, DropdownItem, DropdownMenu, DropdownToggle} from 'reactstrap';
+import {Row, Col, Card, CardBody, Table, Dropdown, DropdownItem, DropdownMenu, DropdownToggle, Popover, PopoverHeader, PopoverBody} from 'reactstrap';
 import NumberFormat from 'react-number-format';
+import {Link} from 'react-router-dom';
 import FieldDisplayEdit from './components/FieldDisplayEdit';
 import AppraisalContentHeader from "./components/AppraisalContentHeader";
 import UnitsTable from "./components/UnitsTable";
@@ -97,54 +98,32 @@ class ViewStabilizedStatement extends React.Component
                                                 <td className={"amount-total-column"}/>
                                             </tr>
                                             <tr className={"data-row"}>
-                                                <td className={"label-column"}>Stabilized Rental Income</td>
+                                                <td className={"label-column"}><Link to={`/appraisal/${this.props.appraisal._id}/tenants/rent_roll`}>Stabilized Rental Income</Link></td>
                                                 <td className={"amount-column"}>
-                                                    $<NumberFormat
-                                                    value={this.props.appraisal.stabilizedStatement.rentalIncome}
-                                                    displayType={'text'}
-                                                    thousandSeparator={', '}
-                                                    decimalScale={2}
-                                                    fixedDecimalScale={true}
-                                                />
+                                                    <Link to={`/appraisal/${this.props.appraisal._id}/tenants/rent_roll`}><CurrencyFormat value={this.props.appraisal.stabilizedStatement.rentalIncome}/></Link>
                                                 </td>
                                                 <td/>
                                             </tr>
                                             <tr className={"data-row"}>
-                                                <td className={"label-column"}>Additional Income</td>
+                                                <td className={"label-column"}><Link to={`/appraisal/${this.props.appraisal._id}/additional_income`}>Additional Income</Link></td>
                                                 <td className={"amount-column"}>
-                                                    $<NumberFormat
-                                                    value={this.props.appraisal.stabilizedStatement.additionalIncome}
-                                                    displayType={'text'}
-                                                    thousandSeparator={', '}
-                                                    decimalScale={2}
-                                                    fixedDecimalScale={true}
-                                                />
+                                                    <Link to={`/appraisal/${this.props.appraisal._id}/additional_income`}><CurrencyFormat value={this.props.appraisal.stabilizedStatement.additionalIncome} /></Link>
                                                 </td>
                                                 <td className={"amount-total-column"}/>
                                             </tr>
                                             <tr className={"statement-sum-after-row data-row"}>
-                                                <td className={"label-column"}>Recoverable Income</td>
+                                                <td className={"label-column"}>
+                                                    <Link to={`/appraisal/${this.props.appraisal._id}/tenants/recovery_structures`}>Recoverable Income</Link>
+                                                </td>
                                                 <td className={"amount-column"}>
-                                                    $<NumberFormat
-                                                    value={this.props.appraisal.stabilizedStatement.recoverableIncome}
-                                                    displayType={'text'}
-                                                    thousandSeparator={', '}
-                                                    decimalScale={2}
-                                                    fixedDecimalScale={true}
-                                                />
+                                                    <Link to={`/appraisal/${this.props.appraisal._id}/tenants/recovery_structures`}><CurrencyFormat value={this.props.appraisal.stabilizedStatement.recoverableIncome}/></Link>
                                                 </td>
                                                 <td className={"amount-total-column"}/>
                                             </tr>
                                             <tr className={"statement-sum-row data-row"}>
                                                 <td className={"label-column"}>Potential Gross Income</td>
                                                 <td className={"amount-column"}>
-                                                    $<NumberFormat
-                                                    value={this.props.appraisal.stabilizedStatement.potentialGrossIncome}
-                                                    displayType={'text'}
-                                                    thousandSeparator={', '}
-                                                    decimalScale={2}
-                                                    fixedDecimalScale={true}
-                                                />
+                                                    <CurrencyFormat value={this.props.appraisal.stabilizedStatement.potentialGrossIncome}/>
                                                 </td>
                                                 <td className={"amount-total-column"}/>
                                             </tr>
@@ -153,13 +132,7 @@ class ViewStabilizedStatement extends React.Component
                                                     <span>Less Vacancy @ <PercentFormat value={this.props.appraisal.stabilizedStatementInputs ? this.props.appraisal.stabilizedStatementInputs.vacancyRate : 5.0}/></span>
                                                 </td>
                                                 <td className={"amount-column"}>
-                                                    $<NumberFormat
-                                                    value={this.props.appraisal.stabilizedStatement.vacancyDeduction}
-                                                    displayType={'text'}
-                                                    thousandSeparator={', '}
-                                                    decimalScale={2}
-                                                    fixedDecimalScale={true}
-                                                />
+                                                    <CurrencyFormat value={this.props.appraisal.stabilizedStatement.vacancyDeduction}/>
                                                 </td>
                                                 <td className={"amount-total-column"}/>
                                             </tr>
@@ -167,13 +140,7 @@ class ViewStabilizedStatement extends React.Component
                                                 <td className={"label-column"}>Effective Gross Income</td>
                                                 <td className={"amount-column"}></td>
                                                 <td className={"amount-total-column"}>
-                                                    $<NumberFormat
-                                                    value={this.props.appraisal.stabilizedStatement.effectiveGrossIncome}
-                                                    displayType={'text'}
-                                                    thousandSeparator={', '}
-                                                    decimalScale={2}
-                                                    fixedDecimalScale={true}
-                                                />
+                                                    <CurrencyFormat value={this.props.appraisal.stabilizedStatement.effectiveGrossIncome}/>
                                                 </td>
                                             </tr>
                                             <tr className={"title-row"}>
@@ -184,15 +151,9 @@ class ViewStabilizedStatement extends React.Component
                                             {
                                                 this.props.appraisal.stabilizedStatement.operatingExpenses ?
                                                     <tr className={"data-row"}>
-                                                        <td className={"label-column"}>Operating Costs</td>
+                                                        <td className={"label-column"}><Link to={`/appraisal/${this.props.appraisal._id}/expenses`}>Operating Costs</Link></td>
                                                         <td className={"amount-column"}>
-                                                            $<NumberFormat
-                                                            value={this.props.appraisal.stabilizedStatement.operatingExpenses}
-                                                            displayType={'text'}
-                                                            thousandSeparator={', '}
-                                                            decimalScale={2}
-                                                            fixedDecimalScale={true}
-                                                        />
+                                                            <Link to={`/appraisal/${this.props.appraisal._id}/expenses`}><CurrencyFormat value={this.props.appraisal.stabilizedStatement.operatingExpenses}/></Link>
                                                         </td>
                                                         <td className={"amount-total-column"}></td>
                                                     </tr> : null
@@ -200,15 +161,9 @@ class ViewStabilizedStatement extends React.Component
                                             {
                                                 this.props.appraisal.stabilizedStatement.taxes ?
                                                     <tr className={"data-row"}>
-                                                        <td className={"label-column"}>Taxes</td>
+                                                        <td className={"label-column"}><Link to={`/appraisal/${this.props.appraisal._id}/expenses`}>Taxes</Link></td>
                                                         <td className={"amount-column"}>
-                                                            $<NumberFormat
-                                                            value={this.props.appraisal.stabilizedStatement.taxes}
-                                                            displayType={'text'}
-                                                            thousandSeparator={', '}
-                                                            decimalScale={2}
-                                                            fixedDecimalScale={true}
-                                                        />
+                                                            <Link to={`/appraisal/${this.props.appraisal._id}/expenses`}><CurrencyFormat value={this.props.appraisal.stabilizedStatement.taxes}/></Link>
                                                         </td>
                                                         <td className={"amount-total-column"}></td>
                                                     </tr> : null
@@ -216,15 +171,9 @@ class ViewStabilizedStatement extends React.Component
                                             {
                                                 this.props.appraisal.stabilizedStatement.managementExpenses ?
                                                     <tr className={"data-row"}>
-                                                        <td className={"label-column"}>Management Expenses</td>
+                                                        <td className={"label-column"}><Link to={`/appraisal/${this.props.appraisal._id}/expenses`}>Management Expenses</Link></td>
                                                         <td className={"amount-column"}>
-                                                            $<NumberFormat
-                                                            value={this.props.appraisal.stabilizedStatement.managementExpenses}
-                                                            displayType={'text'}
-                                                            thousandSeparator={', '}
-                                                            decimalScale={2}
-                                                            fixedDecimalScale={true}
-                                                        />
+                                                            <Link to={`/appraisal/${this.props.appraisal._id}/expenses`}><CurrencyFormat value={this.props.appraisal.stabilizedStatement.managementExpenses}/></Link>
                                                         </td>
                                                         <td className={"amount-total-column"}></td>
                                                     </tr> : null
@@ -233,34 +182,49 @@ class ViewStabilizedStatement extends React.Component
                                                 this.props.appraisal.stabilizedStatement.tmiTotal ?
                                                     <tr className={"data-row vacancy-row"}>
                                                         <td className={"label-column"}>
-                                                            <span>TMI</span>&nbsp;
-                                                            <AreaFormat spaces={false} value={this.props.appraisal.sizeOfBuilding}/>&nbsp;@&nbsp;
-                                                            <CurrencyFormat value={this.props.appraisal.stabilizedStatementInputs.tmiRatePSF}/>
+                                                            <Link to={`/appraisal/${this.props.appraisal._id}/expenses_tmi`}>
+                                                                <span>TMI</span>&nbsp;
+                                                                <AreaFormat spaces={false} value={this.props.appraisal.sizeOfBuilding}/>&nbsp;@&nbsp;
+                                                                <CurrencyFormat value={this.props.appraisal.stabilizedStatementInputs.tmiRatePSF}/>
+                                                            </Link>
                                                         </td>
                                                         <td className={"amount-column"}>
-                                                            $<NumberFormat
-                                                            value={this.props.appraisal.stabilizedStatement.tmiTotal}
-                                                            displayType={'text'}
-                                                            thousandSeparator={', '}
-                                                            decimalScale={2}
-                                                            fixedDecimalScale={true}
-                                                        />
+                                                            <Link to={`/appraisal/${this.props.appraisal._id}/expenses_tmi`}>
+                                                                <CurrencyFormat value={this.props.appraisal.stabilizedStatement.tmiTotal}/>
+                                                            </Link>
                                                         </td>
                                                         <td className={"amount-total-column"}></td>
                                                     </tr> : null
                                             }
                                             <tr className={"statement-sum-after-row data-row vacancy-row"}>
                                                 <td className={"label-column"}>
-                                                    <span>Structural Allowance @ <PercentFormat value={this.props.appraisal.stabilizedStatementInputs ? this.props.appraisal.stabilizedStatementInputs.structuralAllowancePercent : 2.0}/></span>
+                                                    <a onClick={() => this.setState({structuralAllowancePopoverOpen: !this.state.structuralAllowancePopoverOpen})}>
+                                                        <span>Structural Allowance @ <PercentFormat value={this.props.appraisal.stabilizedStatementInputs ? this.props.appraisal.stabilizedStatementInputs.structuralAllowancePercent : 2.0}/></span>
+                                                    </a>
+                                                    <Popover placement="bottom" isOpen={this.state.structuralAllowancePopoverOpen} target="structural-allowance-popover" toggle={() => this.setState({structuralAllowancePopoverOpen: !this.state.structuralAllowancePopoverOpen})}>
+                                                        <PopoverHeader>Structural Allowance</PopoverHeader>
+                                                        <PopoverBody>
+                                                            <table className={"explanation-popover-table"}>
+                                                                <tr>
+                                                                    <td>Potential Gross Income</td>
+                                                                    <td><CurrencyFormat value={this.props.appraisal.stabilizedStatement.potentialGrossIncome} /></td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td></td>
+                                                                    <td className={"underline"}>* <PercentFormat value={this.props.appraisal.stabilizedStatementInputs.structuralAllowancePercent}/></td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td>Structural Allowance</td>
+                                                                    <td><CurrencyFormat value={this.props.appraisal.stabilizedStatement.structuralAllowance} /></td>
+                                                                </tr>
+                                                            </table>
+                                                        </PopoverBody>
+                                                    </Popover>
                                                 </td>
                                                 <td className={"amount-column"}>
-                                                    $<NumberFormat
-                                                    value={this.props.appraisal.stabilizedStatement.structuralAllowance}
-                                                    displayType={'text'}
-                                                    thousandSeparator={', '}
-                                                    decimalScale={2}
-                                                    fixedDecimalScale={true}
-                                                />
+                                                    <a id={"structural-allowance-popover"} onClick={() => this.setState({structuralAllowancePopoverOpen: !this.state.structuralAllowancePopoverOpen})}>
+                                                        <CurrencyFormat value={this.props.appraisal.stabilizedStatement.structuralAllowance}/>
+                                                    </a>
                                                 </td>
                                                 <td className={"amount-total-column"}/>
                                             </tr>
@@ -268,13 +232,7 @@ class ViewStabilizedStatement extends React.Component
                                                 <td className={"label-column"}>Total Expenses</td>
                                                 <td className={"amount-column"}></td>
                                                 <td className={"amount-total-column"}>
-                                                    $<NumberFormat
-                                                    value={this.props.appraisal.stabilizedStatement.totalExpenses}
-                                                    displayType={'text'}
-                                                    thousandSeparator={', '}
-                                                    decimalScale={2}
-                                                    fixedDecimalScale={true}
-                                                />
+                                                    <CurrencyFormat value={this.props.appraisal.stabilizedStatement.totalExpenses}/>
                                                 </td>
                                             </tr>
 
@@ -282,13 +240,7 @@ class ViewStabilizedStatement extends React.Component
                                                 <td className={"label-column"}><span className={"title"}>Net Operating Income</span></td>
                                                 <td className={"amount-column"} />
                                                 <td className={"amount-total-column"}>
-                                                    $<NumberFormat
-                                                    value={this.props.appraisal.stabilizedStatement.netOperatingIncome}
-                                                    displayType={'text'}
-                                                    thousandSeparator={', '}
-                                                    decimalScale={2}
-                                                    fixedDecimalScale={true}
-                                                />
+                                                    <CurrencyFormat value={this.props.appraisal.stabilizedStatement.netOperatingIncome}/>
                                                 </td>
                                             </tr>
                                             </tbody>

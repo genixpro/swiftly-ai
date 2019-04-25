@@ -48,18 +48,18 @@ class ComparableSalesStatistics extends React.Component
     computeStatistics()
     {
         let {min: minSize, max: maxSize, average: sizeAverage} = this.computeStatsForField('sizeSquareFootage');
-        let {min: minPPS, max: maxPPS,  average: averagePPS} = this.computeStatsForField('pricePerSquareFoot');
+        let {min: minPSF, max: maxPSF,  average: averagePSF} = this.computeStatsForField('pricePerSquareFoot');
         let {min: minCapRate, max: maxCapRate,  average: averageCapRate} = this.computeStatsForField('capitalizationRate');
         let {min: minClearCeilingHeight, max: maxClearCeilingHeight,  average: averageClearCeilingHeight} = this.computeStatsForField('clearCeilingHeight');
 
         let {min: minSizeOfLand, max: maxSizeOfLand,  average: averageSizeOfLand} = this.computeStatsForField('sizeOfLandAcres');
 
         let {min: minFSI, max: maxFSI,  average: averageFSI} = this.computeStatsForField('floorSpaceIndex');
-        let {min: minPPSLand, max: maxPPSLand,  average: averagePPSLand} = this.computeStatsForField('pricePerSquareFootLand');
+        let {min: minPSFLand, max: maxPSFLand,  average: averagePSFLand} = this.computeStatsForField('pricePerSquareFootLand');
 
         let {min: minPricePerAcreLand, max: maxPricePerAcreLand,  average: averagePricePerAcreLand} = this.computeStatsForField('pricePerAcreLand');
 
-        let {min: minPPSBuildableArea, max: maxPPSBuildableArea,  average: averagePPSBuildableArea} = this.computeStatsForField('pricePerSquareFootBuildableArea');
+        let {min: minPSFBuildableArea, max: maxPSFBuildableArea,  average: averagePSFBuildableArea} = this.computeStatsForField('pricePerSquareFootBuildableArea');
 
         return {
             minSize,
@@ -68,9 +68,9 @@ class ComparableSalesStatistics extends React.Component
             minCapRate,
             maxCapRate,
             averageCapRate,
-            minPPS,
-            maxPPS,
-            averagePPS,
+            minPSF,
+            maxPSF,
+            averagePSF,
             minClearCeilingHeight,
             maxClearCeilingHeight,
             averageClearCeilingHeight,
@@ -80,15 +80,15 @@ class ComparableSalesStatistics extends React.Component
             minFSI,
             maxFSI,
             averageFSI,
-            minPPSLand,
-            maxPPSLand,
-            averagePPSLand,
+            minPSFLand,
+            maxPSFLand,
+            averagePSFLand,
             minPricePerAcreLand,
             maxPricePerAcreLand,
             averagePricePerAcreLand,
-            minPPSBuildableArea,
-            maxPPSBuildableArea,
-            averagePPSBuildableArea
+            minPSFBuildableArea,
+            maxPSFBuildableArea,
+            averagePSFBuildableArea
         }
     }
 
@@ -124,7 +124,7 @@ class ComparableSalesStatistics extends React.Component
                                         <Col xs={4}>
                                             <strong>Price Per Square Foot Range ($)</strong>&nbsp;&nbsp;&nbsp;
                                             {
-                                                stats.minPPS ? <span><CurrencyFormat value={stats.minPPS} cents={false} /> - <CurrencyFormat value={stats.maxPPS} cents={false} /></span> : <span>n/a</span>
+                                                stats.minPSF ? <span><CurrencyFormat value={stats.minPSF} cents={false} /> - <CurrencyFormat value={stats.maxPSF} cents={false} /></span> : <span>n/a</span>
                                             }
                                         </Col>
                                         <Col xs={4}>
@@ -147,7 +147,7 @@ class ComparableSalesStatistics extends React.Component
                                         <Col xs={4}>
                                             <strong>Price Per Square Average ($)</strong>&nbsp;&nbsp;&nbsp;
                                             {
-                                                stats.averagePPS ? <CurrencyFormat value={stats.averagePPS} cents={false}/> : <span>n/a</span>
+                                                stats.averagePSF ? <CurrencyFormat value={stats.averagePSF} cents={false}/> : <span>n/a</span>
                                             }
                                         </Col>
                                         <Col xs={4}>
@@ -197,9 +197,9 @@ class ComparableSalesStatistics extends React.Component
                                             }
                                         </Col>
                                         <Col xs={4}>
-                                            <strong>PPS of Land ($)</strong>&nbsp;&nbsp;&nbsp;
+                                            <strong>PSF of Land ($)</strong>&nbsp;&nbsp;&nbsp;
                                             {
-                                                stats.minPPSLand ? <span><CurrencyFormat value={stats.minPPSLand} /> - <CurrencyFormat value={stats.maxPPSLand} /></span> : <span>n/a</span>
+                                                stats.minPSFLand ? <span><CurrencyFormat value={stats.minPSFLand} /> - <CurrencyFormat value={stats.maxPSFLand} /></span> : <span>n/a</span>
                                             }
                                         </Col>
                                     </Row> : null
@@ -220,9 +220,9 @@ class ComparableSalesStatistics extends React.Component
                                             }
                                         </Col>
                                         <Col xs={4}>
-                                            <strong>PPS of Land ($)</strong>&nbsp;&nbsp;&nbsp;
+                                            <strong>PSF of Land ($)</strong>&nbsp;&nbsp;&nbsp;
                                             {
-                                                stats.averagePPSLand ? <span><CurrencyFormat value={stats.averagePPSLand} /></span> : <span>n/a</span>
+                                                stats.averagePSFLand ? <span><CurrencyFormat value={stats.averagePSFLand} /></span> : <span>n/a</span>
                                             }
                                         </Col>
                                     </Row> : null
@@ -231,10 +231,10 @@ class ComparableSalesStatistics extends React.Component
                                 this.props.appraisal.propertyType === 'land' ?
                                     <Row>
                                         <Col xs={4}>
-                                            <strong>PPS of Buildable Area Range ($/sqft) </strong>&nbsp;&nbsp;&nbsp;
+                                            <strong>PSF of Buildable Area Range ($/sqft) </strong>&nbsp;&nbsp;&nbsp;
                                             {
-                                                stats.minPPSBuildableArea ? <span>
-                                            <CurrencyFormat value={stats.minPPSBuildableArea} /> - <CurrencyFormat value={stats.maxPPSBuildableArea}/></span> : <span>n/a</span>
+                                                stats.minPSFBuildableArea ? <span>
+                                            <CurrencyFormat value={stats.minPSFBuildableArea} /> - <CurrencyFormat value={stats.maxPSFBuildableArea}/></span> : <span>n/a</span>
                                             }
                                         </Col>
                                         <Col xs={4}>
@@ -249,9 +249,9 @@ class ComparableSalesStatistics extends React.Component
                                 this.props.appraisal.propertyType === 'land' ?
                                     <Row>
                                         <Col xs={4}>
-                                            <strong>PPS of Buildable Area Average ($/sqft) </strong>&nbsp;&nbsp;&nbsp;
+                                            <strong>PSF of Buildable Area Average ($/sqft) </strong>&nbsp;&nbsp;&nbsp;
                                             {
-                                                stats.averagePPSBuildableArea ? <span><CurrencyFormat value={stats.averagePPSBuildableArea}/></span> : <span>n/a</span>
+                                                stats.averagePSFBuildableArea ? <span><CurrencyFormat value={stats.averagePSFBuildableArea}/></span> : <span>n/a</span>
                                             }
                                         </Col>
                                         <Col xs={4}>

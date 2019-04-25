@@ -55,6 +55,16 @@
     margin-right: auto;
     width: auto;
 
+    a {
+      color: #656565;
+    }
+
+    a:hover {
+      color: #656565;
+      text-decoration: underline;
+      cursor: pointer;
+    }
+
     td {
       vertical-align: middle;
     }
@@ -154,5 +164,20 @@
       padding: 2px;
       border: 0;
     }
+  }
+}
+
+
+.explanation-popover-table
+{
+  td:first-child
+  {
+    font-weight: bold;
+    padding-right: 20px;
+  }
+
+  td.underline
+  {
+    border-bottom: 1px solid black;
   }
 }

@@ -47,10 +47,10 @@ class ViewTenants extends React.Component
                                 <NavLink to={`${this.props.match.url}/leasing_costs`} activeClassName="active"
                                          tag={RRNavLink}>Leasing Costs</NavLink>
                             </NavItem>
-                            <NavItem>
-                                <NavLink to={`${this.props.match.url}/vacancy_schedule`} activeClassName="active"
-                                         tag={RRNavLink}>Vacancy Schedule</NavLink>
-                            </NavItem>
+                            {/*<NavItem>*/}
+                                {/*<NavLink to={`${this.props.match.url}/vacancy_schedule`} activeClassName="active"*/}
+                                         {/*tag={RRNavLink}>Vacancy Schedule</NavLink>*/}
+                            {/*</NavItem>*/}
                         </Nav>
                     </Col>
                 </Row>,

@@ -162,7 +162,7 @@ class FieldDisplayEdit extends React.Component
 
     cleanValue(value)
     {
-        if (this.props.type === 'currency' || this.props.type === 'number' || this.props.type === 'percent' || this.props.type === 'length' || this.props.type === 'area')
+        if (this.props.type === 'currency' || this.props.type === 'number' || this.props.type === 'percent' || this.props.type === 'length' || this.props.type === 'area' || this.props.type === 'acres')
         {
             const isNegative = value.toString().indexOf("-") !== -1 || value.toString().indexOf("(") !== -1 || value.toString().indexOf(")") !== -1;
 

@@ -41,6 +41,7 @@ class RentTypeSelector extends React.Component
                 value={this.props.value}
                 title={this.props.title || this.props.placeholder}
                 disabled={this.props.disabled}
+                style={{"color": !this.props.value ? "lightgrey" : ""}}
 
             >
                 <option value={""}>Rent Type</option>

@@ -18,7 +18,7 @@ class Tenancy(EmbeddedDocument):
     # The free rent period in months
     freeRentMonths = FloatField()
 
-    recoveryStructure = StringField(default="Default")
+    recoveryStructure = StringField(default="Standard")
 
     # This specifies the rent-type. This can be either "NET" or "GROSS"
     rentType = StringField(choices=["net", "gross", "", None], default="net", null=True)
@@ -61,7 +61,7 @@ class Unit(EmbeddedDocument):
     marketRent = StringField()
 
     # The Leasing Cost Structure
-    leasingCostStructure = StringField(default="Default")
+    leasingCostStructure = StringField(default="Standard")
 
     # General comments on the unit
     remarks = StringField()

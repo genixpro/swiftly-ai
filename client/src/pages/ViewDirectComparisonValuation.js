@@ -1,6 +1,7 @@
 import React from 'react';
 import {Row, Col, Card, CardBody, Table, Dropdown, DropdownItem, DropdownMenu, DropdownToggle} from 'reactstrap';
 import NumberFormat from 'react-number-format';
+import {Link} from "react-router-dom"
 import axios from "axios/index";
 import FieldDisplayEdit from './components/FieldDisplayEdit';
 import AppraisalContentHeader from "./components/AppraisalContentHeader";
@@ -134,7 +135,7 @@ class ViewDirectComparisonValuation extends React.Component
     render()
     {
         return [
-            <AppraisalContentHeader appraisal={this.props.appraisal} title="Direct Comparison Valuation"/>,
+            <AppraisalContentHeader appraisal={this.props.appraisal} title="Direct Comparison Approach"/>,
             <Row className={"view-direct-comparison-valuation"}>
                 <Col xs={12}>
                     <Card className="card-default">
@@ -199,13 +200,7 @@ class ViewDirectComparisonValuation extends React.Component
                                         </td>
                                         <td className={"amount-column"}></td>
                                         <td className={"amount-total-column"}>
-                                            $<NumberFormat
-                                            value={this.props.appraisal.directComparisonValuation.comparativeValue}
-                                            displayType={'text'}
-                                            thousandSeparator={', '}
-                                            decimalScale={2}
-                                            fixedDecimalScale={true}
-                                        />
+                                            <CurrencyFormat value={this.props.appraisal.directComparisonValuation.comparativeValue}/>
                                         </td>
                                     </tr>
 
@@ -213,17 +208,15 @@ class ViewDirectComparisonValuation extends React.Component
                                         this.props.appraisal.directComparisonValuation.marketRentDifferential ?
                                             <tr className={"data-row capitalization-row"}>
                                                 <td className={"label-column"}>
-                                                    <span>Market Rent Differential, Discounted @ <PercentFormat value={this.props.appraisal.directComparisonValuationInputs.marketRentDifferentialDiscountRate}/></span>
+                                                    <Link to={`/appraisal/${this.props.appraisal._id}/tenants/market_rents`}>
+                                                        <span>Market Rent Differential, Discounted @ <PercentFormat value={this.props.appraisal.directComparisonInputs.marketRentDifferentialDiscountRate}/></span>
+                                                    </Link>
                                                 </td>
                                                 <td className={"amount-column"}></td>
                                                 <td className={"amount-total-column"}>
-                                                    $<NumberFormat
-                                                    value={this.props.appraisal.directComparisonValuation.marketRentDifferential}
-                                                    displayType={'text'}
-                                                    thousandSeparator={', '}
-                                                    decimalScale={2}
-                                                    fixedDecimalScale={true}
-                                                />
+                                                    <Link to={`/appraisal/${this.props.appraisal._id}/tenants/market_rents`}>
+                                                        <CurrencyFormat value={this.props.appraisal.directComparisonValuation.marketRentDifferential} />
+                                                    </Link>
                                                 </td>
                                             </tr> : null
                                     }
@@ -235,13 +228,7 @@ class ViewDirectComparisonValuation extends React.Component
                                                 </td>
                                                 <td className={"amount-column"}></td>
                                                 <td className={"amount-total-column"}>
-                                                    $<NumberFormat
-                                                    value={this.props.appraisal.directComparisonValuation.freeRentDifferential}
-                                                    displayType={'text'}
-                                                    thousandSeparator={', '}
-                                                    decimalScale={2}
-                                                    fixedDecimalScale={true}
-                                                />
+                                                    <CurrencyFormat value={this.props.appraisal.directComparisonValuation.freeRentDifferential} />
                                                 </td>
                                             </tr> : null
                                     }
@@ -249,17 +236,15 @@ class ViewDirectComparisonValuation extends React.Component
                                         this.props.appraisal.directComparisonValuation.vacantUnitDifferential ?
                                             <tr className={"data-row capitalization-row"}>
                                                 <td className={"label-column"}>
-                                                    <span>Vacant Unit Differential</span>
+                                                    <Link to={`/appraisal/${this.props.appraisal._id}/tenants/leasing_costs`}>
+                                                        <span>Lease Up Costs</span>
+                                                    </Link>
                                                 </td>
                                                 <td className={"amount-column"}></td>
                                                 <td className={"amount-total-column"}>
-                                                    $<NumberFormat
-                                                    value={this.props.appraisal.directComparisonValuation.vacantUnitDifferential}
-                                                    displayType={'text'}
-                                                    thousandSeparator={', '}
-                                                    decimalScale={2}
-                                                    fixedDecimalScale={true}
-                                                />
+                                                    <Link to={`/appraisal/${this.props.appraisal._id}/tenants/leasing_costs`}>
+                                                        <CurrencyFormat value={this.props.appraisal.directComparisonValuation.vacantUnitDifferential} />
+                                                    </Link>
                                                 </td>
                                             </tr> : null
                                     }
@@ -267,17 +252,15 @@ class ViewDirectComparisonValuation extends React.Component
                                         this.props.appraisal.directComparisonValuation.amortizationDifferential ?
                                             <tr className={"data-row capitalization-row"}>
                                                 <td className={"label-column"}>
-                                                    <span>Amortized Capital Investment</span>
+                                                    <Link to={`/appraisal/${this.props.appraisal._id}/tenants/amortization`}>
+                                                        <span>Amortized Capital Investment</span>
+                                                    </Link>
                                                 </td>
                                                 <td className={"amount-column"}></td>
                                                 <td className={"amount-total-column"}>
-                                                    $<NumberFormat
-                                                    value={this.props.appraisal.directComparisonValuation.amortizationDifferential}
-                                                    displayType={'text'}
-                                                    thousandSeparator={', '}
-                                                    decimalScale={2}
-                                                    fixedDecimalScale={true}
-                                                />
+                                                    <Link to={`/appraisal/${this.props.appraisal._id}/tenants/amortization`}>
+                                                        <CurrencyFormat value={this.props.appraisal.directComparisonValuation.amortizationDifferential} />
+                                                    </Link>
                                                 </td>
                                             </tr> : null
                                     }
@@ -333,13 +316,7 @@ class ViewDirectComparisonValuation extends React.Component
                                         </td>
                                         <td className={"amount-column"}></td>
                                         <td className={"amount-total-column"}>
-                                            $<NumberFormat
-                                            value={this.props.appraisal.directComparisonValuation.valuation}
-                                            displayType={'text'}
-                                            thousandSeparator={', '}
-                                            decimalScale={2}
-                                            fixedDecimalScale={true}
-                                        />
+                                            <CurrencyFormat value={this.props.appraisal.directComparisonValuation.valuation} />
                                         </td>
                                     </tr>
 
@@ -349,13 +326,7 @@ class ViewDirectComparisonValuation extends React.Component
                                         </td>
                                         <td className={"amount-column"}></td>
                                         <td className={"amount-total-column"}>
-                                            $<NumberFormat
-                                            value={this.props.appraisal.directComparisonValuation.valuationRounded}
-                                            displayType={'text'}
-                                            thousandSeparator={', '}
-                                            decimalScale={2}
-                                            fixedDecimalScale={true}
-                                        />
+                                            <CurrencyFormat value={this.props.appraisal.directComparisonValuation.valuationRounded}/>
                                         </td>
                                     </tr>
                                     </tbody>
@@ -384,7 +355,7 @@ class ViewDirectComparisonValuation extends React.Component
                                                         <FieldDisplayEdit
                                                             type={"percent"}
                                                             placeholder={"Market Rent Differential Discount Rate"}
-                                                            value={this.props.appraisal.directComparisonValuationInputs ? this.props.appraisal.directComparisonValuationInputs.marketRentDifferentialDiscountRate : 5.0}
+                                                            value={this.props.appraisal.directComparisonInputs ? this.props.appraisal.directComparisonInputs.marketRentDifferentialDiscountRate : 5.0}
                                                             onChange={(newValue) => this.changeStabilizedInput("marketRentDifferentialDiscountRate", newValue)}
                                                         />
                                                     </td>

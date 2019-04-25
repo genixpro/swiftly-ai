@@ -102,12 +102,12 @@ class Appraisal(Document):
 
     # A list of recovery structures for this building
     recoveryStructures = ListField(EmbeddedDocumentField(RecoveryStructure), default=[
-        RecoveryStructure(name="Default",
-                          managementCalculationRule=CalculationRule(percentage=15, field="managementExpenses"),
+        RecoveryStructure(name="Standard",
+                          managementCalculationRule=CalculationRule(percentage=15, field="operatingExpensesAndTaxes"),
                           expenseRecoveries={}
                           )
     ])
 
     # A list of recovery structures for this building
-    leasingCosts = ListField(EmbeddedDocumentField(LeasingCostStructure), default=[LeasingCostStructure(name="Default")])
+    leasingCosts = ListField(EmbeddedDocumentField(LeasingCostStructure), default=[LeasingCostStructure(name="Standard")])
 

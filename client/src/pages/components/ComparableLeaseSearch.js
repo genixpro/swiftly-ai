@@ -100,7 +100,7 @@ class ComparableLeaseSearch extends React.Component
                                     </tr>
                                     <tr>
                                         <td>
-                                            <strong>Tags:</strong>
+                                            <strong>Sub Type:</strong>
                                         </td>
                                         <td>
                                             {

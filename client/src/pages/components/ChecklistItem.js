@@ -22,8 +22,8 @@ class ChecklistItem extends React.Component
                 &nbsp;
                 &nbsp;
                 <span>{this.props.title}</span>
-                &nbsp;-&nbsp;
-                <span>{this.props.description}</span>
+                {/*&nbsp;-&nbsp;*/}
+                {/*<span>{this.props.description}</span>*/}
                 <br/>
             </span>
 

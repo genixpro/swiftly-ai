@@ -16,13 +16,26 @@ class CurrencyFormat extends React.Component
             return <span>n/a</span>;
         }
 
-        return <span>$<NumberFormat
-            value={this.props.value}
-            displayType={'text'}
-            thousandSeparator={', '}
-            decimalScale={this.props.cents ? 2 : 0}
-            fixedDecimalScale={true}
-        /></span>
+        if (this.props.value < 0)
+        {
+            return <span>($<NumberFormat
+                value={-this.props.value}
+                displayType={'text'}
+                thousandSeparator={', '}
+                decimalScale={this.props.cents ? 2 : 0}
+                fixedDecimalScale={true}
+            />)</span>
+        }
+        else
+        {
+            return <span>$<NumberFormat
+                value={this.props.value}
+                displayType={'text'}
+                thousandSeparator={', '}
+                decimalScale={this.props.cents ? 2 : 0}
+                fixedDecimalScale={true}
+            /></span>
+        }
     }
 }
 

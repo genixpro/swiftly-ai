@@ -81,40 +81,46 @@ class ComparableSaleSearch extends React.Component
                                             }
                                         </td>
                                     </tr>
-                                    <tr>
-                                        <td>
-                                            <strong>Cap Rate Low:</strong>
-                                        </td>
-                                        <td>
-                                            {
-                                                <FieldDisplayEdit
-                                                    isSearch={true}
-                                                    type={"number"}
-                                                    value={this.state.search.capitalizationRateFrom}
-                                                    onChange={(newValue) => this.changeSearchField("capitalizationRateFrom", newValue)}
-                                                    hideInput={false}
-                                                    hideIcon={true}
-                                                />
-                                            }
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            <strong>Cap Rate High:</strong>
-                                        </td>
-                                        <td>
-                                            {
-                                                <FieldDisplayEdit
-                                                    isSearch={true}
-                                                    type={"number"}
-                                                    value={this.state.search.capitalizationRateTo}
-                                                    onChange={(newValue) => this.changeSearchField("capitalizationRateTo", newValue)}
-                                                    hideInput={false}
-                                                    hideIcon={true}
-                                                />
-                                            }
-                                        </td>
-                                    </tr>
+                                    {
+                                        this.props.appraisal.propertyType !== 'land' ?
+                                            <tr>
+                                                <td>
+                                                    <strong>Cap Rate Low:</strong>
+                                                </td>
+                                                <td>
+                                                    {
+                                                        <FieldDisplayEdit
+                                                            isSearch={true}
+                                                            type={"number"}
+                                                            value={this.state.search.capitalizationRateFrom}
+                                                            onChange={(newValue) => this.changeSearchField("capitalizationRateFrom", newValue)}
+                                                            hideInput={false}
+                                                            hideIcon={true}
+                                                        />
+                                                    }
+                                                </td>
+                                            </tr> : null
+                                    }
+                                    {
+                                        this.props.appraisal.propertyType !== 'land' ?
+                                            <tr>
+                                                <td>
+                                                    <strong>Cap Rate High:</strong>
+                                                </td>
+                                                <td>
+                                                    {
+                                                        <FieldDisplayEdit
+                                                            isSearch={true}
+                                                            type={"number"}
+                                                            value={this.state.search.capitalizationRateTo}
+                                                            onChange={(newValue) => this.changeSearchField("capitalizationRateTo", newValue)}
+                                                            hideInput={false}
+                                                            hideIcon={true}
+                                                        />
+                                                    }
+                                                </td>
+                                            </tr> : null
+                                    }
                                     {
                                         this.props.appraisal.propertyType === 'industrial' ?
                                             <tr>
@@ -149,6 +155,48 @@ class ComparableSaleSearch extends React.Component
                                                             type={"length"}
                                                             value={this.state.search.clearCeilingHeightTo}
                                                             onChange={(newValue) => this.changeSearchField("clearCeilingHeightTo", newValue)}
+                                                            hideInput={false}
+                                                            hideIcon={true}
+
+                                                        />
+                                                    }
+                                                </td>
+                                            </tr> : null
+                                    }
+                                    {
+                                        this.props.appraisal.propertyType === 'land' ?
+                                            <tr>
+                                                <td>
+                                                    <strong>Price Per Acre Low:</strong>
+                                                </td>
+                                                <td>
+                                                    {
+                                                        <FieldDisplayEdit
+                                                            isSearch={true}
+                                                            type={"currency"}
+                                                            value={this.state.search.pricePerAcreLandFrom}
+                                                            onChange={(newValue) => this.changeSearchField("pricePerAcreLandFrom", newValue)}
+                                                            hideInput={false}
+                                                            hideIcon={true}
+
+                                                        />
+                                                    }
+                                                </td>
+                                            </tr> : null
+                                    }
+                                    {
+                                        this.props.appraisal.propertyType === 'land' ?
+                                            <tr>
+                                                <td>
+                                                    <strong>Price Per Acre High:</strong>
+                                                </td>
+                                                <td>
+                                                    {
+                                                        <FieldDisplayEdit
+                                                            isSearch={true}
+                                                            type={"currency"}
+                                                            value={this.state.search.pricePerAcreLandTo}
+                                                            onChange={(newValue) => this.changeSearchField("pricePerAcreLandTo", newValue)}
                                                             hideInput={false}
                                                             hideIcon={true}
 
@@ -276,76 +324,131 @@ class ComparableSaleSearch extends React.Component
                                 </Col>
                                 <Col xs={12} sm={6} md={4}>
                                     <tbody>
-                                    <tr>
-                                        <td>
-                                            <strong>Leasable Area Low:</strong>
-                                        </td>
-                                        <td>
-                                            {
-                                                <FieldDisplayEdit
-                                                    isSearch={true}
-                                                    type={"number"}
-                                                    value={this.state.search.leasableAreaFrom}
-                                                    onChange={(newValue) => this.changeSearchField("leasableAreaFrom", newValue)}
-                                                    hideInput={false}
-                                                    hideIcon={true}
-                                                />
-                                            }
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            <strong>Leasable Area High:</strong>
-                                        </td>
-                                        <td>
-                                            {
-                                                <FieldDisplayEdit
-                                                    isSearch={true}
-                                                    type={"number"}
-                                                    value={this.state.search.leasableAreaTo}
-                                                    onChange={(newValue) => this.changeSearchField("leasableAreaTo", newValue)}
-                                                    hideInput={false}
-                                                    hideIcon={true}
+                                    {
+                                        this.props.appraisal.propertyType !== 'land' ?
+                                            <tr>
+                                                <td>
+                                                    <strong>Leasable Area Low:</strong>
+                                                </td>
+                                                <td>
+                                                    {
+                                                        <FieldDisplayEdit
+                                                            isSearch={true}
+                                                            type={"number"}
+                                                            value={this.state.search.leasableAreaFrom}
+                                                            onChange={(newValue) => this.changeSearchField("leasableAreaFrom", newValue)}
+                                                            hideInput={false}
+                                                            hideIcon={true}
+                                                        />
+                                                    }
+                                                </td>
+                                            </tr> : null
+                                    }
+                                    {
+                                        this.props.appraisal.propertyType !== 'land' ?
+                                            <tr>
+                                                <td>
+                                                    <strong>Leasable Area High:</strong>
+                                                </td>
+                                                <td>
+                                                    {
+                                                        <FieldDisplayEdit
+                                                            isSearch={true}
+                                                            type={"number"}
+                                                            value={this.state.search.leasableAreaTo}
+                                                            onChange={(newValue) => this.changeSearchField("leasableAreaTo", newValue)}
+                                                            hideInput={false}
+                                                            hideIcon={true}
 
-                                                />
-                                            }
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            <strong>Price Per Square Foot Low:</strong>
-                                        </td>
-                                        <td>
-                                            {
-                                                <FieldDisplayEdit
-                                                    isSearch={true}
-                                                    type={"number"}
-                                                    value={this.state.search.pricePerSquareFootFrom}
-                                                    onChange={(newValue) => this.changeSearchField("pricePerSquareFootFrom", newValue)}
-                                                    hideInput={false}
-                                                    hideIcon={true}
-                                                />
-                                            }
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            <strong>Price Per Square Foot Low:</strong>
-                                        </td>
-                                        <td>
-                                            {
-                                                <FieldDisplayEdit
-                                                    isSearch={true}
-                                                    type={"number"}
-                                                    value={this.state.search.pricePerSquareFootTo}
-                                                    onChange={(newValue) => this.changeSearchField("pricePerSquareFootTo", newValue)}
-                                                    hideInput={false}
-                                                    hideIcon={true}
+                                                        />
+                                                    }
+                                                </td>
+                                            </tr> : null
+                                    }
+                                    {
+                                        this.props.appraisal.propertyType !== 'land' ?
+                                            <tr>
+                                                <td>
+                                                    <strong>Price Per Square Foot Low:</strong>
+                                                </td>
+                                                <td>
+                                                    {
+                                                        <FieldDisplayEdit
+                                                            isSearch={true}
+                                                            type={"number"}
+                                                            value={this.state.search.pricePerSquareFootFrom}
+                                                            onChange={(newValue) => this.changeSearchField("pricePerSquareFootFrom", newValue)}
+                                                            hideInput={false}
+                                                            hideIcon={true}
+                                                        />
+                                                    }
+                                                </td>
+                                            </tr> : null
+                                    }
 
-                                                />
-                                            }
-                                        </td>
-                                    </tr>
+                                    {
+                                        this.props.appraisal.propertyType !== 'land' ?
+                                            <tr>
+                                                <td>
+                                                    <strong>Price Per Square Foot Low:</strong>
+                                                </td>
+                                                <td>
+                                                    {
+                                                        <FieldDisplayEdit
+                                                            isSearch={true}
+                                                            type={"number"}
+                                                            value={this.state.search.pricePerSquareFootTo}
+                                                            onChange={(newValue) => this.changeSearchField("pricePerSquareFootTo", newValue)}
+                                                            hideInput={false}
+                                                            hideIcon={true}
+
+                                                        />
+                                                    }
+                                                </td>
+                                            </tr> : null
+                                    }
+                                    {
+                                        this.props.appraisal.propertyType === 'land' ?
+                                            <tr>
+                                                <td>
+                                                    <strong>Price Per Square Foot Buildable Low:</strong>
+                                                </td>
+                                                <td>
+                                                    {
+                                                        <FieldDisplayEdit
+                                                            isSearch={true}
+                                                            type={"number"}
+                                                            value={this.state.search.pricePerSquareFootBuildableAreaFrom}
+                                                            onChange={(newValue) => this.changeSearchField("pricePerSquareFootBuildableAreaFrom", newValue)}
+                                                            hideInput={false}
+                                                            hideIcon={true}
+                                                        />
+                                                    }
+                                                </td>
+                                            </tr> : null
+                                    }
+
+                                    {
+                                        this.props.appraisal.propertyType === 'land' ?
+                                            <tr>
+                                                <td>
+                                                    <strong>Price Per Square Foot Buildable High:</strong>
+                                                </td>
+                                                <td>
+                                                    {
+                                                        <FieldDisplayEdit
+                                                            isSearch={true}
+                                                            type={"number"}
+                                                            value={this.state.search.pricePerSquareFootBuildableAreaTo}
+                                                            onChange={(newValue) => this.changeSearchField("pricePerSquareFootBuildableAreaTo", newValue)}
+                                                            hideInput={false}
+                                                            hideIcon={true}
+
+                                                        />
+                                                    }
+                                                </td>
+                                            </tr> : null
+                                    }
                                     {
                                         this.props.appraisal.propertyType === 'industrial' ?
                                             <tr>

@@ -50,7 +50,7 @@ class ChecklistGroup extends React.Component {
                 </CardHeader>
                 <Collapse isOpen={this.state.detailsOpen}>
                     <CardBody>
-                        <p>{this.props.description}</p>
+                        {/*<p>{this.props.description}</p>*/}
                         {this.props.children}
                     </CardBody>
                 </Collapse>
