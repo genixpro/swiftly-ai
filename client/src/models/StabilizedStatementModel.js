@@ -13,6 +13,8 @@ class StabilizedStatementModel extends BaseModel
 
     static operatingExpenseRecovery = new FloatField();
 
+    static taxRecovery = new FloatField();
+
     static recoverableIncome = new FloatField();
 
     static potentialGrossIncome = new FloatField();
@@ -47,11 +49,13 @@ class StabilizedStatementModel extends BaseModel
 
     static marketRentDifferential = new FloatField();
 
-    static freeRentDifferential = new FloatField();
+    static freeRentRentLoss = new FloatField();
 
-    static vacantUnitDifferential = new FloatField();
+    static vacantUnitRentLoss = new FloatField();
 
-    static amortizationDifferential = new FloatField();
+    static vacantUnitLeasupCosts = new FloatField();
+
+    static amortizedCapitalInvestment = new FloatField();
 }
 
 export default StabilizedStatementModel;

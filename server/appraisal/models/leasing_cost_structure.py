@@ -8,8 +8,14 @@ class LeasingCostStructure(EmbeddedDocument):
     # The name of this leasing cost structure
     name = StringField()
 
-    # The cost of making a new lease
+    # The cost of making a new lease, on a PSF basis
     leasingCommissionPSF = FloatField(default=0.5)
+
+    # The cost of making a new lease, on a percentage of rent basis
+    leasingCommissionPercent = FloatField(default=20)
+
+    # Whether leasing commission is given as a percentage of rent or a PSF rate
+    leasingCommissionMode = StringField(default='psf', choices=['percent_of_rent', 'psf'])
 
     # The cost of tenant inducements for new tenants
     tenantInducementsPSF = FloatField(default=1.5)

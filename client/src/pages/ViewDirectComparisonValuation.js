@@ -221,35 +221,51 @@ class ViewDirectComparisonValuation extends React.Component
                                             </tr> : null
                                     }
                                     {
-                                        this.props.appraisal.directComparisonValuation.freeRentDifferential ?
+                                        this.props.appraisal.directComparisonValuation.freeRentRentLoss ?
                                             <tr className={"data-row capitalization-row"}>
                                                 <td className={"label-column"}>
-                                                    <span>Free Rent Differential</span>
+                                                    <span>Free Rent Gross Rent Loss</span>
                                                 </td>
                                                 <td className={"amount-column"}></td>
                                                 <td className={"amount-total-column"}>
-                                                    <CurrencyFormat value={this.props.appraisal.directComparisonValuation.freeRentDifferential} />
+                                                    <CurrencyFormat value={this.props.appraisal.directComparisonValuation.freeRentRentLoss} />
                                                 </td>
                                             </tr> : null
                                     }
                                     {
-                                        this.props.appraisal.directComparisonValuation.vacantUnitDifferential ?
+                                        this.props.appraisal.directComparisonValuation.vacantUnitLeasupCosts ?
                                             <tr className={"data-row capitalization-row"}>
                                                 <td className={"label-column"}>
                                                     <Link to={`/appraisal/${this.props.appraisal._id}/tenants/leasing_costs`}>
-                                                        <span>Lease Up Costs</span>
+                                                        <span>Vacant Unit Lease Up Costs</span>
                                                     </Link>
                                                 </td>
                                                 <td className={"amount-column"}></td>
                                                 <td className={"amount-total-column"}>
                                                     <Link to={`/appraisal/${this.props.appraisal._id}/tenants/leasing_costs`}>
-                                                        <CurrencyFormat value={this.props.appraisal.directComparisonValuation.vacantUnitDifferential} />
+                                                        <CurrencyFormat value={this.props.appraisal.directComparisonValuation.vacantUnitLeasupCosts} />
                                                     </Link>
                                                 </td>
                                             </tr> : null
                                     }
                                     {
-                                        this.props.appraisal.directComparisonValuation.amortizationDifferential ?
+                                        this.props.appraisal.directComparisonValuation.vacantUnitRentLoss ?
+                                            <tr className={"data-row capitalization-row"}>
+                                                <td className={"label-column"}>
+                                                    <Link to={`/appraisal/${this.props.appraisal._id}/tenants/leasing_costs`}>
+                                                        <span>Vacant Unit Gross Rent Loss</span>
+                                                    </Link>
+                                                </td>
+                                                <td className={"amount-column"}></td>
+                                                <td className={"amount-total-column"}>
+                                                    <Link to={`/appraisal/${this.props.appraisal._id}/tenants/leasing_costs`}>
+                                                        <CurrencyFormat value={this.props.appraisal.directComparisonValuation.vacantUnitRentLoss} />
+                                                    </Link>
+                                                </td>
+                                            </tr> : null
+                                    }
+                                    {
+                                        this.props.appraisal.directComparisonValuation.amortizedCapitalInvestment ?
                                             <tr className={"data-row capitalization-row"}>
                                                 <td className={"label-column"}>
                                                     <Link to={`/appraisal/${this.props.appraisal._id}/tenants/amortization`}>
@@ -259,7 +275,7 @@ class ViewDirectComparisonValuation extends React.Component
                                                 <td className={"amount-column"}></td>
                                                 <td className={"amount-total-column"}>
                                                     <Link to={`/appraisal/${this.props.appraisal._id}/tenants/amortization`}>
-                                                        <CurrencyFormat value={this.props.appraisal.directComparisonValuation.amortizationDifferential} />
+                                                        <CurrencyFormat value={this.props.appraisal.directComparisonValuation.amortizedCapitalInvestment} />
                                                     </Link>
                                                 </td>
                                             </tr> : null

@@ -62,31 +62,41 @@ class App extends React.Component
             });
         }
 
-        if (this.props.appraisal.stabilizedStatement.freeRentDifferential)
+        if (this.props.appraisal.stabilizedStatement.freeRentRentLoss)
         {
             rows.push({
-                "label": "Free Rent Differential",
-                "amount": <CurrencyValue cents={false}>{this.props.appraisal.stabilizedStatement.freeRentDifferential}</CurrencyValue>,
+                "label": "Free Rent Loss",
+                "amount": <CurrencyValue cents={false}>{this.props.appraisal.stabilizedStatement.freeRentRentLoss}</CurrencyValue>,
                 "amountTotal": null,
                 "mode": "data"
             });
         }
 
-        if (this.props.appraisal.stabilizedStatement.vacantUnitDifferential)
+        if (this.props.appraisal.stabilizedStatement.vacantUnitRentLoss)
         {
             rows.push({
-                "label": "Vacant Unit Differential",
-                "amount": <CurrencyValue cents={false}>{this.props.appraisal.stabilizedStatement.vacantUnitDifferential}</CurrencyValue>,
+                "label": "Vacant Unit Rent Loss",
+                "amount": <CurrencyValue cents={false}>{this.props.appraisal.stabilizedStatement.vacantUnitRentLoss}</CurrencyValue>,
                 "amountTotal": null,
                 "mode": "data"
             });
         }
 
-        if (this.props.appraisal.stabilizedStatement.amortizationDifferential)
+        if (this.props.appraisal.stabilizedStatement.vacantUnitLeasupCosts)
         {
             rows.push({
-                "label": "Amortization Differential",
-                "amount": <CurrencyValue cents={false}>{this.props.appraisal.stabilizedStatement.amortizationDifferential}</CurrencyValue>,
+                "label": "Vacant Unit Leasup Costs",
+                "amount": <CurrencyValue cents={false}>{this.props.appraisal.stabilizedStatement.vacantUnitLeasupCosts}</CurrencyValue>,
+                "amountTotal": null,
+                "mode": "data"
+            });
+        }
+
+        if (this.props.appraisal.stabilizedStatement.amortizedCapitalInvestment)
+        {
+            rows.push({
+                "label": "Amortized Capital Investment",
+                "amount": <CurrencyValue cents={false}>{this.props.appraisal.stabilizedStatement.amortizedCapitalInvestment}</CurrencyValue>,
                 "amountTotal": null,
                 "mode": "data"
             });

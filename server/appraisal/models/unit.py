@@ -60,11 +60,34 @@ class Unit(EmbeddedDocument):
     # Market Rent
     marketRent = StringField()
 
+    # Whether a market rent differential should be calculated
+    shouldApplyMarketRentDifferential = BooleanField(default=False)
+
+    # Whether the market rent should be used in place of the current rent in the stabilized statement
+    shouldUseMarketRent = BooleanField(default=True)
+
+    # Whether this unit should be considered vacant for the purposes of calculation
+    shouldTreatAsVacant = BooleanField(default=None, null=True)
+
     # The Leasing Cost Structure
     leasingCostStructure = StringField(default="Standard")
 
     # General comments on the unit
     remarks = StringField()
+
+    calculatedManagementRecovery = FloatField(default=0)
+
+    calculatedExpenseRecovery = FloatField(default=0)
+
+    calculatedTaxRecovery = FloatField(default=0)
+
+    calculatedMarketRentDifferential = FloatField(default=0)
+
+    calculatedFreeRentLoss = FloatField(default=0)
+
+    calculatedVacantUnitRentLoss = FloatField(default=0)
+
+    calculatedVacantUnitLeasupCosts = FloatField(default=0)
 
     @property
     def currentTenancy(self):
@@ -80,6 +103,13 @@ class Unit(EmbeddedDocument):
             return sortedTenancies[-1]
         else:
             return None
+
+    @property
+    def isVacantForStabilizedStatement(self):
+        if self.shouldTreatAsVacant is not None:
+            return self.shouldTreatAsVacant
+        else:
+            return self.isVacantInFirstYear
 
     @property
     def isVacantInFirstYear(self):

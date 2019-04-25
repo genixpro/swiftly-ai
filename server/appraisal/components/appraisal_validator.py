@@ -109,7 +109,7 @@ class AppraisalValidator:
         return False
 
     def checkAmortization(self, appraisal):
-        if appraisal.stabilizedStatement.amortizationDifferential and appraisal.stabilizedStatement.amortizationDifferential > 0:
+        if appraisal.stabilizedStatement.amortizedCapitalInvestment and appraisal.stabilizedStatement.amortizedCapitalInvestment > 0:
             return True
         return False
 

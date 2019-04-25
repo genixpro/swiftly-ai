@@ -4,6 +4,8 @@ from appraisal.models.extraction_reference import ExtractionReference
 
 
 class StabilizedStatement(EmbeddedDocument):
+    meta = {'strict': False}
+
     rentalIncome = FloatField()
 
     additionalIncome = FloatField()
@@ -15,6 +17,8 @@ class StabilizedStatement(EmbeddedDocument):
     managementRecovery = FloatField()
 
     operatingExpenseRecovery = FloatField()
+
+    taxRecovery = FloatField()
 
     vacancyDeduction = FloatField()
 
@@ -40,11 +44,13 @@ class StabilizedStatement(EmbeddedDocument):
 
     marketRentDifferential = FloatField()
 
-    freeRentDifferential = FloatField()
+    freeRentRentLoss = FloatField()
 
-    vacantUnitDifferential = FloatField()
+    vacantUnitRentLoss = FloatField()
 
-    amortizationDifferential = FloatField()
+    vacantUnitLeasupCosts = FloatField()
+
+    amortizedCapitalInvestment = FloatField()
 
     valuation = FloatField()
 

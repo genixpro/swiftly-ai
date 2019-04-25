@@ -89,14 +89,14 @@ class GenericStabilizedStatementTest:
     def test_marketRentDifferential(self):
         self.assertWithinDollar(type(self).originalAppraisal.stabilizedStatement.marketRentDifferential, type(self).processedAppraisal.stabilizedStatement.marketRentDifferential)
 
-    def test_freeRentDifferential(self):
-        self.assertWithinDollar(type(self).originalAppraisal.stabilizedStatement.freeRentDifferential, type(self).processedAppraisal.stabilizedStatement.freeRentDifferential)
+    def test_freeRentRentLoss(self):
+        self.assertWithinDollar(type(self).originalAppraisal.stabilizedStatement.freeRentRentLoss, type(self).processedAppraisal.stabilizedStatement.freeRentRentLoss)
 
     def test_vacantUnitDifferential(self):
         self.assertWithinDollar(type(self).originalAppraisal.stabilizedStatement.vacantUnitDifferential, type(self).processedAppraisal.stabilizedStatement.vacantUnitDifferential)
 
-    def test_amortizationDifferential(self):
-        self.assertWithinDollar(type(self).originalAppraisal.stabilizedStatement.amortizationDifferential, type(self).processedAppraisal.stabilizedStatement.amortizationDifferential)
+    def test_amortizedCapitalInvestment(self):
+        self.assertWithinDollar(type(self).originalAppraisal.stabilizedStatement.amortizedCapitalInvestment, type(self).processedAppraisal.stabilizedStatement.amortizedCapitalInvestment)
 
     def test_structuralAllowance(self):
         self.assertWithinDollar(type(self).originalAppraisal.stabilizedStatement.structuralAllowance, type(self).processedAppraisal.stabilizedStatement.structuralAllowance)

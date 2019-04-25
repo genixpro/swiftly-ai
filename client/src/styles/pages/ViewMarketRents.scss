@@ -5,9 +5,115 @@
 
 .view-market-rents
 {
-  .market-rent-table
+  .market-rent-list
   {
-      border: 1px solid rgba(0, 0, 0, 0.125);
+    display: flex;
+    flex-direction: column;
+    justify-items: stretch;
+    justify-content: stretch;
+    width: fit-content;
+  }
+
+  .market-rent-editor
+  {
+    border: 1px solid lightgray;
+    width: fit-content;
+
+
+    .title
+    {
+      font-size: 150%;
+    }
+
+    .delete-button
+    {
+      float: right;
+      margin-top: 10px;
+    }
+
+    .market-rent-table
+    {
+      .header-row
+      {
+        .calculated-market-rent-differential-column
+        {
+
+        }
+      }
+
+      .label-column
+      {
+        padding-right: 15px;
+        min-width: 150px;
+      }
+
+      .value-column
+      {
+        display: flex;
+        flex-direction: row;
+        white-space: nowrap;
+        justify-content: space-between;
+        width: 100%;
+        min-width: 200px;
+      }
+
+      .calculated-market-rent-differential-column
+      {
+        padding-left: 15px;
+        text-align: right;
+        min-width: 150px;
+      }
+      .should-apply-market-rent-differential-column
+      {
+        padding-left: 15px;
+        min-width: 150px;
+      }
+      .should-use-market-rent
+      {
+        padding-left: 15px;
+        min-width: 150px;
+      }
+    }
+
+    .total-spacer-row
+    {
+      td {
+        padding-top: 15px;
+      }
+
+      .calculated-market-rent-differential-column
+      {
+        border-bottom: 1px solid black;
+      }
+      .should-apply-market-rent-differential-column
+      {
+
+      }
+    }
+
+    .total-row
+    {
+      .value-column
+      {
+        text-align: right;
+        float: right;
+      }
+    }
+  }
+
+  .new-market-rent
+  {
+    border: 0;
+    .btn {
+      border: 1px solid lightgray;
+      padding-top: 20px;
+
+      padding-bottom: 20px;
+      width: 100%;
+      height: 100%;
+      font-size: 16px;
+      color: #777;
+    }
   }
 
 }

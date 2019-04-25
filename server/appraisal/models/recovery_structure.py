@@ -12,4 +12,12 @@ class RecoveryStructure(EmbeddedDocument):
 
     managementCalculationRule = EmbeddedDocumentField(CalculationRule, default=CalculationRule(percentage=100, field="managementExpenses"))
 
+    calculatedManagementRecovery = FloatField(default=0)
+
     expenseRecoveries = DictField()
+
+    taxRecoveries = DictField()
+
+    calculatedExpenseRecoveries = DictField(default={})
+
+    calculatedTaxRecoveries = DictField(default={})

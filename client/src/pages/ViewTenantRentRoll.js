@@ -1,6 +1,7 @@
 import React from 'react';
-import { Row, Col, Button, DropdownItem, DropdownToggle, Dropdown, DropdownMenu, Alert } from 'reactstrap';
+import {Row, Col, Button, DropdownItem, DropdownToggle, Dropdown, DropdownMenu, Alert} from 'reactstrap';
 import NumberFormat from 'react-number-format';
+import {Link} from "react-router-dom";
 import _ from 'underscore';
 import FieldDisplayEdit from './components/FieldDisplayEdit';
 import Datetime from 'react-datetime';
@@ -8,42 +9,43 @@ import 'react-datetime/css/react-datetime.css'
 import UnitsTable from "./components/UnitsTable";
 import Auth from "../Auth";
 import {TenancyModel} from "../models/UnitModel";
+import CurrencyFormat from "./components/CurrencyFormat";
 
 class ViewTenantsRentRoll extends React.Component
 {
     state = {
-        selectedUnit: null
+        selectedUnitIndex: null
     };
 
-    onUnitClicked(unit)
+    onUnitClicked(unitIndex)
     {
-        this.setState({selectedUnit: unit})
+        this.setState({selectedUnitIndex: unitIndex})
     }
 
     onRemoveUnit(unitIndex)
     {
-        if (this.props.appraisal.units[unitIndex] === this.state.selectedUnit)
+        if (unitIndex === this.state.selectedUnitIndex)
         {
-            this.setState({selectedUnit: null});
+            this.setState({selectedUnitIndex: null});
         }
 
         this.props.appraisal.units.splice(unitIndex, 1);
 
-        this.props.saveAppraisal(this.props.appraisal);
+        this.props.saveAppraisal(this.props.appraisal, true);
     }
 
 
     onCreateUnit(newUnit)
     {
         this.props.appraisal.units.push(newUnit);
-        this.props.saveAppraisal(this.props.appraisal);
+        this.props.saveAppraisal(this.props.appraisal, true);
 
     }
 
     removeTenancy(unitInfo, tenancyInfo, tenancyIndex)
     {
         unitInfo.tenancies.splice(tenancyIndex, 1);
-        this.props.saveAppraisal(this.props.appraisal);
+        this.props.saveAppraisal(this.props.appraisal, true);
     }
 
     renderTenancy(unitInfo, tenantInfo, tenancyIndex)
@@ -58,7 +60,7 @@ class ViewTenantsRentRoll extends React.Component
                     hideIcon={true}
                     value={tenantInfo.name}
                     placeholder={"name"}
-                    onChange={(newValue) => this.changeTenancyField(this.state.selectedUnit, tenantInfo, 'name', newValue)}/>
+                    onChange={(newValue) => this.changeTenancyField(this.props.appraisal.units[this.state.selectedUnitIndex], tenantInfo, 'name', newValue)}/>
             </td>
             <td>
                 <FieldDisplayEdit
@@ -66,7 +68,7 @@ class ViewTenantsRentRoll extends React.Component
                     hideIcon={true}
                     value={tenantInfo.startDate}
                     placeholder={"Start Date"}
-                    onChange={(newValue) => this.changeTenancyField(this.state.selectedUnit, tenantInfo, 'startDate', newValue)}/>
+                    onChange={(newValue) => this.changeTenancyField(this.props.appraisal.units[this.state.selectedUnitIndex], tenantInfo, 'startDate', newValue)}/>
             </td>
             <td>
                 <FieldDisplayEdit
@@ -74,7 +76,7 @@ class ViewTenantsRentRoll extends React.Component
                     hideIcon={true}
                     value={tenantInfo.endDate}
                     placeholder={"End Date"}
-                    onChange={(newValue) => this.changeTenancyField(this.state.selectedUnit, tenantInfo, 'endDate', newValue)}/>
+                    onChange={(newValue) => this.changeTenancyField(this.props.appraisal.units[this.state.selectedUnitIndex], tenantInfo, 'endDate', newValue)}/>
             </td>
             <td>
                 <FieldDisplayEdit
@@ -82,7 +84,7 @@ class ViewTenantsRentRoll extends React.Component
                     hideIcon={true}
                     value={tenantInfo.rentType}
                     placeholder={"gross/net"}
-                    onChange={(newValue) => this.changeTenancyField(this.state.selectedUnit, tenantInfo, 'rentType', newValue)}/>
+                    onChange={(newValue) => this.changeTenancyField(this.props.appraisal.units[this.state.selectedUnitIndex], tenantInfo, 'rentType', newValue)}/>
             </td>
             <td>
                 <FieldDisplayEdit
@@ -90,7 +92,7 @@ class ViewTenantsRentRoll extends React.Component
                     hideIcon={true}
                     value={tenantInfo.yearlyRentPSF}
                     placeholder={"yearly rent (psf)"}
-                    onChange={(newValue) => this.changeTenancyField(this.state.selectedUnit, tenantInfo, 'yearlyRentPSF', newValue)}/>
+                    onChange={(newValue) => this.changeTenancyField(this.props.appraisal.units[this.state.selectedUnitIndex], tenantInfo, 'yearlyRentPSF', newValue)}/>
             </td>
             <td>
                 <FieldDisplayEdit
@@ -98,16 +100,18 @@ class ViewTenantsRentRoll extends React.Component
                     hideIcon={true}
                     value={tenantInfo.yearlyRent}
                     placeholder={"yearly rent"}
-                    onChange={(newValue) => this.changeTenancyField(this.state.selectedUnit, tenantInfo, 'yearlyRent', newValue)}/>
+                    onChange={(newValue) => this.changeTenancyField(this.props.appraisal.units[this.state.selectedUnitIndex], tenantInfo, 'yearlyRent', newValue)}/>
             </td>
             <td className={"action-column"}>
-                <Button
-                    color="secondary"
-                    onClick={(evt) => this.removeTenancy(unitInfo, tenantInfo, tenancyIndex)}
-                    title={"New Tenancy"}
-                >
-                    <i className="fa fa-trash-alt"></i>
-                </Button>
+                {
+                    tenancyIndex !== 0 ? <Button
+                        color="secondary"
+                        onClick={(evt) => this.removeTenancy(unitInfo, tenantInfo, tenancyIndex)}
+                        title={"New Tenancy"}
+                    >
+                        <i className="fa fa-trash-alt"></i>
+                    </Button> : null
+                }
             </td>
         </tr>;
     }
@@ -115,18 +119,16 @@ class ViewTenantsRentRoll extends React.Component
 
     createNewTenancy(field, value)
     {
-        const newTenancy = {
-        };
+        const newTenancy = new TenancyModel({}, this.props.appraisal.units[this.state.selectedUnitIndex]);
 
         if (field)
         {
             newTenancy[field] = value;
         }
 
-        this.state.selectedUnit.tenancies.push(new TenancyModel(newTenancy));
-        this.props.saveAppraisal(this.props.appraisal);
+        this.props.appraisal.units[this.state.selectedUnitIndex].tenancies.push(newTenancy);
+        this.props.saveAppraisal(this.props.appraisal, true);
     }
-
 
 
     renderNewTenancyRow()
@@ -136,7 +138,7 @@ class ViewTenantsRentRoll extends React.Component
                 <FieldDisplayEdit
                     hideIcon={true}
                     value={""}
-                    placeholder={"name"}
+                    placeholder={"Name"}
                     onChange={_.once((newValue) => this.createNewTenancy("name", newValue))}
                 />
             </td>
@@ -147,22 +149,22 @@ class ViewTenantsRentRoll extends React.Component
                     placeholder={"Start Date"}
                     hideIcon={true}
 
-                    onChange={(newValue) => newValue.toDate ? this.createNewTenancy('startDate', newValue.toDate()) : null }
-                    />
+                    onChange={(newValue) => newValue.toDate ? this.createNewTenancy('startDate', newValue.toDate()) : null}
+                />
             </td>
             <td>
                 <FieldDisplayEdit
                     type='date'
                     placeholder={"End Date"}
                     hideIcon={true}
-                    onChange={(newValue) => newValue.toDate ? this.createNewTenancy('endDate', newValue.toDate()) : null }
-                    />
+                    onChange={(newValue) => newValue.toDate ? this.createNewTenancy('endDate', newValue.toDate()) : null}
+                />
             </td>
             <td>
                 <FieldDisplayEdit
                     type='rentType'
                     value={""}
-                    placeholder={"net vs gross"}
+                    placeholder={"Net vs Gross"}
                     hideIcon={true}
                     onChange={(newValue) => this.createNewTenancy('rentType', newValue)}/>
             </td>
@@ -170,7 +172,7 @@ class ViewTenantsRentRoll extends React.Component
                 <FieldDisplayEdit
                     type='currency'
                     value={""}
-                    placeholder={"annual rent psf"}
+                    placeholder={"Annual rent psf"}
                     hideIcon={true}
                     onChange={(newValue) => this.createNewTenancy('yearlyRentPSF', newValue)}/>
             </td>
@@ -178,7 +180,7 @@ class ViewTenantsRentRoll extends React.Component
                 <FieldDisplayEdit
                     type='currency'
                     value={""}
-                    placeholder={"annual rent"}
+                    placeholder={"Annual rent"}
                     hideIcon={true}
                     onChange={(newValue) => this.createNewTenancy('yearlyRent', newValue)}/>
             </td>
@@ -205,7 +207,7 @@ class ViewTenantsRentRoll extends React.Component
             }
         });
 
-        this.props.saveAppraisal(this.props.appraisal);
+        this.props.saveAppraisal(this.props.appraisal, true);
     }
 
     changeAllTenantField(unitInfo, tenantInfo, field, newValue)
@@ -222,7 +224,7 @@ class ViewTenantsRentRoll extends React.Component
             }
         });
 
-        this.props.saveAppraisal(this.props.appraisal);
+        this.props.saveAppraisal(this.props.appraisal, true);
     }
 
     toggleDownload()
@@ -247,7 +249,7 @@ class ViewTenantsRentRoll extends React.Component
         //     }
         // });
 
-        this.props.saveAppraisal(this.props.appraisal);
+        this.props.saveAppraisal(this.props.appraisal, true);
     }
 
     downloadWordRentRoll()
@@ -261,7 +263,8 @@ class ViewTenantsRentRoll extends React.Component
     }
 
 
-    render() {
+    render()
+    {
         return (
             (this.props.appraisal) ?
                 <div id={"view-tenants-rent-roll"} className={"view-tenants-rent-roll"}>
@@ -287,157 +290,336 @@ class ViewTenantsRentRoll extends React.Component
                             <Alert color="danger">
                                 There is no Rent Roll on file.
                             </Alert>
-                             : null
+                            : null
                     }
                     <Row>
                         <Col xs={5} md={5} lg={5} xl={5}>
                             <UnitsTable
                                 appraisal={this.props.appraisal}
-                                selectedUnit={this.state.selectedUnit}
-                                onUnitClicked={(unit) => this.onUnitClicked(unit)}
+                                selectedUnit={this.props.appraisal.units[this.state.selectedUnitIndex]}
+                                onUnitClicked={(unit, unitIndex) => this.onUnitClicked(unitIndex)}
                                 onRemoveUnit={(unitIndex) => this.onRemoveUnit(unitIndex)}
                                 onCreateUnit={(newUnit) => this.onCreateUnit(newUnit)}
                             />
                         </Col>
                         {
-                            this.state.selectedUnit ?
+                            this.state.selectedUnitIndex !== null ?
                                 <Col xs={7} md={7} lg={7} xl={7}>
                                     {/*<Card outline color="primary" className="mb-3">*/}
                                     <h3>Tenant Information</h3>
-                                        {/*<CardHeader className="text-white bg-primary">Tenant Information</CardHeader>*/}
-                                        {/*<CardBody>*/}
-                                            <table className="table">
-                                                <tbody>
+                                    {/*<CardHeader className="text-white bg-primary">Tenant Information</CardHeader>*/}
+                                    {/*<CardBody>*/}
+                                    <table className="table">
+                                        <tbody>
+                                        <tr>
+                                            <td>
+                                                <strong>Unit Number</strong>
+                                            </td>
+                                            <td>
+                                                <FieldDisplayEdit placeholder={"Unit Number"} value={this.props.appraisal.units[this.state.selectedUnitIndex].unitNumber}
+                                                                  onChange={(newValue) => this.changeUnitField(this.props.appraisal.units[this.state.selectedUnitIndex], 'unitNumber', newValue)}/>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <strong>Floor Number</strong>
+                                            </td>
+                                            <td>
+                                                <FieldDisplayEdit placeholder={"Floor Number"} value={this.props.appraisal.units[this.state.selectedUnitIndex].floorNumber}
+                                                                  onChange={(newValue) => this.changeUnitField(this.props.appraisal.units[this.state.selectedUnitIndex], 'floorNumber', newValue)}/>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <strong>Unit Size</strong>
+                                            </td>
+                                            <td>
+                                                <FieldDisplayEdit type="area" placeholder={"Unit Size"} value={this.props.appraisal.units[this.state.selectedUnitIndex].squareFootage}
+                                                                  onChange={(newValue) => this.changeUnitField(this.props.appraisal.units[this.state.selectedUnitIndex], 'squareFootage', newValue)}/>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <strong>Tenant Name</strong>
+                                            </td>
+                                            <td>
+                                                <FieldDisplayEdit placeholder={"Tenant Name"} value={this.props.appraisal.units[this.state.selectedUnitIndex].currentTenancy.name}
+                                                                  onChange={(newValue) => this.changeAllTenantField(this.props.appraisal.units[this.state.selectedUnitIndex], this.props.appraisal.units[this.state.selectedUnitIndex].currentTenancy, 'name', newValue)}/>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <strong>Net / Gross</strong>
+                                            </td>
+                                            <td>
+                                                <FieldDisplayEdit type="rentType" value={this.props.appraisal.units[this.state.selectedUnitIndex].currentTenancy.rentType}
+                                                                  onChange={(newValue) => this.changeAllTenantField(this.props.appraisal.units[this.state.selectedUnitIndex], this.props.appraisal.units[this.state.selectedUnitIndex].currentTenancy, 'rentType', newValue)}/>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <strong>Market Rent</strong>
+                                            </td>
+                                            <td>
+                                                <FieldDisplayEdit type="marketRent" placeholder={"Market Rent"} marketRents={this.props.appraisal.marketRents}
+                                                                  value={this.props.appraisal.units[this.state.selectedUnitIndex].marketRent}
+                                                                  onChange={(newValue) => this.changeUnitField(this.props.appraisal.units[this.state.selectedUnitIndex], 'marketRent', newValue)}/>
+                                            </td>
+                                        </tr>
+                                        {
+                                            this.props.appraisal.units[this.state.selectedUnitIndex].marketRent ?
                                                 <tr>
                                                     <td>
-                                                        <strong>Unit Number</strong>
+                                                        <strong>Use Market Rent for<br/> Stabilized Statement?</strong>
                                                     </td>
-                                                    <td>
-                                                        <FieldDisplayEdit placeholder={"Unit Number"} value={this.state.selectedUnit.unitNumber} onChange={(newValue) => this.changeUnitField(this.state.selectedUnit, 'unitNumber', newValue)}/>
+                                                    <td style={{"paddingTop": "10px", "paddingLeft": "10px"}}>
+                                                        <FieldDisplayEdit hideIcon={true} type="boolean"
+                                                                          placeholder={"Use Market Rent for Stabilized Statement?"}
+                                                                          value={this.props.appraisal.units[this.state.selectedUnitIndex].shouldUseMarketRent}
+                                                                          onChange={(newValue) => this.changeUnitField(this.props.appraisal.units[this.state.selectedUnitIndex], 'shouldUseMarketRent', newValue)}/>
                                                     </td>
-                                                </tr>
+                                                </tr> : null
+                                        }
+                                        {
+                                            this.props.appraisal.units[this.state.selectedUnitIndex].marketRent ?
                                                 <tr>
                                                     <td>
-                                                        <strong>Floor Number</strong>
+                                                        <strong>Apply Market Rent<br/> Differential?</strong>
+                                                    </td>
+                                                    <td style={{"paddingTop": "10px", "paddingLeft": "10px"}}>
+                                                        <FieldDisplayEdit hideIcon={true} type="boolean" placeholder={"Apply Market Rent Differential?"}
+                                                                          value={this.props.appraisal.units[this.state.selectedUnitIndex].shouldApplyMarketRentDifferential}
+                                                                          onChange={(newValue) => this.changeUnitField(this.props.appraisal.units[this.state.selectedUnitIndex], 'shouldApplyMarketRentDifferential', newValue)}/>
+                                                    </td>
+                                                </tr> : null
+                                        }
+                                        <tr>
+                                            <td>
+                                                <strong>Free Rent Period (months)</strong>
+                                            </td>
+                                            <td>
+                                                <FieldDisplayEdit type="months" placeholder={"Free Rent Period (months)"}
+                                                                  value={this.props.appraisal.units[this.state.selectedUnitIndex].currentTenancy.freeRentMonths}
+                                                                  onChange={(newValue) => this.changeTenancyField(this.props.appraisal.units[this.state.selectedUnitIndex], this.props.appraisal.units[this.state.selectedUnitIndex].currentTenancy, 'freeRentMonths', newValue)}/>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <strong>Recovery Structure</strong>
+                                            </td>
+                                            <td>
+                                                <FieldDisplayEdit type="recoveryStructure" placeholder={"Recovery Structure"}
+                                                                  recoveryStructures={this.props.appraisal.recoveryStructures}
+                                                                  value={this.props.appraisal.units[this.state.selectedUnitIndex].currentTenancy.recoveryStructure}
+                                                                  onChange={(newValue) => this.changeAllTenantField(this.props.appraisal.units[this.state.selectedUnitIndex], this.props.appraisal.units[this.state.selectedUnitIndex].currentTenancy, 'recoveryStructure', newValue)}/>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <strong>Leasing Cost Structure</strong>
+                                            </td>
+                                            <td>
+                                                <FieldDisplayEdit type="leasingCostStructure" placeholder={"Leasing Cost Structure"}
+                                                                  leasingCostStructures={this.props.appraisal.leasingCosts}
+                                                                  value={this.props.appraisal.units[this.state.selectedUnitIndex].leasingCostStructure}
+                                                                  onChange={(newValue) => this.changeUnitField(this.props.appraisal.units[this.state.selectedUnitIndex], 'leasingCostStructure', newValue)}/>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <strong>Treat as Vacant Unit?</strong>
+                                            </td>
+                                            <td style={{"paddingTop": "10px", "paddingLeft": "10px", "paddingBottom": "10px"}}>
+                                                <FieldDisplayEdit
+                                                    value={this.props.appraisal.units[this.state.selectedUnitIndex].isVacantForStabilizedStatement}
+                                                    type={"boolean"}
+                                                    hideIcon={true}
+                                                    placeholder={"Treat Unit as Vacant?"}
+                                                    onChange={(newValue) => this.changeUnitField(this.props.appraisal.units[this.state.selectedUnitIndex], 'shouldTreatAsVacant', newValue)}
+                                                />
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <strong>Remarks</strong>
+                                            </td>
+                                            <td>
+                                                <FieldDisplayEdit value={this.props.appraisal.units[this.state.selectedUnitIndex].remarks} placeholder={"Remarks"}
+                                                                  onChange={(newValue) => this.changeUnitField(this.props.appraisal.units[this.state.selectedUnitIndex], 'remarks', newValue)}/>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td colSpan={2}>
+                                                <br/>
+                                                <h3>Stats</h3>
+                                            </td>
+                                        </tr>
+                                        <tr className={"stats-row"}>
+                                            <td>
+                                                <strong>Current Yearly Rent (psf)</strong>
+                                            </td>
+                                            <td>
+                                                        <span style={{"marginLeft": "10px"}}>
+                                                            <CurrencyFormat value={this.props.appraisal.units[this.state.selectedUnitIndex].currentTenancy.yearlyRentPSF}/>
+                                                        </span>
+                                            </td>
+                                        </tr>
+                                        {
+                                            this.props.appraisal.units[this.state.selectedUnitIndex].calculatedManagementRecovery ?
+                                                <tr className={"stats-row"}>
+                                                    <td>
+                                                        <Link to={`/appraisal/${this.props.appraisal._id}/tenants/recovery_structures`}>
+                                                            <strong>Calculated Management Recovery</strong>
+                                                        </Link>
                                                     </td>
                                                     <td>
-                                                        <FieldDisplayEdit placeholder={"Floor Number"} value={this.state.selectedUnit.floorNumber} onChange={(newValue) => this.changeUnitField(this.state.selectedUnit, 'floorNumber', newValue)}/>
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <td>
-                                                        <strong>Unit Size</strong>
-                                                    </td>
-                                                    <td>
-                                                        <FieldDisplayEdit type="area" placeholder={"Unit Size"} value={this.state.selectedUnit.squareFootage} onChange={(newValue) => this.changeUnitField(this.state.selectedUnit, 'squareFootage', newValue)}/>
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <td>
-                                                        <strong>Tenant Name</strong>
-                                                    </td>
-                                                    <td>
-                                                        <FieldDisplayEdit placeholder={"Tenant Name"} value={this.state.selectedUnit.currentTenancy.name} onChange={(newValue) => this.changeAllTenantField(this.state.selectedUnit, this.state.selectedUnit.currentTenancy, 'name', newValue)}/>
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <td>
-                                                        <strong>Net / Gross</strong>
-                                                    </td>
-                                                    <td>
-                                                        <FieldDisplayEdit type="rentType" value={this.state.selectedUnit.currentTenancy.rentType} onChange={(newValue) => this.changeAllTenantField(this.state.selectedUnit, this.state.selectedUnit.currentTenancy, 'rentType', newValue)}/>
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <td>
-                                                        <strong>Market Rent</strong>
-                                                    </td>
-                                                    <td>
-                                                        <FieldDisplayEdit type="marketRent" placeholder={"Market Rent"} marketRents={this.props.appraisal.marketRents} value={this.state.selectedUnit.marketRent} onChange={(newValue) => this.changeUnitField(this.state.selectedUnit, 'marketRent', newValue)}/>
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <td>
-                                                        <strong>Free Rent Period (months)</strong>
-                                                    </td>
-                                                    <td>
-                                                        <FieldDisplayEdit type="number" placeholder={"Free Rent Period (months)"} value={this.state.selectedUnit.currentTenancy.freeRentMonths} onChange={(newValue) => this.changeTenancyField(this.state.selectedUnit, this.state.selectedUnit.currentTenancy, 'freeRentMonths', newValue)}/>
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <td>
-                                                        <strong>Recovery Structure</strong>
-                                                    </td>
-                                                    <td>
-                                                        <FieldDisplayEdit type="recoveryStructure" placeholder={"Recovery Structure"} recoveryStructures={this.props.appraisal.recoveryStructures} value={this.state.selectedUnit.currentTenancy.recoveryStructure} onChange={(newValue) => this.changeAllTenantField(this.state.selectedUnit, this.state.selectedUnit.currentTenancy, 'recoveryStructure', newValue)} />
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <td>
-                                                        <strong>Leasing Cost Structure</strong>
-                                                    </td>
-                                                    <td>
-                                                        <FieldDisplayEdit type="leasingCostStructure" placeholder={"Leasing Cost Structure"} leasingCostStructures={this.props.appraisal.leasingCosts} value={this.state.selectedUnit.leasingCostStructure} onChange={(newValue) => this.changeUnitField(this.state.selectedUnit, 'leasingCostStructure', newValue)} />
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <td>
-                                                        <strong>Remarks</strong>
-                                                    </td>
-                                                    <td>
-                                                        <FieldDisplayEdit value={this.state.selectedUnit.remarks} placeholder={"Remarks"} onChange={(newValue) => this.changeUnitField(this.state.selectedUnit, 'remarks', newValue)}/>
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <td>
-                                                        <strong>Current Yearly Rent (psf)</strong>
-                                                    </td>
-                                                    <td>
-                                                        <span  style={{"marginLeft": "10px"}}>
-                                                            $<NumberFormat
-                                                            value={this.state.selectedUnit.currentTenancy.yearlyRentPSF}
-                                                            displayType={'text'}
-                                                            thousandSeparator={', '}
-                                                            decimalScale={2}
-                                                            fixedDecimalScale={true}
-                                                        />
+                                                        <span style={{"marginLeft": "10px"}}>
+                                                        <Link to={`/appraisal/${this.props.appraisal._id}/tenants/recovery_structures`}>
+                                                            <CurrencyFormat value={this.props.appraisal.units[this.state.selectedUnitIndex].calculatedManagementRecovery}/>
+                                                        </Link>
                                                         </span>
                                                     </td>
-                                                </tr>
-                                                </tbody>
-                                            </table>
-                                        {/*</CardBody>*/}
+                                                </tr> : null
+                                        }
+
+                                        {
+                                            this.props.appraisal.units[this.state.selectedUnitIndex].calculatedExpenseRecovery ?
+                                                <tr className={"stats-row"}>
+                                                    <td>
+                                                        <Link to={`/appraisal/${this.props.appraisal._id}/tenants/recovery_structures`}>
+                                                            <strong>Calculated Operating Expense Recovery</strong>
+                                                        </Link>
+                                                    </td>
+                                                    <td>
+                                                        <span style={{"marginLeft": "10px"}}>
+                                                        <Link to={`/appraisal/${this.props.appraisal._id}/tenants/recovery_structures`}>
+                                                            <CurrencyFormat
+                                                                value={this.props.appraisal.units[this.state.selectedUnitIndex].calculatedExpenseRecovery}/>
+                                                        </Link>
+                                                        </span>
+                                                    </td>
+                                                </tr> : null
+                                        }
+                                        {
+                                            this.props.appraisal.units[this.state.selectedUnitIndex].calculatedTaxRecovery ?
+                                                <tr className={"stats-row"}>
+                                                    <td>
+                                                        <Link to={`/appraisal/${this.props.appraisal._id}/tenants/recovery_structures`}>
+                                                            <strong>Calculated Tax Recovery</strong>
+                                                        </Link>
+                                                    </td>
+                                                    <td>
+                                                        <Link to={`/appraisal/${this.props.appraisal._id}/tenants/recovery_structures`}>
+                                                        <span style={{"marginLeft": "10px"}}>
+                                                            <CurrencyFormat
+                                                                value={this.props.appraisal.units[this.state.selectedUnitIndex].calculatedTaxRecovery}/>
+                                                        </span>
+                                                        </Link>
+                                                    </td>
+                                                </tr> : null
+                                        }
+                                        {
+                                            this.props.appraisal.units[this.state.selectedUnitIndex].calculatedMarketRentDifferential ?
+                                                <tr className={"stats-row"}>
+                                                    <td>
+                                                        <Link to={`/appraisal/${this.props.appraisal._id}/tenants/market_rents`}>
+                                                            <strong>Calculated Market Rent Differential</strong>
+                                                        </Link>
+                                                    </td>
+                                                    <td>
+                                                        <Link to={`/appraisal/${this.props.appraisal._id}/tenants/market_rents`}>
+                                                        <span style={{"marginLeft": "10px"}}>
+                                                            <CurrencyFormat
+                                                                value={this.props.appraisal.units[this.state.selectedUnitIndex].calculatedMarketRentDifferential}/>
+                                                        </span>
+                                                        </Link>
+                                                    </td>
+                                                </tr> : null
+                                        }
+                                        {
+                                            this.props.appraisal.units[this.state.selectedUnitIndex].calculatedFreeRentLoss ?
+                                                <tr className={"stats-row"}>
+                                                    <td>
+                                                        <strong>Calculated Free Rent Loss</strong>
+                                                    </td>
+                                                    <td>
+                                                        <span style={{"marginLeft": "10px"}}>
+                                                            <CurrencyFormat value={this.props.appraisal.units[this.state.selectedUnitIndex].calculatedFreeRentLoss}/>
+                                                        </span>
+                                                    </td>
+                                                </tr> : null
+                                        }
+                                        {
+                                            this.props.appraisal.units[this.state.selectedUnitIndex].calculatedVacantUnitRentLoss ?
+                                                <tr className={"stats-row"}>
+                                                    <td>
+                                                        <Link to={`/appraisal/${this.props.appraisal._id}/tenants/leasing_costs`}>
+                                                            <strong>Calculated Vacant Unit Rent Loss</strong>
+                                                        </Link>
+                                                    </td>
+                                                    <td>
+                                                        <Link to={`/appraisal/${this.props.appraisal._id}/tenants/leasing_costs`}>
+                                                        <span style={{"marginLeft": "10px"}}>
+                                                            <CurrencyFormat
+                                                                value={this.props.appraisal.units[this.state.selectedUnitIndex].calculatedVacantUnitRentLoss}/>
+                                                        </span>
+                                                        </Link>
+                                                    </td>
+                                                </tr> : null
+                                        }
+                                        {
+                                            this.props.appraisal.units[this.state.selectedUnitIndex].calculatedVacantUnitLeasupCosts ?
+                                                <tr className={"stats-row"}>
+                                                    <td>
+                                                        <Link to={`/appraisal/${this.props.appraisal._id}/tenants/leasing_costs`}>
+                                                            <strong>Calculated Vacant Unit Leaseup Costs</strong>
+                                                        </Link>
+                                                    </td>
+                                                    <td>
+                                                        <Link to={`/appraisal/${this.props.appraisal._id}/tenants/leasing_costs`}>
+                                                        <span style={{"marginLeft": "10px"}}>
+                                                            <CurrencyFormat
+                                                                value={this.props.appraisal.units[this.state.selectedUnitIndex].calculatedVacantUnitLeasupCosts}/>
+                                                        </span>
+                                                        </Link>
+                                                    </td>
+                                                </tr> : null
+                                        }
+                                        </tbody>
+                                    </table>
+                                    {/*</CardBody>*/}
                                     {/*</Card>*/}
                                     {/*<Card outline color="primary" className="mb-3">*/}
                                     <br/>
                                     <h3>Tenancy & Esclation Schedule</h3>
-                                        {/*<CardHeader className="text-white bg-primary">Tenancy & Escalation Schedule</CardHeader>*/}
-                                        {/*<CardBody>*/}
-                                            <table className="table tenancies-table">
-                                                <thead>
-                                                <tr>
-                                                    <td>Tenant Name</td>
-                                                    <td>Term Start</td>
-                                                    <td>Term End</td>
-                                                    <td>Net / Gross</td>
-                                                    <td>Annual Rent (psf) </td>
-                                                    <td>Annual Rent </td>
-                                                    <td className="action-column" />
-                                                </tr>
-                                                </thead>
-                                                <tbody>
-                                                {
-                                                    this.state.selectedUnit.tenancies.map((tenancy, tenancyIndex) => {
-                                                        return this.renderTenancy(this.state.selectedUnit, tenancy, tenancyIndex);
-                                                    })
-                                                }
-                                                {
-                                                    this.renderNewTenancyRow()
-                                                }
-                                                </tbody>
+                                    {/*<CardHeader className="text-white bg-primary">Tenancy & Escalation Schedule</CardHeader>*/}
+                                    {/*<CardBody>*/}
+                                    <table className="table tenancies-table">
+                                        <thead>
+                                        <tr>
+                                            <td>Tenant Name</td>
+                                            <td>Term Start</td>
+                                            <td>Term End</td>
+                                            <td>Net / Gross</td>
+                                            <td>Annual Rent (psf)</td>
+                                            <td>Annual Rent</td>
+                                            <td className="action-column"/>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        {
+                                            this.props.appraisal.units[this.state.selectedUnitIndex].tenancies.map((tenancy, tenancyIndex) =>
+                                            {
+                                                return this.renderTenancy(this.props.appraisal.units[this.state.selectedUnitIndex], tenancy, tenancyIndex);
+                                            })
+                                        }
+                                        {
+                                            this.renderNewTenancyRow()
+                                        }
+                                        </tbody>
 
-                                            </table>
-                                        {/*</CardBody>*/}
+                                    </table>
+                                    {/*</CardBody>*/}
                                     {/*</Card>*/}
                                 </Col> : null
                         }

@@ -27,11 +27,12 @@ class DirectComparisonValuationModel(ValuationModelBase):
         dca.comparativeValue = appraisal.sizeOfBuilding * appraisal.directComparisonInputs.pricePerSquareFoot
 
         dca.marketRentDifferential = self.computeMarketRentDifferentials(appraisal)
-        dca.freeRentDifferential = self.computeFreeRentDifferentials(appraisal)
-        dca.vacantUnitDifferential = self.computeVacantUnitDifferential(appraisal)
-        dca.amortizationDifferential = self.computeAmortizationDifferential(appraisal)
+        dca.freeRentRentLoss = self.computeFreeRentRentLoss(appraisal)
+        dca.vacantUnitRentLoss = self.computeVacantUnitRentLoss(appraisal)
+        dca.vacantUnitLeasupCosts = self.computeVacantUnitLeasupCosts(appraisal)
+        dca.amortizedCapitalInvestment = self.computeAmortizedCapitalInvestment(appraisal)
 
-        dca.valuation = dca.comparativeValue + dca.marketRentDifferential + dca.freeRentDifferential + dca.vacantUnitDifferential + dca.amortizationDifferential
+        dca.valuation = dca.comparativeValue + dca.marketRentDifferential + dca.freeRentRentLoss + dca.vacantUnitRentLoss + dca.vacantUnitLeasupCosts + dca.amortizedCapitalInvestment
 
         for modifier in appraisal.directComparisonInputs.modifiers:
             if modifier.amount:

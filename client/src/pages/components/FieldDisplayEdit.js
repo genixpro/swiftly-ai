@@ -20,6 +20,7 @@ import {
 import IncomeItemTypeSelector from "./IncomeItemTypeSelector";
 import RecoveryStructureSelector from "./RecoveryStructureSelector";
 import ManagementExpenseModeSelector from "./ManagementExpenseModeSelector";
+import LeasingComissionModeSelector from "./LeasingCommissionModeSelector";
 
 class FieldDisplayEdit extends React.Component
 {
@@ -155,6 +156,15 @@ class FieldDisplayEdit extends React.Component
                 return this.numberWithCommas(value.toString());
             }
         }
+        else if (this.props.type === 'months')
+        {
+            try {
+                return this.numberWithCommas(Number(value).toFixed(0).toString()) + " months";
+            }
+            catch(err) {
+                return this.numberWithCommas(value.toString());
+            }
+        }
 
         return value;
     }
@@ -162,7 +172,14 @@ class FieldDisplayEdit extends React.Component
 
     cleanValue(value)
     {
-        if (this.props.type === 'currency' || this.props.type === 'number' || this.props.type === 'percent' || this.props.type === 'length' || this.props.type === 'area' || this.props.type === 'acres')
+        if (this.props.type === 'currency' ||
+            this.props.type === 'number' ||
+            this.props.type === 'percent' ||
+            this.props.type === 'length' ||
+            this.props.type === 'area' ||
+            this.props.type === 'acres' ||
+            this.props.type === 'months'
+        )
         {
             const isNegative = value.toString().indexOf("-") !== -1 || value.toString().indexOf("(") !== -1 || value.toString().indexOf(")") !== -1;
 
@@ -315,7 +332,7 @@ class FieldDisplayEdit extends React.Component
                     this.props.type === "float" ||
                     this.props.type === "percent" || this.props.type === "text" ||
                     this.props.type === "length" || this.props.type === "area" ||
-                    this.props.type === "acres" ||
+                    this.props.type === "acres" || this.props.type === "months" ||
                     !this.props.type ?
                         <Input placeholder={this.props.placeholder}
                                disabled={!this.props.edit}
@@ -462,14 +479,27 @@ class FieldDisplayEdit extends React.Component
                     this.props.type === "zone" ?
                         <ZoneSelector
                             title={this.props.title || this.props.placeholder}
+                            disabled={!this.props.edit}
                             value={this.state.isEditing ? this.state.value : this.props.value}
                             onChange={(newValue) => this.selectInputUpdated(newValue) }
                             onBlur={() => this.finishEditing()}
                         /> : null
                 }
                 {
+                    this.props.type === "leasingCommissionMode" ?
+                        <LeasingComissionModeSelector
+                            title={this.props.title || this.props.placeholder}
+                            disabled={!this.props.edit}
+                            value={this.state.isEditing ? this.state.value : this.props.value}
+                            onChange={(newValue) => this.selectInputUpdated(newValue) }
+                            onBlur={() => this.finishEditing()}
+                            innerRef={(inputElem) => this.inputElem = inputElem}
+                        /> : null
+                }
+                {
                     this.props.type === "tags" ?
                         <TagEditor
+                            disabled={!this.props.edit}
                             title={this.props.title || this.props.placeholder}
                             value={this.state.isEditing ? this.state.value : this.props.value}
                             onChange={(newValue) => this.tagInputUpdated(newValue) }

@@ -23,6 +23,7 @@
   .label-column
   {
     padding-right: 15px;
+    min-width: 200px;
   }
 
   .seperator {
@@ -64,7 +65,7 @@
   {
     .rule-percentage-column
     {
-
+      min-width: 250px;
     }
 
     .rule-field-column
@@ -72,6 +73,54 @@
       display: flex;
       flex-direction: row;
       align-items: center;
+      vertical-align: middle;
+      min-width: 300px;
+    }
+
+    .rule-calculated-amount-column
+    {
+      padding-left: 15px;
+      min-width: 100px;
+      text-align: right;
+      vertical-align: middle;
+      //border-left: 1px dashed lightgray;
+    }
+
+    .total-spacer-row {
+      td {
+        padding-top: 15px;
+      }
+    }
+
+    .total-row
+    {
+      .rule-field-column
+      {
+        position: relative;
+        top: -1px;
+        border-top: 1px solid black;
+        float: right;
+      }
+
+
+      .rule-calculated-amount-column
+      {
+        border-top: 1px solid black;
+      }
+    }
+
+    .header-row
+    {
+      .label-column
+      {
+        padding-right: 15px;
+      }
+
+
+      .rule-calculated-amount-column
+      {
+
+      }
     }
   }
 }

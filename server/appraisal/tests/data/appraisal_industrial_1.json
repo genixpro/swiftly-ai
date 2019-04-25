@@ -333,9 +333,9 @@
     "netOperatingIncomePSF": null,
     "capitalization": 0,
     "marketRentDifferential": 0,
-    "freeRentDifferential": 0,
+    "freeRentRentLoss": 0,
     "vacantUnitDifferential": -189787.50,
-    "amortizationDifferential": 0,
+    "amortizedCapitalInvestment": 0,
     "valuation": 0,
     "valuationRounded": 0
   }

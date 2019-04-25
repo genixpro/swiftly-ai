@@ -5,15 +5,19 @@ from appraisal.models.extraction_reference import ExtractionReference
 
 
 class DirectComparisonValuation(EmbeddedDocument):
+    meta = {'strict': False}
+
     comparativeValue = FloatField()
 
     marketRentDifferential = FloatField()
 
-    freeRentDifferential = FloatField()
+    freeRentRentLoss = FloatField()
 
-    vacantUnitDifferential = FloatField()
+    vacantUnitLeasupCosts = FloatField()
 
-    amortizationDifferential = FloatField()
+    vacantUnitRentLoss = FloatField()
+
+    amortizedCapitalInvestment = FloatField()
 
     valuation = FloatField()
 

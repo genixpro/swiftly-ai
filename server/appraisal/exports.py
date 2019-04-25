@@ -837,14 +837,17 @@ class CapitalizationValuationExcelFile(ExportAPI):
         if appraisal.stabilizedStatement.marketRentDifferential:
             ws1.append(["Market Rent Differential", appraisal.stabilizedStatement.marketRentDifferential, ""])
 
-        if appraisal.stabilizedStatement.vacantUnitDifferential:
-            ws1.append(["Vacant Unit Differential", appraisal.stabilizedStatement.vacantUnitDifferential, ""])
+        if appraisal.stabilizedStatement.vacantUnitRentLoss:
+            ws1.append(["Vacant Unit Rent Loss", appraisal.stabilizedStatement.vacantUnitRentLoss, ""])
 
-        if appraisal.stabilizedStatement.freeRentDifferential:
-            ws1.append(["Free Rent Differential", appraisal.stabilizedStatement.freeRentDifferential, ""])
+        if appraisal.stabilizedStatement.freeRentRentLoss:
+            ws1.append(["Free Rent Loss", appraisal.stabilizedStatement.freeRentRentLoss, ""])
 
-        if appraisal.stabilizedStatement.amortizationDifferential:
-            ws1.append(["Amortization Differential", appraisal.stabilizedStatement.amortizationDifferential, ""])
+        if appraisal.stabilizedStatement.vacantUnitLeasupCosts:
+            ws1.append(["Vacant Unit Leasup Costs", appraisal.stabilizedStatement.vacantUnitLeasupCosts, ""])
+
+        if appraisal.stabilizedStatement.amortizedCapitalInvestment:
+            ws1.append(["Amortized Capital Investment", appraisal.stabilizedStatement.amortizedCapitalInvestment, ""])
 
         for modifier in appraisal.stabilizedStatementInputs.modifiers:
             ws1.append([modifier.name, modifier.amount, ""])
@@ -937,14 +940,17 @@ class DirectComparisonValuationExcelFile(ExportAPI):
         if appraisal.directComparisonValuation.marketRentDifferential:
             ws1.append(["Market Rent Differential", appraisal.directComparisonValuation.marketRentDifferential, ""])
 
-        if appraisal.directComparisonValuation.vacantUnitDifferential:
-            ws1.append(["Vacant Unit Differential", appraisal.directComparisonValuation.vacantUnitDifferential, ""])
+        if appraisal.directComparisonValuation.vacantUnitRentLoss:
+            ws1.append(["Vacant Unit Rent Loss", appraisal.directComparisonValuation.vacantUnitRentLoss, ""])
 
-        if appraisal.directComparisonValuation.freeRentDifferential:
-            ws1.append(["Free Rent Differential", appraisal.directComparisonValuation.freeRentDifferential, ""])
+        if appraisal.directComparisonValuation.freeRentRentLoss:
+            ws1.append(["Free Rent Loss", appraisal.directComparisonValuation.freeRentRentLoss, ""])
 
-        if appraisal.directComparisonValuation.amortizationDifferential:
-            ws1.append(["Amortization Differential", appraisal.directComparisonValuation.amortizationDifferential, ""])
+        if appraisal.directComparisonValuation.vacantUnitLeasupCosts:
+            ws1.append(["Vacant Unit Leasup Costs", appraisal.directComparisonValuation.vacantUnitLeasupCosts, ""])
+
+        if appraisal.directComparisonValuation.amortizedCapitalInvestment:
+            ws1.append(["Amortized Capital Investment", appraisal.directComparisonValuation.amortizedCapitalInvestment, ""])
 
         for modifier in appraisal.directComparisonInputs.modifiers:
             ws1.append([modifier.name, modifier.amount, ""])

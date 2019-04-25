@@ -6,6 +6,7 @@ import StringField from "../orm/StringField";
 import DateField from "../orm/DateField";
 import _ from "underscore";
 import FloatField from "../orm/FloatField";
+import BoolField from "../orm/BoolField";
 
 
 class TenancyModel extends BaseModel
@@ -55,6 +56,42 @@ class UnitModel extends BaseModel
     static leasingCostStructure = new StringField("leasingCostStructure", "Default");
     static remarks = new StringField();
 
+    static shouldApplyMarketRentDifferential = new BoolField("shouldApplyMarketRentDifferential", false);
+    static shouldUseMarketRent = new BoolField("shouldUseMarketRent", true);
+    static shouldTreatAsVacant = new BoolField("shouldTreatAsVacant", null);
+
+    static calculatedManagementRecovery = new FloatField();
+    static calculatedExpenseRecovery = new FloatField();
+    static calculatedTaxRecovery = new FloatField();
+    static calculatedMarketRentDifferential = new FloatField();
+    static calculatedFreeRentLoss = new FloatField();
+    static calculatedVacantUnitRentLoss = new FloatField();
+    static calculatedVacantUnitLeasupCosts = new FloatField();
+
+    get marketRentAmount()
+    {
+        for (let marketRent of this.parent.marketRents)
+        {
+            if (marketRent.name === this.marketRent)
+            {
+                return marketRent.amount;
+            }
+        }
+        return null;
+    }
+
+    get isVacantForStabilizedStatement()
+    {
+        if(_.isNull(this.shouldTreatAsVacant))
+        {
+            return this.isVacantInFirstYear;
+        }
+        else
+        {
+            return this.shouldTreatAsVacant;
+        }
+    }
+
     get currentTenancy()
     {
         for(let tenancy of this.tenancies)
@@ -67,6 +104,60 @@ class UnitModel extends BaseModel
 
         const sorted = _.sortBy(this.tenancies, (tenancy) => tenancy.startDate ? tenancy.startDate.getTime() : Date.now());
         return sorted[sorted.length - 1];
+    }
+
+    get isVacantInFirstYear()
+    {
+        const oneYearDate = Date.now() + (1000 * 60 * 60 * 24 * 365);
+
+        if (this.tenancies.length > 0)
+        {
+            for(let tenancy of this.tenancies)
+            {
+                if (tenancy.startDate !== null && !_.isUndefined(tenancy.startDate) && oneYearDate >= tenancy.startDate.getTime() && tenancy.endDate !== null && !_.isUndefined(tenancy.endDate) && oneYearDate <= tenancy.endDate.getTime())
+                {
+                    if (tenancy.yearlyRent && tenancy.yearlyRent > 0)
+                    {
+                        return false;
+                    }
+                }
+            }
+
+            const sorted = _.sortBy(this.tenancies, (tenancy) => tenancy.startDate ? tenancy.startDate.getTime() : oneYearDate);
+            const firstTenancy = sorted[sorted.length - 1];
+
+            if (firstTenancy.yearlyRent && firstTenancy.yearlyRent > 0)
+            {
+                return false
+            }
+
+            return true;
+        }
+        else
+        {
+            return true;
+        }
+    }
+
+    get calculatedTotalRecovery()
+    {
+        let total = 0;
+        if (_.isNumber(this.calculatedManagementRecovery))
+        {
+            total += this.calculatedManagementRecovery;
+        }
+
+        if (_.isNumber(this.calculatedExpenseRecovery))
+        {
+            total += this.calculatedExpenseRecovery;
+        }
+
+        if (_.isNumber(this.calculatedTaxRecovery))
+        {
+            total += this.calculatedTaxRecovery;
+        }
+
+        return total;
     }
 }
 

@@ -25,7 +25,16 @@ class ValuationModelBase:
             if marketRent.name == name:
                 return marketRent.amountPSF
 
-    def getLeasingCosts(self, appraisal, name):
+
+    def getStabilizedRent(self, appraisal, unit):
+        if unit.squareFootage and unit.marketRent and self.getMarketRent(appraisal, unit.marketRent) and unit.shouldUseMarketRent:
+            return self.getMarketRent(appraisal, unit.marketRent) * unit.squareFootage
+        elif unit.currentTenancy and unit.currentTenancy.yearlyRent:
+            return unit.currentTenancy.yearlyRent
+        else:
+            return 0
+
+    def getLeasingCostStructure(self, appraisal, name):
         for leasingCost in appraisal.leasingCosts:
             if leasingCost.name == name:
                 return leasingCost
@@ -40,7 +49,9 @@ class ValuationModelBase:
         totalDifferential = 0
 
         for unit in appraisal.units:
-            if unit.currentTenancy and unit.currentTenancy.yearlyRent and unit.squareFootage and unit.marketRent and self.getMarketRent(appraisal, unit.marketRent):
+            unit.calculatedMarketRentDifferential = 0
+
+            if unit.currentTenancy and unit.currentTenancy.yearlyRent and unit.squareFootage and unit.marketRent and self.getMarketRent(appraisal, unit.marketRent) and unit.shouldApplyMarketRentDifferential:
                 presentDifferentialPSF = (unit.currentTenancy.yearlyRent / unit.squareFootage) - self.getMarketRent(appraisal, unit.marketRent)
 
                 monthlyDifferentialCashflow = (presentDifferentialPSF * unit.squareFootage) / 12.0
@@ -57,7 +68,11 @@ class ValuationModelBase:
                 while currentDate < endDate:
                     totalDiscount = monthlyDiscount ** month
 
-                    totalDifferential += monthlyDifferentialCashflow / totalDiscount
+                    currentDifferential = monthlyDifferentialCashflow / totalDiscount
+
+                    totalDifferential += currentDifferential
+
+                    unit.calculatedMarketRentDifferential += currentDifferential
 
                     currentDate = currentDate + relativedelta(months=1)
                     month += 1
@@ -65,34 +80,66 @@ class ValuationModelBase:
         return float(totalDifferential)
 
 
-    def computeFreeRentDifferentials(self, appraisal):
-        totalDifferential = 0
+    def computeFreeRentRentLoss(self, appraisal):
+        totalRentLoss = 0
 
         for unit in appraisal.units:
+            unit.calculatedFreeRentLoss = 0
+
             if unit.currentTenancy and unit.currentTenancy.yearlyRent and unit.currentTenancy.freeRentMonths:
                 monthsFromStart = relativedelta(self.getEffectiveDate(appraisal), unit.currentTenancy.startDate).months
                 freeRentMonthsRemaining = int(max(unit.currentTenancy.freeRentMonths - monthsFromStart, 0))
 
-                differential = freeRentMonthsRemaining * unit.currentTenancy.yearlyRent / 12.0
+                currentRentLoss = freeRentMonthsRemaining * self.getStabilizedRent(appraisal, unit) / 12.0
 
-                totalDifferential += differential
+                totalRentLoss += currentRentLoss
 
-        return -float(totalDifferential)
+                unit.calculatedFreeRentLoss += currentRentLoss
+
+        return -float(totalRentLoss)
 
 
-    def computeVacantUnitDifferential(self, appraisal):
+    def computeVacantUnitRentLoss(self, appraisal):
         total = 0
 
         for unit in appraisal.units:
-            if unit.isVacantInFirstYear and unit.squareFootage and unit.marketRent and self.getMarketRent(appraisal, unit.marketRent):
-                leasingCosts = self.getLeasingCosts(appraisal, unit.leasingCostStructure)
+            unit.calculatedVacantUnitRentLoss = 0
 
-                total += leasingCosts.tenantInducementsPSF * unit.squareFootage + leasingCosts.leasingCommissionPSF * unit.squareFootage + (self.getMarketRent(appraisal, unit.marketRent) * unit.squareFootage) / 12.0 * leasingCosts.renewalPeriod
+            if unit.isVacantForStabilizedStatement and unit.squareFootage and unit.marketRent and self.getMarketRent(appraisal, unit.marketRent):
+                leasingCosts = self.getLeasingCostStructure(appraisal, unit.leasingCostStructure)
+
+                currentRentLoss = (self.getMarketRent(appraisal, unit.marketRent) * unit.squareFootage) / 12.0 * leasingCosts.renewalPeriod
+
+                unit.calculatedVacantUnitRentLoss += currentRentLoss
+                total += currentRentLoss
 
         return -total
 
 
-    def computeAmortizationDifferential(self, appraisal):
+    def computeVacantUnitLeasupCosts(self, appraisal):
+        total = 0
+
+        for unit in appraisal.units:
+            unit.calculatedVacantUnitLeasupCosts = 0
+
+            if unit.isVacantForStabilizedStatement and unit.squareFootage:
+                leasingCosts = self.getLeasingCostStructure(appraisal, unit.leasingCostStructure)
+
+                currentLeaseUpCosts = leasingCosts.tenantInducementsPSF * unit.squareFootage
+
+                if leasingCosts.leasingCommissionMode == 'psf':
+                    currentLeaseUpCosts += leasingCosts.leasingCommissionPSF * unit.squareFootage
+                elif leasingCosts.leasingCommissionMode == "percent_of_rent" and unit.marketRent and self.getMarketRent(appraisal, unit.marketRent):
+                    currentLeaseUpCosts += (leasingCosts.leasingCommissionPercent / 100.0) * self.getMarketRent(appraisal, unit.marketRent) * unit.squareFootage
+
+                unit.calculatedVacantUnitLeasupCosts += currentLeaseUpCosts
+
+                total += currentLeaseUpCosts
+
+        return -total
+
+
+    def computeAmortizedCapitalInvestment(self, appraisal):
         total = 0
 
         for item in appraisal.amortizationSchedule.items:

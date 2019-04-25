@@ -6,26 +6,31 @@ import 'react-datetime/css/react-datetime.css'
 import NumberFormat from "react-number-format";
 import RecoveryStructureModel from "../models/RecoveryStructureModel";
 import _ from "underscore";
+import CurrencyFormat from "./components/CurrencyFormat";
 
 class ExpensePercentageEditor extends React.Component
 {
     render()
     {
-        return [<td className={"rule-percentage-column"}>
+        return [<td className={"rule-percentage-column"} key={1}>
             <FieldDisplayEdit
                 key={1}
                 type="percent"
                 placeholder={"Expense %"}
-                value={_.isNumber(this.props.recovery.expenseRecoveries[this.props.expense.name]) ? this.props.recovery.expenseRecoveries[this.props.expense.name] : 100}
+                value={_.isNumber(this.props.value) ? this.props.value : 100}
                 hideInput={false}
                 hideIcon={true}
                 onChange={(newValue) => this.props.onChange(newValue)}
             />
         </td>,
-            <td className={"rule-field-column"}>
+            <td className={"rule-field-column"} key={2}>
                 <span key={2} className={"seperator"}>of</span>
                 <div className={"expense-name"}>{this.props.expense.name}</div>
-            </td>]
+            </td>,
+            <td className={"rule-calculated-amount-column"} key={3}>
+                <CurrencyFormat value={this.props.calculated}/>
+            </td>
+        ]
     }
 }
 
@@ -33,18 +38,27 @@ class TenantApplicableEditor extends React.Component
 {
     render()
     {
-        return [<td className={"rule-percentage-column"}>
+        return [<td className={"rule-percentage-column"} key={1}>
             {this.props.unit.currentTenancy.name || `Unit ${this.props.unit.unitNumber}`}
         </td>,
-            <td className={"rule-field-column"}>
+            <td className={"rule-field-column"} key={2}>
                 <FieldDisplayEdit
                     type={"boolean"}
                     hideIcon={true}
+                    edit={!this.props.recovery.isDefault}
                     value={this.props.unit.currentTenancy.recoveryStructure === this.props.recovery.name}
                     onChange={() => this.props.onChange()}
                     placeholder={"Does recovery structure apply to this tenancy"}
                 />
-            </td>]
+            </td>,
+            <td className={"rule-calculated-amount-column"} key={3}>
+                {
+                    this.props.unit.currentTenancy.recoveryStructure === this.props.recovery.name ?
+                        <CurrencyFormat value={this.props.unit.calculatedTotalRecovery}/>
+                        : null
+                }
+            </td>
+    ]
     }
 }
 
@@ -93,11 +107,20 @@ class RecoveryStructureEditor extends React.Component
         }
     }
 
+    changeTaxRecovery(expenseName, newValue)
+    {
+        if (newValue !== this.props.recovery.taxRecoveries[expenseName])
+        {
+            this.props.recovery.taxRecoveries[expenseName] = newValue;
+            this.props.onChange(this.props.recovery);
+        }
+    }
+
     changeUnitRecoveryStructure(unit)
     {
         if (unit.currentTenancy.recoveryStructure === this.props.recovery.name)
         {
-            unit.currentTenancy.recoveryStructure = "Standard";
+            unit.currentTenancy.recoveryStructure = RecoveryStructureModel.defaultRecoveryName;
         }
         else
         {
@@ -106,11 +129,16 @@ class RecoveryStructureEditor extends React.Component
         this.props.onChange(this.props.recovery);
     }
 
-
-
     operatingExpenses()
     {
-        return this.props.expenses.filter((expense) => expense.incomeStatementItemType === "operating_expense" || expense.incomeStatementItemType === "taxes")
+        return this.props.expenses.filter((expense) => expense.incomeStatementItemType === "operating_expense")
+    }
+
+
+
+    taxes()
+    {
+        return this.props.expenses.filter((expense) =>  expense.incomeStatementItemType === "taxes")
     }
 
     render()
@@ -121,10 +149,10 @@ class RecoveryStructureEditor extends React.Component
             <CardBody>
                 <table className="recovery-structure-table">
                     <tbody>
-                    <tr>
-                        <td colSpan={4}>
+                    <tr className={"header-row"}>
+                        <td colSpan={3} className={"label-column"}>
                             {
-                                recovery.name !== "Standard" ?
+                                !recovery.isDefault ?
                                     <FieldDisplayEdit
                                         type="text"
                                         placeholder="Recovery Structure Name"
@@ -133,10 +161,12 @@ class RecoveryStructureEditor extends React.Component
                                         hideInput={false}
                                         hideIcon={true}
                                     />
-                                    : <strong className={"title"}>{recovery.name}</strong>
+                                    : <strong className={"title"}>Standard Recovery Structure</strong>
                             }
                         </td>
-                        <td />
+                        <td className={"rule-calculated-amount-column"}>
+                            <strong>Calculated<br/>Amounts</strong>
+                        </td>
                     </tr>
                     <tr className={"recovery-rule label-row"}>
                         <td className={"label-column"}>
@@ -165,6 +195,9 @@ class RecoveryStructureEditor extends React.Component
                                 onChange={(newValue) => this.changeCalculationRuleField(recovery.managementCalculationRule, 'field', newValue)}
                             />
                         </td>
+                        <td className={"rule-calculated-amount-column"}>
+                            <CurrencyFormat value={recovery.calculatedManagementRecovery}/>
+                        </td>
                     </tr>
                     <tr className={"recovery-rule label-row"}>
                         <td className={"label-column"}>
@@ -184,6 +217,8 @@ class RecoveryStructureEditor extends React.Component
                                     expense={this.operatingExpenses()[0]}
                                     recovery={recovery}
                                     onChange={(newValue) => this.changeOperatingExpenseRecovery(this.operatingExpenses()[0].name, newValue)}
+                                    calculated={recovery.calculatedExpenseRecoveries[this.operatingExpenses()[0].name]}
+                                    value={recovery.expenseRecoveries[this.operatingExpenses()[0].name]}
                                 />
                                 : null
                         }
@@ -203,36 +238,117 @@ class RecoveryStructureEditor extends React.Component
                                     expense={expense}
                                     recovery={recovery}
                                     onChange={(newValue) => this.changeOperatingExpenseRecovery(expense.name, newValue)}
+                                    calculated={recovery.calculatedExpenseRecoveries[expense.name]}
+                                    value={recovery.expenseRecoveries[expense.name]}
                                 />
                             </tr>
                         })
                     }
+                    <tr className={"recovery-rule label-row"}>
+                        <td className={"label-column"}>
+                            <strong>Tax Recoveries</strong>
+                        </td>
+                        {
+                            this.taxes().length === 0 ?
+                                [
+                                    <td className={"rule-percentage-column"} key={1} colSpan={2}>
+                                        No taxes found. Please go to "Expenses" or upload an Income or Tax statement.
+                                    </td>,
+                                ] : null
+                        }
+                        {
+                            this.taxes().length > 0 ?
+                                <ExpensePercentageEditor
+                                    expense={this.taxes()[0]}
+                                    recovery={recovery}
+                                    onChange={(newValue) => this.changeTaxRecovery(this.taxes()[0].name, newValue)}
+                                    calculated={recovery.calculatedTaxRecoveries[this.taxes()[0].name]}
+                                    value={recovery.taxRecoveries[this.taxes()[0].name]}
+                                />
+                                : null
+                        }
+                    </tr>
                     {
-                        recovery.name !== "Standard" ? [
-                            <tr className={"recovery-rule label-row"}>
-                                <td className={"label-column"}>
-                                    <strong>Tenants Applied To</strong>
-                                </td>
-                                {
-                                    this.props.units.length > 0 ?
-                                        <TenantApplicableEditor unit={this.props.units[0]} recovery={recovery} onChange={() => this.changeUnitRecoveryStructure(this.props.units[0])}/>
-                                        : null
-                                }
-                            </tr>,
-                                this.props.units.map((unit, unitIndex) =>
+                        this.taxes().map((expense, expenseIndex) =>
+                        {
+                            if (expenseIndex === 0)
                             {
-                                if (unitIndex === 0)
-                                {
-                                    return null;
-                                }
+                                return null;
+                            }
 
-                                return <tr className={"recovery-rule"} key={unitIndex}>
-                                    <td className={"label-column"} />
-                                    <TenantApplicableEditor unit={unit} recovery={recovery} onChange={() => this.changeUnitRecoveryStructure(unit)}/>
-                                </tr>
-                            })
-                        ] : null
+                            return <tr className={"recovery-rule"} key={expenseIndex}>
+                                <td className={"label-column"}>
+                                </td>
+                                <ExpensePercentageEditor
+                                    expense={expense}
+                                    recovery={recovery}
+                                    onChange={(newValue) => this.changeTaxRecovery(expense.name, newValue)}
+                                    calculated={recovery.calculatedTaxRecoveries[expense.name]}
+                                    value={recovery.taxRecoveries[expense.name]}
+                                />
+                            </tr>
+                        })
                     }
+                    <tr className={"total-spacer-row"}>
+                        <td className={"label-column"} />
+                        <td className={"rule-percentage-column"} />
+                        <td className={"rule-field-column"} />
+                        <td className={"rule-calculated-amount-column"} />
+                    </tr>
+                    <tr className={"total-row"}>
+                        <td className={"label-column"}>
+                        </td>
+                        <td className={"rule-percentage-column"}>
+                        </td>
+                        <td className={"rule-field-column"}>
+                            <strong>Total Recovered Under This Structure</strong>
+                        </td>
+                        <td className={"rule-calculated-amount-column"}>
+                            <CurrencyFormat value={recovery.calculatedTotalRecovery}/>
+                        </td>
+                    </tr>
+                    <tr className={"recovery-rule label-row"}>
+                        <td className={"label-column"}>
+                            <strong>Tenants Applied To</strong>
+                        </td>
+                        {
+                            this.props.units.length > 0 ?
+                                <TenantApplicableEditor unit={this.props.units[0]} recovery={recovery} onChange={() => this.changeUnitRecoveryStructure(this.props.units[0])}/>
+                                : null
+                        }
+                    </tr>
+                    {
+                        this.props.units.map((unit, unitIndex) =>
+                        {
+                            if (unitIndex === 0)
+                            {
+                                return null;
+                            }
+
+                            return <tr className={"recovery-rule"} key={unitIndex}>
+                                <td className={"label-column"} />
+                                <TenantApplicableEditor unit={unit} recovery={recovery} onChange={() => this.changeUnitRecoveryStructure(unit)}/>
+                            </tr>
+                        })
+                    }
+                    <tr className={"total-spacer-row"}>
+                        <td className={"label-column"} />
+                        <td className={"rule-percentage-column"} />
+                        <td className={"rule-field-column"} />
+                        <td className={"rule-calculated-amount-column"} />
+                    </tr>
+                    <tr className={"total-row"}>
+                        <td className={"label-column"}>
+                        </td>
+                        <td className={"rule-percentage-column"}>
+                        </td>
+                        <td className={"rule-field-column"}>
+                            <strong>Total Recovered Under This Structure</strong>
+                        </td>
+                        <td className={"rule-calculated-amount-column"}>
+                            <CurrencyFormat value={recovery.calculatedTotalRecovery}/>
+                        </td>
+                    </tr>
                     </tbody>
                 </table>
                 <table className="units-applicable-table">
@@ -240,7 +356,7 @@ class RecoveryStructureEditor extends React.Component
                     </tbody>
                 </table>
                 {
-                    recovery.name !== "Standard" ?
+                    !recovery.isDefault ?
                         <Button color={"danger"} className={"delete-button"} onClick={() => this.props.onDeleteRecovery(this.props.recovery)}>Delete</Button>
                         : null
                 }
@@ -264,7 +380,8 @@ class ViewRecoveryStructures extends React.Component
             percentage: 100,
             field: "managementExpenses"
         },
-        expenseRecoveries: {}
+        expenseRecoveries: {},
+        taxRecoveries: {}
     };
 
     componentDidMount()
@@ -275,14 +392,14 @@ class ViewRecoveryStructures extends React.Component
     onRecoveryChanged(recovery, recoveryIndex)
     {
         this.props.appraisal.recoveryStructures[recoveryIndex] = recovery;
-        this.props.saveAppraisal(this.props.appraisal);
+        this.props.saveAppraisal(this.props.appraisal, true);
     }
 
     onNewRecovery(newRecovery)
     {
         newRecovery.name = newRecovery.name + " " + this.props.appraisal.recoveryStructures.length.toString();
         this.props.appraisal.recoveryStructures.push(newRecovery);
-        this.props.saveAppraisal(this.props.appraisal);
+        this.props.saveAppraisal(this.props.appraisal, true);
     }
 
     onDeleteRecovery(recoveryIndex)
@@ -295,11 +412,11 @@ class ViewRecoveryStructures extends React.Component
         {
             if (unit.currentTenancy.recoveryStructure === recoveryStructure.name)
             {
-                unit.currentTenancy.recoveryStructure = "Standard";
+                unit.currentTenancy.recoveryStructure = RecoveryStructureModel.defaultRecoveryName;
             }
         });
 
-        this.props.saveAppraisal(this.props.appraisal);
+        this.props.saveAppraisal(this.props.appraisal, true);
     }
 
     render() {
@@ -324,6 +441,29 @@ class ViewRecoveryStructures extends React.Component
                                     />
                                 })
                             }
+                                {
+                                    this.props.appraisal.leasingCosts.length > 1 ?
+                                        <Card className={"recovery-structure-editor"}>
+                                            <CardBody>
+                                                <table className="recovery-structure-table">
+                                                    <tbody>
+                                                    <tr className={""}>
+                                                        <td className={"label-column"}>
+                                                        </td>
+                                                        <td className={"rule-percentage-column"}>
+                                                        </td>
+                                                        <td className={"rule-field-column"}>
+                                                            <strong>Total Recoveries</strong>
+                                                        </td>
+                                                        <td className={"rule-calculated-amount-column"}>
+                                                            <CurrencyFormat value={this.props.appraisal.stabilizedStatement.operatingExpenseRecovery + this.props.appraisal.stabilizedStatement.managementRecovery + this.props.appraisal.stabilizedStatement.taxRecovery}/>
+                                                        </td>
+                                                    </tr>
+                                                    </tbody>
+                                                </table>
+                                            </CardBody>
+                                        </Card> : null
+                                }
                             {
                                 <div className={"new-recovery-structure"}>
                                         <Button onClick={() => this.onNewRecovery(new RecoveryStructureModel(this.defaultRecoveryStructureData))}>

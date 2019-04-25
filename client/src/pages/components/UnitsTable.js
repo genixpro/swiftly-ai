@@ -24,12 +24,14 @@ class UnitsTable extends React.Component
     {
         if (this.props.onUnitClicked)
         {
+            let index = 0;
             for (let unit of this.props.appraisal.units)
             {
                 if (unit.unitNumber === unitNum)
                 {
-                    this.props.onUnitClicked(unit);
+                    this.props.onUnitClicked(unit, index);
                 }
+                index += 1;
             }
         }
     }
@@ -47,10 +49,10 @@ class UnitsTable extends React.Component
             <td>{unitInfo.currentTenancy.name}</td>
             <td className={"square-footage-column"}><AreaFormat value={unitInfo.squareFootage}/></td>
             <td className={"rent-column"}>
-                <CurrencyFormat value={unitInfo.currentTenancy.yearlyRentPSF || unitInfo.marketRent} />
+                <CurrencyFormat value={_.isNumber(unitInfo.currentTenancy.yearlyRentPSF) ? unitInfo.currentTenancy.yearlyRentPSF : unitInfo.marketRentAmount} />
             </td>
             <td className={"rent-column"}>
-                <CurrencyFormat value={unitInfo.currentTenancy.yearlyRent || unitInfo.marketRent * unitInfo.squareFootage} cents={false} />
+                <CurrencyFormat value={_.isNumber(unitInfo.currentTenancy.yearlyRent) ? unitInfo.currentTenancy.yearlyRent : unitInfo.marketRentAmount * unitInfo.squareFootage} cents={false} />
             </td>
             {this.props.allowSelection ? <td className={"action-column"}>
                 <Button

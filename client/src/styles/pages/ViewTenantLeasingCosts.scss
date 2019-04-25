@@ -23,6 +23,7 @@
   .label-column
   {
     padding-right: 15px;
+    min-width: 150px;
   }
 
   .delete-button
@@ -40,6 +41,82 @@
       white-space: nowrap;
       justify-content: space-between;
       width: 100%;
+      min-width: 350px;
+    }
+  }
+
+  .none-found
+  {
+    font-size: 85%;
+    font-style: italic;
+  }
+
+
+  .unit-size-column, .calculated-vacant-unit-leasup-costs-column, .should-treat-unit-as-vacant-column, .calculated-vacant-unit-rent-loss
+  {
+    padding-left: 15px;
+    text-align: right;
+    min-width: 150px;
+  }
+
+  .should-treat-unit-as-vacant-column
+  {
+    display: flex;
+    justify-content: flex-end;
+    .field-display-edit
+    {
+      width: auto;
+
+    }
+  }
+
+
+  .header-row
+  {
+    .unit-size-column
+    {
+
+    }
+
+    .calculated-vacant-unit-leasup-costs-column
+    {
+
+    }
+
+    .calculated-vacant-unit-rent-loss
+    {
+
+    }
+  }
+
+  .total-spacer-row
+  {
+    td {
+      padding-top: 15px;
+    }
+
+    .unit-size-column
+    {
+      border-bottom: 1px solid black;
+    }
+
+    .calculated-vacant-unit-leasup-costs-column
+    {
+      border-bottom: 1px solid black;
+    }
+
+    .calculated-vacant-unit-rent-loss
+    {
+      border-bottom: 1px solid black;
+    }
+  }
+
+  .total-row
+  {
+    .value-column
+    {
+      justify-content: flex-end;
+      text-align: right;
     }
   }
 }

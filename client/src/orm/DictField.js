@@ -3,11 +3,20 @@ import _ from "underscore";
 
 class DictField extends BaseField
 {
-    constructor(subField)
+    constructor(subField, defaultValue)
     {
         super();
 
         this.subField = subField;
+
+        if (_.isUndefined(defaultValue))
+        {
+            this.defaultValue = null;
+        }
+        else
+        {
+            this.defaultValue = defaultValue;
+        }
     }
 
     set keyName(value)
@@ -24,11 +33,11 @@ class DictField extends BaseField
     {
         if (!_.isObject(value))
         {
-            return null;
+            return this.defaultValue;
         }
         else if (_.isUndefined(value))
         {
-            return null;
+            return this.defaultValue;
         }
         else
         {

@@ -217,35 +217,51 @@ class ViewCapitalizationValuation extends React.Component
                                                     </tr> : null
                                             }
                                             {
-                                                this.props.appraisal.stabilizedStatement.freeRentDifferential ?
+                                                this.props.appraisal.stabilizedStatement.freeRentRentLoss ?
                                                     <tr className={"data-row capitalization-row"}>
                                                         <td className={"label-column"}>
-                                                            <span>Free Rent Differential</span>
+                                                            <span>Free Rent Loss</span>
                                                         </td>
                                                         <td className={"amount-column"}></td>
                                                         <td className={"amount-total-column"}>
-                                                            <CurrencyFormat value={this.props.appraisal.stabilizedStatement.freeRentDifferential} />
+                                                            <CurrencyFormat value={this.props.appraisal.stabilizedStatement.freeRentRentLoss} />
                                                         </td>
                                                     </tr> : null
                                             }
                                             {
-                                                this.props.appraisal.stabilizedStatement.vacantUnitDifferential ?
+                                                this.props.appraisal.stabilizedStatement.vacantUnitLeasupCosts ?
                                                     <tr className={"data-row capitalization-row"}>
                                                         <td className={"label-column"}>
                                                             <Link to={`/appraisal/${this.props.appraisal._id}/tenants/leasing_costs`}>
-                                                                <span>Leaseup Costs</span>
+                                                                <span>Vacant Unit Leasup Costs</span>
                                                             </Link>
                                                         </td>
                                                         <td className={"amount-column"}></td>
                                                         <td className={"amount-total-column"}>
                                                             <Link to={`/appraisal/${this.props.appraisal._id}/tenants/leasing_costs`}>
-                                                                <CurrencyFormat value={this.props.appraisal.stabilizedStatement.vacantUnitDifferential}/>
+                                                                <CurrencyFormat value={this.props.appraisal.stabilizedStatement.vacantUnitLeasupCosts}/>
                                                             </Link>
                                                         </td>
                                                     </tr> : null
                                             }
                                             {
-                                                this.props.appraisal.stabilizedStatement.amortizationDifferential ?
+                                                this.props.appraisal.stabilizedStatement.vacantUnitRentLoss ?
+                                                    <tr className={"data-row capitalization-row"}>
+                                                        <td className={"label-column"}>
+                                                            <Link to={`/appraisal/${this.props.appraisal._id}/tenants/leasing_costs`}>
+                                                                <span>Vacant Unit Rent Loss</span>
+                                                            </Link>
+                                                        </td>
+                                                        <td className={"amount-column"}></td>
+                                                        <td className={"amount-total-column"}>
+                                                            <Link to={`/appraisal/${this.props.appraisal._id}/tenants/leasing_costs`}>
+                                                                <CurrencyFormat value={this.props.appraisal.stabilizedStatement.vacantUnitRentLoss}/>
+                                                            </Link>
+                                                        </td>
+                                                    </tr> : null
+                                            }
+                                            {
+                                                this.props.appraisal.stabilizedStatement.amortizedCapitalInvestment ?
                                                     <tr className={"data-row capitalization-row"}>
                                                         <td className={"label-column"}>
                                                             <Link to={`/appraisal/${this.props.appraisal._id}/tenants/amortization`}>
@@ -255,7 +271,7 @@ class ViewCapitalizationValuation extends React.Component
                                                         <td className={"amount-column"}></td>
                                                         <td className={"amount-total-column"}>
                                                             <Link to={`/appraisal/${this.props.appraisal._id}/tenants/amortization`}>
-                                                                <CurrencyFormat value={this.props.appraisal.stabilizedStatement.amortizationDifferential} />
+                                                                <CurrencyFormat value={this.props.appraisal.stabilizedStatement.amortizedCapitalInvestment} />
                                                             </Link>
                                                         </td>
                                                     </tr> : null

@@ -33,11 +33,15 @@ class StabilizedStatementModel(ValuationModelBase):
                 statement.tmiTotal = 0
 
         statement.marketRentDifferential = self.computeMarketRentDifferentials(appraisal)
-        statement.freeRentDifferential = self.computeFreeRentDifferentials(appraisal)
-        statement.vacantUnitDifferential = self.computeVacantUnitDifferential(appraisal)
-        statement.amortizationDifferential = self.computeAmortizationDifferential(appraisal)
+        statement.freeRentRentLoss = self.computeFreeRentRentLoss(appraisal)
+
+        statement.vacantUnitRentLoss = self.computeVacantUnitRentLoss(appraisal)
+        statement.vacantUnitLeasupCosts = self.computeVacantUnitLeasupCosts(appraisal)
+
+        statement.amortizedCapitalInvestment = self.computeAmortizedCapitalInvestment(appraisal)
         statement.managementRecovery = self.computeManagementRecoveries(appraisal)
         statement.operatingExpenseRecovery = self.computeOperatingExpenseRecoveries(appraisal)
+        statement.taxRecovery = self.computeTaxRecoveries(appraisal)
         statement.recoverableIncome = self.computeTotalRecoverableIncome(appraisal)
         
         statement.potentialGrossIncome = self.computePotentialGrossIncome(appraisal)
@@ -59,7 +63,7 @@ class StabilizedStatementModel(ValuationModelBase):
 
         statement.capitalization = statement.netOperatingIncome / (appraisal.stabilizedStatementInputs.capitalizationRate / 100.0)
 
-        statement.valuation = statement.capitalization + statement.marketRentDifferential + statement.freeRentDifferential + statement.vacantUnitDifferential + statement.amortizationDifferential
+        statement.valuation = statement.capitalization + statement.marketRentDifferential + statement.freeRentRentLoss + statement.vacantUnitLeasupCosts + statement.vacantUnitRentLoss + statement.amortizedCapitalInvestment
 
         for modifier in appraisal.stabilizedStatementInputs.modifiers:
             if modifier.amount:
@@ -74,7 +78,7 @@ class StabilizedStatementModel(ValuationModelBase):
 
 
     def computeTotalRecoverableIncome(self, appraisal):
-        return self.computeManagementRecoveries(appraisal) + self.computeOperatingExpenseRecoveries(appraisal)
+        return self.computeManagementRecoveries(appraisal) + self.computeOperatingExpenseRecoveries(appraisal) + self.computeTaxRecoveries(appraisal)
 
     def computePotentialGrossIncome(self, appraisal):
         return self.computeRentalIncome(appraisal) + self.computeAdditionalIncome(appraisal) + self.computeTotalRecoverableIncome(appraisal)
@@ -84,14 +88,6 @@ class StabilizedStatementModel(ValuationModelBase):
 
     def computeEffectiveGrossIncome(self, appraisal):
         return self.computePotentialGrossIncome(appraisal) - self.computeVacancyDeduction(appraisal)
-
-    def getStabilizedRent(self, appraisal, unit):
-        if unit.currentTenancy and unit.currentTenancy.yearlyRent:
-            return unit.currentTenancy.yearlyRent
-        elif unit.squareFootage and unit.marketRent and self.getMarketRent(appraisal, unit.marketRent):
-            return self.getMarketRent(appraisal, unit.marketRent) * unit.squareFootage
-        else:
-            return 0
 
 
     def getRecoveryStructure(self, appraisal, name):
@@ -191,11 +187,16 @@ class StabilizedStatementModel(ValuationModelBase):
     def computeManagementRecoveries(self, appraisal):
         total = 0
 
+        for recoveryStructure in appraisal.recoveryStructures:
+            recoveryStructure.calculatedManagementRecovery = 0
+
         for unit in appraisal.units:
             if unit.currentTenancy and unit.currentTenancy.recoveryStructure and self.getRecoveryStructure(appraisal, unit.currentTenancy.recoveryStructure) is not None:
                 recoveryStructure = self.getRecoveryStructure(appraisal, unit.currentTenancy.recoveryStructure)
             else:
                 recoveryStructure = self.getDefaultRecoveryStructure(appraisal)
+
+            unit.calculatedManagementRecovery = 0
 
             # TODO: This is a weird edge case. Because effectiveGrossIncome is itself dependent upon management recoveries, if management recoveries are based on
             # management expenses and management expenses are based on a number that is dependent upon management recoveries, we have a circular logic that leads
@@ -211,13 +212,22 @@ class StabilizedStatementModel(ValuationModelBase):
                 if unit.squareFootage and appraisal.sizeOfBuilding:
                     percentage *= unit.squareFootage / appraisal.sizeOfBuilding
 
-                total += percentage * self.getCalculationField(appraisal, recoveryStructure.managementCalculationRule.field)
+                recoveredAmount = percentage * self.getCalculationField(appraisal, recoveryStructure.managementCalculationRule.field)
+
+                total += recoveredAmount
+                recoveryStructure.calculatedManagementRecovery += recoveredAmount
+                unit.calculatedManagementRecovery += recoveredAmount
 
         return total
 
-
     def computeOperatingExpenseRecoveries(self, appraisal):
         total = 0
+
+        for recoveryStructure in appraisal.recoveryStructures:
+            recoveryStructure.calculatedExpenseRecoveries = {}
+            for expense in appraisal.incomeStatement.expenses:
+                if expense.incomeStatementItemType == 'operating_expense':
+                    recoveryStructure.calculatedExpenseRecoveries[expense.name] = 0
 
         for unit in appraisal.units:
             if unit.currentTenancy and unit.currentTenancy.recoveryStructure and self.getRecoveryStructure(appraisal, unit.currentTenancy.recoveryStructure) is not None:
@@ -225,13 +235,51 @@ class StabilizedStatementModel(ValuationModelBase):
             else:
                 recoveryStructure = self.getDefaultRecoveryStructure(appraisal)
 
+            unit.calculatedExpenseRecovery = 0
+
             for expense in appraisal.incomeStatement.expenses:
-                if expense.incomeStatementItemType == 'operating_expense' or expense.incomeStatementItemType == 'taxes':
+                if expense.incomeStatementItemType == 'operating_expense':
                     percentage = (recoveryStructure.expenseRecoveries.get(expense.name, 100)) / 100.0
 
                     if unit.squareFootage and appraisal.sizeOfBuilding:
                         percentage *= unit.squareFootage / appraisal.sizeOfBuilding
 
-                    total += percentage * expense.getLatestAmount()
+                    recoveredAmount = percentage * expense.getLatestAmount()
+
+                    total += recoveredAmount
+                    recoveryStructure.calculatedExpenseRecoveries[expense.name] += recoveredAmount
+                    unit.calculatedExpenseRecovery += recoveredAmount
+
+        return total
+
+    def computeTaxRecoveries(self, appraisal):
+        total = 0
+
+        for recoveryStructure in appraisal.recoveryStructures:
+            recoveryStructure.calculatedTaxRecoveries = {}
+            for expense in appraisal.incomeStatement.expenses:
+                if expense.incomeStatementItemType == 'taxes':
+                    recoveryStructure.calculatedTaxRecoveries[expense.name] = 0
+
+        for unit in appraisal.units:
+            if unit.currentTenancy and unit.currentTenancy.recoveryStructure and self.getRecoveryStructure(appraisal, unit.currentTenancy.recoveryStructure) is not None:
+                recoveryStructure = self.getRecoveryStructure(appraisal, unit.currentTenancy.recoveryStructure)
+            else:
+                recoveryStructure = self.getDefaultRecoveryStructure(appraisal)
+
+            unit.calculatedTaxRecovery = 0
+
+            for expense in appraisal.incomeStatement.expenses:
+                if expense.incomeStatementItemType == 'taxes':
+                    percentage = (recoveryStructure.taxRecoveries.get(expense.name, 100)) / 100.0
+
+                    if unit.squareFootage and appraisal.sizeOfBuilding:
+                        percentage *= unit.squareFootage / appraisal.sizeOfBuilding
+
+                    recoveredAmount = percentage * expense.getLatestAmount()
+
+                    total += recoveredAmount
+                    recoveryStructure.calculatedTaxRecoveries[expense.name] += recoveredAmount
+                    unit.calculatedTaxRecovery += recoveredAmount
 
         return total
