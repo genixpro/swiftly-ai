@@ -61,7 +61,7 @@ class DictField extends BaseField
         {
             if (key === 'delete')
             {
-                if (oldValue[key])
+                if (_.isUndefined(oldValue[key]))
                 {
                     delete oldValue[key];
                 }

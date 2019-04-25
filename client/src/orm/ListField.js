@@ -77,7 +77,7 @@ class ListField extends BaseField
         {
             if (key === 'delete')
             {
-                if (oldValue[key])
+                if (!_.isUndefined(oldValue[key]))
                 {
                     delete oldValue[key];
                 }
@@ -91,7 +91,7 @@ class ListField extends BaseField
             }
             else
             {
-                oldValue[key] = this.subField.applyDiff(oldValue[key], diffValue[key], parent);
+                oldValue[Number(key)] = this.subField.applyDiff(oldValue[Number(key)], diffValue[key], parent);
             }
         });
         return oldValue;

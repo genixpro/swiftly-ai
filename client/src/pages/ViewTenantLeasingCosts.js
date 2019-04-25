@@ -25,21 +25,21 @@ class TenantApplicableEditor extends React.Component
                     />
                 </div>
             </td>,
-            <td className={"unit-size-column"}>
+            <td className={"unit-size-column"} key={2}>
                 {
                     this.props.unit.leasingCostStructure === this.props.leasingCostStructure.name ?
                         <AreaFormat value={this.props.unit.squareFootage} /> : null
                 }
 
             </td>,
-            <td className={"calculated-vacant-unit-leasup-costs-column"}>
+            <td className={"calculated-vacant-unit-leasup-costs-column"} key={3}>
                 {
                     this.props.unit.leasingCostStructure === this.props.leasingCostStructure.name && this.props.unit.isVacantForStabilizedStatement
                         && this.props.unit.calculatedVacantUnitLeasupCosts ?
                         <CurrencyFormat value={this.props.unit.calculatedVacantUnitLeasupCosts}/> : null
                 }
             </td>,
-            <td className={"calculated-vacant-unit-rent-loss"}>
+            <td className={"calculated-vacant-unit-rent-loss"} key={4}>
                 {
                     this.props.unit.leasingCostStructure === this.props.leasingCostStructure.name && this.props.unit.isVacantForStabilizedStatement ?
                         this.props.unit.marketRent ?
@@ -50,7 +50,7 @@ class TenantApplicableEditor extends React.Component
                         : null
                 }
             </td>,
-            <td className={"should-treat-unit-as-vacant-column"}>
+            <td className={"should-treat-unit-as-vacant-column"} key={5}>
                 {this.props.unit.leasingCostStructure === this.props.leasingCostStructure.name ?
                     <FieldDisplayEdit
                         type={"boolean"}
@@ -425,6 +425,7 @@ class ViewTenantsLeasingCosts extends React.Component
                                     this.props.appraisal.leasingCosts.map((leasingCostStructure, leasingCostStructureIndex) =>
                                     {
                                         return <LeasingCostStructureEditor
+                                            key={leasingCostStructureIndex}
                                             leasingCostStructure={leasingCostStructure}
                                             appraisal={this.props.appraisal}
                                             onChange={(newValue) => this.onLeasingStructureChanged(newValue, leasingCostStructureIndex)}

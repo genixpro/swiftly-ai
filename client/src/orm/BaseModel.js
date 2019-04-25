@@ -1,5 +1,5 @@
 import BaseField from "./BaseField";
-
+import _ from "underscore";
 
 /**
  * This class is encapsulates data that is sent down from the server.
@@ -175,7 +175,7 @@ class BaseModel extends Object
                 if (field.fieldName)
                 {
                     let diffValue = diff[field.fieldName];
-                    if (diffValue)
+                    if (!_.isUndefined(diffValue))
                     {
                         this[field.fieldName] = modelClass[key].applyDiff(this[field.fieldName], diffValue, this);
                     }
@@ -189,7 +189,7 @@ class BaseModel extends Object
                 {
                     let diffValue = diff[key];
 
-                    if (diffValue)
+                    if (!_.isUndefined(diffValue))
                     {
                         this[key] = modelClass[key].applyDiff(this[key], diffValue, this);
                     }
