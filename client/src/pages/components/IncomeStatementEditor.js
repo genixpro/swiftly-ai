@@ -765,7 +765,7 @@ class IncomeStatementEditor extends React.Component
             const expenseFilter = (expense) => expense[sortableIndex] === newIndex-start;
             while (origNewIndex === -1 && (newIndex-start) > 0)
             {
-                origNewIndex = _.indexOf(expensesSorted, _.filter(expensesSorted, expenseFilter())[0]);
+                origNewIndex = _.indexOf(expensesSorted, _.filter(expensesSorted, expenseFilter)[0]);
                 start += 1;
             }
         }
