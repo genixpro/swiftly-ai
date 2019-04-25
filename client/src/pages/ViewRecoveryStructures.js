@@ -442,7 +442,7 @@ class ViewRecoveryStructures extends React.Component
                                 })
                             }
                                 {
-                                    this.props.appraisal.leasingCosts.length > 1 ?
+                                    this.props.appraisal.recoveryStructures.length > 1 ?
                                         <Card className={"recovery-structure-editor"}>
                                             <CardBody>
                                                 <table className="recovery-structure-table">
