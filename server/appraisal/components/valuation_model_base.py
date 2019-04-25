@@ -90,7 +90,12 @@ class ValuationModelBase:
                 monthsFromStart = relativedelta(self.getEffectiveDate(appraisal), unit.currentTenancy.startDate).months
                 freeRentMonthsRemaining = int(max(unit.currentTenancy.freeRentMonths - monthsFromStart, 0))
 
-                currentRentLoss = freeRentMonthsRemaining * self.getStabilizedRent(appraisal, unit) / 12.0
+                if unit.currentTenancy.freeRentType == 'gross':
+                    currentRentLoss = freeRentMonthsRemaining * self.getStabilizedRent(appraisal, unit) / 12.0
+                else:
+                    unitRecoveries = self.computeTaxRecoveriesForUnit(appraisal, unit) + self.computeManagementRecoveriesForUnit(appraisal, unit) + self.computeOperatingExpenseRecoveriesForUnit(appraisal, unit)
+
+                    currentRentLoss = freeRentMonthsRemaining * (self.getStabilizedRent(appraisal, unit) + unitRecoveries) / 12.0
 
                 totalRentLoss += currentRentLoss
 
@@ -161,4 +166,259 @@ class ValuationModelBase:
         return total
 
 
+    def getRecoveryStructure(self, appraisal, name):
+        for recovery in appraisal.recoveryStructures:
+            if recovery.name == name:
+                return recovery
+        return None
 
+    def getDefaultRecoveryStructure(self, appraisal):
+        for recovery in appraisal.recoveryStructures:
+            if 'default' in recovery.name.lower():
+                return recovery
+        return appraisal.recoveryStructures[0]
+
+
+    def computeTotalRecoverableIncome(self, appraisal):
+        return self.computeManagementRecoveries(appraisal) + self.computeOperatingExpenseRecoveries(appraisal) + self.computeTaxRecoveries(appraisal)
+
+    def computePotentialGrossIncome(self, appraisal):
+        return self.computeRentalIncome(appraisal) + self.computeAdditionalIncome(appraisal) + self.computeTotalRecoverableIncome(appraisal)
+
+    def computeVacancyDeduction(self, appraisal):
+        return self.computePotentialGrossIncome(appraisal) * (appraisal.stabilizedStatementInputs.vacancyRate / 100.0)
+
+    def computeEffectiveGrossIncome(self, appraisal):
+        return self.computePotentialGrossIncome(appraisal) - self.computeVacancyDeduction(appraisal)
+
+
+    def computeRentalIncome(self, appraisal):
+        total = 0
+
+        for unit in appraisal.units:
+            total += self.getStabilizedRent(appraisal, unit)
+
+        return total
+
+
+    def computeAdditionalIncome(self, appraisal):
+        total = 0
+
+        for income in appraisal.incomeStatement.incomes:
+            if income.incomeStatementItemType == 'additional_income':
+                total += self.getLatestAmount(income)
+
+        return total
+
+
+    def computeRecoverableOperatingExpenses(self, appraisal):
+        total = 0
+
+        for expense in appraisal.incomeStatement.expenses:
+            if expense.incomeStatementItemType == 'operating_expense':
+                total += self.getLatestAmount(expense)
+
+        return total
+
+
+    def computeTotalOperatingExpenses(self, appraisal):
+        total = 0
+
+        for expense in appraisal.incomeStatement.expenses:
+            if expense.incomeStatementItemType == 'operating_expense':
+                total += self.getLatestAmount(expense)
+
+        return total
+
+
+    def computeTaxes(self, appraisal):
+        total = 0
+
+        for expense in appraisal.incomeStatement.expenses:
+            if expense.incomeStatementItemType == 'taxes':
+                total += self.getLatestAmount(expense)
+
+        return total
+
+
+    def computeManagementFees(self, appraisal):
+        total = 0
+
+        if appraisal.stabilizedStatementInputs.managementExpenseMode == 'income_statement':
+            for expense in appraisal.incomeStatement.expenses:
+                if expense.incomeStatementItemType == 'management_expense':
+                    total += self.getLatestAmount(expense)
+        elif appraisal.stabilizedStatementInputs.managementExpenseMode == 'rule':
+            total = (appraisal.stabilizedStatementInputs.managementExpenseCalculationRule.percentage / 100.0) * self.getCalculationField(appraisal, appraisal.stabilizedStatementInputs.managementExpenseCalculationRule.field)
+
+        return total
+
+    def getCalculationField(self, appraisal, name):
+        if name == "operatingExpenses":
+            return self.computeTotalOperatingExpenses(appraisal)
+        if name == "managementExpenses":
+            return self.computeManagementFees(appraisal)
+        if name == "taxes":
+            return self.computeTaxes(appraisal)
+        if name == "rentalIncome":
+            return self.computeRentalIncome(appraisal)
+        if name == "effectiveGrossIncome":
+            return self.computeEffectiveGrossIncome(appraisal)
+
+        if name == "operatingExpensesAndTaxes":
+            return self.computeTotalOperatingExpenses(appraisal) + self.computeTaxes(appraisal)
+
+        for expense in appraisal.incomeStatement.expenses:
+            if expense.name == name:
+                return expense.getLatestAmount()
+
+    def recoveryStructureForUnit(self, appraisal, unit):
+        if unit.currentTenancy and unit.currentTenancy.recoveryStructure and self.getRecoveryStructure(appraisal, unit.currentTenancy.recoveryStructure) is not None:
+            recoveryStructure = self.getRecoveryStructure(appraisal, unit.currentTenancy.recoveryStructure)
+        else:
+            recoveryStructure = self.getDefaultRecoveryStructure(appraisal)
+
+        return recoveryStructure
+
+
+    def computeManagementRecoveriesForUnit(self, appraisal, unit):
+        recoveryStructure = self.recoveryStructureForUnit(appraisal, unit)
+
+        unit.calculatedManagementRecovery = 0
+
+        # TODO: This is a weird edge case. Because effectiveGrossIncome is itself dependent upon management recoveries, if management recoveries are based on
+        # management expenses and management expenses are based on a number that is dependent upon management recoveries, we have a circular logic that leads
+        # to infinite recursion and an unsolvable set of rules. We'll need a better way to catch this in the future.
+        if recoveryStructure.managementCalculationRule.field == 'managementExpenses' and \
+                appraisal.stabilizedStatementInputs.managementExpenseMode == 'rule' and \
+                appraisal.stabilizedStatementInputs.managementExpenseCalculationRule.field == 'effectiveGrossIncome':
+            return 0
+
+        if recoveryStructure.managementCalculationRule and recoveryStructure.managementCalculationRule.percentage and recoveryStructure.managementCalculationRule.field:
+            percentage = (recoveryStructure.managementCalculationRule.percentage / 100.0)
+
+            if unit.squareFootage and appraisal.sizeOfBuilding:
+                percentage *= unit.squareFootage / appraisal.sizeOfBuilding
+
+            recoveredAmount = percentage * self.getCalculationField(appraisal, recoveryStructure.managementCalculationRule.field)
+
+            unit.calculatedManagementRecovery += recoveredAmount
+
+            return recoveredAmount
+        return 0
+
+
+
+    def computeOperatingExpenseRecoveriesForUnit(self, appraisal, unit):
+        recoveryStructure = self.recoveryStructureForUnit(appraisal, unit)
+
+        unit.calculatedExpenseRecovery = 0
+
+        for expense in appraisal.incomeStatement.expenses:
+            if expense.incomeStatementItemType == 'operating_expense':
+                percentage = (recoveryStructure.expenseRecoveries.get(expense.name, 100)) / 100.0
+
+                if unit.squareFootage and appraisal.sizeOfBuilding:
+                    percentage *= unit.squareFootage / appraisal.sizeOfBuilding
+
+                recoveredAmount = percentage * expense.getLatestAmount()
+
+                unit.calculatedExpenseRecovery += recoveredAmount
+
+        return unit.calculatedExpenseRecovery
+
+
+    def computeTaxRecoveriesForUnit(self, appraisal, unit):
+        recoveryStructure = self.recoveryStructureForUnit(appraisal, unit)
+
+        unit.calculatedTaxRecovery = 0
+
+        for expense in appraisal.incomeStatement.expenses:
+            if expense.incomeStatementItemType == 'taxes':
+                percentage = (recoveryStructure.taxRecoveries.get(expense.name, 100)) / 100.0
+
+                if unit.squareFootage and appraisal.sizeOfBuilding:
+                    percentage *= unit.squareFootage / appraisal.sizeOfBuilding
+
+                recoveredAmount = percentage * expense.getLatestAmount()
+
+                unit.calculatedTaxRecovery += recoveredAmount
+
+        return unit.calculatedTaxRecovery
+
+
+    def computeManagementRecoveries(self, appraisal):
+        total = 0
+
+        for recoveryStructure in appraisal.recoveryStructures:
+            recoveryStructure.calculatedManagementRecovery = 0
+
+        for unit in appraisal.units:
+            unit.calculatedManagementRecovery = self.computeManagementRecoveriesForUnit(appraisal, unit)
+
+            recoveryStructure = self.recoveryStructureForUnit(appraisal, unit)
+
+            total += unit.calculatedManagementRecovery
+            recoveryStructure.calculatedManagementRecovery += unit.calculatedManagementRecovery
+
+        return total
+
+
+    def computeOperatingExpenseRecoveries(self, appraisal):
+        total = 0
+
+        for recoveryStructure in appraisal.recoveryStructures:
+            recoveryStructure.calculatedExpenseRecoveries = {}
+            for expense in appraisal.incomeStatement.expenses:
+                if expense.incomeStatementItemType == 'operating_expense':
+                    recoveryStructure.calculatedExpenseRecoveries[expense.name] = 0
+
+        for unit in appraisal.units:
+            recoveryStructure = self.recoveryStructureForUnit(appraisal, unit)
+
+            unit.calculatedExpenseRecovery = 0
+
+            for expense in appraisal.incomeStatement.expenses:
+                if expense.incomeStatementItemType == 'operating_expense':
+                    percentage = (recoveryStructure.expenseRecoveries.get(expense.name, 100)) / 100.0
+
+                    if unit.squareFootage and appraisal.sizeOfBuilding:
+                        percentage *= unit.squareFootage / appraisal.sizeOfBuilding
+
+                    recoveredAmount = percentage * expense.getLatestAmount()
+
+                    total += recoveredAmount
+                    recoveryStructure.calculatedExpenseRecoveries[expense.name] += recoveredAmount
+                    unit.calculatedExpenseRecovery += recoveredAmount
+
+        return total
+
+
+    def computeTaxRecoveries(self, appraisal):
+        total = 0
+
+        for recoveryStructure in appraisal.recoveryStructures:
+            recoveryStructure.calculatedTaxRecoveries = {}
+            for expense in appraisal.incomeStatement.expenses:
+                if expense.incomeStatementItemType == 'taxes':
+                    recoveryStructure.calculatedTaxRecoveries[expense.name] = 0
+
+        for unit in appraisal.units:
+            recoveryStructure = self.recoveryStructureForUnit(appraisal, unit)
+
+            unit.calculatedTaxRecovery = 0
+
+            for expense in appraisal.incomeStatement.expenses:
+                if expense.incomeStatementItemType == 'taxes':
+                    percentage = (recoveryStructure.taxRecoveries.get(expense.name, 100)) / 100.0
+
+                    if unit.squareFootage and appraisal.sizeOfBuilding:
+                        percentage *= unit.squareFootage / appraisal.sizeOfBuilding
+
+                    recoveredAmount = percentage * expense.getLatestAmount()
+
+                    total += recoveredAmount
+                    recoveryStructure.calculatedTaxRecoveries[expense.name] += recoveredAmount
+                    unit.calculatedTaxRecovery += recoveredAmount
+
+        return total

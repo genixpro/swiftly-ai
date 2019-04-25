@@ -18,6 +18,9 @@ class Tenancy(EmbeddedDocument):
     # The free rent period in months
     freeRentMonths = FloatField()
 
+    # The free rent period in months
+    freeRentType = StringField(choices=["net", "gross", "", None], default="net", null=True)
+
     recoveryStructure = StringField(default="Standard")
 
     # This specifies the rent-type. This can be either "NET" or "GROSS"

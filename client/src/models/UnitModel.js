@@ -15,6 +15,7 @@ class TenancyModel extends BaseModel
     static monthlyRent = new FloatField("monthlyRent", 0);
     static yearlyRent = new FloatField("yearlyRent", 0);
     static rentType = new StringField("rentType", "net");
+    static freeRentType = new StringField("freeRentType", "net");
     static startDate = new DateField("startDate", () => new Date());
     static endDate = new DateField("endDate", () => new Date());
     static freeRentMonths = new FloatField("freeRentMonths", 0);

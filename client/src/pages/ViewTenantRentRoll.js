@@ -405,6 +405,16 @@ class ViewTenantsRentRoll extends React.Component
                                         </tr>
                                         <tr>
                                             <td>
+                                                <strong>Free Rent Type</strong>
+                                            </td>
+                                            <td>
+                                                <FieldDisplayEdit type="rentType"
+                                                                  value={this.props.appraisal.units[this.state.selectedUnitIndex].currentTenancy.freeRentType}
+                                                                  onChange={(newValue) => this.changeAllTenantField(this.props.appraisal.units[this.state.selectedUnitIndex], this.props.appraisal.units[this.state.selectedUnitIndex].currentTenancy, 'freeRentType', newValue)}/>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
                                                 <strong>Recovery Structure</strong>
                                             </td>
                                             <td>
