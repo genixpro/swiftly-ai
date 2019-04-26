@@ -52,6 +52,16 @@ class AppraisalModel extends BaseModel
     static recoveryStructures = new ListField(new ModelField(RecoveryStructureModel));
     static amortizationSchedule = new ModelField(AmortizationScheduleModel);
     static leasingCosts = new ListField(new ModelField(LeasingCostStructureModel));
+
+
+    getEffectiveDate()
+    {
+        if (this.effectiveDate)
+        {
+            return this.effectiveDate;
+        }
+        return new Date();
+    }
 }
 
 export default AppraisalModel;

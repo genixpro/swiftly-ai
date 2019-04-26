@@ -19,6 +19,15 @@
     border: 1px solid lightgray;
     width: fit-content;
 
+    a {
+      color: #656565;
+    }
+
+    a:hover {
+      color: #656565;
+      text-decoration: underline;
+      cursor: pointer;
+    }
 
     .title
     {
