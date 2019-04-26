@@ -16,7 +16,7 @@ class ExpensePercentageEditor extends React.Component
 
     render()
     {
-        const popoverId = `expense-recovery-popover-${this.props.expense.name.replace(/ /g, "")}-${this.props.recovery.name.replace(/ /g, "")}`;
+        const popoverId = `expense-recovery-popover-${this.props.expense.name.replace(/\W/g, "")}-${this.props.recovery.name.replace(/\W/g, "")}`;
 
         const percentage = _.isNumber(this.props.value) ? this.props.value : 100;
 
@@ -120,7 +120,7 @@ class TenantApplicableEditor extends React.Component
 
     render()
     {
-        const popoverId = `tenancy-recovery-popover-${this.props.unit.currentTenancy.name.replace(/ /g, "")}-${this.props.recovery.name.replace(/ /g, "")}`;
+        const popoverId = `tenancy-recovery-popover-${this.props.unit.currentTenancy.name.replace(/\W/g, "")}-${this.props.recovery.name.replace(/\W/g, "")}`;
 
         return [<td className={"rule-percentage-column"} key={1}>
             {this.props.unit.currentTenancy.name || `Unit ${this.props.unit.unitNumber}`}
@@ -260,7 +260,7 @@ class RecoveryStructureEditor extends React.Component
     {
         const recovery = this.props.recovery;
 
-        const managementRecoveryPopoverId = `management-recovery-popover-${this.props.recovery.name.replace(/ /g, "")}`;
+        const managementRecoveryPopoverId = `management-recovery-popover-${this.props.recovery.name.replace(/\W/g, "")}`;
 
         return <Card className={"recovery-structure-editor"}>
             <CardBody>

@@ -16,9 +16,9 @@ class TenantApplicableEditor extends React.Component
 
     render()
     {
-        const vacantUnitLeasupCostPopoverId = `tenant-leasing-cost-popover-${this.props.unit.unitNumber.replace(/ /g, "")}-${this.props.leasingCostStructure.name.replace(/ /g, "")}`;
+        const vacantUnitLeasupCostPopoverId = `tenant-leasing-cost-popover-${this.props.unit.unitNumber.replace(/\W]/g, "")}-${this.props.leasingCostStructure.name.replace(/\W/g, "")}`;
 
-        const vacantUnitRentLossPopoverId = `tenant-rent-loss-popover-${this.props.unit.unitNumber.replace(/ /g, "")}-${this.props.leasingCostStructure.name.replace(/ /g, "")}`;
+        const vacantUnitRentLossPopoverId = `tenant-rent-loss-popover-${this.props.unit.unitNumber.replace(/\W/g, "")}-${this.props.leasingCostStructure.name.replace(/\W/g, "")}`;
 
         return [<td className={"value-column"} key={1}>
                 <div>Unit {this.props.unit.unitNumber}</div>
