@@ -66,6 +66,13 @@ class DictField extends BaseField
                     delete oldValue[key];
                 }
             }
+            else if (key === '$replace')
+            {
+                Object.keys(diffValue[key]).forEach((modKey) =>
+                {
+                    oldValue[modKey] = this.subField.toObject(diffValue[key][modKey]);
+                })
+            }
             else
             {
                 oldValue[key] = this.subField.applyDiff(oldValue[key], diffValue[key], parent);
