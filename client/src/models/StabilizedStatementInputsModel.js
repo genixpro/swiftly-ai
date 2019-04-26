@@ -33,4 +33,5 @@ class StabilizedStatementInputsModel extends BaseModel
 }
 
 export default StabilizedStatementInputsModel;
+export {StabilizedStatementInputsModel, StabilizedStatementModifier};
 

@@ -120,7 +120,7 @@ class ViewTenantsRentRoll extends React.Component
 
     createNewTenancy(field, value)
     {
-        const newTenancy = new TenancyModel({}, this.props.appraisal.units[this.state.selectedUnitIndex]);
+        const newTenancy = TenancyModel.create({}, this.props.appraisal.units[this.state.selectedUnitIndex], "tenancies");
 
         if (field)
         {

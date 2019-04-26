@@ -14,7 +14,7 @@ class BaseModel extends Object
 
     static create(data, parent, fieldName)
     {
-        const object = new this(data, parent, fieldName);
+        const object = new this(data, parent, fieldName, "createFunc");
 
         return new Proxy(object, {
             set: (target, name, value, receiver) => {
@@ -27,9 +27,14 @@ class BaseModel extends Object
         })
     }
 
-    constructor(data, parent, fieldName)
+    constructor(data, parent, fieldName, createFuncCheck)
     {
         super();
+
+        if (createFuncCheck !== "createFunc")
+        {
+            throw new Error(`You can not call the constructor of ${this.constructor.name} directly. You must instead call ${this.constructor.name}.create()`);
+        }
 
         if (!data)
         {

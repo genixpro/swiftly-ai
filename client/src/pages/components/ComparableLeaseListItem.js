@@ -54,7 +54,7 @@ class ComparableLeaseListItem extends React.Component
     {
         if (!_.isNull(value))
         {
-            const escalation = new RentEscalation();
+            const escalation = RentEscalation.create({}, this.state.comparableLease, "rentEscalations");
             escalation[key] = value;
 
             let escalations = this.state.comparableLease.rentEscalations;

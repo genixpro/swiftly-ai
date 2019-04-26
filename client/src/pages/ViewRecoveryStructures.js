@@ -663,7 +663,7 @@ class ViewRecoveryStructures extends React.Component
                                 }
                             {
                                 <div className={"new-recovery-structure"}>
-                                        <Button onClick={() => this.onNewRecovery(new RecoveryStructureModel(this.defaultRecoveryStructureData))}>
+                                        <Button onClick={() => this.onNewRecovery(RecoveryStructureModel.create(this.defaultRecoveryStructureData, this.props.appraisal, "recoveryStructures"))}>
                                         <span>Create a new recovery structure</span>
                                         </Button>
                                 </div>

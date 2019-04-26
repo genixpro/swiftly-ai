@@ -94,10 +94,10 @@ class ViewDirectComparisonValuation extends React.Component
                 this.props.appraisal.directComparisonInputs.modifiers = [];
             }
 
-            const object = new DirectComparisonModifier({
+            const object = DirectComparisonModifier.create({
                 name: "Modification",
                 amount: 0
-            });
+            }, this.props.appraisal.directComparisonInputs, "modifiers");
 
             object[field] = newValue;
 

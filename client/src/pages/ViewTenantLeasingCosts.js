@@ -569,7 +569,7 @@ class ViewTenantsLeasingCosts extends React.Component
                                 }
                                 {
                                     <div className={"new-leasing-cost-structure"}>
-                                        <Button onClick={() => this.onNewLeasingStructure(new LeasingCostStructureModel(this.defaultLeasingCostStructureData))}>
+                                        <Button onClick={() => this.onNewLeasingStructure(LeasingCostStructureModel.create(this.defaultLeasingCostStructureData, this.props.appraisal.stabilizedStatement, 'leasingCosts'))}>
                                             <span>Create a new leasing cost structure</span>
                                         </Button>
                                     </div>

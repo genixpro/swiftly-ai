@@ -88,7 +88,7 @@ class UnitsTable extends React.Component
                 newUnit[field] = value;
             }
 
-            const newUnitObj = new UnitModel(newUnit);
+            const newUnitObj = UnitModel.create(newUnit, this.props.appraisal, "units");
 
             newUnitObj.unitNumber += " " + this.props.appraisal.units.length.toString();
 

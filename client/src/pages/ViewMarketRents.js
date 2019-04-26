@@ -526,7 +526,7 @@ class ViewMarketRents extends React.Component
                                 }
                                 {
                                     <div className={"new-market-rent"}>
-                                        <Button onClick={() => this.onNewMarketRent(new MarketRentModel(this.defaultMarketRentData))}>
+                                        <Button onClick={() => this.onNewMarketRent(MarketRentModel.create(this.defaultMarketRentData, this.props.appraisal, "marketRents"))}>
                                             <span>Create a new Market Rent</span>
                                         </Button>
                                     </div>

@@ -37,13 +37,13 @@ class TenancyModel extends BaseModel
 
 class UnitModel extends BaseModel
 {
-    constructor(data, parent, fieldName)
+    constructor(data, parent, fieldName, check)
     {
-        super(data, parent, fieldName);
+        super(data, parent, fieldName, check);
 
         if (this.tenancies.length === 0)
         {
-            this.tenancies.push(new TenancyModel({name: "Vacant"}, this, "tenancies"))
+            this.tenancies.push(TenancyModel.create({name: "Vacant"}, this, "tenancies"))
         }
 
         this.setDirtyField("tenancies");

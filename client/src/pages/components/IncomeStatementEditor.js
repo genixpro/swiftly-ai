@@ -613,7 +613,7 @@ class IncomeStatementEditor extends React.Component
         const newItem = IncomeStatementItemModel.create({
             cashFlowType: "expense",
             incomeStatementItemType: incomeStatementItemType
-        }, this.props.appraisal.incomeStatement);
+        }, this.props.appraisal.incomeStatement, this.props.field);
 
         if (field)
         {

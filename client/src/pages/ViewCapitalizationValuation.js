@@ -12,6 +12,7 @@ import Auth from "../Auth";
 import PercentFormat from "./components/PercentFormat";
 import CurrencyFormat from "./components/CurrencyFormat";
 import IntegerFormat from "./components/IntegerFormat";
+import {StabilizedStatementModifier} from "../models/StabilizedStatementInputsModel";
 
 class ViewCapitalizationValuation extends React.Component
 {
@@ -94,10 +95,10 @@ class ViewCapitalizationValuation extends React.Component
                 this.props.appraisal.stabilizedStatementInputs.modifiers = [];
             }
 
-            const object = {
+            const object = StabilizedStatementModifier.create({
                 name: "Modification",
                 amount: 0
-            };
+            }, this.props.appraisal.stabilizedStatementInputs, "modifiers");
 
             object[field] = newValue;
 
