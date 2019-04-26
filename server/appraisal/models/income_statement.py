@@ -41,6 +41,10 @@ class IncomeStatementItem(EmbeddedDocument):
 
     def getLatestAmount(self):
         years = sorted(self.yearlyAmounts.keys(), key=lambda x: float(x))
+
+        if len(years) == 0:
+            return 0
+
         return self.yearlyAmounts[years[-1]]
 
     def mergeWithIncomeStatementItem(self, otherIncomeStatementItem):

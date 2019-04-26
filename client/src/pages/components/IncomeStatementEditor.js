@@ -680,11 +680,11 @@ class IncomeStatementEditor extends React.Component
                             type="currency"
                             hideIcon={true}
                             value={""}
-                            onChange={_.once((newValue, extractionReference) => newValue ? this.createNewIncomeItem("yearlyAmounts", {[year]: this.cleanNumericalValue(newValue)}, incomeStatementItemType, {[year]: {
+                            onChange={_.once((newValue, extractionReference) => newValue ? this.createNewIncomeItem("yearlyAmounts", {[year]: this.cleanNumericalValue(newValue)}, incomeStatementItemType, extractionReference ? {[year]: {
                                     appraisalId: this.props.appraisal._id,
                                     fileId: this.state.file._id,
                                     wordIndexes: extractionReference
-                                }}) : null)}
+                                }} : {}) : null)}
                         />
                     </Col>,
                         this.props.appraisal.sizeOfBuilding ? <Col key={year.toString() + "2"} className={"amount-column psf"}></Col> : null

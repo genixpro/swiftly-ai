@@ -58,10 +58,9 @@ class TenantApplicableEditor extends React.Component
             currentDate.add(1, "months");
             month += 1;
         }
-        console.log(differentialMonths)
 
         return [<td className={"value-column"} key={1}>
-            <div>Unit {this.props.unit.unitNumber}</div>
+            <div>Unit {this.props.unit.unitNumber} - {this.props.unit.currentTenancy.name}</div>
             <div>
                 <FieldDisplayEdit
                     type={"boolean"}
@@ -80,7 +79,7 @@ class TenantApplicableEditor extends React.Component
                         : null}
                 </a>
                 <Popover placement="bottom" isOpen={this.state.marketRentDifferentialPopoverOpen} target={popoverId} toggle={() => this.setState({marketRentDifferentialPopoverOpen: !this.state.marketRentDifferentialPopoverOpen})}>
-                    <PopoverHeader>Market Rent Differential</PopoverHeader>
+                    <PopoverHeader>Unit {this.props.unit.unitNumber} - Market Rent Differential</PopoverHeader>
                     <PopoverBody>
                         <table className={"explanation-popover-table"}>
                             <thead>
@@ -496,6 +495,7 @@ class ViewMarketRents extends React.Component
                                     this.props.appraisal.marketRents.map((marketRent, marketRentIndex) =>
                                     {
                                         return <MarketRentEditor
+                                            key={marketRentIndex}
                                             marketRent={marketRent}
                                             appraisal={this.props.appraisal}
                                             onChange={(newValue) => this.onMarketRentChanged(newValue, marketRentIndex)}

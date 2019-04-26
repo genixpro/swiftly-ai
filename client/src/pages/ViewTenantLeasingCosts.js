@@ -21,7 +21,7 @@ class TenantApplicableEditor extends React.Component
         const vacantUnitRentLossPopoverId = `tenant-rent-loss-popover-${this.props.unit.unitNumber.replace(/\W/g, "")}-${this.props.leasingCostStructure.name.replace(/\W/g, "")}`;
 
         return [<td className={"value-column"} key={1}>
-                <div>Unit {this.props.unit.unitNumber}</div>
+                <div>Unit {this.props.unit.unitNumber} - {this.props.unit.currentTenancy.name}</div>
                 <div>
                     <FieldDisplayEdit
                         type={"boolean"}
@@ -49,7 +49,7 @@ class TenantApplicableEditor extends React.Component
                     }
                 </a>
                 <Popover placement="bottom" isOpen={this.state.leasupCostPopoverOpen} target={vacantUnitLeasupCostPopoverId} toggle={() => this.setState({leasupCostPopoverOpen: !this.state.leasupCostPopoverOpen})}>
-                    <PopoverHeader>Tenant Leasup Costs</PopoverHeader>
+                    <PopoverHeader>Unit {this.props.unit.unitNumber} - Leasup Costs</PopoverHeader>
                     <PopoverBody>
                         <table className={"explanation-popover-table"}>
                             <tbody>
@@ -125,7 +125,7 @@ class TenantApplicableEditor extends React.Component
                     }
                 </a>
                 <Popover placement="bottom" isOpen={this.state.rentLossPopoverOpen} target={vacantUnitRentLossPopoverId} toggle={() => this.setState({rentLossPopoverOpen: !this.state.rentLossPopoverOpen})}>
-                    <PopoverHeader>Rent Loss</PopoverHeader>
+                    <PopoverHeader>Unit {this.props.unit.unitNumber} - Vacant Rent Loss</PopoverHeader>
                     <PopoverBody>
                         <table className={"explanation-popover-table"}>
                             <tbody>
@@ -287,7 +287,7 @@ class LeasingCostStructureEditor extends React.Component
                     </tr>
                     <tr className={"leasing-cost-row"}>
                         <td className={"label-column"}>
-                            <strong>Tenant Inducments (psf)</strong>
+                            <strong>Tenant Inducements (psf)</strong>
                         </td>
                         <td className={"value-column"}>
                             <FieldDisplayEdit

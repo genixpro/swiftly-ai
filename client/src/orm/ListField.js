@@ -75,16 +75,19 @@ class ListField extends BaseField
     {
         Object.keys(diffValue).forEach((key) =>
         {
-            if (key === 'delete')
+            if (key === '$delete')
             {
-                if (!_.isUndefined(oldValue[key]))
+                diffValue[key].forEach((subKey) =>
                 {
-                    delete oldValue[key];
-                }
+                    if (!_.isUndefined(oldValue[subKey]))
+                    {
+                        oldValue.splice(subKey, 1)
+                    }
+                });
             }
-            else if (key === 'insert')
+            else if (key === '$insert')
             {
-                for (let insertDiff of diffValue['insert'])
+                for (let insertDiff of diffValue['$insert'])
                 {
                     oldValue.splice(insertDiff[0], 0, this.subField.toObject(insertDiff[1], parent))
                 }

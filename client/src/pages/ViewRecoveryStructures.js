@@ -40,9 +40,10 @@ class ExpensePercentageEditor extends React.Component
                     <CurrencyFormat value={this.props.calculated}/>
                 </a>
                 <Popover placement="bottom" isOpen={this.state.popoverOpen} target={popoverId} toggle={() => this.setState({popoverOpen: !this.state.popoverOpen})}>
-                    <PopoverHeader>Expense Recovery</PopoverHeader>
+                    <PopoverHeader>Expense Recovery - {this.props.expense.name}</PopoverHeader>
                     <PopoverBody>
                         <table className={"explanation-popover-table"}>
+                            <tbody>
                             {
                                 this.props.appraisal.units.map((unit, unitIndex) =>
                                 {
@@ -106,6 +107,7 @@ class ExpensePercentageEditor extends React.Component
                                 <td></td>
                                 <td><CurrencyFormat value={this.props.calculated} /></td>
                             </tr>
+                            </tbody>
                         </table>
                     </PopoverBody>
                 </Popover>
@@ -123,7 +125,7 @@ class TenantApplicableEditor extends React.Component
         const popoverId = `tenancy-recovery-popover-${this.props.unit.currentTenancy.name.replace(/\W/g, "")}-${this.props.recovery.name.replace(/\W/g, "")}`;
 
         return [<td className={"rule-percentage-column"} key={1}>
-            {this.props.unit.currentTenancy.name || `Unit ${this.props.unit.unitNumber}`}
+            Unit {this.props.unit.unitNumber} - {this.props.unit.currentTenancy.name}
         </td>,
             <td className={"rule-field-column"} key={2}>
                 <FieldDisplayEdit
@@ -145,7 +147,7 @@ class TenantApplicableEditor extends React.Component
                     }
                 </a>
                 <Popover placement="bottom" isOpen={this.state.popoverOpen} target={popoverId} toggle={() => this.setState({popoverOpen: !this.state.popoverOpen})}>
-                    <PopoverHeader>Tenant Recovery</PopoverHeader>
+                    <PopoverHeader>Unit {this.props.unit.unitNumber} - Tenant Recovery - {this.props.unit.currentTenancy.name}</PopoverHeader>
                     <PopoverBody>
                         <table className={"explanation-popover-table"}>
                             <tr>

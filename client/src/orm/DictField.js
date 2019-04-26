@@ -11,7 +11,7 @@ class DictField extends BaseField
 
         if (_.isUndefined(defaultValue))
         {
-            this.defaultValue = null;
+            this.defaultValue = {};
         }
         else
         {
@@ -59,12 +59,15 @@ class DictField extends BaseField
     {
         Object.keys(diffValue).forEach((key) =>
         {
-            if (key === 'delete')
+            if (key === '$delete')
             {
-                if (_.isUndefined(oldValue[key]))
+                diffValue[key].forEach((subKey) =>
                 {
-                    delete oldValue[key];
-                }
+                    if (!_.isUndefined(oldValue[subKey]))
+                    {
+                        delete oldValue[subKey];
+                    }
+                });
             }
             else if (key === '$replace')
             {
