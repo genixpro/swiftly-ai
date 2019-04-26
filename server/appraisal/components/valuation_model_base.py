@@ -85,17 +85,24 @@ class ValuationModelBase:
 
         for unit in appraisal.units:
             unit.calculatedFreeRentLoss = 0
+            unit.calculatedFreeRentMonths = 0
 
             if unit.currentTenancy and unit.currentTenancy.yearlyRent and unit.currentTenancy.freeRentMonths:
                 monthsFromStart = relativedelta(self.getEffectiveDate(appraisal), unit.currentTenancy.startDate).months
                 freeRentMonthsRemaining = int(max(unit.currentTenancy.freeRentMonths - monthsFromStart, 0))
 
+                unit.calculatedFreeRentMonths = freeRentMonthsRemaining
+
                 if unit.currentTenancy.freeRentType == 'gross':
-                    currentRentLoss = freeRentMonthsRemaining * self.getStabilizedRent(appraisal, unit) / 12.0
+                    unit.calculatedFreeRentNetAmount = self.getStabilizedRent(appraisal, unit)
+
+                    currentRentLoss = freeRentMonthsRemaining * unit.calculatedFreeRentNetAmount / 12.0
                 else:
                     unitRecoveries = self.computeTaxRecoveriesForUnit(appraisal, unit) + self.computeManagementRecoveriesForUnit(appraisal, unit) + self.computeOperatingExpenseRecoveriesForUnit(appraisal, unit)
 
-                    currentRentLoss = freeRentMonthsRemaining * (self.getStabilizedRent(appraisal, unit) + unitRecoveries) / 12.0
+                    unit.calculatedFreeRentNetAmount = self.getStabilizedRent(appraisal, unit) + unitRecoveries
+
+                    currentRentLoss = freeRentMonthsRemaining * unit.calculatedFreeRentNetAmount / 12.0
 
                 totalRentLoss += currentRentLoss
 

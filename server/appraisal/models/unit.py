@@ -92,6 +92,10 @@ class Unit(EmbeddedDocument):
 
     calculatedVacantUnitLeasupCosts = FloatField(default=0)
 
+    calculatedFreeRentMonths = FloatField(default=0)
+
+    calculatedFreeRentNetAmount = FloatField(default=0)
+
     @property
     def currentTenancy(self):
         currentDateTime = datetime.datetime.now()

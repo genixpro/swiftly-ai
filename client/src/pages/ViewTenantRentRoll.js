@@ -1,5 +1,5 @@
 import React from 'react';
-import {Row, Col, Button, DropdownItem, DropdownToggle, Dropdown, DropdownMenu, Alert} from 'reactstrap';
+import {Row, Col, Button, DropdownItem, DropdownToggle, Dropdown, DropdownMenu, Alert, Popover, PopoverBody, PopoverHeader} from 'reactstrap';
 import NumberFormat from 'react-number-format';
 import {Link} from "react-router-dom";
 import _ from 'underscore';
@@ -10,6 +10,7 @@ import UnitsTable from "./components/UnitsTable";
 import Auth from "../Auth";
 import {TenancyModel} from "../models/UnitModel";
 import CurrencyFormat from "./components/CurrencyFormat";
+import IntegerFormat from "./components/IntegerFormat";
 
 class ViewTenantsRentRoll extends React.Component
 {
@@ -551,11 +552,38 @@ class ViewTenantsRentRoll extends React.Component
                                             this.props.appraisal.units[this.state.selectedUnitIndex].calculatedFreeRentLoss ?
                                                 <tr className={"stats-row"}>
                                                     <td>
-                                                        <strong>Calculated Free Rent Loss</strong>
+                                                        <a onClick={() => this.setState({freeRentLossPopoverOpen: !this.state.freeRentLossPopoverOpen})}>
+                                                            <strong>Calculated Free Rent Loss</strong>
+                                                        </a>
                                                     </td>
                                                     <td>
                                                         <span style={{"marginLeft": "10px"}}>
-                                                            <CurrencyFormat value={this.props.appraisal.units[this.state.selectedUnitIndex].calculatedFreeRentLoss}/>
+                                                            <a id={"free-rent-loss-popover"} onClick={() => this.setState({freeRentLossPopoverOpen: !this.state.freeRentLossPopoverOpen})}>
+                                                                {
+                                                                        this.props.appraisal.units[this.state.selectedUnitIndex].calculatedFreeRentLoss ?
+                                                                            <CurrencyFormat value={this.props.appraisal.units[this.state.selectedUnitIndex].calculatedFreeRentLoss}/>
+                                                                            : null
+                                                                }
+                                                            </a>
+                                                            <Popover placement="bottom" isOpen={this.state.freeRentLossPopoverOpen} target={"free-rent-loss-popover"} toggle={() => this.setState({freeRentLossPopoverOpen: !this.state.freeRentLossPopoverOpen})}>
+                                                                <PopoverHeader>Free Rent Loss</PopoverHeader>
+                                                                <PopoverBody>
+                                                                    <table className={"explanation-popover-table"}>
+                                                                        <tbody>
+                                                                        <tr className={"total-row"}>
+                                                                            <td>Free Rent Loss</td>
+                                                                            <td><IntegerFormat value={this.props.appraisal.units[this.state.selectedUnitIndex].calculatedFreeRentMonths}/> months remaining</td>
+                                                                            <td>/</td>
+                                                                            <td>12</td>
+                                                                            <td>*</td>
+                                                                            <td><CurrencyFormat value={this.props.appraisal.units[this.state.selectedUnitIndex].calculatedFreeRentNetAmount}/></td>
+                                                                            <td>=</td>
+                                                                            <td><CurrencyFormat value={this.props.appraisal.units[this.state.selectedUnitIndex].calculatedFreeRentLoss} cents={false}/></td>
+                                                                        </tr>
+                                                                        </tbody>
+                                                                    </table>
+                                                                </PopoverBody>
+                                                            </Popover>
                                                         </span>
                                                     </td>
                                                 </tr> : null

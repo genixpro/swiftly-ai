@@ -37,6 +37,12 @@
     color: #656565;
   }
 
+  a:hover
+  {
+    text-decoration: underline !important;
+    cursor: pointer;
+  }
+
   .statement-table
   {
     margin-left: auto;

@@ -1,5 +1,5 @@
 import React from 'react';
-import {Row, Col, Card, CardBody, Table, Dropdown, DropdownItem, DropdownMenu, DropdownToggle} from 'reactstrap';
+import {Row, Col, Card, CardBody, Table, Dropdown, DropdownItem, DropdownMenu, DropdownToggle, Popover, PopoverBody, PopoverHeader} from 'reactstrap';
 import NumberFormat from 'react-number-format';
 import {Link} from 'react-router-dom';
 import axios from "axios/index";
@@ -11,6 +11,7 @@ import Promise from "bluebird";
 import Auth from "../Auth";
 import PercentFormat from "./components/PercentFormat";
 import CurrencyFormat from "./components/CurrencyFormat";
+import IntegerFormat from "./components/IntegerFormat";
 
 class ViewCapitalizationValuation extends React.Component
 {
@@ -220,11 +221,51 @@ class ViewCapitalizationValuation extends React.Component
                                                 this.props.appraisal.stabilizedStatement.freeRentRentLoss ?
                                                     <tr className={"data-row capitalization-row"}>
                                                         <td className={"label-column"}>
-                                                            <span>Free Rent Loss</span>
+                                                            <a onClick={() => this.setState({freeRentLossPopoverOpen: !this.state.freeRentLossPopoverOpen})}>
+                                                                <span>Free Rent Loss</span>
+                                                            </a>
+                                                            <Popover placement="bottom" isOpen={this.state.freeRentLossPopoverOpen} target={"free-rent-loss-popover"} toggle={() => this.setState({freeRentLossPopoverOpen: !this.state.freeRentLossPopoverOpen})}>
+                                                                <PopoverHeader>Free Rent Loss</PopoverHeader>
+                                                                <PopoverBody>
+                                                                    <table className={"explanation-popover-table"}>
+                                                                        <tbody>
+                                                                        {
+                                                                            this.props.appraisal.units.map((unit, unitIndex) =>
+                                                                            {
+                                                                                const underline = unitIndex === this.props.appraisal.units.length - 1 ? "underline" : "";
+
+                                                                                return <tr>
+                                                                                    <td>Unit {unit.unitNumber}</td>
+                                                                                    <td><IntegerFormat value={unit.calculatedFreeRentMonths}/> months remaining</td>
+                                                                                    <td>/</td>
+                                                                                    <td>12</td>
+                                                                                    <td>*</td>
+                                                                                    <td><CurrencyFormat value={unit.calculatedFreeRentNetAmount}/></td>
+                                                                                    <td>=</td>
+                                                                                    <td className={underline}><CurrencyFormat value={unit.calculatedFreeRentLoss} cents={false}/></td>
+                                                                                </tr>
+                                                                            })
+                                                                        }
+                                                                        <tr className={"total-row"}>
+                                                                            <td>Free Rent Loss</td>
+                                                                            <td></td>
+                                                                            <td></td>
+                                                                            <td></td>
+                                                                            <td></td>
+                                                                            <td></td>
+                                                                            <td></td>
+                                                                            <td><CurrencyFormat value={-this.props.appraisal.stabilizedStatement.freeRentRentLoss} cents={false}/></td>
+                                                                        </tr>
+                                                                        </tbody>
+                                                                    </table>
+                                                                </PopoverBody>
+                                                            </Popover>
                                                         </td>
                                                         <td className={"amount-column"}></td>
                                                         <td className={"amount-total-column"}>
-                                                            <CurrencyFormat value={this.props.appraisal.stabilizedStatement.freeRentRentLoss} />
+                                                            <a id={"free-rent-loss-popover"} onClick={() => this.setState({freeRentLossPopoverOpen: !this.state.freeRentLossPopoverOpen})}>
+                                                                <CurrencyFormat value={this.props.appraisal.stabilizedStatement.freeRentRentLoss} />
+                                                            </a>
                                                         </td>
                                                     </tr> : null
                                             }

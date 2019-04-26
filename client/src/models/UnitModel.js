@@ -68,6 +68,8 @@ class UnitModel extends BaseModel
     static calculatedFreeRentLoss = new FloatField();
     static calculatedVacantUnitRentLoss = new FloatField();
     static calculatedVacantUnitLeasupCosts = new FloatField();
+    static calculatedFreeRentMonths = new FloatField();
+    static calculatedFreeRentNetAmount = new FloatField();
 
     get marketRentAmount()
     {

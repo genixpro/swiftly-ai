@@ -30,6 +30,12 @@
     color: #656565;
   }
 
+  a:hover
+  {
+    text-decoration: underline !important;
+    cursor: pointer;
+  }
+
   .stats-row
   {
     height: 30px;
