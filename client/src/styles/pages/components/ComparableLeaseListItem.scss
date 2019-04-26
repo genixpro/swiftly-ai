@@ -29,12 +29,12 @@
   }
 
 
-  &:not(:last-child)
+  &:not(.last)
   {
     border-bottom: 0;
   }
 
-  &:last-child
+  &.last
   {
     border-bottom-left-radius: 0.25rem;
     border-bottom-right-radius: 0.25rem;
@@ -161,6 +161,7 @@
   margin-bottom: 0;
   border-bottom-left-radius: 0;
   border-bottom-right-radius: 0;
+  border-bottom: 0;
 }
 
 .comparable-lease-list-item-header
@@ -185,5 +186,10 @@
   .header-field-column:not(:first-child)
   {
     border-left: 1px solid #eeeeee;
+  }
+
+  &.first-spacing
+  {
+    padding-left: 60px;
   }
 }

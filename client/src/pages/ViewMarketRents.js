@@ -400,6 +400,8 @@ class ViewMarketRents extends React.Component
         comparableLeases: []
     };
 
+    loadedComparables = {};
+
     defaultMarketRentData = {
         name: "New Market Rent",
         amountPSF: 1
@@ -438,6 +440,12 @@ class ViewMarketRents extends React.Component
     componentDidMount()
     {
         this.loadLeases();
+    }
+
+
+    onComparablesChanged(comps)
+    {
+        this.setState({comparableLeases: comps});
     }
 
     loadLeases()

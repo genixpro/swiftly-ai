@@ -148,8 +148,10 @@ class ComparableLeaseListItem extends React.Component
 
         const expandedClass = this.state.detailsOpen ? "expanded" : "";
 
+        const lastClass = this.props.last ? "last" : "";
+
         return (
-            <div className={`card b comparable-lease-list-item ${expandedClass}`}>
+            <div className={`card b comparable-lease-list-item ${expandedClass} ${lastClass}`}>
                 <div>
                     {
                         this.props.onRemoveComparableClicked && this.isCompWithinAppraisal(this.props.appraisalComparables) ?

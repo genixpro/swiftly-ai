@@ -57,6 +57,11 @@ class ViewCapitalizationValuation extends React.Component
     }
 
 
+    onComparablesChanged(comps)
+    {
+        this.setState({comparableSales: comps});
+    }
+
     changeStabilizedInput(field, newValue)
     {
         this.props.appraisal.stabilizedStatementInputs[field] = newValue;
@@ -169,8 +174,7 @@ class ViewCapitalizationValuation extends React.Component
                                                             appraisal={this.props.appraisal}
                                                             appraisalId={this.props.match.params._id}
                                                             appraisalComparables={this.props.appraisal.comparableSales}
-                                                            // onRemoveComparableClicked={(comp) => this.removeComparableFromAppraisal(comp)}
-                                                            // onChange={(comps) => this.onComparablesChanged(comps)}
+                                                            onChange={(comps) => this.onComparablesChanged(comps)}
                                         />
                                     </div>
                                 </Col>

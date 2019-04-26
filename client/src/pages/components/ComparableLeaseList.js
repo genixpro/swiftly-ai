@@ -173,6 +173,12 @@ class ComparableLeaseList extends React.Component
             excludeIds = [];
         }
 
+        let firstSpacing = '';
+        if (this.props.onRemoveComparableClicked)
+        {
+            firstSpacing = 'first-spacing';
+        }
+
         return (
             <div>
                 {
@@ -180,7 +186,7 @@ class ComparableLeaseList extends React.Component
                 }
                 {
                     <div className={`card b comparable-lease-list-header`}>
-                        <CardHeader className={"comparable-lease-list-item-header"}>
+                        <CardHeader className={`comparable-lease-list-item-header ${firstSpacing}`}>
                             <CardTitle>
                                 <Row>
                                     <Col xs={2} className={"header-field-column"} onClick={() => this.changeSortColumn("leaseDate")}>
@@ -240,6 +246,7 @@ class ComparableLeaseList extends React.Component
                                 onRemoveComparableClicked={this.props.onRemoveComparableClicked}
                                 onDeleteComparable={(comp) => this.onRemoveComparableClicked(comp)}
                                 appraisalId={this.props.appraisalId}
+                                last={index===this.state.comparableLeases.length-1}
                             />;
                         }
                         else

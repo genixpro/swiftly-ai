@@ -144,6 +144,12 @@ class ComparableSaleList extends React.Component
             excludeIds = [];
         }
 
+        let firstSpacing = '';
+        if (this.props.onRemoveComparableClicked)
+        {
+            firstSpacing = 'first-spacing';
+        }
+
         return (
             <div>
                 {
@@ -152,10 +158,10 @@ class ComparableSaleList extends React.Component
                 <div>
                 {
                     <div className={`card b comparable-sale-list-header`}>
-                        <CardHeader className={"comparable-sale-list-item-header"}>
+                        <CardHeader className={`comparable-sale-list-item-header ${firstSpacing}`}>
                             <CardTitle>
                                 <Row>
-                                    <Col xs={1} className={"header-field-column"} onClick={() => this.changeSortColumn("saleDate")}>
+                                    <Col xs={1} className={`header-field-column`} onClick={() => this.changeSortColumn("saleDate")}>
                                         Date <SortDirection field={"saleDate"} sort={this.props.sort} />
                                     </Col>
                                     <Col xs={3} className={"header-field-column"} onClick={() => this.changeSortColumn("address")}>
@@ -261,6 +267,7 @@ class ComparableSaleList extends React.Component
                                 onRemoveComparableClicked={this.props.onRemoveComparableClicked}
                                 onDeleteComparable={(comp) => this.onRemoveComparableClicked(comp)}
                                 appraisalId={this.props.appraisalId}
+                                last={index===this.state.comparableSales.length-1}
                             />;
                         }
                         else
