@@ -70,7 +70,7 @@ class ViewAmortization extends React.Component
             </td>
             <td>
                 <FieldDisplayEdit
-                    type='number'
+                    type='months'
                     value={amortization.periodMonths}
                     placeholder={"Period (months)"}
                     onChange={(newValue) => this.changeAmortizationField(amortization, 'periodMonths', newValue)}/>
@@ -189,7 +189,7 @@ class ViewAmortization extends React.Component
             </td>
             <td>
                 <FieldDisplayEdit
-                    type='number'
+                    type='months'
                     value={""}
                     placeholder={"Period (months)"}
                     onChange={(newValue) => this.createNewAmortization('periodMonths', newValue)}/>

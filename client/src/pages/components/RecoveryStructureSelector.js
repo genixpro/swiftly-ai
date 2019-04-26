@@ -38,7 +38,7 @@ class RecoveryStructureSelector extends React.Component
         }
 
         const options = [
-            <option value={""} key={"blank"}>Recovery Structure</option>
+            <option value={""} key={"blank"}>No Recovery Structure</option>
         ].concat(
             this.props.recoveryStructures.map((recovery) =>
             {

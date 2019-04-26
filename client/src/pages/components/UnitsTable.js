@@ -157,6 +157,19 @@ class UnitsTable extends React.Component
         return total / count;
     }
 
+    getTotalAnnualRent()
+    {
+        let total = 0;
+        for(let unit of this.props.appraisal.units)
+        {
+            if (unit.currentTenancy.yearlyRent !== 0)
+            {
+                total += unit.currentTenancy.yearlyRent;
+            }
+        }
+        return total;
+    }
+
     getMinimumSize()
     {
         let minSize = null;
@@ -254,7 +267,9 @@ class UnitsTable extends React.Component
                                     <AreaFormat value={this.getTotalSize()}/>
                                 </td>
                                 <td className={"rent-column"}></td>
-                                <td className={"rent-column"}></td>
+                                <td className={"rent-column"}>
+                                    <CurrencyFormat value={this.getTotalAnnualRent()} cents={false} />
+                                </td>
                             </tr> : null
                     }
                     {

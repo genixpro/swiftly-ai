@@ -24,7 +24,7 @@ class LeasingCostStructureModel extends BaseModel
 
     get isDefault()
     {
-        return this.name === LeasingCostStructureModel.defaultLeasingCostName;
+        return this.name === LeasingCostStructureModel.defaultLeasingCostName || this.name === "Default";
     }
 
     static get defaultLeasingCostName()

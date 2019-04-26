@@ -38,7 +38,7 @@ class LeasingCostSelector extends React.Component
         }
 
         const options = [
-            <option value={""} key={"blank"}>Default Leasing Costs</option>
+            <option value={""} key={"blank"}>No Leasing Costs</option>
         ].concat(
             this.props.leasingCostStructures.map((rent, index) =>
             {

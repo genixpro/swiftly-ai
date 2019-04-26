@@ -26,7 +26,7 @@ class RecoveryStructureModel extends BaseModel
 
     get isDefault()
     {
-        return this.name === RecoveryStructureModel.defaultRecoveryName;
+        return this.name === RecoveryStructureModel.defaultRecoveryName || this.name === "Default";
     }
 
     static get defaultRecoveryName()

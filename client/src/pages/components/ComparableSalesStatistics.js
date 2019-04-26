@@ -115,20 +115,20 @@ class ComparableSalesStatistics extends React.Component
                                 this.props.appraisal.propertyType !== 'land' ?
                                     <Row>
                                         <Col xs={4}>
-                                            <strong>Cap Rate Range (%)</strong>&nbsp;&nbsp;&nbsp;
+                                            <strong>Cap Rate Range (%):</strong>&nbsp;&nbsp;&nbsp;
                                             {
                                                 stats.minCapRate ? <span>
                                             <PercentFormat value={stats.minCapRate} /> - <PercentFormat value={stats.maxCapRate}/></span> : <span>n/a</span>
                                             }
                                         </Col>
                                         <Col xs={4}>
-                                            <strong>Price Per Square Foot Range ($)</strong>&nbsp;&nbsp;&nbsp;
+                                            <strong>Price Per Square Foot Range ($):</strong>&nbsp;&nbsp;&nbsp;
                                             {
                                                 stats.minPSF ? <span><CurrencyFormat value={stats.minPSF} cents={false} /> - <CurrencyFormat value={stats.maxPSF} cents={false} /></span> : <span>n/a</span>
                                             }
                                         </Col>
                                         <Col xs={4}>
-                                            <strong>Building Size Range (sq)</strong>&nbsp;&nbsp;&nbsp;
+                                            <strong>Building Size Range (sq):</strong>&nbsp;&nbsp;&nbsp;
                                             {
                                                 stats.minSize ? <span><IntegerFormat value={stats.minSize} /> - <IntegerFormat value={stats.maxSize} /></span> : <span>n/a</span>
                                             }
@@ -139,19 +139,19 @@ class ComparableSalesStatistics extends React.Component
                                 this.props.appraisal.propertyType !== 'land' ?
                                     <Row>
                                         <Col xs={4}>
-                                            <strong>Cap Rate Average (%)</strong>&nbsp;&nbsp;&nbsp;
+                                            <strong>Cap Rate Average (%):</strong>&nbsp;&nbsp;&nbsp;
                                             {
                                                 stats.averageCapRate ? <PercentFormat value={stats.averageCapRate}/> : <span>n/a</span>
                                             }
                                         </Col>
                                         <Col xs={4}>
-                                            <strong>Price Per Square Average ($)</strong>&nbsp;&nbsp;&nbsp;
+                                            <strong>Price Per Square Average ($):</strong>&nbsp;&nbsp;&nbsp;
                                             {
                                                 stats.averagePSF ? <CurrencyFormat value={stats.averagePSF} cents={false}/> : <span>n/a</span>
                                             }
                                         </Col>
                                         <Col xs={4}>
-                                            <strong>Building Size Average (sq)</strong>&nbsp;&nbsp;&nbsp;
+                                            <strong>Building Size Average (sq):</strong>&nbsp;&nbsp;&nbsp;
                                             {
                                                 stats.sizeAverage ? <IntegerFormat value={stats.sizeAverage}/> : <span>n/a</span>
                                             }
@@ -162,7 +162,7 @@ class ComparableSalesStatistics extends React.Component
                                 this.props.appraisal.propertyType === 'industrial' ?
                                     <Row>
                                         <Col xs={4}>
-                                            <strong>Clear Ceiling Height Range</strong>&nbsp;&nbsp;&nbsp;
+                                            <strong>Clear Ceiling Height Range:</strong>&nbsp;&nbsp;&nbsp;
                                             {
                                                 stats.minClearCeilingHeight ? <span><IntegerFormat value={stats.minClearCeilingHeight} /> - <LengthFormat value={stats.maxClearCeilingHeight} /></span> : <span>n/a</span>
                                             }
@@ -173,7 +173,7 @@ class ComparableSalesStatistics extends React.Component
                                 this.props.appraisal.propertyType === 'industrial' ?
                                     <Row>
                                         <Col xs={4}>
-                                            <strong>Clear Ceiling Height Average</strong>&nbsp;&nbsp;&nbsp;
+                                            <strong>Clear Ceiling Height Average:</strong>&nbsp;&nbsp;&nbsp;
                                             {
                                                 stats.averageClearCeilingHeight ? <LengthFormat value={stats.averageClearCeilingHeight} /> : <span>n/a</span>
                                             }
@@ -184,20 +184,20 @@ class ComparableSalesStatistics extends React.Component
                                 this.props.appraisal.propertyType === 'land' ?
                                     <Row>
                                         <Col xs={4}>
-                                            <strong>Size of Land  (acres) Range </strong>&nbsp;&nbsp;&nbsp;
+                                            <strong>Size of Land  (acres) Range :</strong>&nbsp;&nbsp;&nbsp;
                                             {
                                                 stats.minSizeOfLand ? <span>
                                             <IntegerFormat value={stats.minSizeOfLand} /> - <IntegerFormat value={stats.maxSizeOfLand}/></span> : <span>n/a</span>
                                             }
                                         </Col>
                                         <Col xs={4}>
-                                            <strong>Floor Space Index Range</strong>&nbsp;&nbsp;&nbsp;
+                                            <strong>Floor Space Index Range:</strong>&nbsp;&nbsp;&nbsp;
                                             {
                                                 stats.minFSI ? <span>{stats.minFSI.toFixed(2)} - {stats.maxFSI.toFixed(2)}</span> : <span>n/a</span>
                                             }
                                         </Col>
                                         <Col xs={4}>
-                                            <strong>PSF of Land ($)</strong>&nbsp;&nbsp;&nbsp;
+                                            <strong>PSF of Land ($):</strong>&nbsp;&nbsp;&nbsp;
                                             {
                                                 stats.minPSFLand ? <span><CurrencyFormat value={stats.minPSFLand} /> - <CurrencyFormat value={stats.maxPSFLand} /></span> : <span>n/a</span>
                                             }
@@ -208,19 +208,19 @@ class ComparableSalesStatistics extends React.Component
                                 this.props.appraisal.propertyType === 'land' ?
                                     <Row>
                                         <Col xs={4}>
-                                            <strong>Size of Land (acres) Average </strong>&nbsp;&nbsp;&nbsp;
+                                            <strong>Size of Land (acres) Average :</strong>&nbsp;&nbsp;&nbsp;
                                             {
                                                 stats.averageSizeOfLand ? <span><IntegerFormat value={stats.averageSizeOfLand} /></span> : <span>n/a</span>
                                             }
                                         </Col>
                                         <Col xs={4}>
-                                            <strong>Floor Space Index Average</strong>&nbsp;&nbsp;&nbsp;
+                                            <strong>Floor Space Index Average:</strong>&nbsp;&nbsp;&nbsp;
                                             {
                                                 stats.averageFSI ? <span>{stats.averageFSI}</span> : <span>n/a</span>
                                             }
                                         </Col>
                                         <Col xs={4}>
-                                            <strong>PSF of Land ($)</strong>&nbsp;&nbsp;&nbsp;
+                                            <strong>PSF of Land ($):</strong>&nbsp;&nbsp;&nbsp;
                                             {
                                                 stats.averagePSFLand ? <span><CurrencyFormat value={stats.averagePSFLand} /></span> : <span>n/a</span>
                                             }
@@ -231,14 +231,14 @@ class ComparableSalesStatistics extends React.Component
                                 this.props.appraisal.propertyType === 'land' ?
                                     <Row>
                                         <Col xs={4}>
-                                            <strong>PSF of Buildable Area Range ($/sqft) </strong>&nbsp;&nbsp;&nbsp;
+                                            <strong>PSF of Buildable Area Range ($/sqft) :</strong>&nbsp;&nbsp;&nbsp;
                                             {
                                                 stats.minPSFBuildableArea ? <span>
                                             <CurrencyFormat value={stats.minPSFBuildableArea} /> - <CurrencyFormat value={stats.maxPSFBuildableArea}/></span> : <span>n/a</span>
                                             }
                                         </Col>
                                         <Col xs={4}>
-                                            <strong>Price per Acre Land Range ($)</strong>&nbsp;&nbsp;&nbsp;
+                                            <strong>Price per Acre Land Range ($):</strong>&nbsp;&nbsp;&nbsp;
                                             {
                                                 stats.minPricePerAcreLand ? <span><CurrencyFormat value={stats.minPricePerAcreLand} cents={false} /> - <CurrencyFormat value={stats.maxPricePerAcreLand} cents={false} /></span> : <span>n/a</span>
                                             }
@@ -249,13 +249,13 @@ class ComparableSalesStatistics extends React.Component
                                 this.props.appraisal.propertyType === 'land' ?
                                     <Row>
                                         <Col xs={4}>
-                                            <strong>PSF of Buildable Area Average ($/sqft) </strong>&nbsp;&nbsp;&nbsp;
+                                            <strong>PSF of Buildable Area Average ($/sqft) :</strong>&nbsp;&nbsp;&nbsp;
                                             {
                                                 stats.averagePSFBuildableArea ? <span><CurrencyFormat value={stats.averagePSFBuildableArea}/></span> : <span>n/a</span>
                                             }
                                         </Col>
                                         <Col xs={4}>
-                                            <strong>Price per Acre Land Average ($)</strong>&nbsp;&nbsp;&nbsp;
+                                            <strong>Price per Acre Land Average ($):</strong>&nbsp;&nbsp;&nbsp;
                                             {
                                                 stats.averagePricePerAcreLand ? <span><CurrencyFormat value={stats.averagePricePerAcreLand} cents={false} /></span> : <span>n/a</span>
                                             }

@@ -44,7 +44,7 @@ class RentTypeSelector extends React.Component
                 style={{"color": !this.props.value ? "lightgrey" : ""}}
 
             >
-                <option value={""}>Rent Type</option>
+                <option value={""}>No Rent Type</option>
                 <option value={"net"}>Net Rent</option>
                 <option value={"gross"}>Gross Rent</option>
             </select>
