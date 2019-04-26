@@ -71,6 +71,19 @@ class UnitModel extends BaseModel
     static calculatedFreeRentMonths = new FloatField();
     static calculatedFreeRentNetAmount = new FloatField();
 
+    resetCalculations()
+    {
+        this.calculatedManagementRecovery = null;
+        this.calculatedExpenseRecovery = null;
+        this.calculatedTaxRecovery = null;
+        this.calculatedMarketRentDifferential = null;
+        this.calculatedFreeRentLoss = null;
+        this.calculatedVacantUnitRentLoss = null;
+        this.calculatedVacantUnitLeasupCosts = null;
+        this.calculatedFreeRentMonths = null;
+        this.calculatedFreeRentNetAmount = null;
+    }
+
     get marketRentAmount()
     {
         for (let marketRent of this.parent.marketRents)

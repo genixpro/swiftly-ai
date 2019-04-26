@@ -241,6 +241,7 @@ class RecoveryStructureEditor extends React.Component
         {
             unit.currentTenancy.recoveryStructure = this.props.recovery.name;
         }
+        unit.resetCalculations();
         this.props.onChange(this.props.recovery);
     }
 

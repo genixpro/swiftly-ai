@@ -13,14 +13,14 @@ class LeasingCostStructureModel extends BaseModel
 {
     static leasingCostStructureName = new StringField("name");
 
-    static leasingCommissionPSF = new FloatField();
-    static leasingCommissionPercent = new FloatField();
-    static leasingCommissionMode = new StringField();
+    static leasingCommissionPSF = new FloatField("leasingCommissionPSF", 1);
+    static leasingCommissionPercent = new FloatField("leasingCommissionPercent", 100);
+    static leasingCommissionMode = new StringField("leasingCommissionMode", "psf");
 
 
-    static tenantInducementsPSF = new FloatField();
-    static renewalPeriod = new FloatField();
-    static leasingPeriod = new FloatField();
+    static tenantInducementsPSF = new FloatField("tenantInducementsPSF", 1);
+    static renewalPeriod = new FloatField("renewalPeriod", 3);
+    static leasingPeriod = new FloatField("leasingPeriod", 60);
 
     get isDefault()
     {

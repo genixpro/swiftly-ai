@@ -70,7 +70,7 @@ class DictField extends BaseField
             {
                 Object.keys(diffValue[key]).forEach((modKey) =>
                 {
-                    oldValue[modKey] = this.subField.toObject(diffValue[key][modKey]);
+                    oldValue[modKey] = this.subField.toObject(diffValue[key][modKey], oldValue);
                 })
             }
             else

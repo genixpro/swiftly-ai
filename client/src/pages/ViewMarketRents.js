@@ -74,7 +74,7 @@ class TenantApplicableEditor extends React.Component
         </td>,
             <td className={"calculated-market-rent-differential-column"} key={2}>
                 <a id={popoverId} onClick={() => this.setState({marketRentDifferentialPopoverOpen: !this.state.marketRentDifferentialPopoverOpen})}>
-                    {this.props.unit.marketRent === this.props.marketRent.name ?
+                    {this.props.unit.marketRent === this.props.marketRent.name && this.props.unit.shouldApplyMarketRentDifferential ?
                         <CurrencyFormat value={this.props.unit.calculatedMarketRentDifferential}
                                         title={`Market Rent Differential for Unit ${this.props.unit.unitNumber}`}/>
                         : null}
@@ -241,6 +241,7 @@ class MarketRentEditor extends React.Component
         {
             unit.marketRent = this.props.marketRent.name;
         }
+        unit.resetCalculations();
         this.props.onChange(this.props.marketRent);
     }
 

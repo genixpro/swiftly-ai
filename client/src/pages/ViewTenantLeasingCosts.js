@@ -203,12 +203,14 @@ class LeasingCostStructureEditor extends React.Component
         {
             unit.leasingCostStructure = this.props.leasingCostStructure.name;
         }
+        unit.resetCalculations();
         this.props.onChange(this.props.leasingCostStructure);
     }
 
     onChangeTreatAsVacant(unit)
     {
         unit.shouldTreatAsVacant = !unit.isVacantForStabilizedStatement;
+        unit.resetCalculations();
         this.props.onChange(this.props.leasingCostStructure);
     }
 
