@@ -69,10 +69,11 @@ class TenantApplicableEditor extends React.Component
                                             <AreaFormat value={this.props.unit.squareFootage}/> : null
                                     }
                                     {
-                                        this.props.unit.marketRent ?
-                                            this.props.leasingCostStructure.leasingCommissionMode === 'percent_of_rent' ?
-                                                <CurrencyFormat value={this.props.unit.marketRentAmount * this.props.unit.squareFootage} cents={false}/> : null
-                                            : <span className={"none-found"}>no market rent</span>
+                                        this.props.leasingCostStructure.leasingCommissionMode === 'percent_of_rent' ?
+                                            this.props.unit.marketRent ?
+                                                <CurrencyFormat value={this.props.unit.marketRentAmount * this.props.unit.squareFootage} cents={false}/>
+                                                : <span className={"none-found"}>no market rent</span>
+                                        : null
                                     }
                                 </td>
                                 <td>*</td>
