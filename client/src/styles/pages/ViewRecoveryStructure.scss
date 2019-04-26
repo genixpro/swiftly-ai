@@ -15,6 +15,11 @@
   border: 1px solid lightgray;
   width: fit-content;
 
+  a:hover {
+    text-decoration: underline !important;
+    cursor: pointer;
+  }
+
   .title
   {
     font-size: 150%;

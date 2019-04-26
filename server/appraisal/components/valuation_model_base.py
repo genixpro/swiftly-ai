@@ -352,6 +352,7 @@ class ValuationModelBase:
 
         for recoveryStructure in appraisal.recoveryStructures:
             recoveryStructure.calculatedManagementRecovery = 0
+            recoveryStructure.calculatedManagementRecoveryBaseFieldValue = self.getCalculationField(appraisal, recoveryStructure.managementCalculationRule.field)
 
         for unit in appraisal.units:
             unit.calculatedManagementRecovery = self.computeManagementRecoveriesForUnit(appraisal, unit)
@@ -388,7 +389,7 @@ class ValuationModelBase:
                     recoveredAmount = percentage * expense.getLatestAmount()
 
                     total += recoveredAmount
-                    recoveryStructure.calculatedExpenseRecoveries[expense.name] += recoveredAmount
+                    recoveryStructure.calculatedExpenseRecoveries[expense.name.replace(".", "").replace("$", "")] += recoveredAmount
                     unit.calculatedExpenseRecovery += recoveredAmount
 
         return total
@@ -418,7 +419,7 @@ class ValuationModelBase:
                     recoveredAmount = percentage * expense.getLatestAmount()
 
                     total += recoveredAmount
-                    recoveryStructure.calculatedTaxRecoveries[expense.name] += recoveredAmount
+                    recoveryStructure.calculatedTaxRecoveries[expense.name.replace(".", "").replace("$", "")] += recoveredAmount
                     unit.calculatedTaxRecovery += recoveredAmount
 
         return total

@@ -16,6 +16,8 @@ class RecoveryStructureModel extends BaseModel
 
     static calculatedManagementRecovery = new FloatField("calculatedManagementRecovery", 0);
 
+    static calculatedManagementRecoveryBaseFieldValue = new FloatField("calculatedManagementRecoveryBaseFieldValue", 0);
+
     static expenseRecoveries = new DictField(new FloatField());
 
     static taxRecoveries = new DictField(new FloatField());

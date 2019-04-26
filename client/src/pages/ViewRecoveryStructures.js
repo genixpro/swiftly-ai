@@ -1,5 +1,5 @@
 import React from 'react';
-import { Row, Col, Card, CardHeader, CardBody, Button } from 'reactstrap';
+import { Row, Col, Card, CardHeader, CardBody, Button, Popover, PopoverBody, PopoverHeader } from 'reactstrap';
 import axios from "axios/index";
 import FieldDisplayEdit from './components/FieldDisplayEdit';
 import 'react-datetime/css/react-datetime.css'
@@ -7,17 +7,25 @@ import NumberFormat from "react-number-format";
 import RecoveryStructureModel from "../models/RecoveryStructureModel";
 import _ from "underscore";
 import CurrencyFormat from "./components/CurrencyFormat";
+import PercentFormat from "./components/PercentFormat";
+import AreaFormat from "./components/AreaFormat";
 
 class ExpensePercentageEditor extends React.Component
 {
+    state = {};
+
     render()
     {
+        const popoverId = `expense-recovery-popover-${this.props.expense.name.replace(/ /g, "")}-${this.props.recovery.name.replace(/ /g, "")}`;
+
+        const percentage = _.isNumber(this.props.value) ? this.props.value : 100;
+
         return [<td className={"rule-percentage-column"} key={1}>
             <FieldDisplayEdit
                 key={1}
                 type="percent"
                 placeholder={"Expense %"}
-                value={_.isNumber(this.props.value) ? this.props.value : 100}
+                value={percentage}
                 hideInput={false}
                 hideIcon={true}
                 onChange={(newValue) => this.props.onChange(newValue)}
@@ -28,7 +36,79 @@ class ExpensePercentageEditor extends React.Component
                 <div className={"expense-name"}>{this.props.expense.name}</div>
             </td>,
             <td className={"rule-calculated-amount-column"} key={3}>
-                <CurrencyFormat value={this.props.calculated}/>
+                <a id={popoverId} onClick={() => this.setState({popoverOpen: !this.state.popoverOpen})}>
+                    <CurrencyFormat value={this.props.calculated}/>
+                </a>
+                <Popover placement="bottom" isOpen={this.state.popoverOpen} target={popoverId} toggle={() => this.setState({popoverOpen: !this.state.popoverOpen})}>
+                    <PopoverHeader>Expense Recovery</PopoverHeader>
+                    <PopoverBody>
+                        <table className={"explanation-popover-table"}>
+                            {
+                                this.props.appraisal.units.map((unit, unitIndex) =>
+                                {
+                                    if (unit.currentTenancy.recoveryStructure !== this.props.recovery.name)
+                                    {
+                                        return;
+                                    }
+
+                                    let className = "";
+
+                                    if (unitIndex === this.props.appraisal.units.length - 1)
+                                    {
+                                        className = "underline";
+                                    }
+
+                                    return <tr key={unitIndex}>
+                                        <td>{unit.currentTenancy.name}</td>
+                                        <td>
+                                            <AreaFormat value={unit.squareFootage} />
+                                        </td>
+                                        <td>
+                                            /
+                                        </td>
+                                        <td>
+                                            <AreaFormat value={this.props.appraisal.sizeOfBuilding} />
+                                        </td>
+                                        <td>
+                                            =
+                                        </td>
+                                        <td>
+                                            <PercentFormat value={unit.squareFootage / this.props.appraisal.sizeOfBuilding * 100} />
+                                        </td>
+                                        <td>
+                                            *
+                                        </td>
+                                        <td>
+                                            <PercentFormat value={percentage} />
+                                        </td>
+                                        <td>
+                                            *
+                                        </td>
+                                        <td>
+                                            <CurrencyFormat value={this.props.expense.latestAmount} />
+                                        </td>
+                                        <td className={className}>
+                                            <CurrencyFormat value={this.props.expense.latestAmount * unit.squareFootage / this.props.appraisal.sizeOfBuilding} />
+                                        </td>
+                                    </tr>
+                                })
+                            }
+                            <tr className={"total-row"}>
+                                <td>Recovered Amount Under Structure</td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td><CurrencyFormat value={this.props.calculated} /></td>
+                            </tr>
+                        </table>
+                    </PopoverBody>
+                </Popover>
             </td>
         ]
     }
@@ -36,8 +116,12 @@ class ExpensePercentageEditor extends React.Component
 
 class TenantApplicableEditor extends React.Component
 {
+    state = {};
+
     render()
     {
+        const popoverId = `tenancy-recovery-popover-${this.props.unit.currentTenancy.name.replace(/ /g, "")}-${this.props.recovery.name.replace(/ /g, "")}`;
+
         return [<td className={"rule-percentage-column"} key={1}>
             {this.props.unit.currentTenancy.name || `Unit ${this.props.unit.unitNumber}`}
         </td>,
@@ -52,11 +136,40 @@ class TenantApplicableEditor extends React.Component
                 />
             </td>,
             <td className={"rule-calculated-amount-column"} key={3}>
-                {
-                    this.props.unit.currentTenancy.recoveryStructure === this.props.recovery.name ?
-                        <CurrencyFormat value={this.props.unit.calculatedTotalRecovery}/>
-                        : null
-                }
+                <a id={popoverId} onClick={() => this.setState({popoverOpen: !this.state.popoverOpen})}>
+
+                    {
+                        this.props.unit.currentTenancy.recoveryStructure === this.props.recovery.name ?
+                            <CurrencyFormat value={this.props.unit.calculatedTotalRecovery}/>
+                            : null
+                    }
+                </a>
+                <Popover placement="bottom" isOpen={this.state.popoverOpen} target={popoverId} toggle={() => this.setState({popoverOpen: !this.state.popoverOpen})}>
+                    <PopoverHeader>Tenant Recovery</PopoverHeader>
+                    <PopoverBody>
+                        <table className={"explanation-popover-table"}>
+                            <tr>
+                                <td>Operating Expense Recovery</td>
+                                <td><CurrencyFormat value={this.props.unit.calculatedExpenseRecovery} /></td>
+                            </tr>
+                            <tr>
+                                <td>Management Recovery</td>
+                                <td><CurrencyFormat value={this.props.unit.calculatedManagementRecovery} /></td>
+                            </tr>
+                            <tr>
+                                <td>Tax Recovery</td>
+                                <td className={"underline"}><CurrencyFormat value={this.props.unit.calculatedTaxRecovery} /></td>
+                            </tr>
+
+                            <tr className={"total-row"}>
+                                <td>Recovered Amount Under Structure</td>
+                                <td><CurrencyFormat value={this.props.unit.calculatedTotalRecovery} /></td>
+                            </tr>
+                        </table>
+                    </PopoverBody>
+                </Popover>
+
+
             </td>
     ]
     }
@@ -66,6 +179,8 @@ class TenantApplicableEditor extends React.Component
 
 class RecoveryStructureEditor extends React.Component
 {
+    state = {};
+
     changeRecoveryStructureField(field, newValue)
     {
         const recoveryStructure = this.props.recovery;
@@ -145,6 +260,8 @@ class RecoveryStructureEditor extends React.Component
     {
         const recovery = this.props.recovery;
 
+        const managementRecoveryPopoverId = `management-recovery-popover-${this.props.recovery.name.replace(/ /g, "")}`;
+
         return <Card className={"recovery-structure-editor"}>
             <CardBody>
                 <table className="recovery-structure-table">
@@ -196,7 +313,83 @@ class RecoveryStructureEditor extends React.Component
                             />
                         </td>
                         <td className={"rule-calculated-amount-column"}>
-                            <CurrencyFormat value={recovery.calculatedManagementRecovery}/>
+                            <a id={managementRecoveryPopoverId} onClick={() => this.setState({managementRecoveryPopoverOpen: !this.state.managementRecoveryPopoverOpen})}>
+                                <CurrencyFormat value={recovery.calculatedManagementRecovery}/>
+                            </a>
+                            <Popover placement="bottom" isOpen={this.state.managementRecoveryPopoverOpen} target={managementRecoveryPopoverId} toggle={() => this.setState({managementRecoveryPopoverOpen: !this.state.managementRecoveryPopoverOpen})}>
+                                <PopoverHeader>Management Recovery</PopoverHeader>
+                                <PopoverBody>
+                                    <table className={"explanation-popover-table"}>
+                                        {
+                                            this.props.appraisal.units.map((unit, unitIndex) =>
+                                            {
+                                                if (unit.currentTenancy.recoveryStructure !== recovery.name)
+                                                {
+                                                    return;
+                                                }
+
+                                                let className = "";
+
+                                                if (unitIndex === this.props.appraisal.units.length - 1)
+                                                {
+                                                    className = "underline";
+                                                }
+
+                                                return <tr key={unitIndex}>
+                                                    <td>{unit.currentTenancy.name}</td>
+                                                    <td>
+                                                        <AreaFormat value={unit.squareFootage} />
+                                                    </td>
+                                                    <td>
+                                                        /
+                                                    </td>
+                                                    <td>
+                                                        <AreaFormat value={this.props.appraisal.sizeOfBuilding} />
+                                                    </td>
+                                                    <td>
+                                                        =
+                                                    </td>
+                                                    <td>
+                                                        <PercentFormat value={unit.squareFootage / this.props.appraisal.sizeOfBuilding * 100} />
+                                                    </td>
+                                                    <td>
+                                                        *
+                                                    </td>
+                                                    <td>
+                                                        <PercentFormat value={recovery.managementCalculationRule.percentage} />
+                                                    </td>
+                                                    <td>
+                                                        *
+                                                    </td>
+                                                    <td>
+                                                        <CurrencyFormat value={recovery.calculatedManagementRecoveryBaseFieldValue} />
+                                                    </td>
+                                                    <td>
+                                                        =
+                                                    </td>
+                                                    <td className={className}>
+                                                        <CurrencyFormat value={unit.calculatedManagementRecovery} />
+                                                    </td>
+                                                </tr>
+                                            })
+                                        }
+                                        <tr className={"total-row"}>
+                                            <td>Recovered Amount Under Structure</td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td></td>
+                                            <td><CurrencyFormat value={recovery.calculatedManagementRecovery} /></td>
+                                        </tr>
+                                    </table>
+                                </PopoverBody>
+                            </Popover>
                         </td>
                     </tr>
                     <tr className={"recovery-rule label-row"}>
@@ -216,6 +409,7 @@ class RecoveryStructureEditor extends React.Component
                                 <ExpensePercentageEditor
                                     expense={this.operatingExpenses()[0]}
                                     recovery={recovery}
+                                    appraisal={this.props.appraisal}
                                     onChange={(newValue) => this.changeOperatingExpenseRecovery(this.operatingExpenses()[0].name, newValue)}
                                     calculated={recovery.calculatedExpenseRecoveries[this.operatingExpenses()[0].name]}
                                     value={recovery.expenseRecoveries[this.operatingExpenses()[0].name]}
@@ -237,6 +431,7 @@ class RecoveryStructureEditor extends React.Component
                                 <ExpensePercentageEditor
                                     expense={expense}
                                     recovery={recovery}
+                                    appraisal={this.props.appraisal}
                                     onChange={(newValue) => this.changeOperatingExpenseRecovery(expense.name, newValue)}
                                     calculated={recovery.calculatedExpenseRecoveries[expense.name]}
                                     value={recovery.expenseRecoveries[expense.name]}
@@ -261,6 +456,7 @@ class RecoveryStructureEditor extends React.Component
                                 <ExpensePercentageEditor
                                     expense={this.taxes()[0]}
                                     recovery={recovery}
+                                    appraisal={this.props.appraisal}
                                     onChange={(newValue) => this.changeTaxRecovery(this.taxes()[0].name, newValue)}
                                     calculated={recovery.calculatedTaxRecoveries[this.taxes()[0].name]}
                                     value={recovery.taxRecoveries[this.taxes()[0].name]}
@@ -282,6 +478,7 @@ class RecoveryStructureEditor extends React.Component
                                 <ExpensePercentageEditor
                                     expense={expense}
                                     recovery={recovery}
+                                    appraisal={this.props.appraisal}
                                     onChange={(newValue) => this.changeTaxRecovery(expense.name, newValue)}
                                     calculated={recovery.calculatedTaxRecoveries[expense.name]}
                                     value={recovery.taxRecoveries[expense.name]}

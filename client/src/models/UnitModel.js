@@ -75,7 +75,7 @@ class UnitModel extends BaseModel
         {
             if (marketRent.name === this.marketRent)
             {
-                return marketRent.amount;
+                return marketRent.amountPSF;
             }
         }
         return null;

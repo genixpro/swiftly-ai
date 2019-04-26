@@ -17,6 +17,11 @@ class IncomeStatementItemModel extends BaseModel
     static cashFlowType = new StringField();
     static incomeStatementItemType = new StringField();
 
+    get latestAmount()
+    {
+        return this.yearlyAmounts[_.max(Object.keys(this.yearlyAmounts))];
+    }
+
     get yearlyAmountsPSF()
     {
         const psf = {};

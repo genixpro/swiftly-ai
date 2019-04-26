@@ -173,11 +173,25 @@
   td:first-child
   {
     font-weight: bold;
-    padding-right: 20px;
+  }
+
+  td:not(:first-child)
+  {
+    padding-left: 10px;
+  }
+
+  td:not(:last-child)
+  {
+    padding-right: 10px;
   }
 
   td.underline
   {
     border-bottom: 1px solid black;
+  }
+
+  tr.total-row td
+  {
+    padding-top: 10px;
   }
 }
