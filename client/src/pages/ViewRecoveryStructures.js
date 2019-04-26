@@ -88,7 +88,7 @@ class ExpensePercentageEditor extends React.Component
                                             <CurrencyFormat value={this.props.expense.latestAmount} />
                                         </td>
                                         <td className={className}>
-                                            <CurrencyFormat value={this.props.expense.latestAmount * unit.squareFootage / this.props.appraisal.sizeOfBuilding} />
+                                            <CurrencyFormat value={this.props.expense.latestAmount * (percentage / 100.0) * unit.squareFootage / this.props.appraisal.sizeOfBuilding} />
                                         </td>
                                     </tr>
                                 })
