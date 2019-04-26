@@ -410,9 +410,9 @@ class RecoveryStructureEditor extends React.Component
                                     expense={this.operatingExpenses()[0]}
                                     recovery={recovery}
                                     appraisal={this.props.appraisal}
-                                    onChange={(newValue) => this.changeOperatingExpenseRecovery(this.operatingExpenses()[0].name, newValue)}
-                                    calculated={recovery.calculatedExpenseRecoveries[this.operatingExpenses()[0].name]}
-                                    value={recovery.expenseRecoveries[this.operatingExpenses()[0].name]}
+                                    onChange={(newValue) => this.changeOperatingExpenseRecovery(this.operatingExpenses()[0].machineName, newValue)}
+                                    calculated={recovery.calculatedExpenseRecoveries[this.operatingExpenses()[0].machineName]}
+                                    value={recovery.expenseRecoveries[this.operatingExpenses()[0].machineName]}
                                 />
                                 : null
                         }
@@ -432,9 +432,9 @@ class RecoveryStructureEditor extends React.Component
                                     expense={expense}
                                     recovery={recovery}
                                     appraisal={this.props.appraisal}
-                                    onChange={(newValue) => this.changeOperatingExpenseRecovery(expense.name, newValue)}
-                                    calculated={recovery.calculatedExpenseRecoveries[expense.name]}
-                                    value={recovery.expenseRecoveries[expense.name]}
+                                    onChange={(newValue) => this.changeOperatingExpenseRecovery(expense.machineName, newValue)}
+                                    calculated={recovery.calculatedExpenseRecoveries[expense.machineName]}
+                                    value={recovery.expenseRecoveries[expense.machineName]}
                                 />
                             </tr>
                         })
@@ -457,9 +457,9 @@ class RecoveryStructureEditor extends React.Component
                                     expense={this.taxes()[0]}
                                     recovery={recovery}
                                     appraisal={this.props.appraisal}
-                                    onChange={(newValue) => this.changeTaxRecovery(this.taxes()[0].name, newValue)}
-                                    calculated={recovery.calculatedTaxRecoveries[this.taxes()[0].name]}
-                                    value={recovery.taxRecoveries[this.taxes()[0].name]}
+                                    onChange={(newValue) => this.changeTaxRecovery(this.taxes()[0].machineName, newValue)}
+                                    calculated={recovery.calculatedTaxRecoveries[this.taxes()[0].machineName]}
+                                    value={recovery.taxRecoveries[this.taxes()[0].machineName]}
                                 />
                                 : null
                         }
@@ -479,9 +479,9 @@ class RecoveryStructureEditor extends React.Component
                                     expense={expense}
                                     recovery={recovery}
                                     appraisal={this.props.appraisal}
-                                    onChange={(newValue) => this.changeTaxRecovery(expense.name, newValue)}
-                                    calculated={recovery.calculatedTaxRecoveries[expense.name]}
-                                    value={recovery.taxRecoveries[expense.name]}
+                                    onChange={(newValue) => this.changeTaxRecovery(expense.machineName, newValue)}
+                                    calculated={recovery.calculatedTaxRecoveries[expense.machineName]}
+                                    value={recovery.taxRecoveries[expense.machineName]}
                                 />
                             </tr>
                         })

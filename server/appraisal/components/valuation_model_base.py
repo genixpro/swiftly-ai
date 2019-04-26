@@ -323,7 +323,7 @@ class ValuationModelBase:
 
         for expense in appraisal.incomeStatement.expenses:
             if expense.incomeStatementItemType == 'operating_expense':
-                percentage = (recoveryStructure.expenseRecoveries.get(expense.name, 100)) / 100.0
+                percentage = (recoveryStructure.expenseRecoveries.get(expense.machineName, 100)) / 100.0
 
                 if unit.squareFootage and appraisal.sizeOfBuilding:
                     percentage *= unit.squareFootage / appraisal.sizeOfBuilding
@@ -342,7 +342,7 @@ class ValuationModelBase:
 
         for expense in appraisal.incomeStatement.expenses:
             if expense.incomeStatementItemType == 'taxes':
-                percentage = (recoveryStructure.taxRecoveries.get(expense.name, 100)) / 100.0
+                percentage = (recoveryStructure.taxRecoveries.get(expense.machineName, 100)) / 100.0
 
                 if unit.squareFootage and appraisal.sizeOfBuilding:
                     percentage *= unit.squareFootage / appraisal.sizeOfBuilding
@@ -379,7 +379,7 @@ class ValuationModelBase:
             recoveryStructure.calculatedExpenseRecoveries = {}
             for expense in appraisal.incomeStatement.expenses:
                 if expense.incomeStatementItemType == 'operating_expense':
-                    recoveryStructure.calculatedExpenseRecoveries[expense.name] = 0
+                    recoveryStructure.calculatedExpenseRecoveries[expense.machineName] = 0
 
         for unit in appraisal.units:
             recoveryStructure = self.recoveryStructureForUnit(appraisal, unit)
@@ -388,7 +388,7 @@ class ValuationModelBase:
 
             for expense in appraisal.incomeStatement.expenses:
                 if expense.incomeStatementItemType == 'operating_expense':
-                    percentage = (recoveryStructure.expenseRecoveries.get(expense.name, 100)) / 100.0
+                    percentage = (recoveryStructure.expenseRecoveries.get(expense.machineName, 100)) / 100.0
 
                     if unit.squareFootage and appraisal.sizeOfBuilding:
                         percentage *= unit.squareFootage / appraisal.sizeOfBuilding
@@ -396,7 +396,7 @@ class ValuationModelBase:
                     recoveredAmount = percentage * expense.getLatestAmount()
 
                     total += recoveredAmount
-                    recoveryStructure.calculatedExpenseRecoveries[expense.name.replace(".", "").replace("$", "")] += recoveredAmount
+                    recoveryStructure.calculatedExpenseRecoveries[expense.machineName] += recoveredAmount
                     unit.calculatedExpenseRecovery += recoveredAmount
 
         return total
@@ -409,7 +409,7 @@ class ValuationModelBase:
             recoveryStructure.calculatedTaxRecoveries = {}
             for expense in appraisal.incomeStatement.expenses:
                 if expense.incomeStatementItemType == 'taxes':
-                    recoveryStructure.calculatedTaxRecoveries[expense.name] = 0
+                    recoveryStructure.calculatedTaxRecoveries[expense.machineName] = 0
 
         for unit in appraisal.units:
             recoveryStructure = self.recoveryStructureForUnit(appraisal, unit)
@@ -418,7 +418,7 @@ class ValuationModelBase:
 
             for expense in appraisal.incomeStatement.expenses:
                 if expense.incomeStatementItemType == 'taxes':
-                    percentage = (recoveryStructure.taxRecoveries.get(expense.name, 100)) / 100.0
+                    percentage = (recoveryStructure.taxRecoveries.get(expense.machineName, 100)) / 100.0
 
                     if unit.squareFootage and appraisal.sizeOfBuilding:
                         percentage *= unit.squareFootage / appraisal.sizeOfBuilding
@@ -426,7 +426,7 @@ class ValuationModelBase:
                     recoveredAmount = percentage * expense.getLatestAmount()
 
                     total += recoveredAmount
-                    recoveryStructure.calculatedTaxRecoveries[expense.name.replace(".", "").replace("$", "")] += recoveredAmount
+                    recoveryStructure.calculatedTaxRecoveries[expense.machineName] += recoveredAmount
                     unit.calculatedTaxRecovery += recoveredAmount
 
         return total

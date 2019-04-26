@@ -35,6 +35,10 @@ class IncomeStatementItem(EmbeddedDocument):
         "unknown"
     ])
 
+    @property
+    def machineName(self):
+        return self.name.replace(".", "").replace("$", "")
+
     def getLatestAmount(self):
         years = sorted(self.yearlyAmounts.keys(), key=lambda x: float(x))
         return self.yearlyAmounts[years[-1]]

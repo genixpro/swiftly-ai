@@ -22,6 +22,11 @@ class IncomeStatementItemModel extends BaseModel
         return this.yearlyAmounts[_.max(Object.keys(this.yearlyAmounts))];
     }
 
+    get machineName()
+    {
+        return this.name.replace(/\.\$/g, "");
+    }
+
     get yearlyAmountsPSF()
     {
         const psf = {};
