@@ -92,8 +92,10 @@ class UnitsTable extends React.Component
 
             newUnitObj.unitNumber += " " + this.props.appraisal.units.length.toString();
 
+            const newIndex = this.props.appraisal.units.length;
+
             this.props.onCreateUnit(newUnitObj);
-            this.props.onUnitClicked(newUnitObj);
+            this.props.onUnitClicked(newUnitObj, newIndex);
         }
     }
 

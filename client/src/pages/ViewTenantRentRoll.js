@@ -316,7 +316,8 @@ class ViewTenantsRentRoll extends React.Component
                                                 <strong>Unit Number</strong>
                                             </td>
                                             <td>
-                                                <FieldDisplayEdit placeholder={"Unit Number"} value={this.props.appraisal.units[this.state.selectedUnitIndex].unitNumber}
+                                                <FieldDisplayEdit placeholder={"Unit Number"}
+                                                                  value={this.props.appraisal.units[this.state.selectedUnitIndex].unitNumber}
                                                                   onChange={(newValue) => this.changeUnitField(this.props.appraisal.units[this.state.selectedUnitIndex], 'unitNumber', newValue)}/>
                                             </td>
                                         </tr>
