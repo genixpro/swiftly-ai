@@ -180,6 +180,11 @@ class BaseModel extends Object
                 if (field.fieldName)
                 {
                     let diffValue = diff[field.fieldName];
+                    if (_.isUndefined(diffValue) && diff["$replace"] && !_.isUndefined(diff["$replace"][field.fieldName]))
+                    {
+                        diffValue = diff["$replace"][field.fieldName];
+                    }
+
                     if (!_.isUndefined(diffValue))
                     {
                         this[field.fieldName] = modelClass[key].applyDiff(this[field.fieldName], diffValue, this);
@@ -193,6 +198,11 @@ class BaseModel extends Object
                 else
                 {
                     let diffValue = diff[key];
+
+                    if (_.isUndefined(diffValue) && diff["$replace"] && !_.isUndefined(diff["$replace"][key]))
+                    {
+                        diffValue = diff["$replace"][key];
+                    }
 
                     if (!_.isUndefined(diffValue))
                     {
