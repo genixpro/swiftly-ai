@@ -4,6 +4,101 @@ import FieldDisplayEdit from "./FieldDisplayEdit";
 import axios from "axios/index";
 import UploadableImage from "./UploadableImage";
 import NumberFormat from 'react-number-format';
+import PropTypes from "prop-types";
+import ComparableSaleModel from "../../models/ComparableSaleModel";
+import AppraisalModel from "../../models/AppraisalModel";
+import _ from 'underscore';
+import CurrencyFormat from "./CurrencyFormat";
+import PercentFormat from "./PercentFormat";
+
+class ComparableSaleListItemField extends React.Component
+{
+    static propTypes = {
+        title: PropTypes.string.isRequired,
+        field: PropTypes.string.isRequired,
+        fieldType: PropTypes.string.isRequired,
+        edit: PropTypes.bool.isRequired,
+        propertyType: PropTypes.string,
+        excludedPropertyType: PropTypes.string,
+        onChange: PropTypes.func.isRequired,
+        comparableSale: PropTypes.instanceOf(ComparableSaleModel).isRequired
+    };
+
+    render()
+    {
+        if (this.props.propertyType && this.props.comparableSale.propertyType !== this.props.propertyType)
+        {
+            return null;
+        }
+
+        if (this.props.excludedPropertyType && this.props.comparableSale.propertyType === this.props.excludedPropertyType)
+        {
+            return null;
+        }
+
+        return [
+            <span key={1} className={"comparable-field-label"}>{this.props.title}:</span>,
+
+            <FieldDisplayEdit
+                key={2}
+                type={this.props.fieldType}
+                edit={this.props.edit}
+                placeholder={this.props.placeholder || this.props.title}
+                value={this.props.comparableSale[this.props.field]}
+                onChange={(newValue) => this.props.onChange(this.props.field, newValue)}
+                onGeoChange={(newValue) => this.props.onChange('location', {"type": "Point", "coordinates": [newValue.lng, newValue.lat]})}
+            />
+        ]
+    }
+}
+
+
+class ComparableSaleListItemHeaderColumn extends React.Component
+{
+    static propTypes = {
+        size: PropTypes.number.isRequired,
+        renders: PropTypes.arrayOf(PropTypes.func).isRequired,
+        noValueTexts: PropTypes.arrayOf(PropTypes.string).isRequired,
+        fields: PropTypes.arrayOf(PropTypes.string).isRequired,
+        comparableSale: PropTypes.instanceOf(ComparableSaleModel).isRequired
+    };
+
+    render()
+    {
+        const colProps = {};
+        let colClass = "";
+
+        if (_.isNumber(this.props.size))
+        {
+            colProps['xs'] = this.props.size;
+        }
+        else if(this.props.size === 'middle')
+        {
+            colClass = "middle-col"
+        }
+
+        return <Col className={`header-field-column ${colClass}`} {...colProps}>
+
+            {
+                this.props.fields.map((field, fieldIndex) =>
+                {
+                    return this.props.comparableSale[field] && !(_.isArray(this.props.comparableSale[field]) && this.props.comparableSale[field].length === 0)
+                        ? <span>
+                            {
+                                this.props.renders[fieldIndex](this.props.comparableSale[field])
+                            }
+                            {fieldIndex !== this.props.fields.length - 1 ? <br /> : null}
+                            </span>
+                        : <span className={"no-data"}>
+                            {this.props.noValueTexts[fieldIndex]}
+                            {fieldIndex !== this.props.fields.length - 1 ? <br /> : null}
+                        </span>
+                })
+            }
+
+        </Col>
+    }
+}
 
 class ComparableSaleListItem extends React.Component
 {
@@ -11,8 +106,28 @@ class ComparableSaleListItem extends React.Component
 
     static defaultProps = {
         edit: true,
-        detailsOpen: false,
-        showPropertyTypeInHeader: true
+        openByDefault: false,
+        showPropertyTypeInHeader: true,
+        last: false
+    };
+
+    static propTypes = {
+        edit: PropTypes.bool,
+        openByDefault: PropTypes.bool,
+        showPropertyTypeInHeader: PropTypes.bool,
+        last: PropTypes.bool,
+
+        headers: PropTypes.arrayOf(PropTypes.string),
+
+        comparableSale: PropTypes.instanceOf(ComparableSaleModel).isRequired,
+        appraisal: PropTypes.instanceOf(AppraisalModel).isRequired,
+
+        onChange: PropTypes.func,
+        onDeleteComparable: PropTypes.func,
+        onAddCapRateClicked: PropTypes.func,
+        onRemoveCapRateClicked: PropTypes.func,
+        onRemoveDCAClicked: PropTypes.func,
+        onAddDCAClicked: PropTypes.func,
     };
 
     state = {
@@ -72,139 +187,9 @@ class ComparableSaleListItem extends React.Component
         });
     }
 
-    isCompWithinAppraisal()
-    {
-        if (!this.state.comparableSale._id)
-        {
-            return false;
-        }
-        const id = this.state.comparableSale._id;
-
-        if (!this.props.appraisal.comparableSalesCapRate)
-        {
-            return false;
-        }
-        else
-        {
-            for (let i = 0; i < this.props.appraisal.comparableSalesCapRate.length; i += 1)
-            {
-                if (this.props.appraisal.comparableSalesCapRate[i] === id)
-                {
-                    return true;
-                }
-            }
-        }
-
-        if (!this.props.appraisal.comparableSalesDCA)
-        {
-            return false;
-        }
-        else
-        {
-            for (let i = 0; i < this.props.appraisal.comparableSalesDCA.length; i += 1)
-            {
-                if (this.props.appraisal.comparableSalesDCA[i] === id)
-                {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-
-    isCompWithinDCA()
-    {
-        if (!this.state.comparableSale._id)
-        {
-            return false;
-        }
-        const id = this.state.comparableSale._id;
-
-        if (!this.props.appraisal.comparableSalesDCA)
-        {
-            return false;
-        }
-        else
-        {
-            for (let i = 0; i < this.props.appraisal.comparableSalesDCA.length; i += 1)
-            {
-                if (this.props.appraisal.comparableSalesDCA[i] === id)
-                {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-
-    isCompWithinCapRate()
-    {
-        if (!this.state.comparableSale._id)
-        {
-            return false;
-        }
-        const id = this.state.comparableSale._id;
-
-        if (!this.props.appraisal.comparableSalesCapRate)
-        {
-            return false;
-        }
-        else
-        {
-            for (let i = 0; i < this.props.appraisal.comparableSalesCapRate.length; i += 1)
-            {
-                if (this.props.appraisal.comparableSalesCapRate[i] === id)
-                {
-                    return true;
-                }
-            }
-        }
-    }
-
     toggleDetails()
     {
         this.setState({detailsOpen: !this.state.detailsOpen});
-    }
-
-
-    defaultDescriptionText()
-    {
-        const comparableSale = this.props.comparableSale;
-
-        let text = '';
-
-        if (comparableSale.saleDate && comparableSale.propertyType && comparableSale.address)
-        {
-            text += `In reference to the ${comparableSale.saleDate.getFullYear()}/${comparableSale.saleDate.getMonth() + 1}/${comparableSale.saleDate.getDate()} sale of a ${comparableSale.propertyType} building located at ${comparableSale.address}. `;
-        }
-
-        if (comparableSale.sizeSquareFootage)
-        {
-            text += `The building has gross rentable area of ${comparableSale.sizeSquareFootage}. `;
-        }
-
-
-        if(comparableSale.vendor && comparableSale.purchaser && comparableSale.salePrice)
-        {
-            text += `The property was sold by ${comparableSale.vendor} and was acquired by ${comparableSale.purchaser} for a consideration of $${comparableSale.salePrice}. `;
-        }
-
-        if(comparableSale.description)
-        {
-            text += comparableSale.description;
-        }
-
-        if(comparableSale.tenants)
-        {
-            text += `The property is leased to ${comparableSale.tenants}. `;
-        }
-
-        if(comparableSale.capitalizationRate)
-        {
-            text += `The net income of ${comparableSale.netOperatingIncome} yielded a ${comparableSale.capitalizationRate}% rate of return. `;
-        }
-
-        return text;
     }
 
 
@@ -218,11 +203,93 @@ class ComparableSaleListItem extends React.Component
 
         const lastClass = this.props.last ? "last" : "";
 
+        const headerConfigurations = {
+            saleDate: {
+                render: (value) => <span>{new Date(value).getMonth() + 1} / {new Date(value).getFullYear().toString().substr(2)}</span>,
+                noValueText: "No Sale Date",
+                size: 1
+            },
+            address: {
+                render: (value) => <span>{value}</span>,
+                noValueText: "No Address",
+                size: 3
+            },
+            sizeSquareFootage: {
+                render: (value) => <NumberFormat
+                    value={value}
+                    displayType={'text'}
+                    thousandSeparator={', '}
+                    decimalScale={0}
+                    fixedDecimalScale={true}
+                />,
+                noValueText: "No Size",
+                size: "middle"
+            },
+            sizeOfLandAcres: {
+                render: (value) => <NumberFormat
+                    value={value}
+                    displayType={'text'}
+                    thousandSeparator={', '}
+                    decimalScale={0}
+                    fixedDecimalScale={true}
+                />,
+                noValueText: "No Size",
+                size: "middle"
+            },
+            sizeOfBuildableAreaSqft: {
+                render: (value) => <NumberFormat
+                    value={value}
+                    displayType={'text'}
+                    thousandSeparator={', '}
+                    decimalScale={2}
+                    fixedDecimalScale={true}
+                />,
+                noValueText: "No Buildable Area",
+                size: "middle"
+            },
+            salePrice: {
+                render: (value) => <CurrencyFormat value={value} cents={false}/>,
+                noValueText: "No Price",
+                size: "middle"
+            },
+            capitalizationRate: {
+                render: (value) => <PercentFormat value={value} />,
+                noValueText: "No Cap Rate",
+                size: "middle"
+            },
+            propertyType: {
+                render: (value) => <span>{value}</span>,
+                noValueText: "No Property Type",
+                size: "middle"
+            },
+            propertyTags: {
+                render: (value) => value.map((tag, tagIndex) => <span key={tag}>{tag}{tagIndex !== value.length ? ", " : null}</span>),
+                noValueText: "No Sub Type",
+                size: "middle"
+            },
+            pricePerSquareFoot: {
+                render: (value) => <CurrencyFormat value={value} />,
+                noValueText: "No PPS",
+                size: "middle"
+            },
+            pricePerAcreLand: {
+                render: (value) => <CurrencyFormat value={value} cents={false} />,
+                noValueText: "No PPA",
+                size: "middle"
+            },
+            pricePerSquareFootBuildableArea: {
+                render: (value) => <CurrencyFormat value={value} />,
+                noValueText: "No Buildable PSF",
+                size: "middle"
+            }
+        };
+
+
         return (
             <div className={`card b comparable-sale-list-item ${expandedClass} ${lastClass}`}>
                 <div className={"comparable-sale-list-item-button-column"}>
                     {
-                        this.props.onRemoveComparableClicked && this.isCompWithinAppraisal() ?
+                        this.props.onRemoveComparableClicked && this.props.appraisal.hasComparableSale(this.props.comparableSale) ?
                             <div className={`comparable-button-row`}>
                                 <Button color={"primary"} onClick={(evt) => this.props.onRemoveComparableClicked(comparableSale)} className={"move-comparable-button"}>
                                     <i className={"fa fa-check-square"} />
@@ -233,7 +300,7 @@ class ComparableSaleListItem extends React.Component
                             </div> : null
                     }
                     {
-                        this.props.onAddComparableClicked && !this.isCompWithinAppraisal() ?
+                        this.props.onAddComparableClicked && !this.props.appraisal.hasComparableSale(this.props.comparableSale) ?
                             <div className={`comparable-button-row`}>
                                 <Button color={"primary"} onClick={(evt) => this.props.onAddComparableClicked(comparableSale)} className={"move-comparable-button"}>
                                     <i className={"fa fa-square"} />
@@ -250,91 +317,16 @@ class ComparableSaleListItem extends React.Component
                         <CardHeader onClick={() => this.toggleDetails()} className={"comparable-sale-list-item-header"}>
                             <CardTitle>
                                 <Row>
-                                    <Col xs={1} className={"header-field-column"}>
+                                    {
+                                        this.props.headers.map((headerFieldList) =>
                                         {
-                                            comparableSale.saleDate ? <span>{new Date(comparableSale.saleDate).getMonth() + 1} / {new Date(comparableSale.saleDate).getFullYear().toString().substr(2)}</span>
-                                                : <span className={"no-data"}>No Sale Date</span>
-                                        }
-                                    </Col>
-                                    <Col xs={3} className={"header-field-column"}>
-                                        {comparableSale.address ? comparableSale.address : <span className={"no-data"}>No Address</span>}
-                                    </Col>
-                                    {
-                                        this.props.appraisal.propertyType !== "land" ? <Col className={"header-field-column middle-col"}>
-                                            {comparableSale.sizeSquareFootage ? <NumberFormat
-                                                value={comparableSale.sizeSquareFootage}
-                                                displayType={'text'}
-                                                thousandSeparator={', '}
-                                                decimalScale={0}
-                                                fixedDecimalScale={true}
-                                            /> : <span className={"no-data"}>No Size</span>}
-                                        </Col> : null
-                                    }
-                                    {
-                                        this.props.appraisal.propertyType === "land" ? <Col className={"header-field-column middle-col"}>
-                                            {comparableSale.sizeOfLandAcres ? <NumberFormat
-                                                value={comparableSale.sizeOfLandAcres}
-                                                displayType={'text'}
-                                                thousandSeparator={', '}
-                                                decimalScale={2}
-                                                fixedDecimalScale={true}
-                                            /> : <span className={"no-data"}>No Size</span>}
-                                            <br/>
-                                            {comparableSale.sizeOfBuildableAreaSqft ? <NumberFormat
-                                                value={comparableSale.sizeOfBuildableAreaSqft}
-                                                displayType={'text'}
-                                                thousandSeparator={', '}
-                                                decimalScale={0}
-                                                fixedDecimalScale={true}
-                                            /> : <span className={"no-data"}>No Buildable Area</span>}
-
-                                        </Col> : null
-                                    }
-                                    <Col className={"header-field-column middle-col"}>
-                                        {comparableSale.salePrice ? <span>$<NumberFormat
-                                            value={comparableSale.salePrice}
-                                            displayType={'text'}
-                                            thousandSeparator={', '}
-                                            decimalScale={0}
-                                            fixedDecimalScale={true}
-                                        /></span> : <span className={"no-data"}>No Price</span>}
-                                    </Col>
-                                    {
-                                        this.props.showPropertyTypeInHeader ?
-                                            <Col xs={2} className={"header-field-column"}>
-                                                {comparableSale.propertyType ? comparableSale.propertyType : <span className={"no-data"}>No Propery Type</span>}<br/>
-                                                {comparableSale.propertyTags ? comparableSale.propertyTags.map((tag, tagIndex) => <span key={tag}>{tag}{tagIndex !== comparableSale.propertyTags.length ? ", " : null}</span>) : <span className={"no-data"}>No Sub Type</span>}
-                                            </Col> : null
-                                    }
-                                    {
-                                        this.props.appraisal.propertyType !== 'land' ? this.props.showPropertyTypeInHeader ?
-                                            <Col className={"header-field-column small-header-column middle-col"}>
-                                                {comparableSale.capitalizationRate ? (comparableSale.capitalizationRate.toString() + "%") : <span className={"no-data"}>No Cap Rate</span>}
-                                                <br/>
-                                                {(comparableSale.salePrice && comparableSale.sizeSquareFootage) ?  "$" + (comparableSale.salePrice / comparableSale.sizeSquareFootage).toFixed(2) : <span className={"no-data"}>No PSF</span>}
-                                            </Col> : [
-                                                <Col key={1} className={"header-field-column small-header-column middle-col"}>
-                                                    {comparableSale.capitalizationRate ? (comparableSale.capitalizationRate.toString() + "%") : <span className={"no-data"}>No Cap Rate</span>}
-                                                </Col>,
-                                                <Col key={2} className={"header-field-column small-header-column middle-col"}>
-                                                    {(comparableSale.salePrice && comparableSale.sizeSquareFootage) ?  "$" + (comparableSale.salePrice / comparableSale.sizeSquareFootage).toFixed(2) : <span className={"no-data"}>No PSF</span>}
-                                                </Col>
-                                            ] : null
-                                    }
-                                    {
-                                        this.props.appraisal.propertyType === 'land' ? this.props.showPropertyTypeInHeader ?
-                                            <Col className={"header-field-column small-header-column middle-col"}>
-                                                {comparableSale.pricePerAcreLand ? ("$" + comparableSale.pricePerAcreLand.toFixed(2)) : <span className={"no-data"}>No PPA</span>}
-                                                <br/>
-                                                {(comparableSale.pricePerSquareFootBuildableArea) ?  "$" + (comparableSale.pricePerSquareFootBuildableArea).toFixed(2) : <span className={"no-data"}>No Buildable PSF</span>}
-                                            </Col> : [
-                                                <Col key={1} className={"header-field-column small-header-column middle-col"}>
-                                                    {comparableSale.pricePerAcreLand ? ("$" + comparableSale.pricePerAcreLand.toFixed(2)) : <span className={"no-data"}>No PPA</span>}
-                                                </Col>,
-                                                <Col key={2} className={"header-field-column small-header-column middle-col"}>
-                                                    {(comparableSale.pricePerSquareFootBuildableArea) ?  "$" + (comparableSale.pricePerSquareFootBuildableArea).toFixed(2) : <span className={"no-data"}>No Buildable PSF</span>}
-                                                </Col>
-                                            ] : null
+                                            return <ComparableSaleListItemHeaderColumn
+                                                size={headerConfigurations[headerFieldList[0]].size}
+                                                renders={headerFieldList.map((field) => headerConfigurations[field].render)}
+                                                noValueTexts={headerFieldList.map((field) => headerConfigurations[field].noValueText)}
+                                                fields={headerFieldList}
+                                                comparableSale={this.props.comparableSale}/>
+                                        })
                                     }
                                 </Row>
                             </CardTitle>
@@ -364,8 +356,8 @@ class ComparableSaleListItem extends React.Component
                                             <FieldDisplayEdit
                                                 type={"boolean"}
                                                 hideIcon={true}
-                                                value={this.isCompWithinDCA()}
-                                                onChange={() => this.isCompWithinDCA() ? this.props.onRemoveDCAClicked(comparableSale) : this.props.onAddDCAClicked(comparableSale)}
+                                                value={this.props.appraisal.hasComparableSaleInDCA(this.props.comparableSale)}
+                                                onChange={() => this.props.appraisal.hasComparableSaleInDCA(this.props.comparableSale) ? this.props.onRemoveDCAClicked(comparableSale) : this.props.onAddDCAClicked(comparableSale)}
                                             />
                                         </div> : null
                                     }
@@ -375,8 +367,8 @@ class ComparableSaleListItem extends React.Component
                                             <FieldDisplayEdit
                                                 type={"boolean"}
                                                 hideIcon={true}
-                                                value={this.isCompWithinCapRate()}
-                                                onChange={() => this.isCompWithinCapRate() ? this.props.onRemoveCapRateClicked(comparableSale) : this.props.onAddCapRateClicked(comparableSale)}
+                                                value={this.props.appraisal.hasComparableSaleInCapRate(this.props.comparableSale)}
+                                                onChange={() => this.props.appraisal.hasComparableSaleInCapRate(this.props.comparableSale) ? this.props.onRemoveCapRateClicked(comparableSale) : this.props.onAddCapRateClicked(comparableSale)}
                                             />
                                         </div> : null
                                     }
@@ -385,127 +377,101 @@ class ComparableSaleListItem extends React.Component
                                 </div>
                             <div className={`comparable-sale-content`}>
                                 <div className={"comparable-fields-area"}>
-                                    <span className={"comparable-field-label"}>Address:</span>
-
-                                    <FieldDisplayEdit
-                                        type={"address"}
+                                    <ComparableSaleListItemField
+                                        title="Address"
+                                        field="address"
+                                        fieldType="address"
                                         edit={this.props.edit}
-                                        placeholder={"Address"}
-                                        value={comparableSale.address}
-                                        onChange={(newValue) => this.changeComparableField('address', newValue)}
-                                        onGeoChange={(newValue) => this.changeComparableField('location', {"type": "Point", "coordinates": [newValue.lng, newValue.lat]})}
+                                        comparableSale={comparableSale}
+                                        onChange={this.changeComparableField.bind(this)}
                                     />
 
-                                    <span className={"comparable-field-label"}>Property Type:</span>
-
-                                    <FieldDisplayEdit
-                                        type={"propertyType"}
+                                    <ComparableSaleListItemField
+                                        title="Property Type"
+                                        field="propertyType"
+                                        fieldType="propertyType"
                                         edit={this.props.edit}
-                                        placeholder={"Property Type"}
-                                        value={comparableSale.propertyType}
-                                        onChange={(newValue) => this.changeComparableField('propertyType', newValue)}
+                                        comparableSale={comparableSale}
+                                        onChange={this.changeComparableField.bind(this)}
                                     />
 
-                                    <span className={"comparable-field-label"}>Sub Type:</span>
-
-                                    <FieldDisplayEdit
-                                        type={"tags"}
+                                    <ComparableSaleListItemField
+                                        title="Sub Type"
+                                        field="propertyTags"
+                                        fieldType="tags"
                                         edit={this.props.edit}
-                                        placeholder={"Sub Type"}
-                                        value={comparableSale.propertyTags}
-                                        onChange={(newValue) => this.changeComparableField('propertyTags', newValue)}
+                                        comparableSale={comparableSale}
+                                        onChange={this.changeComparableField.bind(this)}
                                     />
 
                                     <h4 className={"group-heading"}>Sales Information</h4>
-                                    <span className={"group-heading"}></span>
+                                    <span className={"group-heading"} />
 
-                                    <span className={"comparable-field-label"}>Sale Price:</span>
-
-                                    <FieldDisplayEdit
-                                        type={"currency"}
+                                    <ComparableSaleListItemField
+                                        title="Sale Price"
+                                        field="salePrice"
+                                        fieldType="currency"
                                         edit={this.props.edit}
-                                        placeholder={"Sale Price"}
-                                        value={comparableSale.salePrice}
-                                        onChange={(newValue) => this.changeComparableField('salePrice', newValue)}
+                                        comparableSale={comparableSale}
+                                        onChange={this.changeComparableField.bind(this)}
                                     />
 
-
-                                    {
-                                        comparableSale.propertyType !== "land" ? [
-                                            <span key={1} className={"comparable-field-label"}>Cap Rate:</span>,
-
-                                            <FieldDisplayEdit
-                                                key={2}
-                                                type={"percent"}
-                                                edit={this.props.edit}
-                                                placeholder={"Capitalization Rate"}
-                                                value={comparableSale.capitalizationRate}
-                                                onChange={(newValue) => this.changeComparableField('capitalizationRate', newValue)}
-                                            />
-                                        ] : null
-                                    }
-
-                                    <span className={"comparable-field-label"}>Sale Date:</span>
-
-                                    <FieldDisplayEdit
-                                        type={"date"}
+                                    <ComparableSaleListItemField
+                                        title="Cap Rate"
+                                        field="capitalizationRate"
+                                        fieldType="percent"
                                         edit={this.props.edit}
-                                        placeholder={"Sale Date"}
-                                        value={comparableSale.saleDate}
-                                        onChange={(newValue) => this.changeComparableField('saleDate', newValue)}
+                                        comparableSale={comparableSale}
+                                        excludedPropertyType={"land"}
+                                        onChange={this.changeComparableField.bind(this)}
                                     />
 
-                                    <span className={"comparable-field-label"}>Vendor:</span>
-
-                                    <FieldDisplayEdit
-                                        type={"text"}
+                                    <ComparableSaleListItemField
+                                        title="Sale Date"
+                                        field="date"
+                                        fieldType="date"
                                         edit={this.props.edit}
-                                        placeholder={"Vendor"}
-                                        value={comparableSale.vendor}
-                                        onChange={(newValue) => this.changeComparableField('vendor', newValue)}
+                                        comparableSale={comparableSale}
+                                        onChange={this.changeComparableField.bind(this)}
                                     />
 
-                                    <span className={"comparable-field-label"}>Purchaser:</span>
-
-                                    <FieldDisplayEdit
-                                        type={"text"}
+                                    <ComparableSaleListItemField
+                                        title="Vendor"
+                                        field="vendor"
+                                        fieldType="text"
                                         edit={this.props.edit}
-                                        placeholder={"Purchaser"}
-                                        value={comparableSale.purchaser}
-                                        onChange={(newValue) => this.changeComparableField('purchaser', newValue)}
+                                        comparableSale={comparableSale}
+                                        onChange={this.changeComparableField.bind(this)}
                                     />
 
+                                    <ComparableSaleListItemField
+                                        title="Purchaser"
+                                        field="purchaser"
+                                        fieldType="text"
+                                        edit={this.props.edit}
+                                        comparableSale={comparableSale}
+                                        onChange={this.changeComparableField.bind(this)}
+                                    />
 
+                                    <ComparableSaleListItemField
+                                        title="NOI"
+                                        placeholder={"Net Operating Income"}
+                                        field="netOperatingIncome"
+                                        fieldType="currency"
+                                        excludedPropertyType={"land"}
+                                        edit={this.props.edit}
+                                        comparableSale={comparableSale}
+                                        onChange={this.changeComparableField.bind(this)}
+                                    />
 
-                                    {
-                                        comparableSale.propertyType !== "land" ? [
-                                            <span key={1} className={"comparable-field-label"}>NOI: </span>,
-
-                                            <FieldDisplayEdit
-                                                key={2}
-                                                type={"currency"}
-                                                edit={this.props.edit}
-                                                placeholder={"Net Operating Income"}
-                                                value={comparableSale.netOperatingIncome}
-                                                onChange={(newValue) => this.changeComparableField('netOperatingIncome', newValue)}
-                                            />
-                                        ] : null
-                                    }
-
-                                    {
-                                        comparableSale.propertyType !== "land" ? [
-                                            <span key={1} className={"comparable-field-label"}>Price Per Square Foot:</span>,
-
-                                            <FieldDisplayEdit
-                                                key={2}
-                                                type={"currency"}
-                                                edit={this.props.edit}
-                                                placeholder={"Price Per Square Foot"}
-                                                value={comparableSale.pricePerSquareFoot}
-                                                onChange={(newValue) => this.changeComparableField('pricePerSquareFoot', newValue)}
-                                            />
-                                        ] : null
-                                    }
+                                    <ComparableSaleListItemField
+                                        title="Price Per Square Foot"
+                                        field="netOperatingIncome"
+                                        fieldType="currency"
+                                        excludedPropertyType={"land"}
+                                        comparableSale={comparableSale}
+                                        onChange={this.changeComparableField.bind(this)}
+                                    />
 
 
                                     {
@@ -513,284 +479,257 @@ class ComparableSaleListItem extends React.Component
                                             <h4 className={"group-heading"}>Property Information</h4>
                                             : <h4 className={"group-heading"}>Building Information</h4>
                                     }
-
-                                    {
-                                        comparableSale.propertyType !== "land" ? [
-                                            <span key={1} className={"comparable-field-label"}>Building Size:</span>,
-
-                                            <FieldDisplayEdit
-                                                key={2}
-                                                type={"area"}
-                                                edit={this.props.edit}
-                                                placeholder={"Building Size"}
-                                                value={comparableSale.sizeSquareFootage}
-                                                onChange={(newValue) => this.changeComparableField('sizeSquareFootage', newValue)}
-                                            />
-                                        ] : null
-                                    }
-
-                                    {
-                                        comparableSale.propertyType !== "land" ? [
-
-                                            <span key={1} className={"comparable-field-label"}>Construction Date:</span>,
-                                            <FieldDisplayEdit
-                                                key={2}
-                                                type={"date"}
-                                                edit={this.props.edit}
-                                                placeholder={"Construction Date"}
-                                                value={comparableSale.constructionDate}
-                                                onChange={(newValue) => this.changeComparableField('constructionDate', newValue)}
-                                                />
-                                        ] : null
-                                    }
-                                    {
-                                        comparableSale.propertyType !== "land" ? [
-                                            <span key={1} className={"comparable-field-label"}>Site Area:</span>,
-                                            <FieldDisplayEdit
-                                                key={2}
-                                                type={"text"}
-                                                edit={this.props.edit}
-                                                placeholder={"Site Area"}
-                                                value={comparableSale.siteArea}
-                                                onChange={(newValue) => this.changeComparableField('siteArea', newValue)}
-                                            />
-                                        ] : null
-                                    }
-
-
-                                    {
-                                        comparableSale.propertyType === 'industrial' ?
-                                            [
-                                                <span className={"comparable-field-label"} key={5} >Site Coverage:</span>,
-                                                <FieldDisplayEdit
-                                                    key={6}
-                                                    type={"percent"}
-                                                    edit={this.props.edit}
-                                                    placeholder={"Site Coverage"}
-                                                    value={comparableSale.siteCoverage}
-                                                    onChange={(newValue) => this.changeComparableField('siteCoverage', newValue)}
-                                                />
-
-                                            ] : null
-                                    }
-
-                                    {
-                                        comparableSale.propertyType !== "land" ? [
-                                            <span key={1} className={"comparable-field-label"}>Occupancy Rate:</span>,
-
-                                            <FieldDisplayEdit
-                                                key={2}
-                                                type={"percent"}
-                                                edit={this.props.edit}
-                                                placeholder={"Occupancy Rate"}
-                                                value={comparableSale.occupancyRate}
-                                                onChange={(newValue) => this.changeComparableField('occupancyRate', newValue)}
-                                            />
-                                        ] : null
-                                    }
-
-                                    {
-                                        comparableSale.propertyType === 'industrial' ?
-                                        [
-                                            <span className={"comparable-field-label"} key={1} >Clear Ceiling Height:</span>,
-                                            <FieldDisplayEdit
-                                                key={2}
-                                                type={"length"}
-                                                edit={this.props.edit}
-                                                placeholder={"Clear Ceiling Height"}
-                                                value={comparableSale.clearCeilingHeight}
-                                                onChange={(newValue) => this.changeComparableField('clearCeilingHeight', newValue)}
-                                            />,
-                                            <span className={"comparable-field-label"} key={3} >Finished Office Percentage:</span>,
-                                            <FieldDisplayEdit
-                                                key={4}
-                                                type={"percent"}
-                                                edit={this.props.edit}
-                                                placeholder={"Finished Office Percent"}
-                                                value={comparableSale.finishedOfficePercent}
-                                                onChange={(newValue) => this.changeComparableField('finishedOfficePercent', newValue)}
-                                            />,
-                                            <span className={"comparable-field-label"} key={5} >Shipping Doors:</span>,
-                                            <FieldDisplayEdit
-                                                key={6}
-                                                type={"number"}
-                                                edit={this.props.edit}
-                                                placeholder={"Shipping Doors"}
-                                                value={comparableSale.shippingDoors}
-                                                onChange={(newValue) => this.changeComparableField('shippingDoors', newValue)}
-                                            />
-
-                                        ] : null
-                                    }
-
                                     {
                                         comparableSale.propertyType === 'land' ?
-                                            [
-                                                <span className={"comparable-field-label"} key={1}>Zoning:</span>,
-                                                <FieldDisplayEdit
-                                                    key={2}
-                                                    type={"zone"}
-                                                    edit={this.props.edit}
-                                                    placeholder={"Zoning"}
-                                                    value={comparableSale.zoning}
-                                                    onChange={(newValue) => this.changeComparableField('zoning', newValue)}
-                                                />,
-                                                <span className={"comparable-field-label"} key={3}>Development Proposals:</span>,
-                                                <FieldDisplayEdit
-                                                    key={4}
-                                                    type={"text"}
-                                                    edit={this.props.edit}
-                                                    placeholder={"Development Proposals"}
-                                                    value={comparableSale.developmentProposals}
-                                                    onChange={(newValue) => this.changeComparableField('developmentProposals', newValue)}
-                                                />,
-                                                <span className={"comparable-field-label"} key={5}>Size of Land (sqft):</span>,
-                                                <FieldDisplayEdit
-                                                    key={6}
-                                                    type={"area"}
-                                                    edit={this.props.edit}
-                                                    placeholder={"Size of Land"}
-                                                    value={comparableSale.sizeOfLandSqft}
-                                                    onChange={(newValue) => this.changeComparableField('sizeOfLandSqft', newValue)}
-                                                />,
-                                                <span className={"comparable-field-label"} key={7}>Size of Land (acres):</span>,
-                                                <FieldDisplayEdit
-                                                    key={8}
-                                                    type={"acres"}
-                                                    edit={this.props.edit}
-                                                    placeholder={"Size of Land"}
-                                                    value={comparableSale.sizeOfLandAcres}
-                                                    onChange={(newValue) => this.changeComparableField('sizeOfLandAcres', newValue)}
-                                                />,
-                                                <span className={"comparable-field-label"} key={9}>Buildable Area (sqft):</span>,
-                                                <FieldDisplayEdit
-                                                    key={10}
-                                                    type={"area"}
-                                                    edit={this.props.edit}
-                                                    placeholder={"Size of Buildable Area"}
-                                                    value={comparableSale.sizeOfBuildableAreaSqft}
-                                                    onChange={(newValue) => this.changeComparableField('sizeOfBuildableAreaSqft', newValue)}
-                                                />,
-                                                <span className={"comparable-field-label"} key={10}>Buildable Units:</span>,
-                                                <FieldDisplayEdit
-                                                    key={11}
-                                                    type={"number"}
-                                                    edit={this.props.edit}
-                                                    placeholder={"Buildable Units"}
-                                                    value={comparableSale.buildableUnits}
-                                                    onChange={(newValue) => this.changeComparableField('buildableUnits', newValue)}
-                                                />,
-                                            ] : null
-                                    }
-                                    {
-                                        comparableSale.propertyType === 'land' ?
-                                            [
-                                                <h4 className={"group-heading"}>Stats</h4>,
-                                                <span className={"group-heading"}></span>,
-                                                <span className={"comparable-field-label"} key={13} >Price per Square Foot of Land:</span>,
-                                                <FieldDisplayEdit
-                                                    key={14}
-                                                    type={"currency"}
-                                                    edit={this.props.edit}
-                                                    placeholder={"PSF of Land"}
-                                                    value={comparableSale.pricePerSquareFootLand}
-                                                    onChange={(newValue) => this.changeComparableField('pricePerSquareFootLand', newValue)}
-                                                />,
-                                                <span className={"comparable-field-label"} key={15} >Price per Acre of Land:</span>,
-                                                <FieldDisplayEdit
-                                                    key={16}
-                                                    type={"currency"}
-                                                    edit={this.props.edit}
-                                                    placeholder={"Price Per Acre of Land"}
-                                                    value={comparableSale.pricePerAcreLand}
-                                                    onChange={(newValue) => this.changeComparableField('pricePerAcreLand', newValue)}
-                                                />,
-                                                <span className={"comparable-field-label"} key={17} >Price per Square Foot of Buildable Area:</span>,
-                                                <FieldDisplayEdit
-                                                    key={18}
-                                                    type={"currency"}
-                                                    edit={this.props.edit}
-                                                    placeholder={"PSF of Buildable Area"}
-                                                    value={comparableSale.pricePerSquareFootBuildableArea}
-                                                    onChange={(newValue) => this.changeComparableField('pricePerSquareFootBuildableArea', newValue)}
-                                                />,
-                                                <span className={"comparable-field-label"} key={19} >Price per Acre of Buildable Area:</span>,
-                                                <FieldDisplayEdit
-                                                    key={20}
-                                                    type={"currency"}
-                                                    edit={this.props.edit}
-                                                    placeholder={"Price Per Acre of Buildable Area"}
-                                                    value={comparableSale.pricePerAcreBuildableArea}
-                                                    onChange={(newValue) => this.changeComparableField('pricePerAcreBuildableArea', newValue)}
-                                                />,
-                                                <span className={"comparable-field-label"} key={21} >Price per Buildable Unit:</span>,
-                                                <FieldDisplayEdit
-                                                    key={22}
-                                                    type={"currency"}
-                                                    edit={this.props.edit}
-                                                    placeholder={"Price Per Buildable Unit"}
-                                                    value={comparableSale.pricePerBuildableUnit}
-                                                    onChange={(newValue) => this.changeComparableField('pricePerBuildableUnit', newValue)}
-                                                />,
-                                                <span className={"comparable-field-label"} key={23} >Floor Space Index:</span>,
-                                                <FieldDisplayEdit
-                                                    key={24}
-                                                    type={"float"}
-                                                    edit={this.props.edit}
-                                                    placeholder={"Floor Space Index"}
-                                                    value={comparableSale.floorSpaceIndex}
-                                                    onChange={(newValue) => this.changeComparableField('floorSpaceIndex', newValue)}
-                                                />
-                                            ] : null
+                                            <span className={"group-heading"}></span>
+                                            : <span className={"group-heading"}></span>
                                     }
 
-                                    {
-                                        comparableSale.propertyType !== "land" ? [
-                                            <span key={1} className={"comparable-field-label"}>Tenants:</span>,
-
-                                            <FieldDisplayEdit
-                                                type={"text"}
-                                                key={2}
-                                                edit={this.props.edit}
-                                                placeholder={"Tenants"}
-                                                value={comparableSale.tenants}
-                                                onChange={(newValue) => this.changeComparableField('tenants', newValue)}
-                                            />
-                                        ] : null
-                                    }
-
-                                    {
-                                        comparableSale.propertyType !== "land" ? [
-                                            <span key={1} className={"comparable-field-label"}>Parking:</span>,
-                                            <FieldDisplayEdit
-                                                key={2}
-                                                type={"text"}
-                                                edit={this.props.edit}
-                                                placeholder={"Parking"}
-                                                value={comparableSale.parking}
-                                                onChange={(newValue) => this.changeComparableField('parking', newValue)}
-                                            />
-                                        ] : null
-                                    }
-
-                                    <span className={"comparable-field-label"}>Additional Info:</span>
-
-                                    <FieldDisplayEdit
-                                        type={"text"}
+                                    <ComparableSaleListItemField
+                                        title="Building Size"
+                                        field="sizeSquareFootage"
+                                        fieldType="area"
+                                        excludedPropertyType={"land"}
                                         edit={this.props.edit}
-                                        placeholder={"Additional Info"}
-                                        value={comparableSale.additionalInfo}
-                                        onChange={(newValue) => this.changeComparableField('additionalInfo', newValue)}
+                                        comparableSale={comparableSale}
+                                        onChange={this.changeComparableField.bind(this)}
                                     />
 
-                                    <span className={"comparable-field-label"}>Description:</span>
-
-                                    <FieldDisplayEdit
-                                        type={"textbox"}
+                                    <ComparableSaleListItemField
+                                        title="Construction Date"
+                                        field="constructionDate"
+                                        fieldType="date"
+                                        excludedPropertyType={"land"}
                                         edit={this.props.edit}
-                                        placeholder={"Description..."}
-                                        value={comparableSale.description ? comparableSale.description : this.defaultDescriptionText()}
-                                        onChange={(newValue) => this.changeComparableField('description', newValue)}
+                                        comparableSale={comparableSale}
+                                        onChange={this.changeComparableField.bind(this)}
+                                    />
+
+                                    <ComparableSaleListItemField
+                                        title="Site Area"
+                                        field="siteArea"
+                                        fieldType="text"
+                                        excludedPropertyType={"land"}
+                                        edit={this.props.edit}
+                                        comparableSale={comparableSale}
+                                        onChange={this.changeComparableField.bind(this)}
+                                    />
+
+                                    <ComparableSaleListItemField
+                                        title="Site Coverage"
+                                        field="siteCoverage"
+                                        fieldType="percent"
+                                        propertyType={"industrial"}
+                                        edit={this.props.edit}
+                                        comparableSale={comparableSale}
+                                        onChange={this.changeComparableField.bind(this)}
+                                    />
+
+                                    <ComparableSaleListItemField
+                                        title="Occupancy Rate"
+                                        field="occupancyRate"
+                                        fieldType="percent"
+                                        excludedPropertyType={"land"}
+                                        edit={this.props.edit}
+                                        comparableSale={comparableSale}
+                                        onChange={this.changeComparableField.bind(this)}
+                                    />
+
+                                    <ComparableSaleListItemField
+                                        title="Clear Ceiling Height"
+                                        field="clearCeilingHeight"
+                                        fieldType="length"
+                                        propertyType={"industrial"}
+                                        edit={this.props.edit}
+                                        comparableSale={comparableSale}
+                                        onChange={this.changeComparableField.bind(this)}
+                                    />
+
+                                    <ComparableSaleListItemField
+                                        title="Finished Office Percentage"
+                                        field="finishedOfficePercent"
+                                        fieldType="percent"
+                                        propertyType={"industrial"}
+                                        edit={this.props.edit}
+                                        comparableSale={comparableSale}
+                                        onChange={this.changeComparableField.bind(this)}
+                                    />
+
+                                    <ComparableSaleListItemField
+                                        title="Shipping Doors"
+                                        field="shippingDoors"
+                                        fieldType="number"
+                                        propertyType={"industrial"}
+                                        edit={this.props.edit}
+                                        comparableSale={comparableSale}
+                                        onChange={this.changeComparableField.bind(this)}
+                                    />
+
+                                    <ComparableSaleListItemField
+                                        title="Zoning"
+                                        field="zoning"
+                                        fieldType="zone"
+                                        propertyType={"land"}
+                                        edit={this.props.edit}
+                                        comparableSale={comparableSale}
+                                        onChange={this.changeComparableField.bind(this)}
+                                    />
+
+                                    <ComparableSaleListItemField
+                                        title="Development Proposals"
+                                        field="developmentProposals"
+                                        fieldType="text"
+                                        propertyType={"land"}
+                                        edit={this.props.edit}
+                                        comparableSale={comparableSale}
+                                        onChange={this.changeComparableField.bind(this)}
+                                    />
+
+                                    <ComparableSaleListItemField
+                                        title="Size of Land (sqft)"
+                                        field="sizeOfLandSqft"
+                                        fieldType="area"
+                                        propertyType={"land"}
+                                        edit={this.props.edit}
+                                        comparableSale={comparableSale}
+                                        onChange={this.changeComparableField.bind(this)}
+                                    />
+
+                                    <ComparableSaleListItemField
+                                        title="Size of Land (sqft)"
+                                        field="sizeOfLandSqft"
+                                        fieldType="area"
+                                        propertyType={"land"}
+                                        edit={this.props.edit}
+                                        comparableSale={comparableSale}
+                                        onChange={this.changeComparableField.bind(this)}
+                                    />
+
+                                    <ComparableSaleListItemField
+                                        title="Size of Land (acres)"
+                                        field="sizeOfLandAcres"
+                                        fieldType="acres"
+                                        propertyType={"land"}
+                                        edit={this.props.edit}
+                                        comparableSale={comparableSale}
+                                        onChange={this.changeComparableField.bind(this)}
+                                    />
+
+                                    <ComparableSaleListItemField
+                                        title="Buildable Area (sqft)"
+                                        field="sizeOfBuildableAreaSqft"
+                                        fieldType="area"
+                                        propertyType={"land"}
+                                        edit={this.props.edit}
+                                        comparableSale={comparableSale}
+                                        onChange={this.changeComparableField.bind(this)}
+                                    />
+
+                                    <ComparableSaleListItemField
+                                        title="Buildable Units"
+                                        field="buildableUnits"
+                                        fieldType="number"
+                                        propertyType={"land"}
+                                        edit={this.props.edit}
+                                        comparableSale={comparableSale}
+                                        onChange={this.changeComparableField.bind(this)}
+                                    />
+
+                                    {
+                                        comparableSale.propertyType === 'land' ? <h4 className={"group-heading"}>Property Information</h4> : null
+                                    }
+
+                                    {
+                                        comparableSale.propertyType === 'land' ? <span className={"group-heading"}></span> : null
+                                    }
+
+                                    <ComparableSaleListItemField
+                                        title="Price per Square Foot of Land"
+                                        field="pricePerSquareFootLand"
+                                        fieldType="currency"
+                                        propertyType={"land"}
+                                        edit={this.props.edit}
+                                        comparableSale={comparableSale}
+                                        onChange={this.changeComparableField.bind(this)}
+                                    />
+
+                                    <ComparableSaleListItemField
+                                        title="Price per Acre of Land"
+                                        field="pricePerAcreLand"
+                                        fieldType="currency"
+                                        propertyType={"land"}
+                                        edit={this.props.edit}
+                                        comparableSale={comparableSale}
+                                        onChange={this.changeComparableField.bind(this)}
+                                    />
+
+                                    <ComparableSaleListItemField
+                                        title="Price per Square Foot of Buildable Area"
+                                        field="pricePerSquareFootBuildableArea"
+                                        fieldType="currency"
+                                        propertyType={"land"}
+                                        edit={this.props.edit}
+                                        comparableSale={comparableSale}
+                                        onChange={this.changeComparableField.bind(this)}
+                                    />
+
+                                    <ComparableSaleListItemField
+                                        title="Price per Buildable Unit"
+                                        field="pricePerBuildableUnit"
+                                        fieldType="currency"
+                                        propertyType={"land"}
+                                        edit={this.props.edit}
+                                        comparableSale={comparableSale}
+                                        onChange={this.changeComparableField.bind(this)}
+                                    />
+
+                                    <ComparableSaleListItemField
+                                        title="Floor Space Index"
+                                        field="floorSpaceIndex"
+                                        fieldType="float"
+                                        propertyType={"land"}
+                                        edit={this.props.edit}
+                                        comparableSale={comparableSale}
+                                        onChange={this.changeComparableField.bind(this)}
+                                    />
+
+                                    <ComparableSaleListItemField
+                                        title="Tenants"
+                                        field="tenants"
+                                        fieldType="text"
+                                        excludedPropertyType={"land"}
+                                        edit={this.props.edit}
+                                        comparableSale={comparableSale}
+                                        onChange={this.changeComparableField.bind(this)}
+                                    />
+
+                                    <ComparableSaleListItemField
+                                        title="Parking"
+                                        field="parking"
+                                        fieldType="text"
+                                        excludedPropertyType={"land"}
+                                        edit={this.props.edit}
+                                        comparableSale={comparableSale}
+                                        onChange={this.changeComparableField.bind(this)}
+                                    />
+
+                                    <ComparableSaleListItemField
+                                        title="Additional Info"
+                                        field="additionalInfo"
+                                        fieldType="text"
+                                        excludedPropertyType={"land"}
+                                        edit={this.props.edit}
+                                        comparableSale={comparableSale}
+                                        onChange={this.changeComparableField.bind(this)}
+                                    />
+
+                                    <ComparableSaleListItemField
+                                        title="Description"
+                                        field="computedDescriptionText"
+                                        fieldType="textbox"
+                                        edit={this.props.edit}
+                                        comparableSale={comparableSale}
+                                        onChange={this.changeComparableField.bind(this)}
                                     />
 
                                 </div>

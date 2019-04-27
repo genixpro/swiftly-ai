@@ -193,6 +193,56 @@ class ComparableSaleModel extends EquationMdoel
         }
         return comparables;
     }
+
+    get computedDescriptionText()
+    {
+        const comparableSale = this;
+
+        if (comparableSale.description)
+        {
+            return comparableSale.description;
+        }
+
+        let text = '';
+
+        if (comparableSale.saleDate && comparableSale.propertyType && comparableSale.address)
+        {
+            text += `In reference to the ${comparableSale.saleDate.getFullYear()}/${comparableSale.saleDate.getMonth() + 1}/${comparableSale.saleDate.getDate()} sale of a ${comparableSale.propertyType} building located at ${comparableSale.address}. `;
+        }
+
+        if (comparableSale.sizeSquareFootage)
+        {
+            text += `The building has gross rentable area of ${comparableSale.sizeSquareFootage}. `;
+        }
+
+
+        if(comparableSale.vendor && comparableSale.purchaser && comparableSale.salePrice)
+        {
+            text += `The property was sold by ${comparableSale.vendor} and was acquired by ${comparableSale.purchaser} for a consideration of $${comparableSale.salePrice}. `;
+        }
+
+        if(comparableSale.description)
+        {
+            text += comparableSale.description;
+        }
+
+        if(comparableSale.tenants)
+        {
+            text += `The property is leased to ${comparableSale.tenants}. `;
+        }
+
+        if(comparableSale.capitalizationRate)
+        {
+            text += `The net income of ${comparableSale.netOperatingIncome} yielded a ${comparableSale.capitalizationRate}% rate of return. `;
+        }
+
+        return text;
+    }
+
+    set computedDescriptionText(newValue)
+    {
+        this.description = newValue;
+    }
 }
 
 export default ComparableSaleModel;

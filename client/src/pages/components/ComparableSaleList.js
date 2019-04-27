@@ -6,7 +6,49 @@ import { Button, Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
 import SortDirection from "./SortDirection";
 import ComparableSaleModel from "../../models/ComparableSaleModel";
 import axios from "axios/index";
+import PropTypes from "prop-types";
+import _ from "underscore";
 
+class ComparableSaleListHeaderColumn extends React.Component
+{
+    static propTypes = {
+        size: PropTypes.number.isRequired,
+        texts: PropTypes.arrayOf(PropTypes.string).isRequired,
+        fields: PropTypes.arrayOf(PropTypes.string).isRequired,
+        sort: PropTypes.object.isRequired,
+        changeSortColumn: PropTypes.func.isRequired
+    };
+
+    render()
+    {
+        const colProps = {};
+        let colClass = "";
+
+        if (_.isNumber(this.props.size))
+        {
+            colProps['xs'] = this.props.size;
+        }
+        else if(this.props.size === 'middle')
+        {
+            colClass = "middle-col"
+        }
+
+        return <Col className={`header-field-column ${colClass}`} {...colProps} onClick={() => this.props.changeSortColumn(this.props.fields[0])}>
+
+            {
+                this.props.fields.map((field, fieldIndex) =>
+                {
+                    return <span>
+                            {this.props.texts[fieldIndex]}
+                            {fieldIndex === 0 ? <SortDirection field={this.props.fields[0]} sort={this.props.sort} /> : null}
+                            {fieldIndex !== this.props.fields.length - 1 ? <br /> : null}
+                    </span>
+                })
+            }
+
+        </Col>
+    }
+}
 
 class ComparableSaleList extends React.Component
 {
@@ -36,6 +78,39 @@ class ComparableSaleList extends React.Component
         this.updateComparables();
     }
 
+    defaultHeaderFields()
+    {
+        const headerFields = [
+            ["saleDate"],
+            ["address"]
+        ];
+
+        if (this.props.appraisal.propertyType !== 'land')
+        {
+            headerFields.push(["sizeSquareFootage"])
+        }
+
+        if (this.props.appraisal.propertyType === 'land')
+        {
+            headerFields.push(["sizeOfLandAcres", "sizeOfBuildableAreaSqft"])
+        }
+
+        headerFields.push(["salePrice"]);
+
+        headerFields.push(["propertyType", "propertyTags"]);
+
+        if (this.props.appraisal.propertyType !== 'land')
+        {
+            headerFields.push(["capitalizationRate", "pricePerSquareFoot"])
+        }
+
+        if (this.props.appraisal.propertyType === 'land')
+        {
+            headerFields.push(["pricePerAcreLand", "pricePerSquareFootBuildableArea"])
+        }
+
+        return headerFields;
+    }
 
     updateComparables()
     {
@@ -150,6 +225,60 @@ class ComparableSaleList extends React.Component
             firstSpacing = 'first-spacing';
         }
 
+
+        const headerConfigurations = {
+            saleDate: {
+                title: "Date",
+                size: 1
+            },
+            address: {
+                title: "Address",
+                size: 3
+            },
+            sizeSquareFootage: {
+                title: "Building Size (sf)",
+                size: "middle"
+            },
+            sizeOfLandAcres: {
+                title: "Site Area (acres)",
+                size: "middle"
+            },
+            sizeOfBuildableAreaSqft: {
+                title: "Buildable Area (sqft)",
+                size: "middle"
+            },
+            salePrice: {
+                title: "Sale Price",
+                size: "middle"
+            },
+            capitalizationRate: {
+                title: "Cap Rate (%)",
+                size: "middle"
+            },
+            propertyType: {
+                title: "Property Type",
+                size: "middle"
+            },
+            propertyTags: {
+                title: "Sub Type",
+                size: "middle"
+            },
+            pricePerSquareFoot: {
+                title: "PSF ($)",
+                size: "middle"
+            },
+            pricePerAcreLand: {
+                title: "Price Per Acre ($)",
+                size: "middle"
+            },
+            pricePerSquareFootBuildableArea: {
+                title: "PSF Buildable Area ($)",
+                size: "middle"
+            }
+        };
+
+        const headerFields = this.props.headers || this.defaultHeaderFields();
+
         return (
             <div>
                 {
@@ -161,71 +290,19 @@ class ComparableSaleList extends React.Component
                         <CardHeader className={`comparable-sale-list-item-header ${firstSpacing}`}>
                             <CardTitle>
                                 <Row>
-                                    <Col xs={1} className={`header-field-column`} onClick={() => this.changeSortColumn("saleDate")}>
-                                        Date <SortDirection field={"saleDate"} sort={this.props.sort} />
-                                    </Col>
-                                    <Col xs={3} className={"header-field-column"} onClick={() => this.changeSortColumn("address")}>
-                                        Address <SortDirection field={"address"} sort={this.props.sort} />
-                                    </Col>
-
                                     {
-                                        this.props.appraisal.propertyType !== "land" ?
-                                            <Col xs={2} className={"header-field-column"} onClick={() => this.changeSortColumn("sizeSquareFootage")}>
-                                                Building Size (sf) <SortDirection field={"sizeSquareFootage"} sort={this.props.sort}/>
-                                            </Col> : null
-                                    }
-                                    {
-                                        this.props.appraisal.propertyType === "land" ?
-                                            <Col xs={2} className={"header-field-column"} onClick={() => this.changeSortColumn("sizeOfLandAcres")}>
-                                                Site Area (acres) <SortDirection field={"sizeOfLandAcres"} sort={this.props.sort}/>
-                                                <br/>
-                                                Buildable Area (sqft)
-                                            </Col> : null
-                                    }
-                                    <Col xs={2} className={"header-field-column"} onClick={() => this.changeSortColumn("salePrice")}>
-                                        Sale Price <SortDirection field={"salePrice"} sort={this.props.sort} />
-                                    </Col>
-                                    {
-                                        this.props.showPropertyTypeInHeader ?
-                                            <Col xs={2} className={"header-field-column"} onClick={() => this.changeSortColumn("propertyType")}>
-                                                Property Type <SortDirection field={"propertyType"} sort={this.props.sort} />
-                                                <br/>
-                                                Sub Type
-                                            </Col> : null
-                                    }
-                                    {
-                                        this.props.appraisal.propertyType !== "land" ?
-                                            this.props.showPropertyTypeInHeader ?
-                                                <Col xs={2} className={"header-field-column"} onClick={() => this.changeSortColumn("capitalizationRate")}>
-                                                    Cap Rate (%) <SortDirection field={"capitalizationRate"} sort={this.props.sort} />
-                                                    <br/>
-                                                    PSF ($)
-                                                </Col> : [
-                                                    <Col key={1} xs={2} className={"header-field-column"} onClick={() => this.changeSortColumn("capitalizationRate")}>
-                                                        Cap Rate (%) <SortDirection field={"capitalizationRate"} sort={this.props.sort} />
-                                                    </Col>,
-                                                    <Col key={2} xs={2} className={"header-field-column"} onClick={() => this.changeSortColumn("pricePerSquareFoot")}>
-                                                        PSF ($) <SortDirection field={"pricePerSquareFoot"} sort={this.props.sort} />
-                                                    </Col>
-                                                ]
-                                            : null
-                                    }
-                                    {
-                                        this.props.appraisal.propertyType === "land" ?
-                                            this.props.showPropertyTypeInHeader ?
-                                                <Col xs={2} className={"header-field-column"} onClick={() => this.changeSortColumn("pricePerAcreLand")}>
-                                                    Price Per Acre ($) <SortDirection field={"pricePerAcreLand"} sort={this.props.sort} />
-                                                    <br/>
-                                                    PSF Buildable Area ($)
-                                                </Col> : [
-                                                    <Col key={1} xs={2} className={"header-field-column"} onClick={() => this.changeSortColumn("pricePerAcreLand")}>
-                                                        Price Per Acre ($) <SortDirection field={"pricePerAcreLand"} sort={this.props.sort} />
-                                                    </Col>,
-                                                    <Col key={2} xs={2} className={"header-field-column"} onClick={() => this.changeSortColumn("pricePerSquareFootBuildableArea")}>
-                                                        PSF Buildable Area ($) <SortDirection field={"pricePerSquareFootBuildableArea"} sort={this.props.sort} />
-                                                    </Col>
-                                                ]
-                                            : null
+                                        headerFields.map((headerFieldList) =>
+                                        {
+                                            return <ComparableSaleListHeaderColumn
+                                                size={headerConfigurations[headerFieldList[0]].size}
+                                                renders={headerFieldList.map((field) => headerConfigurations[field].render)}
+                                                texts={headerFieldList.map((field) => headerConfigurations[field].title)}
+                                                fields={headerFieldList}
+                                                sort={this.props.sort}
+                                                comparableSale={this.props.comparableSale}
+                                                changeSortColumn={this.changeSortColumn.bind(this)}
+                                            />
+                                        })
                                     }
                                 </Row>
                             </CardTitle>
@@ -241,7 +318,7 @@ class ComparableSaleList extends React.Component
                                 <ModalBody>
                                     <ComparableSaleListItem comparableSale={this.state.newComparableSale}
                                                             openByDefault={true}
-                                                             onChange={(comp) => this.setState({newComparableSale: comp})} />
+                                                            onChange={(comp) => this.setState({newComparableSale: comp})} />
                                 </ModalBody>
                                 <ModalFooter>
                                     <Button color="primary" onClick={() => this.addNewComparable(this.state.newComparableSale)}>Add</Button>{' '}
@@ -256,11 +333,11 @@ class ComparableSaleList extends React.Component
                         if (excludeIds.indexOf(comparableSale._id) === -1)
                         {
                             return <ComparableSaleListItem
+                                headers={headerFields}
                                 key={comparableSale._id}
                                 comparableSale={comparableSale}
                                 history={this.props.history}
                                 appraisal={this.props.appraisal}
-                                showPropertyTypeInHeader={this.props.showPropertyTypeInHeader}
                                 onChange={(comp) => this.updateComparable(comp, index)}
                                 onAddComparableClicked={this.props.onAddComparableClicked}
                                 onRemoveComparableClicked={this.props.onRemoveComparableClicked}
@@ -269,7 +346,6 @@ class ComparableSaleList extends React.Component
                                 onAddDCAClicked={this.props.onAddDCAClicked}
                                 onAddCapRateClicked={this.props.onAddCapRateClicked}
                                 onDeleteComparable={(comp) => this.onRemoveComparableClicked(comp)}
-                                appraisalId={this.props.appraisalId}
                                 last={index===this.state.comparableSales.length-1}
                             />;
                         }

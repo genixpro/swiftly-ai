@@ -83,6 +83,7 @@
     "nestable": "themicon/nestable",
     "node-sass": "4.10.0",
     "pdfmake": "0.1.39",
+    "prop-types": "^15.7.2",
     "pubsub-js": "1.7.0",
     "raf": "3.4.1",
     "raphael": "2.2.7",

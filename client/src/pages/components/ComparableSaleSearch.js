@@ -46,6 +46,7 @@ class ComparableSaleSearch extends React.Component
                         <CardBody>
                             <Row>
                                 <Col xs={12} sm={6} md={4}>
+                                    <table>
                                     <tbody>
                                     <tr>
                                         <td>
@@ -206,8 +207,10 @@ class ComparableSaleSearch extends React.Component
                                             </tr> : null
                                     }
                                     </tbody>
+                                    </table>
                                 </Col>
                                 <Col xs={12} sm={6} md={4}>
+                                    <table>
                                     <tbody>
                                     <tr>
                                         <td>
@@ -321,8 +324,10 @@ class ComparableSaleSearch extends React.Component
                                             </tr> : null
                                     }
                                     </tbody>
+                                    </table>
                                 </Col>
                                 <Col xs={12} sm={6} md={4}>
+                                    <table>
                                     <tbody>
                                     {
                                         this.props.appraisal.propertyType !== 'land' ?
@@ -492,6 +497,7 @@ class ComparableSaleSearch extends React.Component
                                             </tr> : null
                                     }
                                     </tbody>
+                                    </table>
                                 </Col>
                             </Row>
                         </CardBody>

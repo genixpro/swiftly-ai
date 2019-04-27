@@ -2,5 +2,22 @@
 
 .comparable-sales-statistics
 {
+  .statBlock
+  {
+    display: inline-block;
+  }
+
+  .statRow
+  {
+    justify-content: flex-start;
+  }
+
+  .statColumn
+  {
+    flex: 0 0 33%;
+    flex-grow: 1;
+    flex-shrink: 0;
+    white-space: nowrap;
+  }
 
 }

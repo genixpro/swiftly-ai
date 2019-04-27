@@ -101,6 +101,59 @@ class AppraisalModel extends BaseModel
     {
         return _.reduce(this.units, function(memo, num){ return memo + num.squareFootage; }, 0);
     }
+
+    hasComparableSaleInCapRate(comp)
+    {
+        if (!comp._id)
+        {
+            return false;
+        }
+
+        if (!this.comparableSalesCapRate)
+        {
+            return false;
+        }
+        else
+        {
+            for (let i = 0; i < this.comparableSalesCapRate.length; i += 1)
+            {
+                if (this.comparableSalesCapRate[i] === comp._id)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+    }
+
+    hasComparableSaleInDCA(comp)
+    {
+        if (!comp._id)
+        {
+            return false;
+        }
+
+        if (!this.comparableSalesDCA)
+        {
+            return false;
+        }
+        else
+        {
+            for (let i = 0; i < this.comparableSalesDCA.length; i += 1)
+            {
+                if (this.comparableSalesDCA[i] === comp._id)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+    }
+
+    hasComparableSale(comp)
+    {
+        return this.hasComparableSaleInCapRate(comp) || this.hasComparableSaleInDCA(comp);
+    }
 }
 
 export default AppraisalModel;

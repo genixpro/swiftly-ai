@@ -5,12 +5,11 @@ import CurrencyFormat from "./CurrencyFormat";
 import PercentFormat from "./PercentFormat";
 import IntegerFormat from "./IntegerFormat";
 import LengthFormat from "./LengthFormat";
+import FloatFormat from "./FloatFormat";
 
 class ComparableSalesStatistics extends React.Component
 {
-    state = {
-        
-    };
+    state = {};
 
     computeStatsForField(field)
     {
@@ -45,53 +44,6 @@ class ComparableSalesStatistics extends React.Component
         }
     }
 
-    computeStatistics()
-    {
-        let {min: minSize, max: maxSize, average: sizeAverage} = this.computeStatsForField('sizeSquareFootage');
-        let {min: minPSF, max: maxPSF,  average: averagePSF} = this.computeStatsForField('pricePerSquareFoot');
-        let {min: minCapRate, max: maxCapRate,  average: averageCapRate} = this.computeStatsForField('capitalizationRate');
-        let {min: minClearCeilingHeight, max: maxClearCeilingHeight,  average: averageClearCeilingHeight} = this.computeStatsForField('clearCeilingHeight');
-
-        let {min: minSizeOfLand, max: maxSizeOfLand,  average: averageSizeOfLand} = this.computeStatsForField('sizeOfLandAcres');
-
-        let {min: minFSI, max: maxFSI,  average: averageFSI} = this.computeStatsForField('floorSpaceIndex');
-        let {min: minPSFLand, max: maxPSFLand,  average: averagePSFLand} = this.computeStatsForField('pricePerSquareFootLand');
-
-        let {min: minPricePerAcreLand, max: maxPricePerAcreLand,  average: averagePricePerAcreLand} = this.computeStatsForField('pricePerAcreLand');
-
-        let {min: minPSFBuildableArea, max: maxPSFBuildableArea,  average: averagePSFBuildableArea} = this.computeStatsForField('pricePerSquareFootBuildableArea');
-
-        return {
-            minSize,
-            maxSize,
-            sizeAverage,
-            minCapRate,
-            maxCapRate,
-            averageCapRate,
-            minPSF,
-            maxPSF,
-            averagePSF,
-            minClearCeilingHeight,
-            maxClearCeilingHeight,
-            averageClearCeilingHeight,
-            minSizeOfLand,
-            maxSizeOfLand,
-            averageSizeOfLand,
-            minFSI,
-            maxFSI,
-            averageFSI,
-            minPSFLand,
-            maxPSFLand,
-            averagePSFLand,
-            minPricePerAcreLand,
-            maxPricePerAcreLand,
-            averagePricePerAcreLand,
-            minPSFBuildableArea,
-            maxPSFBuildableArea,
-            averagePSFBuildableArea
-        }
-    }
-
     render()
     {
         if (!this.props.comparableSales)
@@ -99,7 +51,82 @@ class ComparableSalesStatistics extends React.Component
             return null;
         }
 
-        const stats = this.computeStatistics();
+        const statConfigurations = {
+            sizeSquareFootage: {
+                rangeTitle: "Building Size Range ($)",
+                averageTitle: "Building Size Average ($)",
+                render: (value) => <IntegerFormat value={value}/>
+            },
+            pricePerSquareFoot: {
+                rangeTitle: "Price Per Square Foot Range ($)",
+                averageTitle: "Price Per Square Foot Average ($)",
+                render: (value) => <CurrencyFormat value={value}/>
+            },
+            capitalizationRate: {
+                rangeTitle: "Cap Rate Range (%)",
+                averageTitle: "Cap Rate Average (%)",
+                render: (value) => <PercentFormat value={value}/>
+            },
+            clearCeilingHeight: {
+                rangeTitle: "Clear Ceiling Height Range (%)",
+                averageTitle: "Clear Ceiling Height Average (%)",
+                render: (value) => <LengthFormat value={value}/>
+            },
+            sizeOfLandAcres: {
+                rangeTitle: "Size of Land Range (acres)",
+                averageTitle: "Size of Land Average (acres)",
+                render: (value) => <IntegerFormat value={value}/>
+            },
+            floorSpaceIndex: {
+                rangeTitle: "Floor Space Index Range",
+                averageTitle: "Floor Space Index Average",
+                render: (value) => <FloatFormat value={value}/>
+            },
+            pricePerSquareFootLand: {
+                rangeTitle: "PSF of Land Range ($)",
+                averageTitle: "PSF of Land Average ($)",
+                render: (value) => <CurrencyFormat value={value}/>
+            },
+            pricePerAcreLand: {
+                rangeTitle: "PPA of Land Range ($)",
+                averageTitle: "PPA of Land Average ($)",
+                render: (value) => <CurrencyFormat value={value} cents={false}/>
+            },
+            pricePerSquareFootBuildableArea: {
+                rangeTitle: "PSF of Buildable Area Range ($)",
+                averageTitle: "PSF of Buildable Area Average ($)",
+                render: (value) => <CurrencyFormat value={value} cents={false}/>
+            }
+        };
+
+        const statFields = [];
+
+        if (this.props.appraisal.propertyType !== 'land')
+        {
+            statFields.push("capitalizationRate");
+            statFields.push("pricePerSquareFoot");
+            statFields.push("sizeSquareFootage")
+        }
+
+        if (this.props.appraisal.propertyType === 'industrial')
+        {
+            statFields.push("clearCeilingHeight");
+        }
+
+        if (this.props.appraisal.propertyType === 'land')
+        {
+            statFields.push("sizeOfLandAcres");
+            statFields.push("floorSpaceIndex");
+            statFields.push("pricePerSquareFootLand");
+            statFields.push("pricePerAcreLand");
+            statFields.push("pricePerSquareFootBuildableArea");
+        }
+
+        while(statFields.length % 3 !== 0)
+        {
+            statFields.push(null);
+        }
+
 
         return (
             <Row className={"comparable-sales-statistics"}>
@@ -111,157 +138,40 @@ class ComparableSalesStatistics extends React.Component
                                     <h4>{this.props.title}</h4>
                                 </Col>
                             </Row>
-                            {
-                                this.props.appraisal.propertyType !== 'land' ?
-                                    <Row>
-                                        <Col xs={4}>
-                                            <strong>Cap Rate Range (%):</strong>&nbsp;&nbsp;&nbsp;
-                                            {
-                                                stats.minCapRate ? <span>
-                                            <PercentFormat value={stats.minCapRate} /> - <PercentFormat value={stats.maxCapRate}/></span> : <span>n/a</span>
-                                            }
+                            <Row className={"statRow"}>
+                                {
+                                    statFields.map((statField) =>
+                                    {
+                                        if (statField === null)
+                                        {
+                                            return <Col className={"statColumn"} />;
+                                        }
+
+                                        const stats = this.computeStatsForField(statField);
+                                        const render = statConfigurations[statField].render;
+
+                                        return <Col className={"statColumn"}>
+                                            <div className={"statBlock"}>
+                                                <strong>{statConfigurations[statField].rangeTitle}:</strong>&nbsp;&nbsp;&nbsp;
+                                            </div>
+                                            <div className={"statBlock"}>
+                                                {
+                                                    stats.min ? <span>{render(stats.min)} - {render(stats.max)}</span> : <span>n/a</span>
+                                                }
+                                            </div>
+                                            <br/>
+                                            <div className={"statBlock"}>
+                                                <strong>{statConfigurations[statField].averageTitle}:</strong>&nbsp;&nbsp;&nbsp;
+                                            </div>
+                                            <div className={"statBlock"}>
+                                                {
+                                                    stats.average ? <span>{render(stats.average)}</span> : <span>n/a</span>
+                                                }
+                                            </div>
                                         </Col>
-                                        <Col xs={4}>
-                                            <strong>Price Per Square Foot Range ($):</strong>&nbsp;&nbsp;&nbsp;
-                                            {
-                                                stats.minPSF ? <span><CurrencyFormat value={stats.minPSF} cents={false} /> - <CurrencyFormat value={stats.maxPSF} cents={false} /></span> : <span>n/a</span>
-                                            }
-                                        </Col>
-                                        <Col xs={4}>
-                                            <strong>Building Size Range (sq):</strong>&nbsp;&nbsp;&nbsp;
-                                            {
-                                                stats.minSize ? <span><IntegerFormat value={stats.minSize} /> - <IntegerFormat value={stats.maxSize} /></span> : <span>n/a</span>
-                                            }
-                                        </Col>
-                                    </Row> : null
-                            }
-                            {
-                                this.props.appraisal.propertyType !== 'land' ?
-                                    <Row>
-                                        <Col xs={4}>
-                                            <strong>Cap Rate Average (%):</strong>&nbsp;&nbsp;&nbsp;
-                                            {
-                                                stats.averageCapRate ? <PercentFormat value={stats.averageCapRate}/> : <span>n/a</span>
-                                            }
-                                        </Col>
-                                        <Col xs={4}>
-                                            <strong>Price Per Square Average ($):</strong>&nbsp;&nbsp;&nbsp;
-                                            {
-                                                stats.averagePSF ? <CurrencyFormat value={stats.averagePSF} cents={false}/> : <span>n/a</span>
-                                            }
-                                        </Col>
-                                        <Col xs={4}>
-                                            <strong>Building Size Average (sq):</strong>&nbsp;&nbsp;&nbsp;
-                                            {
-                                                stats.sizeAverage ? <IntegerFormat value={stats.sizeAverage}/> : <span>n/a</span>
-                                            }
-                                        </Col>
-                                    </Row> : null
-                            }
-                            {
-                                this.props.appraisal.propertyType === 'industrial' ?
-                                    <Row>
-                                        <Col xs={4}>
-                                            <strong>Clear Ceiling Height Range:</strong>&nbsp;&nbsp;&nbsp;
-                                            {
-                                                stats.minClearCeilingHeight ? <span><IntegerFormat value={stats.minClearCeilingHeight} /> - <LengthFormat value={stats.maxClearCeilingHeight} /></span> : <span>n/a</span>
-                                            }
-                                        </Col>
-                                    </Row> : null
-                            }
-                            {
-                                this.props.appraisal.propertyType === 'industrial' ?
-                                    <Row>
-                                        <Col xs={4}>
-                                            <strong>Clear Ceiling Height Average:</strong>&nbsp;&nbsp;&nbsp;
-                                            {
-                                                stats.averageClearCeilingHeight ? <LengthFormat value={stats.averageClearCeilingHeight} /> : <span>n/a</span>
-                                            }
-                                        </Col>
-                                    </Row> : null
-                            }
-                            {
-                                this.props.appraisal.propertyType === 'land' ?
-                                    <Row>
-                                        <Col xs={4}>
-                                            <strong>Size of Land  (acres) Range :</strong>&nbsp;&nbsp;&nbsp;
-                                            {
-                                                stats.minSizeOfLand ? <span>
-                                            <IntegerFormat value={stats.minSizeOfLand} /> - <IntegerFormat value={stats.maxSizeOfLand}/></span> : <span>n/a</span>
-                                            }
-                                        </Col>
-                                        <Col xs={4}>
-                                            <strong>Floor Space Index Range:</strong>&nbsp;&nbsp;&nbsp;
-                                            {
-                                                stats.minFSI ? <span>{stats.minFSI.toFixed(2)} - {stats.maxFSI.toFixed(2)}</span> : <span>n/a</span>
-                                            }
-                                        </Col>
-                                        <Col xs={4}>
-                                            <strong>PSF of Land ($):</strong>&nbsp;&nbsp;&nbsp;
-                                            {
-                                                stats.minPSFLand ? <span><CurrencyFormat value={stats.minPSFLand} /> - <CurrencyFormat value={stats.maxPSFLand} /></span> : <span>n/a</span>
-                                            }
-                                        </Col>
-                                    </Row> : null
-                            }
-                            {
-                                this.props.appraisal.propertyType === 'land' ?
-                                    <Row>
-                                        <Col xs={4}>
-                                            <strong>Size of Land (acres) Average :</strong>&nbsp;&nbsp;&nbsp;
-                                            {
-                                                stats.averageSizeOfLand ? <span><IntegerFormat value={stats.averageSizeOfLand} /></span> : <span>n/a</span>
-                                            }
-                                        </Col>
-                                        <Col xs={4}>
-                                            <strong>Floor Space Index Average:</strong>&nbsp;&nbsp;&nbsp;
-                                            {
-                                                stats.averageFSI ? <span>{stats.averageFSI}</span> : <span>n/a</span>
-                                            }
-                                        </Col>
-                                        <Col xs={4}>
-                                            <strong>PSF of Land ($):</strong>&nbsp;&nbsp;&nbsp;
-                                            {
-                                                stats.averagePSFLand ? <span><CurrencyFormat value={stats.averagePSFLand} /></span> : <span>n/a</span>
-                                            }
-                                        </Col>
-                                    </Row> : null
-                            }
-                            {
-                                this.props.appraisal.propertyType === 'land' ?
-                                    <Row>
-                                        <Col xs={4}>
-                                            <strong>PSF of Buildable Area Range ($/sqft) :</strong>&nbsp;&nbsp;&nbsp;
-                                            {
-                                                stats.minPSFBuildableArea ? <span>
-                                            <CurrencyFormat value={stats.minPSFBuildableArea} /> - <CurrencyFormat value={stats.maxPSFBuildableArea}/></span> : <span>n/a</span>
-                                            }
-                                        </Col>
-                                        <Col xs={4}>
-                                            <strong>Price per Acre Land Range ($):</strong>&nbsp;&nbsp;&nbsp;
-                                            {
-                                                stats.minPricePerAcreLand ? <span><CurrencyFormat value={stats.minPricePerAcreLand} cents={false} /> - <CurrencyFormat value={stats.maxPricePerAcreLand} cents={false} /></span> : <span>n/a</span>
-                                            }
-                                        </Col>
-                                    </Row> : null
-                            }
-                            {
-                                this.props.appraisal.propertyType === 'land' ?
-                                    <Row>
-                                        <Col xs={4}>
-                                            <strong>PSF of Buildable Area Average ($/sqft) :</strong>&nbsp;&nbsp;&nbsp;
-                                            {
-                                                stats.averagePSFBuildableArea ? <span><CurrencyFormat value={stats.averagePSFBuildableArea}/></span> : <span>n/a</span>
-                                            }
-                                        </Col>
-                                        <Col xs={4}>
-                                            <strong>Price per Acre Land Average ($):</strong>&nbsp;&nbsp;&nbsp;
-                                            {
-                                                stats.averagePricePerAcreLand ? <span><CurrencyFormat value={stats.averagePricePerAcreLand} cents={false} /></span> : <span>n/a</span>
-                                            }
-                                        </Col>
-                                    </Row> : null
-                            }
+                                    })
+                                }
+                            </Row>
                         </CardBody>
                     </Card>
                 </Col>

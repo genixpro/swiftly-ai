@@ -144,6 +144,35 @@ class ViewCapitalizationValuation extends React.Component
     {
         const popoverId = `market-rent-differential-popover`;
 
+        const compHeaders = [
+            ["saleDate"],
+            ["address"]
+        ];
+
+        if (this.props.appraisal.propertyType !== 'land')
+        {
+            compHeaders.push(["sizeSquareFootage"])
+        }
+
+        if (this.props.appraisal.propertyType === 'land')
+        {
+            compHeaders.push(["sizeOfLandAcres", "sizeOfBuildableAreaSqft"])
+        }
+
+        compHeaders.push(["salePrice"]);
+
+        if (this.props.appraisal.propertyType !== 'land')
+        {
+            compHeaders.push(["capitalizationRate"]);
+            compHeaders.push(["pricePerSquareFoot"])
+        }
+
+        if (this.props.appraisal.propertyType === 'land')
+        {
+            compHeaders.push(["pricePerAcreLand"]);
+            compHeaders.push(["pricePerSquareFootBuildableArea"]);
+        }
+
         return [
             <AppraisalContentHeader appraisal={this.props.appraisal} title="Capitalization Approach" key={"header"}/>,
             <Row className={"view-capitalization-valuation"} key={"body"}>
@@ -166,9 +195,9 @@ class ViewCapitalizationValuation extends React.Component
                                         <h3>Capitalization Approach</h3>
                                         <h4>{this.props.appraisal.address}</h4>
                                         <ComparableSaleList comparableSales={this.state.comparableSales}
+                                                            headers={compHeaders}
                                                             statsTitle={""}
                                                             statsPosition={"below"}
-                                                            showPropertyTypeInHeader={false}
                                                             allowNew={false}
                                                             sort={this.state.sort}
                                                             noCompMessage={"There are no comparables attached to this appraisal. Please go to the comparables database and select comparables from there."}
