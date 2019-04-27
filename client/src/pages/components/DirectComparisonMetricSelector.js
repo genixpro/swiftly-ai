@@ -1,7 +1,7 @@
 import React from 'react';
 
 
-class MarketRentSelector extends React.Component
+class DirectComparisonMetricSelector extends React.Component
 {
     onChangeValue(newValue)
     {
@@ -32,19 +32,6 @@ class MarketRentSelector extends React.Component
 
     render()
     {
-        if (!this.props.marketRents)
-        {
-            return null;
-        }
-
-        const options = [
-            <option value={""} key={"blank"}>No Market Rent</option>
-        ].concat(
-            this.props.marketRents.map((rent, index) =>
-            {
-                return <option key={index} value={rent.name}>{rent.name}</option>
-            }));
-
         return (
             <select
                 className="custom-select"
@@ -55,12 +42,18 @@ class MarketRentSelector extends React.Component
                 title={this.props.title || this.props.placeholder}
                 disabled={this.props.disabled}
                 style={{"color": !this.props.value ? "lightgrey" : ""}}
+
             >
-                {options}
+                <option value={""}>No Metric Selected</option>
+                <option value={"psf"}>Per Square Foot</option>
+                <option value={"psf_land"}>Per Square Foot of Land</option>
+                <option value={"per_acre_land"}>Per Acre of Land</option>
+                <option value={"psf_buildable_area"}>Per Square Foot of Buildable Area</option>
+                <option value={"per_buildable_unit"}>Per Buildable Unit</option>
             </select>
         );
     }
 }
 
 
-export default MarketRentSelector;
+export default DirectComparisonMetricSelector;

@@ -50,7 +50,10 @@ class StabilizedStatementModel(ValuationModelBase):
 
         statement.effectiveGrossIncome = self.computeEffectiveGrossIncome(appraisal)
 
-        statement.structuralAllowance = statement.potentialGrossIncome * (appraisal.stabilizedStatementInputs.structuralAllowancePercent / 100.0)
+        if appraisal.stabilizedStatementInputs.managementExpenseMode != 'combined_structural_rule':
+            statement.structuralAllowance = statement.potentialGrossIncome * (appraisal.stabilizedStatementInputs.structuralAllowancePercent / 100.0)
+        else:
+            statement.structuralAllowance = 0
 
         if appraisal.stabilizedStatementInputs.expensesMode == 'income_statement':
             statement.totalExpenses = statement.operatingExpenses + statement.taxes + statement.managementExpenses + statement.structuralAllowance

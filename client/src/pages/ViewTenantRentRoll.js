@@ -11,12 +11,37 @@ import Auth from "../Auth";
 import {TenancyModel} from "../models/UnitModel";
 import CurrencyFormat from "./components/CurrencyFormat";
 import IntegerFormat from "./components/IntegerFormat";
+import moment from "moment/moment";
+import PercentFormat from "./components/PercentFormat";
+import AreaFormat from "./components/AreaFormat";
+import Moment from "react-moment";
 
 class ViewTenantsRentRoll extends React.Component
 {
     state = {
         selectedUnitIndex: null
     };
+
+    componentDidMount()
+    {
+        if (this.getQueryVariable("unit"))
+        {
+            this.setState({selectedUnitIndex: this.getQueryVariable("unit")})
+        }
+    }
+
+    getQueryVariable(variable)
+    {
+        let query = this.props.history.location.search.substring(1);
+        let vars = query.split('&');
+        for (let i = 0; i < vars.length; i++) {
+            let pair = vars[i].split('=');
+            if (decodeURIComponent(pair[0]) === variable) {
+                return decodeURIComponent(pair[1]);
+            }
+        }
+        console.log('Query variable %s not found', variable);
+    }
 
     onUnitClicked(unitIndex)
     {
@@ -263,9 +288,65 @@ class ViewTenantsRentRoll extends React.Component
         window.location = `${process.env.VALUATE_ENVIRONMENT.REACT_APP_SERVER_URL}appraisal/${this.props.appraisal._id}/rent_roll/excel?access_token=${Auth.getAccessToken()}`;
     }
 
+    calculateDifferentialMonths()
+    {
+        if (!this.props.appraisal.units[this.state.selectedUnitIndex] || this.state.selectedUnitIndex === null)
+        {
+            return null;
+        }
+
+        const marketRentDifferentialStateDate = moment(this.props.appraisal.getEffectiveDate());
+        const marketRentDifferentialEndDate = moment(this.props.appraisal.units[this.state.selectedUnitIndex].currentTenancy.endDate);
+
+        const differentialMonths = [];
+
+        const currentDate = marketRentDifferentialStateDate;
+
+        const presentDifferentialPSF = (this.props.appraisal.units[this.state.selectedUnitIndex].currentTenancy.yearlyRent / this.props.appraisal.units[this.state.selectedUnitIndex].squareFootage) - this.props.appraisal.units[this.state.selectedUnitIndex].marketRentAmount;
+
+        const monthlyDifferentialCashflow = (presentDifferentialPSF * this.props.appraisal.units[this.state.selectedUnitIndex].squareFootage) / 12.0;
+
+        const monthlyDiscount = Math.pow(1.0 + (this.props.appraisal.stabilizedStatementInputs.marketRentDifferentialDiscountRate / 100), 1 / 12.0);
+
+        let month = 0;
+
+        while(currentDate.toDate().getTime() < marketRentDifferentialEndDate.toDate().getTime())
+        {
+            const totalDiscount = monthlyDiscount ** month;
+
+            const presentValue = monthlyDifferentialCashflow / totalDiscount;
+
+            differentialMonths.push({
+                date: currentDate.clone().toDate(),
+                month: month,
+                currentRent: this.props.appraisal.units[this.state.selectedUnitIndex].currentTenancy.yearlyRent / 12,
+                marketRent: this.props.appraisal.units[this.state.selectedUnitIndex].marketRentAmount * this.props.appraisal.units[this.state.selectedUnitIndex].squareFootage / 12,
+                presentMonthlyCashFlow: monthlyDifferentialCashflow,
+                discount: totalDiscount,
+                presentValue: presentValue,
+
+            });
+
+            currentDate.add(1, "months");
+            month += 1;
+        }
+
+        return differentialMonths;
+    }
+
+
+    changeStabilizedInput(field, newValue)
+    {
+        this.props.appraisal.stabilizedStatementInputs[field] = newValue;
+        this.props.saveAppraisal(this.props.appraisal);
+    }
 
     render()
     {
+        const popoverId = `market-rent-differential-popover`;
+
+        const differentialMonths = this.calculateDifferentialMonths();
+
         return (
             (this.props.appraisal) ?
                 <div id={"view-tenants-rent-roll"} className={"view-tenants-rent-roll"}>
@@ -310,7 +391,7 @@ class ViewTenantsRentRoll extends React.Component
                                     <h3>Tenant Information</h3>
                                     {/*<CardHeader className="text-white bg-primary">Tenant Information</CardHeader>*/}
                                     {/*<CardBody>*/}
-                                    <table className="table">
+                                    <table className="table tenant-information-table">
                                         <tbody>
                                         <tr>
                                             <td>
@@ -368,33 +449,6 @@ class ViewTenantsRentRoll extends React.Component
                                                                   onChange={(newValue) => this.changeUnitField(this.props.appraisal.units[this.state.selectedUnitIndex], 'marketRent', newValue)}/>
                                             </td>
                                         </tr>
-                                        {
-                                            this.props.appraisal.units[this.state.selectedUnitIndex].marketRent ?
-                                                <tr>
-                                                    <td>
-                                                        <strong>Use Market Rent for<br/> Stabilized Statement?</strong>
-                                                    </td>
-                                                    <td style={{"paddingTop": "10px", "paddingLeft": "10px"}}>
-                                                        <FieldDisplayEdit hideIcon={true} type="boolean"
-                                                                          placeholder={"Use Market Rent for Stabilized Statement?"}
-                                                                          value={this.props.appraisal.units[this.state.selectedUnitIndex].shouldUseMarketRent}
-                                                                          onChange={(newValue) => this.changeUnitField(this.props.appraisal.units[this.state.selectedUnitIndex], 'shouldUseMarketRent', newValue)}/>
-                                                    </td>
-                                                </tr> : null
-                                        }
-                                        {
-                                            this.props.appraisal.units[this.state.selectedUnitIndex].marketRent ?
-                                                <tr>
-                                                    <td>
-                                                        <strong>Apply Market Rent<br/> Differential?</strong>
-                                                    </td>
-                                                    <td style={{"paddingTop": "10px", "paddingLeft": "10px"}}>
-                                                        <FieldDisplayEdit hideIcon={true} type="boolean" placeholder={"Apply Market Rent Differential?"}
-                                                                          value={this.props.appraisal.units[this.state.selectedUnitIndex].shouldApplyMarketRentDifferential}
-                                                                          onChange={(newValue) => this.changeUnitField(this.props.appraisal.units[this.state.selectedUnitIndex], 'shouldApplyMarketRentDifferential', newValue)}/>
-                                                    </td>
-                                                </tr> : null
-                                        }
                                         <tr>
                                             <td>
                                                 <strong>Free Rent Period (months)</strong>
@@ -439,7 +493,16 @@ class ViewTenantsRentRoll extends React.Component
                                         </tr>
                                         <tr>
                                             <td>
-                                                <strong>Treat as Vacant Unit?</strong>
+                                                <strong>Remarks</strong>
+                                            </td>
+                                            <td>
+                                                <FieldDisplayEdit value={this.props.appraisal.units[this.state.selectedUnitIndex].remarks} placeholder={"Remarks"}
+                                                                  onChange={(newValue) => this.changeUnitField(this.props.appraisal.units[this.state.selectedUnitIndex], 'remarks', newValue)}/>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>
+                                                <strong>Consider as Vacant Unit</strong>
                                             </td>
                                             <td style={{"paddingTop": "10px", "paddingLeft": "10px", "paddingBottom": "10px"}}>
                                                 <FieldDisplayEdit
@@ -452,28 +515,39 @@ class ViewTenantsRentRoll extends React.Component
                                             </td>
                                         </tr>
                                         <tr>
-                                            <td>
-                                                <strong>Remarks</strong>
-                                            </td>
-                                            <td>
-                                                <FieldDisplayEdit value={this.props.appraisal.units[this.state.selectedUnitIndex].remarks} placeholder={"Remarks"}
-                                                                  onChange={(newValue) => this.changeUnitField(this.props.appraisal.units[this.state.selectedUnitIndex], 'remarks', newValue)}/>
-                                            </td>
-                                        </tr>
-                                        <tr>
                                             <td colSpan={2}>
                                                 <br/>
-                                                <h3>Stats</h3>
+                                                <h3>Financials</h3>
                                             </td>
                                         </tr>
                                         <tr className={"stats-row"}>
                                             <td>
-                                                <strong>Current Yearly Rent (psf)</strong>
+                                                <strong>Stabilized Annual Rent</strong>
                                             </td>
-                                            <td>
+                                            <td className={"stabilized-rent-column"}>
                                                         <span style={{"marginLeft": "10px"}}>
-                                                            <CurrencyFormat value={this.props.appraisal.units[this.state.selectedUnitIndex].currentTenancy.yearlyRentPSF}/>
+                                                            <CurrencyFormat value={this.props.appraisal.units[this.state.selectedUnitIndex].currentTenancy.yearlyRent}/>
                                                         </span>
+
+                                                {
+                                                    this.props.appraisal.units[this.state.selectedUnitIndex].marketRent ?
+                                                        <div className={"use-market-rent-selector"}>
+                                                                <strong>Apply Market Rent</strong>
+                                                                <FieldDisplayEdit hideIcon={true} type="boolean"
+                                                                                  placeholder={"Use Market Rent for Stabilized Statement?"}
+                                                                                  value={this.props.appraisal.units[this.state.selectedUnitIndex].shouldUseMarketRent}
+                                                                                  onChange={(newValue) => this.changeUnitField(this.props.appraisal.units[this.state.selectedUnitIndex], 'shouldUseMarketRent', newValue)}/>
+                                                        </div> : null
+                                                }
+                                                {
+                                                    this.props.appraisal.units[this.state.selectedUnitIndex].marketRent ?
+                                                        <div className={"use-market-rent-selector"}>
+                                                                <strong>Apply Market Rent Differential</strong>
+                                                                <FieldDisplayEdit hideIcon={true} type="boolean" placeholder={"Apply Market Rent Differential?"}
+                                                                                  value={this.props.appraisal.units[this.state.selectedUnitIndex].shouldApplyMarketRentDifferential}
+                                                                                  onChange={(newValue) => this.changeUnitField(this.props.appraisal.units[this.state.selectedUnitIndex], 'shouldApplyMarketRentDifferential', newValue)}/>
+                                                        </div> : null
+                                                }
                                             </td>
                                         </tr>
                                         {
@@ -534,17 +608,154 @@ class ViewTenantsRentRoll extends React.Component
                                             this.props.appraisal.units[this.state.selectedUnitIndex].calculatedMarketRentDifferential ?
                                                 <tr className={"stats-row"}>
                                                     <td>
-                                                        <Link to={`/appraisal/${this.props.appraisal._id}/tenants/market_rents`}>
+                                                        <a onClick={() => this.setState({marketRentDifferentialPopoverOpen: !this.state.marketRentDifferentialPopoverOpen})}>
                                                             <strong>Calculated Market Rent Differential</strong>
-                                                        </Link>
+                                                        </a>
                                                     </td>
                                                     <td>
-                                                        <Link to={`/appraisal/${this.props.appraisal._id}/tenants/market_rents`}>
+
+                                                        <a id={popoverId} onClick={() => this.setState({marketRentDifferentialPopoverOpen: !this.state.marketRentDifferentialPopoverOpen})}>
                                                         <span style={{"marginLeft": "10px"}}>
                                                             <CurrencyFormat
                                                                 value={this.props.appraisal.units[this.state.selectedUnitIndex].calculatedMarketRentDifferential}/>
                                                         </span>
-                                                        </Link>
+                                                        </a>
+                                                        <Popover placement="bottom" isOpen={this.state.marketRentDifferentialPopoverOpen} target={popoverId} toggle={() => this.setState({marketRentDifferentialPopoverOpen: !this.state.marketRentDifferentialPopoverOpen})}>
+                                                            <PopoverHeader>Unit {this.props.appraisal.units[this.state.selectedUnitIndex].unitNumber} - Market Rent Differential</PopoverHeader>
+                                                            <PopoverBody>
+                                                                <table className={"explanation-popover-table"}>
+                                                                    <thead>
+                                                                    <tr className={"total-row"}>
+                                                                        <td colSpan={2}></td>
+                                                                        <td colSpan={2}>
+                                                                            PSF
+                                                                        </td>
+                                                                        <td>Annual</td>
+                                                                        <td></td>
+                                                                        <td></td>
+                                                                        <td></td>
+                                                                    </tr>
+                                                                    <tr className={"total-row"}>
+                                                                        <td colSpan={2}>Contract Rent</td>
+                                                                        <td colSpan={2}>
+                                                                            <CurrencyFormat value={differentialMonths[0].currentRent * 12 / this.props.appraisal.units[this.state.selectedUnitIndex].squareFootage}/>
+                                                                        </td>
+                                                                        <td>
+                                                                            <CurrencyFormat value={differentialMonths[0].currentRent * 12}/>
+                                                                        </td>
+                                                                        <td></td>
+                                                                        <td></td>
+                                                                        <td></td>
+                                                                    </tr>
+                                                                    <tr className={"total-row"}>
+                                                                        <td colSpan={2}>Market Rent</td>
+                                                                        <td colSpan={2}>
+                                                                            <CurrencyFormat value={differentialMonths[0].marketRent * 12 / this.props.appraisal.units[this.state.selectedUnitIndex].squareFootage}/>
+                                                                        </td>
+                                                                        <td>
+                                                                            <CurrencyFormat value={differentialMonths[0].marketRent * 12}/>
+                                                                        </td>
+                                                                        <td></td>
+                                                                        <td></td>
+                                                                        <td></td>
+                                                                    </tr>
+                                                                    <tr className={"total-row"}>
+                                                                        <td colSpan={2}>Differential</td>
+                                                                        <td colSpan={2}>
+                                                                            <CurrencyFormat value={differentialMonths[0].presentMonthlyCashFlow * 12 / this.props.appraisal.units[this.state.selectedUnitIndex].squareFootage}/>
+                                                                        </td>
+                                                                        <td>
+                                                                            <CurrencyFormat value={differentialMonths[0].presentMonthlyCashFlow * 12}/>
+                                                                        </td>
+                                                                        <td></td>
+                                                                        <td></td>
+                                                                        <td></td>
+                                                                    </tr>
+                                                                    <tr className={"total-row"}>
+                                                                        <td colSpan={2}><strong>Present Value</strong></td>
+                                                                        <td colSpan={3}><CurrencyFormat value={this.props.appraisal.units[this.state.selectedUnitIndex].calculatedMarketRentDifferential} /></td>
+                                                                        <td></td>
+                                                                        <td></td>
+                                                                    </tr>
+                                                                    <tr className={"total-row"}>
+                                                                        <td colSpan={2}>Discount Rate</td>
+                                                                        <td colSpan={3}>
+                                                                            <FieldDisplayEdit
+                                                                                type={"percent"}
+                                                                                placeholder={"Market Rent Differential Discount Rate"}
+                                                                                value={this.props.appraisal.stabilizedStatementInputs ? this.props.appraisal.stabilizedStatementInputs.marketRentDifferentialDiscountRate : 5.0}
+                                                                                onChange={(newValue) => this.changeStabilizedInput("marketRentDifferentialDiscountRate", newValue)}
+                                                                            />
+                                                                        </td>
+                                                                        <td></td>
+                                                                        <td></td>
+                                                                        <td></td>
+                                                                        <td></td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <td>
+                                                                            Date
+                                                                        </td>
+                                                                        <td>
+                                                                            Month
+                                                                        </td>
+                                                                        <td>
+                                                                            Actual Rent
+                                                                        </td>
+                                                                        <td>
+                                                                            Market Rent
+                                                                        </td>
+                                                                        <td>
+                                                                            Differential
+                                                                        </td>
+                                                                        <td>
+                                                                            Present Value
+                                                                        </td>
+                                                                    </tr>
+                                                                    </thead>
+                                                                    <tbody>
+                                                                    {
+                                                                        differentialMonths.map((differential, index) =>
+                                                                        {
+                                                                            let className = "";
+
+                                                                            if (index === differentialMonths.length - 1)
+                                                                            {
+                                                                                className = "underline";
+                                                                            }
+
+                                                                            return <tr key={index}>
+                                                                                <td>
+                                                                                    <Moment date={differential.date} format="MMM YYYY" />
+                                                                                </td>
+                                                                                <td>
+                                                                                    <IntegerFormat value={differential.month} />
+                                                                                </td>
+                                                                                <td>
+                                                                                    <CurrencyFormat value={differential.currentRent}/>
+                                                                                </td>
+                                                                                <td>
+                                                                                    <CurrencyFormat value={differential.marketRent}/>
+                                                                                </td>
+                                                                                <td>
+                                                                                    <CurrencyFormat value={differential.presentMonthlyCashFlow}/>
+                                                                                </td>
+                                                                                <td className={className}>
+                                                                                    <CurrencyFormat value={differential.presentValue}/>
+                                                                                </td>
+                                                                            </tr>
+                                                                        })
+                                                                    }
+                                                                    <tr className={"total-row"}>
+                                                                        <td></td>
+                                                                        <td></td>
+                                                                        <td colSpan={3}><strong>Present Value</strong></td>
+                                                                        <td><CurrencyFormat value={this.props.appraisal.units[this.state.selectedUnitIndex].calculatedMarketRentDifferential} /></td>
+                                                                    </tr>
+                                                                    </tbody>
+                                                                </table>
+                                                            </PopoverBody>
+                                                        </Popover>
                                                     </td>
                                                 </tr> : null
                                         }

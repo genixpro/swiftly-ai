@@ -1,10 +1,6 @@
 import BaseModel from "../orm/BaseModel";
 import StringField from "../orm/StringField";
 import FloatField from "../orm/FloatField";
-import ModelField from "../orm/ModelField";
-import ListField from "../orm/ListField";
-import BoolField from "../orm/BoolField";
-import CalculationRuleModel from "./CalculationRuleModel";
 import DictField from "../orm/DictField";
 import _ from "underscore";
 
@@ -12,9 +8,17 @@ class RecoveryStructureModel extends BaseModel
 {
     static structureName = new StringField("name");
 
-    static managementCalculationRule = new ModelField(CalculationRuleModel);
+    static managementRecoveryMode = new StringField("managementRecoveryMode", "operatingExpenses");
 
-    static calculatedManagementRecovery = new FloatField("calculatedManagementRecovery", 0);
+    static managementRecoveryOperatingPercentage = new FloatField();
+
+    static managementRecoveries = new DictField(new FloatField(), {});
+
+    static calculatedManagementRecoveryBaseValue = new FloatField();
+
+    static calculatedManagementRecoveryTotal = new FloatField();
+
+    static calculatedManagementRecoveries = new DictField(new FloatField(), {});
 
     static calculatedManagementRecoveryBaseFieldValue = new FloatField("calculatedManagementRecoveryBaseFieldValue", 0);
 
@@ -39,9 +43,9 @@ class RecoveryStructureModel extends BaseModel
     get calculatedTotalRecovery()
     {
         let total = 0;
-        if (_.isNumber(this.calculatedManagementRecovery))
+        if (_.isNumber(this.calculatedManagementRecoveryTotal))
         {
-            total += this.calculatedManagementRecovery;
+            total += this.calculatedManagementRecoveryTotal;
         }
 
         if (this.calculatedExpenseRecoveries)

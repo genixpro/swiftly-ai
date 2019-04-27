@@ -15,6 +15,7 @@ from appraisal.models.amortization_schedule import AmortizationSchedule
 from appraisal.models.recovery_structure import RecoveryStructure, CalculationRule
 from appraisal.models.leasing_cost_structure import LeasingCostStructure
 from appraisal.models.date_field import ConvertingDateField
+import numpy
 
 class Appraisal(Document):
     meta = {'collection': 'appraisals', 'strict': False}
@@ -31,6 +32,9 @@ class Appraisal(Document):
     # The location of the building on a map
     location = PointField()
 
+    # The client of this appraisal
+    client = StringField()
+
     # The URL for the image of this building
     imageUrl = StringField()
 
@@ -46,9 +50,6 @@ class Appraisal(Document):
     # If this property type is land, this is the land sub-type for the property
     landSubType = StringField()
 
-    # This is the size of the building, in square feet
-    sizeOfBuilding = FloatField()
-
     # This is the size of the land the building is on, in square feet
     sizeOfLand = FloatField()
 
@@ -60,6 +61,10 @@ class Appraisal(Document):
 
     # A list of tags associated with this comparable lease
     propertyTags = ListField(StringField())
+
+    buildableArea = FloatField()
+
+    buildableUnits = FloatField()
 
     # A list of units within this Appraisal
     units = ListField(EmbeddedDocumentField(Unit))
@@ -77,7 +82,10 @@ class Appraisal(Document):
     validationResult = EmbeddedDocumentField(AppraisalValidationResult, default=AppraisalValidationResult)
 
     # A list of comparable sales that are attached to this appraisal
-    comparableSales = ListField(StringField())
+    comparableSalesCapRate = ListField(StringField(), default=[])
+
+    # A list of comparable sales that are attached to this appraisal
+    comparableSalesDCA = ListField(StringField(), default=[])
 
     # A list of comparable leases that are attached to this appraisal
     comparableLeases = ListField(StringField())
@@ -103,7 +111,8 @@ class Appraisal(Document):
     # A list of recovery structures for this building
     recoveryStructures = ListField(EmbeddedDocumentField(RecoveryStructure), default=[
         RecoveryStructure(name="Standard",
-                          managementCalculationRule=CalculationRule(percentage=15, field="operatingExpensesAndTaxes"),
+                          managementRecoveryMode="operatingExpensesAndTaxes",
+                          managementRecoveries={},
                           expenseRecoveries={}
                           )
     ])
@@ -111,3 +120,6 @@ class Appraisal(Document):
     # A list of recovery structures for this building
     leasingCosts = ListField(EmbeddedDocumentField(LeasingCostStructure), default=[LeasingCostStructure(name="Standard")])
 
+    @property
+    def sizeOfBuilding(self):
+        return float(numpy.sum([unit.squareFootage for unit in self.units]))

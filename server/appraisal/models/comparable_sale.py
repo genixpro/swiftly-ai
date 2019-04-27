@@ -96,10 +96,14 @@ class ComparableSale(Document):
 
     pricePerAcreBuildableArea = FloatField()
 
+    pricePerBuildableUnit = FloatField()
+
     floorSpaceIndex = FloatField()
 
     # The percentage of the building that is finished office space, for industrial comps
     finishedOfficePercent = FloatField()
+
+    buildableUnits = FloatField()
 
 
 

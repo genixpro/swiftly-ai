@@ -127,7 +127,7 @@ class ComparableLeaseSearch extends React.Component
                                             {
                                                 <FieldDisplayEdit
                                                     isSearch={true}
-                                                    type={"number"}
+                                                    type={"area"}
                                                     value={this.state.search.sizeOfUnitFrom}
                                                     onChange={(newValue) => this.changeSearchField("sizeOfUnitFrom", newValue)}
                                                     hideInput={false}
@@ -144,7 +144,7 @@ class ComparableLeaseSearch extends React.Component
                                             {
                                                 <FieldDisplayEdit
                                                     isSearch={true}
-                                                    type={"number"}
+                                                    type={"area"}
                                                     value={this.state.search.sizeOfUnitTo}
                                                     onChange={(newValue) => this.changeSearchField("sizeOfUnitTo", newValue)}
                                                     hideInput={false}

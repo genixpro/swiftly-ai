@@ -8,11 +8,6 @@ import ComparableLeaseList from "./components/ComparableLeaseList";
 import Promise from "bluebird";
 import MarketRentModel from "../models/MarketRentModel";
 import CurrencyFormat from "./components/CurrencyFormat";
-import PercentFormat from "./components/PercentFormat";
-import AreaFormat from "./components/AreaFormat";
-import moment from "moment";
-import Moment from "react-moment";
-import IntegerFormat from "./components/IntegerFormat";
 
 
 class TenantApplicableEditor extends React.Component
@@ -21,43 +16,6 @@ class TenantApplicableEditor extends React.Component
 
     render()
     {
-        const popoverId = `market-rent-differential-popover-${this.props.marketRent.name.replace(/\W/g, "")}-${this.props.unit.unitNumber.replace(/\W/g, "")}`;
-
-        const marketRentDifferentialStateDate = moment(this.props.appraisal.getEffectiveDate());
-        const marketRentDifferentialEndDate = moment(this.props.unit.currentTenancy.endDate);
-
-        const differentialMonths = [];
-
-        const currentDate = marketRentDifferentialStateDate;
-
-        const presentDifferentialPSF = (this.props.unit.currentTenancy.yearlyRent / this.props.unit.squareFootage) - this.props.unit.marketRentAmount;
-
-        const monthlyDifferentialCashflow = (presentDifferentialPSF * this.props.unit.squareFootage) / 12.0;
-
-        const monthlyDiscount = Math.pow(1.0 + (this.props.appraisal.stabilizedStatementInputs.marketRentDifferentialDiscountRate / 100), 1 / 12.0);
-
-        let month = 0;
-
-        while(currentDate.toDate().getTime() < marketRentDifferentialEndDate.toDate().getTime())
-        {
-            const totalDiscount = monthlyDiscount ** month;
-
-            const presentValue = monthlyDifferentialCashflow / totalDiscount;
-
-            differentialMonths.push({
-                date: currentDate.clone().toDate(),
-                month: month,
-                currentRent: this.props.unit.currentTenancy.yearlyRent,
-                marketRent: this.props.unit.marketRentAmount * this.props.unit.squareFootage,
-                presentMonthlyCashFlow: monthlyDifferentialCashflow,
-                discount: totalDiscount,
-                presentValue: presentValue,
-
-            });
-
-            currentDate.add(1, "months");
-            month += 1;
-        }
 
         return [<td className={"value-column"} key={1}>
             <div>Unit {this.props.unit.unitNumber} - {this.props.unit.currentTenancy.name}</div>
@@ -70,115 +28,14 @@ class TenantApplicableEditor extends React.Component
                     placeholder={"Does market rent apply to unit " + this.props.unit.unitNumber.toString()}
                 />
             </div>
-        </td>,
+        </td>
+        ]
+    }
+}
+/*
+
             <td className={"calculated-market-rent-differential-column"} key={2}>
-                <a id={popoverId} onClick={() => this.setState({marketRentDifferentialPopoverOpen: !this.state.marketRentDifferentialPopoverOpen})}>
-                    {this.props.unit.marketRent === this.props.marketRent.name && this.props.unit.shouldApplyMarketRentDifferential ?
-                        <CurrencyFormat value={this.props.unit.calculatedMarketRentDifferential}
-                                        title={`Market Rent Differential for Unit ${this.props.unit.unitNumber}`}/>
-                        : null}
-                </a>
-                <Popover placement="bottom" isOpen={this.state.marketRentDifferentialPopoverOpen} target={popoverId} toggle={() => this.setState({marketRentDifferentialPopoverOpen: !this.state.marketRentDifferentialPopoverOpen})}>
-                    <PopoverHeader>Unit {this.props.unit.unitNumber} - Market Rent Differential</PopoverHeader>
-                    <PopoverBody>
-                        <table className={"explanation-popover-table"}>
-                            <thead>
-                            <tr>
-                                <td>
-                                    Date
-                                </td>
-                                <td>
-                                    Month
-                                </td>
-                                <td>
-                                    Actual Rent
-                                </td>
-                                <td />
-                                <td>
-                                    Market Rent
-                                </td>
-                                <td />
-                                <td>
-                                    Market Rent Difference
-                                </td>
-                                <td>
 
-                                </td>
-                                <td>
-                                    Discount
-                                </td>
-                                <td>
-
-                                </td>
-                                <td>
-                                    Present Value
-                                </td>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            {
-                                differentialMonths.map((differential, index) =>
-                                {
-                                    let className = "";
-
-                                    if (index === differentialMonths.length - 1)
-                                    {
-                                        className = "underline";
-                                    }
-
-                                    return <tr key={index}>
-                                        <td>
-                                            <Moment date={differential.date} format="MMM YYYY" />
-                                        </td>
-                                        <td>
-                                            <IntegerFormat value={differential.month} />
-                                        </td>
-                                        <td>
-                                            <CurrencyFormat value={differential.currentRent}/>
-                                        </td>
-                                        <td>
-                                            -
-                                        </td>
-                                        <td>
-                                            <CurrencyFormat value={differential.marketRent}/>
-                                        </td>
-                                        <td>
-                                            =
-                                        </td>
-                                        <td>
-                                            <CurrencyFormat value={differential.presentMonthlyCashFlow}/>
-                                        </td>
-                                        <td>
-                                            *
-                                        </td>
-                                        <td>
-                                            <PercentFormat value={(1 / differential.discount) * 100}/>
-                                        </td>
-                                        <td>
-                                            =
-                                        </td>
-                                        <td className={className}>
-                                            <CurrencyFormat value={differential.presentValue}/>
-                                        </td>
-                                    </tr>
-                                })
-                            }
-                            <tr className={"total-row"}>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td colSpan={2}><strong>Total Present Value<br/> of Market Rent<br/> Differential</strong></td>
-                                <td><CurrencyFormat value={this.props.unit.calculatedMarketRentDifferential} /></td>
-                            </tr>
-                            </tbody>
-                        </table>
-                    </PopoverBody>
-                </Popover>
             </td>,
             <td className={"should-apply-market-rent-differential-column"} key={3}>
                 {this.props.unit.marketRent === this.props.marketRent.name ?
@@ -201,9 +58,7 @@ class TenantApplicableEditor extends React.Component
                         placeholder={"Should use the market rent for unit " + this.props.unit.unitNumber.toString() + " when calculating the stabilized statement."}
                     /> : null}
             </td>
-        ]
-    }
-}
+ */
 
 class MarketRentEditor extends React.Component
 {
@@ -294,9 +149,6 @@ class MarketRentEditor extends React.Component
                             }
 
                         </td>
-                        <td className={"calculated-market-rent-differential-column"}/>
-                        <td className={"should-apply-market-rent-differential-column"}/>
-                        <td className={"should-use-market-rent"} />
                     </tr>
                     <tr className={"market-rent-row"}>
                         <td className={"label-column"}>
@@ -311,22 +163,10 @@ class MarketRentEditor extends React.Component
                                 onChange={(newValue) => this.changeField('amountPSF', newValue)}
                             />
                         </td>
-                        <td className={"calculated-market-rent-differential-column"}/>
-                        <td className={"should-apply-market-rent-differential-column"}/>
-                        <td className={"should-use-market-rent"} />
                     </tr>
                     <tr className={"market-rent-row header-row"}>
                         <td className={"label-column"}/>
                         <td className={"value-column"}/>
-                        <td className={"calculated-market-rent-differential-column"}>
-                            <strong>Calculated Market<br/>Rent Differential</strong>
-                        </td>
-                        <td className={"should-apply-market-rent-differential-column"}>
-                            <strong>Apply Market<br/>Rent Differential</strong>
-                        </td>
-                        <td className={"should-use-market-rent"}>
-                            <strong>Should use Market Rent<br/>in Stabilized Statement</strong>
-                        </td>
                     </tr>
                     <tr className={"market-rent-row"}>
                         <td className={"label-column"}>
@@ -365,20 +205,6 @@ class MarketRentEditor extends React.Component
                     <tr className={"market-rent-row total-spacer-row"}>
                         <td className={"label-column"}/>
                         <td className={"value-column"} />
-                        <td className={"calculated-market-rent-differential-column"} />
-                        <td className={"should-apply-market-rent-differential-column"} />
-                        <td className={"should-use-market-rent"} />
-                    </tr>
-                    <tr className={"market-rent-row total-row"}>
-                        <td className={"label-column"}/>
-                        <td className={"value-column"}>
-                            <strong>Total Market Rent Differential<br/>at this Market Rent Rate</strong>
-                        </td>
-                        <td className={"calculated-market-rent-differential-column"}>
-                            <CurrencyFormat value={this.computeTotalMarketRentDifferential()}/>
-                        </td>
-                        <td className={"should-apply-market-rent-differential-column"} />
-                        <td className={"should-use-market-rent"} />
                     </tr>
                     </tbody>
                 </table>

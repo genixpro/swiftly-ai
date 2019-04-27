@@ -21,6 +21,14 @@ class ViewComparableSales extends React.Component {
             saveAppraisal: this.props.saveAppraisal,
         };
 
+        const capRateRouteFields = {
+            ...routeProps, compsField: "comparableSalesCapRate"
+        };
+
+        const dcaRouteFields = {
+            ...routeProps, compsField: "comparableSalesDCA"
+        };
+
         return [
             <AppraisalContentHeader key={1} appraisal={this.props.appraisal} title="Comparable Sales" />,
             <Row key={2}>
@@ -30,7 +38,10 @@ class ViewComparableSales extends React.Component {
                             <NavLink to={`${this.props.match.url}/database`} activeClassName="active" tag={RRNavLink}>Comparable Sales Database</NavLink>
                         </NavItem>
                         <NavItem>
-                            <NavLink to={`${this.props.match.url}/appraisal`} activeClassName="active" tag={RRNavLink}>Appraisal Comparable Sales</NavLink>
+                            <NavLink to={`${this.props.match.url}/appraisal_caprate`} activeClassName="active" tag={RRNavLink}>Comparable Sales for Capitalization Approach</NavLink>
+                        </NavItem>
+                        <NavItem>
+                            <NavLink to={`${this.props.match.url}/appraisal_dca`} activeClassName="active" tag={RRNavLink}>Comparable Sales for Direct Comparison Approach</NavLink>
                         </NavItem>
                     </Nav>
                 </Col>
@@ -41,7 +52,8 @@ class ViewComparableSales extends React.Component {
                         <CardBody>
                             <div id={"view-tenants"}>
                                 <Switch>
-                                    <Route path={`${this.props.match.url}/appraisal`} render={(props) => withProps({...routeProps, ...props})(ViewAppraisalComparableSales)()} />
+                                    <Route path={`${this.props.match.url}/appraisal_caprate`} render={(props) => withProps({...capRateRouteFields, ...props})(ViewAppraisalComparableSales)()} />
+                                    <Route path={`${this.props.match.url}/appraisal_dca`} render={(props) => withProps({...dcaRouteFields, ...props})(ViewAppraisalComparableSales)()} />
                                     <Route path={`${this.props.match.url}/database`} render={(props) => withProps({...routeProps, ...props})(ViewComparableSalesDatabase)()} />
                                 </Switch>
                             </div>

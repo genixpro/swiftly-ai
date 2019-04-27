@@ -10,15 +10,21 @@ class RecoveryStructure(EmbeddedDocument):
 
     name = StringField()
 
-    managementCalculationRule = EmbeddedDocumentField(CalculationRule, default=CalculationRule(percentage=100, field="managementExpenses"))
+    managementRecoveryMode = StringField(default="operatingExpenses", choices=["operatingExpenses", "operatingExpensesAndTaxes", "custom", "managementExpenses", "none"])
 
-    calculatedManagementRecoveryBaseFieldValue = FloatField(default=0)
+    managementRecoveryOperatingPercentage = FloatField()
 
-    calculatedManagementRecovery = FloatField(default=0)
+    managementRecoveries = DictField()
 
     expenseRecoveries = DictField()
 
     taxRecoveries = DictField()
+
+    calculatedManagementRecoveryBaseValue = FloatField()
+
+    calculatedManagementRecoveryTotal = FloatField()
+
+    calculatedManagementRecoveries = DictField(default={})
 
     calculatedExpenseRecoveries = DictField(default={})
 

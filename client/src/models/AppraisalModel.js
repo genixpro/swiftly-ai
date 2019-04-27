@@ -19,6 +19,7 @@ import StringField from "../orm/StringField";
 import FloatField from "../orm/FloatField";
 import DateField from "../orm/DateField";
 import LeasingCostStructureModel from "./LeasingCostStructureModel";
+import _ from "underscore";
 
 class AppraisalModel extends BaseModel
 {
@@ -26,14 +27,17 @@ class AppraisalModel extends BaseModel
     static appraisalName = new StringField("name");
     static address = new StringField();
     static owner = new StringField();
+
+    static client = new StringField();
     static location = new GenericField();
     static imageUrl = new StringField();
     static effectiveDate = new DateField();
     static propertyType = new StringField();
     static industrialSubType = new StringField();
     static landSubType = new StringField();
-    static sizeOfBuilding = new FloatField();
     static sizeOfLand = new FloatField();
+    static buildableArea = new FloatField();
+    static buildableUnits = new FloatField();
     static legalDescription = new StringField();
     static zoning = new StringField();
     static propertyTags = new ListField(new StringField());
@@ -42,7 +46,10 @@ class AppraisalModel extends BaseModel
     static discountedCashFlowInputs = new ModelField(DiscountedCashFlowInputsModel);
     static discountedCashFlow = new ModelField(DiscountedCashFlowModel);
     static validationResult = new ModelField(AppraisalValidationResultModel);
-    static comparableSales = new ListField(new StringField());
+
+    static comparableSalesCapRate = new ListField(new StringField(), []);
+    static comparableSalesDCA = new ListField(new StringField(), []);
+
     static comparableLeases = new ListField(new StringField());
     static stabilizedStatementInputs = new ModelField(StabilizedStatementInputsModel);
     static stabilizedStatement = new ModelField(StabilizedStatementModel);
@@ -61,6 +68,38 @@ class AppraisalModel extends BaseModel
             return this.effectiveDate;
         }
         return new Date();
+    }
+
+    get estimatedMarketRent()
+    {
+        let total = 0;
+        for(let unit of this.units)
+        {
+            total += unit.marketRentAmount * unit.squareFootage;
+        }
+
+        return total;
+    }
+
+    get occupancyRate()
+    {
+        let total = 0;
+        let totalOccupied = 0;
+        for(let unit of this.units)
+        {
+            total += unit.squareFootage;
+            if(!unit.isVacantForStabilizedStatement)
+            {
+                totalOccupied += unit.squareFootage;
+            }
+        }
+
+        return totalOccupied / total;
+    }
+
+    get sizeOfBuilding()
+    {
+        return _.reduce(this.units, function(memo, num){ return memo + num.squareFootage; }, 0);
     }
 }
 

@@ -45,6 +45,7 @@ class ComparableSaleModel extends EquationMdoel
     static shippingDoors = new FloatField();
     static siteCoverage = new FloatField();
 
+    static buildableUnits = new FloatField();
 
     static zoning = new StringField();
     static developmentProposals = new StringField();
@@ -162,6 +163,12 @@ class ComparableSaleModel extends EquationMdoel
             {
                 inputs: ['sizeOfBuildableAreaSqft', 'sizeOfLandSqft'],
                 equation: (sizeOfBuildableAreaSqft, sizeOfLandSqft) => sizeOfBuildableAreaSqft / sizeOfLandSqft
+            }
+        ],
+        "pricePerBuildableUnit": [
+            {
+                inputs: ['salePrice', 'buildableUnits'],
+                equation: (salePrice, buildableUnits) => salePrice / buildableUnits
             }
         ]
     };

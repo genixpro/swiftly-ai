@@ -2,10 +2,6 @@
 import BaseModel from "../orm/BaseModel";
 import StringField from "../orm/StringField";
 import FloatField from "../orm/FloatField";
-import ModelField from "../orm/ModelField";
-import ListField from "../orm/ListField";
-import BoolField from "../orm/BoolField";
-import RecoveryStructureModel from "./RecoveryStructureModel";
 
 
 
@@ -14,7 +10,8 @@ class LeasingCostStructureModel extends BaseModel
     static leasingCostStructureName = new StringField("name");
 
     static leasingCommissionPSF = new FloatField("leasingCommissionPSF", 1);
-    static leasingCommissionPercent = new FloatField("leasingCommissionPercent", 100);
+    static leasingCommissionPercentYearOne = new FloatField("leasingCommissionPercentYearOne", 2);
+    static leasingCommissionPercentRemainingYears = new FloatField("leasingCommissionPercentRemainingYears", 2);
     static leasingCommissionMode = new StringField("leasingCommissionMode", "psf");
 
 

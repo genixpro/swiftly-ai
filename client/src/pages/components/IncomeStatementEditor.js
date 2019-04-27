@@ -220,7 +220,7 @@ class IncomeStatementEditor extends React.Component
 
         this.SortableList = SortableContainer(({items}) =>
         {
-            const others = _.filter(items, (item) => Object.keys(this.props.groups).indexOf(item.incomeStatementItemType) === -1);
+            // const others = _.filter(items, (item) => Object.keys(this.props.groups).indexOf(item.incomeStatementItemType) === -1);
 
             let increment = 0;
 

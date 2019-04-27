@@ -1,4 +1,3 @@
-import GenericField from "../orm/GenericField";
 import BaseModel from "../orm/BaseModel";
 import ListField from "../orm/ListField";
 import ModelField from "../orm/ModelField";
@@ -15,6 +14,13 @@ class DirectComparisonModifier extends BaseModel
 class DirectComparisonInputs extends BaseModel
 {
     static pricePerSquareFoot = new FloatField();
+
+    static pricePerAcreLand = new FloatField();
+    static pricePerSquareFootLand = new FloatField();
+    static pricePerSquareFootBuildableArea = new FloatField();
+    static pricePerBuildableUnit = new FloatField();
+
+    static directComparisonMetric = new StringField();
 
     static modifiers = new ListField(new ModelField(DirectComparisonModifier));
 }

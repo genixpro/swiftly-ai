@@ -27,7 +27,7 @@ class StabilizedStatementInputs(EmbeddedDocument):
     expensesMode = StringField(default="income_statement", choices=["income_statement", "tmi"])
 
     # This specifies whether mangemgent expenses are taken from the income statement, or based on a calculation rule
-    managementExpenseMode = StringField(default="income_statement", choices=["income_statement", "rule"])
+    managementExpenseMode = StringField(default="income_statement", choices=["income_statement", "rule", "combined_structural_rule"])
 
     managementExpenseCalculationRule = EmbeddedDocumentField(CalculationRule, default=CalculationRule(percentage=3, field="effectiveGrossIncome"))
 

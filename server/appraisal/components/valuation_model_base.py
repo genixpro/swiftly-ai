@@ -120,10 +120,19 @@ class ValuationModelBase:
             if unit.isVacantForStabilizedStatement and unit.squareFootage and unit.marketRent and self.getMarketRent(appraisal, unit.marketRent):
                 leasingCosts = self.getLeasingCostStructure(appraisal, unit.leasingCostStructure)
 
+                if unit.currentTenancy.rentType == 'net':
+                    currentRecoveryLoss = self.computeOperatingExpenseRecoveriesForUnit(appraisal, unit) / 12.0 * leasingCosts.renewalPeriod \
+                                          + self.computeTaxRecoveriesForUnit(appraisal, unit) / 12.0 * leasingCosts.renewalPeriod \
+                                          + self.computeManagementRecoveriesForUnit(appraisal, unit) / 12.0 * leasingCosts.renewalPeriod
+                else:
+                    currentRecoveryLoss = 0
+
                 currentRentLoss = (self.getMarketRent(appraisal, unit.marketRent) * unit.squareFootage) / 12.0 * leasingCosts.renewalPeriod
 
-                unit.calculatedVacantUnitRentLoss += currentRentLoss
-                total += currentRentLoss
+                currentTotalLoss = currentRecoveryLoss + currentRentLoss
+
+                unit.calculatedVacantUnitRentLoss += currentTotalLoss
+                total += currentRentLoss + currentTotalLoss
 
         return -total
 
@@ -142,7 +151,11 @@ class ValuationModelBase:
                 if leasingCosts.leasingCommissionMode == 'psf':
                     currentLeaseUpCosts += leasingCosts.leasingCommissionPSF * unit.squareFootage
                 elif leasingCosts.leasingCommissionMode == "percent_of_rent" and unit.marketRent and self.getMarketRent(appraisal, unit.marketRent):
-                    currentLeaseUpCosts += (leasingCosts.leasingCommissionPercent / 100.0) * self.getMarketRent(appraisal, unit.marketRent) * unit.squareFootage
+                    yearOneMonths = min(leasingCosts.leasingPeriod, 12)
+                    remainingMonths = max(0, leasingCosts.leasingPeriod - 12)
+
+                    currentLeaseUpCosts += (leasingCosts.leasingCommissionPercentYearOne / 100.0) * self.getMarketRent(appraisal, unit.marketRent) * unit.squareFootage / 12.0 * yearOneMonths
+                    currentLeaseUpCosts += (leasingCosts.leasingCommissionPercentRemainingYears / 100.0) * self.getMarketRent(appraisal, unit.marketRent) * unit.squareFootage / 12.0 * remainingMonths
 
                 unit.calculatedVacantUnitLeasupCosts += currentLeaseUpCosts
 
@@ -255,7 +268,7 @@ class ValuationModelBase:
             for expense in appraisal.incomeStatement.expenses:
                 if expense.incomeStatementItemType == 'management_expense':
                     total += self.getLatestAmount(expense)
-        elif appraisal.stabilizedStatementInputs.managementExpenseMode == 'rule':
+        elif appraisal.stabilizedStatementInputs.managementExpenseMode == 'rule' or appraisal.stabilizedStatementInputs.managementExpenseMode == 'combined_structural_rule':
             total = (appraisal.stabilizedStatementInputs.managementExpenseCalculationRule.percentage / 100.0) * self.getCalculationField(appraisal, appraisal.stabilizedStatementInputs.managementExpenseCalculationRule.field)
 
         return total
@@ -291,27 +304,40 @@ class ValuationModelBase:
     def computeManagementRecoveriesForUnit(self, appraisal, unit):
         recoveryStructure = self.recoveryStructureForUnit(appraisal, unit)
 
-        unit.calculatedManagementRecovery = 0
-
-        # TODO: This is a weird edge case. Because effectiveGrossIncome is itself dependent upon management recoveries, if management recoveries are based on
-        # management expenses and management expenses are based on a number that is dependent upon management recoveries, we have a circular logic that leads
-        # to infinite recursion and an unsolvable set of rules. We'll need a better way to catch this in the future.
-        if recoveryStructure.managementCalculationRule.field == 'managementExpenses' and \
-                appraisal.stabilizedStatementInputs.managementExpenseMode == 'rule' and \
-                appraisal.stabilizedStatementInputs.managementExpenseCalculationRule.field == 'effectiveGrossIncome':
+        if recoveryStructure.managementRecoveryMode == 'none':
             return 0
 
-        if recoveryStructure.managementCalculationRule and recoveryStructure.managementCalculationRule.percentage and recoveryStructure.managementCalculationRule.field:
-            percentage = (recoveryStructure.managementCalculationRule.percentage / 100.0)
+        if recoveryStructure.managementRecoveryMode == "operatingExpenses" or recoveryStructure.managementRecoveryMode == 'operatingExpensesAndTaxes' or recoveryStructure.managementRecoveryMode == 'managementExpenses':
+            percentage = ((recoveryStructure.managementRecoveryOperatingPercentage or 100) / 100.0)
 
             if unit.squareFootage and appraisal.sizeOfBuilding:
                 percentage *= unit.squareFootage / appraisal.sizeOfBuilding
 
-            recoveredAmount = percentage * self.getCalculationField(appraisal, recoveryStructure.managementCalculationRule.field)
+            recoveredAmount = 0
+            if recoveryStructure.managementRecoveryMode == 'operatingExpenses':
+                recoveredAmount = percentage * self.computeTotalOperatingExpenses(appraisal)
+            elif recoveryStructure.managementRecoveryMode == 'operatingExpensesAndTaxes':
+                recoveredAmount = percentage * (self.computeTotalOperatingExpenses(appraisal) + self.computeTaxes(appraisal))
+            elif recoveryStructure.managementRecoveryMode == 'managementExpenses':
+                recoveredAmount = percentage * (self.computeManagementFees(appraisal))
 
             unit.calculatedManagementRecovery += recoveredAmount
 
             return recoveredAmount
+        elif recoveryStructure.managementRecoveryMode == "custom":
+            for expense in appraisal.incomeStatement.expenses:
+                if expense.incomeStatementItemType == 'operating_expense' or expense.incomeStatementItemType == 'taxes':
+                    percentage = (recoveryStructure.managementRecoveries.get(expense.machineName, 100)) / 100.0
+
+                    if unit.squareFootage and appraisal.sizeOfBuilding:
+                        percentage *= unit.squareFootage / appraisal.sizeOfBuilding
+
+                    recoveredAmount = percentage * expense.getLatestAmount()
+
+                    unit.calculatedManagementRecovery += recoveredAmount
+
+            return unit.calculatedManagementRecovery
+
         return 0
 
 
@@ -358,16 +384,44 @@ class ValuationModelBase:
         total = 0
 
         for recoveryStructure in appraisal.recoveryStructures:
-            recoveryStructure.calculatedManagementRecovery = 0
-            recoveryStructure.calculatedManagementRecoveryBaseFieldValue = self.getCalculationField(appraisal, recoveryStructure.managementCalculationRule.field)
+            recoveryStructure.calculatedManagementRecoveries = {}
+            for expense in appraisal.incomeStatement.expenses:
+                if expense.incomeStatementItemType == 'operating_expense' or expense.incomeStatementItemType == 'management_expense' or expense.incomeStatementItemType == 'taxes':
+                    recoveryStructure.calculatedManagementRecoveries[expense.machineName] = 0
+            recoveryStructure.calculatedManagementRecoveryTotal = 0
+
+            if recoveryStructure.managementRecoveryMode == 'operatingExpenses':
+                recoveryStructure.calculatedManagementRecoveryBaseValue = self.computeTotalOperatingExpenses(appraisal)
+            elif recoveryStructure.managementRecoveryMode == 'operatingExpensesAndTaxes':
+                recoveryStructure.calculatedManagementRecoveryBaseValue = (self.computeTotalOperatingExpenses(appraisal) + self.computeTaxes(appraisal))
+            elif recoveryStructure.managementRecoveryMode == 'managementExpenses':
+                recoveryStructure.calculatedManagementRecoveryBaseValue = (self.computeManagementFees(appraisal))
 
         for unit in appraisal.units:
             unit.calculatedManagementRecovery = self.computeManagementRecoveriesForUnit(appraisal, unit)
-
             recoveryStructure = self.recoveryStructureForUnit(appraisal, unit)
 
-            total += unit.calculatedManagementRecovery
-            recoveryStructure.calculatedManagementRecovery += unit.calculatedManagementRecovery
+            if recoveryStructure.managementRecoveryMode == "operatingExpenses" or recoveryStructure.managementRecoveryMode == 'operatingExpensesAndTaxes' or recoveryStructure.managementRecoveryMode == 'managementExpenses':
+                total += unit.calculatedManagementRecovery
+                recoveryStructure.calculatedManagementRecoveryTotal += unit.calculatedManagementRecovery
+            elif recoveryStructure.managementRecoveryMode == "custom":
+                recoveryStructure = self.recoveryStructureForUnit(appraisal, unit)
+
+                unit.calculatedExpenseRecovery = 0
+
+                for expense in appraisal.incomeStatement.expenses:
+                    if expense.incomeStatementItemType == 'operating_expense' or expense.incomeStatementItemType == 'taxes':
+                        percentage = (recoveryStructure.managementRecoveries.get(expense.machineName, 100)) / 100.0
+
+                        if unit.squareFootage and appraisal.sizeOfBuilding:
+                            percentage *= unit.squareFootage / appraisal.sizeOfBuilding
+
+                        recoveredAmount = percentage * expense.getLatestAmount()
+
+                        total += recoveredAmount
+                        recoveryStructure.calculatedManagementRecoveries[expense.machineName] += recoveredAmount
+                        recoveryStructure.calculatedManagementRecoveryTotal += recoveredAmount
+                        unit.calculatedExpenseRecovery += recoveredAmount
 
         return total
 

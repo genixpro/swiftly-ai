@@ -21,6 +21,7 @@ class TagEditor extends React.Component {
                 })
             };
         }
+        return {};
     }
 
     componentDidMount()

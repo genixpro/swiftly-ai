@@ -13,6 +13,7 @@ import PercentFormat from "./components/PercentFormat";
 import CurrencyFormat from "./components/CurrencyFormat";
 import IntegerFormat from "./components/IntegerFormat";
 import {StabilizedStatementModifier} from "../models/StabilizedStatementInputsModel";
+import _ from "underscore";
 
 class ViewCapitalizationValuation extends React.Component
 {
@@ -27,7 +28,7 @@ class ViewCapitalizationValuation extends React.Component
     componentDidMount()
     {
         this.props.reloadAppraisal();
-        Promise.map(this.props.appraisal.comparableSales, (comparableSaleId) =>
+        Promise.map(this.props.appraisal.comparableSalesCapRate, (comparableSaleId) =>
         {
             if (this.loadedComparables[comparableSaleId])
             {
@@ -141,9 +142,11 @@ class ViewCapitalizationValuation extends React.Component
 
     render()
     {
+        const popoverId = `market-rent-differential-popover`;
+
         return [
-            <AppraisalContentHeader appraisal={this.props.appraisal} title="Capitalization Approach"/>,
-            <Row className={"view-capitalization-valuation"}>
+            <AppraisalContentHeader appraisal={this.props.appraisal} title="Capitalization Approach" key={"header"}/>,
+            <Row className={"view-capitalization-valuation"} key={"body"}>
                 <Col xs={12}>
                     <Card className="card-default">
                         <CardBody>
@@ -210,14 +213,58 @@ class ViewCapitalizationValuation extends React.Component
                                                 this.props.appraisal.stabilizedStatement.marketRentDifferential ?
                                                     <tr className={"data-row capitalization-row"}>
                                                         <td className={"label-column"}>
-                                                            <Link to={`/appraisal/${this.props.appraisal._id}/tenants/market_rents`}>
-                                                                <span>Market Rent Differential, Discounted @ <PercentFormat value={this.props.appraisal.stabilizedStatementInputs.marketRentDifferentialDiscountRate}/></span>
-                                                            </Link>
+                                                            <a id={popoverId} onClick={() => this.setState({marketRentDifferentialPopoverOpen: !this.state.marketRentDifferentialPopoverOpen})}>
+                                                                <span>Market Rent Differential</span>
+                                                            </a>
                                                         </td>
-                                                        <td className={"amount-column"}></td>
+                                                        <td className={"amount-column"} />
                                                         <td className={"amount-total-column"}>
-                                                            <Link to={`/appraisal/${this.props.appraisal._id}/tenants/market_rents`}>
+                                                            <a id={popoverId} onClick={() => this.setState({marketRentDifferentialPopoverOpen: !this.state.marketRentDifferentialPopoverOpen})}>
                                                                 <CurrencyFormat value={this.props.appraisal.stabilizedStatement.marketRentDifferential} />
+                                                            </a>
+                                                            <Popover placement="bottom" isOpen={this.state.marketRentDifferentialPopoverOpen} target={popoverId} toggle={() => this.setState({marketRentDifferentialPopoverOpen: !this.state.marketRentDifferentialPopoverOpen})}>
+                                                                <PopoverHeader>Market Rent Differential</PopoverHeader>
+                                                                <PopoverBody>
+                                                                    <table className={"explanation-popover-table"}>
+                                                                        <thead>
+                                                                        </thead>
+                                                                        <tbody>
+                                                                        <tr>
+                                                                            <td>Discount Rate</td>
+                                                                            <td>
+                                                                                <PercentFormat value={this.props.appraisal.stabilizedStatementInputs.marketRentDifferentialDiscountRate}/>
+                                                                            </td>
+                                                                        </tr>
+                                                                        {
+                                                                            _.filter(this.props.appraisal.units, (unit) => unit.calculatedMarketRentDifferential).map((unit, unitIndex) =>
+                                                                            {
+                                                                                let underline = "";
+                                                                                if (unitIndex === this.props.appraisal.units.length-1)
+                                                                                {
+                                                                                    underline = `underline`;
+                                                                                }
+
+                                                                                return <tr key={unitIndex}>
+                                                                                    <td>Unit {unit.unitNumber}</td>
+                                                                                    <td className={underline}><CurrencyFormat value={unit.calculatedMarketRentDifferential}/></td>
+                                                                                </tr>;
+                                                                            })
+                                                                        }
+                                                                        <tr className={"total-row"}>
+                                                                            <td>
+                                                                                Total
+                                                                            </td>
+                                                                            <td>
+                                                                                <CurrencyFormat value={this.props.appraisal.stabilizedStatement.marketRentDifferential}/>
+                                                                            </td>
+                                                                        </tr>
+                                                                        </tbody>
+                                                                    </table>
+                                                                </PopoverBody>
+                                                            </Popover>
+
+
+                                                            <Link to={`/appraisal/${this.props.appraisal._id}/tenants/market_rents`}>
                                                             </Link>
                                                         </td>
                                                     </tr> : null
@@ -227,10 +274,10 @@ class ViewCapitalizationValuation extends React.Component
                                                     <tr className={"data-row capitalization-row"}>
                                                         <td className={"label-column"}>
                                                             <a onClick={() => this.setState({freeRentLossPopoverOpen: !this.state.freeRentLossPopoverOpen})}>
-                                                                <span>Free Rent Loss</span>
+                                                                <span>Remaining Free Rent</span>
                                                             </a>
                                                             <Popover placement="bottom" isOpen={this.state.freeRentLossPopoverOpen} target={"free-rent-loss-popover"} toggle={() => this.setState({freeRentLossPopoverOpen: !this.state.freeRentLossPopoverOpen})}>
-                                                                <PopoverHeader>Free Rent Loss</PopoverHeader>
+                                                                <PopoverHeader>Remaining Free Rent</PopoverHeader>
                                                                 <PopoverBody>
                                                                     <table className={"explanation-popover-table"}>
                                                                         <tbody>
@@ -239,7 +286,7 @@ class ViewCapitalizationValuation extends React.Component
                                                                             {
                                                                                 const underline = unitIndex === this.props.appraisal.units.length - 1 ? "underline" : "";
 
-                                                                                return <tr>
+                                                                                return <tr key={unitIndex}>
                                                                                     <td>Unit {unit.unitNumber}</td>
                                                                                     <td><IntegerFormat value={unit.calculatedFreeRentMonths}/> months remaining</td>
                                                                                     <td>/</td>
@@ -279,7 +326,7 @@ class ViewCapitalizationValuation extends React.Component
                                                     <tr className={"data-row capitalization-row"}>
                                                         <td className={"label-column"}>
                                                             <Link to={`/appraisal/${this.props.appraisal._id}/tenants/leasing_costs`}>
-                                                                <span>Vacant Unit Leasup Costs</span>
+                                                                <span>Vacant Unit Leasing Costs</span>
                                                             </Link>
                                                         </td>
                                                         <td className={"amount-column"}></td>
@@ -405,16 +452,8 @@ class ViewCapitalizationValuation extends React.Component
                                             <h3>Inputs</h3>
 
                                             <Table>
+                                                <tbody>
                                                 <tr>
-                                                    <td>Discount Rate for Market Rent Differential</td>
-                                                    <td>
-                                                        <FieldDisplayEdit
-                                                            type={"percent"}
-                                                            placeholder={"Market Rent Differential Discount Rate"}
-                                                            value={this.props.appraisal.stabilizedStatementInputs ? this.props.appraisal.stabilizedStatementInputs.marketRentDifferentialDiscountRate : 5.0}
-                                                            onChange={(newValue) => this.changeStabilizedInput("marketRentDifferentialDiscountRate", newValue)}
-                                                        />
-                                                    </td>
                                                 </tr>
                                                 <tr>
                                                     <td>Capitalization Rate</td>
@@ -427,8 +466,8 @@ class ViewCapitalizationValuation extends React.Component
                                                         />
                                                     </td>
                                                 </tr>
+                                                </tbody>
                                             </Table>
-
                                         </CardBody>
                                     </Card>
                                 </Col>

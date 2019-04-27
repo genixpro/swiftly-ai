@@ -21,6 +21,8 @@ import IncomeItemTypeSelector from "./IncomeItemTypeSelector";
 import RecoveryStructureSelector from "./RecoveryStructureSelector";
 import ManagementExpenseModeSelector from "./ManagementExpenseModeSelector";
 import LeasingComissionModeSelector from "./LeasingCommissionModeSelector";
+import ManagementRecoveryModeSelector from "./ManagementRecoveryModeSelector";
+import DirectComparisonMetricSelector from "./DirectComparisonMetricSelector";
 
 class FieldDisplayEdit extends React.Component
 {
@@ -467,6 +469,28 @@ class FieldDisplayEdit extends React.Component
                 {
                     this.props.type === "managementExpenseMode" ?
                         <ManagementExpenseModeSelector
+                            value={this.state.isEditing ? this.state.value : this.props.value}
+                            disabled={!this.props.edit}
+                            title={this.props.title || this.props.placeholder}
+                            onChange={(newValue) => this.selectInputUpdated(newValue) }
+                            onBlur={() => this.finishEditing()}
+                            innerRef={(inputElem) => this.inputElem = inputElem}
+                        /> : null
+                }
+                {
+                    this.props.type === "managementRecoveryMode" ?
+                        <ManagementRecoveryModeSelector
+                            value={this.state.isEditing ? this.state.value : this.props.value}
+                            disabled={!this.props.edit}
+                            title={this.props.title || this.props.placeholder}
+                            onChange={(newValue) => this.selectInputUpdated(newValue) }
+                            onBlur={() => this.finishEditing()}
+                            innerRef={(inputElem) => this.inputElem = inputElem}
+                        /> : null
+                }
+                {
+                    this.props.type === "directComparisonMetric" ?
+                        <DirectComparisonMetricSelector
                             value={this.state.isEditing ? this.state.value : this.props.value}
                             disabled={!this.props.edit}
                             title={this.props.title || this.props.placeholder}

@@ -10,6 +10,10 @@ import Auth from "../Auth";
 
 
 class ViewAppraisalComparableSales extends React.Component {
+    static defaultProps = {
+        compsField: "comparableSalesCapRate"
+    };
+
     state = {
         comparableSales: [],
         sort: "-saleDate"
@@ -17,9 +21,12 @@ class ViewAppraisalComparableSales extends React.Component {
 
     loadedComparables = {};
 
+    field = "";
+
     componentDidMount()
     {
-         Promise.map(this.props.appraisal.comparableSales, (comparableSaleId) =>
+        this.field = this.props.compsField;
+        Promise.map(this.props.appraisal[this.props.compsField], (comparableSaleId) =>
         {
             if (this.loadedComparables[comparableSaleId])
             {
@@ -42,6 +49,14 @@ class ViewAppraisalComparableSales extends React.Component {
         })
     }
 
+    componentDidUpdate()
+    {
+        if (this.props.compsField !== this.field)
+        {
+            this.componentDidMount();
+        }
+    }
+
     onComparablesChanged(comps)
     {
         this.setState({comparableSales: comps});
@@ -50,8 +65,58 @@ class ViewAppraisalComparableSales extends React.Component {
     addComparableToAppraisal(comp)
     {
         const appraisal = this.props.appraisal;
-        appraisal.comparableSales.push(comp._id);
-        appraisal.comparableSales = _.clone(appraisal.comparableSales);
+        appraisal[this.props.compsField].push(comp._id);
+        appraisal[this.props.compsField] = _.clone(appraisal[this.props.compsField]);
+        this.props.saveAppraisal(appraisal);
+    }
+
+    addComparableToDCA(comp)
+    {
+        const appraisal = this.props.appraisal;
+
+        appraisal.comparableSalesDCA.push(comp._id);
+        appraisal.comparableSalesDCA = _.clone(appraisal.comparableSalesDCA);
+        this.props.saveAppraisal(appraisal);
+    }
+
+    addComparableToCapRate(comp)
+    {
+        const appraisal = this.props.appraisal;
+
+        appraisal.comparableSalesCapRate.push(comp._id);
+        appraisal.comparableSalesCapRate = _.clone(appraisal.comparableSalesCapRate);
+        this.props.saveAppraisal(appraisal);
+    }
+
+
+    removeComparableFromDCA(comp)
+    {
+        const appraisal = this.props.appraisal;
+        for (let i = 0; i < appraisal.comparableSalesDCA.length; i += 1)
+        {
+            if (appraisal.comparableSalesDCA[i] === comp._id)
+            {
+                appraisal.comparableSalesDCA.splice(i, 1);
+                break;
+            }
+        }
+        appraisal.comparableSalesDCA = _.clone(appraisal.comparableSalesDCA);
+        this.props.saveAppraisal(appraisal);
+    }
+
+
+    removeComparableFromCapRate(comp)
+    {
+        const appraisal = this.props.appraisal;
+        for (let i = 0; i < appraisal.comparableSalesCapRate.length; i += 1)
+        {
+            if (appraisal.comparableSalesCapRate[i] === comp._id)
+            {
+                appraisal.comparableSalesCapRate.splice(i, 1);
+                break;
+            }
+        }
+        appraisal.comparableSalesCapRate = _.clone(appraisal.comparableSalesCapRate);
         this.props.saveAppraisal(appraisal);
     }
 
@@ -60,16 +125,16 @@ class ViewAppraisalComparableSales extends React.Component {
     {
         const appraisal = this.props.appraisal;
         const comparables = this.state.comparableSales;
-        for (let i = 0; i < appraisal.comparableSales.length; i += 1)
+        for (let i = 0; i < appraisal[this.props.compsField].length; i += 1)
         {
-            if (appraisal.comparableSales[i] === comp._id)
+            if (appraisal[this.props.compsField][i] === comp._id)
             {
-                appraisal.comparableSales.splice(i, 1);
+                appraisal[this.props.compsField].splice(i, 1);
                 comparables.splice(i, 1);
                 break;
             }
         }
-        appraisal.comparableSales = _.clone(appraisal.comparableSales);
+        appraisal[this.props.compsField] = _.clone(appraisal[this.props.compsField]);
         this.props.saveAppraisal(appraisal);
         this.setState({comparableSales: comparables});
     }
@@ -143,9 +208,13 @@ class ViewAppraisalComparableSales extends React.Component {
                                                 history={this.props.history}
                                                 appraisal={this.props.appraisal}
                                                 appraisalId={this.props.match.params._id}
-                                                appraisalComparables={this.props.appraisal.comparableSales}
+                                                appraisalComparables={this.props.appraisal[this.props.compsField]}
                                                 onRemoveComparableClicked={(comp) => this.removeComparableFromAppraisal(comp)}
                                                 onChange={(comps) => this.onComparablesChanged(comps)}
+                                                onRemoveDCAClicked={(comp) => this.removeComparableFromDCA(comp)}
+                                                onRemoveCapRateClicked={(comp) => this.removeComparableFromCapRate(comp)}
+                                                onAddDCAClicked={(comp) => this.addComparableToDCA(comp)}
+                                                onAddCapRateClicked={(comp) => this.addComparableToCapRate(comp)}
                             />
                         </Col>
                         <Col xs={4}>

@@ -1,5 +1,4 @@
 import IdField from "../orm/IdField";
-import GenericField from "../orm/GenericField";
 import BaseModel from "../orm/BaseModel";
 import StringField from "../orm/StringField";
 

@@ -45,6 +45,7 @@ class ManagementExpenseModeSelector extends React.Component
             >
                 <option value={"income_statement"}>Base on Expense Statement</option>
                 <option value={"rule"}>Base on Industry Rate</option>
+                <option value={"combined_structural_rule"}>Combine with Structural Allowance</option>
             </select>
         );
     }

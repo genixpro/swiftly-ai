@@ -64,8 +64,29 @@ class ViewComparableSalesDatabase extends React.Component {
     addComparableToAppraisal(comp)
     {
         const appraisal = this.props.appraisal;
-        appraisal.comparableSales.push(comp._id);
-        appraisal.comparableSales = _.clone(appraisal.comparableSales);
+        appraisal.comparableSalesCapRate.push(comp._id);
+        appraisal.comparableSalesCapRate = _.clone(appraisal.comparableSalesCapRate);
+
+        appraisal.comparableSalesDCA.push(comp._id);
+        appraisal.comparableSalesDCA = _.clone(appraisal.comparableSalesDCA);
+        this.props.saveAppraisal(appraisal);
+    }
+
+    addComparableToDCA(comp)
+    {
+        const appraisal = this.props.appraisal;
+
+        appraisal.comparableSalesDCA.push(comp._id);
+        appraisal.comparableSalesDCA = _.clone(appraisal.comparableSalesDCA);
+        this.props.saveAppraisal(appraisal);
+    }
+
+    addComparableToCapRate(comp)
+    {
+        const appraisal = this.props.appraisal;
+
+        appraisal.comparableSalesCapRate.push(comp._id);
+        appraisal.comparableSalesCapRate = _.clone(appraisal.comparableSalesCapRate);
         this.props.saveAppraisal(appraisal);
     }
 
@@ -79,15 +100,56 @@ class ViewComparableSalesDatabase extends React.Component {
     removeComparableFromAppraisal(comp)
     {
         const appraisal = this.props.appraisal;
-        for (let i = 0; i < appraisal.comparableSales.length; i += 1)
+        for (let i = 0; i < appraisal.comparableSalesCapRate.length; i += 1)
         {
-            if (appraisal.comparableSales[i] === comp._id)
+            if (appraisal.comparableSalesCapRate[i] === comp._id)
             {
-                appraisal.comparableSales.splice(i, 1);
+                appraisal.comparableSalesCapRate.splice(i, 1);
                 break;
             }
         }
-        appraisal.comparableSales = _.clone(appraisal.comparableSales);
+        for (let i = 0; i < appraisal.comparableSalesDCA.length; i += 1)
+        {
+            if (appraisal.comparableSalesDCA[i] === comp._id)
+            {
+                appraisal.comparableSalesDCA.splice(i, 1);
+                break;
+            }
+        }
+        appraisal.comparableSalesCapRate = _.clone(appraisal.comparableSalesCapRate);
+        appraisal.comparableSalesDCA = _.clone(appraisal.comparableSalesDCA);
+        this.props.saveAppraisal(appraisal);
+    }
+
+
+    removeComparableFromDCA(comp)
+    {
+        const appraisal = this.props.appraisal;
+        for (let i = 0; i < appraisal.comparableSalesDCA.length; i += 1)
+        {
+            if (appraisal.comparableSalesDCA[i] === comp._id)
+            {
+                appraisal.comparableSalesDCA.splice(i, 1);
+                break;
+            }
+        }
+        appraisal.comparableSalesDCA = _.clone(appraisal.comparableSalesDCA);
+        this.props.saveAppraisal(appraisal);
+    }
+
+
+    removeComparableFromCapRate(comp)
+    {
+        const appraisal = this.props.appraisal;
+        for (let i = 0; i < appraisal.comparableSalesCapRate.length; i += 1)
+        {
+            if (appraisal.comparableSalesCapRate[i] === comp._id)
+            {
+                appraisal.comparableSalesCapRate.splice(i, 1);
+                break;
+            }
+        }
+        appraisal.comparableSalesCapRate = _.clone(appraisal.comparableSalesCapRate);
         this.props.saveAppraisal(appraisal);
     }
 
@@ -141,6 +203,10 @@ class ViewComparableSalesDatabase extends React.Component {
                                             onRemoveComparableClicked={(comp) => this.removeComparableFromAppraisal(comp)}
                                             onNewComparable={(comp) => this.createNewComparable(comp)}
                                             onChange={(comps) => this.onComparablesChanged(comps)}
+                                            onRemoveDCAClicked={(comp) => this.removeComparableFromDCA(comp)}
+                                            onRemoveCapRateClicked={(comp) => this.removeComparableFromCapRate(comp)}
+                                            onAddDCAClicked={(comp) => this.addComparableToDCA(comp)}
+                                            onAddCapRateClicked={(comp) => this.addComparableToCapRate(comp)}
                         />
                     </Col>
                     <Col xs={4}>

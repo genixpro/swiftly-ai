@@ -34,11 +34,7 @@ class TenantApplicableEditor extends React.Component
                 </div>
             </td>,
             <td className={"unit-size-column"} key={2}>
-                {
-                    this.props.unit.leasingCostStructure === this.props.leasingCostStructure.name ?
-                        <AreaFormat value={this.props.unit.squareFootage} /> : null
-                }
-
+                <AreaFormat value={this.props.unit.squareFootage} />
             </td>,
             <td className={"calculated-vacant-unit-leasup-costs-column"} key={3}>
                 <a id={vacantUnitLeasupCostPopoverId} onClick={() => this.setState({leasupCostPopoverOpen: !this.state.leasupCostPopoverOpen})}>
@@ -49,62 +45,123 @@ class TenantApplicableEditor extends React.Component
                     }
                 </a>
                 <Popover placement="bottom" isOpen={this.state.leasupCostPopoverOpen} target={vacantUnitLeasupCostPopoverId} toggle={() => this.setState({leasupCostPopoverOpen: !this.state.leasupCostPopoverOpen})}>
-                    <PopoverHeader>Unit {this.props.unit.unitNumber} - Leasup Costs</PopoverHeader>
+                    <PopoverHeader>Unit {this.props.unit.unitNumber} - Leasing Costs</PopoverHeader>
                     <PopoverBody>
                         <table className={"explanation-popover-table"}>
                             <tbody>
-                            <tr className={"total-row"}>
+                            <tr>
                                 <td>Tenant Inducements</td>
+                                <td />
+                                <td />
+                                <td>
+                                </td>
+                                <td />
                                 <td><AreaFormat value={this.props.unit.squareFootage}/></td>
                                 <td>*</td>
                                 <td><CurrencyFormat value={this.props.leasingCostStructure.tenantInducementsPSF}/></td>
                                 <td>=</td>
                                 <td><CurrencyFormat value={this.props.unit.squareFootage * this.props.leasingCostStructure.tenantInducementsPSF} cents={false}/></td>
                             </tr>
+                            {
+                                this.props.leasingCostStructure.leasingCommissionMode === 'psf' ?
+                                    <tr>
+                                        <td>Leasing Costs</td>
+                                        <td />
+                                        <td />
+                                        <td>
+                                        </td>
+                                        <td>
+                                        </td>
+                                        <td>
+                                            <AreaFormat value={this.props.unit.squareFootage}/>
+                                        </td>
+                                        <td>*</td>
+                                        <td>
+                                            <CurrencyFormat value={this.props.leasingCostStructure.leasingCommissionPSF}/>
+                                        </td>
+                                        <td>=</td>
+                                        <td className={"underline"}>
+                                            <CurrencyFormat value={this.props.leasingCostStructure.leasingCommissionPSF * this.props.unit.squareFootage} cents={false}/>
+                                        </td>
+                                    </tr> : null
+                               }
+                            {
+                                this.props.leasingCostStructure.leasingCommissionMode === 'percent_of_rent' ?
+                                    <tr>
+                                        <td>Leasing Costs - Year One</td>
+                                        <td />
+                                        <td />
+                                        <td>
+                                            {
+                                                this.props.unit.marketRent ?
+                                                    <CurrencyFormat value={this.props.unit.marketRentAmount} cents={true}/>
+                                                    : <span className={"none-found"}>no market rent</span>
+                                            }
+                                        </td>
+                                        <td>
+                                            <span>*</span>
+                                        </td>
+                                        <td>
+                                            <AreaFormat value={this.props.unit.squareFootage}/>
+                                        </td>
+                                        <td>*</td>
+                                        <td>
+                                            <PercentFormat value={this.props.leasingCostStructure.leasingCommissionPercentYearOne}/>
+                                        </td>
+                                        <td>=</td>
+                                        <td>
+                                            <CurrencyFormat
+                                                value={this.props.leasingCostStructure.leasingCommissionPercentYearOne / 100.0 * (this.props.unit.marketRentAmount * this.props.unit.squareFootage)}
+                                                cents={false}/>
+                                        </td>
+                                    </tr> : null
+                            }
+                            {
+                                this.props.leasingCostStructure.leasingCommissionMode === 'percent_of_rent' && (this.props.leasingCostStructure.leasingPeriod > 12) ?
+                                    <tr>
+                                        <td>Leasing Costs - Remaining Term</td>
+                                        <td>
+                                            {
+                                                <IntegerFormat value={Math.max(0, this.props.leasingCostStructure.leasingPeriod - 12) / 12.0}/>
+                                            }
+                                        </td>
+                                        <td>
+                                            *
+                                        </td>
+                                        <td>
+                                            {
+                                                this.props.unit.marketRent ?
+                                                    <CurrencyFormat value={this.props.unit.marketRentAmount} cents={true}/>
+                                                    : <span className={"none-found"}>no market rent</span>
+                                            }
+                                        </td>
+                                        <td>
+                                            <span>*</span>
+                                        </td>
+                                        <td>
+                                            <AreaFormat value={this.props.unit.squareFootage}/>
+                                        </td>
+                                        <td>*</td>
+                                        <td>
+                                            <PercentFormat value={this.props.leasingCostStructure.leasingCommissionPercentRemainingYears}/>
+                                        </td>
+                                        <td>=</td>
+                                        <td className={"underline"}>
+                                            <CurrencyFormat
+                                                value={this.props.leasingCostStructure.leasingCommissionPercentRemainingYears / 100.0 * (this.props.unit.marketRentAmount * this.props.unit.squareFootage)}
+                                                cents={false}/>
+                                        </td>
+                                    </tr> : null
+                            }
                             <tr className={"total-row"}>
-                                <td>Leasing Costs</td>
-                                <td>
-                                    {
-                                        this.props.leasingCostStructure.leasingCommissionMode === 'psf' ?
-                                            <AreaFormat value={this.props.unit.squareFootage}/> : null
-                                    }
-                                    {
-                                        this.props.leasingCostStructure.leasingCommissionMode === 'percent_of_rent' ?
-                                            this.props.unit.marketRent ?
-                                                <CurrencyFormat value={this.props.unit.marketRentAmount * this.props.unit.squareFootage} cents={false}/>
-                                                : <span className={"none-found"}>no market rent</span>
-                                        : null
-                                    }
-                                </td>
-                                <td>*</td>
-                                <td>
-                                    {
-                                        this.props.leasingCostStructure.leasingCommissionMode === 'psf' ?
-                                            <CurrencyFormat value={this.props.leasingCostStructure.leasingCommissionPSF}/> : null
-                                    }
-                                    {
-                                        this.props.leasingCostStructure.leasingCommissionMode === 'percent_of_rent' ?
-                                            <PercentFormat value={this.props.leasingCostStructure.leasingCommissionPercent}/> : null
-                                    }
-                                </td>
-                                <td>=</td>
-                                <td className={"underline"}>
-                                    {
-                                        this.props.leasingCostStructure.leasingCommissionMode === 'psf' ?
-                                            <CurrencyFormat value={this.props.leasingCostStructure.leasingCommissionPSF * this.props.unit.squareFootage} cents={false}/> : null
-                                    }
-                                    {
-                                        this.props.leasingCostStructure.leasingCommissionMode === 'percent_of_rent' ?
-                                            <CurrencyFormat value={this.props.leasingCostStructure.leasingCommissionPercent / 100.0 * (this.props.unit.marketRentAmount * this.props.unit.squareFootage)} cents={false}/> : null
-                                    }
-                                </td>
-                            </tr>
-                            <tr className={"total-row"}>
-                                <td>Vacant Unit Lease Up Costs</td>
                                 <td></td>
                                 <td></td>
                                 <td></td>
                                 <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td colSpan={2}>Total Leasing Costs</td>
                                 <td><CurrencyFormat value={this.props.unit.calculatedVacantUnitLeasupCosts} cents={false} /></td>
                             </tr>
                             </tbody>
@@ -130,6 +187,16 @@ class TenantApplicableEditor extends React.Component
                         <table className={"explanation-popover-table"}>
                             <tbody>
                             <tr className={"total-row"}>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td><strong>Annual Amount</strong></td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                            <tr className={"total-row"}>
                                 <td>Rent Loss</td>
                                 <td><IntegerFormat value={this.props.leasingCostStructure.renewalPeriod}/></td>
                                 <td>/</td>
@@ -137,16 +204,28 @@ class TenantApplicableEditor extends React.Component
                                 <td>*</td>
                                 <td><CurrencyFormat value={this.props.unit.marketRentAmount * this.props.unit.squareFootage}/></td>
                                 <td>=</td>
-                                <td><CurrencyFormat value={this.props.unit.calculatedVacantUnitRentLoss} cents={false}/></td>
+                                <td><CurrencyFormat value={this.props.leasingCostStructure.renewalPeriod / 12.0 * this.props.unit.marketRentAmount * this.props.unit.squareFootage} cents={false}/></td>
                             </tr>
+                            {
+                                this.props.unit.currentTenancy.rentType === 'net' ?
+                                    <tr className={"total-row"}>
+                                        <td>Recovery Loss</td>
+                                        <td><IntegerFormat value={this.props.leasingCostStructure.renewalPeriod}/></td>
+                                        <td>/</td>
+                                        <td>12</td>
+                                        <td>*</td>
+                                        <td><CurrencyFormat value={this.props.unit.calculatedTaxRecovery + this.props.unit.calculatedManagementRecovery + this.props.unit.calculatedExpenseRecovery}/></td>
+                                        <td>=</td>
+                                        <td><CurrencyFormat value={(this.props.unit.calculatedTaxRecovery + this.props.unit.calculatedManagementRecovery + this.props.unit.calculatedExpenseRecovery) / 12.0 * this.props.leasingCostStructure.renewalPeriod} cents={false}/></td>
+                                    </tr> : null
+                            }
                             <tr className={"total-row"}>
-                                <td>Vacant Unit Rent Loss</td>
                                 <td></td>
                                 <td></td>
                                 <td></td>
                                 <td></td>
                                 <td></td>
-                                <td></td>
+                                <td colSpan={2}><strong>Gross Rent Loss</strong></td>
                                 <td><CurrencyFormat value={this.props.unit.calculatedVacantUnitRentLoss} cents={false} /></td>
                             </tr>
                             </tbody>
@@ -276,7 +355,7 @@ class LeasingCostStructureEditor extends React.Component
                                         hideInput={false}
                                         hideIcon={true}
 
-                                    /> : <strong className={"title"}>Standard Leasing Costs</strong>
+                                    /> : <strong className={"title"}>Standard Market Leasing Assumptions</strong>
                             }
 
                         </td>
@@ -309,16 +388,6 @@ class LeasingCostStructureEditor extends React.Component
                         </td>
                         <td className={"value-column"}>
                             {
-                                leasingCostStructure.leasingCommissionMode === 'percent_of_rent' ?
-                                    <FieldDisplayEdit
-                                        type="percent"
-                                        value={leasingCostStructure.leasingCommissionPercent}
-                                        hideInput={false}
-                                        hideIcon={true}
-                                        onChange={(newValue) => this.changeField('leasingCommissionPercent', newValue)}
-                                    /> : null
-                            }
-                            {
                                 leasingCostStructure.leasingCommissionMode === 'psf' ?
                                     <FieldDisplayEdit
                                         type="currency"
@@ -341,9 +410,54 @@ class LeasingCostStructureEditor extends React.Component
                         <td className={"calculated-vacant-unit-rent-loss"} />
                         <td className={"should-treat-unit-as-vacant-column"} />
                     </tr>
+                    {
+                        leasingCostStructure.leasingCommissionMode === 'percent_of_rent' ?
+                        <tr className={"leasing-cost-row"}>
+                            <td className={"label-column"}>
+                                <strong>Year 1</strong>
+                            </td>
+                            <td className={"value-column"}>
+                                <FieldDisplayEdit
+                                    type="percent"
+                                    value={leasingCostStructure.leasingCommissionPercentYearOne}
+                                    hideInput={false}
+                                    hideIcon={true}
+                                    onChange={(newValue) => this.changeField('leasingCommissionPercentYearOne', newValue)}
+                                />
+                            </td>
+                            <td className={"unit-size-column"} />
+                            <td className={"calculated-vacant-unit-leasup-costs-column"} />
+                            <td className={"calculated-vacant-unit-rent-loss"} />
+                            <td className={"should-treat-unit-as-vacant-column"} />
+                        </tr> : null
+                    }
+                    {
+                        leasingCostStructure.leasingCommissionMode === 'percent_of_rent' ?
+                            <tr className={"leasing-cost-row"}>
+                                <td className={"label-column"}>
+                                    <strong>Remaining Years</strong>
+                                </td>
+                                <td className={"value-column"}>
+                                    {
+                                        leasingCostStructure.leasingCommissionMode === 'percent_of_rent' ?
+                                            <FieldDisplayEdit
+                                                type="percent"
+                                                value={leasingCostStructure.leasingCommissionPercentRemainingYears}
+                                                hideInput={false}
+                                                hideIcon={true}
+                                                onChange={(newValue) => this.changeField('leasingCommissionPercentRemainingYears', newValue)}
+                                            /> : null
+                                    }
+                                </td>
+                                <td className={"unit-size-column"}/>
+                                <td className={"calculated-vacant-unit-leasup-costs-column"}/>
+                                <td className={"calculated-vacant-unit-rent-loss"}/>
+                                <td className={"should-treat-unit-as-vacant-column"}/>
+                            </tr> : null
+                    }
                     <tr className={"leasing-cost-row"}>
                         <td className={"label-column"}>
-                            <strong>Renewal Period</strong>
+                            <strong>Lag Vacancy</strong>
                         </td>
                         <td className={"value-column"}>
                             <FieldDisplayEdit
@@ -361,7 +475,7 @@ class LeasingCostStructureEditor extends React.Component
                     </tr>
                     <tr className={"leasing-cost-row"}>
                         <td className={"label-column"}>
-                            <strong>Leasing Period</strong>
+                            <strong>Lease Term</strong>
                         </td>
                         <td className={"value-column"}>
                             <FieldDisplayEdit
@@ -378,23 +492,27 @@ class LeasingCostStructureEditor extends React.Component
                         <td className={"should-treat-unit-as-vacant-column"} />
                     </tr>
                     <tr className={"leasing-cost-row header-row"}>
-                        <td className={"label-column"}>
-
+                        <td className={"label-column"} colSpan={5}>
+                        </td>
+                    </tr>
+                    <tr className={"leasing-cost-row header-row"}>
+                        <td className={"label-column"} colSpan={1}>
+                            <strong className={"title"}>Leasing Costs</strong>
                         </td>
                         <td className={"value-column"}>
-
+                            <strong>Apply Leasing Structure to Tenants:</strong>
                         </td>
                         <td className={"unit-size-column"}>
                             <strong>Unit Size (sqft)</strong>
                         </td>
                         <td className={"calculated-vacant-unit-leasup-costs-column"}>
-                            <strong>Calculated Vacant <br/>Unit Leasup Costs</strong>
+                            <strong>Leasing Costs</strong>
                         </td>
                         <td className={"calculated-vacant-unit-rent-loss"}>
-                            <strong>Calculated Vacant <br/>Unit Rent Loss</strong>
+                            <strong>Gross Rent Loss</strong>
                         </td>
                         <td className={"should-treat-unit-as-vacant-column"} >
-                            <strong>Treat Unit<br/>As Vacant</strong>
+                            <strong>Vacant</strong>
                         </td>
                     </tr>
                     <tr className={"leasing-cost-row"}>
@@ -522,7 +640,7 @@ class ViewTenantsLeasingCosts extends React.Component
         return (
             (this.props.appraisal) ?
                 <div id={"view-leasing-cost-structures"} className={"view-leasing-cost-structures"}>
-                    <h2>Leasing Cost Structures</h2>
+                    <h2>Market Leasing Assumptions</h2>
 
                     <Row>
                         <Col>

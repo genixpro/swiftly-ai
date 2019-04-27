@@ -1,7 +1,7 @@
 import React from 'react';
 
 
-class MarketRentSelector extends React.Component
+class ManagementRecoveryModeSelector extends React.Component
 {
     onChangeValue(newValue)
     {
@@ -32,19 +32,6 @@ class MarketRentSelector extends React.Component
 
     render()
     {
-        if (!this.props.marketRents)
-        {
-            return null;
-        }
-
-        const options = [
-            <option value={""} key={"blank"}>No Market Rent</option>
-        ].concat(
-            this.props.marketRents.map((rent, index) =>
-            {
-                return <option key={index} value={rent.name}>{rent.name}</option>
-            }));
-
         return (
             <select
                 className="custom-select"
@@ -52,15 +39,19 @@ class MarketRentSelector extends React.Component
                 onBlur={(evt) => this.onBlur()}
                 ref={(ref) => this.onRef(ref)}
                 value={this.props.value}
-                title={this.props.title || this.props.placeholder}
                 disabled={this.props.disabled}
+                title={this.props.title || this.props.placeholder}
                 style={{"color": !this.props.value ? "lightgrey" : ""}}
             >
-                {options}
+                <option value={"none"}>No Management Recovery</option>
+                <option value={"operatingExpenses"}>Operating Expenses</option>
+                <option value={"operatingExpensesAndTaxes"}>Operating Expenses & Taxes</option>
+                <option value={"managementExpenses"}>Management Expenses</option>
+                <option value={"custom"}>Custom</option>
             </select>
         );
     }
 }
 
 
-export default MarketRentSelector;
+export default ManagementRecoveryModeSelector;

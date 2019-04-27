@@ -27,7 +27,7 @@ class ViewDirectComparisonValuation extends React.Component
     componentDidMount()
     {
         this.props.reloadAppraisal();
-        Promise.map(this.props.appraisal.comparableSales, (comparableSaleId) =>
+        Promise.map(this.props.appraisal.comparableSalesDCA, (comparableSaleId) =>
         {
             if (this.loadedComparables[comparableSaleId])
             {
@@ -66,6 +66,13 @@ class ViewDirectComparisonValuation extends React.Component
     changeDirectComparisonInput(field, newValue)
     {
         this.props.appraisal.directComparisonInputs[field] = newValue;
+        this.props.saveAppraisal(this.props.appraisal);
+    }
+
+
+    changeStabilizedInput(field, newValue)
+    {
+        this.props.appraisal.stabilizedStatementInputs[field] = newValue;
         this.props.saveAppraisal(this.props.appraisal);
     }
 
@@ -194,15 +201,66 @@ class ViewDirectComparisonValuation extends React.Component
                                     {/*</tr>*/}
                                     <tr className={"data-row capitalization-row"}>
                                         <td className={"label-column"}>
-                                            <span>
-                                                <NumberFormat
-                                                    value={this.props.appraisal.sizeOfBuilding || 0}
-                                                    displayType={'text'}
-                                                    thousandSeparator={', '}
-                                                    decimalScale={0}
-                                                    fixedDecimalScale={true}
-                                                /> sqft @ <CurrencyFormat value={this.props.appraisal.directComparisonInputs.pricePerSquareFoot}/>
-                                            </span>
+                                            {
+                                                this.props.appraisal.directComparisonInputs.directComparisonMetric === 'psf' ?
+                                                            <span>
+                                                                <NumberFormat
+                                                                    value={this.props.appraisal.sizeOfBuilding || 0}
+                                                                    displayType={'text'}
+                                                                    thousandSeparator={', '}
+                                                                    decimalScale={0}
+                                                                    fixedDecimalScale={true}
+                                                                /> sqft @ <CurrencyFormat value={this.props.appraisal.directComparisonInputs.pricePerSquareFoot}/>
+                                                            </span> : null
+                                            }
+                                            {
+                                                this.props.appraisal.directComparisonInputs.directComparisonMetric === 'psf_land' ?
+                                                            <span>
+                                                                <NumberFormat
+                                                                    value={this.props.appraisal.sizeOfLand * 43560 || 0}
+                                                                    displayType={'text'}
+                                                                    thousandSeparator={', '}
+                                                                    decimalScale={0}
+                                                                    fixedDecimalScale={true}
+                                                                /> sqft @ <CurrencyFormat value={this.props.appraisal.directComparisonInputs.pricePerSquareFootLand}/>
+                                                            </span> : null
+                                            }
+                                            {
+                                                this.props.appraisal.directComparisonInputs.directComparisonMetric === 'per_acre_land' ?
+                                                            <span>
+                                                                <NumberFormat
+                                                                    value={this.props.appraisal.sizeOfLand || 0}
+                                                                    displayType={'text'}
+                                                                    thousandSeparator={', '}
+                                                                    decimalScale={0}
+                                                                    fixedDecimalScale={true}
+                                                                /> acres @ <CurrencyFormat value={this.props.appraisal.directComparisonInputs.pricePerAcreLand}/>
+                                                            </span> : null
+                                            }
+                                            {
+                                                this.props.appraisal.directComparisonInputs.directComparisonMetric === 'psf_buildable_area' ?
+                                                            <span>
+                                                                <NumberFormat
+                                                                    value={this.props.appraisal.buildableArea || 0}
+                                                                    displayType={'text'}
+                                                                    thousandSeparator={', '}
+                                                                    decimalScale={0}
+                                                                    fixedDecimalScale={true}
+                                                                /> psf @ <CurrencyFormat value={this.props.appraisal.directComparisonInputs.pricePerSquareFootBuildableArea}/>
+                                                            </span> : null
+                                            }
+                                            {
+                                                this.props.appraisal.directComparisonInputs.directComparisonMetric === 'per_buildable_unit' ?
+                                                            <span>
+                                                                <NumberFormat
+                                                                    value={this.props.appraisal.buildableUnits || 0}
+                                                                    displayType={'text'}
+                                                                    thousandSeparator={', '}
+                                                                    decimalScale={0}
+                                                                    fixedDecimalScale={true}
+                                                                /> units @ <CurrencyFormat value={this.props.appraisal.directComparisonInputs.pricePerBuildableUnit}/>
+                                                            </span> : null
+                                            }
                                         </td>
                                         <td className={"amount-column"}></td>
                                         <td className={"amount-total-column"}>
@@ -215,7 +273,7 @@ class ViewDirectComparisonValuation extends React.Component
                                             <tr className={"data-row capitalization-row"}>
                                                 <td className={"label-column"}>
                                                     <Link to={`/appraisal/${this.props.appraisal._id}/tenants/market_rents`}>
-                                                        <span>Market Rent Differential, Discounted @ <PercentFormat value={this.props.appraisal.directComparisonInputs.marketRentDifferentialDiscountRate}/></span>
+                                                        <span>Market Rent Differential, Discounted @ <PercentFormat value={this.props.appraisal.stabilizedStatementInputs.marketRentDifferentialDiscountRate}/></span>
                                                     </Link>
                                                 </td>
                                                 <td className={"amount-column"}></td>
@@ -414,27 +472,98 @@ class ViewDirectComparisonValuation extends React.Component
 
                                             <Table>
                                                 <tr>
+                                                    <td>Comparison Metric</td>
+                                                    <td>
+                                                        <FieldDisplayEdit
+                                                            type={"directComparisonMetric"}
+                                                            placeholder={"The metric used for comparing the building."}
+                                                            value={this.props.appraisal.directComparisonInputs ? this.props.appraisal.directComparisonInputs.directComparisonMetric : 'psf'}
+                                                            onChange={(newValue) => this.changeDirectComparisonInput("directComparisonMetric", newValue)}
+                                                        />
+                                                    </td>
+                                                </tr>
+                                                {
+                                                    this.props.appraisal.directComparisonInputs.directComparisonMetric === 'psf' ?
+                                                        <tr>
+                                                            <td>Price Per Square Foot</td>
+                                                            <td>
+                                                                <FieldDisplayEdit
+                                                                    type={"currency"}
+                                                                    placeholder={"Price Per Square Foot"}
+                                                                    value={this.props.appraisal.directComparisonInputs ? this.props.appraisal.directComparisonInputs.pricePerSquareFoot : null}
+                                                                    onChange={(newValue) => this.changeDirectComparisonInput("pricePerSquareFoot", newValue)}
+                                                                />
+                                                            </td>
+                                                        </tr> : null
+                                                }
+                                                {
+                                                    this.props.appraisal.directComparisonInputs.directComparisonMetric === 'psf_land' ?
+                                                        <tr>
+                                                            <td>Price Per Square Foot of Land</td>
+                                                            <td>
+                                                                <FieldDisplayEdit
+                                                                    type={"currency"}
+                                                                    placeholder={"Price Per Square Foot of Land"}
+                                                                    value={this.props.appraisal.directComparisonInputs ? this.props.appraisal.directComparisonInputs.pricePerSquareFootLand : null}
+                                                                    onChange={(newValue) => this.changeDirectComparisonInput("pricePerSquareFootLand", newValue)}
+                                                                />
+                                                            </td>
+                                                        </tr> : null
+                                                }
+                                                {
+                                                    this.props.appraisal.directComparisonInputs.directComparisonMetric === 'per_acre_land' ?
+                                                        <tr>
+                                                            <td>Price Per Acre of Land</td>
+                                                            <td>
+                                                                <FieldDisplayEdit
+                                                                    type={"currency"}
+                                                                    placeholder={"Price Per Acre of Land"}
+                                                                    value={this.props.appraisal.directComparisonInputs ? this.props.appraisal.directComparisonInputs.pricePerAcreLand : null}
+                                                                    onChange={(newValue) => this.changeDirectComparisonInput("pricePerAcreLand", newValue)}
+                                                                />
+                                                            </td>
+                                                        </tr> : null
+                                                }
+                                                {
+                                                    this.props.appraisal.directComparisonInputs.directComparisonMetric === 'psf_buildable_area' ?
+                                                        <tr>
+                                                            <td>Price Per Square Foot of Buildable Area</td>
+                                                            <td>
+                                                                <FieldDisplayEdit
+                                                                    type={"currency"}
+                                                                    placeholder={"Price Per Square Foot of Buildable Area"}
+                                                                    value={this.props.appraisal.directComparisonInputs ? this.props.appraisal.directComparisonInputs.pricePerSquareFootBuildableArea : null}
+                                                                    onChange={(newValue) => this.changeDirectComparisonInput("pricePerSquareFootBuildableArea", newValue)}
+                                                                />
+                                                            </td>
+                                                        </tr> : null
+                                                }
+                                                {
+                                                    this.props.appraisal.directComparisonInputs.directComparisonMetric === 'per_buildable_unit' ?
+                                                        <tr>
+                                                            <td>Price Per Buildable Unit</td>
+                                                            <td>
+                                                                <FieldDisplayEdit
+                                                                    type={"currency"}
+                                                                    placeholder={"Price Per Buildable Unit"}
+                                                                    value={this.props.appraisal.directComparisonInputs ? this.props.appraisal.directComparisonInputs.pricePerBuildableUnit : null}
+                                                                    onChange={(newValue) => this.changeDirectComparisonInput("pricePerBuildableUnit", newValue)}
+                                                                />
+                                                            </td>
+                                                        </tr> : null
+                                                }
+                                                <tr>
                                                     <td>Discount Rate for Market Rent Differential</td>
                                                     <td>
                                                         <FieldDisplayEdit
                                                             type={"percent"}
                                                             placeholder={"Market Rent Differential Discount Rate"}
-                                                            value={this.props.appraisal.directComparisonInputs ? this.props.appraisal.directComparisonInputs.marketRentDifferentialDiscountRate : 5.0}
+                                                            value={this.props.appraisal.stabilizedStatementInputs ? this.props.appraisal.stabilizedStatementInputs.marketRentDifferentialDiscountRate : 5.0}
                                                             onChange={(newValue) => this.changeStabilizedInput("marketRentDifferentialDiscountRate", newValue)}
                                                         />
                                                     </td>
                                                 </tr>
-                                                <tr>
-                                                    <td>Price Per Square Foot</td>
-                                                    <td>
-                                                        <FieldDisplayEdit
-                                                            type={"currency"}
-                                                            placeholder={"Price Per Square Foot"}
-                                                            value={this.props.appraisal.directComparisonInputs ? this.props.appraisal.directComparisonInputs.pricePerSquareFoot : null}
-                                                            onChange={(newValue) => this.changeDirectComparisonInput("pricePerSquareFoot", newValue)}
-                                                        />
-                                                    </td>
-                                                </tr>
+
                                             </Table>
 
                                         </CardBody>

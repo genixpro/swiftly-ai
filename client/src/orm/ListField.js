@@ -15,11 +15,20 @@ class ListField extends BaseField
         "unshift"
     ];
 
-    constructor(subField)
+    constructor(subField, defaultValue)
     {
         super();
 
         this.subField = subField;
+
+        if (!_.isUndefined(defaultValue))
+        {
+            this.defaultValue = defaultValue;
+        }
+        else
+        {
+            this.defaultValue = null;
+        }
     }
 
     set keyName(value)
@@ -36,11 +45,11 @@ class ListField extends BaseField
     {
         if (!_.isArray(value))
         {
-            return null;
+            return this.defaultValue;
         }
         else if (_.isUndefined(value))
         {
-            return null;
+            return this.defaultValue;
         }
         else
         {

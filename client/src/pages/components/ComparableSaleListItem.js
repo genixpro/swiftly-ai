@@ -72,27 +72,93 @@ class ComparableSaleListItem extends React.Component
         });
     }
 
-    isCompWithinAppraisal(appraisalComparables)
+    isCompWithinAppraisal()
     {
         if (!this.state.comparableSale._id)
         {
             return false;
         }
-        if (!appraisalComparables)
+        const id = this.state.comparableSale._id;
+
+        if (!this.props.appraisal.comparableSalesCapRate)
         {
             return false;
         }
-
-        const id = this.state.comparableSale._id;
-
-        for (let i = 0; i < appraisalComparables.length; i += 1)
+        else
         {
-            if (appraisalComparables[i] === id)
+            for (let i = 0; i < this.props.appraisal.comparableSalesCapRate.length; i += 1)
             {
-                return true;
+                if (this.props.appraisal.comparableSalesCapRate[i] === id)
+                {
+                    return true;
+                }
+            }
+        }
+
+        if (!this.props.appraisal.comparableSalesDCA)
+        {
+            return false;
+        }
+        else
+        {
+            for (let i = 0; i < this.props.appraisal.comparableSalesDCA.length; i += 1)
+            {
+                if (this.props.appraisal.comparableSalesDCA[i] === id)
+                {
+                    return true;
+                }
             }
         }
         return false;
+    }
+
+    isCompWithinDCA()
+    {
+        if (!this.state.comparableSale._id)
+        {
+            return false;
+        }
+        const id = this.state.comparableSale._id;
+
+        if (!this.props.appraisal.comparableSalesDCA)
+        {
+            return false;
+        }
+        else
+        {
+            for (let i = 0; i < this.props.appraisal.comparableSalesDCA.length; i += 1)
+            {
+                if (this.props.appraisal.comparableSalesDCA[i] === id)
+                {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    isCompWithinCapRate()
+    {
+        if (!this.state.comparableSale._id)
+        {
+            return false;
+        }
+        const id = this.state.comparableSale._id;
+
+        if (!this.props.appraisal.comparableSalesCapRate)
+        {
+            return false;
+        }
+        else
+        {
+            for (let i = 0; i < this.props.appraisal.comparableSalesCapRate.length; i += 1)
+            {
+                if (this.props.appraisal.comparableSalesCapRate[i] === id)
+                {
+                    return true;
+                }
+            }
+        }
     }
 
     toggleDetails()
@@ -156,7 +222,7 @@ class ComparableSaleListItem extends React.Component
             <div className={`card b comparable-sale-list-item ${expandedClass} ${lastClass}`}>
                 <div className={"comparable-sale-list-item-button-column"}>
                     {
-                        this.props.onRemoveComparableClicked && this.isCompWithinAppraisal(this.props.appraisalComparables) ?
+                        this.props.onRemoveComparableClicked && this.isCompWithinAppraisal() ?
                             <div className={`comparable-button-row`}>
                                 <Button color={"primary"} onClick={(evt) => this.props.onRemoveComparableClicked(comparableSale)} className={"move-comparable-button"}>
                                     <i className={"fa fa-check-square"} />
@@ -167,7 +233,7 @@ class ComparableSaleListItem extends React.Component
                             </div> : null
                     }
                     {
-                        this.props.onAddComparableClicked && !this.isCompWithinAppraisal(this.props.appraisalComparables) ?
+                        this.props.onAddComparableClicked && !this.isCompWithinAppraisal() ?
                             <div className={`comparable-button-row`}>
                                 <Button color={"primary"} onClick={(evt) => this.props.onAddComparableClicked(comparableSale)} className={"move-comparable-button"}>
                                     <i className={"fa fa-square"} />
@@ -276,21 +342,47 @@ class ComparableSaleListItem extends React.Component
                     }
                     <Collapse isOpen={this.state.detailsOpen}>
                         <div className={`card-body comparable-sale-list-item-body ${editableClass}`}>
-                            {
-                                (comparableSale.imageUrl) ?
+                                <div className={"comparable-sale-list-item-left-column"}>
+                                    {
+                                    (comparableSale.imageUrl) ?
                                     <UploadableImage
                                         editable={this.props.edit}
                                         value={comparableSale.imageUrl}
                                         onChange={(newUrl) => this.changeComparableField('imageUrl', newUrl)} />
                                     :
-                                        (comparableSale.address && comparableSale.address !== "") ?
-                                            <UploadableImage
-                                                editable={this.props.edit}
-                                                value={`https://maps.googleapis.com/maps/api/streetview?key=AIzaSyBRmZ2N4EhJjXmC29t3VeiLUQssNG-MY1I&size=640x480&source=outdoor&location=${comparableSale.address}`}
-                                                onChange={(newUrl) => this.changeComparableField('imageUrl', newUrl)}
+                                    (comparableSale.address && comparableSale.address !== "") ?
+                                    <UploadableImage
+                                        editable={this.props.edit}
+                                        value={`https://maps.googleapis.com/maps/api/streetview?key=AIzaSyBRmZ2N4EhJjXmC29t3VeiLUQssNG-MY1I&size=640x480&source=outdoor&location=${comparableSale.address}`}
+                                        onChange={(newUrl) => this.changeComparableField('imageUrl', newUrl)}
+                                    />
+                                    : <UploadableImage  />
+                                    }
+                                    {
+                                        this.props.onRemoveDCAClicked ? <div className={"comparable-list-boxes"}>
+                                            <span>Include in Direct Comparison&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                                            <FieldDisplayEdit
+                                                type={"boolean"}
+                                                hideIcon={true}
+                                                value={this.isCompWithinDCA()}
+                                                onChange={() => this.isCompWithinDCA() ? this.props.onRemoveDCAClicked(comparableSale) : this.props.onAddDCAClicked(comparableSale)}
                                             />
-                                            : <UploadableImage  />
-                            }
+                                        </div> : null
+                                    }
+                                    {
+                                        this.props.onRemoveCapRateClicked ? <div className={"comparable-list-boxes"}>
+                                            <span>Include in Capitalization Approach</span>
+                                            <FieldDisplayEdit
+                                                type={"boolean"}
+                                                hideIcon={true}
+                                                value={this.isCompWithinCapRate()}
+                                                onChange={() => this.isCompWithinCapRate() ? this.props.onRemoveCapRateClicked(comparableSale) : this.props.onAddCapRateClicked(comparableSale)}
+                                            />
+                                        </div> : null
+                                    }
+
+
+                                </div>
                             <div className={`comparable-sale-content`}>
                                 <div className={"comparable-fields-area"}>
                                     <span className={"comparable-field-label"}>Address:</span>
@@ -570,7 +662,7 @@ class ComparableSaleListItem extends React.Component
                                                     value={comparableSale.sizeOfLandAcres}
                                                     onChange={(newValue) => this.changeComparableField('sizeOfLandAcres', newValue)}
                                                 />,
-                                                <span className={"comparable-field-label"} key={0}>Buildable Area (sqft):</span>,
+                                                <span className={"comparable-field-label"} key={9}>Buildable Area (sqft):</span>,
                                                 <FieldDisplayEdit
                                                     key={10}
                                                     type={"area"}
@@ -578,6 +670,15 @@ class ComparableSaleListItem extends React.Component
                                                     placeholder={"Size of Buildable Area"}
                                                     value={comparableSale.sizeOfBuildableAreaSqft}
                                                     onChange={(newValue) => this.changeComparableField('sizeOfBuildableAreaSqft', newValue)}
+                                                />,
+                                                <span className={"comparable-field-label"} key={10}>Buildable Units:</span>,
+                                                <FieldDisplayEdit
+                                                    key={11}
+                                                    type={"number"}
+                                                    edit={this.props.edit}
+                                                    placeholder={"Buildable Units"}
+                                                    value={comparableSale.buildableUnits}
+                                                    onChange={(newValue) => this.changeComparableField('buildableUnits', newValue)}
                                                 />,
                                             ] : null
                                     }
@@ -622,9 +723,18 @@ class ComparableSaleListItem extends React.Component
                                                     value={comparableSale.pricePerAcreBuildableArea}
                                                     onChange={(newValue) => this.changeComparableField('pricePerAcreBuildableArea', newValue)}
                                                 />,
-                                                <span className={"comparable-field-label"} key={21} >Floor Space Index:</span>,
+                                                <span className={"comparable-field-label"} key={21} >Price per Buildable Unit:</span>,
                                                 <FieldDisplayEdit
                                                     key={22}
+                                                    type={"currency"}
+                                                    edit={this.props.edit}
+                                                    placeholder={"Price Per Buildable Unit"}
+                                                    value={comparableSale.pricePerBuildableUnit}
+                                                    onChange={(newValue) => this.changeComparableField('pricePerBuildableUnit', newValue)}
+                                                />,
+                                                <span className={"comparable-field-label"} key={23} >Floor Space Index:</span>,
+                                                <FieldDisplayEdit
+                                                    key={24}
                                                     type={"float"}
                                                     edit={this.props.edit}
                                                     placeholder={"Floor Space Index"}

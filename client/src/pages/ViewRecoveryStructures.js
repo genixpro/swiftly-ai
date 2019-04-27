@@ -206,15 +206,6 @@ class RecoveryStructureEditor extends React.Component
         }
     }
 
-    changeCalculationRuleField(calculationRule, field, newValue)
-    {
-        if (newValue !== calculationRule[field])
-        {
-            calculationRule[field] = newValue;
-            this.props.onChange(this.props.recovery);
-        }
-    }
-
     changeOperatingExpenseRecovery(expenseName, newValue)
     {
         if (newValue !== this.props.recovery.expenseRecoveries[expenseName])
@@ -224,12 +215,21 @@ class RecoveryStructureEditor extends React.Component
         }
     }
 
+    changeManagementRecovery(expenseName, newValue)
+    {
+        if (newValue !== this.props.recovery.managementRecoveries[expenseName])
+        {
+            this.props.recovery.managementRecoveries[expenseName] = newValue;
+            this.props.onChange(this.props.recovery);
+        }
+    }
+
     changeTaxRecovery(expenseName, newValue)
     {
         if (newValue !== this.props.recovery.taxRecoveries[expenseName])
         {
             this.props.recovery.taxRecoveries[expenseName] = newValue;
-            this.props.onChange(this.props.recovery);
+            this.props.onChange(this.propsrecovery);
         }
     }
 
@@ -247,11 +247,16 @@ class RecoveryStructureEditor extends React.Component
         this.props.onChange(this.props.recovery);
     }
 
+    operatingExpensesAndTaxes()
+    {
+        return this.props.expenses.filter((expense) => (expense.incomeStatementItemType === "operating_expense" || expense.incomeStatementItemType === "taxes"))
+    }
+
+
     operatingExpenses()
     {
         return this.props.expenses.filter((expense) => expense.incomeStatementItemType === "operating_expense")
     }
-
 
 
     taxes()
@@ -292,109 +297,165 @@ class RecoveryStructureEditor extends React.Component
                         <td className={"label-column"}>
                             <strong>Management Recoveries</strong>
                         </td>
-                        <td className={"rule-percentage-column"}>
-                            <FieldDisplayEdit
-                                key={1}
-                                type="percent"
-                                              placeholder={"Management Expense %"}
-                                              value={recovery.managementCalculationRule.percentage}
-                                              hideInput={false}
-                                              hideIcon={true}
-                                              onChange={(newValue) => this.changeCalculationRuleField(recovery.managementCalculationRule, 'percentage', newValue)}
-                            />
-                        </td>
+                        {
+                            recovery.managementRecoveryMode !== "custom" && recovery.managementRecoveryMode !== "none" ?
+                                    <td className={"rule-percentage-column"}>
+                                        <FieldDisplayEdit
+                                            key={1}
+                                            type="percent"
+                                            placeholder={"Management Recovery %"}
+                                            value={recovery.managementRecoveryOperatingPercentage}
+                                            hideInput={false}
+                                            hideIcon={true}
+                                            onChange={(newValue) => this.changeRecoveryStructureField('managementRecoveryOperatingPercentage', newValue)}
+                                        />
+                                    </td> : <td className={"rule-percentage-column"} />
+                        }
                         <td className={"rule-field-column"}>
-                            <span key={2} className={"seperator"}>of</span>
                             <FieldDisplayEdit
-                                type="calculationField"
+                                type="managementRecoveryMode"
                                 expenses={this.props.expenses}
-                                placeholder={"Expense Calculation Field"}
-                                value={recovery.managementCalculationRule.field}
+                                placeholder={"Management Recovery Mode"}
+                                value={recovery.managementRecoveryMode}
                                 hideInput={false}
                                 hideIcon={true}
-                                onChange={(newValue) => this.changeCalculationRuleField(recovery.managementCalculationRule, 'field', newValue)}
+                                onChange={(newValue) => this.changeRecoveryStructureField('managementRecoveryMode', newValue)}
                             />
                         </td>
                         <td className={"rule-calculated-amount-column"}>
-                            <a id={managementRecoveryPopoverId} onClick={() => this.setState({managementRecoveryPopoverOpen: !this.state.managementRecoveryPopoverOpen})}>
-                                <CurrencyFormat value={recovery.calculatedManagementRecovery}/>
-                            </a>
-                            <Popover placement="bottom" isOpen={this.state.managementRecoveryPopoverOpen} target={managementRecoveryPopoverId} toggle={() => this.setState({managementRecoveryPopoverOpen: !this.state.managementRecoveryPopoverOpen})}>
-                                <PopoverHeader>Management Recovery</PopoverHeader>
-                                <PopoverBody>
-                                    <table className={"explanation-popover-table"}>
-                                        {
-                                            this.props.appraisal.units.map((unit, unitIndex) =>
-                                            {
-                                                if (unit.currentTenancy.recoveryStructure !== recovery.name)
+                            {
+                                recovery.managementRecoveryMode !== "custom" && recovery.managementRecoveryMode !== "none" ?
+                                [
+                                    <a id={managementRecoveryPopoverId} onClick={() => this.setState({managementRecoveryPopoverOpen: !this.state.managementRecoveryPopoverOpen})} key={0}>
+                                        <CurrencyFormat value={recovery.calculatedManagementRecoveryTotal}/>
+                                    </a>,
+                                    <Popover placement="bottom" isOpen={this.state.managementRecoveryPopoverOpen} target={managementRecoveryPopoverId} toggle={() => this.setState({managementRecoveryPopoverOpen: !this.state.managementRecoveryPopoverOpen})} key={1}>
+                                        <PopoverHeader>Management Recovery</PopoverHeader>
+                                        <PopoverBody>
+                                            <table className={"explanation-popover-table"}>
                                                 {
-                                                    return;
+                                                    this.props.appraisal.units.map((unit, unitIndex) =>
+                                                    {
+                                                        if (unit.currentTenancy.recoveryStructure !== recovery.name)
+                                                        {
+                                                            return;
+                                                        }
+
+                                                        let className = "";
+
+                                                        if (unitIndex === this.props.appraisal.units.length - 1)
+                                                        {
+                                                            className = "underline";
+                                                        }
+
+                                                        return <tr key={unitIndex}>
+                                                            <td>{unit.currentTenancy.name}</td>
+                                                            <td>
+                                                                <AreaFormat value={unit.squareFootage} />
+                                                            </td>
+                                                            <td>
+                                                                /
+                                                            </td>
+                                                            <td>
+                                                                <AreaFormat value={this.props.appraisal.sizeOfBuilding} />
+                                                            </td>
+                                                            <td>
+                                                                =
+                                                            </td>
+                                                            <td>
+                                                                <PercentFormat value={unit.squareFootage / this.props.appraisal.sizeOfBuilding * 100} />
+                                                            </td>
+                                                            <td>
+                                                                *
+                                                            </td>
+                                                            <td>
+                                                                <PercentFormat value={recovery.managementRecoveryOperatingPercentage} />
+                                                            </td>
+                                                            <td>
+                                                                *
+                                                            </td>
+                                                            <td>
+                                                                <CurrencyFormat value={recovery.calculatedManagementRecoveryBaseValue} />
+                                                            </td>
+                                                            <td>
+                                                                =
+                                                            </td>
+                                                            <td className={className}>
+                                                                <CurrencyFormat value={unit.calculatedManagementRecovery} />
+                                                            </td>
+                                                        </tr>
+                                                    })
                                                 }
-
-                                                let className = "";
-
-                                                if (unitIndex === this.props.appraisal.units.length - 1)
-                                                {
-                                                    className = "underline";
-                                                }
-
-                                                return <tr key={unitIndex}>
-                                                    <td>{unit.currentTenancy.name}</td>
-                                                    <td>
-                                                        <AreaFormat value={unit.squareFootage} />
-                                                    </td>
-                                                    <td>
-                                                        /
-                                                    </td>
-                                                    <td>
-                                                        <AreaFormat value={this.props.appraisal.sizeOfBuilding} />
-                                                    </td>
-                                                    <td>
-                                                        =
-                                                    </td>
-                                                    <td>
-                                                        <PercentFormat value={unit.squareFootage / this.props.appraisal.sizeOfBuilding * 100} />
-                                                    </td>
-                                                    <td>
-                                                        *
-                                                    </td>
-                                                    <td>
-                                                        <PercentFormat value={recovery.managementCalculationRule.percentage} />
-                                                    </td>
-                                                    <td>
-                                                        *
-                                                    </td>
-                                                    <td>
-                                                        <CurrencyFormat value={recovery.calculatedManagementRecoveryBaseFieldValue} />
-                                                    </td>
-                                                    <td>
-                                                        =
-                                                    </td>
-                                                    <td className={className}>
-                                                        <CurrencyFormat value={unit.calculatedManagementRecovery} />
-                                                    </td>
+                                                <tr className={"total-row"}>
+                                                    <td>Recovered Amount Under Structure</td>
+                                                    <td></td>
+                                                    <td></td>
+                                                    <td></td>
+                                                    <td></td>
+                                                    <td></td>
+                                                    <td></td>
+                                                    <td></td>
+                                                    <td></td>
+                                                    <td></td>
+                                                    <td></td>
+                                                    <td><CurrencyFormat value={recovery.calculatedManagementRecoveryTotal} /></td>
                                                 </tr>
-                                            })
-                                        }
-                                        <tr className={"total-row"}>
-                                            <td>Recovered Amount Under Structure</td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td></td>
-                                            <td><CurrencyFormat value={recovery.calculatedManagementRecovery} /></td>
-                                        </tr>
-                                    </table>
-                                </PopoverBody>
-                            </Popover>
+                                            </table>
+                                        </PopoverBody>
+                                    </Popover>
+                                ] : null
+                            }
                         </td>
                     </tr>
+                    {
+                        recovery.managementRecoveryMode === "custom" ? <tr className={"recovery-rule label-row"}>
+                            <td className={"label-column"}>
+                            </td>
+                            {
+                                this.operatingExpensesAndTaxes().length === 0 ?
+                                    [
+                                        <td className={"rule-percentage-column"} key={1} colSpan={2}>
+                                            No expenses found. Please go to "Expenses" or upload an Income Statement.
+                                        </td>,
+                                    ] : null
+                            }
+                            {
+                                this.operatingExpensesAndTaxes().length > 0 ?
+                                    <ExpensePercentageEditor
+                                        expense={this.operatingExpensesAndTaxes()[0]}
+                                        recovery={recovery}
+                                        appraisal={this.props.appraisal}
+                                        onChange={(newValue) => this.changeManagementRecovery(this.operatingExpensesAndTaxes()[0].machineName, newValue)}
+                                        calculated={recovery.calculatedManagementRecoveries[this.operatingExpensesAndTaxes()[0].machineName]}
+                                        value={recovery.managementRecoveries[this.operatingExpensesAndTaxes()[0].machineName]}
+                                    />
+                                    : null
+                            }
+                        </tr> : null
+                    }
+                    {
+                        recovery.managementRecoveryMode === "custom" ?
+                            this.operatingExpensesAndTaxes().map((expense, expenseIndex) =>
+                        {
+                            if (expenseIndex === 0)
+                            {
+                                return null;
+                            }
+
+                            return <tr className={"recovery-rule"} key={expenseIndex}>
+                                <td className={"label-column"}>
+                                </td>
+                                <ExpensePercentageEditor
+                                    expense={expense}
+                                    recovery={recovery}
+                                    appraisal={this.props.appraisal}
+                                    onChange={(newValue) => this.changeManagementRecovery(expense.machineName, newValue)}
+                                    calculated={recovery.calculatedManagementRecoveries[expense.machineName]}
+                                    value={recovery.managementRecoveries[expense.machineName]}
+                                />
+                            </tr>
+                        }) : null
+                    }
                     <tr className={"recovery-rule label-row"}>
                         <td className={"label-column"}>
                             <strong>Operating Expense Recoveries</strong>
@@ -501,7 +562,7 @@ class RecoveryStructureEditor extends React.Component
                         <td className={"rule-percentage-column"}>
                         </td>
                         <td className={"rule-field-column"}>
-                            <strong>Total Recovered Under This Structure</strong>
+                            <strong>Total</strong>
                         </td>
                         <td className={"rule-calculated-amount-column"}>
                             <CurrencyFormat value={recovery.calculatedTotalRecovery}/>
@@ -543,7 +604,7 @@ class RecoveryStructureEditor extends React.Component
                         <td className={"rule-percentage-column"}>
                         </td>
                         <td className={"rule-field-column"}>
-                            <strong>Total Recovered Under This Structure</strong>
+                            <strong>Total</strong>
                         </td>
                         <td className={"rule-calculated-amount-column"}>
                             <CurrencyFormat value={recovery.calculatedTotalRecovery}/>

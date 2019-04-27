@@ -12,7 +12,10 @@ class LeasingCostStructure(EmbeddedDocument):
     leasingCommissionPSF = FloatField(default=0.5)
 
     # The cost of making a new lease, on a percentage of rent basis
-    leasingCommissionPercent = FloatField(default=20)
+    leasingCommissionPercentYearOne = FloatField(default=2)
+
+    # The cost of making a new lease, on a percentage of rent basis
+    leasingCommissionPercentRemainingYears = FloatField(default=2)
 
     # Whether leasing commission is given as a percentage of rent or a PSF rate
     leasingCommissionMode = StringField(default='psf', choices=['percent_of_rent', 'psf'])

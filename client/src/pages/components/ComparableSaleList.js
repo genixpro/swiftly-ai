@@ -262,9 +262,12 @@ class ComparableSaleList extends React.Component
                                 appraisal={this.props.appraisal}
                                 showPropertyTypeInHeader={this.props.showPropertyTypeInHeader}
                                 onChange={(comp) => this.updateComparable(comp, index)}
-                                appraisalComparables={this.props.appraisalComparables}
                                 onAddComparableClicked={this.props.onAddComparableClicked}
                                 onRemoveComparableClicked={this.props.onRemoveComparableClicked}
+                                onRemoveDCAClicked={this.props.onRemoveDCAClicked}
+                                onRemoveCapRateClicked={this.props.onRemoveCapRateClicked}
+                                onAddDCAClicked={this.props.onAddDCAClicked}
+                                onAddCapRateClicked={this.props.onAddCapRateClicked}
                                 onDeleteComparable={(comp) => this.onRemoveComparableClicked(comp)}
                                 appraisalId={this.props.appraisalId}
                                 last={index===this.state.comparableSales.length-1}

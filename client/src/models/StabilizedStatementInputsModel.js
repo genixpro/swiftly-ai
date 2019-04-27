@@ -1,4 +1,3 @@
-import GenericField from "../orm/GenericField";
 import BaseModel from "../orm/BaseModel";
 import ListField from "../orm/ListField";
 import ModelField from "../orm/ModelField";
