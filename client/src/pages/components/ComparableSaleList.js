@@ -375,7 +375,6 @@ class ComparableSaleList extends React.Component
                                         {
                                             return <ComparableSaleListHeaderColumn
                                                 size={headerConfigurations[headerFieldList[0]].size}
-                                                renders={headerFieldList.map((field) => headerConfigurations[field].render)}
                                                 texts={headerFieldList.map((field) => headerConfigurations[field].title)}
                                                 fields={headerFieldList}
                                                 sort={this.props.sort}

@@ -7,6 +7,56 @@ import CurrencyFormat from './CurrencyFormat';
 import IntegerFormat from './IntegerFormat';
 import UploadableImage from "./UploadableImage";
 import {RentEscalation} from "../../models/ComparableLeaseModel";
+import ComparableLeaseModel from "../../models/ComparableLeaseModel";
+import PropTypes from "prop-types";
+import AreaFormat from "./AreaFormat";
+
+class ComparableLeaseListItemHeaderColumn extends React.Component
+{
+    static propTypes = {
+        size: PropTypes.number.isRequired,
+        renders: PropTypes.arrayOf(PropTypes.func).isRequired,
+        noValueTexts: PropTypes.arrayOf(PropTypes.string).isRequired,
+        fields: PropTypes.arrayOf(PropTypes.string).isRequired,
+        comparableLease: PropTypes.instanceOf(ComparableLeaseModel).isRequired
+    };
+
+    render()
+    {
+        const colProps = {};
+        let colClass = "";
+
+        if (_.isNumber(this.props.size))
+        {
+            colProps['xs'] = this.props.size;
+        }
+        else if(this.props.size === 'middle')
+        {
+            colClass = "middle-col"
+        }
+
+        return <Col className={`header-field-column ${colClass}`} {...colProps}>
+
+            {
+                this.props.fields.map((field, fieldIndex) =>
+                {
+                    return this.props.comparableLease[field] && !(_.isArray(this.props.comparableLease[field]) && this.props.comparableLease[field].length === 0)
+                        ? <span>
+                            {
+                                this.props.renders[fieldIndex](this.props.comparableLease[field])
+                            }
+                            {fieldIndex !== this.props.fields.length - 1 ? <br /> : null}
+                            </span>
+                        : <span className={"no-data"}>
+                            {this.props.noValueTexts[fieldIndex]}
+                            {fieldIndex !== this.props.fields.length - 1 ? <br /> : null}
+                        </span>
+                })
+            }
+
+        </Col>
+    }
+}
 
 class ComparableLeaseListItem extends React.Component
 {
@@ -150,6 +200,75 @@ class ComparableLeaseListItem extends React.Component
 
         const lastClass = this.props.last ? "last" : "";
 
+        const headerConfigurations = {
+            leaseDate: {
+                render: (value) => <span>{new Date(value).getMonth() + 1} / {new Date(value).getFullYear().toString().substr(2)}</span>,
+                noValueText: "No Lease Date",
+                size: 2
+            },
+            address: {
+                render: (value) => <span>{value}</span>,
+                noValueText: "No Address",
+                size: 4
+            },
+            rentEscalations: {
+                render: (value) => value.map((escalation) =>
+                {
+                    if (escalation.startYear && escalation.endYear)
+                    {
+                        return <span>Yrs. {escalation.startYear} - {escalation.endYear} @ <CurrencyFormat value={escalation.yearlyRent} cents={false} /><br/></span>
+                    }
+                    else if (escalation.startYear || escalation.endYear)
+                    {
+                        return <span>Yr. {escalation.startYear || escalation.endYear} @ <CurrencyFormat value={escalation.yearlyRent} cents={false} /><br/></span>
+                    }
+                    else
+                    {
+                        return null;
+                    }
+                }),
+                noValueText: "No Rent",
+                size: 2
+            },
+            sizeOfUnit: {
+                render: (value) => <AreaFormat value={value} />,
+                noValueText: "No Size",
+                size: 2
+            },
+            taxesMaintenanceInsurance: {
+                render: (value) => <CurrencyFormat value={value} />,
+                noValueText: "No TMI",
+                size: 2
+            },
+            tenantInducements: {
+                render: (value) => <span>{value}</span>,
+                noValueText: "No Inducements",
+                size: 2
+            },
+            freeRent: {
+                render: (value) => <span>{value}</span>,
+                noValueText: "No Free Rent",
+                size: 2
+            }
+        };
+
+        this.props.headers.forEach((headerFieldList) =>
+        {
+            headerFieldList.forEach((field) =>
+            {
+                if (!headerConfigurations[field])
+                {
+                    const message = `Error! No header configuration for ${field}`;
+                    console.error(message);
+
+                    if (process.env.VALUATE_ENVIRONMENT.REACT_APP_DEBUG)
+                    {
+                        alert(message);
+                    }
+                }
+            })
+        });
+
         return (
             <div className={`card b comparable-lease-list-item ${expandedClass} ${lastClass}`}>
                 <div>
@@ -182,44 +301,17 @@ class ComparableLeaseListItem extends React.Component
                             <CardHeader onClick={() => this.toggleDetails()} className={"comparable-lease-list-item-header"}>
                                 <CardTitle>
                                     <Row>
-                                        <Col xs={2} className={"header-field-column"}>
+                                        {
+                                            this.props.headers.map((headerFieldList) =>
                                             {
-                                                comparableLease.leaseDate ? <span>{new Date(comparableLease.leaseDate).getMonth() + 1} / {new Date(comparableLease.leaseDate).getFullYear().toString().substr(2)}</span>
-                                                    : <span className={"no-data"}>No Lease Date</span>
-                                            }
-                                        </Col>
-                                        <Col xs={4} className={"header-field-column"}>
-                                            {comparableLease.address ? comparableLease.address : <span className={"no-data"}>No Address</span>}
-                                        </Col>
-                                        <Col xs={2} className={"header-field-column"}>
-                                            {comparableLease.sizeOfUnit ? <IntegerFormat value={comparableLease.sizeOfUnit} /> : <span className={"no-data"}>No Size</span>}
-                                        </Col>
-                                        <Col xs={2} className={"header-field-column"}>
-                                            {
-                                                comparableLease.rentEscalations.map((escalation) =>
-                                                {
-                                                    if (escalation.startYear && escalation.endYear)
-                                                    {
-                                                        return <span>Yrs. {escalation.startYear} - {escalation.endYear} @ <CurrencyFormat value={escalation.yearlyRent} cents={false} /><br/></span>
-                                                    }
-                                                    else if (escalation.startYear || escalation.endYear)
-                                                    {
-                                                        return <span>Yr. {escalation.startYear || escalation.endYear} @ <CurrencyFormat value={escalation.yearlyRent} cents={false} /><br/></span>
-                                                    }
-                                                    else
-                                                    {
-                                                        return null;
-                                                    }
-                                                })
-                                            }
-                                        </Col>
-                                        <Col xs={2} className={"header-field-column"}>
-                                            {comparableLease.taxesMaintenanceInsurance ? <CurrencyFormat value={comparableLease.taxesMaintenanceInsurance} /> : <span className={"no-data"}>No TMI</span>}
-                                            <br/>
-                                            {comparableLease.tenantInducements}
-                                            <br/>
-                                            {comparableLease.freeRent}
-                                        </Col>
+                                                return <ComparableLeaseListItemHeaderColumn
+                                                    size={headerConfigurations[headerFieldList[0]].size}
+                                                    renders={headerFieldList.map((field) => headerConfigurations[field].render)}
+                                                    noValueTexts={headerFieldList.map((field) => headerConfigurations[field].noValueText)}
+                                                    fields={headerFieldList}
+                                                    comparableLease={this.props.comparableLease}/>
+                                            })
+                                        }
                                     </Row>
                                 </CardTitle>
                             </CardHeader> : null

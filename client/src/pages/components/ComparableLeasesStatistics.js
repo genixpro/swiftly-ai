@@ -10,84 +10,36 @@ class ComparableLeasesStatistics extends React.Component
 
     };
 
-    computeStatistics()
+    computeStatsForField(field)
     {
-        let minSize = null;
-        let maxSize = null;
-        let totalSize = 0;
-        let sizeCount = 0;
-
-        let minRent = null;
-        let maxRent = null;
-        let totalRent = 0;
-        let rentCount = 0;
-
-        let minTMI = null;
-        let maxTMI = null;
-        let totalTMI = 0;
-        let tmiCount = 0;
+        let minVal = null;
+        let maxVal = null;
+        let totalVal = 0;
+        let valCount = 0;
 
         this.props.comparableLeases.forEach((comparable) =>
         {
-            if (_.isNumber(comparable.sizeOfUnit))
+            if (_.isNumber(comparable[field]))
             {
-                if (minSize === null || comparable.sizeOfUnit < minSize)
+                if (minVal === null || comparable[field] < minVal)
                 {
-                    minSize = comparable.sizeOfUnit;
+                    minVal = comparable[field];
                 }
 
-                if (maxSize === null || comparable.sizeOfUnit > maxSize)
+                if (maxVal === null || comparable[field] > maxVal)
                 {
-                    maxSize = comparable.sizeOfUnit;
+                    maxVal = comparable[field];
                 }
 
-                totalSize += comparable.sizeOfUnit;
-                sizeCount += 1;
-            }
-
-            if (_.isNumber(comparable.startingYearlyRent))
-            {
-                if (minRent === null || comparable.startingYearlyRent < minRent)
-                {
-                    minRent = comparable.startingYearlyRent;
-                }
-
-                if (maxRent === null || comparable.startingYearlyRent > maxRent)
-                {
-                    maxRent = comparable.startingYearlyRent;
-                }
-
-                totalRent += comparable.startingYearlyRent;
-                rentCount += 1;
-            }
-
-            if (_.isNumber(comparable.taxesMaintenanceInsurance))
-            {
-                if (minTMI === null || comparable.taxesMaintenanceInsurance < minTMI)
-                {
-                    minTMI = comparable.taxesMaintenanceInsurance;
-                }
-
-                if (maxTMI === null || comparable.taxesMaintenanceInsurance > maxTMI)
-                {
-                    maxTMI = comparable.taxesMaintenanceInsurance;
-                }
-
-                totalTMI += comparable.taxesMaintenanceInsurance;
-                tmiCount += 1;
+                totalVal += comparable[field];
+                valCount += 1;
             }
         });
 
         return {
-            minSize,
-            maxSize,
-            averageSize: sizeCount > 0 ? totalSize / sizeCount : null,
-            minRent,
-            maxRent,
-            averageRent: totalRent > 0 ? totalRent / rentCount : null,
-            minTMI,
-            maxTMI,
-            averageTMI: totalTMI > 0 ? totalTMI / tmiCount : null
+            min: minVal,
+            max: maxVal,
+            average: valCount > 0 ? totalVal / valCount : 0,
         }
     }
 
@@ -98,57 +50,90 @@ class ComparableLeasesStatistics extends React.Component
             return null;
         }
 
-        const stats = this.computeStatistics();
+        const statConfigurations = {
+            sizeOfUnit: {
+                rangeTitle: "Size Range (sqft))",
+                averageTitle: "Size Average (sqft)",
+                render: (value) => <AreaFormat value={value}/>
+            },
+            startingYearlyRent: {
+                rangeTitle: "Yearly Rent Range ($)",
+                averageTitle: "Yearly Rent Average ($)",
+                render: (value) => <CurrencyFormat value={value}/>
+            },
+            taxesMaintenanceInsurance: {
+                rangeTitle: "TMI Range ($)",
+                averageTitle: "TMI Average (%)",
+                render: (value) => <CurrencyFormat value={value}/>
+            }
+        };
+
+        const statFields = _.clone(this.props.stats);
+        statFields.forEach((field) =>
+        {
+            if (!statConfigurations[field])
+            {
+                const message = `Error! No statistic configuration for ${field}`;
+                console.error(message);
+
+                if (process.env.VALUATE_ENVIRONMENT.REACT_APP_DEBUG)
+                {
+                    alert(message);
+                }
+            }
+        });
+
+        while(statFields.length % 3 !== 0)
+        {
+            statFields.push(null);
+        }
 
         return (
             <Row className={"comparable-leases-statistics"}>
                 <Col xs={12}>
                     <Card className="card-default">
                         <CardBody>
-                            <Row>
-                                <Col xs={12}>
-                                    <h4>{this.props.title}</h4>
-                                </Col>
-                            </Row>
-                            <Row>
-                                <Col xs={4}>
-                                    <strong>Size Range:</strong>&nbsp;&nbsp;&nbsp;
+                            {
+                                this.props.title ?
+                                    <Row>
+                                        <Col xs={12}>
+                                            <h4>{this.props.title}</h4>
+                                        </Col>
+                                    </Row> : null
+                            }
+                            <Row className={"statRow"}>
+                                {
+                                    statFields.map((statField) =>
                                     {
-                                        stats.minSize ? <span><AreaFormat value={stats.minSize} /> - <AreaFormat value={stats.maxSize} /></span> : <span>n/a</span>
-                                    }
-                                </Col>
-                                <Col xs={4}>
-                                    <strong>Yearly Rent Range:</strong>&nbsp;&nbsp;&nbsp;
-                                    {
-                                        stats.minRent ? <span><CurrencyFormat value={stats.minRent} /> - <CurrencyFormat value={stats.maxRent} /></span> : <span>n/a</span>
-                                    }
-                                </Col>
-                                <Col xs={4}>
-                                    <strong>TMI Range:</strong>&nbsp;&nbsp;&nbsp;
-                                    {
-                                        stats.minTMI ? <span><CurrencyFormat value={stats.minTMI} /> - <CurrencyFormat value={stats.maxTMI} /></span> : <span>n/a</span>
-                                    }
-                                </Col>
-                            </Row>
-                            <Row>
-                                <Col xs={4}>
-                                    <strong>Size Average:</strong>&nbsp;&nbsp;&nbsp;
-                                    {
-                                        stats.averageSize ? <span><AreaFormat value={stats.averageSize} /></span> : <span>n/a</span>
-                                    }
-                                </Col>
-                                <Col xs={4}>
-                                    <strong>Yearly Rent Average:</strong>&nbsp;&nbsp;&nbsp;
-                                    {
-                                        stats.averageRent ? <span><CurrencyFormat value={stats.averageRent} /></span> : <span>n/a</span>
-                                    }
-                                </Col>
-                                <Col xs={4}>
-                                    <strong>TMI Average:</strong>&nbsp;&nbsp;&nbsp;
-                                    {
-                                        stats.averageTMI ? <span><CurrencyFormat value={stats.averageTMI} /></span> : <span>n/a</span>
-                                    }
-                                </Col>
+                                        if (statField === null)
+                                        {
+                                            return <Col className={"statColumn"} />;
+                                        }
+
+                                        const stats = this.computeStatsForField(statField);
+                                        const render = statConfigurations[statField].render;
+
+                                        return <Col className={"statColumn"}>
+                                            <div className={"statBlock"}>
+                                                <strong>{statConfigurations[statField].rangeTitle}:</strong>&nbsp;&nbsp;&nbsp;
+                                            </div>
+                                            <div className={"statBlock"}>
+                                                {
+                                                    stats.min ? <span>{render(stats.min)} - {render(stats.max)}</span> : <span>n/a</span>
+                                                }
+                                            </div>
+                                            <br/>
+                                            <div className={"statBlock"}>
+                                                <strong>{statConfigurations[statField].averageTitle}:</strong>&nbsp;&nbsp;&nbsp;
+                                            </div>
+                                            <div className={"statBlock"}>
+                                                {
+                                                    stats.average ? <span>{render(stats.average)}</span> : <span>n/a</span>
+                                                }
+                                            </div>
+                                        </Col>
+                                    })
+                                }
                             </Row>
                         </CardBody>
                     </Card>

@@ -97,6 +97,7 @@ class ViewExpensesTMI extends React.Component
                                         <ComparableLeaseList comparableLeases={this.state.comparableLeases}
                                                             statsTitle={"Statistics for Selected Comps"}
                                                             allowNew={false}
+                                                             statsPosition={"below"}
                                                             sort={this.state.sort}
                                                             onSortChanged={(newSort) => this.onSortChanged(newSort)}
                                                             noCompMessage={"There are no comparables attached to this appraisal. Please go to the comparable sales database and select comparables from there."}

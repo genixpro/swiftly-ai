@@ -7,12 +7,57 @@ import ComparableLeasesStatistics from "./ComparableLeasesStatistics";
 import ComparableLeaseModel from "../../models/ComparableLeaseModel";
 import { Button, Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
 import SortDirection from "./SortDirection";
+import PropTypes from "prop-types";
+import _ from "underscore";
 
+
+class ComparableLeaseListHeaderColumn extends React.Component
+{
+    static propTypes = {
+        size: PropTypes.number.isRequired,
+        texts: PropTypes.arrayOf(PropTypes.string).isRequired,
+        fields: PropTypes.arrayOf(PropTypes.string).isRequired,
+        sort: PropTypes.object.isRequired,
+        sortField: PropTypes.string.isRequired,
+        changeSortColumn: PropTypes.func.isRequired
+    };
+
+    render()
+    {
+        const colProps = {};
+        let colClass = "";
+
+        if (_.isNumber(this.props.size))
+        {
+            colProps['xs'] = this.props.size;
+        }
+        else if(this.props.size === 'middle')
+        {
+            colClass = "middle-col"
+        }
+
+        return <Col className={`header-field-column ${colClass}`} {...colProps} onClick={() => this.props.changeSortColumn(this.props.fields[0])}>
+
+            {
+                this.props.fields.map((field, fieldIndex) =>
+                {
+                    return <span>
+                            {this.props.texts[fieldIndex]}
+                        {fieldIndex === 0 ? <SortDirection field={this.props.sortField} sort={this.props.sort} /> : null}
+                        {fieldIndex !== this.props.fields.length - 1 ? <br /> : null}
+                    </span>
+                })
+            }
+
+        </Col>
+    }
+}
 
 class ComparableLeaseList extends React.Component
 {
     static defaultProps = {
-        "noCompMessage": "There are no comparables. Please add a new one or change your search settings."
+        "noCompMessage": "There are no comparables. Please add a new one or change your search settings.",
+        statsPosition: "above"
     };
 
     state = {
@@ -35,6 +80,26 @@ class ComparableLeaseList extends React.Component
     componentDidUpdate()
     {
         this.updateComparables();
+    }
+
+    defaultHeaderFields()
+    {
+        const headerFields = [
+            ["leaseDate"],
+            ["address"],
+            ["sizeOfUnit"],
+            ["rentEscalations"],
+            ["taxesMaintenanceInsurance", "tenantInducements", "freeRent"],
+        ];
+
+        return headerFields;
+    }
+
+    defaultStatsFields()
+    {
+        const statFields = ['sizeOfUnit', 'startingYearlyRent', 'taxesMaintenanceInsurance'];
+
+        return statFields;
     }
 
 
@@ -179,35 +244,85 @@ class ComparableLeaseList extends React.Component
             firstSpacing = 'first-spacing';
         }
 
+        const headerConfigurations = {
+            leaseDate: {
+                title: "Date",
+                size: 2
+            },
+            address: {
+                title: "Address",
+                size: 4
+            },
+            sizeOfUnit: {
+                title: "Size (sqft)",
+                size: 2
+            },
+            rentEscalations: {
+                title: "Rent ($)",
+                sortField: "rentEscalations[0].yearlyRent",
+                size: 2
+            },
+            taxesMaintenanceInsurance: {
+                title: "TMI ($)",
+                size: 2
+            },
+            tenantInducements: {
+                title: "Inducements",
+                size: 2
+            },
+            freeRent: {
+                title: "freeRent",
+                size: 2
+            }
+        };
+
+        const headerFields = this.props.headers || this.defaultHeaderFields();
+
+        headerFields.forEach((headerFieldList) =>
+        {
+            headerFieldList.forEach((field) =>
+            {
+                if (!headerConfigurations[field])
+                {
+                    const message = `Error! No header configuration for ${field}`;
+                    console.error(message);
+
+                    if (process.env.VALUATE_ENVIRONMENT.REACT_APP_DEBUG)
+                    {
+                        alert(message);
+                    }
+                }
+            })
+        });
+
+        const statsFields = this.props.stats || this.defaultStatsFields();
+
         return (
             <div>
                 {
-                    <ComparableLeasesStatistics comparableLeases={this.state.comparableLeases} title={this.props.statsTitle} />
+                    this.props.statsPosition === "above" ?
+                        <ComparableLeasesStatistics comparableLeases={this.state.comparableLeases} title={this.props.statsTitle} stats={statsFields} />
+                        : null
                 }
                 {
                     <div className={`card b comparable-lease-list-header`}>
                         <CardHeader className={`comparable-lease-list-item-header ${firstSpacing}`}>
                             <CardTitle>
                                 <Row>
-                                    <Col xs={2} className={"header-field-column"} onClick={() => this.changeSortColumn("leaseDate")}>
-                                        Date <SortDirection field={"leaseDate"} sort={this.props.sort} />
-                                    </Col>
-                                    <Col xs={4} className={"header-field-column"} onClick={() => this.changeSortColumn("address")}>
-                                        Address <SortDirection field={"address"} sort={this.props.sort} />
-                                    </Col>
-                                    <Col xs={2} className={"header-field-column"} onClick={() => this.changeSortColumn("sizeOfUnit")}>
-                                        Size (sf) <SortDirection field={"sizeOfUnit"} sort={this.props.sort} />
-                                    </Col>
-                                    <Col xs={2} className={"header-field-column"} onClick={() => this.changeSortColumn("rentEscalations[0].yearlyRent")}>
-                                        Rent ($) <SortDirection field={"rentEscalations[0].yearlyRent"} sort={this.props.sort} />
-                                    </Col>
-                                    <Col xs={2} className={"header-field-column"} onClick={() => this.changeSortColumn("taxesMaintenanceInsurance")}>
-                                        TMI ($) <SortDirection field={"taxesMaintenanceInsurance"} sort={this.props.sort} />
-                                        <br/>
-                                        Inducements
-                                        <br/>
-                                        Free Rent
-                                    </Col>
+                                    {
+                                        headerFields.map((headerFieldList) =>
+                                        {
+                                            return <ComparableLeaseListHeaderColumn
+                                                size={headerConfigurations[headerFieldList[0]].size}
+                                                texts={headerFieldList.map((field) => headerConfigurations[field].title)}
+                                                fields={headerFieldList}
+                                                sortField={headerConfigurations[headerFieldList[0]].sortField || headerFieldList[0]}
+                                                sort={this.props.sort}
+                                                comparableLease={this.props.comparableLease}
+                                                changeSortColumn={this.changeSortColumn.bind(this)}
+                                            />
+                                        })
+                                    }
                                 </Row>
                             </CardTitle>
                         </CardHeader>
@@ -237,6 +352,7 @@ class ComparableLeaseList extends React.Component
                         if (excludeIds.indexOf(comparableLease._id) === -1)
                         {
                             return <ComparableLeaseListItem
+                                headers={headerFields}
                                 key={comparableLease._id}
                                 comparableLease={comparableLease}
                                 history={this.props.history}
@@ -264,6 +380,11 @@ class ComparableLeaseList extends React.Component
                         </div> : null
                     }
                 </div>
+                {
+                    this.props.statsPosition === "below" ? <div><br/>
+                        <ComparableLeasesStatistics comparableLeases={this.state.comparableLeases} title={this.props.statsTitle} stats={statsFields} />
+                    </div> : null
+                }
             </div>
         );
     }
