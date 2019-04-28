@@ -272,7 +272,7 @@ class ComparableLeaseList extends React.Component
                 size: 2
             },
             freeRent: {
-                title: "freeRent",
+                title: "Free Rent",
                 size: 2
             }
         };

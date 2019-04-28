@@ -19,22 +19,7 @@ class ViewAppraisalComparableLeases extends React.Component {
 
     componentDidMount()
     {
-        Promise.map(this.props.appraisal.comparableLeases, (comparableLeaseId) =>
-        {
-            if (this.loadedComparables[comparableLeaseId])
-            {
-                return this.loadedComparables[comparableLeaseId];
-            }
-            else
-            {
-                // alert('loading');
-                return axios.get(`/comparable_leases/` + comparableLeaseId).then((response) =>
-                {
-                    this.loadedComparables[comparableLeaseId] = ComparableLeaseModel.create(response.data.comparableLease);
-                    return this.loadedComparables[comparableLeaseId];
-                });
-            }
-        }).then((comparableLeases) =>
+        this.props.appraisal.loadComparableLeases().then((comparableLeases) =>
         {
             this.setState({comparableLeases: ComparableLeaseModel.sortComparables(comparableLeases, this.state.sort)})
         })

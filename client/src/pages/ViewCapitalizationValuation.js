@@ -29,34 +29,10 @@ class ViewCapitalizationValuation extends React.Component
 
     componentDidMount()
     {
-        this.props.reloadAppraisal();
-        Promise.map(this.props.appraisal.comparableSalesCapRate, (comparableSaleId) =>
-        {
-            if (this.loadedComparables[comparableSaleId])
-            {
-                return this.loadedComparables[comparableSaleId];
-            }
-            else
-            {
-                return axios.get(`/comparable_sales/` + comparableSaleId).then((response) =>
-                {
-                    if (response.data.comparableSale)
-                    {
-                        this.loadedComparables[comparableSaleId] = ComparableSaleModel.create(response.data.comparableSale);
-                        return this.loadedComparables[comparableSaleId];
-                    }
-                });
-            }
-        }).then((comparableSales) =>
+        this.props.appraisal.loadComparableSalesCapRate().then((comparableSales) =>
         {
             this.setState({comparableSales: ComparableSaleModel.sortComparables(comparableSales.filter((item) => item), this.state.sort)})
-        }).catch((err) =>
-        {
-            if (process.env.VALUATE_ENVIRONMENT.REACT_APP_DEBUG)
-            {
-                alert("Error: " + err.toString());
-            }
-        })
+        });
     }
 
 

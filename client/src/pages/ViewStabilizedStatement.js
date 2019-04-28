@@ -19,7 +19,7 @@ class ViewStabilizedStatement extends React.Component
 
     componentDidMount()
     {
-        this.props.reloadAppraisal();
+
     }
 
 

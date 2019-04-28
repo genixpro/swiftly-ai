@@ -26,24 +26,7 @@ class ViewAppraisalComparableSales extends React.Component {
     componentDidMount()
     {
         this.field = this.props.compsField;
-        Promise.map(this.props.appraisal[this.props.compsField], (comparableSaleId) =>
-        {
-            if (this.loadedComparables[comparableSaleId])
-            {
-                return this.loadedComparables[comparableSaleId];
-            }
-            else
-            {
-                return axios.get(`/comparable_sales/` + comparableSaleId).then((response) =>
-                {
-                    if (response.data.comparableSale)
-                    {
-                        this.loadedComparables[comparableSaleId] = ComparableSaleModel.create(response.data.comparableSale);
-                        return this.loadedComparables[comparableSaleId];
-                    }
-                });
-            }
-        }).then((comparableSales) =>
+        this.props.appraisal.loadComparableSales(this.props.compsField).then((comparableSales) =>
         {
             this.setState({comparableSales: ComparableSaleModel.sortComparables(comparableSales.filter((item) => item), this.state.sort)})
         })

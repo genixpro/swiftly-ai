@@ -20,6 +20,10 @@ import FloatField from "../orm/FloatField";
 import DateField from "../orm/DateField";
 import LeasingCostStructureModel from "./LeasingCostStructureModel";
 import _ from "underscore";
+import ComparableSaleModel from "./ComparableSaleModel";
+import Promise from "bluebird";
+import axios from "axios/index";
+import ComparableLeaseModel from "./ComparableLeaseModel";
 
 class AppraisalModel extends BaseModel
 {
@@ -153,6 +157,85 @@ class AppraisalModel extends BaseModel
     hasComparableSale(comp)
     {
         return this.hasComparableSaleInCapRate(comp) || this.hasComparableSaleInDCA(comp);
+    }
+
+    static _loadedComparableSales = Symbol("_loadedComparableSales");
+    static _loadedComparableLeases = Symbol("_loadedComparableLeases");
+
+    loadComparableSales(compField)
+    {
+        if (!this[AppraisalModel._loadedComparableSales])
+        {
+            this[AppraisalModel._loadedComparableSales] = {};
+        }
+
+        return Promise.map(this[compField], (comparableSaleId) =>
+        {
+            if (this[AppraisalModel._loadedComparableSales][comparableSaleId])
+            {
+                return this[AppraisalModel._loadedComparableSales][comparableSaleId];
+            }
+            else
+            {
+                return axios.get(`/comparable_sales/` + comparableSaleId).then((response) =>
+                {
+                    if (response.data.comparableSale)
+                    {
+                        this[AppraisalModel._loadedComparableSales][comparableSaleId] = ComparableSaleModel.create(response.data.comparableSale);
+                        return this[AppraisalModel._loadedComparableSales][comparableSaleId];
+                    }
+                });
+            }
+        }).catch((err) =>
+        {
+            if (process.env.VALUATE_ENVIRONMENT.REACT_APP_DEBUG)
+            {
+                alert("Error: " + err.toString());
+            }
+        })
+    }
+
+    loadComparableLeases()
+    {
+        if (!this[AppraisalModel._loadedComparableLeases])
+        {
+            this[AppraisalModel._loadedComparableLeases] = {};
+        }
+
+        return Promise.map(this.comparableLeases, (comparableLeaseId) =>
+        {
+            if (this[AppraisalModel._loadedComparableLeases][comparableLeaseId])
+            {
+                return this[AppraisalModel._loadedComparableLeases][comparableLeaseId];
+            }
+            else
+            {
+                return axios.get(`/comparable_leases/` + comparableLeaseId).then((response) =>
+                {
+                    if (response.data.comparableLease)
+                    {
+                        this[AppraisalModel._loadedComparableLeases][comparableLeaseId] = ComparableLeaseModel.create(response.data.comparableLease);
+                        return this[AppraisalModel._loadedComparableLeases][comparableLeaseId];
+                    }
+                });
+            }
+        }).catch((err) =>
+        {
+            if (process.env.VALUATE_ENVIRONMENT.REACT_APP_DEBUG)
+            {
+                alert("Error: " + err.toString());
+            }
+        })
+    }
+
+    loadComparableSalesDCA()
+    {
+        return this.loadComparableSales('comparableSalesDCA')
+    }
+
+    loadComparableSalesCapRate()
+    {
+        return this.loadComparableSales('comparableSalesCapRate')
     }
 }
 
