@@ -196,6 +196,10 @@ class ViewDirectComparisonValuation extends React.Component
             compHeaders.push(["sizeOfBuildableAreaSqft", "sizeOfLandSqft", "buildableUnits"]);
             compStats.push(["buildableUnits"]);
         }
+        else if (this.props.appraisal.directComparisonInputs.directComparisonMetric === "per_unit")
+        {
+            compHeaders.push(["numberOfUnits", "totalBedrooms"]);
+        }
         else
         {
             compHeaders.push(["sizeSquareFootage"]);
@@ -233,6 +237,12 @@ class ViewDirectComparisonValuation extends React.Component
         {
             compHeaders.push(["pricePerSquareFootBuildableArea", "pricePerSquareFootLand", "pricePerBuildableUnit"]);
             compStats.push(["pricePerBuildableUnit"]);
+        }
+        else if (this.props.appraisal.directComparisonInputs.directComparisonMetric === "per_unit")
+        {
+            compHeaders.push(["noiPerUnit", "noiPerBedroom"]);
+            compHeaders.push(["pricePerUnit", "pricePerBedroom"]);
+            compStats.push(["pricePerUnit"]);
         }
         else
         {

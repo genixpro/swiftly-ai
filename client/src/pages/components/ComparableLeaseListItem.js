@@ -367,6 +367,7 @@ class ComparableLeaseListItem extends React.Component
                                         edit={this.props.edit}
                                         placeholder={"Property Tags"}
                                         value={comparableLease.propertyTags}
+                                        propertyType={comparableLease.propertyType}
                                         onChange={(newValue) => this.changeComparableField('propertyTags', newValue)}
                                     />
 

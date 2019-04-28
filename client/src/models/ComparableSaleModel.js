@@ -76,6 +76,7 @@ class ComparableSaleModel extends EquationMdoel
     static noiPerBedroom = new FloatField();
 
     static pricePerBedroom = new FloatField("pricePerBedroom");
+    static pricePerUnit = new FloatField("pricePerUnit");
     static numberOfBachelors = new FloatField("numberOfBachelors", 0);
     static numberOfOneBedrooms = new FloatField("numberOfOneBedrooms", 0);
     static numberOfTwoBedrooms = new FloatField("numberOfTwoBedrooms", 0);
@@ -221,6 +222,12 @@ class ComparableSaleModel extends EquationMdoel
             {
                 inputs: ['totalBedrooms', 'salePrice'],
                 equation: (totalBedrooms, salePrice) => totalBedrooms ? salePrice / totalBedrooms : 0
+            }
+        ],
+        "pricePerUnit": [
+            {
+                inputs: ['numberOfUnits', 'salePrice'],
+                equation: (numberOfUnits, salePrice) => numberOfUnits ? salePrice / numberOfUnits : 0
             }
         ],
         "noiPerBedroom": [

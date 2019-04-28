@@ -73,6 +73,14 @@ class DirectComparisonValuationModel(ValuationModelBase):
             noiPSF = (appraisal.stabilizedStatement.netOperatingIncome / appraisal.sizeOfBuilding)
 
             dca.comparativeValue = noiPSF * appraisal.directComparisonInputs.noiPSFMultiple * appraisal.sizeOfBuilding # Size of building technically cancels out in this equation
+        elif appraisal.directComparisonInputs.directComparisonMetric == 'per_unit':
+            if not len(appraisal.units):
+                dca.comparativeValue = 0
+                dca.valuation = 0
+                dca.valuationRounded = 0
+                return dca
+
+            dca.comparativeValue = len(appraisal.units) * appraisal.directComparisonInputs.pricePerUnit
 
         else:
             dca.comparativeValue = 0

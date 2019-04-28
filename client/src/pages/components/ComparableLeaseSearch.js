@@ -108,6 +108,7 @@ class ComparableLeaseSearch extends React.Component
                                                 <FieldDisplayEdit
                                                     isSearch={true}
                                                     type={"tags"}
+                                                    propertyType={this.state.search.propertyType}
                                                     value={this.state.search.propertyTags}
                                                     onChange={(newValue) => this.changeSearchField("propertyTags", newValue)}
                                                     hideInput={false}

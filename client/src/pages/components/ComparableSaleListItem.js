@@ -50,6 +50,7 @@ class ComparableSaleListItemField extends React.Component
                 cents={this.props.cents}
                 placeholder={this.props.placeholder || this.props.title}
                 value={this.props.comparableSale[this.props.field]}
+                propertyType={this.props.comparableSale.propertyType}
                 onChange={(newValue) => this.props.onChange(this.props.field, newValue)}
                 onGeoChange={(newValue) => this.props.onChange('location', {"type": "Point", "coordinates": [newValue.lng, newValue.lat]})}
             />
@@ -352,6 +353,14 @@ class ComparableSaleListItem extends React.Component
             },
             totalBedrooms: {
                 render: (value) => <IntegerFormat value={value}/>,
+                size: "middle"
+            },
+            pricePerUnit: {
+                render: (value) => <CurrencyFormat value={value} cents={false}/>,
+                size: "middle"
+            },
+            pricePerBedroom: {
+                render: (value) => <CurrencyFormat value={value} cents={false}/>,
                 size: "middle"
             }
         };

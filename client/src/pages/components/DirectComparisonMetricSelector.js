@@ -47,6 +47,7 @@ class DirectComparisonMetricSelector extends React.Component
                 <option value={""}>No Metric Selected</option>
                 <option value={"psf"}>Price Per Square Foot of Building Size</option>
                 <option value={"noi_multiple"}>NOI/PSF Multiple</option>
+                <option value={"per_unit"}>Price Per Unit (Residential)</option>
                 <option value={"psf_land"}>Per Square Foot of Land</option>
                 <option value={"per_acre_land"}>Per Acre of Land</option>
                 <option value={"psf_buildable_area"}>Per Square Foot of Buildable Area</option>

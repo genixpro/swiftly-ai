@@ -56,7 +56,8 @@ class ComparableSaleList extends React.Component
         "sort": "-date",
         "statsPosition": "above",
         showPropertyTypeInHeader: true,
-        "noCompMessage": "There are no comparables. Please add a new one or change your search settings."
+        "noCompMessage": "There are no comparables. Please add a new one or change your search settings.",
+        search: {}
     };
 
     state = {
@@ -86,12 +87,12 @@ class ComparableSaleList extends React.Component
             ["address"]
         ];
 
-        if (this.props.appraisal.propertyType !== 'land')
+        if (this.props.search.propertyType !== 'land')
         {
             headerFields.push(["sizeSquareFootage"])
         }
 
-        if (this.props.appraisal.propertyType === 'land')
+        if (this.props.search.propertyType === 'land')
         {
             headerFields.push(["sizeOfLandAcres", "sizeOfBuildableAreaSqft"])
         }
@@ -100,12 +101,12 @@ class ComparableSaleList extends React.Component
 
         headerFields.push(["propertyType", "propertyTags"]);
 
-        if (this.props.appraisal.propertyType !== 'land')
+        if (this.props.search.propertyType !== 'land')
         {
             headerFields.push(["capitalizationRate", "pricePerSquareFoot"])
         }
 
-        if (this.props.appraisal.propertyType === 'land')
+        if (this.props.search.propertyType === 'land')
         {
             headerFields.push(["pricePerAcreLand", "pricePerSquareFootBuildableArea"])
         }
@@ -117,19 +118,24 @@ class ComparableSaleList extends React.Component
     {
         const statFields = [];
 
-        if (this.props.appraisal.propertyType !== 'land')
+        if (this.props.search.propertyType !== 'land')
         {
             statFields.push("capitalizationRate");
             statFields.push("pricePerSquareFoot");
             statFields.push("sizeSquareFootage")
         }
 
-        if (this.props.appraisal.propertyType === 'industrial')
+        if (this.props.search.propertyType !== 'land')
+        {
+            statFields.push("occupancyRate");
+        }
+
+        if (this.props.search.propertyType === 'industrial')
         {
             statFields.push("clearCeilingHeight");
         }
 
-        if (this.props.appraisal.propertyType === 'land')
+        if (this.props.search.propertyType === 'land')
         {
             statFields.push("sizeOfLandAcres");
             statFields.push("floorSpaceIndex");
@@ -365,7 +371,15 @@ class ComparableSaleList extends React.Component
                 size: "middle"
             },
             totalBedrooms: {
-                title: "totalBedrooms",
+                title: "Total Bedrooms",
+                size: "middle"
+            },
+            pricePerUnit: {
+                title: "Price / Unit",
+                size: "middle"
+            },
+            pricePerBedroom: {
+                title: "Price / Bedroom",
                 size: "middle"
             }
         };

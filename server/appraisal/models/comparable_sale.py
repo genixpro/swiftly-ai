@@ -116,6 +116,7 @@ class ComparableSale(Document):
     noiPerUnit = FloatField()
     noiPerBedroom = FloatField()
 
+    pricePerUnit = FloatField()
     pricePerBedroom = FloatField()
     numberOfBachelors = FloatField()
     numberOfOneBedrooms = FloatField()

@@ -33,7 +33,14 @@ class TagEditor extends React.Component {
 
     onCreateTag(data)
     {
-        axios.post(`/property_tags`, {name: data}).then((response) =>
+        const newTag = {name: data};
+
+        if (this.props.propertyType)
+        {
+            newTag['propertyType'] = this.props.propertyType;
+        }
+
+        axios.post(`/property_tags`, newTag).then((response) =>
         {
             this.setState((state) => {
                 state.tags.push({value: data, label: data});
@@ -43,7 +50,13 @@ class TagEditor extends React.Component {
 
     loadOptions(inputValue, callback)
     {
-        axios.get(`/property_tags`, {params: {name: inputValue}}).then((response) =>
+        const search = {name: inputValue};
+        if (this.props.propertyType)
+        {
+            search['propertyType'] = this.props.propertyType;
+        }
+
+        axios.get(`/property_tags`, {params: search}).then((response) =>
         {
             callback(response.data.tags.map((tag) => ({value: tag._id['$oid'], label: tag.name}) ));
         });
@@ -79,9 +92,12 @@ class TagEditor extends React.Component {
                 <div {...(data.innerProps)} className={"tag-editor-option"}>
                     {data.data.label}
 
-                    <Button className={"delete-tag-button"} color={"secondary"} onClick={(evt) => this.deleteTag(evt, data.value)} >
-                        <i className={"fa fa-times"} />
-                    </Button>
+                    {
+                        data.data.hasValue ?
+                            <Button className={"delete-tag-button"} color={"secondary"} onClick={(evt) => this.deleteTag(evt, data.value)} >
+                                <i className={"fa fa-times"} />
+                            </Button> : null
+                    }
                 </div>
             ) : null;
         };
@@ -94,7 +110,7 @@ class TagEditor extends React.Component {
                 // cacheOptions
                 isClearable
                 isMulti
-                loadOptions={this.loadOptions}
+                loadOptions={(inputValue, callback) => this.loadOptions(inputValue, callback)}
                 onCreateOption={(data) => this.onCreateTag(data)}
                 noOptionsMessage={() => <span>Search for or Type in a Tag</span>}
                 ref={(ref) => this.selectRef = ref}

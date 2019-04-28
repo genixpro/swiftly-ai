@@ -137,6 +137,16 @@ class ComparableSalesStatistics extends React.Component
                 rangeTitle: "NOI Range ($)",
                 averageTitle: "NOI Average ($)",
                 render: (value) => <CurrencyFormat value={value} cents={false}/>
+            },
+            pricePerUnit: {
+                rangeTitle: "Price / Unit Range ($)",
+                averageTitle: "Price / Unit Average ($)",
+                render: (value) => <CurrencyFormat value={value} cents={false}/>
+            },
+            occupancyRate: {
+                rangeTitle: "Occupancy Rate Range (%)",
+                averageTitle: "Occupancy Rate Average (%)",
+                render: (value) => <CurrencyFormat value={value} cents={false}/>
             }
         };
 

@@ -538,6 +538,7 @@ class FieldDisplayEdit extends React.Component
                     this.props.type === "tags" ?
                         <TagEditor
                             disabled={!this.props.edit}
+                            propertyType={this.props.propertyType}
                             title={this.props.title || this.props.placeholder}
                             value={this.state.isEditing ? this.state.value : this.props.value}
                             onChange={(newValue) => this.tagInputUpdated(newValue) }

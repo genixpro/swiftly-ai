@@ -32,6 +32,9 @@ class PropertyTagAPI(object):
         if "name" in self.request.GET:
             query['name__icontains'] = self.request.GET['name']
 
+        if "propertyType" in self.request.GET:
+            query['propertyType'] = self.request.GET['propertyType']
+
         if "admin" not in self.request.effective_principals:
             query["owner"] = self.request.authenticated_userid
 

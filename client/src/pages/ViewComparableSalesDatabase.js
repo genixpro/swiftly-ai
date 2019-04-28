@@ -92,6 +92,7 @@ class ViewComparableSalesDatabase extends React.Component {
     onSearchChanged(search)
     {
         this.search = search;
+        this.setState({search: search});
         this.loadData();
     }
 
@@ -193,6 +194,7 @@ class ViewComparableSalesDatabase extends React.Component {
                                             statsTitle={"Region Statistics"}
                                             allowNew={true}
                                             sort={this.state.sort}
+                                            search={this.state.search}
                                             onSortChanged={(field) => this.onSortChanged(field)}
                                             history={this.props.history}
                                             appraisal={this.props.appraisal}

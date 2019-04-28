@@ -22,6 +22,7 @@ class DirectComparisonInputs extends BaseModel
     static pricePerBuildableUnit = new FloatField();
     static noiPSFMultiple = new FloatField();
     static noiPSFPricePerSquareFoot = new FloatField();
+    static pricePerUnit = new FloatField();
 
     static directComparisonMetric = new StringField();
 

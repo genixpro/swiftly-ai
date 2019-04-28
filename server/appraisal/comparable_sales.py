@@ -66,6 +66,21 @@ class ComparableSaleAPI(object):
         if 'siteCoverageTo' in self.request.GET:
             query['siteCoverage__lte'] = self.request.GET['siteCoverageTo']
 
+        if 'sizeOfLandAcresFrom' in self.request.GET:
+            query['sizeOfLandAcres__gte'] = self.request.GET['sizeOfLandAcresFrom']
+        if 'sizeOfLandAcresTo' in self.request.GET:
+            query['sizeOfLandAcres__lte'] = self.request.GET['sizeOfLandAcresTo']
+
+        if 'sizeOfLandSqftFrom' in self.request.GET:
+            query['sizeOfLandSqft__gte'] = self.request.GET['sizeOfLandSqftFrom']
+        if 'sizeOfLandSqftTo' in self.request.GET:
+            query['sizeOfLandSqft__lte'] = self.request.GET['sizeOfLandSqftTo']
+
+        if 'pricePerSquareFootLandFrom' in self.request.GET:
+            query['pricePerSquareFootLand__gte'] = self.request.GET['pricePerSquareFootLandFrom']
+        if 'pricePerSquareFootLandTo' in self.request.GET:
+            query['pricePerSquareFootLand__lte'] = self.request.GET['pricePerSquareFootLandTo']
+
         if 'propertyType' in self.request.GET:
             query['propertyType'] = self.request.GET['propertyType']
 

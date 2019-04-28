@@ -50,9 +50,9 @@ class PropertyTypeSelector extends React.Component
                 }
                 <option value={"office"}>Office</option>
                 <option value={"industrial"}>Industrial</option>
-                <option value={"residential"}>Residential</option>
                 <option value={"retail"}>Retail</option>
                 <option value={"land"}>Land</option>
+                <option value={"residential"}>Residential</option>
             </select>
         );
     }
