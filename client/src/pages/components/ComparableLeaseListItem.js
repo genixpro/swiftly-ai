@@ -10,6 +10,7 @@ import {RentEscalation} from "../../models/ComparableLeaseModel";
 import ComparableLeaseModel from "../../models/ComparableLeaseModel";
 import PropTypes from "prop-types";
 import AreaFormat from "./AreaFormat";
+import PercentFormat from "./PercentFormat";
 
 class ComparableLeaseListItemHeaderColumn extends React.Component
 {

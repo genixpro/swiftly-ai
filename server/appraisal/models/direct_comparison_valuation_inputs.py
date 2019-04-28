@@ -19,9 +19,16 @@ class DirectComparisonValuationInputs(EmbeddedDocument):
     pricePerSquareFootBuildableArea = FloatField(default=20.0)
     pricePerBuildableUnit = FloatField(default=10000.0)
     noiPSFMultiple = FloatField(default=10)
+    noiPSFPricePerSquareFoot = FloatField()
 
-    directComparisonMetric = StringField(default='psf', choices=['noi_multiple', 'psf', 'psf_land', 'per_acre_land', 'psf_buildable_area', 'per_buildable_unit', None, ""], null=True)
+    directComparisonMetric = StringField(default='noi_multiple', choices=['noi_multiple', 'psf', 'psf_land', 'per_acre_land', 'psf_buildable_area', 'per_buildable_unit', None, ""], null=True)
 
     # This is a dictionary mapping the modifiers that are added to the final valuation
     modifiers = ListField(EmbeddedDocumentField(DirectComparisonValuationModifier), default=[])
+
+    applyVacantUnitLeasingCosts = BooleanField(default=True)
+    applyVacantUnitRentLoss = BooleanField(default=True)
+    applyFreeRentLoss = BooleanField(default=True)
+    applyAmortization = BooleanField(default=True)
+    applyMarketRentDifferential = BooleanField(default=True)
 

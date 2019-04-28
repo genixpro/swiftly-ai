@@ -297,7 +297,7 @@ class ComparableSaleList extends React.Component
                 size: "middle"
             },
             pricePerSquareFoot: {
-                title: "PSF ($)",
+                title: "PSF Building Size ($)",
                 size: "middle"
             },
             pricePerAcreLand: {
@@ -321,7 +321,7 @@ class ComparableSaleList extends React.Component
                 size: "middle"
             },
             netOperatingIncomePSF: {
-                title: "NOI ($/psf)",
+                title: "NOI PSF",
                 size: "middle"
             },
             noiPSFMultiple: {
@@ -330,6 +330,22 @@ class ComparableSaleList extends React.Component
             },
             buildableUnits: {
                 title: "Buildable Units",
+                size: "middle"
+            },
+            siteCoverage: {
+                title: "(Site Coverage)",
+                size: "middle"
+            },
+            occupancyRate: {
+                title: "(Occupancy Rate)",
+                size: "middle"
+            },
+            zoning: {
+                title: "Zoning",
+                size: "middle"
+            },
+            floorSpaceIndex: {
+                title: "Floor Space Index",
                 size: "middle"
             }
         };

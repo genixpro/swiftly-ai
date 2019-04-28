@@ -66,7 +66,22 @@ class StabilizedStatementModel(ValuationModelBase):
 
         statement.capitalization = statement.netOperatingIncome / (appraisal.stabilizedStatementInputs.capitalizationRate / 100.0)
 
-        statement.valuation = statement.capitalization + statement.marketRentDifferential + statement.freeRentRentLoss + statement.vacantUnitLeasupCosts + statement.vacantUnitRentLoss + statement.amortizedCapitalInvestment
+        statement.valuation = statement.capitalization
+
+        if appraisal.stabilizedStatementInputs.applyMarketRentDifferential:
+            statement.valuation += statement.marketRentDifferential
+
+        if appraisal.stabilizedStatementInputs.applyFreeRentLoss:
+            statement.valuation += statement.freeRentRentLoss
+
+        if appraisal.stabilizedStatementInputs.applyVacantUnitRentLoss:
+            statement.valuation += statement.vacantUnitRentLoss
+
+        if appraisal.stabilizedStatementInputs.applyVacantUnitLeasingCosts:
+            statement.valuation += statement.vacantUnitLeasupCosts
+
+        if appraisal.stabilizedStatementInputs.applyAmortization:
+            statement.valuation += statement.amortizedCapitalInvestment
 
         for modifier in appraisal.stabilizedStatementInputs.modifiers:
             if modifier.amount:

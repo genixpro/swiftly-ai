@@ -1,5 +1,6 @@
 import BaseModel from "../orm/BaseModel";
 import FloatField from "../orm/FloatField";
+import BoolField from "../orm/BoolField";
 
 
 class DirectComparisonValuation extends BaseModel

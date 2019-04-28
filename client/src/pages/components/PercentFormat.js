@@ -16,7 +16,7 @@ class PercentFormat extends React.Component
             value={this.props.value}
             displayType={'text'}
             thousandSeparator={', '}
-            decimalScale={2}
+            decimalScale={!_.isUndefined(this.props.digits) ? this.props.digits : 2}
             fixedDecimalScale={true}
         />%</span>
     }

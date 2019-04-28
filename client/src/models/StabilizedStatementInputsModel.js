@@ -4,6 +4,7 @@ import ModelField from "../orm/ModelField";
 import StringField from "../orm/StringField";
 import FloatField from "../orm/FloatField";
 import CalculationRuleModel from "./CalculationRuleModel";
+import BoolField from "../orm/BoolField";
 
 class StabilizedStatementModifier extends BaseModel
 {
@@ -29,6 +30,12 @@ class StabilizedStatementInputsModel extends BaseModel
     static managementExpenseCalculationRule = new ModelField(CalculationRuleModel);
 
     static tmiRatePSF = new FloatField();
+
+    static applyVacantUnitLeasingCosts = new BoolField();
+    static applyVacantUnitRentLoss = new BoolField();
+    static applyFreeRentLoss = new BoolField();
+    static applyAmortization = new BoolField();
+    static applyMarketRentDifferential = new BoolField();
 }
 
 export default StabilizedStatementInputsModel;

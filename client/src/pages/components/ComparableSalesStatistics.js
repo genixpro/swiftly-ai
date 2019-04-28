@@ -54,8 +54,8 @@ class ComparableSalesStatistics extends React.Component
 
         const statConfigurations = {
             sizeSquareFootage: {
-                rangeTitle: "Building Size Range ($)",
-                averageTitle: "Building Size Average ($)",
+                rangeTitle: "Building Size Range (sqft)",
+                averageTitle: "Building Size Average (sqft)",
                 render: (value) => <IntegerFormat value={value}/>
             },
             pricePerSquareFoot: {

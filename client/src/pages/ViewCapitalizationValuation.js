@@ -124,30 +124,17 @@ class ViewCapitalizationValuation extends React.Component
 
         const compHeaders = [
             ["saleDate"],
-            ["address"]
+            ["address"],
+            ["salePrice"],
+            ["propertyType", "propertyTags"],
+            ["sizeSquareFootage"],
+            ["netOperatingIncomePSF"],
+            ["capitalizationRate"]
         ];
 
         const compStats = [];
-
-        if (this.props.appraisal.propertyType !== 'land')
-        {
-            compHeaders.push(["salePrice"]);
-            compHeaders.push(["netOperatingIncome"]);
-            compHeaders.push(["sizeSquareFootage"]);
-            compStats.push("netOperatingIncomePSF");
-            compStats.push("pricePerSquareFoot");
-        }
-
-        if (this.props.appraisal.propertyType === 'land')
-        {
-            compHeaders.push(["netOperatingIncome"]);
-            compHeaders.push(["netOperatingIncomePSF"]);
-            compHeaders.push(["sizeOfBuildableAreaSqft"]);
-            compStats.push("netOperatingIncome");
-            compStats.push("netOperatingIncomePSF");
-        }
-
-        compHeaders.push(["capitalizationRate"]);
+        compStats.push("netOperatingIncomePSF");
+        compStats.push("pricePerSquareFoot");
         compStats.push("capitalizationRate");
 
         return [
@@ -217,7 +204,7 @@ class ViewCapitalizationValuation extends React.Component
                                                 </td>
                                             </tr>
                                             {
-                                                this.props.appraisal.stabilizedStatement.marketRentDifferential ?
+                                                this.props.appraisal.stabilizedStatement.marketRentDifferential && this.props.appraisal.stabilizedStatementInputs.applyMarketRentDifferential ?
                                                     <tr className={"data-row capitalization-row"}>
                                                         <td className={"label-column"}>
                                                             <TotalMarketRentDifferentialCalculationPopoverWrapper appraisal={this.props.appraisal}>
@@ -233,7 +220,7 @@ class ViewCapitalizationValuation extends React.Component
                                                     </tr> : null
                                             }
                                             {
-                                                this.props.appraisal.stabilizedStatement.freeRentRentLoss ?
+                                                this.props.appraisal.stabilizedStatement.freeRentRentLoss && this.props.appraisal.stabilizedStatementInputs.applyFreeRentLoss ?
                                                     <tr className={"data-row capitalization-row"}>
                                                         <td className={"label-column"}>
                                                             <TotalRemainingFreeRentPopoverWrapper appraisal={this.props.appraisal}>
@@ -249,7 +236,7 @@ class ViewCapitalizationValuation extends React.Component
                                                     </tr> : null
                                             }
                                             {
-                                                this.props.appraisal.stabilizedStatement.vacantUnitLeasupCosts ?
+                                                this.props.appraisal.stabilizedStatement.vacantUnitLeasupCosts && this.props.appraisal.stabilizedStatementInputs.applyVacantUnitLeasingCosts ?
                                                     <tr className={"data-row capitalization-row"}>
                                                         <td className={"label-column"}>
                                                             <Link to={`/appraisal/${this.props.appraisal._id}/tenants/leasing_costs`}>
@@ -265,7 +252,7 @@ class ViewCapitalizationValuation extends React.Component
                                                     </tr> : null
                                             }
                                             {
-                                                this.props.appraisal.stabilizedStatement.vacantUnitRentLoss ?
+                                                this.props.appraisal.stabilizedStatement.vacantUnitRentLoss && this.props.appraisal.stabilizedStatementInputs.applyVacantUnitRentLoss ?
                                                     <tr className={"data-row capitalization-row"}>
                                                         <td className={"label-column"}>
                                                             <Link to={`/appraisal/${this.props.appraisal._id}/tenants/leasing_costs`}>
@@ -281,7 +268,7 @@ class ViewCapitalizationValuation extends React.Component
                                                     </tr> : null
                                             }
                                             {
-                                                this.props.appraisal.stabilizedStatement.amortizedCapitalInvestment ?
+                                                this.props.appraisal.stabilizedStatement.amortizedCapitalInvestment && this.props.appraisal.stabilizedStatementInputs.applyAmortization ?
                                                     <tr className={"data-row capitalization-row"}>
                                                         <td className={"label-column"}>
                                                             <Link to={`/appraisal/${this.props.appraisal._id}/tenants/amortization`}>
@@ -393,6 +380,83 @@ class ViewCapitalizationValuation extends React.Component
                                                         />
                                                     </td>
                                                 </tr>
+                                                {
+                                                    this.props.appraisal.stabilizedStatement.marketRentDifferential ?
+                                                        <tr>
+                                                            <td>Market Rent Differential</td>
+                                                            <td>
+                                                                <FieldDisplayEdit
+                                                                    type={"boolean"}
+                                                                    placeholder={"Apply Market Rent Differential"}
+                                                                    hideIcon={true}
+                                                                    value={this.props.appraisal.stabilizedStatementInputs ? this.props.appraisal.stabilizedStatementInputs.applyMarketRentDifferential : null}
+                                                                    onChange={(newValue) => this.changeStabilizedInput("applyMarketRentDifferential", newValue)}
+                                                                />
+                                                            </td>
+                                                        </tr> : null
+                                                }
+                                                {
+                                                    this.props.appraisal.stabilizedStatement.vacantUnitLeasupCosts ?
+                                                        <tr>
+                                                            <td>Vacant Unit Leasing Costs</td>
+                                                            <td>
+                                                                <FieldDisplayEdit
+                                                                    type={"boolean"}
+                                                                    placeholder={"Apply Vacant Unit Leasing Costs"}
+                                                                    hideIcon={true}
+                                                                    value={this.props.appraisal.stabilizedStatementInputs ? this.props.appraisal.stabilizedStatementInputs.applyVacantUnitLeasingCosts : null}
+                                                                    onChange={(newValue) => this.changeStabilizedInput("applyVacantUnitLeasingCosts", newValue)}
+                                                                />
+                                                            </td>
+                                                        </tr> : null
+                                                }
+
+                                                {
+                                                    this.props.appraisal.stabilizedStatement.vacantUnitRentLoss ?
+                                                        <tr>
+                                                            <td>Vacant Unit Rent Loss</td>
+                                                            <td>
+                                                                <FieldDisplayEdit
+                                                                    type={"boolean"}
+                                                                    placeholder={"Apply Vacant Unit Rent Loss"}
+                                                                    hideIcon={true}
+                                                                    value={this.props.appraisal.stabilizedStatementInputs ? this.props.appraisal.stabilizedStatementInputs.applyVacantUnitRentLoss : null}
+                                                                    onChange={(newValue) => this.changeStabilizedInput("applyVacantUnitLeasingCosts", newValue)}
+                                                                />
+                                                            </td>
+                                                        </tr> : null
+                                                }
+
+                                                {
+                                                    this.props.appraisal.stabilizedStatement.freeRentRentLoss ?
+                                                        <tr>
+                                                            <td>Free Rent Loss</td>
+                                                            <td>
+                                                                <FieldDisplayEdit
+                                                                    type={"boolean"}
+                                                                    placeholder={"Apply Free Rent Loss"}
+                                                                    hideIcon={true}
+                                                                    value={this.props.appraisal.stabilizedStatementInputs ? this.props.appraisal.stabilizedStatementInputs.applyFreeRentLoss : null}
+                                                                    onChange={(newValue) => this.changeStabilizedInput("applyVacantUnitLeasingCosts", newValue)}
+                                                                />
+                                                            </td>
+                                                        </tr> : null
+                                                }
+                                                {
+                                                    this.props.appraisal.stabilizedStatement.amortizedCapitalInvestment ?
+                                                        <tr>
+                                                            <td>Amortization Adjustment</td>
+                                                            <td>
+                                                                <FieldDisplayEdit
+                                                                    type={"boolean"}
+                                                                    placeholder={"Apply Amortization Adjustment"}
+                                                                    hideIcon={true}
+                                                                    value={this.props.appraisal.stabilizedStatementInputs ? this.props.appraisal.stabilizedStatementInputs.applyAmortization : null}
+                                                                    onChange={(newValue) => this.changeStabilizedInput("applyVacantUnitLeasingCosts", newValue)}
+                                                                />
+                                                            </td>
+                                                        </tr> : null
+                                                }
                                                 </tbody>
                                             </Table>
                                         </CardBody>

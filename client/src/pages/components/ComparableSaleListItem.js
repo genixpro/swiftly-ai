@@ -93,7 +93,7 @@ class ComparableSaleListItemHeaderColumn extends React.Component
                             {fieldIndex !== this.props.fields.length - 1 ? <br /> : null}
                             </span>
                         : <span className={"no-data"}>
-                            {this.props.noValueTexts[fieldIndex]}
+                            <span>n/a</span>
                             {fieldIndex !== this.props.fields.length - 1 ? <br /> : null}
                         </span>
                 })
@@ -232,7 +232,6 @@ class ComparableSaleListItem extends React.Component
                     decimalScale={0}
                     fixedDecimalScale={true}
                 />,
-                noValueText: "No Size",
                 size: "middle"
             },
             sizeOfLandSqft: {
@@ -243,7 +242,6 @@ class ComparableSaleListItem extends React.Component
                     decimalScale={0}
                     fixedDecimalScale={true}
                 />,
-                noValueText: "No Size",
                 size: "middle"
             },
             sizeOfLandAcres: {
@@ -254,7 +252,6 @@ class ComparableSaleListItem extends React.Component
                     decimalScale={1}
                     fixedDecimalScale={true}
                 />,
-                noValueText: "No Size",
                 size: "middle"
             },
             sizeOfBuildableAreaSqft: {
@@ -262,75 +259,77 @@ class ComparableSaleListItem extends React.Component
                     value={value}
                     displayType={'text'}
                     thousandSeparator={', '}
-                    decimalScale={2}
+                    decimalScale={0}
                     fixedDecimalScale={true}
                 />,
-                noValueText: "No Buildable Area",
                 size: "middle"
             },
             salePrice: {
                 render: (value) => <CurrencyFormat value={value} cents={false}/>,
-                noValueText: "No Price",
                 size: "middle"
             },
             capitalizationRate: {
                 render: (value) => <PercentFormat value={value} />,
-                noValueText: "No Cap Rate",
                 size: "middle"
             },
             propertyType: {
                 render: (value) => <span>{value}</span>,
-                noValueText: "No Property Type",
                 size: "middle"
             },
             propertyTags: {
                 render: (value) => value.map((tag, tagIndex) => <span key={tag}>{tag}{tagIndex !== value.length ? ", " : null}</span>),
-                noValueText: "No Sub Type",
                 size: "middle"
             },
             pricePerSquareFoot: {
                 render: (value) => <CurrencyFormat value={value} />,
-                noValueText: "No PSF",
                 size: "middle"
             },
             pricePerAcreLand: {
                 render: (value) => <CurrencyFormat value={value} cents={false} />,
-                noValueText: "No PPA",
                 size: "middle"
             },
             pricePerSquareFootLand: {
                 render: (value) => <CurrencyFormat value={value} cents={false} />,
-                noValueText: "No PSF Land",
                 size: "middle"
             },
             pricePerSquareFootBuildableArea: {
                 render: (value) => <CurrencyFormat value={value} />,
-                noValueText: "No Buildable PSF",
                 size: "middle"
             },
             pricePerBuildableUnit: {
                 render: (value) => <CurrencyFormat value={value} cents={false} />,
-                noValueText: "No Price Per Buildable Unit",
                 size: "middle"
             },
             netOperatingIncome: {
                 render: (value) => <CurrencyFormat value={value} cents={false} />,
-                noValueText: "No NOI",
                 size: "middle"
             },
             netOperatingIncomePSF: {
                 render: (value) => <CurrencyFormat value={value} cents={true} />,
-                noValueText: "No NOI/sqft",
                 size: "middle"
             },
             noiPSFMultiple: {
                 render: (value) => <FloatFormat value={value} />,
-                noValueText: "No Multiple",
                 size: "middle"
             },
             buildableUnits: {
                 render: (value) => <IntegerFormat value={value} />,
-                noValueText: "No Buildable Units",
+                size: "middle"
+            },
+            siteCoverage: {
+                render: (value) => <span>(<PercentFormat value={value} digits={0} />)</span>,
+                size: "middle"
+            },
+            occupancyRate: {
+                render: (value) => <span>(<PercentFormat value={value} digits={0} />)</span>,
+                size: "middle"
+            },
+            zoning: {
+                render: (value) => <span>{value}</span>,
+                size: "middle"
+            },
+            floorSpaceIndex: {
+                render: (value) => <FloatFormat value={value} />,
                 size: "middle"
             }
         };

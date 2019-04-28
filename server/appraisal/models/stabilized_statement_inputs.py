@@ -34,3 +34,8 @@ class StabilizedStatementInputs(EmbeddedDocument):
     # This provides the user-selected TMI rates for the expenses
     tmiRatePSF = FloatField()
 
+    applyVacantUnitLeasingCosts = BooleanField(default=True)
+    applyVacantUnitRentLoss = BooleanField(default=True)
+    applyFreeRentLoss = BooleanField(default=True)
+    applyAmortization = BooleanField(default=True)
+    applyMarketRentDifferential = BooleanField(default=True)
