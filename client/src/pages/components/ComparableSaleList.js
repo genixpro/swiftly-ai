@@ -347,6 +347,26 @@ class ComparableSaleList extends React.Component
             floorSpaceIndex: {
                 title: "Floor Space Index",
                 size: "middle"
+            },
+            noiPerBedroom: {
+                title: "NOI / Bedroom",
+                size: "middle"
+            },
+            noiPerUnit: {
+                title: "NOI / Unit",
+                size: "middle"
+            },
+            averageMonthlyRentPerUnit: {
+                title: "Avg Mthly Rent",
+                size: "middle"
+            },
+            numberOfUnits: {
+                title: "Number Of Units",
+                size: "middle"
+            },
+            totalBedrooms: {
+                title: "totalBedrooms",
+                size: "middle"
             }
         };
 

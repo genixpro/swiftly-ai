@@ -109,3 +109,16 @@ class ComparableSale(Document):
 
     noiPSFMultiple = FloatField()
 
+    numberOfUnits = FloatField()
+
+    averageMonthlyRentPerUnit = FloatField()
+
+    noiPerUnit = FloatField()
+    noiPerBedroom = FloatField()
+
+    pricePerBedroom = FloatField()
+    numberOfBachelors = FloatField()
+    numberOfOneBedrooms = FloatField()
+    numberOfTwoBedrooms = FloatField()
+    numberOfThreePlusBedrooms = FloatField()
+    totalBedrooms = FloatField()

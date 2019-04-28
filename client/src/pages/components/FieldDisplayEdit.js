@@ -29,7 +29,8 @@ class FieldDisplayEdit extends React.Component
     static defaultProps = {
         edit: true,
         hideInput: true,
-        hideIcon: false
+        hideIcon: false,
+        cents: true
     };
 
     state = {
@@ -90,15 +91,28 @@ class FieldDisplayEdit extends React.Component
         else if (this.props.type === 'currency')
         {
             try {
-                if (Number(value) < 0)
+                if (this.props.cents)
                 {
-                    return "($" + this.numberWithCommas(Number(-value).toFixed(2).toString()) + ")";
+                    if (Number(value) < 0)
+                    {
+                        return "($" + this.numberWithCommas(Number(-value).toFixed(2).toString()) + ")";
+                    }
+                    else
+                    {
+                        return "$" + this.numberWithCommas(Number(value).toFixed(2).toString());
+                    }
                 }
                 else
                 {
-                    return "$" + this.numberWithCommas(Number(value).toFixed(2).toString());
+                    if (Number(value) < 0)
+                    {
+                        return "($" + this.numberWithCommas(Number(-value).toFixed(0).toString()) + ")";
+                    }
+                    else
+                    {
+                        return "$" + this.numberWithCommas(Number(value).toFixed(0).toString());
+                    }
                 }
-
             }
             catch(err) {
                 return "$" + this.numberWithCommas(value.toString());

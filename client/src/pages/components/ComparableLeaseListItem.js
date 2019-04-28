@@ -467,7 +467,7 @@ class ComparableLeaseListItem extends React.Component
                                         onChange={(newValue) => this.changeComparableField('tenantInducements', newValue)}
                                     />
 
-                                    <span className={"comparable-field-label"}>TMI:</span>
+                                    <span className={"comparable-field-label"}>TMI (psf):</span>
 
                                     <FieldDisplayEdit
                                         type={"currency"}

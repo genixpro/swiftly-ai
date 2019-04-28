@@ -122,15 +122,32 @@ class ViewCapitalizationValuation extends React.Component
     {
         const popoverId = `market-rent-differential-popover`;
 
-        const compHeaders = [
-            ["saleDate"],
-            ["address"],
-            ["salePrice"],
-            ["propertyType", "propertyTags"],
-            ["sizeSquareFootage"],
-            ["netOperatingIncomePSF"],
-            ["capitalizationRate"]
-        ];
+        let compHeaders;
+
+        if (this.props.appraisal.propertyType === 'residential')
+        {
+            compHeaders = [
+                ["saleDate"],
+                ["address"],
+                ["salePrice"],
+                ["propertyType", "propertyTags"],
+                ["averageMonthlyRentPerUnit", 'numberOfUnits'],
+                ["noiPerUnit","noiPerBedroom"],
+                ["capitalizationRate"]
+            ];
+        }
+        else
+        {
+            compHeaders = [
+                ["saleDate"],
+                ["address"],
+                ["salePrice"],
+                ["propertyType", "propertyTags"],
+                ["sizeSquareFootage"],
+                ["netOperatingIncomePSF"],
+                ["capitalizationRate"]
+            ];
+        }
 
         const compStats = [];
         compStats.push("netOperatingIncomePSF");

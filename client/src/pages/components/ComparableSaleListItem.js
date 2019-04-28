@@ -21,6 +21,7 @@ class ComparableSaleListItemField extends React.Component
         field: PropTypes.string.isRequired,
         fieldType: PropTypes.string.isRequired,
         edit: PropTypes.bool.isRequired,
+        cents: PropTypes.bool.isRequired,
         propertyType: PropTypes.string,
         excludedPropertyType: PropTypes.string,
         onChange: PropTypes.func.isRequired,
@@ -46,6 +47,7 @@ class ComparableSaleListItemField extends React.Component
                 key={2}
                 type={this.props.fieldType}
                 edit={this.props.edit}
+                cents={this.props.cents}
                 placeholder={this.props.placeholder || this.props.title}
                 value={this.props.comparableSale[this.props.field]}
                 onChange={(newValue) => this.props.onChange(this.props.field, newValue)}
@@ -331,6 +333,26 @@ class ComparableSaleListItem extends React.Component
             floorSpaceIndex: {
                 render: (value) => <FloatFormat value={value} />,
                 size: "middle"
+            },
+            noiPerBedroom: {
+                render: (value) => <CurrencyFormat value={value} cents={false}/>,
+                size: "middle"
+            },
+            noiPerUnit: {
+                render: (value) => <CurrencyFormat value={value} cents={false}/>,
+                size: "middle"
+            },
+            averageMonthlyRentPerUnit: {
+                render: (value) => <CurrencyFormat value={value} cents={false}/>,
+                size: "middle"
+            },
+            numberOfUnits: {
+                render: (value) => <IntegerFormat value={value}/>,
+                size: "middle"
+            },
+            totalBedrooms: {
+                render: (value) => <IntegerFormat value={value}/>,
+                size: "middle"
             }
         };
 
@@ -478,6 +500,7 @@ class ComparableSaleListItem extends React.Component
                                         title="Sale Price"
                                         field="salePrice"
                                         fieldType="currency"
+                                        cents={false}
                                         edit={this.props.edit}
                                         comparableSale={comparableSale}
                                         onChange={this.changeComparableField.bind(this)}
@@ -536,6 +559,105 @@ class ComparableSaleListItem extends React.Component
                                         field="pricePerSquareFoot"
                                         fieldType="currency"
                                         excludedPropertyType={"land"}
+                                        comparableSale={comparableSale}
+                                        onChange={this.changeComparableField.bind(this)}
+                                    />
+
+                                    <ComparableSaleListItemField
+                                        title="Price Per Unit"
+                                        field="pricePerUnit"
+                                        fieldType="currency"
+                                        propertyType={"residential"}
+                                        comparableSale={comparableSale}
+                                        onChange={this.changeComparableField.bind(this)}
+                                    />
+
+                                    <ComparableSaleListItemField
+                                        title="Avg Monthly Rent Per Unit"
+                                        field="averageMonthlyRentPerUnit"
+                                        fieldType="currency"
+                                        propertyType={"residential"}
+                                        comparableSale={comparableSale}
+                                        onChange={this.changeComparableField.bind(this)}
+                                    />
+
+                                    <ComparableSaleListItemField
+                                        title="Price Per Bedroom"
+                                        field="pricePerBedroom"
+                                        fieldType="currency"
+                                        propertyType={"residential"}
+                                        comparableSale={comparableSale}
+                                        onChange={this.changeComparableField.bind(this)}
+                                    />
+
+                                    <ComparableSaleListItemField
+                                        title="Number Of Units"
+                                        field="numberOfUnits"
+                                        fieldType="number"
+                                        propertyType={"residential"}
+                                        comparableSale={comparableSale}
+                                        onChange={this.changeComparableField.bind(this)}
+                                    />
+
+                                    <ComparableSaleListItemField
+                                        title="NOI Per Unit"
+                                        field="noiPerUnit"
+                                        fieldType="currency"
+                                        propertyType={"residential"}
+                                        comparableSale={comparableSale}
+                                        onChange={this.changeComparableField.bind(this)}
+                                    />
+
+                                    <ComparableSaleListItemField
+                                        title="NOI Per Bedroom"
+                                        field="noiPerBedroom"
+                                        fieldType="currency"
+                                        propertyType={"residential"}
+                                        comparableSale={comparableSale}
+                                        onChange={this.changeComparableField.bind(this)}
+                                    />
+
+                                    <ComparableSaleListItemField
+                                        title="Bachelors"
+                                        field="numberOfBachelors"
+                                        fieldType="number"
+                                        propertyType={"residential"}
+                                        comparableSale={comparableSale}
+                                        onChange={this.changeComparableField.bind(this)}
+                                    />
+
+                                    <ComparableSaleListItemField
+                                        title="One Bedrooms"
+                                        field="numberOfOneBedrooms"
+                                        fieldType="number"
+                                        propertyType={"residential"}
+                                        comparableSale={comparableSale}
+                                        onChange={this.changeComparableField.bind(this)}
+                                    />
+
+                                    <ComparableSaleListItemField
+                                        title="Two Bedrooms"
+                                        field="numberOfTwoBedrooms"
+                                        fieldType="number"
+                                        propertyType={"residential"}
+                                        comparableSale={comparableSale}
+                                        onChange={this.changeComparableField.bind(this)}
+                                    />
+
+                                    <ComparableSaleListItemField
+                                        title="Three+ Bedrooms"
+                                        field="numberOfThreePlusBedrooms"
+                                        fieldType="number"
+                                        propertyType={"residential"}
+                                        comparableSale={comparableSale}
+                                        onChange={this.changeComparableField.bind(this)}
+                                    />
+
+                                    <ComparableSaleListItemField
+                                        title="Total Bedrooms"
+                                        field="totalBedrooms"
+                                        fieldType="number"
+                                        propertyType={"residential"}
                                         comparableSale={comparableSale}
                                         onChange={this.changeComparableField.bind(this)}
                                     />

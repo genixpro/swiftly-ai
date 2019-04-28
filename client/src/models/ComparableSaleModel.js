@@ -70,6 +70,18 @@ class ComparableSaleModel extends EquationMdoel
     static floorSpaceIndex = new FloatField();
     static finishedOfficePercent = new FloatField();
 
+    static numberOfUnits = new FloatField();
+    static averageMonthlyRentPerUnit = new FloatField();
+    static noiPerUnit = new FloatField();
+    static noiPerBedroom = new FloatField();
+
+    static pricePerBedroom = new FloatField("pricePerBedroom");
+    static numberOfBachelors = new FloatField("numberOfBachelors", 0);
+    static numberOfOneBedrooms = new FloatField("numberOfOneBedrooms", 0);
+    static numberOfTwoBedrooms = new FloatField("numberOfTwoBedrooms", 0);
+    static numberOfThreePlusBedrooms = new FloatField("numberOfThreePlusBedrooms", 0);
+    static totalBedrooms = new FloatField("totalBedrooms");
+
     static equations = {
         "netOperatingIncome": [
             {
@@ -191,6 +203,30 @@ class ComparableSaleModel extends EquationMdoel
             {
                 inputs: ['netOperatingIncomePSF', 'pricePerSquareFoot'],
                 equation: (netOperatingIncomePSF, pricePerSquareFoot) => pricePerSquareFoot / netOperatingIncomePSF
+            }
+        ],
+        "noiPerUnit": [
+            {
+                inputs: ['netOperatingIncome', 'numberOfUnits'],
+                equation: (netOperatingIncome, numberOfUnits) => netOperatingIncome / numberOfUnits
+            }
+        ],
+        "totalBedrooms": [
+            {
+                inputs: ['numberOfBachelors', 'numberOfOneBedrooms', 'numberOfTwoBedrooms', 'numberOfThreePlusBedrooms'],
+                equation: (numberOfBachelors, numberOfOneBedrooms, numberOfTwoBedrooms, numberOfThreePlusBedrooms) => numberOfBachelors + numberOfOneBedrooms + numberOfTwoBedrooms + numberOfThreePlusBedrooms
+            }
+        ],
+        "pricePerBedroom": [
+            {
+                inputs: ['totalBedrooms', 'salePrice'],
+                equation: (totalBedrooms, salePrice) => totalBedrooms ? salePrice / totalBedrooms : 0
+            }
+        ],
+        "noiPerBedroom": [
+            {
+                inputs: ['netOperatingIncome', 'totalBedrooms'],
+                equation: (netOperatingIncome, totalBedrooms) => totalBedrooms ? netOperatingIncome / totalBedrooms : 0
             }
         ]
     };
