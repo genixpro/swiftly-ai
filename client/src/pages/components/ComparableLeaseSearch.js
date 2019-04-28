@@ -46,6 +46,7 @@ class ComparableLeaseSearch extends React.Component
                         <CardBody>
                             <Row>
                                 <Col xs={12} sm={6} md={4}>
+                                    <table>
                                     <tbody>
                                     <tr>
                                         <td>
@@ -116,8 +117,10 @@ class ComparableLeaseSearch extends React.Component
                                         </td>
                                     </tr>
                                     </tbody>
+                                    </table>
                                 </Col>
                                 <Col xs={12} sm={6} md={4}>
+                                    <table>
                                     <tbody>
                                     <tr>
                                         <td>
@@ -189,8 +192,10 @@ class ComparableLeaseSearch extends React.Component
                                         </td>
                                     </tr>
                                     </tbody>
+                                    </table>
                                 </Col>
                                 <Col xs={12} sm={6} md={4}>
+                                    <table>
                                     <tbody>
                                     <tr>
                                         <td>
@@ -263,6 +268,7 @@ class ComparableLeaseSearch extends React.Component
                                         </td>
                                     </tr>
                                     </tbody>
+                                    </table>
                                 </Col>
                             </Row>
                         </CardBody>

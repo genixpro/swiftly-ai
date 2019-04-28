@@ -130,10 +130,12 @@ class ComparableLeasesMap extends React.Component {
                                 <Popover placement="right" isOpen={comp.visible} target={id} toggle={() => this.toggleComparablePopover(comp)} container={"comparable-leases-map"}>
                                     <PopoverBody>
                                         <ComparableLeaseListItem
+                                            headers={[]}
                                             comparableLease={comp}
                                             history={this.props.history}
                                             edit={false}
                                             openByDefault={true}
+                                            appraisal={this.props.appraisal}
                                             appraisalId={this.props.appraisalId}
                                             appraisalComparables={this.props.appraisal.comparableLeases}
                                             onAddComparableClicked={(comp) => this.props.onAddComparableToAppraisal(comp)}

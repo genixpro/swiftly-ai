@@ -130,10 +130,12 @@ class ComparableSalesMap extends React.Component {
                                 <Popover placement="right" isOpen={comp.visible} target={id} toggle={() => this.toggleComparablePopover(comp)} container={"comparable-sales-map"}>
                                     <PopoverBody>
                                         <ComparableSaleListItem
+                                            headers={[]}
                                             comparableSale={comp}
                                             history={this.props.history}
                                             edit={false}
                                             openByDefault={true}
+                                            appraisal={this.props.appraisal}
                                             appraisalId={this.props.appraisalId}
                                             appraisalComparables={this.props.appraisal.comparableSales}
                                             onAddComparableClicked={(comp) => this.props.onAddComparableToAppraisal(comp)}

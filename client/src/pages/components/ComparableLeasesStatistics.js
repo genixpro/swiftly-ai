@@ -103,7 +103,7 @@ class ComparableLeasesStatistics extends React.Component
                             }
                             <Row className={"statRow"}>
                                 {
-                                    statFields.map((statField) =>
+                                    statFields.map((statField, statIndex) =>
                                     {
                                         if (statField === null)
                                         {
@@ -113,7 +113,7 @@ class ComparableLeasesStatistics extends React.Component
                                         const stats = this.computeStatsForField(statField);
                                         const render = statConfigurations[statField].render;
 
-                                        return <Col className={"statColumn"}>
+                                        return <Col className={"statColumn"} key={statIndex}>
                                             <div className={"statBlock"}>
                                                 <strong>{statConfigurations[statField].rangeTitle}:</strong>&nbsp;&nbsp;&nbsp;
                                             </div>

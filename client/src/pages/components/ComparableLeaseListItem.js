@@ -14,7 +14,7 @@ import AreaFormat from "./AreaFormat";
 class ComparableLeaseListItemHeaderColumn extends React.Component
 {
     static propTypes = {
-        size: PropTypes.number.isRequired,
+        size: PropTypes.oneOfType([PropTypes.number, PropTypes.string]).isRequired,
         renders: PropTypes.arrayOf(PropTypes.func).isRequired,
         noValueTexts: PropTypes.arrayOf(PropTypes.string).isRequired,
         fields: PropTypes.arrayOf(PropTypes.string).isRequired,
@@ -41,13 +41,13 @@ class ComparableLeaseListItemHeaderColumn extends React.Component
                 this.props.fields.map((field, fieldIndex) =>
                 {
                     return this.props.comparableLease[field] && !(_.isArray(this.props.comparableLease[field]) && this.props.comparableLease[field].length === 0)
-                        ? <span>
+                        ? <span key={fieldIndex}>
                             {
                                 this.props.renders[fieldIndex](this.props.comparableLease[field])
                             }
                             {fieldIndex !== this.props.fields.length - 1 ? <br /> : null}
                             </span>
-                        : <span className={"no-data"}>
+                        : <span className={"no-data"} key={fieldIndex}>
                             {this.props.noValueTexts[fieldIndex]}
                             {fieldIndex !== this.props.fields.length - 1 ? <br /> : null}
                         </span>
@@ -70,15 +70,22 @@ class ComparableLeaseListItem extends React.Component
         comparableLease: {}
     };
 
+    static getDerivedStateFromProps(props)
+    {
+        if (!props.comparableLease._id || props.openByDefault || props.comparableLease[ComparableLeaseListItem._newLease])
+        {
+            return {openByDefault: true}
+        }
+        else
+        {
+            return {openByDefault: false}
+        }
+    }
+
     componentDidMount()
     {
-        if (!this.props.comparableLease._id || this.props.openByDefault || this.props.comparableLease[ComparableLeaseListItem._newLease])
-        {
-            this.setState({detailsOpen: true})
-        }
-
         this.setState({
-            comparableLease: _.clone(this.props.comparableLease)
+            comparableLease: this.props.comparableLease
         })
     }
 
@@ -212,15 +219,15 @@ class ComparableLeaseListItem extends React.Component
                 size: 4
             },
             rentEscalations: {
-                render: (value) => value.map((escalation) =>
+                render: (value) => value.map((escalation, escalationIndex) =>
                 {
                     if (escalation.startYear && escalation.endYear)
                     {
-                        return <span>Yrs. {escalation.startYear} - {escalation.endYear} @ <CurrencyFormat value={escalation.yearlyRent} cents={false} /><br/></span>
+                        return <span key={escalationIndex}>Yrs. {escalation.startYear} - {escalation.endYear} @ <CurrencyFormat value={escalation.yearlyRent} cents={false} /><br/></span>
                     }
                     else if (escalation.startYear || escalation.endYear)
                     {
-                        return <span>Yr. {escalation.startYear || escalation.endYear} @ <CurrencyFormat value={escalation.yearlyRent} cents={false} /><br/></span>
+                        return <span key={escalationIndex}>Yr. {escalation.startYear || escalation.endYear} @ <CurrencyFormat value={escalation.yearlyRent} cents={false} /><br/></span>
                     }
                     else
                     {
@@ -302,9 +309,10 @@ class ComparableLeaseListItem extends React.Component
                                 <CardTitle>
                                     <Row>
                                         {
-                                            this.props.headers.map((headerFieldList) =>
+                                            this.props.headers.map((headerFieldList, headerIndex) =>
                                             {
                                                 return <ComparableLeaseListItemHeaderColumn
+                                                    key={headerIndex}
                                                     size={headerConfigurations[headerFieldList[0]].size}
                                                     renders={headerFieldList.map((field) => headerConfigurations[field].render)}
                                                     noValueTexts={headerFieldList.map((field) => headerConfigurations[field].noValueText)}
@@ -316,7 +324,7 @@ class ComparableLeaseListItem extends React.Component
                                 </CardTitle>
                             </CardHeader> : null
                     }
-                    <Collapse isOpen={this.state.detailsOpen}>
+                    <Collapse isOpen={_.isUndefined(this.state.detailsOpen) ? this.state.openByDefault : this.state.detailsOpen}>
                         <div className={`card-body comparable-lease-list-item-body ${editableClass}`}>
                             {
                                     (comparableLease.address && comparableLease.address !== "") ?
@@ -376,7 +384,7 @@ class ComparableLeaseListItem extends React.Component
                                         {
                                             comparableLease.rentEscalations ? comparableLease.rentEscalations.map((escalation, escalationIndex) =>
                                             {
-                                                return <div className={"escalation"}>
+                                                return <div className={"escalation"} key={escalationIndex}>
                                                     From:
                                                     <FieldDisplayEdit
                                                         type={"number"}

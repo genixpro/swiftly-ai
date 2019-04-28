@@ -12,10 +12,10 @@ import _ from "underscore";
 class ComparableSaleListHeaderColumn extends React.Component
 {
     static propTypes = {
-        size: PropTypes.number.isRequired,
+        size: PropTypes.oneOfType([PropTypes.number, PropTypes.string]).isRequired,
         texts: PropTypes.arrayOf(PropTypes.string).isRequired,
         fields: PropTypes.arrayOf(PropTypes.string).isRequired,
-        sort: PropTypes.object.isRequired,
+        sort: PropTypes.string.isRequired,
         changeSortColumn: PropTypes.func.isRequired
     };
 
@@ -38,7 +38,7 @@ class ComparableSaleListHeaderColumn extends React.Component
             {
                 this.props.fields.map((field, fieldIndex) =>
                 {
-                    return <span>
+                    return <span key={fieldIndex}>
                             {this.props.texts[fieldIndex]}
                             {fieldIndex === 0 ? <SortDirection field={this.props.fields[0]} sort={this.props.sort} /> : null}
                             {fieldIndex !== this.props.fields.length - 1 ? <br /> : null}
@@ -53,6 +53,7 @@ class ComparableSaleListHeaderColumn extends React.Component
 class ComparableSaleList extends React.Component
 {
     static defaultProps = {
+        "sort": "-date",
         "statsPosition": "above",
         showPropertyTypeInHeader: true,
         "noCompMessage": "There are no comparables. Please add a new one or change your search settings."
@@ -371,9 +372,10 @@ class ComparableSaleList extends React.Component
                             <CardTitle>
                                 <Row>
                                     {
-                                        headerFields.map((headerFieldList) =>
+                                        headerFields.map((headerFieldList, headerIndex) =>
                                         {
                                             return <ComparableSaleListHeaderColumn
+                                                key={headerIndex}
                                                 size={headerConfigurations[headerFieldList[0]].size}
                                                 texts={headerFieldList.map((field) => headerConfigurations[field].title)}
                                                 fields={headerFieldList}
@@ -395,9 +397,12 @@ class ComparableSaleList extends React.Component
                             <Modal isOpen={this.state.isCreatingNewItem} toggle={this.toggleNewItem.bind(this)} className={"new-comp-dialog"}>
                                 <ModalHeader toggle={this.toggleNewItem.bind(this)}>New Comparable Sale</ModalHeader>
                                 <ModalBody>
-                                    <ComparableSaleListItem comparableSale={this.state.newComparableSale}
-                                                            openByDefault={true}
-                                                            onChange={(comp) => this.setState({newComparableSale: comp})} />
+                                    <ComparableSaleListItem
+                                        appraisal={this.props.appraisal}
+                                        headers={headerFields}
+                                        comparableSale={this.state.newComparableSale}
+                                        openByDefault={true}
+                                        onChange={(comp) => this.setState({newComparableSale: comp})} />
                                 </ModalBody>
                                 <ModalFooter>
                                     <Button color="primary" onClick={() => this.addNewComparable(this.state.newComparableSale)}>Add</Button>{' '}

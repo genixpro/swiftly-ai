@@ -12,6 +12,7 @@ import CurrencyFormat from "./CurrencyFormat";
 import PercentFormat from "./PercentFormat";
 import FloatFormat from "./FloatFormat";
 import IntegerFormat from "./IntegerFormat";
+import ComparableLeaseListItem from "./ComparableLeaseListItem";
 
 class ComparableSaleListItemField extends React.Component
 {
@@ -58,7 +59,7 @@ class ComparableSaleListItemField extends React.Component
 class ComparableSaleListItemHeaderColumn extends React.Component
 {
     static propTypes = {
-        size: PropTypes.number.isRequired,
+        size: PropTypes.oneOfType([PropTypes.number, PropTypes.string]).isRequired,
         renders: PropTypes.arrayOf(PropTypes.func).isRequired,
         noValueTexts: PropTypes.arrayOf(PropTypes.string).isRequired,
         fields: PropTypes.arrayOf(PropTypes.string).isRequired,
@@ -119,7 +120,7 @@ class ComparableSaleListItem extends React.Component
         showPropertyTypeInHeader: PropTypes.bool,
         last: PropTypes.bool,
 
-        headers: PropTypes.arrayOf(PropTypes.string),
+        headers: PropTypes.arrayOf(PropTypes.arrayOf(PropTypes.string)),
 
         comparableSale: PropTypes.instanceOf(ComparableSaleModel).isRequired,
         appraisal: PropTypes.instanceOf(AppraisalModel).isRequired,
@@ -136,13 +137,20 @@ class ComparableSaleListItem extends React.Component
         comparableSale: {}
     };
 
+    static getDerivedStateFromProps(props)
+    {
+        if (!props.comparableSale._id || props.openByDefault || props.comparableSale[ComparableSaleListItem._newLease])
+        {
+            return {openByDefault: true}
+        }
+        else
+        {
+            return {openByDefault: false}
+        }
+    }
+
     componentDidMount()
     {
-        if (!this.props.comparableSale._id || this.props.openByDefault || this.props.comparableSale[ComparableSaleListItem._newSale])
-        {
-            this.setState({detailsOpen: true})
-        }
-
         this.setState({
             comparableSale: this.props.comparableSale
         })
@@ -377,9 +385,10 @@ class ComparableSaleListItem extends React.Component
                             <CardTitle>
                                 <Row>
                                     {
-                                        this.props.headers.map((headerFieldList) =>
+                                        this.props.headers.map((headerFieldList, headerIndex) =>
                                         {
                                             return <ComparableSaleListItemHeaderColumn
+                                                key={headerIndex}
                                                 size={headerConfigurations[headerFieldList[0]].size}
                                                 renders={headerFieldList.map((field) => headerConfigurations[field].render)}
                                                 noValueTexts={headerFieldList.map((field) => headerConfigurations[field].noValueText)}
@@ -391,7 +400,7 @@ class ComparableSaleListItem extends React.Component
                             </CardTitle>
                         </CardHeader> : null
                     }
-                    <Collapse isOpen={this.state.detailsOpen}>
+                    <Collapse isOpen={_.isUndefined(this.state.detailsOpen) ? this.state.openByDefault : this.state.detailsOpen}>
                         <div className={`card-body comparable-sale-list-item-body ${editableClass}`}>
                                 <div className={"comparable-sale-list-item-left-column"}>
                                     {

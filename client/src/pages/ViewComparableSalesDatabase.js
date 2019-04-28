@@ -43,8 +43,7 @@ class ViewComparableSalesDatabase extends React.Component {
         params['sort'] = this.state.sort;
 
         axios.get(`/comparable_sales`, {params: params}).then((response) => {
-            // console.log(response.data.comparableSales);
-            this.setState({comparableSales: response.data.comparableSales.map((comp) => ComparableSalesModel.create(comp))}, () => console.log(this.state.comparableSales))
+            this.setState({comparableSales: response.data.comparableSales.map((comp) => ComparableSalesModel.create(comp))})
         });
     }
 

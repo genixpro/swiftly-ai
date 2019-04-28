@@ -20,8 +20,8 @@ class UnitRow extends React.Component
         onUnitClicked: PropTypes.func.isRequired,
         removeUnit: PropTypes.func.isRequired,
         allowSelection: PropTypes.bool.isRequired,
-        fields: PropTypes.string,
-        fieldConfiguration: PropTypes.array,
+        fields: PropTypes.arrayOf(PropTypes.string),
+        fieldConfiguration: PropTypes.object,
         selectedUnit: PropTypes.instanceOf(UnitModel)
     };
 
@@ -38,9 +38,9 @@ class UnitRow extends React.Component
 
         return <tr onClick={(evt) => this.props.onUnitClicked(unitInfo.unitNumber)} className={"unit-row " + selectedClass}>
             {
-                this.props.fields.map((field) =>
+                this.props.fields.map((field, fieldIndex) =>
                 {
-                    return <td className={this.props.fieldConfiguration[field].className}>{this.props.fieldConfiguration[field].render(this.props.unit)}</td>;
+                    return <td key={fieldIndex} className={this.props.fieldConfiguration[field].className}>{this.props.fieldConfiguration[field].render(this.props.unit)}</td>;
                 })
             }
             {this.props.allowSelection ? <td className={"action-column"}>
@@ -292,13 +292,13 @@ class UnitsTable extends React.Component
 
         return (
             (this.props.appraisal) ?
-                <Table hover={this.props.onUnitClicked} responsive className={"units-table " + (this.props.onUnitClicked ? "allow-selection" : "")}>
+                <Table hover={!!this.props.onUnitClicked} responsive className={"units-table " + (this.props.onUnitClicked ? "allow-selection" : "")}>
                     <thead>
                     <tr className={"header-row"}>
                         {
-                            fields.map((field) =>
+                            fields.map((field, fieldIndex) =>
                             {
-                                return <td className={fieldConfiguration[field].className}><strong>{fieldConfiguration[field].title}</strong></td>;
+                                return <td key={fieldIndex} className={fieldConfiguration[field].className}><strong>{fieldConfiguration[field].title}</strong></td>;
                             })
                         }
                         {this.props.onUnitClicked ? <td className={"action-column"} /> : null}
@@ -309,6 +309,7 @@ class UnitsTable extends React.Component
                     {
                         this.props.appraisal && this.props.appraisal.units && Object.values(this.props.appraisal.units).map((unit, unitIndex) => {
                             return <UnitRow
+                                key={unitIndex}
                                 unit={unit}
                                 unitIndex={unitIndex}
                                 selectedUnit={this.props.selectedUnit}
