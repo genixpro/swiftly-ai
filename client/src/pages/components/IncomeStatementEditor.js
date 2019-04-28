@@ -56,7 +56,6 @@ class IncomeStatementEditor extends React.Component
     {
         super();
 
-
         this.IncomeStatementItemRow = this.renderIncomeStatementItemRow.bind(this);
         this.NewItemRow = this.renderNewItemRow.bind(this);
 
@@ -136,7 +135,12 @@ class IncomeStatementEditor extends React.Component
                                     {year}
                                     <br/>
                                         {
-                                            this.state.pinnedYear === null ? <YearlySourceTypeFormat value={this.props.appraisal.incomeStatement.yearlySourceTypes[year]}/> : null
+                                            <DroppableFieldDisplayEdit
+                                                type={'text'}
+                                                hideIcon={true}
+                                                value={this.props.appraisal.incomeStatement.customYearTitles[year]}
+                                                onChange={(newValue) => this.changeYearTitle(year, newValue)}
+                                            />
                                         }
                                     </div>
                                 </Col>,
@@ -279,6 +283,15 @@ class IncomeStatementEditor extends React.Component
         });
     }
 
+
+    changeYearTitle(year, newValue)
+    {
+        const appraisal = this.props.appraisal;
+
+        appraisal.incomeStatement.customYearTitles[year] = newValue;
+
+        this.props.saveAppraisal(this.props.appraisal)
+    }
 
     togglePinYear(year)
     {

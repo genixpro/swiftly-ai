@@ -65,14 +65,14 @@ class UploadedFileListItem extends React.Component
         return (
             <tr className={"uploaded-file-list-item"} onClick={(evt) => this.onFileClicked()}>
                 <td>{file.fileName}</td>
-                <td>
-                    <select value={file.fileType} onChange={this.onFileTypeChanged.bind(this)} onClick={(evt) => evt.stopPropagation()}>
-                        <option value={"lease"}>Lease</option>
-                        <option value={"financials"}>Financial Statement</option>
-                        <option value={"comparable"}>Comparable Sale</option>
-                        <option value={"rentroll"}>Rent Roll</option>
-                    </select>
-                </td>
+                {/*<td>*/}
+                    {/*<select value={file.fileType} onChange={this.onFileTypeChanged.bind(this)} onClick={(evt) => evt.stopPropagation()}>*/}
+                        {/*<option value={"lease"}>Lease</option>*/}
+                        {/*<option value={"financials"}>Financial Statement</option>*/}
+                        {/*<option value={"comparable"}>Comparable Sale</option>*/}
+                        {/*<option value={"rentroll"}>Rent Roll</option>*/}
+                    {/*</select>*/}
+                {/*</td>*/}
                 <td>
                     <Button color="danger" onClick={(evt) => this.onDeleteFile(evt)}>Remove</Button>
                 </td>

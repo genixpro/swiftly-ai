@@ -62,6 +62,8 @@ class IncomeStatement(EmbeddedDocument):
 
     yearlySourceTypes = DictField(StringField(), default={})
 
+    customYearTitles = DictField(StringField(), default={})
+
     incomes = ListField(EmbeddedDocumentField(IncomeStatementItem))
 
     expenses = ListField(EmbeddedDocumentField(IncomeStatementItem))
