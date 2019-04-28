@@ -13,7 +13,7 @@ from appraisal.authorization import checkUserOwnsObject
 from pyramid.httpexceptions import HTTPForbidden
 
 
-@resource(collection_path='/property_tags', path='/property_tag/{id}', renderer='bson', cors_enabled=True, cors_origins="*", permission="everything")
+@resource(collection_path='/property_tags', path='/property_tags/{id}', renderer='bson', cors_enabled=True, cors_origins="*", permission="everything")
 class PropertyTagAPI(object):
 
     def __init__(self, request, context=None):

@@ -1,11 +1,14 @@
 import React from 'react';
 import AsyncCreatable from 'react-select/lib/AsyncCreatable';
+import {Button} from 'reactstrap';
 import axios from "axios/index";
+import _ from "underscore";
 
 
 class TagEditor extends React.Component {
     state = {
         selectedOption: null,
+        tags: []
     };
 
     static getDerivedStateFromProps(props, state)
@@ -42,7 +45,7 @@ class TagEditor extends React.Component {
     {
         axios.get(`/property_tags`, {params: {name: inputValue}}).then((response) =>
         {
-            callback(response.data.tags.map((tag) => ({value: tag.name, label: tag.name}) ));
+            callback(response.data.tags.map((tag) => ({value: tag._id['$oid'], label: tag.name}) ));
         });
     }
 
@@ -56,24 +59,48 @@ class TagEditor extends React.Component {
         }
     }
 
+    deleteTag(evt, tagId)
+    {
+        evt.stopPropagation();
+        axios.delete(`/property_tags/` + tagId).then((response) =>
+        {
+            this.selectRef.blur();
+        });
+    }
+
     render()
     {
         // const { selectedOption } = this.state;
+
+        const CustomOption = (data) =>
+        {
+            // alert(JSON.stringify(data, null, 4));
+            return !data.isDisabled ? (
+                <div {...(data.innerProps)} className={"tag-editor-option"}>
+                    {data.data.label}
+
+                    <Button className={"delete-tag-button"} color={"secondary"} onClick={(evt) => this.deleteTag(evt, data.value)} >
+                        <i className={"fa fa-times"} />
+                    </Button>
+                </div>
+            ) : null;
+        };
 
         return (
             <AsyncCreatable
                 className={"tag-editor"}
                 classNamePrefix={"tag-editor"}
                 value={this.state.tags}
-                cacheOptions
+                // cacheOptions
                 isClearable
                 isMulti
                 loadOptions={this.loadOptions}
                 onCreateOption={(data) => this.onCreateTag(data)}
                 noOptionsMessage={() => <span>Search for or Type in a Tag</span>}
-                defaultOptions
+                ref={(ref) => this.selectRef = ref}
                 onChange={(data) => this.onChange(data)}
                 onBlur={this.props.onBlur}
+                components={{ Option: CustomOption }}
             />
         );
     }
