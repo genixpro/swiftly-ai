@@ -157,6 +157,20 @@
     }
   }
 
+  .amount-column
+  {
+    display: flex;
+    flex-direction: row;
+  }
+
+  .column-left-buttons
+  {
+    display: inline-flex;
+    flex-direction: column;
+    text-align: left;
+  }
+
+
   .remove-column-button-wrapper
   {
     position: absolute;
@@ -167,11 +181,11 @@
     z-index: 1;
   }
 
-  .pin-column-button {
+  .pin-column-button, .add-column-button-year {
     border-left: 0;
     border-top: 0;
     border-bottom: 0;
-    height: 100%;
+    height: 50%;
     padding-top: 0.5vh;
     padding-bottom: 0.5vh;
     padding-left: 0.5vw;

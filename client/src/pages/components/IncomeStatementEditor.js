@@ -81,19 +81,70 @@ class IncomeStatementEditor extends React.Component
 
                             return [
                                 <Col key={year.toString() + "-1"} className={"amount-column"}>
-                                    <Button
-                                        className={`pin-column-button`}
-                                        color={this.state.pinnedYear === year ? "info" : "secondary"}
-                                        onClick={(evt) => this.togglePinYear(year)}
-                                        title={"Pin Column"}
-                                        style={{"float": "left"}}
-                                    >
+                                    <div className={"column-left-buttons"}>
+                                        <Button
+                                            className={`pin-column-button`}
+                                            color={this.state.pinnedYear === year ? "info" : "secondary"}
+                                            onClick={(evt) => this.togglePinYear(year)}
+                                            title={"Pin Column"}
+                                            style={{"float": "left"}}
+                                        >
+                                            {
+                                                this.state.pinnedYear === null ?
+                                                    <em className="icon-magnifier-add" />
+                                                    : <em className="icon-magnifier-remove" />
+                                            }
+                                        </Button>
+
                                         {
-                                            this.state.pinnedYear === null ?
-                                                <em className="icon-magnifier-add" />
-                                                : <em className="icon-magnifier-remove" />
+                                            year === this.props.appraisal.incomeStatement.years[0] ?
+                                                [
+                                                    <Button
+                                                        key={1}
+                                                        id={`add-column-button-year-${year}`}
+                                                        className={`add-column-button-year`}
+                                                        color="secondary"
+                                                        onClick={(evt) => this.toggleNewYearPopover(value, year)}
+                                                        title={"Add Year"}
+                                                    >
+                                                        <i className="fa fa-plus-square"></i>
+                                                    </Button>,
+                                                    <Popover
+                                                        key={2}
+                                                        placement="bottom" isOpen={this.state.newYearPopoverShowing[value + year]} target={`add-column-button-year-${year}`} toggle={() => this.toggleNewYearPopover(value, year)}>
+                                                        <PopoverHeader>Add New Year</PopoverHeader>
+                                                        <PopoverBody>
+                                                            Add a new year. Apply Discount Rate to Items:
+                                                            <br/>
+                                                            <br/>
+                                                            <FieldDisplayEdit
+                                                                type={"percent"}
+                                                                value={this.state.newYearGrowthPercent}
+                                                                onChange={(newValue) => this.setState({newYearGrowthPercent: newValue})}
+                                                                hideField={false}
+                                                            />
+                                                            <br/>
+
+                                                            <Button
+                                                                color="info"
+                                                                onClick={(evt) => {this.createNewYear(year); this.toggleNewYearPopover(value, year)}}
+                                                                title={"Add Year"}
+                                                            >
+                                                                Add Year
+                                                            </Button>
+                                                            &nbsp;
+                                                            <Button
+                                                                color="danger"
+                                                                onClick={(evt) => this.toggleNewYearPopover(value, year)}
+                                                                title={"Cancel"}
+                                                            >
+                                                                Cancel
+                                                            </Button>
+                                                        </PopoverBody>
+                                                    </Popover>
+                                                ] : null
                                         }
-                                    </Button>
+                                    </div>
                                     {
                                         this.state.pinnedYear === null ? <div className={"remove-column-button-wrapper"}><Button
                                             id={`remove-year-${year.toString()}`}
@@ -157,12 +208,12 @@ class IncomeStatementEditor extends React.Component
                                 id={`add-column-button-${value.replace(/ /g, "")}`}
                                 className={`add-column-button`}
                                 color="secondary"
-                                onClick={(evt) => this.toggleNewYearPopover(value)}
+                                onClick={(evt) => this.toggleNewYearPopover(value, 'default')}
                                 title={"Add Year"}
                             >
                                 <i className="fa fa-plus-square"></i>
                             </Button>
-                            <Popover placement="bottom" isOpen={this.state.newYearPopoverShowing[value]} target={`add-column-button-${value.replace(/ /g, "")}`} toggle={() => this.toggleNewYearPopover(value)}>
+                            <Popover placement="bottom" isOpen={this.state.newYearPopoverShowing[value+"default"]} target={`add-column-button-${value.replace(/ /g, "")}`} toggle={() => this.toggleNewYearPopover(value, 'default')}>
                                 <PopoverHeader>Add New Year</PopoverHeader>
                                 <PopoverBody>
                                     Add a new year. Apply Growth Rate to Items:
@@ -178,7 +229,7 @@ class IncomeStatementEditor extends React.Component
 
                                     <Button
                                         color="info"
-                                        onClick={(evt) => {this.createNewYear(); this.toggleNewYearPopover(value)}}
+                                        onClick={(evt) => {this.createNewYear(); this.toggleNewYearPopover(value, 'default')}}
                                         title={"Add Year"}
                                     >
                                         Add Year
@@ -186,7 +237,7 @@ class IncomeStatementEditor extends React.Component
                                     &nbsp;
                                     <Button
                                         color="danger"
-                                        onClick={(evt) => this.toggleNewYearPopover(value)}
+                                        onClick={(evt) => this.toggleNewYearPopover(value, 'default')}
                                         title={"Cancel"}
                                     >
                                         Cancel
@@ -488,11 +539,21 @@ class IncomeStatementEditor extends React.Component
         this.props.saveAppraisal(this.props.appraisal)
     }
 
-    createNewYear()
+    createNewYear(givenYear)
     {
-        const currentYear = this.props.appraisal.incomeStatement.latestYear || new Date().getFullYear();
-        const newYear = currentYear + 1;
-        this.props.appraisal.incomeStatement.years.push(newYear);
+        let newYear = null;
+        if (givenYear)
+        {
+            newYear = givenYear - 1;
+            this.props.appraisal.incomeStatement.years.splice(0, 0, newYear);
+        }
+        else
+        {
+            const currentYear = this.props.appraisal.incomeStatement.latestYear || new Date().getFullYear();
+            newYear = currentYear + 1;
+            this.props.appraisal.incomeStatement.years.push(newYear);
+        }
+
         this.props.appraisal.incomeStatement.yearlySourceTypes[newYear] = 'user';
 
         const adjustFunction = (expense) =>
@@ -502,13 +563,27 @@ class IncomeStatementEditor extends React.Component
                 expense.yearlyAmounts = {};
             }
 
-            if (expense.yearlyAmounts[currentYear])
+            if (givenYear)
             {
-                expense.yearlyAmounts[newYear] = expense.yearlyAmounts[currentYear] * (1 + this.state.newYearGrowthPercent/100.0);
+                if (expense.yearlyAmounts[givenYear])
+                {
+                    expense.yearlyAmounts[newYear] = expense.yearlyAmounts[givenYear] / (1 + this.state.newYearGrowthPercent / 100.0);
+                }
+                else
+                {
+                    expense.yearlyAmounts[newYear] = 0;
+                }
             }
             else
             {
-                expense.yearlyAmounts[newYear] = 0;
+                if (expense.yearlyAmounts[newYear-1])
+                {
+                    expense.yearlyAmounts[newYear] = expense.yearlyAmounts[newYear-1] * (1 + this.state.newYearGrowthPercent / 100.0);
+                }
+                else
+                {
+                    expense.yearlyAmounts[newYear] = 0;
+                }
             }
         };
 
@@ -718,10 +793,10 @@ class IncomeStatementEditor extends React.Component
         </li>
     }
 
-    toggleNewYearPopover(group)
+    toggleNewYearPopover(group, year)
     {
         const newYearPopoverShowing = this.state.newYearPopoverShowing;
-        newYearPopoverShowing[group] = !newYearPopoverShowing[group];
+        newYearPopoverShowing[group+year] = !newYearPopoverShowing[group+year];
         this.setState({newYearPopoverShowing: newYearPopoverShowing});
     }
 

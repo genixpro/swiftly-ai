@@ -56,7 +56,7 @@ class ComparableSale(Document):
 
     clearCeilingHeight = FloatField()
 
-    shippingDoors = IntField()
+    shippingDoors = StringField()
 
     siteCoverage = FloatField()
 
