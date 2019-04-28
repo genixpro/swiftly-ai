@@ -147,6 +147,16 @@ class ComparableSalesStatistics extends React.Component
                 rangeTitle: "Occupancy Rate Range (%)",
                 averageTitle: "Occupancy Rate Average (%)",
                 render: (value) => <CurrencyFormat value={value} cents={false}/>
+            },
+            noiPerUnit: {
+                rangeTitle: "NOI / Unit Range ($)",
+                averageTitle: "NOI / Unit Average ($)",
+                render: (value) => <CurrencyFormat value={value} cents={false}/>
+            },
+            pricePerBedroom: {
+                rangeTitle: "Price / Bedroom Range ($)",
+                averageTitle: "Price / Bedroom Average ($)",
+                render: (value) => <CurrencyFormat value={value} cents={false}/>
             }
         };
 
@@ -165,7 +175,7 @@ class ComparableSalesStatistics extends React.Component
             }
         });
 
-        while(statFields.length % 3 !== 0)
+        while(statFields.length % 2 !== 0)
         {
             statFields.push(null);
         }

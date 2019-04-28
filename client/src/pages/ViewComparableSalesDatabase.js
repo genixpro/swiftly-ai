@@ -16,9 +16,15 @@ class ViewComparableSalesDatabase extends React.Component {
     search = {};
     mapSearch = {};
 
+    constructor()
+    {
+        super();
+    }
+
     componentDidMount()
     {
         this.search = this.getDefaultSearchParams();
+        this.setState({search: this.getDefaultSearchParams()});
     }
 
     getDefaultSearchParams()

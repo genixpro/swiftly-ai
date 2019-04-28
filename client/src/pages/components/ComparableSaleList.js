@@ -118,16 +118,11 @@ class ComparableSaleList extends React.Component
     {
         const statFields = [];
 
-        if (this.props.search.propertyType !== 'land')
+        if (this.props.search.propertyType !== 'land' && this.props.search.propertyType !== 'residential')
         {
             statFields.push("capitalizationRate");
             statFields.push("pricePerSquareFoot");
             statFields.push("sizeSquareFootage")
-        }
-
-        if (this.props.search.propertyType !== 'land')
-        {
-            statFields.push("occupancyRate");
         }
 
         if (this.props.search.propertyType === 'industrial')
@@ -135,13 +130,27 @@ class ComparableSaleList extends React.Component
             statFields.push("clearCeilingHeight");
         }
 
+        if (this.props.search.propertyType === 'residential')
+        {
+            statFields.push("capitalizationRate");
+            statFields.push("pricePerSquareFoot");
+            statFields.push("pricePerUnit");
+            statFields.push("noiPerUnit");
+            statFields.push("pricePerBedroom");
+        }
+
+        if (this.props.search.propertyType !== 'land')
+        {
+            statFields.push("occupancyRate");
+        }
+
         if (this.props.search.propertyType === 'land')
         {
             statFields.push("sizeOfLandAcres");
             statFields.push("floorSpaceIndex");
             statFields.push("pricePerSquareFootLand");
-            statFields.push("pricePerAcreLand");
             statFields.push("pricePerSquareFootBuildableArea");
+            statFields.push("pricePerAcreLand");
         }
 
         return statFields;
