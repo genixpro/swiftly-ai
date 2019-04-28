@@ -28,58 +28,58 @@ class ComparableSaleAPI(object):
     def collection_get(self):
         query = {}
         if 'salePriceFrom' in self.request.GET:
-            query['salePrice__gt'] = self.request.GET['salePriceFrom']
+            query['salePrice__gte'] = self.request.GET['salePriceFrom']
         if 'salePriceTo' in self.request.GET:
-            query['salePrice__lt'] = self.request.GET['salePriceTo']
+            query['salePrice__lte'] = self.request.GET['salePriceTo']
         if 'saleDateFrom' in self.request.GET:
-            query['saleDate__gt'] = self.request.GET['saleDateFrom']
+            query['saleDate__gte'] = self.request.GET['saleDateFrom']
         if 'saleDateTo' in self.request.GET:
-            query['saleDate__lt'] = self.request.GET['saleDateTo']
+            query['saleDate__lte'] = self.request.GET['saleDateTo']
         if 'leaseableAreaFrom' in self.request.GET:
-            query['sizeSquareFootage__gt'] = self.request.GET['leaseableAreaFrom']
+            query['sizeSquareFootage__gte'] = self.request.GET['leaseableAreaFrom']
         if 'leaseableAreaTo' in self.request.GET:
-            query['sizeSquareFootage__lt'] = self.request.GET['leaseableAreaTo']
+            query['sizeSquareFootage__lte'] = self.request.GET['leaseableAreaTo']
 
         if 'capitalizationRateFrom' in self.request.GET:
-            query['capitalizationRate__gt'] = self.request.GET['capitalizationRateFrom']
+            query['capitalizationRate__gte'] = self.request.GET['capitalizationRateFrom']
         if 'capitalizationRateTo' in self.request.GET:
-            query['capitalizationRate__lt'] = self.request.GET['capitalizationRateTo']
+            query['capitalizationRate__lte'] = self.request.GET['capitalizationRateTo']
 
         if 'pricePerSquareFootFrom' in self.request.GET:
-            query['pricePerSquareFoot__gt'] = self.request.GET['pricePerSquareFootFrom']
+            query['pricePerSquareFoot__gte'] = self.request.GET['pricePerSquareFootFrom']
         if 'pricePerSquareFootTo' in self.request.GET:
-            query['pricePerSquareFoot__lt'] = self.request.GET['pricePerSquareFootTo']
+            query['pricePerSquareFoot__lte'] = self.request.GET['pricePerSquareFootTo']
 
 
         if 'clearCeilingHeightFrom' in self.request.GET:
-            query['clearCeilingHeight__gt'] = self.request.GET['clearCeilingHeightFrom']
+            query['clearCeilingHeight__gte'] = self.request.GET['clearCeilingHeightFrom']
         if 'clearCeilingHeightTo' in self.request.GET:
-            query['clearCeilingHeight__lt'] = self.request.GET['clearCeilingHeightTo']
+            query['clearCeilingHeight__lte'] = self.request.GET['clearCeilingHeightTo']
 
         if 'shippingDoorsFrom' in self.request.GET:
-            query['shippingDoors__gt'] = self.request.GET['shippingDoorsFrom']
+            query['shippingDoors__gte'] = self.request.GET['shippingDoorsFrom']
         if 'shippingDoorsTo' in self.request.GET:
-            query['shippingDoors__lt'] = self.request.GET['shippingDoorsTo']
+            query['shippingDoors__lte'] = self.request.GET['shippingDoorsTo']
 
         if 'siteCoverageFrom' in self.request.GET:
-            query['siteCoverage__gt'] = self.request.GET['siteCoverageFrom']
+            query['siteCoverage__gte'] = self.request.GET['siteCoverageFrom']
         if 'siteCoverageTo' in self.request.GET:
-            query['siteCoverage__lt'] = self.request.GET['siteCoverageTo']
+            query['siteCoverage__lte'] = self.request.GET['siteCoverageTo']
 
         if 'propertyType' in self.request.GET:
             query['propertyType'] = self.request.GET['propertyType']
 
 
         if 'pricePerAcreLandFrom' in self.request.GET:
-            query['pricePerAcreLand__gt'] = self.request.GET['pricePerAcreLandFrom']
+            query['pricePerAcreLand__gte'] = self.request.GET['pricePerAcreLandFrom']
         if 'pricePerAcreLandTo' in self.request.GET:
-            query['pricePerAcreLand__lt'] = self.request.GET['pricePerAcreLandTo']
+            query['pricePerAcreLand__lte'] = self.request.GET['pricePerAcreLandTo']
 
 
         if 'pricePerSquareFootBuildableAreaFrom' in self.request.GET:
-            query['pricePerSquareFootBuildableArea__gt'] = self.request.GET['pricePerSquareFootBuildableAreaFrom']
+            query['pricePerSquareFootBuildableArea__gte'] = self.request.GET['pricePerSquareFootBuildableAreaFrom']
         if 'pricePerSquareFootBuildableAreaTo' in self.request.GET:
-            query['pricePerSquareFootBuildableArea__lt'] = self.request.GET['pricePerSquareFootBuildableAreaTo']
+            query['pricePerSquareFootBuildableArea__lte'] = self.request.GET['pricePerSquareFootBuildableAreaTo']
 
 
 

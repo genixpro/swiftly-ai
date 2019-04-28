@@ -28,22 +28,22 @@ class ComparableLeaseAPI(object):
     def collection_get(self):
         query = {}
         if 'sizeOfUnitFrom' in self.request.GET:
-            query['sizeOfUnit__gt'] = self.request.GET['sizeOfUnitFrom']
+            query['sizeOfUnit__gte'] = self.request.GET['sizeOfUnitFrom']
         if 'sizeOfUnitTo' in self.request.GET:
-            query['sizeOfUnit__lt'] = self.request.GET['sizeOfUnitTo']
+            query['sizeOfUnit__lte'] = self.request.GET['sizeOfUnitTo']
         if 'yearlyRentFrom' in self.request.GET:
-            query['rentEscalations__0__yearlyRent__gt'] = self.request.GET['yearlyRentFrom']
+            query['rentEscalations__0__yearlyRent__gte'] = self.request.GET['yearlyRentFrom']
         if 'yearlyRentTo' in self.request.GET:
-            query['rentEscalations__0__yearlyRent__lt'] = self.request.GET['yearlyRentTo']
+            query['rentEscalations__0__yearlyRent__lte'] = self.request.GET['yearlyRentTo']
         if 'leaseDateFrom' in self.request.GET:
-            query['leaseDate__gt'] = self.request.GET['leaseDateFrom']
+            query['leaseDate__gte'] = self.request.GET['leaseDateFrom']
         if 'leaseDateTo' in self.request.GET:
-            query['leaseDate__lt'] = self.request.GET['leaseDateTo']
+            query['leaseDate__lte'] = self.request.GET['leaseDateTo']
 
         if 'taxesMaintenanceInsuranceFrom' in self.request.GET:
-            query['taxesMaintenanceInsurance__gt'] = self.request.GET['taxesMaintenanceInsuranceFrom']
+            query['taxesMaintenanceInsurance__gte'] = self.request.GET['taxesMaintenanceInsuranceFrom']
         if 'taxesMaintenanceInsuranceTo' in self.request.GET:
-            query['taxesMaintenanceInsurance__lt'] = self.request.GET['taxesMaintenanceInsuranceTo']
+            query['taxesMaintenanceInsurance__lte'] = self.request.GET['taxesMaintenanceInsuranceTo']
 
         if 'propertyType' in self.request.GET:
             query['propertyType'] = self.request.GET['propertyType']
