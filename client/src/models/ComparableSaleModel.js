@@ -45,7 +45,7 @@ class ComparableSaleModel extends EquationMdoel
     static additionalInfo = new StringField();
     static constructionDate = new DateField();
 
-    static siteArea = new StringField();
+    static siteArea = new FloatField();
 
     static parking = new StringField();
 
@@ -69,6 +69,7 @@ class ComparableSaleModel extends EquationMdoel
     static pricePerAcreBuildableArea = new FloatField();
     static floorSpaceIndex = new FloatField();
     static finishedOfficePercent = new FloatField();
+    static floors = new FloatField();
 
     static numberOfUnits = new FloatField();
     static averageMonthlyRentPerUnit = new FloatField();
@@ -234,6 +235,12 @@ class ComparableSaleModel extends EquationMdoel
             {
                 inputs: ['netOperatingIncome', 'totalBedrooms'],
                 equation: (netOperatingIncome, totalBedrooms) => totalBedrooms ? netOperatingIncome / totalBedrooms : 0
+            }
+        ],
+        "siteCoverage": [
+            {
+                inputs: ['sizeSquareFootage', 'siteArea'],
+                equation: (sizeSquareFootage, siteArea) => (sizeSquareFootage / (siteArea * 43560))
             }
         ]
     };

@@ -694,6 +694,16 @@ class ComparableSaleListItem extends React.Component
                                     />
 
                                     <ComparableSaleListItemField
+                                        title="Floors"
+                                        field="floors"
+                                        fieldType="number"
+                                        excludedPropertyType={"land"}
+                                        edit={this.props.edit}
+                                        comparableSale={comparableSale}
+                                        onChange={this.changeComparableField.bind(this)}
+                                    />
+
+                                    <ComparableSaleListItemField
                                         title="Construction Date"
                                         field="constructionDate"
                                         fieldType="date"
@@ -706,7 +716,7 @@ class ComparableSaleListItem extends React.Component
                                     <ComparableSaleListItemField
                                         title="Site Area"
                                         field="siteArea"
-                                        fieldType="text"
+                                        fieldType="acres"
                                         excludedPropertyType={"land"}
                                         edit={this.props.edit}
                                         comparableSale={comparableSale}

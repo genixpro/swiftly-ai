@@ -50,7 +50,7 @@ class ComparableSale(Document):
 
     constructionDate = ConvertingDateField(sparse=True, default=None, null=True)
 
-    siteArea = StringField()
+    siteArea = FloatField()
 
     parking = StringField()
 
@@ -62,6 +62,9 @@ class ComparableSale(Document):
 
     # The PPS for the building
     pricePerSquareFoot = FloatField()
+
+    # The PPS for the building
+    floors = FloatField()
 
     # The date that the comparable was sold
     saleDate = ConvertingDateField(sparse=True, default=None, null=True)
