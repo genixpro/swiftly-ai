@@ -36,7 +36,7 @@ class ComparableLeaseListHeaderColumn extends React.Component
             colClass = "middle-col"
         }
 
-        return <Col className={`header-field-column ${colClass}`} {...colProps} onClick={() => this.props.changeSortColumn(this.props.fields[0])}>
+        return <Col className={`header-field-column ${colClass}`} {...colProps} onClick={() => this.props.changeSortColumn(this.props.sortField)}>
 
             {
                 this.props.fields.map((field, fieldIndex) =>
