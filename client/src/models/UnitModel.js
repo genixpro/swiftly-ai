@@ -95,6 +95,23 @@ class UnitModel extends BaseModel
         return null;
     }
 
+    get stabilizedRentPSF()
+    {
+        if (this.shouldUseMarketRent && this.marketRent)
+        {
+            return this.marketRentAmount;
+        }
+        else
+        {
+            return this.currentTenancy.yearlyRentPSF;
+        }
+    }
+
+    get stabilizedRent()
+    {
+        return this.stabilizedRentPSF * this.squareFootage;
+    }
+
     get isVacantForStabilizedStatement()
     {
         if(_.isNull(this.shouldTreatAsVacant))

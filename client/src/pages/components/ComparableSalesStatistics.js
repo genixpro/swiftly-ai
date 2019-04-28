@@ -6,6 +6,7 @@ import PercentFormat from "./PercentFormat";
 import IntegerFormat from "./IntegerFormat";
 import LengthFormat from "./LengthFormat";
 import FloatFormat from "./FloatFormat";
+import AreaFormat from "./AreaFormat";
 
 class ComparableSalesStatistics extends React.Component
 {
@@ -77,6 +78,21 @@ class ComparableSalesStatistics extends React.Component
                 averageTitle: "Size of Land Average (acres)",
                 render: (value) => <IntegerFormat value={value}/>
             },
+            sizeOfLandSqft: {
+                rangeTitle: "Size of Land Range (sqft)",
+                averageTitle: "Size of Land Average (sqft)",
+                render: (value) => <IntegerFormat value={value}/>
+            },
+            sizeOfBuildableAreaSqft: {
+                rangeTitle: "Size of Buildable Area Range (sqft)",
+                averageTitle: "Size of Buildable Area Average (sqft)",
+                render: (value) => <IntegerFormat value={value}/>
+            },
+            buildableUnits: {
+                rangeTitle: "Buildable Units Range",
+                averageTitle: "Buildable Units Average",
+                render: (value) => <IntegerFormat value={value}/>
+            },
             floorSpaceIndex: {
                 rangeTitle: "Floor Space Index Range",
                 averageTitle: "Floor Space Index Average",
@@ -93,51 +109,70 @@ class ComparableSalesStatistics extends React.Component
                 render: (value) => <CurrencyFormat value={value} cents={false}/>
             },
             pricePerSquareFootBuildableArea: {
-                rangeTitle: "PSF of Buildable Area Range ($)",
-                averageTitle: "PSF of Buildable Area Average ($)",
+                rangeTitle: "PSF Buildable Range ($)",
+                averageTitle: "PSF Buildable Average ($)",
+                render: (value) => <CurrencyFormat value={value} cents={false}/>
+            },
+            pricePerBuildableUnit: {
+                rangeTitle: "Buildable Unit Price Range ($)",
+                averageTitle: "Buildable Unit Price Average ($)",
+                render: (value) => <CurrencyFormat value={value} cents={false}/>
+            },
+            noiPSFMultiple: {
+                rangeTitle: "Multiple Range ($)",
+                averageTitle: "Multiple Average ($)",
+                render: (value) => <FloatFormat value={value} cents={false}/>
+            },
+            netOperatingIncomePSF: {
+                rangeTitle: "NOI PSF Range ($)",
+                averageTitle: "NOI PSF Average ($)",
+                render: (value) => <CurrencyFormat value={value} cents={false}/>
+            },
+            salePrice: {
+                rangeTitle: "Sale Price Range ($)",
+                averageTitle: "Sale Price Average ($)",
+                render: (value) => <CurrencyFormat value={value} cents={false}/>
+            },
+            netOperatingIncome: {
+                rangeTitle: "NOI Range ($)",
+                averageTitle: "NOI Average ($)",
                 render: (value) => <CurrencyFormat value={value} cents={false}/>
             }
         };
 
-        const statFields = [];
-
-        if (this.props.appraisal.propertyType !== 'land')
+        const statFields = _.clone(this.props.stats);
+        statFields.forEach((field) =>
         {
-            statFields.push("capitalizationRate");
-            statFields.push("pricePerSquareFoot");
-            statFields.push("sizeSquareFootage")
-        }
+            if (!statConfigurations[field])
+            {
+                const message = `Error! No statistic configuration for ${field}`;
+                console.error(message);
 
-        if (this.props.appraisal.propertyType === 'industrial')
-        {
-            statFields.push("clearCeilingHeight");
-        }
-
-        if (this.props.appraisal.propertyType === 'land')
-        {
-            statFields.push("sizeOfLandAcres");
-            statFields.push("floorSpaceIndex");
-            statFields.push("pricePerSquareFootLand");
-            statFields.push("pricePerAcreLand");
-            statFields.push("pricePerSquareFootBuildableArea");
-        }
+                if (process.env.VALUATE_ENVIRONMENT.REACT_APP_DEBUG)
+                {
+                    alert(message);
+                }
+            }
+        });
 
         while(statFields.length % 3 !== 0)
         {
             statFields.push(null);
         }
 
-
         return (
             <Row className={"comparable-sales-statistics"}>
                 <Col xs={12}>
                     <Card className="card-default">
                         <CardBody>
-                            <Row>
-                                <Col xs={12}>
-                                    <h4>{this.props.title}</h4>
-                                </Col>
-                            </Row>
+                            {
+                                this.props.title ?
+                                    <Row>
+                                        <Col xs={12}>
+                                            <h4>{this.props.title}</h4>
+                                        </Col>
+                                    </Row> : null
+                            }
                             <Row className={"statRow"}>
                                 {
                                     statFields.map((statField) =>

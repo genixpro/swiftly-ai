@@ -29,29 +29,23 @@ class DirectComparisonValuationModel(ValuationModelBase):
                 dca.valuation = 0
                 dca.valuationRounded = 0
                 return dca
-
             dca.comparativeValue = appraisal.sizeOfBuilding * appraisal.directComparisonInputs.pricePerSquareFoot
+
         elif appraisal.directComparisonInputs.directComparisonMetric == 'psf_land':
             if not appraisal.sizeOfBuilding:
                 dca.comparativeValue = 0
                 dca.valuation = 0
                 dca.valuationRounded = 0
                 return dca
-
             dca.comparativeValue = (appraisal.sizeOfLand * 43560.0) * appraisal.directComparisonInputs.pricePerSquareFootLand
+
         elif appraisal.directComparisonInputs.directComparisonMetric == 'per_acre_land':
             if not appraisal.sizeOfLand:
                 dca.comparativeValue = 0
                 dca.valuation = 0
                 dca.valuationRounded = 0
                 return dca
-
             dca.comparativeValue = (appraisal.sizeOfLand) * appraisal.directComparisonInputs.pricePerAcreLand
-            if not appraisal.sizeOfLand:
-                dca.comparativeValue = 0
-                dca.valuation = 0
-                dca.valuationRounded = 0
-                return dca
 
         elif appraisal.directComparisonInputs.directComparisonMetric == 'psf_buildable_area':
             if not appraisal.buildableArea:
@@ -59,16 +53,27 @@ class DirectComparisonValuationModel(ValuationModelBase):
                 dca.valuation = 0
                 dca.valuationRounded = 0
                 return dca
-
             dca.comparativeValue = (appraisal.buildableArea) * appraisal.directComparisonInputs.pricePerSquareFootBuildableArea
+
         elif appraisal.directComparisonInputs.directComparisonMetric == 'per_buildable_unit':
             if not appraisal.buildableUnits:
                 dca.comparativeValue = 0
                 dca.valuation = 0
                 dca.valuationRounded = 0
                 return dca
-
             dca.comparativeValue = (appraisal.buildableUnits) * appraisal.directComparisonInputs.pricePerBuildableUnit
+
+        elif appraisal.directComparisonInputs.directComparisonMetric == 'noi_multiple':
+            if not appraisal.sizeOfBuilding:
+                dca.comparativeValue = 0
+                dca.valuation = 0
+                dca.valuationRounded = 0
+                return dca
+
+            noiPSF = (appraisal.stabilizedStatement.netOperatingIncome / appraisal.sizeOfBuilding)
+
+            dca.comparativeValue = noiPSF * appraisal.directComparisonInputs.noiPSFMultiple * appraisal.sizeOfBuilding # Size of building technically cancels out in this equation
+
         else:
             dca.comparativeValue = 0
             dca.valuation = 0

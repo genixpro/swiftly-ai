@@ -14,6 +14,8 @@ import CurrencyFormat from "./components/CurrencyFormat";
 import IntegerFormat from "./components/IntegerFormat";
 import {StabilizedStatementModifier} from "../models/StabilizedStatementInputsModel";
 import _ from "underscore";
+import TotalMarketRentDifferentialCalculationPopoverWrapper from "./components/TotalMarketRentDifferentialCalculationPopoverWrapper";
+import TotalRemainingFreeRentPopoverWrapper from "./components/TotalRemainingFreeRentPopoverWrapper";
 
 class ViewCapitalizationValuation extends React.Component
 {
@@ -149,29 +151,28 @@ class ViewCapitalizationValuation extends React.Component
             ["address"]
         ];
 
+        const compStats = [];
+
         if (this.props.appraisal.propertyType !== 'land')
         {
-            compHeaders.push(["sizeSquareFootage"])
+            compHeaders.push(["salePrice"]);
+            compHeaders.push(["netOperatingIncome"]);
+            compHeaders.push(["sizeSquareFootage"]);
+            compStats.push("netOperatingIncomePSF");
+            compStats.push("pricePerSquareFoot");
         }
 
         if (this.props.appraisal.propertyType === 'land')
         {
-            compHeaders.push(["sizeOfLandAcres", "sizeOfBuildableAreaSqft"])
+            compHeaders.push(["netOperatingIncome"]);
+            compHeaders.push(["netOperatingIncomePSF"]);
+            compHeaders.push(["sizeOfBuildableAreaSqft"]);
+            compStats.push("netOperatingIncome");
+            compStats.push("netOperatingIncomePSF");
         }
 
-        compHeaders.push(["salePrice"]);
-
-        if (this.props.appraisal.propertyType !== 'land')
-        {
-            compHeaders.push(["capitalizationRate"]);
-            compHeaders.push(["pricePerSquareFoot"])
-        }
-
-        if (this.props.appraisal.propertyType === 'land')
-        {
-            compHeaders.push(["pricePerAcreLand"]);
-            compHeaders.push(["pricePerSquareFootBuildableArea"]);
-        }
+        compHeaders.push(["capitalizationRate"]);
+        compStats.push("capitalizationRate");
 
         return [
             <AppraisalContentHeader appraisal={this.props.appraisal} title="Capitalization Approach" key={"header"}/>,
@@ -198,6 +199,7 @@ class ViewCapitalizationValuation extends React.Component
                                                             headers={compHeaders}
                                                             statsTitle={""}
                                                             statsPosition={"below"}
+                                                            stats={compStats}
                                                             allowNew={false}
                                                             sort={this.state.sort}
                                                             noCompMessage={"There are no comparables attached to this appraisal. Please go to the comparables database and select comparables from there."}
@@ -242,59 +244,15 @@ class ViewCapitalizationValuation extends React.Component
                                                 this.props.appraisal.stabilizedStatement.marketRentDifferential ?
                                                     <tr className={"data-row capitalization-row"}>
                                                         <td className={"label-column"}>
-                                                            <a id={popoverId} onClick={() => this.setState({marketRentDifferentialPopoverOpen: !this.state.marketRentDifferentialPopoverOpen})}>
+                                                            <TotalMarketRentDifferentialCalculationPopoverWrapper appraisal={this.props.appraisal}>
                                                                 <span>Market Rent Differential</span>
-                                                            </a>
+                                                            </TotalMarketRentDifferentialCalculationPopoverWrapper>
                                                         </td>
                                                         <td className={"amount-column"} />
                                                         <td className={"amount-total-column"}>
-                                                            <a id={popoverId} onClick={() => this.setState({marketRentDifferentialPopoverOpen: !this.state.marketRentDifferentialPopoverOpen})}>
+                                                            <TotalMarketRentDifferentialCalculationPopoverWrapper appraisal={this.props.appraisal}>
                                                                 <CurrencyFormat value={this.props.appraisal.stabilizedStatement.marketRentDifferential} />
-                                                            </a>
-                                                            <Popover placement="bottom" isOpen={this.state.marketRentDifferentialPopoverOpen} target={popoverId} toggle={() => this.setState({marketRentDifferentialPopoverOpen: !this.state.marketRentDifferentialPopoverOpen})}>
-                                                                <PopoverHeader>Market Rent Differential</PopoverHeader>
-                                                                <PopoverBody>
-                                                                    <table className={"explanation-popover-table"}>
-                                                                        <thead>
-                                                                        </thead>
-                                                                        <tbody>
-                                                                        <tr>
-                                                                            <td>Discount Rate</td>
-                                                                            <td>
-                                                                                <PercentFormat value={this.props.appraisal.stabilizedStatementInputs.marketRentDifferentialDiscountRate}/>
-                                                                            </td>
-                                                                        </tr>
-                                                                        {
-                                                                            _.filter(this.props.appraisal.units, (unit) => unit.calculatedMarketRentDifferential).map((unit, unitIndex) =>
-                                                                            {
-                                                                                let underline = "";
-                                                                                if (unitIndex === this.props.appraisal.units.length-1)
-                                                                                {
-                                                                                    underline = `underline`;
-                                                                                }
-
-                                                                                return <tr key={unitIndex}>
-                                                                                    <td>Unit {unit.unitNumber}</td>
-                                                                                    <td className={underline}><CurrencyFormat value={unit.calculatedMarketRentDifferential}/></td>
-                                                                                </tr>;
-                                                                            })
-                                                                        }
-                                                                        <tr className={"total-row"}>
-                                                                            <td>
-                                                                                Total
-                                                                            </td>
-                                                                            <td>
-                                                                                <CurrencyFormat value={this.props.appraisal.stabilizedStatement.marketRentDifferential}/>
-                                                                            </td>
-                                                                        </tr>
-                                                                        </tbody>
-                                                                    </table>
-                                                                </PopoverBody>
-                                                            </Popover>
-
-
-                                                            <Link to={`/appraisal/${this.props.appraisal._id}/tenants/market_rents`}>
-                                                            </Link>
+                                                            </TotalMarketRentDifferentialCalculationPopoverWrapper>
                                                         </td>
                                                     </tr> : null
                                             }
@@ -302,51 +260,15 @@ class ViewCapitalizationValuation extends React.Component
                                                 this.props.appraisal.stabilizedStatement.freeRentRentLoss ?
                                                     <tr className={"data-row capitalization-row"}>
                                                         <td className={"label-column"}>
-                                                            <a onClick={() => this.setState({freeRentLossPopoverOpen: !this.state.freeRentLossPopoverOpen})}>
+                                                            <TotalRemainingFreeRentPopoverWrapper appraisal={this.props.appraisal}>
                                                                 <span>Remaining Free Rent</span>
-                                                            </a>
-                                                            <Popover placement="bottom" isOpen={this.state.freeRentLossPopoverOpen} target={"free-rent-loss-popover"} toggle={() => this.setState({freeRentLossPopoverOpen: !this.state.freeRentLossPopoverOpen})}>
-                                                                <PopoverHeader>Remaining Free Rent</PopoverHeader>
-                                                                <PopoverBody>
-                                                                    <table className={"explanation-popover-table"}>
-                                                                        <tbody>
-                                                                        {
-                                                                            this.props.appraisal.units.map((unit, unitIndex) =>
-                                                                            {
-                                                                                const underline = unitIndex === this.props.appraisal.units.length - 1 ? "underline" : "";
-
-                                                                                return <tr key={unitIndex}>
-                                                                                    <td>Unit {unit.unitNumber}</td>
-                                                                                    <td><IntegerFormat value={unit.calculatedFreeRentMonths}/> months remaining</td>
-                                                                                    <td>/</td>
-                                                                                    <td>12</td>
-                                                                                    <td>*</td>
-                                                                                    <td><CurrencyFormat value={unit.calculatedFreeRentNetAmount}/></td>
-                                                                                    <td>=</td>
-                                                                                    <td className={underline}><CurrencyFormat value={unit.calculatedFreeRentLoss} cents={false}/></td>
-                                                                                </tr>
-                                                                            })
-                                                                        }
-                                                                        <tr className={"total-row"}>
-                                                                            <td>Free Rent Loss</td>
-                                                                            <td></td>
-                                                                            <td></td>
-                                                                            <td></td>
-                                                                            <td></td>
-                                                                            <td></td>
-                                                                            <td></td>
-                                                                            <td><CurrencyFormat value={-this.props.appraisal.stabilizedStatement.freeRentRentLoss} cents={false}/></td>
-                                                                        </tr>
-                                                                        </tbody>
-                                                                    </table>
-                                                                </PopoverBody>
-                                                            </Popover>
+                                                            </TotalRemainingFreeRentPopoverWrapper>
                                                         </td>
                                                         <td className={"amount-column"}></td>
                                                         <td className={"amount-total-column"}>
-                                                            <a id={"free-rent-loss-popover"} onClick={() => this.setState({freeRentLossPopoverOpen: !this.state.freeRentLossPopoverOpen})}>
+                                                            <TotalRemainingFreeRentPopoverWrapper appraisal={this.props.appraisal}>
                                                                 <CurrencyFormat value={this.props.appraisal.stabilizedStatement.freeRentRentLoss} />
-                                                            </a>
+                                                            </TotalRemainingFreeRentPopoverWrapper>
                                                         </td>
                                                     </tr> : null
                                             }

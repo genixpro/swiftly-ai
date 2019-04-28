@@ -5,6 +5,58 @@ import 'react-datetime/css/react-datetime.css'
 import UnitModel from "../../models/UnitModel";
 import CurrencyFormat from "./CurrencyFormat";
 import AreaFormat from "./AreaFormat";
+import PropTypes from "prop-types";
+import AppraisalModel from "../../models/AppraisalModel";
+
+class UnitRow extends React.Component
+{
+    static instance = 0;
+
+    state = {};
+
+    static propTypes = {
+        unit: PropTypes.instanceOf(UnitModel).isRequired,
+        unitIndex: PropTypes.number.isRequired,
+        onUnitClicked: PropTypes.func.isRequired,
+        removeUnit: PropTypes.func.isRequired,
+        allowSelection: PropTypes.bool.isRequired,
+        fields: PropTypes.string,
+        fieldConfiguration: PropTypes.array,
+        selectedUnit: PropTypes.instanceOf(UnitModel)
+    };
+
+    render()
+    {
+        const unitInfo = this.props.unit;
+        const unitIndex = this.props.unitIndex;
+
+        let selectedClass = "";
+        if (this.props.selectedUnit && unitInfo.unitNumber === this.props.selectedUnit.unitNumber)
+        {
+            selectedClass = " selected-unit-row";
+        }
+
+        return <tr onClick={(evt) => this.props.onUnitClicked(unitInfo.unitNumber)} className={"unit-row " + selectedClass}>
+            {
+                this.props.fields.map((field) =>
+                {
+                    return <td className={this.props.fieldConfiguration[field].className}>{this.props.fieldConfiguration[field].render(this.props.unit)}</td>;
+                })
+            }
+            {this.props.allowSelection ? <td className={"action-column"}>
+                <Button
+                    color="secondary"
+                    onClick={(evt) => this.props.removeUnit(unitInfo, unitIndex)}
+                    title={"Delete Unit"}
+                >
+                    <i className="fa fa-trash-alt"></i>
+                </Button>
+            </td> : null}
+        </tr>;
+    }
+}
+
+
 
 class UnitsTable extends React.Component
 {
@@ -12,6 +64,18 @@ class UnitsTable extends React.Component
         allowSelection: true,
         statsMode: "all",
         allowNewUnit: true
+    };
+
+    static propTypes = {
+        appraisal: PropTypes.instanceOf(AppraisalModel).isRequired,
+        allowNewUnit: PropTypes.bool.isRequired,
+        statsMode: PropTypes.string,
+        allowSelection: PropTypes.bool.isRequired,
+        onCreateUnit: PropTypes.func,
+        onUnitClicked: PropTypes.func,
+        onRemoveUnit: PropTypes.func,
+        fields: PropTypes.arrayOf(PropTypes.string),
+        showStabilizedStats: PropTypes.bool
     };
 
     state = {
@@ -34,36 +98,6 @@ class UnitsTable extends React.Component
         }
     }
 
-    renderUnitRow(unitInfo, unitIndex)
-    {
-        let selectedClass = "";
-        if (this.props.selectedUnit && unitInfo.unitNumber === this.props.selectedUnit.unitNumber)
-        {
-            selectedClass = " selected-unit-row";
-        }
-
-        return <tr onClick={(evt) => this.onUnitClicked(unitInfo.unitNumber)} className={"unit-row " + selectedClass} key={unitIndex}>
-            <td>{unitInfo.unitNumber}</td>
-            <td>{unitInfo.currentTenancy.name}</td>
-            <td className={"square-footage-column"}><AreaFormat value={unitInfo.squareFootage}/></td>
-            <td className={"rent-column"}>
-                <CurrencyFormat value={_.isNumber(unitInfo.currentTenancy.yearlyRentPSF) ? unitInfo.currentTenancy.yearlyRentPSF : unitInfo.marketRentAmount} />
-            </td>
-            <td className={"rent-column"}>
-                <CurrencyFormat value={_.isNumber(unitInfo.currentTenancy.yearlyRent) ? unitInfo.currentTenancy.yearlyRent : unitInfo.marketRentAmount * unitInfo.squareFootage} cents={false} />
-            </td>
-            {this.props.allowSelection ? <td className={"action-column"}>
-                <Button
-                    color="secondary"
-                    onClick={(evt) => this.removeUnit(unitInfo, unitIndex)}
-                    title={"Delete Unit"}
-                >
-                    <i className="fa fa-trash-alt"></i>
-                </Button>
-            </td> : null}
-        </tr>;
-    }
-
     removeUnit(unitInfo, unitIndex)
     {
         if (this.props.onRemoveUnit)
@@ -71,7 +105,6 @@ class UnitsTable extends React.Component
             this.props.onRemoveUnit(unitIndex);
         }
     }
-
 
     createNewUnit(field, value)
     {
@@ -97,7 +130,6 @@ class UnitsTable extends React.Component
         }
     }
 
-
     renderNewUnitRow()
     {
         return <tr className={"new-unit-row"}>
@@ -114,7 +146,6 @@ class UnitsTable extends React.Component
         </tr>;
     }
 
-
     getTotalSize()
     {
         let total = 0;
@@ -123,21 +154,6 @@ class UnitsTable extends React.Component
             total += unit.squareFootage;
         }
         return total;
-    }
-
-    getAverageSize()
-    {
-        let total = 0;
-        let count = 0;
-        for(let unit of this.props.appraisal.units)
-        {
-            if (unit.squareFootage !== 0)
-            {
-                total += unit.squareFootage;
-                count += 1;
-            }
-        }
-        return total / count;
     }
 
     getAverageRentPSF()
@@ -155,10 +171,25 @@ class UnitsTable extends React.Component
         return total / count;
     }
 
+    getAverageStabilizedRentPSF()
+    {
+        let total = 0;
+        let count = 0;
+        for(let unit of this.props.appraisal.units)
+        {
+            if (unit.stabilizedRentPSF !== 0)
+            {
+                total += unit.stabilizedRentPSF;
+                count += 1;
+            }
+        }
+        return total / count;
+    }
+
     getTotalAnnualRent()
     {
         let total = 0;
-        for(let unit of this.props.appraisal.units)
+        for (let unit of this.props.appraisal.units)
         {
             if (unit.currentTenancy.yearlyRent !== 0)
             {
@@ -168,84 +199,108 @@ class UnitsTable extends React.Component
         return total;
     }
 
-    getMinimumSize()
+    getTotalStabilizedRent()
     {
-        let minSize = null;
-        for(let unit of this.props.appraisal.units)
+        let total = 0;
+        for (let unit of this.props.appraisal.units)
         {
-            if (unit.squareFootage !== 0)
-            {
-                if (minSize === null || unit.squareFootage < minSize)
-                {
-                    minSize = unit.squareFootage;
-                }
-            }
+            total += unit.stabilizedRent;
         }
-        return minSize;
+        return total;
     }
 
-    getMaximumSize()
+    defaultFields()
     {
-        let maxSize = null;
-        for(let unit of this.props.appraisal.units)
+        if (!this.props.showStabilizedStats)
         {
-            if (unit.squareFootage !== 0)
-            {
-                if (maxSize === null || unit.squareFootage > maxSize)
-                {
-                    maxSize = unit.squareFootage;
-                }
-            }
+            return [
+                "unitNumber",
+                "tenantName",
+                "squareFootage",
+                "yearlyRentPSF",
+                "yearlyRent"
+            ]
         }
-        return maxSize;
-    }
-
-    getMinimumRentPSF()
-    {
-        let minRentPSF = null;
-        for(let unit of this.props.appraisal.units)
+        else
         {
-            if (unit.currentTenancy.yearlyRent !== 0)
-            {
-                const rentPSF = unit.currentTenancy.yearlyRent / unit.squareFootage;
-                if (minRentPSF === null || rentPSF < minRentPSF)
-                {
-                    minRentPSF = rentPSF;
-                }
-            }
+            return [
+                "unitNumber",
+                "tenantName",
+                "squareFootage",
+                "stabilizedRentPSF",
+                "stabilizedRent"
+            ]
         }
-        return minRentPSF;
-    }
-
-    getMaximumRentPSF()
-    {
-        let maxRentPSF = null;
-        for(let unit of this.props.appraisal.units)
-        {
-            if (unit.currentTenancy.yearlyRent !== 0)
-            {
-                const rentPSF = unit.currentTenancy.yearlyRent / unit.squareFootage;
-                if (maxRentPSF === null || rentPSF > maxRentPSF)
-                {
-                    maxRentPSF = rentPSF;
-                }
-            }
-        }
-        return maxRentPSF;
     }
 
 
     render() {
+
+        const fieldConfiguration = {
+            "unitNumber": {
+                "title": "Unit Number",
+                "className": "unit-number-column",
+                "render": (unit) => <span>{unit.unitNumber}</span>
+            },
+            "tenantName": {
+                "title": "Tenant Name",
+                "className": "tenant-name-column",
+                "render": (unit) => <span>{unit.currentTenancy.name}</span>
+            },
+            "squareFootage": {
+                "title": "Size (sqft)",
+                "className": "square-footage-column",
+                "render": (unit) => <AreaFormat value={unit.squareFootage} />
+            },
+            "yearlyRentPSF": {
+                "title": "Rent (psf)",
+                "className": "rent-column",
+                "render": (unit) => <CurrencyFormat value={unit.currentTenancy.yearlyRentPSF}/>
+            },
+            "yearlyRent": {
+                "title": "Annual Rent",
+                "className": "rent-column",
+                "render": (unit) => <CurrencyFormat value={unit.currentTenancy.yearlyRent} />
+            },
+            "stabilizedRentPSF": {
+                "title": "Stabilized Rent (psf)",
+                "className": "rent-column",
+                "render": (unit) => <CurrencyFormat value={unit.shouldUseMarketRent && unit.marketRent ? unit.marketRentAmount : unit.currentTenancy.yearlyRentPSF}/>
+            },
+            "stabilizedRent": {
+                "title": "Stabilized Annual Rent",
+                "className": "rent-column",
+                "render": (unit) => <CurrencyFormat value={unit.shouldUseMarketRent && unit.marketRent ? unit.marketRentAmount * unit.squareFootage : unit.currentTenancy.yearlyRent} />
+            }
+        };
+
+        const fields = this.props.fields || this.defaultFields();
+
+        fields.forEach((field) =>
+        {
+            if (!fieldConfiguration[field])
+            {
+                const message = `Error! No field configuration for ${field}`;
+                console.error(message);
+
+                if (process.env.VALUATE_ENVIRONMENT.REACT_APP_DEBUG)
+                {
+                    alert(message);
+                }
+            }
+        });
+
         return (
             (this.props.appraisal) ?
                 <Table hover={this.props.onUnitClicked} responsive className={"units-table " + (this.props.onUnitClicked ? "allow-selection" : "")}>
                     <thead>
                     <tr className={"header-row"}>
-                        <td><strong>Unit Number</strong></td>
-                        <td><strong>Tenant Name</strong></td>
-                        <td className={"square-footage-column"}><strong>Size (sf)</strong></td>
-                        <td className={"rent-column"}><strong>Rent (psf)</strong></td>
-                        <td className={"rent-column"}><strong>Annual Rent</strong></td>
+                        {
+                            fields.map((field) =>
+                            {
+                                return <td className={fieldConfiguration[field].className}><strong>{fieldConfiguration[field].title}</strong></td>;
+                            })
+                        }
                         {this.props.onUnitClicked ? <td className={"action-column"} /> : null}
                     </tr>
 
@@ -253,55 +308,42 @@ class UnitsTable extends React.Component
                     <tbody>
                     {
                         this.props.appraisal && this.props.appraisal.units && Object.values(this.props.appraisal.units).map((unit, unitIndex) => {
-                            return this.renderUnitRow(unit, unitIndex);
+                            return <UnitRow
+                                unit={unit}
+                                unitIndex={unitIndex}
+                                selectedUnit={this.props.selectedUnit}
+                                fields={fields}
+                                fieldConfiguration={fieldConfiguration}
+                                onUnitClicked={this.onUnitClicked.bind(this)}
+                                removeUnit={this.removeUnit.bind(this)}
+                                allowSelection={this.props.allowSelection}
+                            />;
                         })
                     }
                     {
                         this.props.statsMode === 'total' || this.props.statsMode === 'all' ?
                             <tr className={"first-total-row " + (this.props.statsMode === 'total' ? "last-total-row" : "")}>
-                                <td></td>
-                                <td><strong>Total</strong></td>
+                                <td className={"unit-number-column"}></td>
+                                <td className={"tenant-name-column"}><strong>Total</strong></td>
                                 <td className={"square-footage-column"}>
                                     <AreaFormat value={this.getTotalSize()}/>
                                 </td>
                                 <td className={"rent-column"}>
-                                    <CurrencyFormat value={this.getAverageRentPSF()} cents={true} />
+                                    {
+                                        this.props.showStabilizedStats
+                                            ? <CurrencyFormat value={this.getAverageStabilizedRentPSF()} cents={true} />
+                                            : <CurrencyFormat value={this.getAverageRentPSF()} cents={true} />
+                                    }
                                 </td>
                                 <td className={"rent-column"}>
-                                    <CurrencyFormat value={this.getTotalAnnualRent()} cents={false} />
+                                    {
+                                        this.props.showStabilizedStats
+                                            ? <CurrencyFormat value={this.getTotalStabilizedRent()} cents={false} />
+                                            : <CurrencyFormat value={this.getTotalAnnualRent()} cents={false} />
+                                    }
                                 </td>
                             </tr> : null
                     }
-                    {/*{*/}
-                        {/*this.props.statsMode === 'all' ?*/}
-                            {/*<tr className={"total-row"}>*/}
-                                {/*<td></td>*/}
-                                {/*<td><strong>Average</strong></td>*/}
-                                {/*<td className={"square-footage-column"}>*/}
-                                    {/*<AreaFormat value={this.getAverageSize()}/>*/}
-                                {/*</td>*/}
-                                {/*<td className={"rent-column"}>*/}
-                                {/*</td>*/}
-                                {/*<td className={"rent-column"}>*/}
-                                    {/*/!*<CurrencyFormat value={this.getAverageRentPSF()} cents={false} />*!/*/}
-                                {/*</td>*/}
-                            {/*</tr> : null*/}
-                    {/*}*/}
-                    {/*{*/}
-                        {/*this.props.statsMode === 'all' ?*/}
-                            {/*<tr className={"last-total-row"}>*/}
-                                {/*<td></td>*/}
-                                {/*<td><strong>Range</strong></td>*/}
-                                {/*<td className={"square-footage-column"}>*/}
-                                    {/*<AreaFormat value={this.getMinimumSize()}/>&nbsp;-&nbsp;*/}
-                                    {/*<AreaFormat value={this.getMaximumSize()}/>*/}
-                                {/*</td>*/}
-                                {/*<td className={"rent-column"}>*/}
-                                    {/*<CurrencyFormat value={this.getMinimumRentPSF()} cents={false}/>&nbsp;-&nbsp;*/}
-                                    {/*<CurrencyFormat value={this.getMaximumRentPSF()} cents={false}/>*/}
-                                {/*</td>*/}
-                            {/*</tr> : null*/}
-                    {/*}*/}
                     {
                         this.props.appraisal && this.props.allowNewUnit ?
                             this.renderNewUnitRow()

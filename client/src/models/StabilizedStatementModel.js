@@ -38,8 +38,6 @@ class StabilizedStatementModel extends BaseModel
 
     static netOperatingIncome = new FloatField();
 
-    static netOperatingIncomePSF = new FloatField();
-
     static capitalization = new FloatField();
 
     static valuation = new FloatField();

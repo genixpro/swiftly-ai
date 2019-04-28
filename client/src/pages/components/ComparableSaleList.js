@@ -112,6 +112,34 @@ class ComparableSaleList extends React.Component
         return headerFields;
     }
 
+    defaultStatsFields()
+    {
+        const statFields = [];
+
+        if (this.props.appraisal.propertyType !== 'land')
+        {
+            statFields.push("capitalizationRate");
+            statFields.push("pricePerSquareFoot");
+            statFields.push("sizeSquareFootage")
+        }
+
+        if (this.props.appraisal.propertyType === 'industrial')
+        {
+            statFields.push("clearCeilingHeight");
+        }
+
+        if (this.props.appraisal.propertyType === 'land')
+        {
+            statFields.push("sizeOfLandAcres");
+            statFields.push("floorSpaceIndex");
+            statFields.push("pricePerSquareFootLand");
+            statFields.push("pricePerAcreLand");
+            statFields.push("pricePerSquareFootBuildableArea");
+        }
+
+        return statFields;
+    }
+
     updateComparables()
     {
         if (this.props.comparableSales !== this.state.comparableSales)
@@ -239,6 +267,10 @@ class ComparableSaleList extends React.Component
                 title: "Building Size (sf)",
                 size: "middle"
             },
+            sizeOfLandSqft: {
+                title: "Site Area (sqft)",
+                size: "middle"
+            },
             sizeOfLandAcres: {
                 title: "Site Area (acres)",
                 size: "middle"
@@ -271,18 +303,66 @@ class ComparableSaleList extends React.Component
                 title: "Price Per Acre ($)",
                 size: "middle"
             },
+            pricePerSquareFootLand: {
+                title: "PSF Land ($)",
+                size: "middle"
+            },
             pricePerSquareFootBuildableArea: {
                 title: "PSF Buildable Area ($)",
+                size: "middle"
+            },
+            pricePerBuildableUnit: {
+                title: "Price Per Buildable Unit ($)",
+                size: "middle"
+            },
+            netOperatingIncome: {
+                title: "NOI ($)",
+                size: "middle"
+            },
+            netOperatingIncomePSF: {
+                title: "NOI ($/psf)",
+                size: "middle"
+            },
+            noiPSFMultiple: {
+                title: "Multiple",
+                size: "middle"
+            },
+            buildableUnits: {
+                title: "Buildable Units",
                 size: "middle"
             }
         };
 
         const headerFields = this.props.headers || this.defaultHeaderFields();
 
+        headerFields.forEach((headerFieldList) =>
+        {
+            headerFieldList.forEach((field) =>
+            {
+                if (!headerConfigurations[field])
+                {
+                    const message = `Error! No header configuration for ${field}`;
+                    console.error(message);
+
+                    if (process.env.VALUATE_ENVIRONMENT.REACT_APP_DEBUG)
+                    {
+                        alert(message);
+                    }
+                }
+            })
+        });
+
+        const statsFields = this.props.stats || this.defaultStatsFields();
+
         return (
             <div>
                 {
-                    this.props.statsPosition === "above" ? <ComparableSalesStatistics appraisal={this.props.appraisal} comparableSales={this.state.comparableSales}  title={this.props.statsTitle}/> : null
+                    this.props.statsPosition === "above" ? <ComparableSalesStatistics
+                        appraisal={this.props.appraisal}
+                        comparableSales={this.state.comparableSales}
+                        title={this.props.statsTitle}
+                        stats={statsFields}
+                    /> : null
                 }
                 <div>
                 {
@@ -366,7 +446,13 @@ class ComparableSaleList extends React.Component
                 </div>
                 </div>
                 {
-                    this.props.statsPosition === "below" ? <div><br/><ComparableSalesStatistics appraisal={this.props.appraisal} comparableSales={this.state.comparableSales}  title={this.props.statsTitle}/></div> : null
+                    this.props.statsPosition === "below" ? <div><br/>
+                        <ComparableSalesStatistics
+                            appraisal={this.props.appraisal}
+                            comparableSales={this.state.comparableSales}
+                            title={this.props.statsTitle}
+                            stats={statsFields}
+                        /></div> : null
                 }
             </div>
         );

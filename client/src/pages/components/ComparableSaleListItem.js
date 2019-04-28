@@ -10,6 +10,8 @@ import AppraisalModel from "../../models/AppraisalModel";
 import _ from 'underscore';
 import CurrencyFormat from "./CurrencyFormat";
 import PercentFormat from "./PercentFormat";
+import FloatFormat from "./FloatFormat";
+import IntegerFormat from "./IntegerFormat";
 
 class ComparableSaleListItemField extends React.Component
 {
@@ -225,12 +227,23 @@ class ComparableSaleListItem extends React.Component
                 noValueText: "No Size",
                 size: "middle"
             },
-            sizeOfLandAcres: {
+            sizeOfLandSqft: {
                 render: (value) => <NumberFormat
                     value={value}
                     displayType={'text'}
                     thousandSeparator={', '}
                     decimalScale={0}
+                    fixedDecimalScale={true}
+                />,
+                noValueText: "No Size",
+                size: "middle"
+            },
+            sizeOfLandAcres: {
+                render: (value) => <NumberFormat
+                    value={value}
+                    displayType={'text'}
+                    thousandSeparator={', '}
+                    decimalScale={1}
                     fixedDecimalScale={true}
                 />,
                 noValueText: "No Size",
@@ -269,7 +282,7 @@ class ComparableSaleListItem extends React.Component
             },
             pricePerSquareFoot: {
                 render: (value) => <CurrencyFormat value={value} />,
-                noValueText: "No PPS",
+                noValueText: "No PSF",
                 size: "middle"
             },
             pricePerAcreLand: {
@@ -277,13 +290,59 @@ class ComparableSaleListItem extends React.Component
                 noValueText: "No PPA",
                 size: "middle"
             },
+            pricePerSquareFootLand: {
+                render: (value) => <CurrencyFormat value={value} cents={false} />,
+                noValueText: "No PSF Land",
+                size: "middle"
+            },
             pricePerSquareFootBuildableArea: {
                 render: (value) => <CurrencyFormat value={value} />,
                 noValueText: "No Buildable PSF",
                 size: "middle"
+            },
+            pricePerBuildableUnit: {
+                render: (value) => <CurrencyFormat value={value} cents={false} />,
+                noValueText: "No Price Per Buildable Unit",
+                size: "middle"
+            },
+            netOperatingIncome: {
+                render: (value) => <CurrencyFormat value={value} cents={false} />,
+                noValueText: "No NOI",
+                size: "middle"
+            },
+            netOperatingIncomePSF: {
+                render: (value) => <CurrencyFormat value={value} cents={true} />,
+                noValueText: "No NOI/sqft",
+                size: "middle"
+            },
+            noiPSFMultiple: {
+                render: (value) => <FloatFormat value={value} />,
+                noValueText: "No Multiple",
+                size: "middle"
+            },
+            buildableUnits: {
+                render: (value) => <IntegerFormat value={value} />,
+                noValueText: "No Buildable Units",
+                size: "middle"
             }
         };
 
+        this.props.headers.forEach((headerFieldList) =>
+        {
+            headerFieldList.forEach((field) =>
+            {
+                if (!headerConfigurations[field])
+                {
+                    const message = `Error! No header configuration for ${field}`;
+                    console.error(message);
+
+                    if (process.env.VALUATE_ENVIRONMENT.REACT_APP_DEBUG)
+                    {
+                        alert(message);
+                    }
+                }
+            })
+        });
 
         return (
             <div className={`card b comparable-sale-list-item ${expandedClass} ${lastClass}`}>
@@ -466,7 +525,7 @@ class ComparableSaleListItem extends React.Component
 
                                     <ComparableSaleListItemField
                                         title="Price Per Square Foot"
-                                        field="netOperatingIncome"
+                                        field="pricePerSquareFoot"
                                         fieldType="currency"
                                         excludedPropertyType={"land"}
                                         comparableSale={comparableSale}
@@ -579,16 +638,6 @@ class ComparableSaleListItem extends React.Component
                                         title="Development Proposals"
                                         field="developmentProposals"
                                         fieldType="text"
-                                        propertyType={"land"}
-                                        edit={this.props.edit}
-                                        comparableSale={comparableSale}
-                                        onChange={this.changeComparableField.bind(this)}
-                                    />
-
-                                    <ComparableSaleListItemField
-                                        title="Size of Land (sqft)"
-                                        field="sizeOfLandSqft"
-                                        fieldType="area"
                                         propertyType={"land"}
                                         edit={this.props.edit}
                                         comparableSale={comparableSale}

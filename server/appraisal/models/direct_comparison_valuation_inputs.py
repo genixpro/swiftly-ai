@@ -8,6 +8,8 @@ class DirectComparisonValuationModifier(EmbeddedDocument):
 
 
 class DirectComparisonValuationInputs(EmbeddedDocument):
+    meta = {"strict": False}
+
     # The price per square foot that this property will be assessed at
     pricePerSquareFoot = FloatField(default=10.0)
 
@@ -16,8 +18,9 @@ class DirectComparisonValuationInputs(EmbeddedDocument):
     pricePerSquareFootLand = FloatField(default=5.0)
     pricePerSquareFootBuildableArea = FloatField(default=20.0)
     pricePerBuildableUnit = FloatField(default=10000.0)
+    noiPSFMultiple = FloatField(default=10)
 
-    directComparisonMetric = StringField(default='psf', choices=['psf', 'psf_land', 'per_acre_land', 'psf_buildable_area', 'per_buildable_unit', None], null=True)
+    directComparisonMetric = StringField(default='psf', choices=['noi_multiple', 'psf', 'psf_land', 'per_acre_land', 'psf_buildable_area', 'per_buildable_unit', None, ""], null=True)
 
     # This is a dictionary mapping the modifiers that are added to the final valuation
     modifiers = ListField(EmbeddedDocumentField(DirectComparisonValuationModifier), default=[])

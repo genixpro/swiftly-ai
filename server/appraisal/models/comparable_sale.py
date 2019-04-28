@@ -105,5 +105,7 @@ class ComparableSale(Document):
 
     buildableUnits = FloatField()
 
+    netOperatingIncomePSF = FloatField()
 
+    noiPSFMultiple = FloatField()
 

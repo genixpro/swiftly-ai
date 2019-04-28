@@ -21,21 +21,32 @@ class EquationModel extends BaseModel
 
             const calculatedValue = this[EquationModel.calculatedValue];
 
-            Object.keys(equations).forEach((fieldName) =>
+            let didCalculate = true;
+
+            while(didCalculate)
             {
-                const fieldEquations = equations[fieldName];
-                if ( _.isNull(this[fieldName]) || _.isUndefined(this[fieldName]) || calculatedValue[fieldName] === this[fieldName])
+                didCalculate = false;
+                Object.keys(equations).forEach((fieldName) =>
                 {
-                    fieldEquations.forEach((equation) =>
+                    const fieldEquations = equations[fieldName];
+                    if ( _.isNull(this[fieldName]) || _.isUndefined(this[fieldName]) || calculatedValue[fieldName] === this[fieldName])
                     {
-                        if (_.every(equation.inputs, (input) => _.isNumber(this[input])))
+                        fieldEquations.forEach((equation) =>
                         {
-                            this[fieldName] = equation.equation.apply(this, equation.inputs.map((inputField) => Number(this[inputField]) ));
-                            calculatedValue[fieldName] = this[fieldName];
-                        }
-                    });
-                }
-            });
+                            if (_.every(equation.inputs, (input) => _.isNumber(this[input])))
+                            {
+                                const newValue = equation.equation.apply(this, equation.inputs.map((inputField) => Number(this[inputField]) ));
+                                if (newValue !== this[fieldName])
+                                {
+                                    this[fieldName] = newValue
+                                    didCalculate = true;
+                                    calculatedValue[fieldName] = this[fieldName];
+                                }
+                            }
+                        });
+                    }
+                });
+            }
         }
         catch(err)
         {

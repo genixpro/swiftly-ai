@@ -38,8 +38,6 @@ class StabilizedStatement(EmbeddedDocument):
 
     netOperatingIncome = FloatField()
 
-    netOperatingIncomePSF = FloatField()
-
     capitalization = FloatField()
 
     marketRentDifferential = FloatField()

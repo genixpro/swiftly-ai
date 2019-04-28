@@ -9,6 +9,13 @@ import FloatField from "../orm/FloatField";
 
 class ComparableSaleModel extends EquationMdoel
 {
+    constructor()
+    {
+        super(...arguments);
+
+        this.calculateMissingNumbers();
+    }
+
     static _id = new IdField();
 
     static owner = new StringField();
@@ -27,6 +34,9 @@ class ComparableSaleModel extends EquationMdoel
     static saleDate = new DateField();
     static propertyTags = new ListField(new StringField());
     static purchaser = new StringField();
+
+    static netOperatingIncomePSF = new FloatField();
+    static noiPSFMultiple = new FloatField();
 
     static vendor = new StringField();
 
@@ -169,6 +179,18 @@ class ComparableSaleModel extends EquationMdoel
             {
                 inputs: ['salePrice', 'buildableUnits'],
                 equation: (salePrice, buildableUnits) => salePrice / buildableUnits
+            }
+        ],
+        "netOperatingIncomePSF": [
+            {
+                inputs: ['netOperatingIncome', 'sizeSquareFootage'],
+                equation: (netOperatingIncome, sizeSquareFootage) => netOperatingIncome / sizeSquareFootage
+            }
+        ],
+        "noiPSFMultiple": [
+            {
+                inputs: ['netOperatingIncomePSF', 'pricePerSquareFoot'],
+                equation: (netOperatingIncomePSF, pricePerSquareFoot) => pricePerSquareFoot / netOperatingIncomePSF
             }
         ]
     };

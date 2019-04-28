@@ -47,7 +47,7 @@ class App extends React.Component
         {
             rows.push({
                 "label": <span>
-                Market Rent Differential, Discounted At @ <PercentValue left>{this.props.appraisal.directComparisonValuationInputs.marketRentDifferentialDiscountRate}</PercentValue>
+                Market Rent Differential, Discounted At @ <PercentValue left>{this.props.appraisal.directComparisonInputs.marketRentDifferentialDiscountRate}</PercentValue>
             </span>,
                 "amount": <CurrencyValue cents={false}>{this.props.appraisal.directComparisonValuation.marketRentDifferential}</CurrencyValue>,
                 "amountTotal": null,

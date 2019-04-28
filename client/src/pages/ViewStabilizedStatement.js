@@ -9,6 +9,7 @@ import AreaFormat from "./components/AreaFormat";
 import Auth from "../Auth";
 import PercentFormat from "./components/PercentFormat";
 import CurrencyFormat from "./components/CurrencyFormat";
+import StructuralAllowanceCalculationPopoverWrapper from "./components/StructuralAllowanceCalculationPopoverWrapper";
 
 class ViewStabilizedStatement extends React.Component
 {
@@ -84,6 +85,7 @@ class ViewStabilizedStatement extends React.Component
                                         <h4>{this.props.appraisal.address}</h4>
                                         <UnitsTable
                                             appraisal={this.props.appraisal}
+                                            showStabilizedStats={true}
                                             allowSelection={false}
                                             allowNewUnit={false}
                                             statsMode={"total"}
@@ -210,33 +212,14 @@ class ViewStabilizedStatement extends React.Component
                                                 this.props.appraisal.stabilizedStatement.structuralAllowance ?
                                                     <tr className={"statement-sum-after-row data-row vacancy-row"}>
                                                         <td className={"label-column"}>
-                                                            <a onClick={() => this.setState({structuralAllowancePopoverOpen: !this.state.structuralAllowancePopoverOpen})}>
+                                                            <StructuralAllowanceCalculationPopoverWrapper appraisal={this.props.appraisal}>
                                                                 <span>Structural Allowance @ <PercentFormat value={this.props.appraisal.stabilizedStatementInputs ? this.props.appraisal.stabilizedStatementInputs.structuralAllowancePercent : 2.0}/></span>
-                                                            </a>
-                                                            <Popover placement="bottom" isOpen={this.state.structuralAllowancePopoverOpen} target="structural-allowance-popover" toggle={() => this.setState({structuralAllowancePopoverOpen: !this.state.structuralAllowancePopoverOpen})}>
-                                                                <PopoverHeader>Structural Allowance</PopoverHeader>
-                                                                <PopoverBody>
-                                                                    <table className={"explanation-popover-table"}>
-                                                                        <tr>
-                                                                            <td>Potential Gross Income</td>
-                                                                            <td><CurrencyFormat value={this.props.appraisal.stabilizedStatement.potentialGrossIncome} /></td>
-                                                                        </tr>
-                                                                        <tr>
-                                                                            <td></td>
-                                                                            <td className={"underline"}>* <PercentFormat value={this.props.appraisal.stabilizedStatementInputs.structuralAllowancePercent}/></td>
-                                                                        </tr>
-                                                                        <tr>
-                                                                            <td>Structural Allowance</td>
-                                                                            <td><CurrencyFormat value={this.props.appraisal.stabilizedStatement.structuralAllowance} /></td>
-                                                                        </tr>
-                                                                    </table>
-                                                                </PopoverBody>
-                                                            </Popover>
+                                                            </StructuralAllowanceCalculationPopoverWrapper>
                                                         </td>
                                                         <td className={"amount-column"}>
-                                                            <a id={"structural-allowance-popover"} onClick={() => this.setState({structuralAllowancePopoverOpen: !this.state.structuralAllowancePopoverOpen})}>
+                                                            <StructuralAllowanceCalculationPopoverWrapper appraisal={this.props.appraisal}>
                                                                 <CurrencyFormat value={this.props.appraisal.stabilizedStatement.structuralAllowance}/>
-                                                            </a>
+                                                            </StructuralAllowanceCalculationPopoverWrapper>
                                                         </td>
                                                         <td className={"amount-total-column"}/>
                                                     </tr> : null

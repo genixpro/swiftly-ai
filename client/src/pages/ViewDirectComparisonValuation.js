@@ -13,6 +13,9 @@ import Auth from "../Auth";
 import PercentFormat from "./components/PercentFormat";
 import CurrencyFormat from "./components/CurrencyFormat";
 import IntegerFormat from "./components/IntegerFormat";
+import FloatFormat from "./components/FloatFormat";
+import TotalRemainingFreeRentPopoverWrapper from "./components/TotalRemainingFreeRentPopoverWrapper";
+import TotalMarketRentDifferentialCalculationPopoverWrapper from "./components/TotalMarketRentDifferentialCalculationPopoverWrapper";
 
 class ViewDirectComparisonValuation extends React.Component
 {
@@ -148,6 +151,97 @@ class ViewDirectComparisonValuation extends React.Component
 
     render()
     {
+        const compHeaders = [
+            ["saleDate"],
+            ["address"]
+        ];
+
+        const compStats = [];
+
+        if (this.props.appraisal.directComparisonInputs.directComparisonMetric === "psf")
+        {
+            compHeaders.push(["sizeSquareFootage"]);
+            compStats.push(["sizeSquareFootage"]);
+        }
+        else if (this.props.appraisal.directComparisonInputs.directComparisonMetric === "noi_multiple")
+        {
+            compHeaders.push(["sizeSquareFootage"]);
+        }
+        else if (this.props.appraisal.directComparisonInputs.directComparisonMetric === "psf_land")
+        {
+            compHeaders.push(["sizeOfLandSqft"]);
+            compStats.push(["sizeOfLandSqft"]);
+        }
+        else if (this.props.appraisal.directComparisonInputs.directComparisonMetric === "per_acre_land")
+        {
+            compHeaders.push(["sizeOfLandAcres"]);
+            compStats.push(["sizeOfLandAcres"]);
+        }
+        else if (this.props.appraisal.directComparisonInputs.directComparisonMetric === "psf_buildable_area")
+        {
+            compHeaders.push(["sizeOfBuildableAreaSqft"]);
+            compStats.push(["sizeOfBuildableAreaSqft"]);
+        }
+        else if (this.props.appraisal.directComparisonInputs.directComparisonMetric === "per_buildable_unit")
+        {
+            compHeaders.push(["buildableUnits"]);
+            compStats.push(["buildableUnits"]);
+        }
+        else
+        {
+            compHeaders.push(["sizeSquareFootage"]);
+            compStats.push(["sizeSquareFootage"]);
+        }
+
+        if (this.props.appraisal.directComparisonInputs.directComparisonMetric !== "noi_multiple")
+        {
+            compHeaders.push(["salePrice"]);
+            compStats.push(["salePrice"]);
+        }
+        else
+        {
+            compHeaders.push(["pricePerSquareFoot"]);
+            compStats.push(["pricePerSquareFoot"]);
+        }
+
+        if (this.props.appraisal.directComparisonInputs.directComparisonMetric === "psf")
+        {
+            compHeaders.push(["pricePerSquareFoot"]);
+            compStats.push(["pricePerSquareFoot"]);
+        }
+        else if (this.props.appraisal.directComparisonInputs.directComparisonMetric === "noi_multiple")
+        {
+            compHeaders.push(["netOperatingIncomePSF"]);
+            compHeaders.push(["noiPSFMultiple"]);
+            compStats.push(["netOperatingIncomePSF"]);
+            compStats.push(["noiPSFMultiple"]);
+        }
+        else if (this.props.appraisal.directComparisonInputs.directComparisonMetric === "psf_land")
+        {
+            compHeaders.push(["pricePerSquareFootLand"]);
+            compStats.push(["pricePerSquareFootLand"]);
+        }
+        else if (this.props.appraisal.directComparisonInputs.directComparisonMetric === "per_acre_land")
+        {
+            compHeaders.push(["pricePerAcreLand"]);
+            compStats.push(["pricePerAcreLand"]);
+        }
+        else if (this.props.appraisal.directComparisonInputs.directComparisonMetric === "psf_buildable_area")
+        {
+            compHeaders.push(["pricePerSquareFootBuildableArea"]);
+            compStats.push(["pricePerSquareFootBuildableArea"]);
+        }
+        else if (this.props.appraisal.directComparisonInputs.directComparisonMetric === "per_buildable_unit")
+        {
+            compHeaders.push(["pricePerBuildableUnit"]);
+            compStats.push(["pricePerBuildableUnit"]);
+        }
+        else
+        {
+            compHeaders.push(["pricePerSquareFoot"]);
+            compStats.push(["pricePerSquareFoot"]);
+        }
+
         return [
             <AppraisalContentHeader appraisal={this.props.appraisal} title="Direct Comparison Approach"/>,
             <Row className={"view-direct-comparison-valuation"}>
@@ -175,6 +269,8 @@ class ViewDirectComparisonValuation extends React.Component
                                                     statsTitle={""}
                                                     statsPosition={"below"}
                                                     allowNew={false}
+                                                    headers={compHeaders}
+                                                    stats={compStats}
                                                     noCompMessage={"There are no comparables attached to this appraisal. Please go to the comparables database and select comparables from there."}
                                                     sort={this.state.sort}
                                                     onSortChanged={(newSort) => this.onSortChanged(newSort)}
@@ -202,8 +298,12 @@ class ViewDirectComparisonValuation extends React.Component
                                     <tr className={"data-row capitalization-row"}>
                                         <td className={"label-column"}>
                                             {
+                                                !this.props.appraisal.directComparisonInputs.directComparisonMetric  ?
+                                                    <span>No Comparison Metric Selected</span> : null
+                                            }
+                                            {
                                                 this.props.appraisal.directComparisonInputs.directComparisonMetric === 'psf' ?
-                                                            <span>
+                                                    <span>
                                                                 <NumberFormat
                                                                     value={this.props.appraisal.sizeOfBuilding || 0}
                                                                     displayType={'text'}
@@ -211,6 +311,19 @@ class ViewDirectComparisonValuation extends React.Component
                                                                     decimalScale={0}
                                                                     fixedDecimalScale={true}
                                                                 /> sqft @ <CurrencyFormat value={this.props.appraisal.directComparisonInputs.pricePerSquareFoot}/>
+                                                            </span> : null
+                                            }
+                                            {
+                                                this.props.appraisal.directComparisonInputs.directComparisonMetric === 'noi_multiple' ?
+                                                    <span>
+                                                                <NumberFormat
+                                                                    value={this.props.appraisal.sizeOfBuilding || 0}
+                                                                    displayType={'text'}
+                                                                    thousandSeparator={', '}
+                                                                    decimalScale={0}
+                                                                    fixedDecimalScale={true}
+                                                                /> sqft * <CurrencyFormat value={this.props.appraisal.stabilizedStatement.netOperatingIncome / this.props.appraisal.sizeOfBuilding}/> NOI / PSF
+                                                                        * <FloatFormat value={this.props.appraisal.directComparisonInputs.noiPSFMultiple}/>
                                                             </span> : null
                                             }
                                             {
@@ -272,15 +385,15 @@ class ViewDirectComparisonValuation extends React.Component
                                         this.props.appraisal.directComparisonValuation.marketRentDifferential ?
                                             <tr className={"data-row capitalization-row"}>
                                                 <td className={"label-column"}>
-                                                    <Link to={`/appraisal/${this.props.appraisal._id}/tenants/market_rents`}>
-                                                        <span>Market Rent Differential, Discounted @ <PercentFormat value={this.props.appraisal.stabilizedStatementInputs.marketRentDifferentialDiscountRate}/></span>
-                                                    </Link>
+                                                    <TotalMarketRentDifferentialCalculationPopoverWrapper appraisal={this.props.appraisal}>
+                                                        <span>Market Rent Differential</span>
+                                                    </TotalMarketRentDifferentialCalculationPopoverWrapper>
                                                 </td>
                                                 <td className={"amount-column"}></td>
                                                 <td className={"amount-total-column"}>
-                                                    <Link to={`/appraisal/${this.props.appraisal._id}/tenants/market_rents`}>
+                                                    <TotalMarketRentDifferentialCalculationPopoverWrapper appraisal={this.props.appraisal}>
                                                         <CurrencyFormat value={this.props.appraisal.directComparisonValuation.marketRentDifferential} />
-                                                    </Link>
+                                                    </TotalMarketRentDifferentialCalculationPopoverWrapper>
                                                 </td>
                                             </tr> : null
                                     }
@@ -288,53 +401,15 @@ class ViewDirectComparisonValuation extends React.Component
                                         this.props.appraisal.directComparisonValuation.freeRentRentLoss ?
                                             <tr className={"data-row capitalization-row"}>
                                                 <td className={"label-column"}>
-                                                    <a onClick={() => this.setState({freeRentLossPopoverOpen: !this.state.freeRentLossPopoverOpen})}>
-                                                        <span>Free Rent Loss</span>
-                                                    </a>
-                                                    <Popover placement="bottom" isOpen={this.state.freeRentLossPopoverOpen} target={"free-rent-loss-popover"} toggle={() => this.setState({freeRentLossPopoverOpen: !this.state.freeRentLossPopoverOpen})}>
-                                                        <PopoverHeader>Free Rent Loss</PopoverHeader>
-                                                        <PopoverBody>
-                                                            <table className={"explanation-popover-table"}>
-                                                                <tbody>
-                                                                {
-                                                                    this.props.appraisal.units.map((unit, unitIndex) =>
-                                                                    {
-                                                                        const underline = unitIndex === this.props.appraisal.units.length - 1 ? "underline" : "";
-
-                                                                        return <tr>
-                                                                            <td>Unit {unit.unitNumber}</td>
-                                                                            <td><IntegerFormat value={unit.calculatedFreeRentMonths}/> months remaining</td>
-                                                                            <td>/</td>
-                                                                            <td>12</td>
-                                                                            <td>*</td>
-                                                                            <td><CurrencyFormat value={unit.calculatedFreeRentNetAmount}/></td>
-                                                                            <td>=</td>
-                                                                            <td className={underline}><CurrencyFormat value={unit.calculatedFreeRentLoss} cents={false}/></td>
-                                                                        </tr>
-                                                                    })
-                                                                }
-                                                                <tr className={"total-row"}>
-                                                                    <td>Free Rent Loss</td>
-                                                                    <td></td>
-                                                                    <td></td>
-                                                                    <td></td>
-                                                                    <td></td>
-                                                                    <td></td>
-                                                                    <td></td>
-                                                                    <td><CurrencyFormat value={-this.props.appraisal.stabilizedStatement.freeRentRentLoss} cents={false}/></td>
-                                                                </tr>
-                                                                </tbody>
-                                                            </table>
-                                                        </PopoverBody>
-                                                    </Popover>
-
-
+                                                    <TotalRemainingFreeRentPopoverWrapper appraisal={this.props.appraisal}>
+                                                        <span>Remaining Free Rent</span>
+                                                    </TotalRemainingFreeRentPopoverWrapper>
                                                 </td>
                                                 <td className={"amount-column"}></td>
                                                 <td className={"amount-total-column"}>
-                                                    <a id={"free-rent-loss-popover"} onClick={() => this.setState({freeRentLossPopoverOpen: !this.state.freeRentLossPopoverOpen})}>
+                                                    <TotalRemainingFreeRentPopoverWrapper appraisal={this.props.appraisal}>
                                                         <CurrencyFormat value={this.props.appraisal.directComparisonValuation.freeRentRentLoss} />
-                                                    </a>
+                                                    </TotalRemainingFreeRentPopoverWrapper>
                                                 </td>
                                             </tr> : null
                                     }
@@ -343,7 +418,7 @@ class ViewDirectComparisonValuation extends React.Component
                                             <tr className={"data-row capitalization-row"}>
                                                 <td className={"label-column"}>
                                                     <Link to={`/appraisal/${this.props.appraisal._id}/tenants/leasing_costs`}>
-                                                        <span>Vacant Unit Lease Up Costs</span>
+                                                        <span>Vacant Unit Leasing Costs</span>
                                                     </Link>
                                                 </td>
                                                 <td className={"amount-column"}></td>
@@ -497,6 +572,20 @@ class ViewDirectComparisonValuation extends React.Component
                                                         </tr> : null
                                                 }
                                                 {
+                                                    this.props.appraisal.directComparisonInputs.directComparisonMetric === 'noi_multiple' ?
+                                                        <tr>
+                                                            <td>NOI Multiple</td>
+                                                            <td>
+                                                                <FieldDisplayEdit
+                                                                    type={"float"}
+                                                                    placeholder={"NOI Multiple"}
+                                                                    value={this.props.appraisal.directComparisonInputs ? this.props.appraisal.directComparisonInputs.noiPSFMultiple : null}
+                                                                    onChange={(newValue) => this.changeDirectComparisonInput("noiPSFMultiple", newValue)}
+                                                                />
+                                                            </td>
+                                                        </tr> : null
+                                                }
+                                                {
                                                     this.props.appraisal.directComparisonInputs.directComparisonMetric === 'psf_land' ?
                                                         <tr>
                                                             <td>Price Per Square Foot of Land</td>
@@ -552,17 +641,6 @@ class ViewDirectComparisonValuation extends React.Component
                                                             </td>
                                                         </tr> : null
                                                 }
-                                                <tr>
-                                                    <td>Discount Rate for Market Rent Differential</td>
-                                                    <td>
-                                                        <FieldDisplayEdit
-                                                            type={"percent"}
-                                                            placeholder={"Market Rent Differential Discount Rate"}
-                                                            value={this.props.appraisal.stabilizedStatementInputs ? this.props.appraisal.stabilizedStatementInputs.marketRentDifferentialDiscountRate : 5.0}
-                                                            onChange={(newValue) => this.changeStabilizedInput("marketRentDifferentialDiscountRate", newValue)}
-                                                        />
-                                                    </td>
-                                                </tr>
 
                                             </Table>
 

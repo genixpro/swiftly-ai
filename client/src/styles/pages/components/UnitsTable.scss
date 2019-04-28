@@ -26,12 +26,19 @@
 
   tr.first-total-row
   {
-    td.square-footage-column, td.rent-column {
+    td {
       border-top: 1px solid gray;
       border-bottom: 1px solid gray;
     }
   }
 
+  tr.first-total-row, tr.last-total-row
+  {
+    td.tenant-name-column
+    {
+      text-align: right;
+    }
+  }
 
 
   td.square-footage-column, td.rent-column {
