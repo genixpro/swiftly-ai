@@ -527,7 +527,7 @@ class ComparableSaleListItem extends React.Component
 
                                     <ComparableSaleListItemField
                                         title="Sale Date"
-                                        field="date"
+                                        field="saleDate"
                                         fieldType="date"
                                         edit={this.props.edit}
                                         comparableSale={comparableSale}
