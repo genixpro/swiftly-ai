@@ -248,7 +248,7 @@ class ComparableLeaseList extends React.Component
         const headerConfigurations = {
             leaseDate: {
                 title: "Date",
-                size: 2
+                size: 1
             },
             address: {
                 title: "Address",
@@ -265,15 +265,15 @@ class ComparableLeaseList extends React.Component
             },
             taxesMaintenanceInsurance: {
                 title: "TMI ($)",
-                size: 2
+                size: 3
             },
             tenantInducements: {
                 title: "Inducements",
-                size: 2
+                size: 3
             },
             freeRent: {
                 title: "Free Rent",
-                size: 2
+                size: 3
             }
         };
 

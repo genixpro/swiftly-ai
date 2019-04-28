@@ -6,6 +6,7 @@ import DateField from "../orm/DateField";
 import _ from "underscore";
 import StringField from "../orm/StringField";
 import FloatField from "../orm/FloatField";
+import moment from "moment";
 
 class ComparableSaleModel extends EquationMdoel
 {
@@ -69,7 +70,7 @@ class ComparableSaleModel extends EquationMdoel
     static pricePerAcreBuildableArea = new FloatField();
     static floorSpaceIndex = new FloatField();
     static finishedOfficePercent = new FloatField();
-    static floors = new FloatField();
+    static floors = new StringField();
 
     static numberOfUnits = new FloatField();
     static averageMonthlyRentPerUnit = new FloatField();
@@ -240,7 +241,7 @@ class ComparableSaleModel extends EquationMdoel
         "siteCoverage": [
             {
                 inputs: ['sizeSquareFootage', 'siteArea'],
-                equation: (sizeSquareFootage, siteArea) => (sizeSquareFootage / (siteArea * 43560))
+                equation: (sizeSquareFootage, siteArea) => (sizeSquareFootage / (siteArea * 43560)) * 100
             }
         ]
     };
@@ -266,6 +267,10 @@ class ComparableSaleModel extends EquationMdoel
         return comparables;
     }
 
+    static numberWithCommas(x) {
+        return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    }
+
     get computedDescriptionText()
     {
         const comparableSale = this;
@@ -277,35 +282,64 @@ class ComparableSaleModel extends EquationMdoel
 
         let text = '';
 
+        const dateFormat = "MMMM YYYY";
+
         if (comparableSale.saleDate && comparableSale.propertyType && comparableSale.address)
         {
-            text += `In reference to the ${comparableSale.saleDate.getFullYear()}/${comparableSale.saleDate.getMonth() + 1}/${comparableSale.saleDate.getDate()} sale of a ${comparableSale.propertyType} building located at ${comparableSale.address}. `;
+            text += `In reference to the ${moment(comparableSale.saleDate).format(dateFormat)} sale of a ${comparableSale.floors ? comparableSale.floors : null} ${comparableSale.propertyType} building located at ${comparableSale.address}. `;
         }
 
         if (comparableSale.sizeSquareFootage)
         {
-            text += `The building has gross rentable area of ${comparableSale.sizeSquareFootage}. `;
+            text += `The building has gross rentable area of ${ComparableSaleModel.numberWithCommas(comparableSale.sizeSquareFootage)} square feet. `;
         }
 
 
         if(comparableSale.vendor && comparableSale.purchaser && comparableSale.salePrice)
         {
-            text += `The property was sold by ${comparableSale.vendor} and was acquired by ${comparableSale.purchaser} for a consideration of $${comparableSale.salePrice}. `;
-        }
-
-        if(comparableSale.description)
-        {
-            text += comparableSale.description;
+            text += `The property was sold by ${comparableSale.vendor} and was acquired by ${comparableSale.purchaser} for a consideration of $${ComparableSaleModel.numberWithCommas(comparableSale.salePrice)}. `;
         }
 
         if(comparableSale.tenants)
         {
-            text += `The property is leased to ${comparableSale.tenants}. `;
+            text += `The tenants include: ${comparableSale.tenants}. `;
+        }
+
+        text += `Property features include: ${comparableSale.tenants}. `;
+
+        if(comparableSale.constructionDate)
+        {
+            text += `construction date of ${moment(comparableSale.constructionDate).format(dateFormat)}, `;
+        }
+
+        if(comparableSale.clearCeilingHeight)
+        {
+            text += `clear ceiling height of ${comparableSale.clearCeilingHeight} feet, `;
+        }
+
+        if(comparableSale.siteCoverage)
+        {
+            text += `site coverage of ${comparableSale.siteCoverage}, `;
+        }
+
+        if(comparableSale.finishedOfficePercent)
+        {
+            text += `finished office percentage of ${comparableSale.finishedOfficePercent}, `;
+        }
+
+        if(comparableSale.parking)
+        {
+            text += `${comparableSale.parking} of parking, `;
+        }
+
+        if(comparableSale.additionalInfo)
+        {
+            text += comparableSale.additionalInfo;
         }
 
         if(comparableSale.capitalizationRate)
         {
-            text += `The net income of ${comparableSale.netOperatingIncome} yielded a ${comparableSale.capitalizationRate}% rate of return. `;
+            text += `The net income yielded a ${comparableSale.capitalizationRate}% rate of return. `;
         }
 
         return text;

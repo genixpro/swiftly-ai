@@ -223,7 +223,7 @@ class ComparableSaleList extends React.Component
 
     renderNewItemRow()
     {
-        return <div className="card b new-comparable" onClick={() => this.toggleCreateNewItem()}>
+        return <div className="card b new-comparable-sale" onClick={() => this.toggleCreateNewItem()}>
                 <div className="card-body">
                     <span>Create new comparable...</span>
                 </div>
@@ -425,6 +425,27 @@ class ComparableSaleList extends React.Component
                     /> : null
                 }
                 <div>
+                    {
+                        this.props.allowNew ?
+                            <div>
+                                {this.renderNewItemRow()}
+                                <Modal isOpen={this.state.isCreatingNewItem} toggle={this.toggleNewItem.bind(this)} className={"new-comp-dialog"}>
+                                    <ModalHeader toggle={this.toggleNewItem.bind(this)}>New Comparable Sale</ModalHeader>
+                                    <ModalBody>
+                                        <ComparableSaleListItem
+                                            appraisal={this.props.appraisal}
+                                            headers={headerFields}
+                                            comparableSale={this.state.newComparableSale}
+                                            openByDefault={true}
+                                            onChange={(comp) => this.setState({newComparableSale: comp})} />
+                                    </ModalBody>
+                                    <ModalFooter>
+                                        <Button color="primary" onClick={() => this.addNewComparable(this.state.newComparableSale)}>Add</Button>{' '}
+                                        <Button color="primary" onClick={() => this.toggleNewItem()}>Cancel</Button>{' '}
+                                    </ModalFooter>
+                                </Modal>
+                            </div> : null
+                    }
                 {
                     <div className={`card b comparable-sale-list-header`}>
                         <CardHeader className={`comparable-sale-list-item-header ${firstSpacing}`}>
@@ -448,27 +469,6 @@ class ComparableSaleList extends React.Component
                             </CardTitle>
                         </CardHeader>
                     </div>
-                }
-                {
-                    this.props.allowNew ?
-                        <div>
-                            {this.renderNewItemRow()}
-                            <Modal isOpen={this.state.isCreatingNewItem} toggle={this.toggleNewItem.bind(this)} className={"new-comp-dialog"}>
-                                <ModalHeader toggle={this.toggleNewItem.bind(this)}>New Comparable Sale</ModalHeader>
-                                <ModalBody>
-                                    <ComparableSaleListItem
-                                        appraisal={this.props.appraisal}
-                                        headers={headerFields}
-                                        comparableSale={this.state.newComparableSale}
-                                        openByDefault={true}
-                                        onChange={(comp) => this.setState({newComparableSale: comp})} />
-                                </ModalBody>
-                                <ModalFooter>
-                                    <Button color="primary" onClick={() => this.addNewComparable(this.state.newComparableSale)}>Add</Button>{' '}
-                                    <Button color="primary" onClick={() => this.toggleNewItem()}>Cancel</Button>{' '}
-                                </ModalFooter>
-                            </Modal>
-                        </div> : null
                 }
                 {
                     this.state.comparableSales.map((comparableSale, index) =>

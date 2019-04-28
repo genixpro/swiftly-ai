@@ -212,7 +212,7 @@ class ComparableLeaseListItem extends React.Component
             leaseDate: {
                 render: (value) => <span>{new Date(value).getMonth() + 1} / {new Date(value).getFullYear().toString().substr(2)}</span>,
                 noValueText: "No Lease Date",
-                size: 2
+                size: 1
             },
             address: {
                 render: (value) => <span>{value}</span>,
@@ -246,17 +246,17 @@ class ComparableLeaseListItem extends React.Component
             taxesMaintenanceInsurance: {
                 render: (value) => <CurrencyFormat value={value} />,
                 noValueText: "No TMI",
-                size: 2
+                size: 3
             },
             tenantInducements: {
                 render: (value) => <span>{value}</span>,
                 noValueText: "No Inducements",
-                size: 2
+                size: 3
             },
             freeRent: {
                 render: (value) => <span>{value}</span>,
                 noValueText: "No Free Rent",
-                size: 2
+                size: 3
             }
         };
 
