@@ -65,7 +65,7 @@ class ValuationModelBase:
 
                 month = 0
 
-                while currentDate < endDate:
+                while currentDate <= endDate:
                     totalDiscount = monthlyDiscount ** month
 
                     currentDifferential = monthlyDifferentialCashflow / totalDiscount

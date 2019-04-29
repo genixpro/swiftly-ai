@@ -310,7 +310,7 @@ class ViewTenantsRentRoll extends React.Component
 
         let month = 0;
 
-        while(currentDate.toDate().getTime() < marketRentDifferentialEndDate.toDate().getTime())
+        while(currentDate.toDate().getTime() <= marketRentDifferentialEndDate.toDate().getTime())
         {
             const totalDiscount = monthlyDiscount ** month;
 

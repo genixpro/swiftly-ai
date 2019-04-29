@@ -220,8 +220,8 @@ class UnitsTable extends React.Component
                 "unitNumber",
                 "tenantName",
                 "squareFootage",
-                "yearlyRentPSF",
-                "yearlyRent"
+                "stabilizedRentPSF",
+                "stabilizedRent"
             ]
         }
         else
@@ -248,10 +248,10 @@ class UnitsTable extends React.Component
             "tenantName": {
                 "title": "Tenant Name",
                 "className": "tenant-name-column",
-                "render": (unit) => <span>{unit.currentTenancy.name}</span>
+                "render": (unit) => <span>{unit.isVacantForStabilizedStatement ? "Vacant" : unit.currentTenancy.name}</span>
             },
             "squareFootage": {
-                "title": "Size (sqft)",
+                "title": "Size (sf)",
                 "className": "square-footage-column",
                 "render": (unit) => <AreaFormat value={unit.squareFootage} />
             },
@@ -334,16 +334,16 @@ class UnitsTable extends React.Component
                                 </td>
                                 <td className={"rent-column"}>
                                     {
-                                        this.props.showStabilizedStats
-                                            ? <CurrencyFormat value={this.getAverageStabilizedRentPSF()} cents={true} />
-                                            : <CurrencyFormat value={this.getAverageRentPSF()} cents={true} />
+                                        // this.props.showStabilizedStats
+                                        //     ? <CurrencyFormat value={this.getAverageStabilizedRentPSF()} cents={true} />
+                                            <CurrencyFormat value={this.getAverageRentPSF()} cents={true} />
                                     }
                                 </td>
                                 <td className={"rent-column"}>
                                     {
-                                        this.props.showStabilizedStats
-                                            ? <CurrencyFormat value={this.getTotalStabilizedRent()} cents={false} />
-                                            : <CurrencyFormat value={this.getTotalAnnualRent()} cents={false} />
+                                        // this.props.showStabilizedStats
+                                            <CurrencyFormat value={this.getTotalStabilizedRent()} cents={false} />
+                                            // : <CurrencyFormat value={this.getTotalAnnualRent()} cents={false} />
                                     }
                                 </td>
                             </tr> : null
