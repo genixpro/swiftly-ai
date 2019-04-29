@@ -526,28 +526,32 @@ class ViewTenantsRentRoll extends React.Component
                                             </td>
                                             <td className={"stabilized-rent-column"}>
                                                         <span style={{"marginLeft": "10px"}}>
-                                                            <CurrencyFormat value={this.props.appraisal.units[this.state.selectedUnitIndex].currentTenancy.yearlyRent}/>
+                                                            <CurrencyFormat value={this.props.appraisal.units[this.state.selectedUnitIndex].stabilizedRent} cents={false}/>
                                                         </span>
 
-                                                {
-                                                    this.props.appraisal.units[this.state.selectedUnitIndex].marketRent ?
-                                                        <div className={"use-market-rent-selector"}>
-                                                                <strong>Apply Market Rent</strong>
-                                                                <FieldDisplayEdit hideIcon={true} type="boolean"
-                                                                                  placeholder={"Use Market Rent for Stabilized Statement?"}
-                                                                                  value={this.props.appraisal.units[this.state.selectedUnitIndex].shouldUseMarketRent}
-                                                                                  onChange={(newValue) => this.changeUnitField(this.props.appraisal.units[this.state.selectedUnitIndex], 'shouldUseMarketRent', newValue)}/>
-                                                        </div> : null
-                                                }
-                                                {
-                                                    this.props.appraisal.units[this.state.selectedUnitIndex].marketRent ?
-                                                        <div className={"use-market-rent-selector"}>
-                                                                <strong>Apply Market Rent Differential</strong>
-                                                                <FieldDisplayEdit hideIcon={true} type="boolean" placeholder={"Apply Market Rent Differential?"}
-                                                                                  value={this.props.appraisal.units[this.state.selectedUnitIndex].shouldApplyMarketRentDifferential}
-                                                                                  onChange={(newValue) => this.changeUnitField(this.props.appraisal.units[this.state.selectedUnitIndex], 'shouldApplyMarketRentDifferential', newValue)}/>
-                                                        </div> : null
-                                                }
+                                                <div className={"use-market-rent-selector-container"}>
+                                                    {
+                                                        this.props.appraisal.units[this.state.selectedUnitIndex].marketRent ?
+                                                            <div className={"use-market-rent-selector"}>
+                                                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                                                    <strong>Apply Market Rent</strong>
+                                                                    <FieldDisplayEdit hideIcon={true} type="boolean"
+                                                                                      placeholder={"Use Market Rent for Stabilized Statement?"}
+                                                                                      value={this.props.appraisal.units[this.state.selectedUnitIndex].shouldUseMarketRent}
+                                                                                      onChange={(newValue) => this.changeUnitField(this.props.appraisal.units[this.state.selectedUnitIndex], 'shouldUseMarketRent', newValue)}/>
+                                                                <br/>
+                                                            </div> : null
+                                                    }
+                                                    {
+                                                        this.props.appraisal.units[this.state.selectedUnitIndex].marketRent ?
+                                                            <div className={"use-market-rent-selector"}>
+                                                                    <strong>Apply Market Rent Differential</strong>
+                                                                    <FieldDisplayEdit hideIcon={true} type="boolean" placeholder={"Apply Market Rent Differential?"}
+                                                                                      value={this.props.appraisal.units[this.state.selectedUnitIndex].shouldApplyMarketRentDifferential}
+                                                                                      onChange={(newValue) => this.changeUnitField(this.props.appraisal.units[this.state.selectedUnitIndex], 'shouldApplyMarketRentDifferential', newValue)}/>
+                                                            </div> : null
+                                                    }
+                                                </div>
                                             </td>
                                         </tr>
                                         {
