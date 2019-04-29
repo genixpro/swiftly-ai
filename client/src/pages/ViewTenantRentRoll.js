@@ -159,7 +159,8 @@ class ViewTenantsRentRoll extends React.Component
 
     renderNewTenancyRow()
     {
-        return <tr className={"tenant-row"}>
+        return <tr className={"tenant-row"}
+                   key={this.props.appraisal.units[this.state.selectedUnitIndex].tenancies.length}>
             <td>
                 <FieldDisplayEdit
                     hideIcon={true}
@@ -865,10 +866,7 @@ class ViewTenantsRentRoll extends React.Component
                                             this.props.appraisal.units[this.state.selectedUnitIndex].tenancies.map((tenancy, tenancyIndex) =>
                                             {
                                                 return this.renderTenancy(this.props.appraisal.units[this.state.selectedUnitIndex], tenancy, tenancyIndex);
-                                            })
-                                        }
-                                        {
-                                            this.renderNewTenancyRow()
+                                            }).concat([this.renderNewTenancyRow()])
                                         }
                                         </tbody>
 
