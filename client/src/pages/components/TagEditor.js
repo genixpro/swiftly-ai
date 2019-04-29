@@ -93,7 +93,7 @@ class TagEditor extends React.Component {
                     {data.data.label}
 
                     {
-                        data.hasValue ?
+                        !data.data.__isNew__ ?
                             <Button className={"delete-tag-button"} color={"secondary"} onClick={(evt) => this.deleteTag(evt, data.value)} >
                                 <i className={"fa fa-times"} />
                             </Button> : null

@@ -305,7 +305,7 @@ class ComparableSaleModel extends EquationMdoel
             text += `The tenants include: ${comparableSale.tenants}. `;
         }
 
-        text += `Property features include: ${comparableSale.tenants}. `;
+        text += `Property features include: `;
 
         if(comparableSale.constructionDate)
         {
