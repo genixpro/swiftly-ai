@@ -504,7 +504,7 @@ class ViewTenantsRentRoll extends React.Component
                                             <td>
                                                 <strong>Consider as Vacant Unit</strong>
                                             </td>
-                                            <td style={{"paddingTop": "10px", "paddingLeft": "10px", "paddingBottom": "10px"}}>
+                                            <td style={{"paddingTop": "10px", "paddingLeft": "15px", "paddingBottom": "10px"}}>
                                                 <FieldDisplayEdit
                                                     value={this.props.appraisal.units[this.state.selectedUnitIndex].isVacantForStabilizedStatement}
                                                     type={"boolean"}
