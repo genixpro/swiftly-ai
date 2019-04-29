@@ -470,7 +470,7 @@ class ViewDirectComparisonValuation extends React.Component
                                             </tr> : null
                                     }
                                     {
-                                        this.props.appraisal.directComparisonInputs.modifiers ? this.props.appraisal.directComparisonInputs.modifiers.map((modifier, index) =>
+                                        (this.props.appraisal.directComparisonInputs.modifiers || []).map((modifier, index) =>
                                         {
                                             return <tr className={"data-row modifier-row"} key={index}>
                                                 <td className={"label-column"}>
@@ -492,28 +492,29 @@ class ViewDirectComparisonValuation extends React.Component
                                                     />
                                                 </td>
                                             </tr>
-                                        }) : null
-                                    }
-                                    <tr className={"data-row modifier-row"}>
-                                        <td className={"label-column"}>
+                                        }).concat([
+                                            <tr className={"data-row modifier-row"} key={(this.props.appraisal.directComparisonInputs.modifiers || []).length}>
+                                                <td className={"label-column"}>
                                             <span><FieldDisplayEdit
                                                 type={"text"}
                                                 placeholder={"Add/Remove"}
                                                 // value={modifier.name}
                                                 onChange={(newValue) => this.createNewModifier("name", newValue)}
                                             /></span>
-                                        </td>
-                                        <td className={"amount-column"}></td>
-                                        <td className={"amount-total-column"}>
-                                            <FieldDisplayEdit
-                                                type={"currency"}
-                                                placeholder={"Amount ($)"}
-                                                hideIcon={true}
-                                                // value={modifier.amount}
-                                                onChange={(newValue) => this.createNewModifier("amount", newValue)}
-                                            />
-                                        </td>
-                                    </tr>
+                                                </td>
+                                                <td className={"amount-column"}></td>
+                                                <td className={"amount-total-column"}>
+                                                    <FieldDisplayEdit
+                                                        type={"currency"}
+                                                        placeholder={"Amount ($)"}
+                                                        hideIcon={true}
+                                                        // value={modifier.amount}
+                                                        onChange={(newValue) => this.createNewModifier("amount", newValue)}
+                                                    />
+                                                </td>
+                                            </tr>
+                                        ])
+                                    }
 
                                     <tr className={"data-row valuation-row"}>
                                         <td className={"label-column"}>
@@ -667,7 +668,7 @@ class ViewDirectComparisonValuation extends React.Component
                                                     this.props.appraisal.directComparisonValuation.marketRentDifferential ?
                                                         <tr>
                                                             <td>Market Rent Differential</td>
-                                                            <td>
+                                                            <td className={"apply-adjustment-column"}>
                                                                 <FieldDisplayEdit
                                                                     type={"boolean"}
                                                                     placeholder={"Apply Market Rent Differential"}
@@ -682,7 +683,7 @@ class ViewDirectComparisonValuation extends React.Component
                                                     this.props.appraisal.directComparisonValuation.vacantUnitLeasupCosts ?
                                                         <tr>
                                                             <td>Vacant Unit Leasing Costs</td>
-                                                            <td>
+                                                            <td className={"apply-adjustment-column"}>
                                                                 <FieldDisplayEdit
                                                                     type={"boolean"}
                                                                     placeholder={"Apply Vacant Unit Leasing Costs"}
@@ -698,7 +699,7 @@ class ViewDirectComparisonValuation extends React.Component
                                                     this.props.appraisal.directComparisonValuation.vacantUnitRentLoss ?
                                                         <tr>
                                                             <td>Vacant Unit Rent Loss</td>
-                                                            <td>
+                                                            <td className={"apply-adjustment-column"}>
                                                                 <FieldDisplayEdit
                                                                     type={"boolean"}
                                                                     placeholder={"Apply Vacant Unit Rent Loss"}
@@ -714,7 +715,7 @@ class ViewDirectComparisonValuation extends React.Component
                                                     this.props.appraisal.directComparisonValuation.freeRentRentLoss ?
                                                         <tr>
                                                             <td>Free Rent Loss</td>
-                                                            <td>
+                                                            <td className={"apply-adjustment-column"}>
                                                                 <FieldDisplayEdit
                                                                     type={"boolean"}
                                                                     placeholder={"Apply Free Rent Loss"}
@@ -729,7 +730,7 @@ class ViewDirectComparisonValuation extends React.Component
                                                     this.props.appraisal.directComparisonValuation.amortizedCapitalInvestment ?
                                                         <tr>
                                                             <td>Amortization Adjustment</td>
-                                                            <td>
+                                                            <td className={"apply-adjustment-column"}>
                                                                 <FieldDisplayEdit
                                                                     type={"boolean"}
                                                                     placeholder={"Apply Amortization Adjustment"}

@@ -91,9 +91,7 @@ class ViewBuildingInformation extends React.Component
                                                     <td>
                                                         <strong>Lot Size (sqft)</strong>
                                                     </td>
-                                                    <td>
-                                                        &nbsp;
-                                                        &nbsp;
+                                                    <td style={{"paddingLeft": "25px"}}>
                                                         <AreaFormat value={this.props.appraisal.sizeOfLand *43560}/>
                                                     </td>
                                                 </tr>
@@ -102,9 +100,7 @@ class ViewBuildingInformation extends React.Component
                                                         <td>
                                                             <strong>Building Size</strong>
                                                         </td>
-                                                        <td>
-                                                            &nbsp;
-                                                            &nbsp;
+                                                        <td style={{"paddingLeft": "25px"}}>
                                                             <AreaFormat value={this.props.appraisal.sizeOfBuilding}/>
                                                         </td>
                                                     </tr> : null
@@ -150,9 +146,7 @@ class ViewBuildingInformation extends React.Component
                                                             <td>
                                                                 <strong>Occupancy</strong>
                                                             </td>
-                                                            <td>
-                                                                &nbsp;
-                                                                &nbsp;
+                                                            <td style={{"paddingLeft": "25px"}}>
                                                                 <PercentFormat value={this.props.appraisal.occupancyRate * 100} />
                                                             </td>
                                                         </tr>,
@@ -160,9 +154,7 @@ class ViewBuildingInformation extends React.Component
                                                             <td>
                                                                 <strong>Estimated Market Rent</strong>
                                                             </td>
-                                                            <td>
-                                                                &nbsp;
-                                                                &nbsp;
+                                                            <td style={{"paddingLeft": "25px"}}>
                                                                 {
                                                                     this.props.appraisal.marketRents.map((marketRent, index) =>
                                                                     {
@@ -179,9 +171,7 @@ class ViewBuildingInformation extends React.Component
                                                             <td>
                                                                 <strong>Stabilized NOI</strong>
                                                             </td>
-                                                            <td>
-                                                                &nbsp;
-                                                                &nbsp;
+                                                            <td style={{"paddingLeft": "25px"}}>
                                                                 <CurrencyFormat value={this.props.appraisal.stabilizedStatement.netOperatingIncome} cents={false} />
                                                             </td>
                                                         </tr>
@@ -199,9 +189,7 @@ class ViewBuildingInformation extends React.Component
                                                     <td>
                                                         <strong>Direct Comparison Approach</strong>
                                                     </td>
-                                                    <td>
-                                                        &nbsp;
-                                                        &nbsp;
+                                                    <td style={{"paddingLeft": "25px"}}>
                                                         <CurrencyFormat value={this.props.appraisal.directComparisonValuation.valuationRounded} cents={false} />
                                                     </td>
                                                 </tr>
@@ -209,9 +197,7 @@ class ViewBuildingInformation extends React.Component
                                                     <td>
                                                         <strong>Capitalization Approach</strong>
                                                     </td>
-                                                    <td>
-                                                        &nbsp;
-                                                        &nbsp;
+                                                    <td style={{"paddingLeft": "25px"}}>
                                                         <CurrencyFormat value={this.props.appraisal.stabilizedStatement.valuationRounded} cents={false} />
                                                         &nbsp;
                                                         &nbsp;
@@ -223,9 +209,7 @@ class ViewBuildingInformation extends React.Component
                                                     <td>
                                                         <strong>Capitalization Rate</strong>
                                                     </td>
-                                                    <td>
-                                                        &nbsp;
-                                                        &nbsp;
+                                                    <td style={{"paddingLeft": "25px"}}>
                                                         <PercentFormat value={this.props.appraisal.stabilizedStatementInputs.capitalizationRate} cents={false} />
                                                     </td>
                                                 </tr>

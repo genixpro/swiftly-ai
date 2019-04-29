@@ -33,6 +33,11 @@
     font-size: 150%;
   }
 
+  .apply-adjustment-column
+  {
+    padding-left: 25px;
+  }
+
   a {
     color: #656565;
   }
@@ -100,9 +105,15 @@
       }
     }
 
-    tr.modifier-row
+    tr.modifier-row:not(.title-row)
     {
+      td.label-column {
+        padding-left: 10px;
+      }
+
       .amount-total-column {
+        position: relative;
+        left: 15px;
         input {
           text-align: right;
         }

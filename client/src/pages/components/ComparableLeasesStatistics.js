@@ -52,7 +52,7 @@ class ComparableLeasesStatistics extends React.Component
 
         const statConfigurations = {
             sizeOfUnit: {
-                rangeTitle: "Size Range (sqft))",
+                rangeTitle: "Size Range (sqft)",
                 averageTitle: "Size Average (sqft)",
                 render: (value) => <AreaFormat value={value}/>
             },

@@ -43,6 +43,11 @@
     cursor: pointer;
   }
 
+  .apply-adjustment-column
+  {
+    padding-left: 25px;
+  }
+
   .statement-table
   {
     margin-left: auto;
@@ -100,10 +105,20 @@
       }
     }
 
-    tr.modifier-row
+    tr.modifier-row:not(.title-row)
     {
+      td.label-column {
+        padding-left: 10px;
+      }
+
       .amount-total-column {
+        position: relative;
+        left: 15px;
         input {
+          text-align: right;
+        }
+        input::placeholder
+        {
           text-align: right;
         }
       }

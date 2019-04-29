@@ -388,7 +388,7 @@ class ComparableLeaseListItem extends React.Component
 
                                     <div className={"escalation-list"}>
                                         {
-                                            comparableLease.rentEscalations ? comparableLease.rentEscalations.map((escalation, escalationIndex) =>
+                                            (comparableLease.rentEscalations || [] ).map((escalation, escalationIndex) =>
                                             {
                                                 return <div className={"escalation"} key={escalationIndex}>
                                                     From:
@@ -420,36 +420,36 @@ class ComparableLeaseListItem extends React.Component
                                                     />
                                                     <Button color={"secondary"} onClick={() => this.removeEscalation(escalationIndex)}><i className={"fa fa-trash"} /></Button>
                                                 </div>
-                                            }) : null
+                                            }).concat([
+                                                <div className={"escalation"} key={(comparableLease.rentEscalations || [] ).length}>
+                                                    From:
+                                                    <FieldDisplayEdit
+                                                        type={"number"}
+                                                        hideIcon={true}
+                                                        edit={this.props.edit}
+                                                        placeholder={"Start Year"}
+                                                        onChange={(newValue) => this.createNewEscalation('startYear', newValue)}
+                                                    />
+                                                    To:
+                                                    <FieldDisplayEdit
+                                                        type={"number"}
+                                                        hideIcon={true}
+                                                        edit={this.props.edit}
+                                                        placeholder={"End Year"}
+                                                        onChange={(newValue) => this.createNewEscalation('endYear', newValue)}
+                                                    />
+                                                    Rent:
+                                                    <FieldDisplayEdit
+                                                        hideIcon={true}
+                                                        type={"currency"}
+                                                        edit={this.props.edit}
+                                                        placeholder={"Yearly Rent"}
+                                                        onChange={(newValue) => this.createNewEscalation('yearlyRent', newValue)}
+                                                    />
+                                                    <Button color={"secondary"} onClick={() => this.createNewEscalation('yearlyRent', 0)}><i className={"fa fa-plus"} /></Button>
+                                                </div>
+                                            ])
                                         }
-
-                                        <div className={"escalation"}>
-                                            From:
-                                            <FieldDisplayEdit
-                                                type={"number"}
-                                                hideIcon={true}
-                                                edit={this.props.edit}
-                                                placeholder={"Start Year"}
-                                                onChange={(newValue) => this.createNewEscalation('startYear', newValue)}
-                                            />
-                                            To:
-                                            <FieldDisplayEdit
-                                                type={"number"}
-                                                hideIcon={true}
-                                                edit={this.props.edit}
-                                                placeholder={"End Year"}
-                                                onChange={(newValue) => this.createNewEscalation('endYear', newValue)}
-                                            />
-                                            Rent:
-                                            <FieldDisplayEdit
-                                                hideIcon={true}
-                                                type={"currency"}
-                                                edit={this.props.edit}
-                                                placeholder={"Yearly Rent"}
-                                                onChange={(newValue) => this.createNewEscalation('yearlyRent', newValue)}
-                                            />
-                                            <Button color={"secondary"} onClick={() => this.createNewEscalation('yearlyRent', 0)}><i className={"fa fa-plus"} /></Button>
-                                        </div>
                                     </div>
 
                                     <span className={"comparable-field-label"}>Free Rent:</span>
