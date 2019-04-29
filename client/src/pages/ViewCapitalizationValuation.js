@@ -171,7 +171,7 @@ class ViewCapitalizationValuation extends React.Component
                             </Dropdown>
 
                             <Row>
-                                <Col xs={8}>
+                                <Col xs={12}>
                                     <div className={"stabilized-statement-centered"}>
                                         <h3>Capitalization Approach</h3>
                                         <h4>{this.props.appraisal.address}</h4>

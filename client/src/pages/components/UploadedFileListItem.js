@@ -1,6 +1,7 @@
 import React from 'react';
 import axios from "axios/index";
 import { Button } from 'reactstrap';
+import Auth from "../../Auth";
 
 
 class UploadedFileListItem extends React.Component
@@ -40,19 +41,22 @@ class UploadedFileListItem extends React.Component
 
     onFileClicked()
     {
-        if (this.state.file.fileType === 'financials')
+        if (Auth.isAdmin)
         {
             this.props.history.push("/appraisal/" + this.props.appraisalId + "/financial_statement/" + this.state.file._id + "/raw");
+            // if (this.state.file.fileType === 'financials')
+            // {
+            // this.props.history.push("/appraisal/" + this.props.appraisalId + "/financial_statement/" + this.state.file._id + "/raw");
+            // }
+            // else if (this.state.file.fileType === 'lease')
+            // {
+            //     this.props.history.push("/appraisal/" + this.props.appraisalId + "/lease/" + this.state.file._id + "/raw");
+            // }
+            // else if (this.state.file.fileType === 'comparable')
+            // {
+            //     this.props.history.push("/appraisal/" + this.props.appraisalId + "/comparable_sale/" + this.state.file._id + "/raw");
+            // }
         }
-        else if (this.state.file.fileType === 'lease')
-        {
-            this.props.history.push("/appraisal/" + this.props.appraisalId + "/lease/" + this.state.file._id + "/raw");
-        }
-        else if (this.state.file.fileType === 'comparable')
-        {
-            this.props.history.push("/appraisal/" + this.props.appraisalId + "/comparable_sale/" + this.state.file._id + "/raw");
-        }
-
     }
 
 

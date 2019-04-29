@@ -7,6 +7,7 @@ import CurrencyFormat from "./CurrencyFormat";
 import AreaFormat from "./AreaFormat";
 import PropTypes from "prop-types";
 import AppraisalModel from "../../models/AppraisalModel";
+import IntegerFormat from "./IntegerFormat";
 
 class UnitRow extends React.Component
 {
@@ -253,7 +254,7 @@ class UnitsTable extends React.Component
             "squareFootage": {
                 "title": "Size (sf)",
                 "className": "square-footage-column",
-                "render": (unit) => <AreaFormat value={unit.squareFootage} />
+                "render": (unit) => <IntegerFormat value={unit.squareFootage} />
             },
             "yearlyRentPSF": {
                 "title": "Rent (psf)",
@@ -266,12 +267,12 @@ class UnitsTable extends React.Component
                 "render": (unit) => <CurrencyFormat value={unit.currentTenancy.yearlyRent} />
             },
             "stabilizedRentPSF": {
-                "title": "Stabilized Rent (psf)",
+                "title": "Rent (psf)",
                 "className": "rent-column",
                 "render": (unit) => <CurrencyFormat value={unit.shouldUseMarketRent && unit.marketRent ? unit.marketRentAmount : unit.currentTenancy.yearlyRentPSF}/>
             },
             "stabilizedRent": {
-                "title": "Stabilized Annual Rent",
+                "title": "Annual Rent",
                 "className": "rent-column",
                 "render": (unit) => <CurrencyFormat value={unit.shouldUseMarketRent && unit.marketRent ? unit.marketRentAmount * unit.squareFootage : unit.currentTenancy.yearlyRent} />
             }

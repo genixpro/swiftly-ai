@@ -262,16 +262,16 @@ class ViewDirectComparisonValuation extends React.Component
                                     Download
                                 </DropdownToggle>
                                 <DropdownMenu>
-                                    <DropdownItem onClick={() => this.downloadWordSummary()}>Direct Comparison Valuation Summary (docx)</DropdownItem>
-                                    <DropdownItem onClick={() => this.downloadExcelSummary()}>Direct Comparison Valuation Spreadsheet (xlsx)</DropdownItem>
+                                    <DropdownItem onClick={() => this.downloadWordSummary()}>Direct Comparison Approach Summary (docx)</DropdownItem>
+                                    <DropdownItem onClick={() => this.downloadExcelSummary()}>Direct Comparison Approach Spreadsheet (xlsx)</DropdownItem>
                                 </DropdownMenu>
                             </Dropdown>
 
 
                             <Row>
-                                <Col xs={8}>
+                                <Col xs={12}>
                             <div className={"stabilized-statement-centered"}>
-                                <h3>Direct Comparison Valuation</h3>
+                                <h3>Direct Comparison Approach</h3>
                                 <h4>{this.props.appraisal.address}</h4>
                                 <ComparableSaleList comparableSales={this.state.comparableSales}
                                                     statsTitle={""}

@@ -108,6 +108,7 @@ class Auth
         this.accessToken = authResult.accessToken;
         this.idToken = authResult.idToken;
         this.expiresAt = expiresAt;
+        this.isAdmin = authResult.idTokenPayload[`${process.env.VALUATE_ENVIRONMENT.REACT_APP_SERVER_URL.replace("https://", "http://")}groups`].indexOf("admin") !== -1;
         this.userId = (authResult.idTokenPayload.sub || authResult.idTokenPayload.user_id);
 
 
@@ -115,6 +116,7 @@ class Auth
         localStorage.setItem('idToken', this.idToken);
         localStorage.setItem('expiresAt', this.expiresAt);
         localStorage.setItem('userId', this.userId);
+        localStorage.setItem('isAdmin', this.isAdmin);
         this.updateAxiosToken();
     }
 
@@ -126,6 +128,7 @@ class Auth
             this.idToken = localStorage.getItem("idToken");
             this.expiresAt = localStorage.getItem("expiresAt");
             this.userId = localStorage.getItem("userId");
+            this.isAdmin = localStorage.getItem("isAdmin");
             this.updateAxiosToken();
         }
     }
@@ -161,6 +164,7 @@ class Auth
         localStorage.removeItem('accessToken');
         localStorage.removeItem('idToken');
         localStorage.removeItem('expiresAt');
+        localStorage.removeItem('isAdmin');
 
         this.auth0.logout({
             returnTo: window.location.origin

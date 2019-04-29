@@ -112,13 +112,16 @@ class ViewStabilizedStatement extends React.Component
                                                 </td>
                                                 <td/>
                                             </tr>
-                                            <tr className={"data-row"}>
-                                                <td className={"label-column"}><Link to={`/appraisal/${this.props.appraisal._id}/additional_income`}>Additional Income</Link></td>
-                                                <td className={"amount-column"}>
-                                                    <Link to={`/appraisal/${this.props.appraisal._id}/additional_income`}><CurrencyFormat value={this.props.appraisal.stabilizedStatement.additionalIncome} /></Link>
-                                                </td>
-                                                <td className={"amount-total-column"}/>
-                                            </tr>
+                                            {
+                                                this.props.appraisal.stabilizedStatement.additionalIncome ?
+                                                    <tr className={"data-row"}>
+                                                        <td className={"label-column"}><Link to={`/appraisal/${this.props.appraisal._id}/additional_income`}>Additional Income</Link></td>
+                                                        <td className={"amount-column"}>
+                                                            <Link to={`/appraisal/${this.props.appraisal._id}/additional_income`}><CurrencyFormat value={this.props.appraisal.stabilizedStatement.additionalIncome} /></Link>
+                                                        </td>
+                                                        <td className={"amount-total-column"}/>
+                                                    </tr> : null
+                                            }
                                             <tr className={"statement-sum-after-row data-row"}>
                                                 <td className={"label-column"}>
                                                     <Link to={`/appraisal/${this.props.appraisal._id}/tenants/recovery_structures`}>Recoverable Income</Link>
