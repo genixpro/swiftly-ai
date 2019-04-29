@@ -142,7 +142,7 @@ class ViewAmortization extends React.Component
 
     renderNewAmortization()
     {
-        return <tr className={"tenant-row"}>
+        return <tr className={"tenant-row"} key={this.props.appraisal.amortizationSchedule.items.length}>
             <td>
                 <FieldDisplayEdit
                     hideIcon={true}
@@ -274,10 +274,7 @@ class ViewAmortization extends React.Component
                                             {
                                                 this.props.appraisal.amortizationSchedule.items.map((item, tenancyIndex) => {
                                                     return this.renderAmortization(item, tenancyIndex);
-                                                })
-                                            }
-                                            {
-                                                this.renderNewAmortization()
+                                                }).concat([this.renderNewAmortization()])
                                             }
                                             </tbody>
 
