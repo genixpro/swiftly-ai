@@ -16,19 +16,41 @@
     padding-top: 20px;
   }
 
+  td.action-column
+  {
+    border-top: 0;
+    border-bottom: 0;
+  }
+
+  td.rent-column
+  {
+    padding-right: 0px;
+  }
+
+
   .header-row
   {
-    td {
+    td:not(.action-column) {
       border-top: 1px solid gray;
       border-bottom: 1px solid  gray;
+    }
+    td.action-column
+    {
+      border-top: 0;
+      border-bottom: 0;
     }
   }
 
   tr.first-total-row
   {
-    td {
+    td:not(.action-column) {
       border-top: 1px solid gray;
       border-bottom: 1px solid gray;
+    }
+    td.action-column
+    {
+      border-top: 0;
+      border-bottom: 0;
     }
   }
 
@@ -65,10 +87,16 @@
 
   &.allow-selection
   {
+    .unit-row
+    {
+      background-color: white;
+    }
+
     .unit-row:hover
     {
       .action-column
       {
+        background-color: white;
         .btn {
           opacity: 1;
           pointer-events: all;
@@ -80,5 +108,9 @@
   .unit-row.selected-unit-row
   {
     background-color: #eee;
+    .action-column
+    {
+      background-color: white;
+    }
   }
 }
