@@ -568,6 +568,17 @@ class ComparableSaleListItem extends React.Component
                                     />
 
                                     <ComparableSaleListItemField
+                                        title="NOI PSF"
+                                        placeholder={"Net Operating Income Per Square Foot"}
+                                        field="netOperatingIncomePSF"
+                                        fieldType="currency"
+                                        excludedPropertyType={"land"}
+                                        edit={this.props.edit}
+                                        comparableSale={comparableSale}
+                                        onChange={this.changeComparableField.bind(this)}
+                                    />
+
+                                    <ComparableSaleListItemField
                                         title="Price Per Square Foot"
                                         field="pricePerSquareFoot"
                                         fieldType="currency"
