@@ -248,19 +248,22 @@ class ViewMarketRents extends React.Component
 
     onDeleteMarketRent(marketRentIndex)
     {
-        const marketRent = this.props.appraisal.marketRents[marketRentIndex];
-        this.props.appraisal.marketRents.splice(marketRentIndex, 1);
-
-        // Go through the appraisal units and update any which are attached to this rent name
-        this.props.appraisal.units.forEach((unit) =>
+        if (window.confirm("Are you sure you want to delete the market rent?"))
         {
-            if (unit.marketRent === marketRent.name)
-            {
-                unit.marketRent = null;
-            }
-        });
+            const marketRent = this.props.appraisal.marketRents[marketRentIndex];
+            this.props.appraisal.marketRents.splice(marketRentIndex, 1);
 
-        this.props.saveAppraisal(this.props.appraisal);
+            // Go through the appraisal units and update any which are attached to this rent name
+            this.props.appraisal.units.forEach((unit) =>
+            {
+                if (unit.marketRent === marketRent.name)
+                {
+                    unit.marketRent = null;
+                }
+            });
+
+            this.props.saveAppraisal(this.props.appraisal);
+        }
     }
 
     componentDidMount()

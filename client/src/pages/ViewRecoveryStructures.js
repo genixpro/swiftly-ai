@@ -665,19 +665,22 @@ class ViewRecoveryStructures extends React.Component
 
     onDeleteRecovery(recoveryIndex)
     {
-        const recoveryStructure = this.props.appraisal.recoveryStructures[recoveryIndex];
-        this.props.appraisal.recoveryStructures.splice(recoveryIndex, 1);
-
-        // Go through the appraisal units and update any which are attached to this rent name
-        this.props.appraisal.units.forEach((unit) =>
+        if (window.confirm("Are you sure you want to delete the recovery structure?"))
         {
-            if (unit.currentTenancy.recoveryStructure === recoveryStructure.name)
-            {
-                unit.currentTenancy.recoveryStructure = RecoveryStructureModel.defaultRecoveryName;
-            }
-        });
+            const recoveryStructure = this.props.appraisal.recoveryStructures[recoveryIndex];
+            this.props.appraisal.recoveryStructures.splice(recoveryIndex, 1);
 
-        this.props.saveAppraisal(this.props.appraisal);
+            // Go through the appraisal units and update any which are attached to this rent name
+            this.props.appraisal.units.forEach((unit) =>
+            {
+                if (unit.currentTenancy.recoveryStructure === recoveryStructure.name)
+                {
+                    unit.currentTenancy.recoveryStructure = RecoveryStructureModel.defaultRecoveryName;
+                }
+            });
+
+            this.props.saveAppraisal(this.props.appraisal);
+        }
     }
 
     render() {

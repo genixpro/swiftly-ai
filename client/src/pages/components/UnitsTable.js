@@ -102,7 +102,10 @@ class UnitsTable extends React.Component
     {
         if (this.props.onRemoveUnit)
         {
-            this.props.onRemoveUnit(unitIndex);
+            if (window.confirm("Are you sure you want to delete the unit?"))
+            {
+                this.props.onRemoveUnit(unitIndex);
+            }
         }
     }
 

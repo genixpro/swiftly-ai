@@ -14,6 +14,7 @@ import FloatFormat from "./FloatFormat";
 import IntegerFormat from "./IntegerFormat";
 import ComparableLeaseListItem from "./ComparableLeaseListItem";
 
+
 class ComparableSaleListItemField extends React.Component
 {
     static propTypes = {
@@ -192,12 +193,15 @@ class ComparableSaleListItem extends React.Component
 
     deleteComparable()
     {
-        this.props.onDeleteComparable(this.state.comparableSale);
+        if (window.confirm("Are you sure you want to delete the comparable?"))
+        {
+            this.props.onDeleteComparable(this.state.comparableSale);
 
-        axios.delete(`/comparable_sales/` + this.state.comparableSale._id).then((response) => {
-            // console.log(response.data.comparableSales);
-            // this.setState({comparableSales: response.data.comparableSales})
-        });
+            axios.delete(`/comparable_sales/` + this.state.comparableSale._id).then((response) => {
+                // console.log(response.data.comparableSales);
+                // this.setState({comparableSales: response.data.comparableSales})
+            });
+        }
     }
 
     toggleDetails()
@@ -280,7 +284,7 @@ class ComparableSaleListItem extends React.Component
                 size: "middle"
             },
             propertyTags: {
-                render: (value) => value.map((tag, tagIndex) => <span key={tag}>{tag}{tagIndex !== value.length ? ", " : null}</span>),
+                render: (value) => value.map((tag, tagIndex) => <span key={tag}>{tag}{tagIndex !== value.length - 1 ? ", " : ""}</span>),
                 size: "middle"
             },
             pricePerSquareFoot: {

@@ -94,6 +94,7 @@
     "react-chartist": "0.13.1",
     "react-chartjs-2": "2.7.4",
     "react-color": "2.14.1",
+    "react-confirm-alert": "^2.4.1",
     "react-contexify": "^4.0.1",
     "react-contextmenu": "^2.10.0",
     "react-data-grid": "4.0.9",

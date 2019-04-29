@@ -29,10 +29,13 @@ class UploadedFileListItem extends React.Component
     onDeleteFile(evt)
     {
         evt.stopPropagation();
-        axios.delete(`/appraisal/${this.props.appraisalId}/files/${this.state.file._id}`).then((response) =>
+        if (window.confirm("Are you sure you want to remove the file?"))
         {
-            this.props.handleDeletion(this.props.file);
-        });
+            axios.delete(`/appraisal/${this.props.appraisalId}/files/${this.state.file._id}`).then((response) =>
+            {
+                this.props.handleDeletion(this.props.file);
+            });
+        }
     }
 
     onFileClicked()

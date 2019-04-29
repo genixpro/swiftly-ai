@@ -621,19 +621,22 @@ class ViewTenantsLeasingCosts extends React.Component
 
     onDeleteLeasingStructure(leasingCostsIndex)
     {
-        const leasingCostStructure = this.props.appraisal.leasingCosts[leasingCostsIndex];
-        this.props.appraisal.leasingCosts.splice(leasingCostsIndex, 1);
-
-        // Go through the appraisal units and update any which are attached to this rent name
-        this.props.appraisal.units.forEach((unit) =>
+        if (window.confirm("Are you sure you want to delete the leasing cost structure?"))
         {
-            if (unit.leasingCostStructure === leasingCostStructure.name)
-            {
-                unit.leasingCostStructure = "Standard";
-            }
-        });
+            const leasingCostStructure = this.props.appraisal.leasingCosts[leasingCostsIndex];
+            this.props.appraisal.leasingCosts.splice(leasingCostsIndex, 1);
 
-        this.props.saveAppraisal(this.props.appraisal);
+            // Go through the appraisal units and update any which are attached to this rent name
+            this.props.appraisal.units.forEach((unit) =>
+            {
+                if (unit.leasingCostStructure === leasingCostStructure.name)
+                {
+                    unit.leasingCostStructure = "Standard";
+                }
+            });
+
+            this.props.saveAppraisal(this.props.appraisal);
+        }
     }
 
     render() {

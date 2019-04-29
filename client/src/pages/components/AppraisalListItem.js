@@ -7,7 +7,10 @@ class AppraisalListItem extends React.Component
     deleteAppraisal(evt)
     {
         evt.stopPropagation();
-        this.props.deleteAppraisal(this.props.appraisal);
+        if (window.confirm("Are you sure you want to delete the appraisal?"))
+        {
+            this.props.deleteAppraisal(this.props.appraisal);
+        }
     }
 
     render()

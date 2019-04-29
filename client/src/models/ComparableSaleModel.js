@@ -44,7 +44,7 @@ class ComparableSaleModel extends EquationMdoel
     static tenants = new StringField();
 
     static additionalInfo = new StringField();
-    static constructionDate = new DateField();
+    static constructionDate = new StringField();
 
     static siteArea = new FloatField();
 
@@ -286,12 +286,12 @@ class ComparableSaleModel extends EquationMdoel
 
         if (comparableSale.saleDate && comparableSale.propertyType && comparableSale.address)
         {
-            text += `In reference to the ${moment(comparableSale.saleDate).format(dateFormat)} sale of a ${comparableSale.floors ? comparableSale.floors : null} ${comparableSale.propertyType} building located at ${comparableSale.address}. `;
+            text += `Sale is in reference to the ${moment(comparableSale.saleDate).format(dateFormat)} sale of a ${comparableSale.floors ? comparableSale.floors : ""} ${comparableSale.propertyType} building located at ${comparableSale.address}. `;
         }
 
         if (comparableSale.sizeSquareFootage)
         {
-            text += `The building has gross rentable area of ${ComparableSaleModel.numberWithCommas(comparableSale.sizeSquareFootage)} square feet. `;
+            text += `The building has a gross rentable area of ${ComparableSaleModel.numberWithCommas(comparableSale.sizeSquareFootage)} square feet. `;
         }
 
 
@@ -324,18 +324,20 @@ class ComparableSaleModel extends EquationMdoel
 
         if(comparableSale.finishedOfficePercent)
         {
-            text += `finished office percentage of ${comparableSale.finishedOfficePercent}, `;
+            text += `finished office percentage of ${comparableSale.finishedOfficePercent}%, `;
         }
 
         if(comparableSale.parking)
         {
-            text += `${comparableSale.parking} of parking, `;
+            text += `${comparableSale.parking} parking spaces, `;
         }
 
         if(comparableSale.additionalInfo)
         {
             text += comparableSale.additionalInfo;
         }
+
+        text += ". ";
 
         if(comparableSale.capitalizationRate)
         {

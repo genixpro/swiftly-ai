@@ -10,7 +10,17 @@ class Logout extends React.Component
 {
     componentDidMount()
     {
-        Auth.logout();
+        if (window.confirm("Are you sure you want to logout?"))
+        {
+            Auth.logout();
+        }
+        else
+        {
+            setTimeout(() =>
+            {
+                this.props.history.push('/appraisals');
+            }, 200);
+        }
     }
 
     render() {

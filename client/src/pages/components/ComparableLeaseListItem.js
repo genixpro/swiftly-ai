@@ -161,12 +161,16 @@ class ComparableLeaseListItem extends React.Component
 
     deleteComparable()
     {
-        this.props.onDeleteComparable(this.state.comparableLease);
+        if (window.confirm("Are you sure you want to delete the comparable?"))
+        {
+            this.props.onDeleteComparable(this.state.comparableLease);
 
-        axios.delete(`/comparable_leases/` + this.state.comparableLease._id).then((response) => {
-            // console.log(response.data.comparableLeases);
-            // this.setState({comparableLeases: response.data.comparableLeases})
-        });
+            axios.delete(`/comparable_leases/` + this.state.comparableLease._id).then((response) =>
+            {
+                // console.log(response.data.comparableLeases);
+                // this.setState({comparableLeases: response.data.comparableLeases})
+            });
+        }
     }
 
     isCompWithinAppraisal(appraisalComparables)
