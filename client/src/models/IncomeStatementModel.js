@@ -24,6 +24,10 @@ class IncomeStatementItemModel extends BaseModel
 
     get machineName()
     {
+        if (!this.name)
+        {
+            return "";
+        }
         return this.name.replace(/\.\$/g, "");
     }
 

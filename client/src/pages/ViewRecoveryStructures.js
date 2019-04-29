@@ -16,7 +16,7 @@ class ExpensePercentageEditor extends React.Component
 
     render()
     {
-        const popoverId = `expense-recovery-popover-${this.props.expense.name.replace(/\W/g, "")}-${this.props.recovery.name.replace(/\W/g, "")}`;
+        const popoverId = `expense-recovery-popover-${this.props.expense.machineName.replace(/\W/g, "")}-${this.props.recovery.name.replace(/\W/g, "")}`;
 
         const percentage = _.isNumber(this.props.value) ? this.props.value : 100;
 
