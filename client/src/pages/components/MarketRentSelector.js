@@ -1,4 +1,5 @@
 import React from 'react';
+import CurrencyFormat from "./CurrencyFormat";
 
 
 class MarketRentSelector extends React.Component
@@ -42,7 +43,7 @@ class MarketRentSelector extends React.Component
         ].concat(
             this.props.marketRents.map((rent, index) =>
             {
-                return <option key={index} value={rent.name}>{rent.name}</option>
+                return <option key={index} value={rent.name}>{rent.name} @ ${rent.amountPSF.toFixed(2)}</option>
             }));
 
         return (

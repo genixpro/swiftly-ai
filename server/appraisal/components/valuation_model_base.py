@@ -307,6 +307,8 @@ class ValuationModelBase:
         if recoveryStructure.managementRecoveryMode == 'none':
             return 0
 
+        unit.calculatedManagementRecovery = 0
+
         if recoveryStructure.managementRecoveryMode == "operatingExpenses" or recoveryStructure.managementRecoveryMode == 'operatingExpensesAndTaxes' or recoveryStructure.managementRecoveryMode == 'managementExpenses':
             percentage = ((recoveryStructure.managementRecoveryOperatingPercentage or 100) / 100.0)
 

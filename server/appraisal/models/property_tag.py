@@ -11,5 +11,5 @@ class PropertyTag(Document):
     # The name of the propertyTag
     name = StringField()
 
-    # The property type associatted with this tag
+    # The property type associated with this tag
     propertyType = StringField()
