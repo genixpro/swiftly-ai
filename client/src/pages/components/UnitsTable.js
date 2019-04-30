@@ -264,7 +264,7 @@ class UnitsTable extends React.Component
             "yearlyRent": {
                 "title": "Annual Rent",
                 "className": "rent-column",
-                "render": (unit) => <CurrencyFormat value={unit.currentTenancy.yearlyRent} />
+                "render": (unit) => <CurrencyFormat value={unit.currentTenancy.yearlyRent} cents={false} />
             },
             "stabilizedRentPSF": {
                 "title": "Rent (psf)",
@@ -274,7 +274,7 @@ class UnitsTable extends React.Component
             "stabilizedRent": {
                 "title": "Annual Rent",
                 "className": "rent-column",
-                "render": (unit) => <CurrencyFormat value={unit.shouldUseMarketRent && unit.marketRent ? unit.marketRentAmount * unit.squareFootage : unit.currentTenancy.yearlyRent} />
+                "render": (unit) => <CurrencyFormat value={unit.shouldUseMarketRent && unit.marketRent ? unit.marketRentAmount * unit.squareFootage : unit.currentTenancy.yearlyRent} cents={false} />
             }
         };
 
@@ -331,7 +331,7 @@ class UnitsTable extends React.Component
                                 <td className={"unit-number-column"}></td>
                                 <td className={"tenant-name-column"}><strong>Total</strong></td>
                                 <td className={"square-footage-column"}>
-                                    <AreaFormat value={this.getTotalSize()}/>
+                                    <IntegerFormat value={this.getTotalSize()}/>
                                 </td>
                                 <td className={"rent-column"}>
                                     {

@@ -319,12 +319,12 @@ class ComparableSaleModel extends EquationMdoel
 
         if(comparableSale.siteCoverage)
         {
-            text += `site coverage of ${comparableSale.siteCoverage}, `;
+            text += `site coverage of ${comparableSale.siteCoverage.toFixed(2)}, `;
         }
 
         if(comparableSale.finishedOfficePercent)
         {
-            text += `finished office percentage of ${comparableSale.finishedOfficePercent}%, `;
+            text += `finished office percentage of ${comparableSale.finishedOfficePercent.toFixed(2)}%, `;
         }
 
         if(comparableSale.parking)
@@ -339,9 +339,11 @@ class ComparableSaleModel extends EquationMdoel
 
         text += ". ";
 
+        text = text.replace(", .", ".");
+
         if(comparableSale.capitalizationRate)
         {
-            text += `The net income yielded a ${comparableSale.capitalizationRate}% rate of return. `;
+            text += `The net income yielded a ${comparableSale.capitalizationRate.toFixed(2)}% rate of return. `;
         }
 
         return text;
