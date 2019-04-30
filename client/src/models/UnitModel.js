@@ -57,7 +57,7 @@ class UnitModel extends BaseModel
     static remarks = new StringField();
 
     static shouldApplyMarketRentDifferential = new BoolField("shouldApplyMarketRentDifferential", false);
-    static shouldUseMarketRent = new BoolField("shouldUseMarketRent", true);
+    static shouldUseMarketRent = new BoolField("shouldUseMarketRent", false);
     static shouldTreatAsVacant = new BoolField("shouldTreatAsVacant", null);
 
     static calculatedManagementRecovery = new FloatField();

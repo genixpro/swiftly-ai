@@ -67,7 +67,7 @@ class Unit(EmbeddedDocument):
     shouldApplyMarketRentDifferential = BooleanField(default=False)
 
     # Whether the market rent should be used in place of the current rent in the stabilized statement
-    shouldUseMarketRent = BooleanField(default=True)
+    shouldUseMarketRent = BooleanField(default=False)
 
     # Whether this unit should be considered vacant for the purposes of calculation
     shouldTreatAsVacant = BooleanField(default=None, null=True)

@@ -506,6 +506,16 @@ class ComparableSaleListItem extends React.Component
                                         onChange={this.changeComparableField.bind(this)}
                                     />
 
+                                    <ComparableSaleListItemField
+                                        title="Building Size"
+                                        field="sizeSquareFootage"
+                                        fieldType="area"
+                                        excludedPropertyType={"land"}
+                                        edit={this.props.edit}
+                                        comparableSale={comparableSale}
+                                        onChange={this.changeComparableField.bind(this)}
+                                    />
+
                                     <h4 className={"group-heading"}>Sales Information</h4>
                                     <span className={"group-heading"} />
 
@@ -697,16 +707,6 @@ class ComparableSaleListItem extends React.Component
                                             <span className={"group-heading"}></span>
                                             : <span className={"group-heading"}></span>
                                     }
-
-                                    <ComparableSaleListItemField
-                                        title="Building Size"
-                                        field="sizeSquareFootage"
-                                        fieldType="area"
-                                        excludedPropertyType={"land"}
-                                        edit={this.props.edit}
-                                        comparableSale={comparableSale}
-                                        onChange={this.changeComparableField.bind(this)}
-                                    />
 
                                     <ComparableSaleListItemField
                                         title="Floors"

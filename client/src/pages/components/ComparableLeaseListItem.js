@@ -17,7 +17,6 @@ class ComparableLeaseListItemHeaderColumn extends React.Component
     static propTypes = {
         size: PropTypes.oneOfType([PropTypes.number, PropTypes.string]).isRequired,
         renders: PropTypes.arrayOf(PropTypes.func).isRequired,
-        noValueTexts: PropTypes.arrayOf(PropTypes.string).isRequired,
         fields: PropTypes.arrayOf(PropTypes.string).isRequired,
         comparableLease: PropTypes.instanceOf(ComparableLeaseModel).isRequired
     };
@@ -49,7 +48,7 @@ class ComparableLeaseListItemHeaderColumn extends React.Component
                             {fieldIndex !== this.props.fields.length - 1 ? <br /> : null}
                             </span>
                         : <span className={"no-data"} key={fieldIndex}>
-                            {this.props.noValueTexts[fieldIndex]}
+                            n/a
                             {fieldIndex !== this.props.fields.length - 1 ? <br /> : null}
                         </span>
                 })
@@ -215,12 +214,10 @@ class ComparableLeaseListItem extends React.Component
         const headerConfigurations = {
             leaseDate: {
                 render: (value) => <span>{new Date(value).getMonth() + 1} / {new Date(value).getFullYear().toString().substr(2)}</span>,
-                noValueText: "No Lease Date",
                 size: 1
             },
             address: {
                 render: (value) => <span>{value}</span>,
-                noValueText: "No Address",
                 size: 4
             },
             rentEscalations: {
@@ -228,38 +225,33 @@ class ComparableLeaseListItem extends React.Component
                 {
                     if (escalation.startYear && escalation.endYear)
                     {
-                        return <span key={escalationIndex}>Yrs. {escalation.startYear} - {escalation.endYear} @ <CurrencyFormat value={escalation.yearlyRent} cents={false} /><br/></span>
+                        return <span key={escalationIndex}>Yrs. {escalation.startYear} - {escalation.endYear} @ <CurrencyFormat value={escalation.yearlyRent} cents={true} /><br/></span>
                     }
                     else if (escalation.startYear || escalation.endYear)
                     {
-                        return <span key={escalationIndex}>Yr. {escalation.startYear || escalation.endYear} @ <CurrencyFormat value={escalation.yearlyRent} cents={false} /><br/></span>
+                        return <span key={escalationIndex}>Yr. {escalation.startYear || escalation.endYear} @ <CurrencyFormat value={escalation.yearlyRent} cents={true} /><br/></span>
                     }
                     else
                     {
                         return null;
                     }
                 }),
-                noValueText: "No Rent",
                 size: 2
             },
             sizeOfUnit: {
                 render: (value) => <AreaFormat value={value} />,
-                noValueText: "No Size",
                 size: 2
             },
             taxesMaintenanceInsurance: {
-                render: (value) => <CurrencyFormat value={value} />,
-                noValueText: "No TMI",
+                render: (value) => <span>TMI @ <CurrencyFormat value={value} /></span>,
                 size: 3
             },
             tenantInducements: {
                 render: (value) => <span>{value}</span>,
-                noValueText: "No Inducements",
                 size: 3
             },
             freeRent: {
                 render: (value) => <span>{value}</span>,
-                noValueText: "No Free Rent",
                 size: 3
             }
         };
@@ -320,7 +312,6 @@ class ComparableLeaseListItem extends React.Component
                                                     key={headerIndex}
                                                     size={headerConfigurations[headerFieldList[0]].size}
                                                     renders={headerFieldList.map((field) => headerConfigurations[field].render)}
-                                                    noValueTexts={headerFieldList.map((field) => headerConfigurations[field].noValueText)}
                                                     fields={headerFieldList}
                                                     comparableLease={this.props.comparableLease}/>
                                             })
