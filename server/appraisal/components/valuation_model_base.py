@@ -304,10 +304,14 @@ class ValuationModelBase:
     def computeManagementRecoveriesForUnit(self, appraisal, unit):
         recoveryStructure = self.recoveryStructureForUnit(appraisal, unit)
 
+        unit.calculatedManagementRecovery = 0
+
         if recoveryStructure.managementRecoveryMode == 'none':
             return 0
 
-        unit.calculatedManagementRecovery = 0
+        if unit.currentTenancy.rentType == 'gross':
+            return 0
+
 
         if recoveryStructure.managementRecoveryMode == "operatingExpenses" or recoveryStructure.managementRecoveryMode == 'operatingExpensesAndTaxes' or recoveryStructure.managementRecoveryMode == 'managementExpenses':
             percentage = ((recoveryStructure.managementRecoveryOperatingPercentage or 100) / 100.0)
@@ -349,6 +353,9 @@ class ValuationModelBase:
 
         unit.calculatedExpenseRecovery = 0
 
+        if unit.currentTenancy.rentType == 'gross':
+            return 0
+
         for expense in appraisal.incomeStatement.expenses:
             if expense.incomeStatementItemType == 'operating_expense':
                 percentage = (recoveryStructure.expenseRecoveries.get(expense.machineName, 100)) / 100.0
@@ -367,6 +374,9 @@ class ValuationModelBase:
         recoveryStructure = self.recoveryStructureForUnit(appraisal, unit)
 
         unit.calculatedTaxRecovery = 0
+
+        if unit.currentTenancy.rentType == 'gross':
+            return 0
 
         for expense in appraisal.incomeStatement.expenses:
             if expense.incomeStatementItemType == 'taxes':
@@ -403,13 +413,14 @@ class ValuationModelBase:
             unit.calculatedManagementRecovery = self.computeManagementRecoveriesForUnit(appraisal, unit)
             recoveryStructure = self.recoveryStructureForUnit(appraisal, unit)
 
+            if unit.currentTenancy.rentType == 'gross':
+                continue
+
             if recoveryStructure.managementRecoveryMode == "operatingExpenses" or recoveryStructure.managementRecoveryMode == 'operatingExpensesAndTaxes' or recoveryStructure.managementRecoveryMode == 'managementExpenses':
                 total += unit.calculatedManagementRecovery
                 recoveryStructure.calculatedManagementRecoveryTotal += unit.calculatedManagementRecovery
             elif recoveryStructure.managementRecoveryMode == "custom":
                 recoveryStructure = self.recoveryStructureForUnit(appraisal, unit)
-
-                unit.calculatedExpenseRecovery = 0
 
                 for expense in appraisal.incomeStatement.expenses:
                     if expense.incomeStatementItemType == 'operating_expense' or expense.incomeStatementItemType == 'taxes':
@@ -423,7 +434,7 @@ class ValuationModelBase:
                         total += recoveredAmount
                         recoveryStructure.calculatedManagementRecoveries[expense.machineName] += recoveredAmount
                         recoveryStructure.calculatedManagementRecoveryTotal += recoveredAmount
-                        unit.calculatedExpenseRecovery += recoveredAmount
+
 
         return total
 
@@ -438,9 +449,11 @@ class ValuationModelBase:
                     recoveryStructure.calculatedExpenseRecoveries[expense.machineName] = 0
 
         for unit in appraisal.units:
+            unit.calculatedExpenseRecovery = self.computeOperatingExpenseRecoveriesForUnit(appraisal, unit)
             recoveryStructure = self.recoveryStructureForUnit(appraisal, unit)
 
-            unit.calculatedExpenseRecovery = 0
+            if unit.currentTenancy.rentType == 'gross':
+                continue
 
             for expense in appraisal.incomeStatement.expenses:
                 if expense.incomeStatementItemType == 'operating_expense':
@@ -453,7 +466,6 @@ class ValuationModelBase:
 
                     total += recoveredAmount
                     recoveryStructure.calculatedExpenseRecoveries[expense.machineName] += recoveredAmount
-                    unit.calculatedExpenseRecovery += recoveredAmount
 
         return total
 
@@ -468,9 +480,11 @@ class ValuationModelBase:
                     recoveryStructure.calculatedTaxRecoveries[expense.machineName] = 0
 
         for unit in appraisal.units:
+            unit.calculatedTaxRecovery = self.computeTaxRecoveriesForUnit(appraisal, unit)
             recoveryStructure = self.recoveryStructureForUnit(appraisal, unit)
 
-            unit.calculatedTaxRecovery = 0
+            if unit.currentTenancy.rentType == 'gross':
+                continue
 
             for expense in appraisal.incomeStatement.expenses:
                 if expense.incomeStatementItemType == 'taxes':
@@ -483,6 +497,5 @@ class ValuationModelBase:
 
                     total += recoveredAmount
                     recoveryStructure.calculatedTaxRecoveries[expense.machineName] += recoveredAmount
-                    unit.calculatedTaxRecovery += recoveredAmount
 
         return total

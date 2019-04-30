@@ -23,7 +23,7 @@ class StabilizedStatementModel(ValuationModelBase):
         statement.additionalIncome = self.computeAdditionalIncome(appraisal)
 
         statement.managementExpenses = self.computeManagementFees(appraisal)
-        
+
         if appraisal.stabilizedStatementInputs.expensesMode == 'income_statement':
             statement.operatingExpenses = self.computeTotalOperatingExpenses(appraisal)
             statement.taxes = self.computeTaxes(appraisal)
