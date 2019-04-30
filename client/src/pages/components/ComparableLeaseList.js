@@ -71,6 +71,8 @@ class ComparableLeaseList extends React.Component
 
     loadedComparables = {};
 
+    lastNewComp = null;
+
 
     componentDidMount()
     {
@@ -151,13 +153,23 @@ class ComparableLeaseList extends React.Component
 
     addNewComparable(newComparable)
     {
+        if (newComparable === this.lastNewComp)
+        {
+            return;
+        }
+        this.lastNewComp = newComparable;
+
         axios.post(`/comparable_leases`, newComparable).then((response) =>
         {
             newComparable["_id"] = response.data._id;
             newComparable[ComparableLeaseListItem._newLease] = true;
+            this.lastNewComp = null;
 
             this.props.onNewComparable(newComparable);
             this.setState({isCreatingNewItem: false, newComparableLease: ComparableLeaseModel.create({})})
+        }, (err) =>
+        {
+            this.lastNewComp = null;
         });
     }
 

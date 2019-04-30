@@ -68,6 +68,7 @@ class ComparableSaleList extends React.Component
 
     loadedComparables = {};
 
+    lastNewComp = null;
 
     componentDidMount()
     {
@@ -168,13 +169,24 @@ class ComparableSaleList extends React.Component
 
     addNewComparable(newComparable)
     {
+        if (newComparable === this.lastNewComp)
+        {
+            return;
+        }
+        this.lastNewComp = newComparable;
+
         axios.post(`/comparable_sales`, newComparable).then((response) =>
         {
             newComparable["_id"] = response.data._id;
             newComparable[ComparableSaleListItem._newSale] = true;
 
+            this.lastNewComp = null;
+
             this.props.onNewComparable(newComparable);
             this.setState({isCreatingNewItem: false, newComparableSale: ComparableSaleModel.create({})})
+        }, (err) =>
+        {
+            this.lastNewComp = null;
         });
     }
 
