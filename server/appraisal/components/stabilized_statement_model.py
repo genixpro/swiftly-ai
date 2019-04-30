@@ -22,8 +22,9 @@ class StabilizedStatementModel(ValuationModelBase):
         statement.rentalIncome = self.computeRentalIncome(appraisal)
         statement.additionalIncome = self.computeAdditionalIncome(appraisal)
 
+        statement.managementExpenses = self.computeManagementFees(appraisal)
+        
         if appraisal.stabilizedStatementInputs.expensesMode == 'income_statement':
-            statement.managementExpenses = self.computeManagementFees(appraisal)
             statement.operatingExpenses = self.computeTotalOperatingExpenses(appraisal)
             statement.taxes = self.computeTaxes(appraisal)
         elif appraisal.stabilizedStatementInputs.expensesMode == 'tmi':
@@ -58,7 +59,7 @@ class StabilizedStatementModel(ValuationModelBase):
         if appraisal.stabilizedStatementInputs.expensesMode == 'income_statement':
             statement.totalExpenses = statement.operatingExpenses + statement.taxes + statement.managementExpenses + statement.structuralAllowance
         elif appraisal.stabilizedStatementInputs.expensesMode == 'tmi':
-            statement.totalExpenses = statement.tmiTotal + statement.structuralAllowance
+            statement.totalExpenses = statement.tmiTotal + statement.managementExpenses + statement.structuralAllowance
         else:
             statement.totalExpenses = 0
 
