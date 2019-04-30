@@ -348,7 +348,12 @@ class RecoveryStructureEditor extends React.Component
                                                     {
                                                         if (unit.currentTenancy.recoveryStructure !== recovery.name)
                                                         {
-                                                            return;
+                                                            return null;
+                                                        }
+
+                                                        if (unit.currentTenancy.rentType !== "gross")
+                                                        {
+                                                            return null;
                                                         }
 
                                                         let className = "";
