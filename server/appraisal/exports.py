@@ -124,7 +124,7 @@ class ComparableSalesExcelFile(ExportAPI):
         if not auth:
             raise HTTPForbidden("You do not have access to this appraisal.")
 
-        query = {"id__in": appraisal.comparableSales}
+        query = {"id__in": appraisal.comparableSalesDCA + appraisal.comparableSalesCapRate}
 
         if "admin" not in self.request.effective_principals:
             query["owner"] = self.request.authenticated_userid
@@ -197,7 +197,7 @@ class ComparableSalesWordFile(ExportAPI):
         if not auth:
             raise HTTPForbidden("You do not have access to this appraisal.")
 
-        query = {"id__in": appraisal.comparableSales}
+        query = {"id__in": appraisal.comparableSalesDCA + appraisal.comparableSalesCapRate}
 
         if "admin" not in self.request.effective_principals:
             query["owner"] = self.request.authenticated_userid
@@ -244,7 +244,7 @@ class ComparableSalesDetailedWordFile(ExportAPI):
         if not auth:
             raise HTTPForbidden("You do not have access to this appraisal.")
 
-        query = {"id__in": appraisal.comparableSales}
+        query = {"id__in": appraisal.comparableSalesDCA + appraisal.comparableSalesCapRate}
 
         if "admin" not in self.request.effective_principals:
             query["owner"] = self.request.authenticated_userid
