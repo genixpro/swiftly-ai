@@ -52,6 +52,12 @@ class ExpensePercentageEditor extends React.Component
                                         return;
                                     }
 
+                                    if (unit.currentTenancy.rentType === "gross")
+                                    {
+                                        return;
+                                    }
+
+
                                     let className = "";
 
                                     if (unitIndex === this.props.appraisal.units.length - 1)
@@ -60,7 +66,7 @@ class ExpensePercentageEditor extends React.Component
                                     }
 
                                     return <tr key={unitIndex}>
-                                        <td>{unit.currentTenancy.name}</td>
+                                        <td>Unit {unit.unitNumber} - {unit.currentTenancy.name}</td>
                                         <td>
                                             <AreaFormat value={unit.squareFootage} />
                                         </td>
@@ -138,38 +144,42 @@ class TenantApplicableEditor extends React.Component
                 />
             </td>,
             <td className={"rule-calculated-amount-column"} key={3}>
-                <a id={popoverId} onClick={() => this.setState({popoverOpen: !this.state.popoverOpen})}>
+                {
+                    this.props.unit.currentTenancy.rentType === 'gross' ? <span>Gross Rent</span> :
+                        [
+                            <a id={popoverId} onClick={() => this.setState({popoverOpen: !this.state.popoverOpen})} key={1}>
+                                {
+                                    this.props.unit.currentTenancy.recoveryStructure === this.props.recovery.name ?
+                                        <CurrencyFormat value={this.props.unit.calculatedTotalRecovery}/>
+                                        : null
+                                }
+                            </a>,
+                            <Popover key={1} placement="bottom" isOpen={this.state.popoverOpen} target={popoverId} toggle={() => this.setState({popoverOpen: !this.state.popoverOpen})}>
+                                <PopoverHeader>Unit {this.props.unit.unitNumber} - Tenant Recovery - {this.props.unit.currentTenancy.name}</PopoverHeader>
+                                <PopoverBody>
+                                    <table className={"explanation-popover-table"}>
+                                        <tr>
+                                            <td>Operating Expense Recovery</td>
+                                            <td><CurrencyFormat value={this.props.unit.calculatedExpenseRecovery} /></td>
+                                        </tr>
+                                        <tr>
+                                            <td>Management Recovery</td>
+                                            <td><CurrencyFormat value={this.props.unit.calculatedManagementRecovery} /></td>
+                                        </tr>
+                                        <tr>
+                                            <td>Tax Recovery</td>
+                                            <td className={"underline"}><CurrencyFormat value={this.props.unit.calculatedTaxRecovery} /></td>
+                                        </tr>
 
-                    {
-                        this.props.unit.currentTenancy.recoveryStructure === this.props.recovery.name ?
-                            <CurrencyFormat value={this.props.unit.calculatedTotalRecovery}/>
-                            : null
-                    }
-                </a>
-                <Popover placement="bottom" isOpen={this.state.popoverOpen} target={popoverId} toggle={() => this.setState({popoverOpen: !this.state.popoverOpen})}>
-                    <PopoverHeader>Unit {this.props.unit.unitNumber} - Tenant Recovery - {this.props.unit.currentTenancy.name}</PopoverHeader>
-                    <PopoverBody>
-                        <table className={"explanation-popover-table"}>
-                            <tr>
-                                <td>Operating Expense Recovery</td>
-                                <td><CurrencyFormat value={this.props.unit.calculatedExpenseRecovery} /></td>
-                            </tr>
-                            <tr>
-                                <td>Management Recovery</td>
-                                <td><CurrencyFormat value={this.props.unit.calculatedManagementRecovery} /></td>
-                            </tr>
-                            <tr>
-                                <td>Tax Recovery</td>
-                                <td className={"underline"}><CurrencyFormat value={this.props.unit.calculatedTaxRecovery} /></td>
-                            </tr>
-
-                            <tr className={"total-row"}>
-                                <td>Recovered Amount Under Structure</td>
-                                <td><CurrencyFormat value={this.props.unit.calculatedTotalRecovery} /></td>
-                            </tr>
-                        </table>
-                    </PopoverBody>
-                </Popover>
+                                        <tr className={"total-row"}>
+                                            <td>Recovered Amount Under Structure</td>
+                                            <td><CurrencyFormat value={this.props.unit.calculatedTotalRecovery} /></td>
+                                        </tr>
+                                    </table>
+                                </PopoverBody>
+                            </Popover>
+                        ]
+                }
 
 
             </td>
