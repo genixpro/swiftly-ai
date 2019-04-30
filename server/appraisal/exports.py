@@ -408,8 +408,8 @@ class ComparableLeasesWordFile(ExportAPI):
                 row_cells[1].text = comp.address
             if comp.sizeOfUnit is not None:
                 row_cells[2].text = self.formatAmount(comp.sizeOfUnit) + " sf"
-            if comp.yearlyRent is not None and comp.sizeOfUnit is not None:
-                row_cells[3].text = "$" + self.formatAmount(comp.yearlyRent / comp.sizeOfUnit)
+            if comp.rentEscalations and len(comp.rentEscalations) > 0 and comp.rentEscalations[0].yearlyRent is not None and comp.sizeOfUnit is not None:
+                row_cells[3].text = "$" + self.formatAmount(comp.rentEscalations[0].yearlyRent / comp.sizeOfUnit)
             if comp.description is not None:
                 row_cells[4].text = comp.description
 

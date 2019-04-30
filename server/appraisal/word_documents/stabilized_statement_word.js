@@ -32,25 +32,25 @@ class App extends React.Component
             },
             {
                 "label": "Stabilized Rental Income",
-                "amount": <CurrencyValue cents={false}> {this.props.appraisal.stabilizedStatement.rentalIncome}</CurrencyValue>,
+                "amount": <CurrencyValue cents={false}>{this.props.appraisal.stabilizedStatement.rentalIncome}</CurrencyValue>,
                 "amountTotal": null,
                 "mode": "data"
             },
             {
                 "label": "Additional Income",
-                "amount": <CurrencyValue cents={false}> {this.props.appraisal.stabilizedStatement.additionalIncome}</CurrencyValue>,
+                "amount": <CurrencyValue cents={false}>{this.props.appraisal.stabilizedStatement.additionalIncome}</CurrencyValue>,
                 "amountTotal": null,
                 "mode": "data"
             },
             {
                 "label": "Recoverable Income",
-                "amount": <CurrencyValue cents={false}> {this.props.appraisal.stabilizedStatement.recoverableIncome}</CurrencyValue>,
+                "amount": <CurrencyValue cents={false}>{this.props.appraisal.stabilizedStatement.recoverableIncome}</CurrencyValue>,
                 "amountTotal": null,
                 "mode": "sumAfter"
             },
             {
                 "label": "Potential Gross Income",
-                "amount": <CurrencyValue cents={false}> {this.props.appraisal.stabilizedStatement.potentialGrossIncome}</CurrencyValue>,
+                "amount": <CurrencyValue cents={false}>{this.props.appraisal.stabilizedStatement.potentialGrossIncome}</CurrencyValue>,
                 "amountTotal": null,
                 "mode": "sum"
             },
@@ -59,14 +59,14 @@ class App extends React.Component
                             <span>Less Vacancy @ </span>
                             <PercentValue left>{this.props.appraisal.stabilizedStatementInputs.vacancyRate}</PercentValue>
                         </span>,
-                "amount": <CurrencyValue cents={false}> {this.props.appraisal.stabilizedStatement.vacancyDeduction}</CurrencyValue>,
+                "amount": <CurrencyValue cents={false}>{this.props.appraisal.stabilizedStatement.vacancyDeduction}</CurrencyValue>,
                 "amountTotal": null,
                 "mode": "sumAfter"
             },
             {
                 "label": "Effective Gross Income",
                 "amount": null,
-                "amountTotal": <CurrencyValue cents={false}> {this.props.appraisal.stabilizedStatement.effectiveGrossIncome}</CurrencyValue>,
+                "amountTotal": <CurrencyValue cents={false}>{this.props.appraisal.stabilizedStatement.effectiveGrossIncome}</CurrencyValue>,
                 "mode": "sum"
             },
             {
@@ -82,7 +82,7 @@ class App extends React.Component
             rows.push(
                 {
                     "label": "Operating Expenses",
-                    "amount": <CurrencyValue cents={false}> {this.props.appraisal.stabilizedStatement.operatingExpenses}</CurrencyValue>,
+                    "amount": <CurrencyValue cents={false}>{this.props.appraisal.stabilizedStatement.operatingExpenses}</CurrencyValue>,
                     "amountTotal": null,
                     "mode": "data"
                 }
@@ -94,7 +94,7 @@ class App extends React.Component
             rows.push(
                 {
                     "label": "Taxes",
-                    "amount": <CurrencyValue cents={false}> {this.props.appraisal.stabilizedStatement.taxes}</CurrencyValue>,
+                    "amount": <CurrencyValue cents={false}>{this.props.appraisal.stabilizedStatement.taxes}</CurrencyValue>,
                     "amountTotal": null,
                     "mode": "data"
                 }
@@ -106,7 +106,7 @@ class App extends React.Component
             rows.push(
                 {
                     "label": "Management Expenses",
-                    "amount": <CurrencyValue cents={false}> {this.props.appraisal.stabilizedStatement.managementExpenses}</CurrencyValue>,
+                    "amount": <CurrencyValue cents={false}>{this.props.appraisal.stabilizedStatement.managementExpenses}</CurrencyValue>,
                     "amountTotal": null,
                     "mode": "data"
                 }
@@ -118,7 +118,7 @@ class App extends React.Component
             rows.push(
                 {
                     "label": "Management Expenses",
-                    "amount": <CurrencyValue cents={false}> {this.props.appraisal.stabilizedStatement.managementExpenses}</CurrencyValue>,
+                    "amount": <CurrencyValue cents={false}>{this.props.appraisal.stabilizedStatement.managementExpenses}</CurrencyValue>,
                     "amountTotal": null,
                     "mode": "data"
                 }
@@ -131,10 +131,10 @@ class App extends React.Component
                 {
                     "label": <span>
                                     <span>TMI</span>
-                                    <IntegerValue left>{this.props.appraisal.sizeOfBuilding}</IntegerValue> sqft @
+                                    <IntegerValue left>{this.props.appraisal.sizeOfBuilding}</IntegerValue>sqft @
                                     <CurrencyValue left>{this.props.appraisal.stabilizedStatementInputs.tmiRatePSF}</CurrencyValue>
                                 </span>,
-                    "amount": <CurrencyValue cents={false}> {this.props.appraisal.stabilizedStatement.tmiTotal}</CurrencyValue>,
+                    "amount": <CurrencyValue cents={false}>{this.props.appraisal.stabilizedStatement.tmiTotal}</CurrencyValue>,
                     "amountTotal": null,
                     "mode": "data"
                 }
@@ -147,7 +147,7 @@ class App extends React.Component
                             <span>Structural Allowance @ </span>
                             <PercentValue left>{this.props.appraisal.stabilizedStatementInputs.structuralAllowancePercent}</PercentValue>
                         </span>,
-            "amount": <CurrencyValue cents={false}> {this.props.appraisal.stabilizedStatement.structuralAllowance}</CurrencyValue>,
+            "amount": <CurrencyValue cents={false}>{this.props.appraisal.stabilizedStatement.structuralAllowance}</CurrencyValue>,
             "amountTotal": null,
             "mode": "sumAfter"
         });
@@ -156,7 +156,7 @@ class App extends React.Component
         rows.push({
             "label": "Total Expenses",
             "amount": null,
-            "amountTotal": <CurrencyValue cents={false}> {this.props.appraisal.stabilizedStatement.totalExpenses}</CurrencyValue>,
+            "amountTotal": <CurrencyValue cents={false}>{this.props.appraisal.stabilizedStatement.totalExpenses}</CurrencyValue>,
             "mode": "sumTotal"
         });
 
@@ -164,7 +164,7 @@ class App extends React.Component
         rows.push({
             "label": "Net Operating Income",
             "amount": null,
-            "amountTotal": <CurrencyValue cents={false}> {this.props.appraisal.stabilizedStatement.netOperatingIncome}</CurrencyValue>,
+            "amountTotal": <CurrencyValue cents={false}>{this.props.appraisal.stabilizedStatement.netOperatingIncome}</CurrencyValue>,
             "mode": "title"
         });
 
