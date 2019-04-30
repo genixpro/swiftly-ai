@@ -209,9 +209,9 @@ class BaseModel extends Object
                         this[key] = modelClass[key].applyDiff(this[key], diffValue, this);
                     }
 
-                    if (diff['$delete'] && diff['$delete'].indexOf(field.fieldName) !== -1)
+                    if (diff['$delete'] && diff['$delete'].indexOf(key) !== -1)
                     {
-                        this[field.fieldName] = null;
+                        this[key] = null;
                     }
                 }
             }

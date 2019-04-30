@@ -15,7 +15,9 @@ from appraisal.models.amortization_schedule import AmortizationSchedule
 from appraisal.models.recovery_structure import RecoveryStructure, CalculationRule
 from appraisal.models.leasing_cost_structure import LeasingCostStructure
 from appraisal.models.date_field import ConvertingDateField
+from appraisal.components.document_processor import DocumentProcessor
 import numpy
+from mongoengine import signals
 
 class Appraisal(Document):
     meta = {'collection': 'appraisals', 'strict': False}
