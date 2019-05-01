@@ -61,7 +61,14 @@ class IncomeStatementItemModel extends BaseModel
         {
             if (_.isNumber(size))
             {
-                yearly[year] = newYearlyPSF[year] * size;
+                if ((this.yearlyAmounts[year] / size).toFixed(2) !== newYearlyPSF[year].toFixed(2))
+                {
+                    yearly[year] = newYearlyPSF[year] * size;
+                }
+                else
+                {
+                    yearly[year] = this.yearlyAmounts[year];
+                }
             }
             else
             {
