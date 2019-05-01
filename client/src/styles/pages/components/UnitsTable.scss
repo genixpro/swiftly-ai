@@ -89,11 +89,15 @@
   {
     .unit-row
     {
-      background-color: white;
+
     }
 
     .unit-row:hover
     {
+      td {
+        background-color: #f6f6f6;
+      }
+
       .action-column
       {
         background-color: white;
@@ -108,6 +112,13 @@
   .unit-row.selected-unit-row
   {
     background-color: #eee;
+    &:hover
+    {
+      td {
+        background-color: #eee;
+      }
+    }
+
     .action-column
     {
       background-color: white;
