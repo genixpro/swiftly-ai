@@ -1,6 +1,6 @@
 # This builds an all-in-one easy to install dockerfile
 
-FROM       node:8.14.0
+FROM       node:8.16.0-alpine
 MAINTAINER Electric Brain <info@electricbrain.io>
 
 # Install some basic system dependencies
@@ -51,7 +51,7 @@ RUN  \
   mv /tmp/fastText/fasttext /usr/bin && \
   rm -rf /tmp/fastText
 
-RUN echo "deb http://packages.cloud.google.com/apt cloud-sdk-$(lsb_release -c -s) main" | tee -a /etc/apt/sources.list.d/google-cloud-sdk.list
+RUN echo "deb http://packages.cloud.google.com/apt cloud-sdk-alpine main" | tee -a /etc/apt/sources.list.d/google-cloud-sdk.list
 RUN curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add -
 RUN apt-get update && apt-get install google-cloud-sdk
 RUN gcloud auth activate-service-account --key-file appraisalai-be8f24d217e0.json
