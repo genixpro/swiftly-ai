@@ -51,7 +51,11 @@ RUN  \
   mv /tmp/fastText/fasttext /usr/bin && \
   rm -rf /tmp/fastText
 
-RUN curl https://sdk.cloud.google.com | bash
+ENV CLOUD_SDK_REPO "cloud-sdk-$(lsb_release -c -s)"
+RUN echo "deb http://packages.cloud.google.com/apt $CLOUD_SDK_REPO main" | tee -a /etc/apt/sources.list.d/google-cloud-sdk.list
+RUN curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add -
+RUN apt-get update && apt-get install google-cloud-sdk
+RUN gcloud auth activate-service-account --key-file appraisalai-be8f24d217e0.json
 
 # Set the working directory to /app
 WORKDIR /swiftly
