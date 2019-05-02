@@ -54,7 +54,6 @@ RUN  \
   mv /tmp/fastText/fasttext /usr/bin && \
   rm -rf /tmp/fastText
 
-RUN gcloud auth activate-service-account --key-file appraisalai-be8f24d217e0.json
 
 # Set the working directory to /app
 WORKDIR /swiftly
@@ -66,6 +65,9 @@ ADD . /swiftly
 ADD nginx_config /etc/nginx/sites-enabled/default
 
 ADD supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+
+WORKDIR /swiftly
+RUN gcloud auth activate-service-account --key-file appraisalai-be8f24d217e0.json
 
 # Download models from gs cloud
 WORKDIR /swiftly/server
