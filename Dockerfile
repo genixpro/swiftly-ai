@@ -22,6 +22,9 @@ RUN apt-get install \
     libblas-dev \
     liblapack-dev \
     libatlas-base-dev \
+    supervisor \
+    nginx \
+    unzip \
     gfortran -y
 
 RUN ln -s /usr/bin/nodejs /usr/bin/node
@@ -35,12 +38,10 @@ RUN pip3 install scikit-learn
 RUN pip3 install matplotlib
 RUN pip3 install spacy
 RUN pip3 install gunicorn
-RUN apt-get install -y nginx
 
 # Forward request logs to Docker log collector
 RUN ln -sf /dev/stdout /var/log/nginx/access.log \
   && ln -sf /dev/stderr /var/log/nginx/error.log
-
 
 RUN  \
   git clone https://github.com/facebookresearch/fastText.git /tmp/fastText && \
@@ -52,11 +53,7 @@ RUN  \
 
 RUN mkdir /tmp/vectors
 WORKDIR /tmp/vectors
-RUN apt-get install -y unzip
 RUN curl https://sdk.cloud.google.com | bash
-
-# Install supervisor to manage both nginx and gunicorn
-RUN apt-get install -y supervisor # Installing supervisord
 
 # Set the working directory to /app
 WORKDIR /swiftly
