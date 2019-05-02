@@ -44,8 +44,8 @@ RUN pip3 install gunicorn
 
 # Forward request logs to Docker log collector
 RUN ln -sf /dev/stdout /var/log/nginx/access.log \
-  && ln -sf /dev/stderr /var/log/nginx/error.log \
-  && ln -sf /dev/stdout /var/log/supervisord.log
+  && ln -sf /dev/stderr /var/log/nginx/error.log
+#  && ln -sf /dev/stdout /var/log/supervisord.log
 
 RUN  \
   git clone https://github.com/facebookresearch/fastText.git /tmp/fastText && \
