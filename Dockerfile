@@ -84,8 +84,12 @@ WORKDIR /swiftly/server
 RUN python3 setup.py install
 RUN mv /tmp/vectors/crawl-300d-2M-subword.bin /swiftly/server
 RUN rm -rf /tmp/vectors
-RUN gsutil cp gs://swiftly-deployment/models.zip .
-RUN unzip models.zip
+RUN mkdir models
+WORKDIR /swiftly/server/models
+RUN gsutil cp gs://swiftly-deployment/models.zip . && \
+    unzip models.zip && \
+    rm -rf models.zip
+WORKDIR /swiftly/server
 RUN gsutil cp gs://swiftly-deployment/crawl-300d-2M-subword.bin .
 
 # Setup and configure systemd
