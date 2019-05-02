@@ -51,8 +51,6 @@ RUN  \
   mv /tmp/fastText/fasttext /usr/bin && \
   rm -rf /tmp/fastText
 
-RUN mkdir /tmp/vectors
-WORKDIR /tmp/vectors
 RUN curl https://sdk.cloud.google.com | bash
 
 # Set the working directory to /app
@@ -65,6 +63,17 @@ ADD . /swiftly
 ADD nginx_config /etc/nginx/sites-enabled/default
 
 ADD supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+
+# Download models from gs cloud
+WORKDIR /swiftly/server
+RUN mkdir models
+WORKDIR /swiftly/server/models
+RUN gsutil cp gs://swiftly-deployment/models.zip . && \
+    unzip models.zip && \
+    rm -rf models.zip
+
+WORKDIR /swiftly/server
+RUN gsutil cp gs://swiftly-deployment/crawl-300d-2M-subword.bin .
 
 # Set the working directory to /swiftly
 WORKDIR /swiftly/client
@@ -79,15 +88,6 @@ ENV VALUATE_ENV=production
 
 WORKDIR /swiftly/server
 RUN python3 setup.py install
-RUN mv /tmp/vectors/crawl-300d-2M-subword.bin /swiftly/server
-RUN rm -rf /tmp/vectors
-RUN mkdir models
-WORKDIR /swiftly/server/models
-RUN gsutil cp gs://swiftly-deployment/models.zip . && \
-    unzip models.zip && \
-    rm -rf models.zip
-WORKDIR /swiftly/server
-RUN gsutil cp gs://swiftly-deployment/crawl-300d-2M-subword.bin .
 
 # Setup and configure systemd
 ENTRYPOINT ["/usr/bin/supervisord"]
