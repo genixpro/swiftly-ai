@@ -1,9 +1,9 @@
 # This builds an all-in-one easy to install dockerfile
 
-FROM       node:8.16.0-jessie
+FROM       node:8.16.0-stretch
 MAINTAINER Electric Brain <info@electricbrain.io>
 
-RUN echo "deb http://packages.cloud.google.com/apt cloud-sdk-jessie main" | tee -a /etc/apt/sources.list.d/google-cloud-sdk.list
+RUN echo "deb http://packages.cloud.google.com/apt cloud-sdk-stretch main" | tee -a /etc/apt/sources.list.d/google-cloud-sdk.list
 RUN curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add -
 
 # Install some basic system dependencies
