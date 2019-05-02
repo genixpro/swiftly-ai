@@ -1,11 +1,11 @@
 # This builds an all-in-one easy to install dockerfile
 
-FROM       node:8.16.0-alpine
+FROM       node:8.16.0-jessie
 MAINTAINER Electric Brain <info@electricbrain.io>
 
 # Install some basic system dependencies
-RUN apt update
-RUN apt install \
+RUN apt-get update
+RUN apt-get install \
     gcc \
     g++ \
     git \
@@ -53,7 +53,7 @@ RUN  \
 
 RUN echo "deb http://packages.cloud.google.com/apt cloud-sdk-alpine main" | tee -a /etc/apt/sources.list.d/google-cloud-sdk.list
 RUN curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add -
-RUN apt update && apt install google-cloud-sdk
+RUN apt-get update && apt-get install google-cloud-sdk
 RUN gcloud auth activate-service-account --key-file appraisalai-be8f24d217e0.json
 
 # Set the working directory to /app
