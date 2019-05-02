@@ -40,7 +40,6 @@ RUN pip3 install --upgrade setuptools
 RUN pip3 install numpy
 RUN pip3 install scikit-learn
 RUN pip3 install matplotlib
-RUN pip3 install spacy
 RUN pip3 install gunicorn
 
 # Forward request logs to Docker log collector
