@@ -52,10 +52,8 @@ RUN  \
 
 RUN mkdir /tmp/vectors
 WORKDIR /tmp/vectors
-RUN wget https://dl.fbaipublicfiles.com/fasttext/vectors-english/crawl-300d-2M-subword.zip
 RUN apt-get install -y unzip
-RUN unzip crawl-300d-2M-subword.zip
-RUN rm -rf crawl-300d-2M-subword.zip
+RUN curl https://sdk.cloud.google.com | bash
 
 # Install supervisor to manage both nginx and gunicorn
 RUN apt-get install -y supervisor # Installing supervisord
@@ -86,6 +84,9 @@ WORKDIR /swiftly/server
 RUN python3 setup.py install
 RUN mv /tmp/vectors/crawl-300d-2M-subword.bin /swiftly/server
 RUN rm -rf /tmp/vectors
+RUN gsutil cp gs://swiftly-deployment/models.zip .
+RUN unzip models.zip
+RUN gsutil cp gs://swiftly-deployment/crawl-300d-2M-subword.bin .
 
 # Setup and configure systemd
 ENTRYPOINT ["/usr/bin/supervisord"]
