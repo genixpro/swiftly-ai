@@ -1,3 +1,4 @@
+steps:
 - name: 'gcr.io/kaniko-project/executor:latest'
   timeout: 7200s
   args:
@@ -17,5 +18,6 @@
   env:
   - 'CLOUDSDK_COMPUTE_ZONE=us-central1-a'
   - 'CLOUDSDK_CONTAINER_CLUSTER=swiftly-cluster-api'
+
 timeout: 10000s
 
