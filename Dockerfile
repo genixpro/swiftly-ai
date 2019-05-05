@@ -5,7 +5,7 @@ MAINTAINER Electric Brain <info@electricbrain.io>
 
 RUN echo "deb http://packages.cloud.google.com/apt cloud-sdk-stretch main" | tee -a /etc/apt/sources.list.d/google-cloud-sdk.list
 RUN curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add -
-RUN curl -sL https://deb.nodesource.com/setup_8.x
+RUN curl -sL https://deb.nodesource.com/setup_8.x | bash
 
 # Install some basic system dependencies
 RUN apt-get update
