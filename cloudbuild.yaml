@@ -1,10 +1,10 @@
 - name: 'gcr.io/kaniko-project/executor:latest'
   args:
-  - --destination=gcr.io/appraisalai/swiftly:$REVISION_ID-$_SWIFTLY_ENV
-  - --cache=true
-  - --cache-ttl=24h
-  - --build-arg
-  - "SWIFTLY_ENV=$_SWIFTLY_ENV"
+  - '--destination=gcr.io/appraisalai/swiftly:$REVISION_ID-$_SWIFTLY_ENV'
+  - '--cache=true'
+  - '--cache-ttl=24h'
+  - '--build-arg'
+  - 'SWIFTLY_ENV=$_SWIFTLY_ENV'
   timeout: 7200s
 - name: 'gcr.io/cloud-builders/kubectl'
   args:
