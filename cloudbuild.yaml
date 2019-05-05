@@ -1,0 +1,16 @@
+steps:
+- name: 'gcr.io/cloud-builders/docker'
+  args: ["build", "-t", "gcr.io/appraisalai/swiftly:$REVISION_ID", ".", "--build-arg", "SWIFTLY_ENV=$_SWIFTLY_ENV"]
+- name: 'gcr.io/cloud-builders/docker'
+  args: ["push", "gcr.io/appraisalai/swiftly:$REVISION_ID"]
+- name: 'gcr.io/cloud-builders/kubectl'
+  args:
+  - 'set'
+  - 'image'
+  - 'deployment'
+  - 'swiftly-$_SWIFTLY_ENV'
+  - 'eb-appraisal-sha256=gcr.io/apraisalai/swiftly:$REVISION_ID'
+  env:
+  - 'CLOUDSDK_COMPUTE_ZONE=us-central1-a'
+  - 'CLOUDSDK_CONTAINER_CLUSTER=swiftly-cluster-api'
+
