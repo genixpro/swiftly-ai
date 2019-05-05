@@ -1,14 +1,11 @@
 steps:
-- name: 'gcr.io/kaniko-project/executor:latest'
+- name: 'gcr.io/cloud-builders/docker'
+  args: ["build", "-t", "gcr.io/appraisalai/swiftly:$REVISION_ID-$_SWIFTLY_ENV", ".", "--build-arg", "SWIFTLY_ENV=$_SWIFTLY_ENV"]
   timeout: 7200s
-  args:
-  - '--destination=gcr.io/appraisalai/swiftly:$REVISION_ID-$_SWIFTLY_ENV'
-  - '--cache=true'
-  - '--cache-ttl=24h'
-  - '--build-arg'
-  - 'SWIFTLY_ENV=$_SWIFTLY_ENV'
-- name: 'gcr.io/cloud-builders/kubectl'
+- name: 'gcr.io/cloud-builders/docker'
+  args: ["push", "gcr.io/appraisalai/swiftly:$REVISION_ID-$_SWIFTLY_ENV"]
   timeout: 600s
+- name: 'gcr.io/cloud-builders/kubectl'
   args:
   - 'set'
   - 'image'
@@ -18,6 +15,6 @@ steps:
   env:
   - 'CLOUDSDK_COMPUTE_ZONE=us-central1-a'
   - 'CLOUDSDK_CONTAINER_CLUSTER=swiftly-cluster-api'
-
+  timeout: 600s
 timeout: 10000s
 
