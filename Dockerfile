@@ -31,7 +31,7 @@ RUN apt-get install \
     unzip \
     google-cloud-sdk \
     nodejs \
-    gfortran -y \
+    gfortran -y
 
 RUN ln -s /usr/bin/nodejs /usr/bin/node
 
