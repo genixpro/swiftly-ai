@@ -31,7 +31,7 @@ def main(global_config, **settings):
         db = pymongo.MongoClient(settings.get('db.uri'))[settings.get('db.name')]
         registry.db = db
 
-        connect('appraisal', host=settings.get('db.uri'))
+        connect(settings.get['db.name'], host=settings.get('db.uri'))
 
 
     return config.make_wsgi_app()
