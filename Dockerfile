@@ -3,8 +3,6 @@
 FROM       node:8.16.0-stretch
 MAINTAINER Electric Brain <info@electricbrain.io>
 
-ARG SWIFTLY_ENV
-
 RUN echo "deb http://packages.cloud.google.com/apt cloud-sdk-stretch main" | tee -a /etc/apt/sources.list.d/google-cloud-sdk.list
 RUN curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add -
 
@@ -64,10 +62,12 @@ WORKDIR /swiftly
 # Copy the current directory contents into the container at /swiftly
 ADD . /swiftly
 
+ARG SWIFTLY_ENV
+
 # Copy the NGINX configuration
 ADD nginx_config /etc/nginx/sites-enabled/default
 
-ADD supervisord_$SWIFTLY_ENV.conf /etc/supervisor/conf.d/supervisord.conf
+ADD supervisord_${SWIFTLY_ENV}.conf /etc/supervisor/conf.d/supervisord.conf
 
 WORKDIR /swiftly
 RUN gcloud auth activate-service-account --key-file appraisalai-be8f24d217e0.json
@@ -86,7 +86,7 @@ RUN gsutil cp gs://swiftly-deployment/crawl-300d-2M-subword.bin .
 # Set the working directory to /swiftly
 WORKDIR /swiftly/client
 RUN npm install
-ENV VALUATE_ENV=$SWIFTLY_ENV
+ENV VALUATE_ENV=${SWIFTLY_ENV}
 RUN npm run-script build
 
 # Set the working directory to /swiftly
