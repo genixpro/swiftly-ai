@@ -63,7 +63,7 @@ class ComparableLeasesStatistics extends React.Component
             },
             taxesMaintenanceInsurance: {
                 rangeTitle: "TMI Range ($)",
-                averageTitle: "TMI Average (%)",
+                averageTitle: "TMI Average ($)",
                 render: (value) => <CurrencyFormat value={value}/>
             }
         };

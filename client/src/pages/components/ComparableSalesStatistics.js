@@ -146,7 +146,7 @@ class ComparableSalesStatistics extends React.Component
             occupancyRate: {
                 rangeTitle: "Occupancy Rate Range (%)",
                 averageTitle: "Occupancy Rate Average (%)",
-                render: (value) => <CurrencyFormat value={value} cents={false}/>
+                render: (value) => <PercentFormat value={value}/>
             },
             noiPerUnit: {
                 rangeTitle: "NOI / Unit Range ($)",

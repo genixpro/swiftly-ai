@@ -32,7 +32,8 @@ requires = [
     'openpyxl',
     "scikit-image",
     "jwcrypto",
-    "jsondiff"
+    "jsondiff",
+    "dnspython"
 ]
 
 tests_require = [
