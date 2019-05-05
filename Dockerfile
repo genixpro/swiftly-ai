@@ -1,10 +1,11 @@
 # This builds an all-in-one easy to install dockerfile
 
-FROM       node:8.16.0-stretch
+FROM       python:3.6.8
 MAINTAINER Electric Brain <info@electricbrain.io>
 
 RUN echo "deb http://packages.cloud.google.com/apt cloud-sdk-stretch main" | tee -a /etc/apt/sources.list.d/google-cloud-sdk.list
 RUN curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add -
+RUN curl -sL https://deb.nodesource.com/setup_8.x
 
 # Install some basic system dependencies
 RUN apt-get update
@@ -29,7 +30,8 @@ RUN apt-get install \
     nginx \
     unzip \
     google-cloud-sdk \
-    gfortran -y
+    nodejs \
+    gfortran -y \
 
 RUN ln -s /usr/bin/nodejs /usr/bin/node
 
