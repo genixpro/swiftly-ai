@@ -33,8 +33,6 @@ RUN apt-get install \
     nodejs \
     gfortran -y
 
-RUN ln -s /usr/bin/nodejs /usr/bin/node
-
 # Install some dependencies which can take a long time to install. We do this ahead of running "ADD . /fathion" so the builds run faster when your
 # making code changes regularly
 RUN pip3 install --upgrade pip
