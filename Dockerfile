@@ -99,8 +99,8 @@ WORKDIR /swiftly/server
 RUN python3 setup.py install
 
 # Setup and configure systemd
-ENTRYPOINT ["/usr/bin/supervisord"]
-#ENTRYPOINT ["gunicorn", "-t", "600", "-w", "4", "-b", "0.0.0.0:5000", "--paste", "testing.ini"]
+#ENTRYPOINT ["/usr/bin/supervisord"]
+ENTRYPOINT ["nginx", "-g", '"daemon off;"']
 EXPOSE 80
 EXPOSE 443
 
