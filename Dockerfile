@@ -67,7 +67,7 @@ ARG SWIFTLY_ENV
 # Copy the NGINX configuration
 ADD nginx_config /etc/nginx/sites-enabled/default
 ADD ssl/swiftly.key /etc/nginx/ssl/nginx.key
-ADD ssl/certbundle.pem /etc/nginx/ssl/nginx.crt
+ADD ssl/certbundle.pem /etc/nginx/ssl/nginx.pem
 
 ADD supervisord_${SWIFTLY_ENV}.conf /etc/supervisor/conf.d/supervisord.conf
 
@@ -100,7 +100,8 @@ RUN python3 setup.py install
 
 # Setup and configure systemd
 #ENTRYPOINT ["/usr/bin/supervisord"]
-ENTRYPOINT ["nginx", "-g", '"daemon off;"']
+#ENTRYPOINT ["gunicorn", "-t", "600", "-w", "4", "-b", "0.0.0.0:5000", "--paste", "testing.ini"]
+ENTRYPOINT ["/usr/sbin/nginx", "-g", "daemon off;"]
 EXPOSE 80
 EXPOSE 443
 

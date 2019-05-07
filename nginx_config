@@ -38,7 +38,7 @@ server {
 	#
 	# include snippets/snakeoil.conf;
 
-        ssl_certificate /etc/nginx/ssl/nginx.crt;
+        ssl_certificate /etc/nginx/ssl/nginx.pem;
         ssl_certificate_key /etc/nginx/ssl/nginx.key;
 
 	root /swiftly/client/build;
