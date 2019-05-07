@@ -67,7 +67,7 @@ ARG SWIFTLY_ENV
 # Copy the NGINX configuration
 ADD nginx_config /etc/nginx/sites-enabled/default
 ADD ssl/swiftly.key /etc/nginx/ssl/nginx.key
-ADD ssl/STAR_swiftlyai_com.crt /etc/nginx/ssl/nginx.crt
+ADD ssl/certbundle.pem /etc/nginx/ssl/nginx.crt
 
 ADD supervisord_${SWIFTLY_ENV}.conf /etc/supervisor/conf.d/supervisord.conf
 
