@@ -31,6 +31,7 @@ RUN apt-get install \
     unzip \
     google-cloud-sdk \
     nodejs \
+    libreoffice \
     gfortran -y
 
 # Install some dependencies which can take a long time to install. We do this ahead of running "ADD . /fathion" so the builds run faster when your
