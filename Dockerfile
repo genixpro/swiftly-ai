@@ -78,8 +78,6 @@ RUN gcloud auth activate-service-account --key-file appraisalai-be8f24d217e0.jso
 
 # Download models from gs cloud
 WORKDIR /swiftly/server
-RUN mkdir models
-WORKDIR /swiftly/server/models
 RUN gsutil cp gs://swiftly-deployment/models.zip . && \
     unzip models.zip && \
     rm -rf models.zip
