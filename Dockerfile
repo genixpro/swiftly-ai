@@ -85,6 +85,9 @@ RUN gsutil cp gs://swiftly-deployment/models.zip . && \
 
 WORKDIR /swiftly/server
 RUN gsutil cp gs://swiftly-deployment/crawl-300d-2M-subword.bin .
+RUN gsutil cp gs://swiftly-deployment/file_type_model.bin .
+RUN gsutil cp gs://swiftly-deployment/page_type_model.bin .
+RUN gsutil cp gs://swiftly-deployment/page_type_model.vec .
 
 # Set the working directory to /swiftly
 WORKDIR /swiftly/client

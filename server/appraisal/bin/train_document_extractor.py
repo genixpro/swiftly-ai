@@ -28,3 +28,7 @@ def main():
     classifier = DocumentExtractor(db)
     classifier.trainAlgorithm()
 
+
+
+if __name__ == '__main__':
+    main()
