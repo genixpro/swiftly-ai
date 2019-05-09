@@ -3,6 +3,7 @@ import GenericField from "../orm/GenericField";
 import ModelField from "../orm/ModelField";
 import ListField from "../orm/ListField";
 import BaseModel from "../orm/BaseModel";
+import StringField from "../orm/StringField";
 
 class WordModel extends BaseModel
 {
@@ -28,6 +29,7 @@ class FileModel extends BaseModel
 {
     static _id = new IdField();
     static fileName = new GenericField();
+    static owner = new StringField();
     static appraisalId = new GenericField();
     static fileType = new GenericField();
 
