@@ -35,7 +35,7 @@ class PropertyTagAPI(object):
         if "propertyType" in self.request.GET:
             query['propertyType'] = self.request.GET['propertyType']
 
-        if "admin" not in self.request.effective_principals:
+        if "view_all" not in self.request.effective_principals:
             query["owner"] = self.request.authenticated_userid
 
         propertyTags = PropertyTag.objects(**query).limit(10)

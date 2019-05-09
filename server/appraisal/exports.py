@@ -126,7 +126,7 @@ class ComparableSalesExcelFile(ExportAPI):
 
         query = {"id__in": appraisal.comparableSalesDCA + appraisal.comparableSalesCapRate}
 
-        if "admin" not in self.request.effective_principals:
+        if "view_all" not in self.request.effective_principals:
             query["owner"] = self.request.authenticated_userid
 
         comparables = ComparableSale.objects(**query)
@@ -199,7 +199,7 @@ class ComparableSalesWordFile(ExportAPI):
 
         query = {"id__in": appraisal.comparableSalesDCA + appraisal.comparableSalesCapRate}
 
-        if "admin" not in self.request.effective_principals:
+        if "view_all" not in self.request.effective_principals:
             query["owner"] = self.request.authenticated_userid
 
         comparables = ComparableSale.objects(**query)
@@ -246,7 +246,7 @@ class ComparableSalesDetailedWordFile(ExportAPI):
 
         query = {"id__in": appraisal.comparableSalesDCA + appraisal.comparableSalesCapRate}
 
-        if "admin" not in self.request.effective_principals:
+        if "view_all" not in self.request.effective_principals:
             query["owner"] = self.request.authenticated_userid
 
         comparables = ComparableSale.objects(**query)
@@ -302,7 +302,7 @@ class ComparableLeasesExcelFile(ExportAPI):
 
         query = {"id__in": appraisal.comparableLeases}
 
-        if "admin" not in self.request.effective_principals:
+        if "view_all" not in self.request.effective_principals:
             query["owner"] = self.request.authenticated_userid
 
         comparables = ComparableLease.objects(**query)
@@ -375,7 +375,7 @@ class ComparableLeasesWordFile(ExportAPI):
 
         query = {"id__in": appraisal.comparableLeases}
 
-        if "admin" not in self.request.effective_principals:
+        if "view_all" not in self.request.effective_principals:
             query["owner"] = self.request.authenticated_userid
 
         comparables = ComparableLease.objects(**query)

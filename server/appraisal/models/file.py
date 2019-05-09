@@ -53,6 +53,8 @@ class Word(EmbeddedDocument):
 class File(Document):
     meta = {'collection': 'files', 'strict': False}
 
+    owner = StringField()
+
     # The original uploaded filename for this file
     fileName = StringField()
 

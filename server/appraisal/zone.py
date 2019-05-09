@@ -32,7 +32,7 @@ class ZoneAPI(object):
         if "zoneName" in self.request.GET:
             query['zoneName__icontains'] = self.request.GET['zoneName']
 
-        if "admin" not in self.request.effective_principals:
+        if "view_all" not in self.request.effective_principals:
             query["owner"] = self.request.authenticated_userid
 
         zones = Zone.objects(**query)

@@ -29,7 +29,7 @@ class AppraisalAPI(object):
     def collection_get(self):
         query = {}
 
-        if "admin" not in self.request.effective_principals:
+        if "view_all" not in self.request.effective_principals:
             query["owner"] = self.request.authenticated_userid
 
         appraisals = Appraisal.objects(**query).only('name', 'address')

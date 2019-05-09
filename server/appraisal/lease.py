@@ -29,7 +29,7 @@ class LeaseAPI(object):
 
         query = {"appraisalId": appraisalId}
 
-        if "admin" not in self.request.effective_principals:
+        if "view_all" not in self.request.effective_principals:
             query["owner"] = self.request.authenticated_userid
 
         leases = self.leasesCollection.find(query, {"fileName": 1, "extractedData": 1, "pricePerSquareFoot": 1, "size": 1, "monthlyRent": 1})

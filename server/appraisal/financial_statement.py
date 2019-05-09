@@ -30,7 +30,7 @@ class FinancialStatementAPI(object):
 
         query = {"appraisalId": appraisalId}
 
-        if "admin" not in self.request.effective_principals:
+        if "view_all" not in self.request.effective_principals:
             query["owner"] = self.request.authenticated_userid
 
         financial_statements = self.financialStatementsCollection.find(query)

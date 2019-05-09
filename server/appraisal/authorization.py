@@ -17,6 +17,7 @@ class CustomAuthenticationPolicy(CallbackAuthenticationPolicy):
         self.apiUrl = settings.get('api.url')
         self.authDomain = settings.get('auth0.api')
         self.authKey = json.load(open(settings.get('auth0.keyFile'), 'rt'))
+        self.viewAll = settings.get('db.enable_view_all') == 'true'
 
 
     def unauthenticated_userid(self, request):
@@ -51,7 +52,11 @@ class CustomAuthenticationPolicy(CallbackAuthenticationPolicy):
 
             groups = claims[f'{self.apiUrl.replace("https://", "http://")}groups']
 
-            return [claims['sub']] + groups
+            view_all = []
+            if self.viewAll:
+                view_all.append('view_all')
+
+            return [claims['sub']] + groups + view_all
         except ValueError as e:
             print(e)
             raise HTTPUnauthorized('The access token is invalid')
@@ -89,7 +94,7 @@ class CustomAuthenticationPolicy(CallbackAuthenticationPolicy):
 
 
 def checkUserOwnsAppraisalId(userId, principalIds, appraisalId):
-    if "admin" in principalIds:
+    if "view_all" in principalIds:
         return True
 
     query = {
@@ -97,7 +102,7 @@ def checkUserOwnsAppraisalId(userId, principalIds, appraisalId):
         "owner": userId
     }
 
-    appraisal = Appraisal.objects(query).only('owner')
+    appraisal = Appraisal.objects(**query).only('owner')
 
     if appraisal is None:
         return False
@@ -105,7 +110,7 @@ def checkUserOwnsAppraisalId(userId, principalIds, appraisalId):
         return True
 
 def checkUserOwnsObject(userId, principalIds, appraisal):
-    if "admin" in principalIds:
+    if "view_all" in principalIds:
         return True
 
     if appraisal.owner != userId:

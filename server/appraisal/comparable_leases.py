@@ -60,7 +60,7 @@ class ComparableLeaseAPI(object):
             ]
 
 
-        if "admin" not in self.request.effective_principals:
+        if "view_all" not in self.request.effective_principals:
             query["owner"] = self.request.authenticated_userid
 
         comparableLeases = ComparableLease.objects(**query)
