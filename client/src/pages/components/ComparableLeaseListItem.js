@@ -336,7 +336,10 @@ class ComparableLeaseListItem extends React.Component
                                             value={`https://maps.googleapis.com/maps/api/streetview?key=AIzaSyBRmZ2N4EhJjXmC29t3VeiLUQssNG-MY1I&size=640x480&source=outdoor&location=${comparableLease.address}`}
                                             onChange={(newUrl) => this.changeComparableField('imageUrl', newUrl)}
                                         />
-                                        : <UploadableImage  />
+                                        : <UploadableImage
+                                            editable={this.props.edit}
+                                            onChange={(newUrl) => this.changeAppraisalField('imageUrl', newUrl)}
+                                        />
                             }
 
                             <div className={`comparable-lease-content`}>

@@ -71,7 +71,7 @@ class ViewBuildingInformation extends React.Component
                                                                         <UploadableImage value={`https://maps.googleapis.com/maps/api/streetview?key=AIzaSyBRmZ2N4EhJjXmC29t3VeiLUQssNG-MY1I&size=640x480&source=outdoor&location=${this.props.appraisal.address}`}
                                                                                          onChange={(newUrl) => this.changeAppraisalField('imageUrl', newUrl)}
                                                                         />
-                                                                        : <UploadableImage />
+                                                                        : <UploadableImage onChange={(newUrl) => this.changeAppraisalField('imageUrl', newUrl)} />
                                                         }
                                                     </td>
                                                 </tr>
