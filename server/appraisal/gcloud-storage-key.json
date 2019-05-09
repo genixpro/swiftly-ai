@@ -1,0 +1,12 @@
+{
+  "type": "service_account",
+  "project_id": "appraisalai",
+  "private_key_id": "7e84f559f8a87ff9b897dff672249ba7d91555c9",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQDEpHbDfXAzQXFc\nv+ppV6YWse7f7HesdwNU0t8jrC/M1GSGjb/ApiCJIQR6D1mTN613jxn4zRbpRTfw\ncbGJYj6wdyGU9YcruRUWTiTS8eB9Ax7mttfPozC7nzswHTFUWe4v8WnUsvAkXjTJ\nX4DzKOCM9mhYJA5Z4D1VHxt3wWuP+rPWDJz0hJz0Oq8ip2lm4REznShKcHVZZO4r\naFssBJHmI6GVOzOWU1msXW3Lyfm6h0VqsFyCI95+VmENY5WeBW51miy1ZEruPaWq\nj32vcy5UbTw9ElsDOEloZuXb9bEA5o6B+cA9DNUyIg1e6nBKWAxiH3ldSHAKKnsI\nSFXLaGdJAgMBAAECggEAV6Td8j/EdHPkrOw09ILGWjMwPsnMhSf+ah4aqnGiVG8N\n5xLitmDU+4mlzylsSTt1q2YyszvlzE63oglqkcsiGdDfPN86QfiaN3jY3NRFtDJh\n4X75LWiU3esYnFdGl0wF54R4IP8oHW2HpYFVngtIGkvxMefQJarWa0wUGAozgNX6\noaLFf35flc8xhnCHg49VX135jnPJBizCYBpmatXc8LKh9XMVfAaF1evqoWeaAMbZ\nzbTNOzZl8y/TlYql7V59EfllgTr/XMuhyztnS0Kir3a45PnrMH9ikLvGam7+aC7T\ncDNUMcGyOYOylvVaEePusx6uScfLAqZS/b4WfwheCQKBgQDmhglRnDf4yB86ywLv\nXBJ4/tn07D5r6rxSPJGhVK0OnAtJyrGHr/FA9R0TKKoWanVg35CO/tkMpcNb66Tp\nfcf8iIABkHrLPTcGAThUY/n+ZcngQBxedGbVK9my0pGMe0wQ8VmqDGVpJzAvKjnv\nYtcv7QaxkIlatRRot5b8FeCBzwKBgQDaX90XID7EWkCVyhn4DU5eBhKu4r/zOW1g\nWM7H9UcSxU4LMSgQ582Lv/KTjq9BsvTuVjx4hK4kX2LPhLmKjye0xlxXm5vlZGa1\nVhsa3P5VDl6TStlqACaY0SKwC9muAMx3gjpZazv92X+QviV+3DKXpltJrha8Moa/\nCbYiL/VDZwKBgEyM6B1Mth2MPyqj7baUqaG6Z6B4rwXhLmZUrLuZRdqbIPiBMdDw\nMToz61LIZysIcTAZLYT+xg74INauetX6qeWHYpKiatSA4HvC/fSwOn0rSg2I3KLV\nHqzdYe6LFEBFVW4u52qbsTVpCQwwhoqjFPhaSqW+bI5NoZhglufhT+trAoGBAJ3p\n9NdkWf9jxJCNNXpLJQCZI6mUD3qzbITfs6illl/cjjNJuM+A0QLeK2zJIbNA1h4D\n/naoe8WRtMKcGBA6tVvklaJExNd9Y0h+m9sxNDoNyhZ5af9dXIvlsE/eQeuyaCmD\n4u4Gvbs0LSteVX8HfQ5tHlaJracqYoaDX1IZnCLBAoGBAJ6r9V+7ID1WY44njbwx\nD+8LqxvSEjQNxrnMIhwrvNYFRQxS6m3RB7FMtcYTS0Zto8gQHeA1nH1PbFqawZjJ\nXXFsq78BDaB+bcfjKUFNjbZRb1cXmthhCuYrvRJ8gLB+1SFj8kTTIegU0vKeqBjB\n46V1z5QFXyNX/K10FFaWN5ct\n-----END PRIVATE KEY-----\n",
+  "client_email": "swiftly-application@appraisalai.iam.gserviceaccount.com",
+  "client_id": "107547737246805864149",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/swiftly-application%40appraisalai.iam.gserviceaccount.com"
+}

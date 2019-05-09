@@ -18,7 +18,7 @@ class AppraisalAPI(object):
     def __init__(self, request, context=None):
         self.request = request
 
-        self.processor = DocumentProcessor(request.registry.db, request.registry.azureBlobStorage)
+        self.processor = DocumentProcessor(request.registry.db, request.registry.storageBucket)
 
     def __acl__(self):
         return [

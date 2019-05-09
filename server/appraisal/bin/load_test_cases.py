@@ -4,6 +4,7 @@ import os.path
 from appraisal.models.appraisal import Appraisal
 from mongoengine import connect
 import sys
+import os
 
 from pyramid.paster import (
     get_appsettings,
@@ -16,6 +17,8 @@ def main():
     settings = get_appsettings(config_uri)
 
     connect('appraisal', host=settings.get('db.uri'))
+
+    os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = pkg_resources.resource_filename("appraisal", "gcloud-storage-key.json")
 
     testCaseDirectory = "tests/data"
 

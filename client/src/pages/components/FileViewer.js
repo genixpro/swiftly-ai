@@ -2,6 +2,7 @@ import React from 'react';
 import { Row, Col } from 'reactstrap';
 import _ from 'underscore';
 import { DragSource } from 'react-dnd'
+import Auth from "../../Auth";
 
 /**
  * Your Component
@@ -316,7 +317,7 @@ class FileViewer extends React.Component
                                             key={pageIndex}
                                             alt="Document"
                                             id={`file-viewer-image`}
-                                            src={`https://appraisalfiles.blob.core.windows.net/files/${this.props.document._id}-image-${page}.png`}
+                                            src={`${process.env.VALUATE_ENVIRONMENT.REACT_APP_SERVER_URL}appraisal/${this.props.document.appraisalId}/files/${this.props.document._id}/rendered/${page}?access_token=${Auth.getAccessToken()}`}
                                             className={`file-viewer-image ${page === this.state.currentPage ? 'active' : ''} ${this.state.slowTransition ? " slow-transition" : ""}`}
                                             onMouseDown={this.startImageDrag.bind(this)}
                                         />;
@@ -325,7 +326,7 @@ class FileViewer extends React.Component
                                 <img
                                     alt="Document"
                                     id={`file-viewer-image`}
-                                    src={`https://appraisalfiles.blob.core.windows.net/files/${this.props.document._id}-image-${this.state.currentPage}.png`}
+                                    src={`${process.env.VALUATE_ENVIRONMENT.REACT_APP_SERVER_URL}appraisal/${this.props.document.appraisalId}/files/${this.props.document._id}/rendered/${this.state.currentPage}?access_token=${Auth.getAccessToken()}`}
                                     className={`file-viewer-image frame`}
                                     onMouseDown={this.startImageDrag.bind(this)}
                                 />

@@ -26,6 +26,8 @@ class ComparableLease(Document):
     # This provides the GPS coordinates of the comparable
     location = PointField()
 
+    imageUrl = StringField()
+
     # The type of property, as an enumeration.
     propertyType = StringField()
 

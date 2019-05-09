@@ -9,6 +9,7 @@ import UploadableImage from "./components/UploadableImage";
 import AreaFormat from "./components/AreaFormat";
 import CurrencyFormat from "./components/CurrencyFormat";
 import PercentFormat from "./components/PercentFormat";
+import Auth from "../Auth";
 
 
 class ViewBuildingInformation extends React.Component
@@ -63,7 +64,7 @@ class ViewBuildingInformation extends React.Component
                                                             (this.props.appraisal.imageUrl) ?
                                                                 <UploadableImage
                                                                     editable={this.props.edit}
-                                                                    value={this.props.appraisal.imageUrl}
+                                                                    value={this.props.appraisal.imageUrl + `?access_token=${Auth.getAccessToken()}`}
                                                                     onChange={(newUrl) => this.changeAppraisalField('imageUrl', newUrl)} />
                                                                 :
                                                                     (this.props.appraisal.address && this.props.appraisal.address !== "") ?

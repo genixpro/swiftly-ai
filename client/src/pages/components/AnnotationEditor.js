@@ -9,6 +9,7 @@ import ActionButton from "./ActionButton";
 import NumberFormat from 'react-number-format';
 import FileModel from "../../models/FileModel";
 import axios from "axios/index";
+import Auth from "../../Auth";
 
 
 class AnnotationEditor extends React.Component
@@ -548,7 +549,7 @@ class AnnotationEditor extends React.Component
                                         <img
                                             alt="Document Preview"
                                             id={`annotation-editor-image-${page}-thumbnail`}
-                                            src={`https://appraisalfiles.blob.core.windows.net/files/${this.state.document._id}-image-${page}.png`}
+                                            src={`${process.env.VALUATE_ENVIRONMENT.REACT_APP_SERVER_URL}appraisal/${this.props.document.appraisalId}/files/${this.props.document._id}/rendered/${page}?access_token=${Auth.getAccessToken()}`}
                                             onLoad={this.componentDidUpdate.bind(this)}
                                             onClick={() => this.changePage(page)}
                                             className="annotationEditorImageThumbnail"
@@ -599,7 +600,7 @@ class AnnotationEditor extends React.Component
                                 <img
                                     alt="Document"
                                     id={`annotation-editor-image-${this.state.currentPage}`}
-                                    src={`https://appraisalfiles.blob.core.windows.net/files/${this.state.document._id}-image-${this.state.currentPage}.png`}
+                                    src={`${process.env.VALUATE_ENVIRONMENT.REACT_APP_SERVER_URL}appraisal/${this.props.document.appraisalId}/files/${this.props.document._id}/rendered/${this.state.currentPage}?access_token=${Auth.getAccessToken()}`}
                                     onLoad={this.componentDidUpdate.bind(this)}
                                     className="annotationEditorImage"
                                 />

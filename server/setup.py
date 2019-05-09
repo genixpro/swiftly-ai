@@ -33,7 +33,8 @@ requires = [
     "scikit-image",
     "jwcrypto",
     "jsondiff",
-    "dnspython"
+    "dnspython",
+    "google-cloud-storage"
 ]
 
 tests_require = [
@@ -65,7 +66,8 @@ setup(
     },
     package_data={
         'appraisal': [
-            'tests/data/*.json'
+            'tests/data/*.json',
+            "gcloud-storage-key.json"
         ]
     },
     install_requires=requires,

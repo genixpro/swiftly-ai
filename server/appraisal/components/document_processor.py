@@ -18,11 +18,11 @@ class DocumentProcessor:
         This system manages the end-to-end process of parsing and interpreting a document that is uploaded to this system.
     """
 
-    def __init__(self, db, azureBlobStorage):
+    def __init__(self, db, storageBucket):
         self.classifier = DocumentClassifier()
         self.parser = DocumentParser()
         self.pageClassifier = PageClassifier()
-        self.azureBlobStorage = azureBlobStorage
+        self.storageBucket = storageBucket
         self.db = db
         self.tenancyDataExtractor = TenancyDataExtractor()
         self.incomeStatementExtractor = IncomeStatementDataExtractor()
@@ -50,8 +50,8 @@ class DocumentProcessor:
         file.save()
         fileId = str(file.id)
 
-        result = self.azureBlobStorage.create_blob_from_bytes('files', fileId, fileData)
-
+        blob = self.storageBucket.blob(fileId)
+        blob.upload_from_string(fileData)
 
         existingFile = File.objects(fileName=file.fileName).first()
         hasExistingData = existingFile and len(existingFile.words) > 0
@@ -84,7 +84,8 @@ class DocumentProcessor:
             imageFileNames = []
             for page, imageData in enumerate(images):
                 fileName = str(file.id) + "-image-" + str(page) + ".png"
-                result = self.azureBlobStorage.create_blob_from_bytes('files', fileName, imageData)
+                blob = self.storageBucket.blob(fileName)
+                blob.upload_from_string(imageData)
                 imageFileNames.append(fileName)
 
             file.images = imageFileNames
@@ -92,7 +93,10 @@ class DocumentProcessor:
             words = self.parser.processImage(fileData, file.id, extractWords=extractWords)
 
             fileName = str(file.id) + "-image-0.png"
-            result = self.azureBlobStorage.create_blob_from_bytes('files', fileName, fileData)
+
+            blob = self.storageBucket.blob(fileName)
+            blob.upload_from_string(fileData)
+
             images = [fileName]
 
             file.images = [fileName]

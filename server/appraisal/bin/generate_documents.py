@@ -9,7 +9,7 @@ from pymongo import MongoClient
 import gridfs
 import pickle
 from mongoengine import connect
-
+import pkg_resources
 
 from pyramid.paster import (
     get_appsettings,
@@ -25,6 +25,8 @@ def main():
     db = MongoClient(settings.get('db.uri'))[settings.get('db.name')]
 
     connect('appraisal', host=settings.get('db.uri'))
+
+    os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = pkg_resources.resource_filename("appraisal", "gcloud-storage-key.json")
 
     generator = DocumentGenerator()
     generator.generateDocument("financial_statement_1.docx", "financial_statement")

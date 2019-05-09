@@ -4,6 +4,9 @@ from appraisal.authorization import CustomAuthenticationPolicy
 from pyramid.authorization import ACLAuthorizationPolicy
 from mongoengine import connect
 from azure.storage.blob import BlockBlobService, PublicAccess
+import os
+import pkg_resources
+from google.cloud import storage
 
 # You can connect to a real mongo server instance by your own.
 
@@ -24,14 +27,19 @@ def main(global_config, **settings):
         config.set_authorization_policy(acl_policy)
 
         # Create the BlockBlockService that is used to call the Blob service for the storage account
-        config.registry.azureBlobStorage =BlockBlobService(account_name=settings['storage.bucket'], account_key=settings['storage.accountKey'])
-        config.registry.storageUrl = settings['storage.url']
+        config.registry.azureBlobStorage =BlockBlobService(account_name=settings['storage.azureBucket'], account_key=settings['storage.azureAccountKey'])
+
+        os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = pkg_resources.resource_filename("appraisal", "gcloud-storage-key.json")
+
+        storage_client = storage.Client()
+        config.registry.storageBucket = storage_client.get_bucket(settings['storage.bucket'])
 
         registry = config.registry
         db = pymongo.MongoClient(settings.get('db.uri'))[settings.get('db.name')]
         registry.db = db
 
-        connect(settings.get('db.name'), host=settings.get('db.uri'))
+        registry.apiUrl = settings.get('api.url')
 
+        connect(settings.get('db.name'), host=settings.get('db.uri'))
 
     return config.make_wsgi_app()

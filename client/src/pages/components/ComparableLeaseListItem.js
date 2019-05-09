@@ -11,6 +11,7 @@ import ComparableLeaseModel from "../../models/ComparableLeaseModel";
 import PropTypes from "prop-types";
 import AreaFormat from "./AreaFormat";
 import PercentFormat from "./PercentFormat";
+import Auth from "../../Auth";
 
 class ComparableLeaseListItemHeaderColumn extends React.Component
 {
@@ -323,6 +324,12 @@ class ComparableLeaseListItem extends React.Component
                     <Collapse isOpen={_.isUndefined(this.state.detailsOpen) ? this.state.openByDefault : this.state.detailsOpen}>
                         <div className={`card-body comparable-lease-list-item-body ${editableClass}`}>
                             {
+                                (comparableLease.imageUrl) ?
+                                    <UploadableImage
+                                        editable={this.props.edit}
+                                        value={comparableLease.imageUrl + `?access_token=${Auth.getAccessToken()}`}
+                                        onChange={(newUrl) => this.changeComparableField('imageUrl', newUrl)} />
+                                    :
                                     (comparableLease.address && comparableLease.address !== "") ?
                                         <UploadableImage
                                             editable={this.props.edit}

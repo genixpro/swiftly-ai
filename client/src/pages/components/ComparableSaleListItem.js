@@ -13,6 +13,7 @@ import PercentFormat from "./PercentFormat";
 import FloatFormat from "./FloatFormat";
 import IntegerFormat from "./IntegerFormat";
 import ComparableLeaseListItem from "./ComparableLeaseListItem";
+import Auth from "../../Auth";
 
 
 class ComparableSaleListItemField extends React.Component
@@ -441,7 +442,7 @@ class ComparableSaleListItem extends React.Component
                                     (comparableSale.imageUrl) ?
                                     <UploadableImage
                                         editable={this.props.edit}
-                                        value={comparableSale.imageUrl}
+                                        value={comparableSale.imageUrl + `?access_token=${Auth.getAccessToken()}`}
                                         onChange={(newUrl) => this.changeComparableField('imageUrl', newUrl)} />
                                     :
                                     (comparableSale.address && comparableSale.address !== "") ?

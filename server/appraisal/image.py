@@ -13,12 +13,15 @@ from pyramid.security import Authenticated
 from pyramid.authorization import Allow, Deny, Everyone
 from appraisal.authorization import checkUserOwnsObject
 from pyramid.httpexceptions import HTTPForbidden
+from pyramid.response import Response
+import google.api_core.exceptions
 
 @resource(collection_path='/images', path='/images/{id}', renderer='bson', cors_enabled=True, cors_origins="*", permission="everything")
 class ImageAPI(object):
 
     def __init__(self, request, context=None):
         self.request = request
+        self.storageBucket = request.registry.storageBucket
 
     def __acl__(self):
         return [
@@ -37,11 +40,12 @@ class ImageAPI(object):
         image.save()
 
         image.fileName = str(image.id) + "-uploaded-image.png"
-        image.url = self.request.registry.storageUrl + image.fileName
+        image.url = self.request.registry.apiUrl + "images/" + str(image.id)
         image.owner = self.request.authenticated_userid
         image.save()
 
-        result = self.request.registry.azureBlobStorage.create_blob_from_bytes('files', image.fileName, input_file)
+        blob = self.storageBucket.blob(image.fileName)
+        blob.upload_from_string(input_file)
 
         # Also save a square version
         buffer = io.BytesIO()
@@ -69,7 +73,33 @@ class ImageAPI(object):
         buffer = io.BytesIO()
         skimage.io.imsave(buffer, imageArray, plugin="pil")
 
-        result = self.request.registry.azureBlobStorage.create_blob_from_bytes('files', image.fileName + "-cropped", buffer.getvalue())
+        blob = self.storageBucket.blob(image.fileName + "-cropped")
+        blob.upload_from_string(buffer.getvalue())
 
         return {"_id": str(image.id), "url": image.url}
+
+    def get(self):
+        # Get the data for the file out from the request object
+        request = self.request
+
+        imageId = self.request.matchdict['id']
+
+        image = Image.objects(id=imageId).first()
+
+        auth = checkUserOwnsObject(self.request.authenticated_userid, self.request.effective_principals, image)
+        if not auth:
+            raise HTTPForbidden("You do not have access to this zone")
+
+        try:
+            blob = self.storageBucket.blob(image.fileName + "-cropped")
+            data = blob.download_as_string()
+        except google.api_core.exceptions.NotFound:
+            azureBlobStorage = self.request.registry.azureBlobStorage
+            data = azureBlobStorage.get_blob_to_bytes('files', image.fileName + "-cropped").content
+
+        response = Response()
+        response.body = data
+        # response.content_type = "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+        # response.content_disposition = "attachment; filename=\"AmortizationSchedule.docx\""
+        return response
 

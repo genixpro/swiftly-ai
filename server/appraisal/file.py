@@ -21,13 +21,15 @@ from pyramid.security import Authenticated
 from pyramid.authorization import Allow, Deny, Everyone
 from appraisal.authorization import checkUserOwnsObject, checkUserOwnsAppraisalId
 from pyramid.httpexceptions import HTTPForbidden
+from pyramid.response import Response
+import google.api_core.exceptions
 
 @resource(collection_path='/appraisal/{appraisalId}/files', path='/appraisal/{appraisalId}/files/{id}', renderer='bson', cors_enabled=True, cors_origins="*", permission="everything")
 class FileAPI(object):
 
     def __init__(self, request, context=None):
         self.request = request
-        self.processor = DocumentProcessor(request.registry.db, request.registry.azureBlobStorage)
+        self.processor = DocumentProcessor(request.registry.db, request.registry.storageBucket)
 
     def __acl__(self):
         return [
@@ -165,7 +167,7 @@ class ReprocessFileAPI(object):
 
     def __init__(self, request, context=None):
         self.request = request
-        self.processor = DocumentProcessor(request.registry.db, request.registry.azureBlobStorage)
+        self.processor = DocumentProcessor(request.registry.db, request.registry.storageBucket)
 
     def __acl__(self):
         return [
@@ -192,3 +194,96 @@ class ReprocessFileAPI(object):
         # self.updateStabilizedStatement(appraisalId)
 
         return {"_id": str(id)}
+
+
+@resource(path='/appraisal/{appraisalId}/files/{id}/contents', renderer='bson', cors_enabled=True, cors_origins="*", permission="everything")
+class FileContentsAPI(object):
+
+    def __init__(self, request, context=None):
+        self.request = request
+        self.storageBucket = request.registry.storageBucket
+
+    def __acl__(self):
+        return [
+            (Allow, Authenticated, 'everything'),
+            (Deny, Everyone, 'everything')
+        ]
+
+    def get(self):
+        appraisalId = self.request.matchdict['appraisalId']
+
+        auth = checkUserOwnsAppraisalId(self.request.authenticated_userid, self.request.effective_principals, appraisalId)
+        if not auth:
+            raise HTTPForbidden("You do not have access to upload, modify or delete files on this appraisal")
+
+        fileId = self.request.matchdict['id']
+
+        file = File.objects(id=fileId).first()
+
+        auth = checkUserOwnsObject(self.request.authenticated_userid, self.request.effective_principals, file)
+        if not auth:
+            raise HTTPForbidden("You do not have access to this file.")
+
+        fileId = str(file.id)
+
+        try:
+            blob = self.storageBucket.blob(fileId)
+            data = blob.download_as_string()
+        except google.api_core.exceptions.NotFound:
+            azureBlobStorage = self.request.registry.azureBlobStorage
+            data = azureBlobStorage.get_blob_to_bytes('files', fileId).content
+
+        response = Response()
+        response.body = data
+        # response.content_type = "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+        # response.content_disposition = "attachment; filename=\"AmortizationSchedule.docx\""
+        return response
+
+
+@resource(path='/appraisal/{appraisalId}/files/{id}/rendered/{page}', renderer='bson', cors_enabled=True, cors_origins="*", permission="everything")
+class FileRenderedImagesAPI(object):
+
+    def __init__(self, request, context=None):
+        self.request = request
+        self.storageBucket = request.registry.storageBucket
+
+    def __acl__(self):
+        return [
+            (Allow, Authenticated, 'everything'),
+            (Deny, Everyone, 'everything')
+        ]
+
+    def get(self):
+        appraisalId = self.request.matchdict['appraisalId']
+
+        auth = checkUserOwnsAppraisalId(self.request.authenticated_userid, self.request.effective_principals, appraisalId)
+        if not auth:
+            raise HTTPForbidden("You do not have access to upload, modify or delete files on this appraisal")
+
+        fileId = self.request.matchdict['id']
+
+        file = File.objects(id=fileId).first()
+
+        auth = checkUserOwnsObject(self.request.authenticated_userid, self.request.effective_principals, file)
+        if not auth:
+            raise HTTPForbidden("You do not have access to this file.")
+
+        page = self.request.matchdict['page']
+
+        fileId = str(file.id)
+
+        imageFilename = fileId + "-image-" + str(page) + ".png"
+
+        try:
+            blob = self.storageBucket.blob(imageFilename)
+            data = blob.download_as_string()
+        except google.api_core.exceptions.NotFound:
+            azureBlobStorage = self.request.registry.azureBlobStorage
+            data = azureBlobStorage.get_blob_to_bytes('files', imageFilename).content
+
+        response = Response()
+        response.body = data
+        # response.content_type = "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+        # response.content_disposition = "attachment; filename=\"AmortizationSchedule.docx\""
+        return response
+
