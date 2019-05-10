@@ -50,7 +50,7 @@ class App extends React.Component
             "mode": "data"
         });
 
-        if (this.props.appraisal.stabilizedStatement.marketRentDifferential)
+        if (this.props.appraisal.stabilizedStatement.marketRentDifferential && this.props.appraisal.stabilizedStatementInputs.applyMarketRentDifferential)
         {
             rows.push({
                 "label": <span>
@@ -62,17 +62,17 @@ class App extends React.Component
             });
         }
 
-        if (this.props.appraisal.stabilizedStatement.freeRentRentLoss)
+        if (this.props.appraisal.stabilizedStatement.freeRentRentLoss && this.props.appraisal.stabilizedStatementInputs.applyFreeRentLoss)
         {
             rows.push({
-                "label": "Free Rent Loss",
+                "label": "Remaining Free Rent",
                 "amount": <CurrencyValue cents={false}>{this.props.appraisal.stabilizedStatement.freeRentRentLoss}</CurrencyValue>,
                 "amountTotal": null,
                 "mode": "data"
             });
         }
 
-        if (this.props.appraisal.stabilizedStatement.vacantUnitRentLoss)
+        if (this.props.appraisal.stabilizedStatement.vacantUnitRentLoss && this.props.appraisal.stabilizedStatementInputs.applyVacantUnitRentLoss)
         {
             rows.push({
                 "label": "Vacant Unit Rent Loss",
@@ -82,7 +82,7 @@ class App extends React.Component
             });
         }
 
-        if (this.props.appraisal.stabilizedStatement.vacantUnitLeasupCosts)
+        if (this.props.appraisal.stabilizedStatement.vacantUnitLeasupCosts && this.props.appraisal.stabilizedStatementInputs.applyVacantUnitLeasingCosts)
         {
             rows.push({
                 "label": "Vacant Unit Leasup Costs",
@@ -92,7 +92,7 @@ class App extends React.Component
             });
         }
 
-        if (this.props.appraisal.stabilizedStatement.amortizedCapitalInvestment)
+        if (this.props.appraisal.stabilizedStatement.amortizedCapitalInvestment && this.props.appraisal.stabilizedStatementInputs.applyAmortization)
         {
             rows.push({
                 "label": "Amortized Capital Investment",
@@ -131,7 +131,7 @@ class App extends React.Component
 
         return (
             <html>
-            <body>
+            <body style={{"width": "7in"}}>
             <br/>
             <h1 style={headerStyle}>Capitalization Valuation</h1>
             <h2 style={subHeaderStyle}>{this.props.appraisal.address}</h2>

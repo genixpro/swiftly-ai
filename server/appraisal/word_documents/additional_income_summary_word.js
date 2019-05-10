@@ -57,7 +57,7 @@ class App extends React.Component {
 
         return (
             <html>
-            <body>
+            <body style={{"width": "7in"}}>
             <br/>
             <h1>Additional Income Summary</h1>
             <br/>

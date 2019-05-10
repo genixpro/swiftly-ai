@@ -35,13 +35,22 @@ class App extends React.Component
                 "amount": <CurrencyValue cents={false}>{this.props.appraisal.stabilizedStatement.rentalIncome}</CurrencyValue>,
                 "amountTotal": null,
                 "mode": "data"
-            },
-            {
-                "label": "Additional Income",
-                "amount": <CurrencyValue cents={false}>{this.props.appraisal.stabilizedStatement.additionalIncome}</CurrencyValue>,
-                "amountTotal": null,
-                "mode": "data"
-            },
+            }
+        ];
+
+        if (this.props.appraisal.stabilizedStatement.additionalIncome)
+        {
+            rows.push(
+                {
+                    "label": "Additional Income",
+                    "amount": <CurrencyValue cents={false}>{this.props.appraisal.stabilizedStatement.additionalIncome}</CurrencyValue>,
+                    "amountTotal": null,
+                    "mode": "data"
+                }
+            )
+        }
+
+        rows.concat([
             {
                 "label": "Recoverable Income",
                 "amount": <CurrencyValue cents={false}>{this.props.appraisal.stabilizedStatement.recoverableIncome}</CurrencyValue>,
@@ -75,7 +84,7 @@ class App extends React.Component
                 "amountTotal": null,
                 "mode": "title"
             },
-        ];
+        ]);
 
         if (this.props.appraisal.stabilizedStatement.operatingExpenses)
         {
@@ -103,9 +112,16 @@ class App extends React.Component
 
         if (this.props.appraisal.stabilizedStatement.managementExpenses)
         {
+            let label = "Management Expenses";
+
+            if (this.props.appraisal.stabilizedStatementInputs.managementExpenseMode === 'combined_structural_rule')
+            {
+                label = "Structural & Mgmt";
+            }
+
             rows.push(
                 {
-                    "label": "Management Expenses",
+                    "label": label,
                     "amount": <CurrencyValue cents={false}>{this.props.appraisal.stabilizedStatement.managementExpenses}</CurrencyValue>,
                     "amountTotal": null,
                     "mode": "data"
@@ -141,16 +157,19 @@ class App extends React.Component
             )
         }
 
-
-        rows.push({
-            "label": <span>
+        if (this.props.appraisal.stabilizedStatement.structuralAllowance)
+        {
+            rows.push({
+                "label": <span>
                             <span>Structural Allowance @ </span>
                             <PercentValue left>{this.props.appraisal.stabilizedStatementInputs.structuralAllowancePercent}</PercentValue>
                         </span>,
-            "amount": <CurrencyValue cents={false}>{this.props.appraisal.stabilizedStatement.structuralAllowance}</CurrencyValue>,
-            "amountTotal": null,
-            "mode": "sumAfter"
-        });
+                "amount": <CurrencyValue cents={false}>{this.props.appraisal.stabilizedStatement.structuralAllowance}</CurrencyValue>,
+                "amountTotal": null,
+                "mode": "sumAfter"
+            });
+        }
+
 
 
         rows.push({
@@ -171,7 +190,7 @@ class App extends React.Component
 
         return (
             <html>
-            <body>
+            <body style={{"width": "7in"}}>
             <br/>
             <h1 style={headerStyle}>Stabilized Income & Expense Statement</h1>
             <h2 style={subHeaderStyle}>{this.props.appraisal.address}</h2>

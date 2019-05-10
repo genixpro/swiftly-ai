@@ -29,7 +29,7 @@ class App extends React.Component {
 
         return (
             <html>
-            <body>
+            <body style={{"width": "7in"}}>
             <br/>
             <h1>Amortization Schedule</h1>
             <br/>

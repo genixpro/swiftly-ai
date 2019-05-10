@@ -15,19 +15,19 @@ class App extends React.Component {
   {
       return (
           <html>
-            <body>
+            <body style={{"width": "7in"}}>
                 <br/>
                 <h1>Comparable Sales</h1>
                 <br/>
                 <br/>
                 <CustomTable
-                    headers={["Date", "Address", "Consideration", "Description", "Cap Rate"]}
+                    headers={["Date", "Address", "Consideration", "Building Size", "Cap Rate"]}
                     rows={this.props.comparableSales}
                     fields={{
                         "saleDate.$date": (saleDate) => <Value><Moment format="MMMM YYYY">{saleDate}</Moment></Value>,
                         "address": (address) => <Value>{address}</Value>,
                         "salePrice": (salePrice) => <CurrencyValue>{salePrice}</CurrencyValue>,
-                        "description": (description) => <Value>{description}</Value>,
+                        "sizeSquareFootage": (sizeSquareFootage) => <Value>{sizeSquareFootage}</Value>,
                         "capitalizationRate": (capitalizationRate) => <PercentValue>{capitalizationRate}</PercentValue>
                     }} />
             </body>

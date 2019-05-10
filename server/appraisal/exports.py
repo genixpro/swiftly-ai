@@ -31,7 +31,7 @@ from docx.oxml import parse_xml
 import docx
 from pyramid.security import Authenticated
 from pyramid.authorization import Allow, Deny, Everyone
-from appraisal.authorization import checkUserOwnsObject
+from appraisal.authorization import checkUserOwnsObject, getAccessTokenForRequest
 from pyramid.httpexceptions import HTTPForbidden
 
 
@@ -206,7 +206,8 @@ class ComparableSalesWordFile(ExportAPI):
 
         data = {
             "appraisal": json.loads(appraisal.to_json()),
-            "comparableSales": [json.loads(comp.to_json()) for comp in comparables]
+            "comparableSales": [json.loads(comp.to_json()) for comp in comparables],
+            "accessToken": getAccessTokenForRequest(self.request)
         }
 
         buffer = self.renderTemplate("comparable_sales_summary_word", data)
@@ -253,12 +254,13 @@ class ComparableSalesDetailedWordFile(ExportAPI):
 
         comparables = [comp for comp in comparables]
 
+        accessToken = getAccessTokenForRequest(self.request)
 
         for comp in comparables:
             if comp.imageUrl == "" or comp.imageUrl is None:
                 image = requests.get(f"https://maps.googleapis.com/maps/api/streetview?key=AIzaSyBRmZ2N4EhJjXmC29t3VeiLUQssNG-MY1I&size=640x480&source=outdoor&location={comp.address}").content
             else:
-                image = requests.get(comp.imageUrl).content
+                image = requests.get(comp.imageUrl + f"?access_token=" + accessToken).content
 
             data64 = u''.join(str(base64.encodebytes(image), 'utf8'))
             comp.imageUrl = u'data:%s;base64,%s' % ("image/jpeg", data64)
@@ -463,6 +465,9 @@ class RentRollWordFile(ExportAPI):
         data = {
             "appraisal": json.loads(appraisal.to_json())
         }
+
+        for unitIndex, unit in enumerate(data['appraisal']['units']):
+            unit['currentTenancy'] = json.loads(appraisal.units[unitIndex].currentTenancy.to_json())
 
         buffer = self.renderTemplate("rent_roll_summary_word", data)
 
@@ -721,7 +726,8 @@ class StabilizedStatementExcelFile(ExportAPI):
 
         ws1.append(["Stabilized Rental Income", appraisal.stabilizedStatement.rentalIncome, ""])
 
-        ws1.append(["Additional Income", appraisal.stabilizedStatement.additionalIncome, ""])
+        if appraisal.stabilizedStatement.additionalIncome:
+            ws1.append(["Additional Income", appraisal.stabilizedStatement.additionalIncome, ""])
 
         ws1.append(["Recoverable Income", appraisal.stabilizedStatement.recoverableIncome, ""])
 
@@ -741,13 +747,19 @@ class StabilizedStatementExcelFile(ExportAPI):
         if appraisal.stabilizedStatement.taxes:
             ws1.append(["Taxes", appraisal.stabilizedStatement.taxes, ""])
 
-        if appraisal.stabilizedStatement.taxes:
-            ws1.append(["Management Expenses", appraisal.stabilizedStatement.managementExpenses, ""])
+        if appraisal.stabilizedStatement.managementExpenses:
+            label = "Management Expenses"
+
+            if appraisal.stabilizedStatementInputs.managementExpenseMode == 'combined_structural_rule':
+                label = "Structural & Mgmt"
+
+            ws1.append([label, appraisal.stabilizedStatement.managementExpenses, ""])
 
         if appraisal.stabilizedStatement.tmiTotal:
             ws1.append([f"TMI {appraisal.sizeOfBuilding} sqft @ ${appraisal.stabilizedStatementInputs.tmiRatePSF}", appraisal.stabilizedStatement.tmiTotal, ""])
 
-        ws1.append([f"Structural Allowance @ {appraisal.stabilizedStatementInputs.structuralAllowancePercent}%", appraisal.stabilizedStatement.structuralAllowance, ""])
+        if appraisal.stabilizedStatement.structuralAllowance:
+            ws1.append([f"Structural Allowance @ {appraisal.stabilizedStatementInputs.structuralAllowancePercent}%", appraisal.stabilizedStatement.structuralAllowance, ""])
 
 
         ws1.append([f"Total Expenses", "", appraisal.stabilizedStatement.totalExpenses])
@@ -834,19 +846,19 @@ class CapitalizationValuationExcelFile(ExportAPI):
 
         ws1.append([f"Capitalized @ {appraisal.stabilizedStatementInputs.capitalizationRate}%", appraisal.stabilizedStatement.capitalization, ""])
 
-        if appraisal.stabilizedStatement.marketRentDifferential:
+        if appraisal.stabilizedStatement.marketRentDifferential and appraisal.stabilizedStatementInputs.applyMarketRentDifferential:
             ws1.append(["Market Rent Differential", appraisal.stabilizedStatement.marketRentDifferential, ""])
 
-        if appraisal.stabilizedStatement.vacantUnitRentLoss:
+        if appraisal.stabilizedStatement.vacantUnitRentLoss and appraisal.stabilizedStatementInputs.applyVacantUnitRentLoss:
             ws1.append(["Vacant Unit Rent Loss", appraisal.stabilizedStatement.vacantUnitRentLoss, ""])
 
-        if appraisal.stabilizedStatement.freeRentRentLoss:
+        if appraisal.stabilizedStatement.freeRentRentLoss and appraisal.stabilizedStatementInputs.applyFreeRentLoss:
             ws1.append(["Free Rent Loss", appraisal.stabilizedStatement.freeRentRentLoss, ""])
 
-        if appraisal.stabilizedStatement.vacantUnitLeasupCosts:
+        if appraisal.stabilizedStatement.vacantUnitLeasupCosts and appraisal.stabilizedStatementInputs.applyVacantUnitLeasingCosts:
             ws1.append(["Vacant Unit Leasup Costs", appraisal.stabilizedStatement.vacantUnitLeasupCosts, ""])
 
-        if appraisal.stabilizedStatement.amortizedCapitalInvestment:
+        if appraisal.stabilizedStatement.amortizedCapitalInvestment and appraisal.stabilizedStatementInputs.applyAmortization:
             ws1.append(["Amortized Capital Investment", appraisal.stabilizedStatement.amortizedCapitalInvestment, ""])
 
         for modifier in appraisal.stabilizedStatementInputs.modifiers:
@@ -935,21 +947,32 @@ class DirectComparisonValuationExcelFile(ExportAPI):
 
         ws1.append(headers)
 
-        ws1.append([f"{appraisal.sizeOfBuilding} sqft @ {appraisal.directComparisonInputs.pricePerSquareFoot}%", appraisal.directComparisonValuation.comparativeValue, ""])
+        if appraisal.directComparisonInputs.directComparisonMetric == 'psf':
+            ws1.append([f"{appraisal.sizeOfBuilding} sqft @ {appraisal.directComparisonInputs.pricePerSquareFoot}%", appraisal.directComparisonValuation.comparativeValue, ""])
+        elif appraisal.directComparisonInputs.directComparisonMetric == 'noi_multiple':
+            ws1.append([f"{appraisal.sizeOfBuilding} sqft @ ${appraisal.directComparisonInputs.noiPSFPricePerSquareFoot}", appraisal.directComparisonValuation.comparativeValue, ""])
+        elif appraisal.directComparisonInputs.directComparisonMetric == 'psf_land':
+            ws1.append([f"{appraisal.sizeOfLand * 43560} sqft @ ${appraisal.directComparisonInputs.pricePerSquareFootLand}", appraisal.directComparisonValuation.comparativeValue, ""])
+        elif appraisal.directComparisonInputs.directComparisonMetric == 'per_acre_land':
+            ws1.append([f"{appraisal.sizeOfLand} acres @ ${appraisal.directComparisonInputs.pricePerAcreLand}", appraisal.directComparisonValuation.comparativeValue, ""])
+        elif appraisal.directComparisonInputs.directComparisonMetric == 'psf_buildable_area':
+            ws1.append([f"{appraisal.buildableArea} sqft @ ${appraisal.directComparisonInputs.pricePerSquareFootBuildableArea}", appraisal.directComparisonValuation.comparativeValue, ""])
+        elif appraisal.directComparisonInputs.directComparisonMetric == 'psf_buildable_area':
+            ws1.append([f"{appraisal.buildableUnits} units @ ${appraisal.directComparisonInputs.pricePerBuildableUnit}", appraisal.directComparisonValuation.comparativeValue, ""])
 
-        if appraisal.directComparisonValuation.marketRentDifferential:
+        if appraisal.directComparisonValuation.marketRentDifferential and appraisal.directComparisonInputs.applyMarketRentDifferential:
             ws1.append(["Market Rent Differential", appraisal.directComparisonValuation.marketRentDifferential, ""])
 
-        if appraisal.directComparisonValuation.vacantUnitRentLoss:
+        if appraisal.directComparisonValuation.vacantUnitRentLoss and appraisal.directComparisonInputs.applyVacantUnitRentLoss:
             ws1.append(["Vacant Unit Rent Loss", appraisal.directComparisonValuation.vacantUnitRentLoss, ""])
 
-        if appraisal.directComparisonValuation.freeRentRentLoss:
+        if appraisal.directComparisonValuation.freeRentRentLoss and appraisal.directComparisonInputs.applyFreeRentLoss:
             ws1.append(["Free Rent Loss", appraisal.directComparisonValuation.freeRentRentLoss, ""])
 
-        if appraisal.directComparisonValuation.vacantUnitLeasupCosts:
+        if appraisal.directComparisonValuation.vacantUnitLeasupCosts and appraisal.directComparisonInputs.applyVacantUnitLeasingCosts:
             ws1.append(["Vacant Unit Leasup Costs", appraisal.directComparisonValuation.vacantUnitLeasupCosts, ""])
 
-        if appraisal.directComparisonValuation.amortizedCapitalInvestment:
+        if appraisal.directComparisonValuation.amortizedCapitalInvestment and appraisal.directComparisonInputs.applyAmortization:
             ws1.append(["Amortized Capital Investment", appraisal.directComparisonValuation.amortizedCapitalInvestment, ""])
 
         for modifier in appraisal.directComparisonInputs.modifiers:

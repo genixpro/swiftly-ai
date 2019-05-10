@@ -33,17 +33,80 @@ class App extends React.Component
 
         const rows = [];
 
+        let sizeOfBuilding = 0;
+        for(let unit of this.props.appraisal.units)
+        {
+            sizeOfBuilding += unit.squareFootage;
+        }
 
-        rows.push({
-            "label": <span>
-                <IntegerValue left>{this.props.appraisal.sizeOfBuilding}</IntegerValue> sqft @ <CurrencyValue left cents={true}>{this.props.appraisal.directComparisonInputs ? this.props.appraisal.directComparisonInputs.pricePerSquareFoot : null}</CurrencyValue>
+        if (this.props.appraisal.directComparisonInputs.directComparisonMetric === 'psf')
+        {
+            rows.push({
+                "label": <span>
+                <IntegerValue left>{sizeOfBuilding || 0}</IntegerValue> sqft @ <CurrencyValue left cents={true}>{this.props.appraisal.directComparisonInputs ? this.props.appraisal.directComparisonInputs.pricePerSquareFoot : null}</CurrencyValue>
             </span>,
-            "amount": <CurrencyValue cents={false}>{this.props.appraisal.directComparisonValuation.comparativeValue}</CurrencyValue>,
-            "amountTotal": null,
-            "mode": "data"
-        });
+                "amount": <CurrencyValue cents={false}>{this.props.appraisal.directComparisonValuation.comparativeValue}</CurrencyValue>,
+                "amountTotal": null,
+                "mode": "data"
+            });
+        }
+        else if (this.props.appraisal.directComparisonInputs.directComparisonMetric === 'noi_multiple')
+        {
+            rows.push({
+                "label": <span>
+                <IntegerValue left>{sizeOfBuilding || 0}</IntegerValue> sqft @ <CurrencyValue left cents={true}>{this.props.appraisal.directComparisonInputs ? this.props.appraisal.directComparisonInputs.noiPSFPricePerSquareFoot : null}</CurrencyValue>
+            </span>,
+                "amount": <CurrencyValue cents={false}>{this.props.appraisal.directComparisonValuation.comparativeValue}</CurrencyValue>,
+                "amountTotal": null,
+                "mode": "data"
+            });
+        }
+        else if (this.props.appraisal.directComparisonInputs.directComparisonMetric === 'psf_land')
+        {
+            rows.push({
+                "label": <span>
+                <IntegerValue left>{this.props.appraisal.sizeOfLand * 43560 || 0}</IntegerValue> sqft @ <CurrencyValue left cents={true}>{this.props.appraisal.directComparisonInputs ? this.props.appraisal.directComparisonInputs.pricePerSquareFootLand : null}</CurrencyValue>
+            </span>,
+                "amount": <CurrencyValue cents={false}>{this.props.appraisal.directComparisonValuation.comparativeValue}</CurrencyValue>,
+                "amountTotal": null,
+                "mode": "data"
+            });
+        }
+        else if (this.props.appraisal.directComparisonInputs.directComparisonMetric === 'per_acre_land')
+        {
+            rows.push({
+                "label": <span>
+                <IntegerValue left>{this.props.appraisal.sizeOfLand || 0}</IntegerValue> acres @ <CurrencyValue left cents={false}>{this.props.appraisal.directComparisonInputs ? this.props.appraisal.directComparisonInputs.pricePerAcreLand : null}</CurrencyValue>
+            </span>,
+                "amount": <CurrencyValue cents={false}>{this.props.appraisal.directComparisonValuation.comparativeValue}</CurrencyValue>,
+                "amountTotal": null,
+                "mode": "data"
+            });
+        }
+        else if (this.props.appraisal.directComparisonInputs.directComparisonMetric === 'psf_buildable_area')
+        {
+            rows.push({
+                "label": <span>
+                <IntegerValue left>{this.props.appraisal.buildableArea || 0}</IntegerValue> psf @ <CurrencyValue left cents={true}>{this.props.appraisal.directComparisonInputs ? this.props.appraisal.directComparisonInputs.pricePerSquareFootBuildableArea : null}</CurrencyValue>
+            </span>,
+                "amount": <CurrencyValue cents={false}>{this.props.appraisal.directComparisonValuation.comparativeValue}</CurrencyValue>,
+                "amountTotal": null,
+                "mode": "data"
+            });
+        }
+        else if (this.props.appraisal.directComparisonInputs.directComparisonMetric === 'per_buildable_unit')
+        {
+            rows.push({
+                "label": <span>
+                <IntegerValue left>{this.props.appraisal.buildableUnits || 0}</IntegerValue> units @ <CurrencyValue left cents={true}>{this.props.appraisal.directComparisonInputs ? this.props.appraisal.directComparisonInputs.pricePerBuildableUnit : null}</CurrencyValue>
+            </span>,
+                "amount": <CurrencyValue cents={false}>{this.props.appraisal.directComparisonValuation.comparativeValue}</CurrencyValue>,
+                "amountTotal": null,
+                "mode": "data"
+            });
+        }
 
-        if (this.props.appraisal.directComparisonValuation.marketRentDifferential)
+        if (this.props.appraisal.directComparisonValuation.marketRentDifferential && this.props.appraisal.directComparisonInputs.applyMarketRentDifferential)
         {
             rows.push({
                 "label": <span>
@@ -55,7 +118,7 @@ class App extends React.Component
             });
         }
 
-        if (this.props.appraisal.directComparisonValuation.freeRentRentLoss)
+        if (this.props.appraisal.directComparisonValuation.freeRentRentLoss && this.props.appraisal.directComparisonInputs.applyFreeRentLoss)
         {
             rows.push({
                 "label": "Free Rent Loss",
@@ -65,7 +128,7 @@ class App extends React.Component
             });
         }
 
-        if (this.props.appraisal.directComparisonValuation.vacantUnitRentLoss)
+        if (this.props.appraisal.directComparisonValuation.vacantUnitRentLoss && this.props.appraisal.directComparisonInputs.applyVacantUnitRentLoss)
         {
             rows.push({
                 "label": "Vacant Unit Rent Loss",
@@ -75,7 +138,7 @@ class App extends React.Component
             });
         }
 
-        if (this.props.appraisal.directComparisonValuation.vacantUnitLeasupCosts)
+        if (this.props.appraisal.directComparisonValuation.vacantUnitLeasupCosts && this.props.appraisal.directComparisonInputs.applyVacantUnitLeasingCosts)
         {
             rows.push({
                 "label": "Vacant Unit Leasup Costs",
@@ -85,7 +148,7 @@ class App extends React.Component
             });
         }
 
-        if (this.props.appraisal.directComparisonValuation.amortizedCapitalInvestment)
+        if (this.props.appraisal.directComparisonValuation.amortizedCapitalInvestment && this.props.appraisal.directComparisonInputs.applyAmortization)
         {
             rows.push({
                 "label": "Amortized Capital Investment",
@@ -124,7 +187,7 @@ class App extends React.Component
 
         return (
             <html>
-            <body>
+            <body style={{"width": "7in"}}>
             <br/>
             <h1 style={headerStyle}>Direct Comparison Valuation</h1>
             <h2 style={subHeaderStyle}>{this.props.appraisal.address}</h2>

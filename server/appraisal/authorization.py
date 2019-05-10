@@ -25,7 +25,7 @@ class CustomAuthenticationPolicy(CallbackAuthenticationPolicy):
         credentials = extract_http_basic_credentials(request)
         if credentials:
             return credentials.username
-        elif request.GET['access_token']:
+        elif 'access_token' in request.GET:
             token = request.GET['access_token']
             return self.extractTokenAuthentications(token)[0]
 
@@ -117,3 +117,14 @@ def checkUserOwnsObject(userId, principalIds, appraisal):
         return False
     else:
         return True
+
+def getAccessTokenForRequest(request):
+    credentials = extract_http_basic_credentials(request)
+    if credentials:
+        username, token = credentials
+        return token
+    elif request.GET['access_token']:
+        token = request.GET['access_token']
+        return token
+    else:
+        return None
