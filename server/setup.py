@@ -82,7 +82,9 @@ setup(
             'appraisal_train_extractor = appraisal.bin.train_document_extractor:main',
             'appraisal_train_page_classifier = appraisal.bin.train_page_classifier:main',
             'appraisal_run_tests = appraisal.bin.run_tests:main',
-            'appraisal_load_test_cases = appraisal.bin.load_test_cases:main'
+            'appraisal_load_test_cases = appraisal.bin.load_test_cases:main',
+            'appraisal_load_sample_data = appraisal.bin.load_sample_data:main',
+            'appraisal_save_sample_data = appraisal.bin.save_sample_data:main',
         ]
     },
 )

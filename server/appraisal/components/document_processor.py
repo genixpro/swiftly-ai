@@ -50,8 +50,7 @@ class DocumentProcessor:
         file.save()
         fileId = str(file.id)
 
-        blob = self.storageBucket.blob(fileId)
-        blob.upload_from_string(fileData)
+        file.uploadFileData(self.storageBucket, fileId)
 
         existingFile = File.objects(fileName=file.fileName).first()
         hasExistingData = existingFile and len(existingFile.words) > 0
@@ -83,19 +82,14 @@ class DocumentProcessor:
 
             imageFileNames = []
             for page, imageData in enumerate(images):
-                fileName = str(file.id) + "-image-" + str(page) + ".png"
-                blob = self.storageBucket.blob(fileName)
-                blob.upload_from_string(imageData)
+                fileName = file.uploadRenderedImage(page, self.storageBucket, imageData)
                 imageFileNames.append(fileName)
 
             file.images = imageFileNames
         elif mimeType == 'image/png':
             words = self.parser.processImage(fileData, file.id, extractWords=extractWords)
 
-            fileName = str(file.id) + "-image-0.png"
-
-            blob = self.storageBucket.blob(fileName)
-            blob.upload_from_string(fileData)
+            fileName = file.uploadRenderedImage(0, self.storageBucket, fileData)
 
             images = [fileName]
 

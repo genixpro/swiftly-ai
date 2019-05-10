@@ -224,14 +224,10 @@ class FileContentsAPI(object):
         if not auth:
             raise HTTPForbidden("You do not have access to this file.")
 
-        fileId = str(file.id)
+        data = file.downloadFileData(self.storageBucket, self.request.registry.azureBlobStorage)
 
-        try:
-            blob = self.storageBucket.blob(fileId)
-            data = blob.download_as_string()
-        except google.api_core.exceptions.NotFound:
-            azureBlobStorage = self.request.registry.azureBlobStorage
-            data = azureBlobStorage.get_blob_to_bytes('files', fileId).content
+        if data is None:
+            return Response(status=404)
 
         response = Response()
         response.body = data
@@ -270,16 +266,10 @@ class FileRenderedImagesAPI(object):
 
         page = self.request.matchdict['page']
 
-        fileId = str(file.id)
+        data = file.downloadRenderedImage(page, self.storageBucket, self.request.registry.azureBlobStorage)
 
-        imageFilename = fileId + "-image-" + str(page) + ".png"
-
-        try:
-            blob = self.storageBucket.blob(imageFilename)
-            data = blob.download_as_string()
-        except google.api_core.exceptions.NotFound:
-            azureBlobStorage = self.request.registry.azureBlobStorage
-            data = azureBlobStorage.get_blob_to_bytes('files', imageFilename).content
+        if data is None:
+            return Response(status=404)
 
         response = Response()
         response.body = data

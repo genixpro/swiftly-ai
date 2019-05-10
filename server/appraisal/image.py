@@ -44,8 +44,7 @@ class ImageAPI(object):
         image.owner = self.request.authenticated_userid
         image.save()
 
-        blob = self.storageBucket.blob(image.fileName)
-        blob.upload_from_string(input_file)
+        image.uploadImageData(self.storageBucket, input_file, cropped=False)
 
         # Also save a square version
         buffer = io.BytesIO()
@@ -73,8 +72,7 @@ class ImageAPI(object):
         buffer = io.BytesIO()
         skimage.io.imsave(buffer, imageArray, plugin="pil")
 
-        blob = self.storageBucket.blob(image.fileName + "-cropped")
-        blob.upload_from_string(buffer.getvalue())
+        image.uploadImageData(self.storageBucket, buffer.getvalue(), cropped=True)
 
         return {"_id": str(image.id), "url": image.url}
 
@@ -90,12 +88,10 @@ class ImageAPI(object):
         if not auth:
             raise HTTPForbidden("You do not have access to this zone")
 
-        try:
-            blob = self.storageBucket.blob(image.fileName + "-cropped")
-            data = blob.download_as_string()
-        except google.api_core.exceptions.NotFound:
-            azureBlobStorage = self.request.registry.azureBlobStorage
-            data = azureBlobStorage.get_blob_to_bytes('files', image.fileName + "-cropped").content
+        data = image.downloadImageData(self.storageBucket, self.request.registry.azureBlobStorage, cropped=True)
+
+        if data is None:
+            return Response(status=404)
 
         response = Response()
         response.body = data

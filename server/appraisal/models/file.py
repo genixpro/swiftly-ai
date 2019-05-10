@@ -1,6 +1,8 @@
 from mongoengine import *
 import datetime
 from appraisal.models.extraction_reference import ExtractionReference
+import google.api_core.exceptions
+import azure.common
 
 class Word(EmbeddedDocument):
     meta = {'strict': False}
@@ -189,4 +191,48 @@ class File(Document):
 
         return lineItems
 
+    def downloadFileData(self, bucket, azureBlobStorage=None):
+        fileId = str(self.id)
 
+        data = None
+        try:
+            blob = bucket.blob(fileId)
+            data = blob.download_as_string()
+        except google.api_core.exceptions.NotFound:
+            if azureBlobStorage:
+                try:
+                    data = azureBlobStorage.get_blob_to_bytes('files', fileId).content
+                except azure.common.AzureMissingResourceHttpError:
+                    pass
+
+        return data
+
+    def downloadRenderedImage(self, page, bucket, azureBlobStorage=None):
+        fileId = str(self.id)
+        imageFilename = fileId + "-image-" + str(page) + ".png"
+
+        data = None
+        try:
+            blob = bucket.blob(imageFilename)
+            data = blob.download_as_string()
+        except google.api_core.exceptions.NotFound:
+            if azureBlobStorage:
+                try:
+                    data = azureBlobStorage.get_blob_to_bytes('files', imageFilename).content
+                except azure.common.AzureMissingResourceHttpError:
+                    pass
+
+        return data
+
+    def uploadFileData(self, bucket, data):
+        fileId = str(self.id)
+
+        blob = bucket.blob(fileId)
+        blob.upload_from_string(data)
+
+    def uploadRenderedImage(self, page, bucket, data):
+        fileName = str(self.id) + "-image-" + str(page) + ".png"
+        blob = bucket.blob(fileName)
+        blob.upload_from_string(data)
+
+        return fileName
