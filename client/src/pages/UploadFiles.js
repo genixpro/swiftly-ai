@@ -78,28 +78,50 @@ class UploadFiles extends React.Component {
                                     {/*</Row>*/}
                                     <Row>
                                         <Col xs={12} className={"upload-zone-column"}>
-                                            <Dropzone className="card card-default upload-zone"
-                                                      ref="dropzone"
-                                                      multiple
-                                                      onDrop={this.onDrop.bind(this)}
-                                                      align="center"
-                                            >
-                                                <div className={"drop-zone-content-wrapper"}>
-                                                    <i className={"fa fa-upload drop-zone-upload-icon"}/>
-                                                    <br/>
-                                                    <br/>
-                                                    <span>Drop files here or click here to upload</span>
+                                            {
+                                                process.env.VALUATE_ENVIRONMENT.REACT_APP_ENABLE_UPLOAD === 'true' ?
+                                                    <Dropzone className="card card-default upload-zone"
+                                                              ref="dropzone"
+                                                              multiple
+                                                              onDrop={this.onDrop.bind(this)}
+                                                              align="center"
+                                                    >
+                                                        <div className={"drop-zone-content-wrapper"}>
+                                                            <i className={"fa fa-upload drop-zone-upload-icon"}/>
+                                                            <br/>
+                                                            <br/>
+                                                            <span>Drop files here or click here to upload</span>
 
-                                                    {
-                                                        this.state.uploading &&
-                                                        <div className="upload-files-loader ball-pulse">
-                                                            <div></div>
-                                                            <div></div>
-                                                            <div></div>
+                                                            {
+                                                                this.state.uploading &&
+                                                                <div className="upload-files-loader ball-pulse">
+                                                                    <div></div>
+                                                                    <div></div>
+                                                                    <div></div>
+                                                                </div>
+                                                            }
                                                         </div>
-                                                    }
-                                                </div>
-                                            </Dropzone>
+                                                    </Dropzone> :
+                                                    <div className="card card-default upload-zone upload-disabled"
+                                                    >
+                                                        <div className={"drop-zone-content-wrapper"}>
+                                                            {/*<i className={"fa fa-upload drop-zone-upload-icon"}/>*/}
+                                                            {/*<br/>*/}
+                                                            <br/>
+                                                            <strong>Uploads are disabled in the Sandbox.</strong>
+
+                                                            {
+                                                                this.state.uploading &&
+                                                                <div className="upload-files-loader ball-pulse">
+                                                                    <div></div>
+                                                                    <div></div>
+                                                                    <div></div>
+                                                                </div>
+                                                            }
+                                                        </div>
+                                                    </div>
+
+                                            }
                                         </Col>
                                     </Row>
                                     <Row>

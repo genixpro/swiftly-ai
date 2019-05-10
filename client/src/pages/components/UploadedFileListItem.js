@@ -1,6 +1,6 @@
 import React from 'react';
 import axios from "axios/index";
-import { Button } from 'reactstrap';
+import {Button} from 'reactstrap';
 import Auth from "../../Auth";
 
 
@@ -69,20 +69,31 @@ class UploadedFileListItem extends React.Component
             return <tr></tr>;
         }
 
+        let className = "";
+
+        if (Auth.isAdmin)
+        {
+            className = "clickable";
+        }
+
         return (
-            <tr className={"uploaded-file-list-item"} onClick={(evt) => this.onFileClicked()}>
+            <tr className={`uploaded-file-list-item ${className}`} onClick={(evt) => this.onFileClicked()}>
                 <td>{file.fileName}</td>
                 {/*<td>*/}
-                    {/*<select value={file.fileType} onChange={this.onFileTypeChanged.bind(this)} onClick={(evt) => evt.stopPropagation()}>*/}
-                        {/*<option value={"lease"}>Lease</option>*/}
-                        {/*<option value={"financials"}>Financial Statement</option>*/}
-                        {/*<option value={"comparable"}>Comparable Sale</option>*/}
-                        {/*<option value={"rentroll"}>Rent Roll</option>*/}
-                    {/*</select>*/}
+                {/*<select value={file.fileType} onChange={this.onFileTypeChanged.bind(this)} onClick={(evt) => evt.stopPropagation()}>*/}
+                {/*<option value={"lease"}>Lease</option>*/}
+                {/*<option value={"financials"}>Financial Statement</option>*/}
+                {/*<option value={"comparable"}>Comparable Sale</option>*/}
+                {/*<option value={"rentroll"}>Rent Roll</option>*/}
+                {/*</select>*/}
                 {/*</td>*/}
-                <td>
-                    <Button color="danger" onClick={(evt) => this.onDeleteFile(evt)}>Remove</Button>
-                </td>
+                {
+                    process.env.VALUATE_ENVIRONMENT.REACT_APP_ENABLE_UPLOAD === 'true' ?
+                        <td>
+                            <Button color="danger" onClick={(evt) => this.onDeleteFile(evt)}>Remove</Button>
+                        </td>
+                        : null
+                }
             </tr>
         );
     }

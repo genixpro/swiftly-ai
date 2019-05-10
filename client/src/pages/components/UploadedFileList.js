@@ -39,7 +39,11 @@ class UploadedFileList extends React.Component
                 <thead>
                 <tr>
                     <th>File Name</th>
-                    <th>Type</th>
+                    {
+                        process.env.VALUATE_ENVIRONMENT.REACT_APP_ENABLE_UPLOAD === 'true' ?
+                            <th>Action</th>
+                            : null
+                    }
                 </tr>
                 </thead>
                 <tbody>

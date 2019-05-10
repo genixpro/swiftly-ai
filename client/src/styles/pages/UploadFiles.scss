@@ -19,6 +19,11 @@
       padding: 0;
     }
 
+    .upload-zone.upload-disabled
+    {
+      cursor: not-allowed;
+    }
+
     .upload-zone:after {
       content: "";
       display: block;
