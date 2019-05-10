@@ -60,7 +60,7 @@ def saveObjects(model, objects, newOwner):
 
         oldId = str(object.id)
 
-        newObject.save()
+        newObject.save(validate=False)
 
         newId = str(newObject.id)
 
@@ -96,7 +96,8 @@ def downloadData(storageBucket, azureBlobStorage):
     for file in files:
         print(f"Downloading file data for {str(file.id)}")
         fileContents[str(file.id)] = file.downloadFileData(storageBucket, azureBlobStorage)
-        fileImages[str(file.id)] = [file.downloadRenderedImage(page, storageBucket, azureBlobStorage) for page in range(file.pages)]
+        if file.pages:
+            fileImages[str(file.id)] = [file.downloadRenderedImage(page, storageBucket, azureBlobStorage) for page in range(file.pages)]
 
     tags = loadObjects(PropertyTag)
     zones = loadObjects(Zone)
@@ -210,9 +211,10 @@ def uploadData(data, dbAlias, storageBucket, newOwner, oldEnv, newEnv):
             contents = data['fileContents'][fileIDMap[str(newFile.id)]]
             newFile.uploadFileData(storageBucket, contents)
 
-            for page in range(newFile.pages):
-                pageImage = data['fileImages'][fileIDMap[str(newFile.id)]][page]
-                newFile.uploadRenderedImage(page, storageBucket, pageImage)
+            if newFile.pages:
+                for page in range(newFile.pages):
+                    pageImage = data['fileImages'][fileIDMap[str(newFile.id)]][page]
+                    newFile.uploadRenderedImage(page, storageBucket, pageImage)
 
     with switch_db(Image, dbAlias) as TargetImage:
         for newImage in newImages:
