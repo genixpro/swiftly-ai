@@ -43,7 +43,7 @@ def main():
     settings = get_appsettings(config_uri)
 
     sampleDataDBName = "swiftly_sample_data"
-    sampleDataURI = settings.get('db.uri').replace(f"swiftly_{settings.get('environment')}_new", "swiftly_sample_data")
+    sampleDataURI = settings.get('db.uri').replace(f"swiftly_{settings.get('environment')}", "swiftly_sample_data")
     sampleDataBucket = 'swiftly-sample-files'
 
     os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = pkg_resources.resource_filename("appraisal", "gcloud-storage-key.json")
