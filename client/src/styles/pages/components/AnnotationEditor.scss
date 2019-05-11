@@ -20,6 +20,41 @@
   pointer-events: none;
 }
 
+.line-token, .column-token, .group-block-token
+{
+  position: absolute;
+  background-color: #5d9cec55;
+  border: 1px dashed black;
+}
+
+.table-block-token
+{
+  position: absolute;
+
+  border: 2px dashed black;
+}
+
+.table-block-token.table
+{
+  background-color: #5d9cec55;
+  //background-image: url("/img/table-watermark.png");
+  //background-repeat: repeat;
+}
+
+.table-block-token.block
+{
+  background-color: rgba(236, 235, 0, 0.33);
+  //background-image: url("/img/block-watermark.png");
+  //background-repeat: repeat;
+}
+
+.line-token:hover, .column-token:hover, .group-block-token:hover
+{
+  background-color: #5d9cec99;
+  border: 1px solid black;
+}
+
+
 .annotation-editor-word
 {
   position: absolute;
@@ -96,5 +131,42 @@
 
   em {
     cursor: pointer;
+  }
+}
+
+.block-background
+{
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  user-select: none;
+  overflow: hidden;
+}
+
+.block-background-unit
+{
+  position: absolute;
+
+  div.block-background-unit-inner
+  {
+    font-style:normal;
+    font-variant:normal;
+    font-weight:normal;
+    font-stretch:normal;
+    font-size:30px;
+    line-height:1.25;
+    letter-spacing: 0;
+    word-spacing: 0;
+    opacity:0.151;
+    transform: rotate(-45deg);
+    text-align: center;
+
+    span {
+      pointer-events: none;
+      user-select: none;
+    }
   }
 }

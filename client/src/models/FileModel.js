@@ -4,24 +4,35 @@ import ModelField from "../orm/ModelField";
 import ListField from "../orm/ListField";
 import BaseModel from "../orm/BaseModel";
 import StringField from "../orm/StringField";
+import IntField from "../orm/IntField";
+import FloatField from "../orm/FloatField";
+import DictField from "../orm/DictField";
 
 class WordModel extends BaseModel
 {
-    static word = new GenericField();
-    static page = new GenericField();
-    static lineNumber = new GenericField();
+    static word = new StringField();
+    static page = new IntField();
+    static lineNumber = new IntField();
+    static documentLineNumber = new IntField();
 
-    static columnLeft = new GenericField();
-    static columnRight = new GenericField();
-    static index = new GenericField();
-    static left = new GenericField();
-    static right = new GenericField();
-    static top = new GenericField();
-    static bottom = new GenericField();
-    static classification = new GenericField();
-    static classificationProbabilities = new GenericField();
-    static modifiers = new GenericField();
-    static modifierProbabilities = new GenericField();
+    static columnLeft = new IntField();
+    static columnRight = new IntField();
+    static index = new IntField();
+    static left = new FloatField();
+    static right = new FloatField();
+    static top = new FloatField();
+    static bottom = new FloatField();
+
+    static textType = new StringField();
+
+    static groups = new DictField(new StringField());
+    static groupProbabilities = new DictField(new DictField(new FloatField()));
+    static groupNumbers = new DictField(new IntField());
+
+    static classification = new StringField();
+    static classificationProbabilities = new DictField(new FloatField());
+    static modifiers = new ListField(new StringField());
+    static modifierProbabilities = new DictField(new FloatField());
 }
 
 

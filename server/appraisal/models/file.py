@@ -16,6 +16,8 @@ class Word(EmbeddedDocument):
     # This is the line number of the word, within the page that its on (line numbers reset to 0 on new pages)
     lineNumber = IntField()
 
+    documentLineNumber = IntField()
+
     # The column number for the left-edge of this word.
     columnLeft = IntField()
 
@@ -50,6 +52,11 @@ class Word(EmbeddedDocument):
     modifierProbabilities = DictField(default={})
 
 
+    textType = StringField()
+
+    groups = DictField(StringField(), default={})
+    groupProbabilities = DictField(DictField(default={}))
+    groupNumbers = DictField(IntField())
 
 
 class File(Document):

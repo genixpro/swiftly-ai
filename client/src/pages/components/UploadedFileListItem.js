@@ -43,19 +43,7 @@ class UploadedFileListItem extends React.Component
     {
         if (Auth.isAdmin)
         {
-            this.props.history.push("/appraisal/" + this.props.appraisalId + "/financial_statement/" + this.state.file._id + "/raw");
-            // if (this.state.file.fileType === 'financials')
-            // {
-            // this.props.history.push("/appraisal/" + this.props.appraisalId + "/financial_statement/" + this.state.file._id + "/raw");
-            // }
-            // else if (this.state.file.fileType === 'lease')
-            // {
-            //     this.props.history.push("/appraisal/" + this.props.appraisalId + "/lease/" + this.state.file._id + "/raw");
-            // }
-            // else if (this.state.file.fileType === 'comparable')
-            // {
-            //     this.props.history.push("/appraisal/" + this.props.appraisalId + "/comparable_sale/" + this.state.file._id + "/raw");
-            // }
+            this.props.history.push("/appraisal/" + this.props.appraisalId + "/files/" + this.state.file._id + "/annotate");
         }
     }
 

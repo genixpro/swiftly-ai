@@ -156,7 +156,8 @@ class DocumentParser:
                 wordsByPage[word.page] = []
             wordsByPage[word.page].append(word)
 
-        for page in wordsByPage.keys():
+        globalLineNumber = 0
+        for page in sorted(wordsByPage.keys()):
             lines = []
 
             sortedWords = sorted(wordsByPage[page], key=lambda word: word.left)
@@ -189,10 +190,14 @@ class DocumentParser:
             # Assign the line numbers to all the lines
             for lineNumber, line in enumerate(lines):
                 line['lineNumber'] = lineNumber
+                line['documentLineNumber'] = globalLineNumber + lineNumber
 
             for word in sortedWords:
                 word.lineNumber = word.line['lineNumber']
+                word.documentLineNumber = word.line['documentLineNumber']
                 del word.line
+
+            globalLineNumber = len(lines)
         return words
 
     def assignColumnNumbersToWords(self, words):

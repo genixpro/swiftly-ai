@@ -10,7 +10,6 @@ import ViewFinancialStatements from "./ViewFinancialStatements";
 import ViewFinancialStatement from "./ViewFinancialStatement";
 import ViewStabilizedStatement from "./ViewStabilizedStatement";
 import ViewComparableSales from "./ViewComparableSales";
-import ViewComparableSale from "./ViewComparableSale";
 import ViewDiscountedCashFlow from "./ViewDiscountedCashFlow";
 import ViewDirectComparisonValuation from "./ViewDirectComparisonValuation";
 import ViewTenants from "./ViewTenants";
@@ -20,6 +19,7 @@ import ViewComparableLeases from "./ViewComparableLeases";
 import ViewCapitalizationValuation from "./ViewCapitalizationValuation";
 import ViewAdditionalIncome from "./ViewAdditionalIncomes";
 import ViewAmortization from "./ViewAmortization";
+import AnnotateFile from "./AnnotateFile";
 import ViewExpensesTMI from "./ViewExpensesTMI";
 import Logout from "./Logout";
 import axios from "axios/index";
@@ -85,9 +85,12 @@ class ViewAppraisal extends React.Component
                         <Route path={`${this.props.match.path}/lease/:leaseId`} render={(props) => withProps({...routeProps, ...props})(ViewLease)()} />
                         <Route path={`${this.props.match.path}/financial_statements`} render={(props) => withProps({...routeProps, ...props})(ViewFinancialStatements)()} />
                         <Route path={`${this.props.match.path}/financial_statement/:financialStatementId`} render={(props) => withProps({...routeProps, ...props})(ViewFinancialStatement)()} />
+
                         <Route path={`${this.props.match.path}/stabilized_statement_valuation`} render={(props) => withProps({...routeProps, ...props})(ViewStabilizedStatement)()} />
                         <Route path={`${this.props.match.path}/comparable_sales`} render={(props) => withProps({...routeProps, ...props})(ViewComparableSales)()} />
-                        <Route path={`${this.props.match.path}/comparable_sale/:comparableSaleId`} render={(props) => withProps({...routeProps, ...props})(ViewComparableSale)()} />
+
+                        <Route path={`${this.props.match.path}/files/:fileId/annotate`} render={(props) => withProps({...routeProps, ...props})(AnnotateFile)()} />
+
                         <Route path={`${this.props.match.path}/discounted_cash_flow`} render={(props) => withProps({...routeProps, ...props})(ViewDiscountedCashFlow)()} />
                         <Route path={`${this.props.match.path}/tenants`} render={(props) => withProps({...routeProps, ...props})(ViewTenants)()} />
                         <Route path={`${this.props.match.path}/general`} render={(props) => withProps({...routeProps, ...props})(ViewBuildingInformation)()}/>} />
