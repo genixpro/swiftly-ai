@@ -10,13 +10,22 @@ import DictField from "../orm/DictField";
 
 class WordModel extends BaseModel
 {
+    constructor()
+    {
+        super(...arguments);
+
+        if (this.groups['undefined'])
+        {
+            delete this.groups['undefined'];
+        }
+    }
+
     static word = new StringField();
     static page = new IntField();
     static lineNumber = new IntField();
     static documentLineNumber = new IntField();
 
-    static columnLeft = new IntField();
-    static columnRight = new IntField();
+    static column = new IntField();
     static index = new IntField();
     static left = new FloatField();
     static right = new FloatField();

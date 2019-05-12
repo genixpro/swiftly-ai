@@ -18,11 +18,8 @@ class Word(EmbeddedDocument):
 
     documentLineNumber = IntField()
 
-    # The column number for the left-edge of this word.
-    columnLeft = IntField()
-
-    # The column number for the right-edge of this word.
-    columnRight = IntField()
+    # The column number for this word
+    column = IntField()
 
     # The index of the word within the larger array of words
     index = IntField()
@@ -52,7 +49,7 @@ class Word(EmbeddedDocument):
     modifierProbabilities = DictField(default={})
 
 
-    textType = StringField()
+    textType = StringField(default='block')
 
     groups = DictField(StringField(), default={})
     groupProbabilities = DictField(DictField(default={}))

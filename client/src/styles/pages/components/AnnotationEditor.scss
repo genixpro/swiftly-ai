@@ -27,6 +27,13 @@
   border: 1px dashed black;
 }
 
+.field-block-token
+{
+  position: absolute;
+  background-color: rgba(55, 59, 236, 0.4);
+  border: 1px dashed black;
+}
+
 .table-block-token
 {
   position: absolute;
@@ -72,7 +79,7 @@
 
 .annotation-editor-word.classified
 {
-  background-color: rgba(0, 0, 255, 0.3);
+  //background-color: rgba(0, 0, 255, 0.3);
 }
 
 .annotation-editor-image-outer-container

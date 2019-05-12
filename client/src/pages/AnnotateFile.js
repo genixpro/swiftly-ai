@@ -8,23 +8,8 @@ import axios from "axios/index";
 
 class AnnotateFile extends React.Component
 {
-    state = {}
+    state = {};
 
-    componentDidMount() {
-        axios.get(`/appraisal/${this.props.appraisal._id}/files/${this.props.match.params.fileId}`).then((response) => {
-            this.setState({file: FileModel.create(response.data.file)})
-        });
-    }
-
-    componentDidUpdate() {
-
-    }
-
-    saveFileData(newFile) {
-        axios.post(`/appraisal/${this.props.appraisal._id}/files/${this.props.match.params.fileId}`, newFile).then((response) => {
-            this.setState({file: newFile})
-        });
-    }
 
 
     render() {
@@ -35,15 +20,20 @@ class AnnotateFile extends React.Component
                     <CardBody>
                         <div id={"view-lease-page"}>
                             {
-                                (this.state.file ? <Row>
+                                this.props.appraisal._id && this.props.match.params.fileId ?
+                                <Row>
                                     <Col xs={12}>
                                         <Card className="card-default">
                                             <CardBody>
-                                                <AnnotationEditor saveFile={(doc) => this.saveFileData(doc)} document={this.state.file} annotationFields={AnnotationFields} />
+                                                <AnnotationEditor
+                                                    annotationFields={AnnotationFields}
+                                                    appraisalId={this.props.appraisal._id}
+                                                    fileId={this.props.match.params.fileId}
+                                                />
                                             </CardBody>
                                         </Card>
                                     </Col>
-                                </Row> : null)
+                                </Row> : null
                             }
                         </div>
                     </CardBody>

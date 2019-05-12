@@ -11,6 +11,7 @@ import requests
 import bson
 from PIL import Image
 import hashlib
+import jsondiff
 from pprint import pprint
 import concurrent.futures
 import filetype
@@ -92,11 +93,20 @@ class FileAPI(object):
             raise HTTPForbidden("You do not have access to this file.")
 
         file.modify(**data)
+
+        self.processor.parser.assignColumnNumbersToWords(file.words)
+
         file.save()
 
-        # self.updateStabilizedStatement(appraisalId)
+        # return {"file": json.loads(file.to_json())}
 
-        return {"_id": str(id)}
+    def cleanDiffKeys(self, d):
+        new = {}
+        for k, v in d.items():
+            if isinstance(v, dict):
+                v = self.cleanDiffKeys(v)
+            new[str(k)] = v
+        return new
 
 
     def delete(self):

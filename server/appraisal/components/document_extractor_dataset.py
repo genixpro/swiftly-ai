@@ -76,12 +76,10 @@ class DocumentExtractorDataset:
             wordVectors.append(numpy.array(self.getWordVector(word['word'])))
 
         lineSortedWordIndexes = [word['index'] for word in sorted(file.words, key=lambda word: (word['page'], word['lineNumber'], word['left']))]
-        columnLeftSortedWordIndexes = [word['index'] for word in sorted(file.words, key=lambda word: (word['page'], word['columnLeft'], word['lineNumber'], word['left']))]
-        columnRightSortedWordIndexes = [word['index'] for word in sorted(file.words, key=lambda word: (word['page'], word['columnRight'], word['lineNumber'], word['left']))]
+        columnSortedWordIndexes = [word['index'] for word in sorted(file.words, key=lambda word: (word['page'], word['column'], word['lineNumber'], word['left']))]
 
         lineSortedReverseWordIndexes = [lineSortedWordIndexes.index(word['index']) for word in file.words]
-        columnLeftReverseWordIndexes = [columnLeftSortedWordIndexes.index(word['index']) for word in file.words]
-        columnRightReverseWordIndexes = [columnRightSortedWordIndexes.index(word['index']) for word in file.words]
+        columnReverseWordIndexes = [columnSortedWordIndexes.index(word['index']) for word in file.words]
 
         classificationOutputs = []
         modifierOutputs = []
@@ -106,10 +104,8 @@ class DocumentExtractorDataset:
             wordVectors,
             lineSortedWordIndexes,
             lineSortedReverseWordIndexes,
-            columnLeftSortedWordIndexes,
-            columnLeftReverseWordIndexes,
-            columnRightSortedWordIndexes,
-            columnRightReverseWordIndexes,
+            columnSortedWordIndexes,
+            columnReverseWordIndexes,
             classificationOutputs,
             modifierOutputs)
 
@@ -187,21 +183,16 @@ class DocumentExtractorDataset:
                 lineRight = max([word['right'] for word in lineOriginalWords])
                 lineWordSize = (lineRight - lineLeft) / len(newWordsByLine[lineNumber])
 
-                columnLeftStart = min([word['columnLeft'] for word in lineOriginalWords])
-                columnLeftEnd = max([word['columnLeft'] for word in lineOriginalWords])
-                columnLeftSize = (columnLeftEnd - columnLeftStart) / len(newWordsByLine[lineNumber])
-
-                columnRightStart = min([word['columnRight'] for word in lineOriginalWords])
-                columnRightEnd = max([word['columnRight'] for word in lineOriginalWords])
-                columnRightSize = (columnRightEnd - columnRightStart) / len(newWordsByLine[lineNumber])
+                columnStart = min([word['column'] for word in lineOriginalWords])
+                columnEnd = max([word['column'] for word in lineOriginalWords])
+                columnSize = (columnEnd - columnStart) / len(newWordsByLine[lineNumber])
 
                 word['top'] = min([word['top'] for word in lineOriginalWords])
                 word['bottom'] = max([word['bottom'] for word in lineOriginalWords])
                 word['left'] = lineLeft + lineWordSize * wordIndex
                 word['right'] = lineLeft + lineWordSize * (wordIndex+1)
 
-                word['columnLeft'] = int(round(columnLeftStart + columnLeftSize * wordIndex))
-                word['columnRight'] = int(round(columnRightStart + columnRightSize * wordIndex))
+                word['column'] = int(round(columnStart + columnSize * wordIndex))
 
 
         return {
@@ -276,10 +267,8 @@ class DocumentExtractorDataset:
         batchWordVectors = []
         batchLineSortedWordIndexes = []
         batchLineSortedReverseWordIndexes = []
-        batchColumnLeftSortedWordIndexes = []
-        batchColumnLeftReverseWordIndexes = []
-        batchColumnRightSortedWordIndexes = []
-        batchColumnRightReverseWordIndexes = []
+        batchColumnSortedWordIndexes = []
+        batchColumnReverseWordIndexes = []
         batchClassificationOutputs = []
         batchModifierOutputs = []
 
@@ -297,21 +286,17 @@ class DocumentExtractorDataset:
             wordVectors = result[0]
             lineSortedWordIndexes = result[1]
             lineSortedReverseWordIndexes = result[2]
-            columnLeftSortedWordIndexes = result[3]
-            columnLeftReverseWordIndexes = result[4]
-            columnRightSortedWordIndexes = result[5]
-            columnRightReverseWordIndexes = result[6]
-            classificationOutputs = result[7]
-            modifierOutputs = result[8]
+            columnSortedWordIndexes = result[3]
+            columnReverseWordIndexes = result[4]
+            classificationOutputs = result[5]
+            modifierOutputs = result[6]
 
             while len(wordVectors) < maxLength:
                 index = len(wordVectors)
                 lineSortedWordIndexes.append(index)
                 lineSortedReverseWordIndexes.append(index)
-                columnLeftSortedWordIndexes.append(index)
-                columnLeftReverseWordIndexes.append(index)
-                columnRightSortedWordIndexes.append(index)
-                columnRightReverseWordIndexes.append(index)
+                columnSortedWordIndexes.append(index)
+                columnReverseWordIndexes.append(index)
                 wordVectors.append([0] * self.wordVectorSize)
 
                 oneHotCodeClassification = [0] * len(self.labels)
@@ -327,10 +312,8 @@ class DocumentExtractorDataset:
                 wordVectors = wordVectors[start:start + maxLength]
                 lineSortedWordIndexes = [index-start for index in lineSortedWordIndexes if index >= start and index < (start + maxLength)]
                 lineSortedReverseWordIndexes = [lineSortedWordIndexes.index(index) for index in range(0, maxLength)]
-                columnLeftSortedWordIndexes = [index-start for index in columnLeftSortedWordIndexes if index >= start and index < (start + maxLength)]
-                columnLeftReverseWordIndexes = [columnLeftSortedWordIndexes.index(index) for index in range(0, maxLength)]
-                columnRightSortedWordIndexes = [index-start for index in columnRightSortedWordIndexes if index >= start and index < (start + maxLength)]
-                columnRightReverseWordIndexes = [columnRightSortedWordIndexes.index(index) for index in range(0, maxLength)]
+                columnSortedWordIndexes = [index-start for index in columnSortedWordIndexes if index >= start and index < (start + maxLength)]
+                columnReverseWordIndexes = [columnSortedWordIndexes.index(index) for index in range(0, maxLength)]
 
                 classificationOutputs = classificationOutputs[start:start + maxLength]
                 modifierOutputs = modifierOutputs[start:start + maxLength]
@@ -338,10 +321,8 @@ class DocumentExtractorDataset:
             batchWordVectors.append(wordVectors)
             batchLineSortedWordIndexes.append(lineSortedWordIndexes)
             batchLineSortedReverseWordIndexes.append(lineSortedReverseWordIndexes)
-            batchColumnLeftSortedWordIndexes.append(columnLeftSortedWordIndexes)
-            batchColumnLeftReverseWordIndexes.append(columnLeftReverseWordIndexes)
-            batchColumnRightSortedWordIndexes.append(columnRightSortedWordIndexes)
-            batchColumnRightReverseWordIndexes.append(columnRightReverseWordIndexes)
+            batchColumnSortedWordIndexes.append(columnSortedWordIndexes)
+            batchColumnReverseWordIndexes.append(columnReverseWordIndexes)
             batchClassificationOutputs.append(classificationOutputs)
             batchModifierOutputs.append(modifierOutputs)
 
@@ -352,10 +333,8 @@ class DocumentExtractorDataset:
             numpy.array(batchWordVectors),
             numpy.array(batchLineSortedWordIndexes),
             numpy.array(batchLineSortedReverseWordIndexes),
-            numpy.array(batchColumnLeftSortedWordIndexes),
-            numpy.array(batchColumnLeftReverseWordIndexes),
-            numpy.array(batchColumnRightSortedWordIndexes),
-            numpy.array(batchColumnRightReverseWordIndexes),
+            numpy.array(batchColumnSortedWordIndexes),
+            numpy.array(batchColumnReverseWordIndexes),
             numpy.array(batchClassificationOutputs),
             numpy.array(batchModifierOutputs)
         )

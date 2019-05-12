@@ -207,43 +207,51 @@ class DocumentParser:
                 wordsByPage[word.page] = []
             wordsByPage[word.page].append(word)
 
-        averageWordWidth = numpy.mean([word.right - word.left for word in words])
-
         for page in wordsByPage:
             pageWords = wordsByPage[page]
 
-            leftPositions = numpy.array([[word.left] for word in pageWords])
-            leftKDE = KernelDensity(kernel='gaussian', bandwidth=averageWordWidth).fit(leftPositions)
-            grid = numpy.reshape(numpy.linspace(0, 1, 1000), newshape=[1000, 1])
-            leftProbs = leftKDE.score_samples(grid)
-            leftPeaks = scipy.signal.find_peaks(leftProbs)[0] / 1000
+            tables = []
 
-            rightPositions = numpy.array([[word.right] for word in pageWords])
-            rightKDE = KernelDensity(kernel='gaussian', bandwidth=averageWordWidth).fit(rightPositions)
-            grid = numpy.reshape(numpy.linspace(0, 1, 1000), newshape=[1000, 1])
-            rightProbs = rightKDE.score_samples(grid)
-            rightPeaks = scipy.signal.find_peaks(rightProbs)[0] / 1000
+            currentTable = None
+            for word in pageWords:
+                if word.textType == 'table':
+                    if currentTable is None:
+                        currentTable = [word]
+                    else:
+                        currentTable.append(word)
+                else:
+                    if currentTable is not None:
+                        tables.append(currentTable)
+                        currentTable = None
 
-            # plt.plot(leftProbs)
-            # plt.savefig(f"histogram-{page}.png")
-            # plt.clf()
+                    word.column = 0
 
-            for word in wordsByPage[page]:
-                # Find the left column closest to this word
-                bestDist = None
-                for column, peak in enumerate(leftPeaks):
-                    dist = abs(word.left - peak)
-                    if bestDist is None or (dist < bestDist):
-                        word.columnLeft = column
-                        bestDist = dist
 
-                # Find the right column closest to this word
-                bestDist = None
-                for column, peak in enumerate(rightPeaks):
-                    dist = abs(word.right - peak)
-                    if bestDist is None or (dist < bestDist):
-                        word.columnRight = column
-                        bestDist = dist
+            if currentTable is not None:
+                tables.append(currentTable)
+
+            for tableWords in tables:
+                averageWordWidth = numpy.mean([word.right - word.left for word in tableWords])
+
+                positions = []
+                for word in tableWords:
+                    width = word.right - word.left
+                    for n in range(10):
+                        positions.append([word.left + (width/9) * n])
+
+                columnKDE = KernelDensity(kernel='gaussian', bandwidth=averageWordWidth).fit(positions)
+                grid = numpy.reshape(numpy.linspace(0, 1, 1000), newshape=[1000, 1])
+                columnProbs = columnKDE.score_samples(grid)
+                columnPeaks = scipy.signal.find_peaks(columnProbs)[0] / 1000
+
+                for word in tableWords:
+                    # Find the column closest to this word
+                    bestDist = None
+                    for column, peak in enumerate(columnPeaks):
+                        dist = abs((word.left/2 + word.right/2) - peak)
+                        if bestDist is None or (dist < bestDist):
+                            word.column = column + 1
+                            bestDist = dist
 
         return words
 

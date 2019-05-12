@@ -7,31 +7,43 @@ export default [
                 "name": "Rent Roll",
                 "placeholder": "Rent Roll",
                 "value": "RENT_ROLL",
-                "groupSet": "DATA_TYPE"
+                "groupSet": "DATA_TYPE",
+                "views": ['dataGroups']
             },
             {
                 "name": "Income Statement",
                 "placeholder": "Income Statement",
                 "value": "INCOME_STATEMENT",
-                "groupSet": "DATA_TYPE"
+                "groupSet": "DATA_TYPE",
+                "views": ['dataGroups']
             },
             {
                 "name": "Expense Statement",
                 "placeholder": "Expense Statement",
                 "value": "EXPENSE_STATEMENT",
-                "groupSet": "DATA_TYPE"
+                "groupSet": "DATA_TYPE",
+                "views": ['dataGroups']
+            },
+            {
+                "name": "Miscellaneous Financial",
+                "placeholder": "Miscellaneous Financial",
+                "value": "MISCELLANEOUS_FINANCIAL",
+                "groupSet": "DATA_TYPE",
+                "views": ['dataGroups']
             },
             {
                 "name": "Comparable Sale",
                 "placeholder": "Comparable Sale",
                 "value": "COMPARABLE_SALE",
-                "groupSet": "DATA_TYPE"
+                "groupSet": "DATA_TYPE",
+                "views": ['dataGroups']
             },
             {
                 "name": "Comparable Lease",
                 "placeholder": "Comparable Lease",
                 "value": "COMPARABLE_LEASE",
-                "groupSet": "DATA_TYPE"
+                "groupSet": "DATA_TYPE",
+                "views": ['dataGroups']
             }
         ]
     },
@@ -41,229 +53,443 @@ export default [
             {
                 "name": "Document Number",
                 "placeholder": "Document Number",
-                "value": "DOCUMENT_NUMBER"
+                "value": "DOCUMENT_NUMBER",
+                "anyOfGroups": ["INCOME_STATEMENT", "EXPENSE_STATEMENT", "RENT_ROLL"],
+                "textType": "block"
             },
             {
                 "name": "Document Date",
                 "placeholder": "Document Date",
-                "value": "DOCUMENT_DATE"
+                "value": "DOCUMENT_DATE",
+                "anyOfGroups": ["INCOME_STATEMENT", "EXPENSE_STATEMENT", "RENT_ROLL"],
+                "textType": "block"
             },
             {
                 "name": "Document Time",
                 "placeholder": "Document Time",
-                "value": "DOCUMENT_TIME"
+                "value": "DOCUMENT_TIME",
+                "anyOfGroups": ["INCOME_STATEMENT", "EXPENSE_STATEMENT", "RENT_ROLL"],
+                "textType": "block"
             },
             {
                 "name": "Statement Date",
                 "placeholder": "Statement Date",
-                "value": "STATEMENT_DATE"
+                "value": "STATEMENT_DATE",
+                "anyOfGroups": ["INCOME_STATEMENT", "EXPENSE_STATEMENT", "RENT_ROLL"],
+                "textType": "block"
             },
             {
                 "name": "Building Address",
                 "placeholder": "Building Address",
-                "value": "BUILDING_ADDRESS"
+                "value": "BUILDING_ADDRESS",
+                "anyOfGroups": ["INCOME_STATEMENT", "EXPENSE_STATEMENT", "RENT_ROLL"],
+                "textType": "block"
             },
             {
                 "name": "User ID",
                 "placeholder": "User ID",
-                "value": "USER_ID"
+                "value": "USER_ID",
+                "anyOfGroups": ["INCOME_STATEMENT", "EXPENSE_STATEMENT", "RENT_ROLL"],
+                "textType": "block"
             },
             {
                 "name": "Statement Year",
                 "placeholder": "Statement Year",
-                "value": "STATEMENT_YEAR"
+                "value": "STATEMENT_YEAR",
+                "anyOfGroups": ["INCOME_STATEMENT", "EXPENSE_STATEMENT", "RENT_ROLL"],
+                "textType": "block"
             },
             {
                 "name": "Statement Next Year",
                 "placeholder": "Statement Next Year",
-                "value": "STATEMENT_NEXT_YEAR"
+                "value": "STATEMENT_NEXT_YEAR",
+                "anyOfGroups": ["INCOME_STATEMENT", "EXPENSE_STATEMENT", "RENT_ROLL"],
+                "textType": "block"
             },
             {
                 "name": "Statement Previous Year",
                 "placeholder": "Statement Previous Year",
-                "value": "STATEMENT_PREVIOUS_YEAR"
+                "value": "STATEMENT_PREVIOUS_YEAR",
+                "anyOfGroups": ["INCOME_STATEMENT", "EXPENSE_STATEMENT", "RENT_ROLL"],
+                "textType": "block"
             }
         ]
     },
     {
         "name": "Line Items",
-        "multiple": true,
-        "value": "items",
         "groups": [
             {
-                "name": "Multi Line Item",
-                "placeholder": "Multi Line Item",
-                "value": "MULTI_LINE_ITEM",
-                "groupSet": "ITEMS"
+                "name": "Line Item Group With Sum",
+                "placeholder": "Line Item Group With Sum",
+                "value": "LINE_ITEM_GROUP_WITH_SUM",
+                "groupSet": "ITEMS",
+                "anyOfGroups": ["INCOME_STATEMENT", "EXPENSE_STATEMENT", "RENT_ROLL"],
+                "textType": "table"
             }
         ],
         "fields": [
             {
                 "name": "Account Number",
                 "placeholder": "Account Number",
-                "value": "ACC_NUM"
+                "value": "ACC_NUM",
+                "anyOfGroups": ["INCOME_STATEMENT", "EXPENSE_STATEMENT"],
+                "textType": "table"
             },
             {
                 "name": "Account Name",
                 "placeholder": "Account Name",
-                "value": "ACC_NAME"
+                "value": "ACC_NAME",
+                "anyOfGroups": ["INCOME_STATEMENT", "EXPENSE_STATEMENT"],
+                "textType": "table"
             },
             {
                 "name": "Forecast",
                 "placeholder": "Forecast",
-                "value": "FORECAST"
+                "value": "FORECAST",
+                "anyOfGroups": ["INCOME_STATEMENT", "EXPENSE_STATEMENT"],
+                "textType": "table"
             },
             {
-                "name": "Budget",
-                "placeholder": "Budget",
-                "value": "BUDGET"
+                "name": "Actuals",
+                "placeholder": "Actuals",
+                "value": "ACTUALS",
+                "anyOfGroups": ["INCOME_STATEMENT", "EXPENSE_STATEMENT"],
+                "textType": "table"
+            },
+            {
+                "name": "Year To Date",
+                "placeholder": "Year To Date",
+                "value": "YEAR_TO_DATE",
+                "anyOfGroups": ["INCOME_STATEMENT", "EXPENSE_STATEMENT"],
+                "textType": "table"
             },
             {
                 "name": "Variance",
                 "placeholder": "Variance",
-                "value": "VARIANCE"
+                "value": "VARIANCE",
+                "anyOfGroups": ["INCOME_STATEMENT", "EXPENSE_STATEMENT"],
+                "textType": "table"
             }
         ],
         "modifiers": [
             {
                 "name": "Sum",
                 "placeholder": "Sum",
-                "value": "SUM"
+                "value": "SUM",
+                "anyOfGroups": ["INCOME_STATEMENT", "EXPENSE_STATEMENT"],
+                "requiredGroups": ["LINE_ITEM_GROUP_WITH_SUM"],
+                "textType": "table",
+                "applyAcrossLine": true
             },
             {
                 "name": "Next Year",
                 "placeholder": "Next Year",
-                "value": "NEXT_YEAR"
+                "value": "NEXT_YEAR",
+                "anyOfGroups": ["INCOME_STATEMENT", "EXPENSE_STATEMENT"],
+                "textType": "table"
+            },
+            {
+                "name": "Next Year + 2",
+                "placeholder": "Next Year + 2",
+                "value": "NEXT_YEAR_2",
+                "anyOfGroups": ["INCOME_STATEMENT", "EXPENSE_STATEMENT"],
+                "textType": "table"
             },
             {
                 "name": "Previous Year",
                 "placeholder": "Previous Year",
-                "value": "PREVIOUS_YEAR"
+                "value": "PREVIOUS_YEAR",
+                "anyOfGroups": ["INCOME_STATEMENT", "EXPENSE_STATEMENT"],
+                "textType": "table"
+            },
+            {
+                "name": "Previous Year + 2",
+                "placeholder": "Previous Year + 2",
+                "value": "PREVIOUS_YEAR_2",
+                "anyOfGroups": ["INCOME_STATEMENT", "EXPENSE_STATEMENT"],
+                "textType": "table"
+            },
+            {
+                "name": "Previous Year + 3",
+                "placeholder": "Previous Year + 3",
+                "value": "PREVIOUS_YEAR_3",
+                "anyOfGroups": ["INCOME_STATEMENT", "EXPENSE_STATEMENT"],
+                "textType": "table"
+            },
+            {
+                "name": "Previous Year + 4",
+                "placeholder": "Previous Year + 4",
+                "value": "PREVIOUS_YEAR_4",
+                "anyOfGroups": ["INCOME_STATEMENT", "EXPENSE_STATEMENT"],
+                "textType": "table"
             },
             {
                 "name": "Percentage",
                 "placeholder": "Percentage",
-                "value": "PERCENTAGE"
+                "value": "PERCENTAGE",
+                "anyOfGroups": ["INCOME_STATEMENT", "EXPENSE_STATEMENT"],
+                "textType": "table"
             },
             {
-                "name": "Summary",
-                "placeholder": "Summary",
-                "value": "SUMMARY"
+                "name": "Per Square Foot",
+                "placeholder": "Per Square Foot",
+                "value": "PSF",
+                "anyOfGroups": ["INCOME_STATEMENT", "EXPENSE_STATEMENT"],
+                "textType": "table"
             },
+            {
+                "name": "Grand Total / Final Sum",
+                "placeholder": "Grand Total / Final Sum",
+                "value": "SUMMARY",
+                "anyOfGroups": ["INCOME_STATEMENT", "EXPENSE_STATEMENT"],
+                "textType": "table",
+                "applyAcrossLine": true
+            }
         ]
     },
     {
         "name": "Income Types",
-        "multiple": true,
-        "value": "items",
         "fields": [
         ],
         "modifiers": [
             {
                 "name": "Income",
                 "placeholder": "Income",
-                "value": "INCOME"
+                "value": "INCOME",
+                "anyOfGroups": ["INCOME_STATEMENT"],
+                "textType": "table",
+                "applyAcrossLine": true
             },
             {
                 "name": "Rent",
                 "placeholder": "Rent",
-                "value": "RENT"
+                "value": "RENT",
+                "anyOfGroups": ["INCOME_STATEMENT"],
+                "textType": "table",
+                "applyAcrossLine": true
             },
             {
                 "name": "Additional Income",
                 "placeholder": "Additional Income",
-                "value": "ADDITIONAL_INCOME"
+                "value": "ADDITIONAL_INCOME",
+                "anyOfGroups": ["INCOME_STATEMENT"],
+                "textType": "table",
+                "applyAcrossLine": true
             },
             {
                 "name": "Expense Recovery",
                 "placeholder": "Expense Recovery",
-                "value": "EXPENSE_RECOVERY"
+                "value": "EXPENSE_RECOVERY",
+                "anyOfGroups": ["INCOME_STATEMENT"],
+                "textType": "table",
+                "applyAcrossLine": true
             }
         ]
     },
     {
         "name": "Expense Types",
-        "multiple": true,
-        "value": "items",
         "fields": [
         ],
         "modifiers": [
             {
                 "name": "Expense",
                 "placeholder": "Expense",
-                "value": "EXPENSE"
+                "value": "EXPENSE",
+                "anyOfGroups": ["INCOME_STATEMENT", "EXPENSE_STATEMENT"],
+                "textType": "table",
+                "applyAcrossLine": true
             },
             {
                 "name": "Expense Recovery",
                 "placeholder": "Expense Recovery",
-                "value": "EXPENSE_RECOVERY"
+                "value": "EXPENSE_RECOVERY",
+                "anyOfGroups": ["INCOME_STATEMENT", "EXPENSE_STATEMENT"],
+                "textType": "table",
+                "applyAcrossLine": true
             },
             {
                 "name": "Operating Expense",
                 "placeholder": "Operating Expense",
-                "value": "OPERATING_EXPENSE"
+                "value": "OPERATING_EXPENSE",
+                "anyOfGroups": ["INCOME_STATEMENT", "EXPENSE_STATEMENT"],
+                "textType": "table",
+                "applyAcrossLine": true
             },
             {
                 "name": "Non Recoverable Expense",
                 "placeholder": "Non Recoverable Expense",
-                "value": "NON_RECOVERABLE_EXPENSE"
+                "value": "NON_RECOVERABLE_EXPENSE",
+                "anyOfGroups": ["INCOME_STATEMENT", "EXPENSE_STATEMENT"],
+                "textType": "table",
+                "applyAcrossLine": true
             },
             {
                 "name": "Taxes",
                 "placeholder": "Taxes",
-                "value": "TAXES"
+                "value": "TAXES",
+                "anyOfGroups": ["INCOME_STATEMENT", "EXPENSE_STATEMENT"],
+                "textType": "table",
+                "applyAcrossLine": true
             },
             {
                 "name": "Management Expense",
                 "placeholder": "Management Expense",
-                "value": "MANAGEMENT_EXPENSE"
+                "value": "MANAGEMENT_EXPENSE",
+                "anyOfGroups": ["INCOME_STATEMENT", "EXPENSE_STATEMENT"],
+                "textType": "table",
+                "applyAcrossLine": true
             },
             {
                 "name": "Structural Allowance",
                 "placeholder": "Structural Allowance",
-                "value": "STRUCTURAL_ALLOWANCE"
+                "value": "STRUCTURAL_ALLOWANCE",
+                "anyOfGroups": ["INCOME_STATEMENT", "EXPENSE_STATEMENT"],
+                "textType": "table",
+                "applyAcrossLine": true
             }
         ]
     },
     {
-        "name": "Rent Roll",
-        "multiple": true,
-        "value": "items",
+        "name": "Rent Roll (Tenant Information)",
+        "groups": [
+            {
+                "name": "Multi Line Tenant Information",
+                "placeholder": "Multi Line Tenant Information",
+                "value": "MULTI_LINE_TENANT",
+                "groupSet": "ITEMS",
+                "anyOfGroups": ["RENT_ROLL"],
+                "textType": "table"
+            }
+        ],
         "fields": [
             {
                 "name": "Unit Number",
                 "placeholder": "Unit Number",
-                "value": "UNIT_NUM"
+                "value": "UNIT_NUM",
+                "anyOfGroups": ["RENT_ROLL"],
+                "textType": "table"
+            },
+            {
+                "name": "Floor Number",
+                "placeholder": "Floor Number",
+                "value": "FLOOR_NUM",
+                "anyOfGroups": ["RENT_ROLL"],
+                "textType": "table"
             },
             {
                 "name": "Tenant Name",
                 "placeholder": "Tenant Name",
-                "value": "TENANT_NAME"
+                "value": "TENANT_NAME",
+                "anyOfGroups": ["RENT_ROLL"],
+                "textType": "table"
             },
             {
                 "name": "Rentable Area",
                 "placeholder": "Rentable Area",
-                "value": "RENTABLE_AREA"
+                "value": "RENTABLE_AREA",
+                "anyOfGroups": ["RENT_ROLL"],
+                "textType": "table"
             },
             {
                 "name": "Lease Term Start",
                 "placeholder": "Lease Term Start",
-                "value": "TERM_START"
+                "value": "TERM_START",
+                "anyOfGroups": ["RENT_ROLL"],
+                "textType": "table"
             },
             {
                 "name": "Lease Term End",
                 "placeholder": "Lease Term End",
-                "value": "TERM_END"
+                "value": "TERM_END",
+                "anyOfGroups": ["RENT_ROLL"],
+                "textType": "table"
+            }
+        ],
+        "modifiers": [
+        ]
+    },
+    {
+        "name": "Rent Roll (Rent)",
+        "groups": [
+            {
+                "name": "Multi Line Tenant Information",
+                "placeholder": "Multi Line Tenant Information",
+                "value": "MULTI_LINE_TENANT",
+                "groupSet": "ITEMS",
+                "anyOfGroups": ["RENT_ROLL"],
+                "textType": "table"
+            }
+        ],
+        "fields": [
+            {
+                "name": "Monthly Rent (Gross)",
+                "placeholder": "Monthly Rent (Gross)",
+                "value": "MONTHLY_RENT",
+                "anyOfGroups": ["RENT_ROLL"],
+                "textType": "table"
             },
             {
-                "name": "Monthly Rent",
-                "placeholder": "Monthly Rent",
-                "value": "MONTHLY_RENT"
+                "name": "Yearly Rent (Gross)",
+                "placeholder": "Yearly Rent (Gross)",
+                "value": "YEARLY_RENT",
+                "anyOfGroups": ["RENT_ROLL"],
+                "textType": "table"
             },
             {
-                "name": "Yearly Rent",
-                "placeholder": "Yearly Rent",
-                "value": "YEARLY_RENT"
+                "name": "Monthly Rent (Net)",
+                "placeholder": "Monthly Rent (Net)",
+                "value": "MONTHLY_RENT",
+                "anyOfGroups": ["RENT_ROLL"],
+                "textType": "table"
+            },
+            {
+                "name": "Yearly Rent (Net)",
+                "placeholder": "Yearly Rent (Net)",
+                "value": "YEARLY_RENT",
+                "anyOfGroups": ["RENT_ROLL"],
+                "textType": "table"
+            },
+            {
+                "name": "Rent is Net",
+                "placeholder": "Rent is Net",
+                "value": "NET_RENT",
+                "anyOfGroups": ["RENT_ROLL"],
+                "textType": "table"
+            },
+            {
+                "name": "Rent is Gross",
+                "placeholder": "Rent is Gross",
+                "value": "GROSS_RENT",
+                "anyOfGroups": ["RENT_ROLL"],
+                "textType": "table"
+            },
+            {
+                "name": "Free Rent is Net",
+                "placeholder": "Free Rent is Net",
+                "value": "NET_FREE_RENT",
+                "anyOfGroups": ["RENT_ROLL"],
+                "textType": "table"
+            },
+            {
+                "name": "Free Rent is Gross",
+                "placeholder": "Free Rent is Gross",
+                "value": "GROSS_FREE_RENT",
+                "anyOfGroups": ["RENT_ROLL"],
+                "textType": "table"
+            },
+            {
+                "name": "Free Rent Months",
+                "placeholder": "Free Rent Months",
+                "value": "FREE_RENT_MONTHS",
+                "anyOfGroups": ["RENT_ROLL"],
+                "textType": "table"
+            },
+            {
+                "name": "Free Rent Area",
+                "placeholder": "Free Rent Area",
+                "value": "FREE_RENT_AREA",
+                "anyOfGroups": ["RENT_ROLL"],
+                "textType": "table"
             }
         ],
         "modifiers": [
@@ -275,12 +501,16 @@ export default [
             {
                 "name": "Building Name",
                 "placeholder": "Name",
-                "value": "building_name"
+                "value": "building_name",
+                "anyOfGroups": ["COMPARABLE_SALE"],
+                "textType": "table"
             },
             {
                 "name": "Building Address",
                 "placeholder": "Address",
-                "value": "building_address"
+                "value": "building_address",
+                "anyOfGroups": ["COMPARABLE_SALE"],
+                "textType": "table"
             }
         ]
     },
@@ -290,12 +520,16 @@ export default [
             {
                 "name": "Price Per Square Foot",
                 "placeholder": "Price Per Square Foot",
-                "value": "price_per_square_foot"
+                "value": "price_per_square_foot",
+                "anyOfGroups": ["COMPARABLE_SALE"],
+                "textType": "table"
             },
             {
                 "name": "Capitalization Rate",
                 "placeholder": "Capitalization Rate",
-                "value": "capitalization_rate"
+                "value": "capitalization_rate",
+                "anyOfGroups": ["COMPARABLE_SALE"],
+                "textType": "table"
             }
         ]
     },
@@ -305,12 +539,16 @@ export default [
             {
                 "name": "Counterparty Name",
                 "placeholder": "Counterparty",
-                "value": "counterparty_name"
+                "value": "counterparty_name",
+                "anyOfGroups": ["LEASE"],
+                "textType": "block"
             },
             {
                 "name": "Counterparty Address",
                 "placeholder": "Address",
-                "value": "counterparty_address"
+                "value": "counterparty_address",
+                "anyOfGroups": ["LEASE"],
+                "textType": "block"
             }
         ]
     },
@@ -320,32 +558,44 @@ export default [
             {
                 "name": "Tenancy Address",
                 "placeholder": "Tenancy Address",
-                "value": "tenancy_address"
+                "value": "tenancy_address",
+                "anyOfGroups": ["LEASE"],
+                "textType": "block"
             },
             {
                 "name": "Tenancy Size",
                 "placeholder": "Tenancy Size",
-                "value": "size_square_feet"
+                "value": "size_square_feet",
+                "anyOfGroups": ["LEASE"],
+                "textType": "block"
             },
             {
                 "name": "Tenancy Term",
                 "placeholder": "Tenancy Term",
-                "value": "term"
+                "value": "term",
+                "anyOfGroups": ["LEASE"],
+                "textType": "block"
             },
             {
                 "name": "Rent",
                 "placeholder": "Rent (PSF $)",
-                "value": "rent_per_square_foot"
+                "value": "rent_per_square_foot",
+                "anyOfGroups": ["LEASE"],
+                "textType": "block"
             },
             {
                 "name": "Additional Rent Terms",
                 "placeholder": "Additional Rent Terms",
-                "value": "additional_rent_terms"
+                "value": "additional_rent_terms",
+                "anyOfGroups": ["LEASE"],
+                "textType": "block"
             },
             {
                 "name": "Free Rent",
                 "placeholder": "Free Rent",
-                "value": "free_rent"
+                "value": "free_rent",
+                "anyOfGroups": ["LEASE"],
+                "textType": "block"
             }
         ]
     }

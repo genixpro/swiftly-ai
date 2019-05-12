@@ -50,9 +50,9 @@ class BlockBackground extends React.Component
                         >
                             <div className={"block-background-unit-inner"}>
                                 {
-                                    titleLines.map((line) =>
+                                    titleLines.map((line, lineIndex) =>
                                     {
-                                        return <span>{line}<br/></span>
+                                        return <span key={lineIndex}>{line}<br/></span>
                                     })
                                 }
                             </div>
@@ -77,10 +77,9 @@ class AnnotationEditor extends React.Component
             width: 0,
             height: 0,
             currentPage: 0,
-            document: {
+            file: {
                 _id: {},
-                words: [],
-                pageTypes: []
+                words: []
             },
             imageZoom: 100,
             extractedData: {},
@@ -90,28 +89,38 @@ class AnnotationEditor extends React.Component
         this.selecting = false;
         this.tokens = {};
         this.hoveredFields = [];
-
-        this.pageTypes = [
-            "miscellaneous",
-            "operating_statement",
-            "rent_roll",
-            "miscellaneous_financial"
-        ];
-
-        this.humanFriendlyPageType = {
-            "miscellaneous": "Header / Footer / Miscellaneous",
-            "operating_statement": "Operating Statement",
-            "rent_roll": "Rent Rolls",
-            "miscellaneous_financial": "Miscellaneous Financial"
-        }
     }
-
 
     componentDidMount()
     {
-        this.setState({"document": this.props.document});
-        this.groupedByPage = _.groupBy(this.props.document.words, (word) => word.page);
+        axios.get(`/appraisal/${this.props.appraisalId}/files/${this.props.fileId}`).then((response) => {
+            const file = FileModel.create(response.data.file);
+            this.setState({file: file});
+            this.groupedByPage = _.groupBy(file.words, (word) => word.page);
+        });
     }
+
+    componentDidUpdate() {
+
+    }
+
+    saveFileData(newFile)
+    {
+        this.setState({file: newFile});
+
+        axios.post(`/appraisal/${this.props.appraisalId}/files/${this.props.fileId}`, newFile).then((response) => {
+            // const file = FileModel.create(response.data.file);
+            // this.setState({file: file});
+            // this.groupedByPage = _.groupBy(file.words, (word) => word.page);
+            // Object.keys(this.tokens).forEach((wordIndex) =>
+            // {
+            //     const token = this.tokens[wordIndex];
+            //     const word = file.words[wordIndex];
+            //     token.setState({word: word});
+            // });
+        });
+    }
+
 
     componentWillUnmount()
     {
@@ -152,7 +161,7 @@ class AnnotationEditor extends React.Component
         return Object.values(lineBounds);
     }
 
-    getColumnsLeft(page)
+    getColumns(page)
     {
         const columnBounds = {};
 
@@ -163,10 +172,15 @@ class AnnotationEditor extends React.Component
 
         this.groupedByPage[page].forEach((word) =>
         {
-            if (!columnBounds[word.columnLeft])
+            if (word.column === 0)
             {
-                columnBounds[word.columnLeft] = {
-                    columnLeft: word.columnLeft,
+                return;
+            }
+
+            if (!columnBounds[word.column])
+            {
+                columnBounds[word.column] = {
+                    column: word.column,
                     left: word.left,
                     right: word.right,
                     top: word.top,
@@ -175,48 +189,12 @@ class AnnotationEditor extends React.Component
             }
             else
             {
-                columnBounds[word.columnLeft] = {
-                    columnLeft: word.columnLeft,
-                    left: Math.min(columnBounds[word.columnLeft].left, word.left),
-                    right: Math.max(columnBounds[word.columnLeft].right, word.right),
-                    top: Math.min(columnBounds[word.columnLeft].top, word.top),
-                    bottom: Math.max(columnBounds[word.columnLeft].bottom, word.bottom)
-                }
-            }
-        });
-
-        return Object.values(columnBounds);
-    }
-
-    getColumnsRight(page)
-    {
-        const columnBounds = {};
-
-        if (!this.groupedByPage)
-        {
-            return [];
-        }
-
-        this.groupedByPage[page].forEach((word) =>
-        {
-            if (!columnBounds[word.columnRight])
-            {
-                columnBounds[word.columnRight] = {
-                    columnRight: word.columnRight,
-                    left: word.left,
-                    right: word.right,
-                    top: word.top,
-                    bottom: word.bottom
-                }
-            }
-            else
-            {
-                columnBounds[word.columnRight] = {
-                    columnRight: word.columnRight,
-                    left: Math.min(columnBounds[word.columnRight].left, word.left),
-                    right: Math.max(columnBounds[word.columnRight].right, word.right),
-                    top: Math.min(columnBounds[word.columnRight].top, word.top),
-                    bottom: Math.max(columnBounds[word.columnRight].bottom, word.bottom)
+                columnBounds[word.column] = {
+                    column: word.column,
+                    left: Math.min(columnBounds[word.column].left, word.left),
+                    right: Math.max(columnBounds[word.column].right, word.right),
+                    top: Math.min(columnBounds[word.column].top, word.top),
+                    bottom: Math.max(columnBounds[word.column].bottom, word.bottom)
                 }
             }
         });
@@ -345,9 +323,75 @@ class AnnotationEditor extends React.Component
         return groupBlocks;
     }
 
-    componentDidUpdate()
+    getFieldBlocks(page, groupSet)
     {
+        const fieldBlocks = [];
 
+        if (!this.groupedByPage)
+        {
+            return [];
+        }
+
+        let currentFieldBlock = null;
+
+        this.groupedByPage[page].forEach((word) =>
+        {
+            if (word.classification && word.classification !== "null")
+            {
+                if (!currentFieldBlock)
+                {
+                    currentFieldBlock = {
+                        classification: word.classification,
+                        modifiers: word.modifiers,
+                        left: word.left,
+                        top: word.top,
+                        right: word.right,
+                        bottom: word.bottom
+                    }
+                }
+                else if (word.classification === currentFieldBlock.classification &&
+                    word.modifiers.length === currentFieldBlock.modifiers.length &&
+                    _.all(word.modifiers, (modifier) => currentFieldBlock.modifiers.indexOf(modifier) !== -1))
+                {
+                    currentFieldBlock = {
+                        classification: word.classification,
+                        modifiers: word.modifiers,
+                        left: Math.min(currentFieldBlock.left, word.left),
+                        top: Math.min(currentFieldBlock.top, word.top),
+                        right: Math.max(currentFieldBlock.right, word.right),
+                        bottom: Math.max(currentFieldBlock.bottom, word.bottom)
+                    }
+                }
+                else
+                {
+                    fieldBlocks.push(currentFieldBlock);
+
+                    currentFieldBlock = {
+                        classification: word.classification,
+                        modifiers: word.modifiers,
+                        left: word.left,
+                        top: word.top,
+                        right: word.right,
+                        bottom: word.bottom
+                    }
+                }
+            }
+            else
+            {
+                if (currentFieldBlock)
+                {
+                    fieldBlocks.push(currentFieldBlock);
+                }
+                currentFieldBlock = null;
+            }
+        });
+
+        if (currentFieldBlock)
+        {
+            fieldBlocks.push(currentFieldBlock);
+        }
+
+        return fieldBlocks;
     }
 
     onWindowScroll(evt)
@@ -396,7 +440,6 @@ class AnnotationEditor extends React.Component
         {
             if (wordToken.state.selected)
             {
-                console.log("selected");
                 wordToken.setState({selected: false});
             }
         });
@@ -405,42 +448,73 @@ class AnnotationEditor extends React.Component
 
     onWordHoverStart(wordIndex)
     {
-        const word = this.state.document.words[wordIndex];
+        const word = this.state.file.words[wordIndex];
         const wordToken = this.tokens[wordIndex];
 
         this.setState({selectedWord: word});
 
         if (this.selecting)
         {
-            const startWord = this.state.document.words[this.selectStart];
+            let selectMode = "box";
+            if (this.state.view === 'tables' || this.state.view === 'dataGroups' || this.state.view === 'lines')
+            {
+                selectMode = 'line';
+            }
+
+            const startWord = this.state.file.words[this.selectStart];
             // const startWordToken = this.tokens[this.selectStart];
 
-            const endWord = this.state.document.words[wordIndex];
+            const endWord = this.state.file.words[wordIndex];
             // const endWordToken = this.tokens[wordIndex];
 
-            const selectTop = Math.min(startWord.top, endWord.top);
-            const selectBottom = Math.max(startWord.bottom, endWord.bottom);
-            const selectLeft = Math.min(startWord.left, endWord.left);
-            const selectRight = Math.max(startWord.right, endWord.right);
-
-
-            Object.values(this.tokens).forEach((wordToken, wordTokenIndex) =>
+            if (selectMode === 'box')
             {
-                const shouldSelectHorizontal = (wordToken.props.word.left <= selectRight) && (wordToken.props.word.right >= selectLeft);
-                const shouldSelectVertical = (wordToken.props.word.top <= selectBottom) && (wordToken.props.word.bottom >= selectTop);
+                const selectTop = Math.min(startWord.top, endWord.top);
+                const selectBottom = Math.max(startWord.bottom, endWord.bottom);
+                const selectLeft = Math.min(startWord.left, endWord.left);
+                const selectRight = Math.max(startWord.right, endWord.right);
 
-                const shouldSelect = shouldSelectHorizontal && shouldSelectVertical;
 
-                // const shouldSelect = (wordTokenIndex >= wordIndex && wordTokenIndex <= this.selectStart) || (wordTokenIndex >= this.selectStart && wordTokenIndex <= wordIndex);
-                if (wordToken.state.selected && !shouldSelect)
+                Object.values(this.tokens).forEach((wordToken, wordTokenIndex) =>
                 {
-                    wordToken.setState({selected: false});
-                }
-                else if (!wordToken.state.selected && shouldSelect)
+                    const shouldSelectHorizontal = (wordToken.props.word.left <= selectRight) && (wordToken.props.word.right >= selectLeft);
+                    const shouldSelectVertical = (wordToken.props.word.top <= selectBottom) && (wordToken.props.word.bottom >= selectTop);
+
+                    const shouldSelect = shouldSelectHorizontal && shouldSelectVertical;
+
+                    // const shouldSelect = (wordTokenIndex >= wordIndex && wordTokenIndex <= this.selectStart) || (wordTokenIndex >= this.selectStart && wordTokenIndex <= wordIndex);
+                    if (wordToken.state.selected && !shouldSelect)
+                    {
+                        wordToken.setState({selected: false});
+                    }
+                    else if (!wordToken.state.selected && shouldSelect)
+                    {
+                        wordToken.setState({selected: true});
+                    }
+                });
+            }
+            else if (selectMode === 'line')
+            {
+                const startLine = Math.min(startWord.lineNumber, endWord.lineNumber);
+                const endLine = Math.max(startWord.lineNumber, endWord.lineNumber);
+
+
+                Object.values(this.tokens).forEach((wordToken, wordTokenIndex) =>
                 {
-                    wordToken.setState({selected: true});
-                }
-            });
+                    const shouldSelect = wordToken.state.word.lineNumber >= startLine && wordToken.state.word.lineNumber <= endLine;
+
+                    // const shouldSelect = (wordTokenIndex >= wordIndex && wordTokenIndex <= this.selectStart) || (wordTokenIndex >= this.selectStart && wordTokenIndex <= wordIndex);
+                    if (wordToken.state.selected && !shouldSelect)
+                    {
+                        wordToken.setState({selected: false});
+                    }
+                    else if (!wordToken.state.selected && shouldSelect)
+                    {
+                        wordToken.setState({selected: true});
+                    }
+                });
+            }
+
         }
 
         word[AnnotationEditor._hover] = true;
@@ -449,7 +523,7 @@ class AnnotationEditor extends React.Component
 
     onWordHoverEnd(wordIndex)
     {
-        const word = this.state.document.words[wordIndex];
+        const word = this.state.file.words[wordIndex];
         const wordToken = this.tokens[wordIndex];
 
         word[AnnotationEditor._hover] = false;
@@ -472,15 +546,17 @@ class AnnotationEditor extends React.Component
 
         Object.values(this.tokens).forEach((wordToken) =>
         {
-            if (wordToken.state.selected)
+            if (wordToken.state.selected || wordToken.state.word[AnnotationEditor._hover])
             {
                 const word = wordToken.state.word;
                 word.classification = "null";
                 word.modifiers = [];
-                wordToken.setState({word: word, selected: false});
+                wordToken.setState({word: word});
             }
         });
-        this.props.saveFile(this.state.document);
+        this.createWordGroup(evt, null, "ITEMS", false);
+
+        this.saveFileData(this.state.file);
     }
 
     changeWordClassification(evt, newClass)
@@ -489,16 +565,15 @@ class AnnotationEditor extends React.Component
 
         Object.values(this.tokens).forEach((wordToken) =>
         {
-            if (wordToken.state.selected)
+            if (wordToken.state.selected || wordToken.state.word[AnnotationEditor._hover])
             {
                 const word = wordToken.state.word;
                 word.classification = newClass;
                 wordToken.setState({word: word, selected: false});
             }
         });
-        this.createWordGroup(evt, null, "ITEMS", false);
 
-        this.props.saveFile(this.state.document);
+        this.saveFileData(this.state.file);
     }
 
     changeTextType(evt, newTextType)
@@ -509,7 +584,7 @@ class AnnotationEditor extends React.Component
 
         Object.values(this.tokens).forEach((wordToken) =>
         {
-            if (wordToken.state.selected)
+            if (wordToken.state.selected || wordToken.state.word[AnnotationEditor._hover])
             {
                 const word = wordToken.state.word;
                 selectedLines[word.lineNumber] = true;
@@ -524,7 +599,7 @@ class AnnotationEditor extends React.Component
                 wordToken.setState({word: word, selected: false});
             }
         });
-        this.props.saveFile(this.state.document);
+        this.saveFileData(this.state.file);
     }
 
     createWordGroup(evt, groupType, groupSet, continuePrevious)
@@ -536,7 +611,7 @@ class AnnotationEditor extends React.Component
 
         Object.values(this.tokens).forEach((wordToken) =>
         {
-            if (wordToken.state.selected)
+            if (wordToken.state.selected || wordToken.state.word[AnnotationEditor._hover])
             {
                 const word = wordToken.state.word;
 
@@ -557,7 +632,7 @@ class AnnotationEditor extends React.Component
         let handlingNewGroup = false;
         let handlingPostGroups = false;
         let lastGroupType = null;
-        this.props.document.words.forEach((word) =>
+        this.state.file.words.forEach((word) =>
         {
             if (word.documentLineNumber < startLineNumber)
             {
@@ -637,8 +712,8 @@ class AnnotationEditor extends React.Component
                 this.tokens[word.index].setState({word: word, selected: false});
             }
         });
-        this.setState({document: this.state.document});
-        this.props.saveFile(this.state.document);
+        this.setState({file: this.state.file});
+        this.saveFileData(this.state.file);
     }
 
     selectionModifiers()
@@ -647,7 +722,7 @@ class AnnotationEditor extends React.Component
         const all = {};
         Object.values(this.tokens).forEach((wordToken) =>
         {
-            if (wordToken.state.selected)
+            if (wordToken.state.selected || wordToken.state.word[AnnotationEditor._hover])
             {
                 for (let modifier of wordToken.state.word.modifiers)
                 {
@@ -672,30 +747,137 @@ class AnnotationEditor extends React.Component
         return {present: Object.keys(present), all: _.filter(Object.keys(all), (key) => all[key])};
     }
 
+    selectionGroups()
+    {
+        const present = {};
+        const all = {};
+        const allGroupSets = {};
+
+        Object.values(this.tokens).forEach((wordToken) =>
+        {
+            if (wordToken.state.selected || wordToken.state.word[AnnotationEditor._hover])
+            {
+                for (let groupSet of Object.keys(wordToken.state.word.groups))
+                {
+                    const group = wordToken.state.word.groups[groupSet];
+
+                    if(group)
+                    {
+                        present[group] = true;
+
+                        if (_.isUndefined(all[group]))
+                        {
+                            all[group] = true;
+                            allGroupSets[group] = groupSet;
+                        }
+                    }
+                }
+
+                for (let allGroup of Object.keys(all))
+                {
+                    const groupSet = allGroupSets[allGroup];
+                    if (wordToken.state.word.groups[groupSet] !== allGroup)
+                    {
+                        all[allGroup] = false;
+                    }
+                }
+            }
+        });
+
+        return {present: Object.keys(present), all: _.filter(Object.keys(all), (key) => all[key])};
+    }
+
+    selectionTextTypes()
+    {
+        const present = {};
+        const all = {};
+        Object.values(this.tokens).forEach((wordToken) =>
+        {
+            if (wordToken.state.selected || wordToken.state.word[AnnotationEditor._hover])
+            {
+                present[wordToken.state.word.textType] = true;
+
+                if (_.isUndefined(all[wordToken.state.word.textType]))
+                {
+                    all[wordToken.state.word.textType] = true;
+                }
+
+                for (let allTextType of Object.keys(all))
+                {
+                    if(wordToken.state.word.textType !== allTextType)
+                    {
+                        all[allTextType] = false;
+                    }
+                }
+            }
+        });
+
+        return {present: Object.keys(present), all: _.filter(Object.keys(all), (key) => all[key])};
+    }
+
+    selectedLineNumbers()
+    {
+        const present = {};
+        Object.values(this.tokens).forEach((wordToken) =>
+        {
+            if (wordToken.state.selected || wordToken.state.word[AnnotationEditor._hover])
+            {
+                present[wordToken.state.word.lineNumber] = true;
+            }
+        });
+
+        return Object.keys(present).map((num) => Number(num));
+    }
+
 
     addWordModifiers(evt, newModifier)
     {
         evt.stopPropagation();
 
-        Object.values(this.tokens).forEach((wordToken) =>
+        if (this.getAnnotationInformation(newModifier).applyAcrossLine)
         {
-            if (wordToken.state.selected)
+            const selectionLineNumbers = this.selectedLineNumbers();
+            Object.values(this.tokens).forEach((wordToken) =>
             {
                 const word = wordToken.state.word;
-                if (!word.modifiers)
+                if (selectionLineNumbers.indexOf(word.lineNumber) !== -1)
                 {
-                    word.modifiers = [];
-                }
+                    if (!word.modifiers)
+                    {
+                        word.modifiers = [];
+                    }
 
-                if (word.modifiers.indexOf(newModifier) === -1)
+                    if (word.modifiers.indexOf(newModifier) === -1)
+                    {
+                        word.modifiers.push(newModifier);
+                    }
+
+                    wordToken.setState({word: word, selected: false});
+                }
+            });
+        }
+        else
+        {
+            Object.values(this.tokens).forEach((wordToken) =>
+            {
+                if (wordToken.state.selected || wordToken.state.word[AnnotationEditor._hover])
                 {
-                    word.modifiers.push(newModifier);
-                }
+                    const word = wordToken.state.word;
+                    if (!word.modifiers)
+                    {
+                        word.modifiers = [];
+                    }
 
-                wordToken.setState({word: word, selected: false});
-            }
-        });
-        this.props.saveFile(this.state.document);
+                    if (word.modifiers.indexOf(newModifier) === -1)
+                    {
+                        word.modifiers.push(newModifier);
+                    }
+
+                    wordToken.setState({word: word, selected: false});
+                }
+            });
+        }
+        this.saveFileData(this.state.file);
     }
 
 
@@ -705,7 +887,7 @@ class AnnotationEditor extends React.Component
 
         Object.values(this.tokens).forEach((wordToken) =>
         {
-            if (wordToken.state.selected)
+            if (wordToken.state.selected || wordToken.state.word[AnnotationEditor._hover])
             {
                 const word = wordToken.state.word;
                 if (!word.modifiers)
@@ -721,7 +903,7 @@ class AnnotationEditor extends React.Component
                 wordToken.setState({word: word, selected: false});
             }
         });
-        this.props.saveFile(this.state.document);
+        this.saveFileData(this.state.file);
     }
 
     getAnnotationInformation(value)
@@ -764,7 +946,7 @@ class AnnotationEditor extends React.Component
 
     saveFile()
     {
-        this.props.saveFile(this.state.document);
+        this.saveFileData(this.state.file);
     }
 
 
@@ -832,15 +1014,7 @@ class AnnotationEditor extends React.Component
         {
             const element = document.getElementById('annotation-editor-image-outer-container');
             element.scrollLeft = Math.max(0, this.dragStartElementScrollX + this.dragStartX - evt.clientX);
-            console.log(evt.clientX - this.dragStartX)
         }
-    }
-
-    onPageTypeChanged(page, newPageType)
-    {
-        const document = this.state.document;
-        document.pageTypes[page] = newPageType;
-        this.setState({document: document}, () => this.saveFile());
     }
 
     reprocessFile()
@@ -854,35 +1028,32 @@ class AnnotationEditor extends React.Component
     }
 
 
+
+
     render()
     {
+        // Calculated here to avoid redundancy
+        const groupSet = this.groupSetForCurrentView();
+        const {present:presentSelectionModifiers,all:allSelectionModifiers} = this.selectionModifiers();
+        const {present:presentSelectionGroups, all:allSelectionGroups} = this.selectionGroups();
+        const {present:presentSelectionTextTypes} = this.selectionTextTypes();
+
         return (
             <div id={"annotation-editor-extractions"} onMouseUp={this.onMouseUp.bind(this)} onMouseMove={this.onMouseMove.bind(this)}>
                 <Row>
                     <Col xs={2}>
                         {
-                            _.range(this.state.document.pages).map((page) =>
+                            _.range(this.state.file.pages).map((page) =>
                             {
                                 return <Card outline color="primary" className="annotation-editor-thumbnail-container" key={page}>
                                     <CardBody>
                                         <img
                                             alt="Document Preview"
                                             id={`annotation-editor-image-${page}-thumbnail`}
-                                            src={`${process.env.VALUATE_ENVIRONMENT.REACT_APP_SERVER_URL}appraisal/${this.props.document.appraisalId}/files/${this.props.document._id}/rendered/${page}?access_token=${Auth.getAccessToken()}`}
-                                            onLoad={this.componentDidUpdate.bind(this)}
+                                            src={`${process.env.VALUATE_ENVIRONMENT.REACT_APP_SERVER_URL}appraisal/${this.props.appraisalId}/files/${this.props.fileId}/rendered/${page}?access_token=${Auth.getAccessToken()}`}
                                             onClick={() => this.changePage(page)}
                                             className="annotationEditorImageThumbnail"
                                         />
-
-                                        <select className="custom-select" value={this.state.document.pageTypes[page]}
-                                                onChange={(evt) => this.onPageTypeChanged(page, evt.target.value)}>
-                                            {
-                                                this.pageTypes.map((pageType) => <option key={pageType}
-                                                                                         value={pageType}>{this.humanFriendlyPageType[pageType]}</option>)
-                                            }
-                                        </select>
-
-                                        {/*<span>{this.humanFriendlyPageType[this.state.document.pageTypes[page]]}</span>*/}
                                     </CardBody>
                                 </Card>;
                             })
@@ -898,26 +1069,13 @@ class AnnotationEditor extends React.Component
                                         onChange={(evt) => this.onViewChanged(this.state.currentPage, evt.target.value)}>
                                     <option value={"tables"}>Tables</option>
                                     <option value={"lines"}>Lines</option>
-                                    <option value={"columnLeft"}>Columns (Left Alignment)</option>
-                                    <option value={"columnRight"}>Columns (Right Alignnment)</option>
+                                    <option value={"columns"}>Columns</option>
                                     <option value={"dataGroups"}>Data Groups</option>
                                     <option value={"fields"}>Fields</option>
                                 </select>
                             </div>
                             <div>
                                 <ActionButton onClick={() => this.reprocessFile()}> Reprocess </ActionButton>
-                            </div>
-                            <div className={"toolbar-label"}>
-                                <span>Page Type</span>
-                            </div>
-                            <div>
-                                <select className="custom-select" value={this.state.document.pageTypes[this.state.currentPage]}
-                                        onChange={(evt) => this.onPageTypeChanged(this.state.currentPage, evt.target.value)}>
-                                    {
-                                        this.pageTypes.map((pageType) => <option key={pageType}
-                                                                                 value={pageType}>{this.humanFriendlyPageType[pageType]}</option>)
-                                    }
-                                </select>
                             </div>
                             <div>
                                 <em className="fa-2x icon-magnifier-add mr-2" onClick={() => this.zoomIn()}></em>
@@ -936,12 +1094,12 @@ class AnnotationEditor extends React.Component
                                 <img
                                     alt="Document"
                                     id={`annotation-editor-image-${this.state.currentPage}`}
-                                    src={`${process.env.VALUATE_ENVIRONMENT.REACT_APP_SERVER_URL}appraisal/${this.props.document.appraisalId}/files/${this.props.document._id}/rendered/${this.state.currentPage}?access_token=${Auth.getAccessToken()}`}
+                                    src={`${process.env.VALUATE_ENVIRONMENT.REACT_APP_SERVER_URL}appraisal/${this.props.appraisalId}/files/${this.props.fileId}/rendered/${this.state.currentPage}?access_token=${Auth.getAccessToken()}`}
                                     onLoad={this.componentDidUpdate.bind(this)}
                                     className="annotationEditorImage"
                                 />
                                 {
-                                    this.state.view === 'lines' ? this.getLines(this.state.currentPage).map((line) =>
+                                    this.state.view === 'lines' ? this.getLines(this.state.currentPage).map((line, lineIndex) =>
                                     {
                                         const position = {
                                             "left": (line.left * 100).toString() + "%",
@@ -950,13 +1108,13 @@ class AnnotationEditor extends React.Component
                                             "height": (line.bottom * 100 - line.top * 100).toString() + "%"
                                         };
 
-                                        return <div style={position} className={"line-token"}>
+                                        return <div style={position} className={"line-token"} key={lineIndex} title={`Line ${lineIndex+1}`}>
 
                                         </div>
                                     }) : null
                                 }
                                 {
-                                    this.state.view === 'columnLeft' ? this.getColumnsLeft(this.state.currentPage).map((column) =>
+                                    this.state.view === 'columns' ? this.getColumns(this.state.currentPage).map((column, columnIndex) =>
                                     {
                                         const position = {
                                             "left": (column.left * 100).toString() + "%",
@@ -965,8 +1123,8 @@ class AnnotationEditor extends React.Component
                                             "height": (column.bottom * 100 - column.top * 100).toString() + "%"
                                         };
 
-                                        return <div style={position} className={"column-token"}>
-                                            <BlockBackground title={`#${column.columnLeft}`}
+                                        return <div style={position} className={"column-token"} key={columnIndex} title={`Column #${column.column}`}>
+                                            <BlockBackground title={`#${column.column}`}
                                                              width={(column.right - column.left) * (this.state.imageZoom/100) * document.body.getBoundingClientRect().width}
                                                              height={(column.bottom - column.top) * (this.state.imageZoom/100) * document.body.getBoundingClientRect().height}
                                             />
@@ -974,25 +1132,7 @@ class AnnotationEditor extends React.Component
                                     }) : null
                                 }
                                 {
-                                    this.state.view === 'columnRight' ? this.getColumnsRight(this.state.currentPage).map((column) =>
-                                    {
-                                        const position = {
-                                            "left": (column.left * 100).toString() + "%",
-                                            "top": (column.top * 100).toString() + "%",
-                                            "width": (column.right * 100 - column.left * 100).toString() + "%",
-                                            "height": (column.bottom * 100 - column.top * 100).toString() + "%"
-                                        };
-
-                                        return <div style={position} className={"column-token"}>
-                                            <BlockBackground title={`#${column.columnRight}`}
-                                                             width={(column.right - column.left) * (this.state.imageZoom/100) * document.body.getBoundingClientRect().width}
-                                                             height={(column.bottom - column.top) * (this.state.imageZoom/100) * document.body.getBoundingClientRect().height}
-                                            />
-                                        </div>
-                                    }) : null
-                                }
-                                {
-                                    this.state.view === 'tables' ? this.getTextTypeBlocks(this.state.currentPage).map((tableBlock) =>
+                                    this.state.view === 'tables' ? this.getTextTypeBlocks(this.state.currentPage).map((tableBlock, tableBlockIndex) =>
                                     {
                                         const position = {
                                             "left": (tableBlock.left * 100).toString() + "%",
@@ -1001,7 +1141,7 @@ class AnnotationEditor extends React.Component
                                             "height": (tableBlock.bottom * 100 - tableBlock.top * 100).toString() + "%"
                                         };
 
-                                        return <div style={position} className={`table-block-token ${tableBlock.textType}`}>
+                                        return <div style={position} className={`table-block-token ${tableBlock.textType}`} key={tableBlockIndex} title={tableBlock.textType}>
                                             <BlockBackground title={tableBlock.textType}
                                                              width={(tableBlock.right - tableBlock.left) * (this.state.imageZoom/100) * document.body.getBoundingClientRect().width}
                                                              height={(tableBlock.bottom - tableBlock.top) * (this.state.imageZoom/100) * document.body.getBoundingClientRect().height}
@@ -1010,7 +1150,20 @@ class AnnotationEditor extends React.Component
                                     }) : null
                                 }
                                 {
-                                    this.state.view === 'dataGroups' ? this.getGroupBlocks(this.state.currentPage, "DATA_TYPE").map((groupBlock) =>
+                                    this.state.view === 'fields' ? this.getFieldBlocks(this.state.currentPage).map((fieldBlock, fieldBlockIndex) =>
+                                    {
+                                        const position = {
+                                            "left": (fieldBlock.left * 100).toString() + "%",
+                                            "top": (fieldBlock.top * 100).toString() + "%",
+                                            "width": (fieldBlock.right * 100 - fieldBlock.left * 100).toString() + "%",
+                                            "height": (fieldBlock.bottom * 100 - fieldBlock.top * 100).toString() + "%"
+                                        };
+
+                                        return <div style={position} className={`field-block-token ${fieldBlock.textType}`} key={fieldBlockIndex} title={fieldBlock.classification} />
+                                    }) : null
+                                }
+                                {
+                                    groupSet !== null ? this.getGroupBlocks(this.state.currentPage, groupSet).map((groupBlock, groupBlockIndex) =>
                                     {
                                         const position = {
                                             "left": (groupBlock.left * 100).toString() + "%",
@@ -1019,7 +1172,7 @@ class AnnotationEditor extends React.Component
                                             "height": (groupBlock.bottom * 100 - groupBlock.top * 100).toString() + "%"
                                         };
 
-                                        return <div style={position} className={`group-block-token ${groupBlock.group}`}>
+                                        return <div style={position} className={`group-block-token ${groupBlock.group}`} key={groupBlockIndex} title={`${this.getAnnotationInformation(groupBlock.group).name} ${groupBlock.groupNumber}`}>
                                             <BlockBackground title={`${this.getAnnotationInformation(groupBlock.group).name}\n${groupBlock.groupNumber}`}
                                                              width={(groupBlock.right - groupBlock.left) * (this.state.imageZoom/100) * document.body.getBoundingClientRect().width}
                                                              height={(groupBlock.bottom - groupBlock.top) * (this.state.imageZoom/100) * document.body.getBoundingClientRect().height}
@@ -1028,25 +1181,7 @@ class AnnotationEditor extends React.Component
                                     }) : null
                                 }
                                 {
-                                    this.state.view === 'fields' ? this.getGroupBlocks(this.state.currentPage, "ITEMS").map((groupBlock) =>
-                                    {
-                                        const position = {
-                                            "left": (groupBlock.left * 100).toString() + "%",
-                                            "top": (groupBlock.top * 100).toString() + "%",
-                                            "width": (groupBlock.right * 100 - groupBlock.left * 100).toString() + "%",
-                                            "height": (groupBlock.bottom * 100 - groupBlock.top * 100).toString() + "%"
-                                        };
-
-                                        return <div style={position} className={`group-block-token ${groupBlock.group}`}>
-                                            <BlockBackground title={`${this.getAnnotationInformation(groupBlock.group).name}\n${groupBlock.groupNumber}`}
-                                                             width={(groupBlock.right - groupBlock.left) * (this.state.imageZoom/100) * document.body.getBoundingClientRect().width}
-                                                             height={(groupBlock.bottom - groupBlock.top) * (this.state.imageZoom/100) * document.body.getBoundingClientRect().height}
-                                            />
-                                        </div>
-                                    }) : null
-                                }
-                                {
-                                    this.state.document.words.map((word, wordIndex) =>
+                                    this.state.file.words.map((word, wordIndex) =>
                                     {
                                         if (word.page === this.state.currentPage)
                                         {
@@ -1079,9 +1214,10 @@ class AnnotationEditor extends React.Component
                                             <CardBody>
                                                 <p>Text: {this.state.selectedWord.word}</p>
                                                 <p>Line: {this.state.selectedWord.lineNumber}</p>
-                                                <p>Left Column: {this.state.selectedWord.columnLeft}</p>
-                                                <p>Right Column: {this.state.selectedWord.columnRight}</p>
+                                                <p>Column: {this.state.selectedWord.column}</p>
                                                 <p>Classification: {this.state.selectedWord.classification}</p>
+                                                <p>Groups: {JSON.stringify(this.state.selectedWord.groups)}</p>
+                                                <p>Index: {this.state.selectedWord.index}</p>
                                                 <p>Modifiers: {this.state.selectedWord.modifiers && this.state.selectedWord.modifiers.map((item, itemIndex) =>
                                                 {
                                                     if (itemIndex === this.state.selectedWord.modifiers.length - 1)
@@ -1106,10 +1242,10 @@ class AnnotationEditor extends React.Component
                                             <CardHeader className="text-white bg-primary">Debug</CardHeader>
                                             <CardBody>
                                                 {
-                                                    Object.keys(this.state.selectedWord.classificationProbabilities).map((label) =>
+                                                    Object.keys(this.state.selectedWord.classificationProbabilities).map((label, labelIndex) =>
                                                     {
                                                         const prob = this.state.selectedWord.classificationProbabilities[label];
-                                                        return <Row>
+                                                        return <Row key={labelIndex}>
                                                             <Col xs={6}>
                                                                 <span>{label}</span>
                                                             </Col>
@@ -1120,10 +1256,10 @@ class AnnotationEditor extends React.Component
                                                     })
                                                 }
                                                 {
-                                                    Object.keys(this.state.selectedWord.modifierProbabilities).map((label) =>
+                                                    Object.keys(this.state.selectedWord.modifierProbabilities).map((label, labelIndex) =>
                                                     {
                                                         const prob = this.state.selectedWord.modifierProbabilities[label];
-                                                        return <Row>
+                                                        return <Row key={labelIndex}>
                                                             <Col xs={6}>
                                                                 <span>{label}</span>
                                                             </Col>
@@ -1138,79 +1274,6 @@ class AnnotationEditor extends React.Component
                                     </Col>
                                 </Row> : null
                             }
-                            {/*{*/}
-                            {/*this.props.annotationFields.map((group) =>*/}
-                            {/*{*/}
-                            {/*if (group.multiple)*/}
-                            {/*{*/}
-                            {/*return <Row key={group.name}>*/}
-                            {/*<Col xs={12}>*/}
-                            {/*<Card outline color="primary" className="mb-3">*/}
-                            {/*<CardHeader className="text-white bg-primary">{group.name}</CardHeader>*/}
-                            {/*<CardBody>*/}
-                            {/*<Table striped bordered hover responsive>*/}
-                            {/*<thead>*/}
-                            {/*<tr>*/}
-                            {/*{group.fields.map((field) => <th key={field.name}>{field.name}</th>)}*/}
-                            {/*</tr>*/}
-                            {/*</thead>*/}
-                            {/*<tbody>*/}
-                            {/*{*/}
-                            {/*this.state.extractedData[group.value] && this.state.extractedData[group.value].map((item) =>*/}
-                            {/*{*/}
-                            {/*return <tr key={item.lineNumber}>*/}
-                            {/*{group.fields.map((field) => <td*/}
-                            {/*id={`${field.value}-${item.lineNumber}-field`}*/}
-                            {/*key={`${item.lineNumber}-${field.value}`}*/}
-                            {/*onMouseEnter={this.onFormHoverStart.bind(this, `${field.value}-${item.lineNumber}`)}*/}
-                            {/*onMouseLeave={this.onFormHoverEnd.bind(this, `${field.value}-${item.lineNumber}`)}*/}
-                            {/*>*/}
-                            {/*<span>{item[field.value]}</span>*/}
-                            {/*</td>)}*/}
-                            {/*</tr>*/}
-                            {/*})*/}
-                            {/*}*/}
-                            {/*</tbody>*/}
-                            {/*</Table>*/}
-                            {/*</CardBody>*/}
-                            {/*</Card>*/}
-                            {/*</Col>*/}
-                            {/*</Row>;*/}
-                            {/*}*/}
-                            {/*else*/}
-                            {/*{*/}
-                            {/*return <Row key={group.name}>*/}
-                            {/*<Col xs={12}>*/}
-                            {/*<Card outline color="primary" className="mb-3">*/}
-                            {/*<CardHeader className="text-white bg-primary">{group.name}</CardHeader>*/}
-                            {/*<CardBody>*/}
-                            {/*<form onSubmit={this.onSubmit}>*/}
-                            {/*{group.fields.map((field) =>*/}
-                            {/*<FormGroup*/}
-                            {/*key={field.value}*/}
-                            {/*className={"annotation-editor-form-field"}*/}
-                            {/*onMouseEnter={this.onFormHoverStart.bind(this, field.value)}*/}
-                            {/*onMouseLeave={this.onFormHoverEnd.bind(this, field.value)}*/}
-                            {/*>*/}
-                            {/*<label className={"annotation-editor-form-field-title"}>{field.name}</label>*/}
-                            {/*<div className={"annotation-editor-form-data"} id={`${field.value}-field`}>*/}
-                            {/*{*/}
-                            {/*this.state.extractedData[field.value] ?*/}
-                            {/*<Badge color="secondary" className={"annotation-editor-extracted-data"}>*/}
-                            {/*{this.state.extractedData[field.value]}*/}
-                            {/*</Badge> : ""*/}
-                            {/*}*/}
-                            {/*</div>*/}
-                            {/*</FormGroup>)*/}
-                            {/*}*/}
-                            {/*</form>*/}
-                            {/*</CardBody>*/}
-                            {/*</Card>*/}
-                            {/*</Col>*/}
-                            {/*</Row>;*/}
-                            {/*}*/}
-                            {/*})*/}
-                            {/*}*/}
                         </div>
                     </Col>
                 </Row>
@@ -1228,20 +1291,40 @@ class AnnotationEditor extends React.Component
                             </MenuItem> : null
                     }
                     {
-                        this.props.annotationFields.map((group) =>
+                        this.props.annotationFields.map((annotationFieldGroup) =>
                         {
-                            const groupSet = this.groupSetForCurrentView();
-
-                            const {present:presentModifiers,all:allModifiers} = this.selectionModifiers();
-
-                            let groupsElement = null;
-                            if (group.groups)
+                            let groupsElement = [];
+                            if (annotationFieldGroup.groups)
                             {
-                                groupsElement = group.groups.map((wordGroup) =>
+                                groupsElement = annotationFieldGroup.groups.map((wordGroup) =>
                                 {
                                     if (wordGroup.groupSet !== groupSet)
                                     {
                                         return null;
+                                    }
+
+                                    if (wordGroup.anyOfGroups)
+                                    {
+                                        if (!_.any(wordGroup.anyOfGroups, (group) => presentSelectionGroups.indexOf(group) !== -1))
+                                        {
+                                            return null;
+                                        }
+                                    }
+
+                                    if (wordGroup.requiredGroups)
+                                    {
+                                        if (!_.all(wordGroup.requiredGroups, (group) => allSelectionGroups.indexOf(group) !== -1))
+                                        {
+                                            return null;
+                                        }
+                                    }
+
+                                    if (wordGroup.textType)
+                                    {
+                                        if (presentSelectionTextTypes.indexOf(wordGroup.textType) === -1)
+                                        {
+                                            return null;
+                                        }
                                     }
 
                                     return <MenuItem onClick={(evt, data) => this.createWordGroup(evt, wordGroup.value, wordGroup.groupSet)} key={wordGroup.value}>
@@ -1249,33 +1332,83 @@ class AnnotationEditor extends React.Component
                                     </MenuItem>
                                 });
                             }
+                            groupsElement = _.filter(groupsElement, (elem) => elem);
 
-                            let fieldsElement = null;
-                            if (this.state.view === 'fields' && group.fields)
+                            let fieldsElement = [];
+                            if (this.state.view === 'fields' && annotationFieldGroup.fields)
                             {
-                                fieldsElement = group.fields.map((field) =>
+                                fieldsElement = annotationFieldGroup.fields.map((field) =>
                                 {
+                                    if (field.anyOfGroups)
+                                    {
+                                        if (!_.any(field.anyOfGroups, (group) => presentSelectionGroups.indexOf(group) !== -1))
+                                        {
+                                            return null;
+                                        }
+                                    }
+
+                                    if (field.requiredGroups)
+                                    {
+                                        if (!_.all(field.requiredGroups, (group) => allSelectionGroups.indexOf(group) !== -1))
+                                        {
+                                            return null;
+                                        }
+                                    }
+
+                                    if (field.textType)
+                                    {
+                                        if (presentSelectionTextTypes.indexOf(field.textType) === -1)
+                                        {
+                                            return null;
+                                        }
+                                    }
+
                                     return <MenuItem onClick={(evt, data) => this.changeWordClassification(evt, field.value)} key={field.value}>
                                         {field.name}
                                     </MenuItem>
                                 });
                             }
+                            fieldsElement = _.filter(fieldsElement, (elem) => elem);
 
-                            let modifiersElement = null;
-                            if (this.state.view === 'fields' && group.modifiers)
+                            let modifiersElement = [];
+                            if (this.state.view === 'fields' && annotationFieldGroup.modifiers)
                             {
-                                modifiersElement = group.modifiers.map((modifier) =>
+                                modifiersElement = annotationFieldGroup.modifiers.map((modifier) =>
                                 {
                                     const elems = [];
 
-                                    if (presentModifiers.indexOf(modifier.value) !== -1)
+                                    if (modifier.anyOfGroups)
+                                    {
+                                        if (!_.any(modifier.anyOfGroups, (group) => presentSelectionGroups.indexOf(group) !== -1))
+                                        {
+                                            return null;
+                                        }
+                                    }
+
+                                    if (modifier.requiredGroups)
+                                    {
+                                        if (!_.all(modifier.requiredGroups, (group) => allSelectionGroups.indexOf(group) !== -1))
+                                        {
+                                            return null;
+                                        }
+                                    }
+
+                                    if (modifier.textType)
+                                    {
+                                        if (presentSelectionTextTypes.indexOf(modifier.textType) === -1)
+                                        {
+                                            return null;
+                                        }
+                                    }
+
+                                    if (presentSelectionModifiers.indexOf(modifier.value) !== -1)
                                     {
                                         elems.push(<MenuItem onClick={(evt, data) => this.removeWordModifiers(evt, modifier.value)} key={modifier.value + "-"}>
                                             --{modifier.name}
                                         </MenuItem>);
                                     }
 
-                                    if (allModifiers.indexOf(modifier.value) === -1)
+                                    if (allSelectionModifiers.indexOf(modifier.value) === -1)
                                     {
                                         elems.push(<MenuItem onClick={(evt, data) => this.addWordModifiers(evt, modifier.value)} key={modifier.value + "+"}>
                                             ++{modifier.name}
@@ -1285,13 +1418,14 @@ class AnnotationEditor extends React.Component
                                     return elems;
                                 })
                             }
+                            modifiersElement = _.filter(modifiersElement, (elem) => elem);
 
-                            if (!groupsElement && !fieldsElement && !modifiersElement)
+                            if ((!groupsElement || groupsElement.length === 0) && (!fieldsElement || fieldsElement.length === 0) && (!modifiersElement || modifiersElement.length === 0))
                             {
                                 return null;
                             }
 
-                            return <SubMenu title={group.name} key={group.name}>
+                            return <SubMenu title={annotationFieldGroup.name} key={annotationFieldGroup.name}>
                                 {groupsElement}
                                 {fieldsElement}
                                 {modifiersElement}

@@ -88,22 +88,18 @@ class DocumentExtractor:
                         wordVectors = batch[0]
                         lineSortedWordIndexes = batch[1]
                         lineSortedReverseWordIndexes = batch[2]
-                        columnLeftSortedWordIndexes = batch[3]
-                        columnLeftReverseWordIndexes = batch[4]
-                        columnRightSortedWordIndexes = batch[5]
-                        columnRightReverseWordIndexes = batch[6]
-                        classificationOutputs = batch[7]
-                        modifierOutputs = batch[8]
+                        columnSortedWordIndexes = batch[3]
+                        columnReverseWordIndexes = batch[4]
+                        classificationOutputs = batch[5]
+                        modifierOutputs = batch[6]
 
                         # Train
                         feed_dict = {
                             self.inputWordVectors: wordVectors,
                             self.lineSortedWordIndexesInput: lineSortedWordIndexes,
                             self.lineSortedReverseIndexesInput: lineSortedReverseWordIndexes,
-                            self.columnLeftSortedWordIndexesInput: columnLeftSortedWordIndexes,
-                            self.columnLeftSortedReverseIndexesInput: columnLeftReverseWordIndexes,
-                            self.columnRightSortedWordIndexesInput: columnRightSortedWordIndexes,
-                            self.columnRightSortedReverseIndexesInput: columnRightReverseWordIndexes,
+                            self.columnSortedWordIndexesInput: columnSortedWordIndexes,
+                            self.columnSortedReverseIndexesInput: columnReverseWordIndexes,
                             self.inputClassification: classificationOutputs,
                             self.inputModifiers: modifierOutputs
                         }
@@ -172,20 +168,16 @@ class DocumentExtractor:
         wordVectors = [data[0]]
         lineSortedWordIndexes = [data[1]]
         lineSortedReverseWordIndexes = [data[2]]
-        columnLeftSortedWordIndexes = [data[3]]
-        columnLeftReverseWordIndexes = [data[4]]
-        columnRightSortedWordIndexes = [data[5]]
-        columnRightReverseWordIndexes = [data[6]]
+        columnSortedWordIndexes = [data[3]]
+        columnReverseWordIndexes = [data[4]]
 
         # Train
         feed_dict = {
             self.inputWordVectors: wordVectors,
             self.lineSortedWordIndexesInput: lineSortedWordIndexes,
             self.lineSortedReverseIndexesInput: lineSortedReverseWordIndexes,
-            self.columnLeftSortedWordIndexesInput: columnLeftSortedWordIndexes,
-            self.columnLeftSortedReverseIndexesInput: columnLeftReverseWordIndexes,
-            self.columnRightSortedWordIndexesInput: columnRightSortedWordIndexes,
-            self.columnRightSortedReverseIndexesInput: columnRightReverseWordIndexes
+            self.columnSortedWordIndexesInput: columnSortedWordIndexes,
+            self.columnSortedReverseIndexesInput: columnReverseWordIndexes
         }
 
         classifications, classificationProbabilities, modifierPredictions, modifierProbabilities = self.session.run([self.classificationPredictions, self.classificationProbabilities, self.modifierPredictions, self.modifierProbabilities], feed_dict)
@@ -239,13 +231,10 @@ class DocumentExtractor:
         with tf.name_scope("lineSorted"), tf.variable_scope("lineSorted"):
             lineSortedOutput = self.createRecurrentAttentionLayer(inputs, self.lineSortedWordIndexesInput, self.lineSortedReverseIndexesInput)
 
-        with tf.name_scope("columnLeft"), tf.variable_scope("columnLeft"):
-            columnLeftOutput = self.createRecurrentAttentionLayer(inputs, self.columnLeftSortedWordIndexesInput, self.columnLeftSortedReverseIndexesInput)
+        with tf.name_scope("column"), tf.variable_scope("column"):
+            columnOutput = self.createRecurrentAttentionLayer(inputs, self.columnSortedWordIndexesInput, self.columnSortedReverseIndexesInput)
 
-        with tf.name_scope("columnRight"), tf.variable_scope("columnRight"):
-            columnRightOutput = self.createRecurrentAttentionLayer(inputs, self.columnRightSortedWordIndexesInput, self.columnRightSortedReverseIndexesInput)
-
-        layerOutputs = tf.concat(values=[lineSortedOutput, columnLeftOutput, columnRightOutput], axis=2)
+        layerOutputs = tf.concat(values=[lineSortedOutput, columnOutput], axis=2)
 
         layerOutputs = tf.layers.batch_normalization(layerOutputs)
 
@@ -265,11 +254,8 @@ class DocumentExtractor:
         self.lineSortedWordIndexesInput = tf.placeholder(tf.int32, shape=[None, None], name='line_sorted_indexes')
         self.lineSortedReverseIndexesInput = tf.placeholder(tf.int32, shape=[None, None], name='line_sorted_reverse_indexes')
 
-        self.columnLeftSortedWordIndexesInput = tf.placeholder(tf.int32, shape=[None, None], name='column_left_sorted_indexes')
-        self.columnLeftSortedReverseIndexesInput = tf.placeholder(tf.int32, shape=[None, None], name='column_left_sorted_reverse_indexes')
-
-        self.columnRightSortedWordIndexesInput = tf.placeholder(tf.int32, shape=[None, None], name='column_right_sorted_indexes')
-        self.columnRightSortedReverseIndexesInput = tf.placeholder(tf.int32, shape=[None, None], name='column_right_sorted_reverse_indexes')
+        self.columnSortedWordIndexesInput = tf.placeholder(tf.int32, shape=[None, None], name='column_sorted_indexes')
+        self.columnSortedReverseIndexesInput = tf.placeholder(tf.int32, shape=[None, None], name='column_sorted_reverse_indexes')
 
         # Recurrent Neural Network
         with tf.name_scope("rnn"), tf.variable_scope("rnn", reuse=tf.AUTO_REUSE):
