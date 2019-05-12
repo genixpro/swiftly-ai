@@ -197,7 +197,7 @@ class DocumentParser:
                 word.documentLineNumber = word.line['documentLineNumber']
                 del word.line
 
-            globalLineNumber = len(lines)
+            globalLineNumber += len(lines)
         return words
 
     def assignColumnNumbersToWords(self, words):

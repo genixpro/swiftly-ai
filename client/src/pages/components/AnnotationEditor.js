@@ -885,24 +885,49 @@ class AnnotationEditor extends React.Component
     {
         evt.stopPropagation();
 
-        Object.values(this.tokens).forEach((wordToken) =>
+        if (this.getAnnotationInformation(newModifier).applyAcrossLine)
         {
-            if (wordToken.state.selected || wordToken.state.word[AnnotationEditor._hover])
+            const selectionLineNumbers = this.selectedLineNumbers();
+            Object.values(this.tokens).forEach((wordToken) =>
             {
                 const word = wordToken.state.word;
-                if (!word.modifiers)
+                if (selectionLineNumbers.indexOf(word.lineNumber) !== -1)
                 {
-                    word.modifiers = [];
-                }
+                    if (!word.modifiers)
+                    {
+                        word.modifiers = [];
+                    }
 
-                if (word.modifiers.indexOf(newModifier) !== -1)
+                    if (word.modifiers.indexOf(newModifier) !== -1)
+                    {
+                        word.modifiers.splice(word.modifiers.indexOf(newModifier), 1);
+                    }
+
+                    wordToken.setState({word: word, selected: false});
+                }
+            });
+        }
+        else
+        {
+            Object.values(this.tokens).forEach((wordToken) =>
+            {
+                if (wordToken.state.selected || wordToken.state.word[AnnotationEditor._hover])
                 {
-                    word.modifiers.splice(word.modifiers.indexOf(newModifier), 1);
-                }
+                    const word = wordToken.state.word;
+                    if (!word.modifiers)
+                    {
+                        word.modifiers = [];
+                    }
 
-                wordToken.setState({word: word, selected: false});
-            }
-        });
+                    if (word.modifiers.indexOf(newModifier) !== -1)
+                    {
+                        word.modifiers.splice(word.modifiers.indexOf(newModifier), 1);
+                    }
+
+                    wordToken.setState({word: word, selected: false});
+                }
+            });
+        }
         this.saveFileData(this.state.file);
     }
 
@@ -1230,6 +1255,7 @@ class AnnotationEditor extends React.Component
                                             <CardBody>
                                                 <p>Text: {this.state.selectedWord.word}</p>
                                                 <p>Line: {this.state.selectedWord.lineNumber}</p>
+                                                <p>Document Line: {this.state.selectedWord.documentLineNumber}</p>
                                                 <p>Column: {this.state.selectedWord.column}</p>
                                                 <p>Classification: {this.state.selectedWord.classification}</p>
                                                 <p>Groups: {JSON.stringify(this.state.selectedWord.groups)}</p>
@@ -1420,14 +1446,14 @@ class AnnotationEditor extends React.Component
                                     if (presentSelectionModifiers.indexOf(modifier.value) !== -1)
                                     {
                                         elems.push(<MenuItem onClick={(evt, data) => this.removeWordModifiers(evt, modifier.value)} key={modifier.value + "-"}>
-                                            --{modifier.name}
+                                            --{modifier.name} {modifier.applyAcrossLine ? <span>(line)</span> : null}
                                         </MenuItem>);
                                     }
 
                                     if (allSelectionModifiers.indexOf(modifier.value) === -1)
                                     {
                                         elems.push(<MenuItem onClick={(evt, data) => this.addWordModifiers(evt, modifier.value)} key={modifier.value + "+"}>
-                                            ++{modifier.name}
+                                            ++{modifier.name} {modifier.applyAcrossLine ? <span>(line)</span> : null}
                                         </MenuItem>);
                                     }
 
@@ -1450,8 +1476,8 @@ class AnnotationEditor extends React.Component
                     }
                     {
                         this.state.view === 'fields' ?
-                            <MenuItem onClick={(evt, data) => this.clearWordClassification(evt)}>
-                                Nothing
+                            <MenuItem onClick={(evt, data) => this.createWordGroup(evt, null, 'ITEM', true)}>
+                                Continue Line Item Group
                             </MenuItem> : null
                     }
                     {
@@ -1464,6 +1490,12 @@ class AnnotationEditor extends React.Component
                         this.state.view === 'dataGroups' ?
                             <MenuItem onClick={(evt, data) => this.createWordGroup(evt, null, 'DATA_TYPE')}>
                                 No Group
+                            </MenuItem> : null
+                    }
+                    {
+                        this.state.view === 'fields' ?
+                            <MenuItem onClick={(evt, data) => this.clearWordClassification(evt)}>
+                                Nothing
                             </MenuItem> : null
                     }
                 </ContextMenu>
