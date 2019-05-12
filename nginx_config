@@ -42,6 +42,8 @@ server {
 	#
 	# include snippets/snakeoil.conf;
 
+	client_max_body_size 100M;
+
         ssl_certificate /etc/nginx/ssl/nginx.pem;
         ssl_certificate_key /etc/nginx/ssl/nginx.key;
 
