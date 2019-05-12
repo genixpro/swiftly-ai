@@ -61,8 +61,8 @@ class File(Document):
 
     owner = StringField()
 
-    # The original uploaded filename for this file
-    fileName = StringField()
+    # The review status for this document
+    reviewStatus = StringField(default="fresh")
 
     # The ID of the Appraisal object that this File is attached to
     appraisalId = StringField()

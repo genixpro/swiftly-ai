@@ -50,6 +50,7 @@ class FileModel extends BaseModel
     static _id = new IdField();
     static fileName = new GenericField();
     static owner = new StringField();
+    static reviewStatus = new StringField();
     static appraisalId = new GenericField();
     static fileType = new GenericField();
 

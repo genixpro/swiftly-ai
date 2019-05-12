@@ -95,8 +95,8 @@ class AnnotationEditor extends React.Component
     {
         axios.get(`/appraisal/${this.props.appraisalId}/files/${this.props.fileId}`).then((response) => {
             const file = FileModel.create(response.data.file);
-            this.setState({file: file});
             this.groupedByPage = _.groupBy(file.words, (word) => word.page);
+            this.setState({file: file});
         });
     }
 
@@ -1027,7 +1027,12 @@ class AnnotationEditor extends React.Component
         this.setState({view: newView});
     }
 
+    onReviewStatusChanged(newStatus)
+    {
+        this.state.file.reviewStatus = newStatus;
 
+        this.saveFileData(this.state.file);
+    }
 
 
     render()
@@ -1072,6 +1077,17 @@ class AnnotationEditor extends React.Component
                                     <option value={"columns"}>Columns</option>
                                     <option value={"dataGroups"}>Data Groups</option>
                                     <option value={"fields"}>Fields</option>
+                                </select>
+                            </div>
+                            <div>
+                                <span>Review Status:</span>
+                            </div>
+                            <div>
+                                <select className="custom-select" value={this.state.file.reviewStatus}
+                                        onChange={(evt) => this.onReviewStatusChanged(evt.target.value)}>
+                                    <option value={"fresh"}>Fresh</option>
+                                    <option value={"in_review"}>In Review</option>
+                                    <option value={"verifed"}>Verified</option>
                                 </select>
                             </div>
                             <div>
