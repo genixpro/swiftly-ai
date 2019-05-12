@@ -469,15 +469,15 @@ class AnnotationEditor extends React.Component
 
             if (selectMode === 'box')
             {
-                const selectTop = Math.min(startWord.top+startWord.height/5, endWord.top+endWord.height/5);
-                const selectBottom = Math.max(startWord.bottom-startWord.height/5, endWord.bottom-endWord.height/5);
-                const selectLeft = Math.min(startWord.left+startWord.left/5, endWord.left+endWord.left/5);
-                const selectRight = Math.max(startWord.right-startWord.right/5, endWord.right-endWord.right/5);
+                const selectTopLine = Math.min(startWord.documentLineNumber, endWord.documentLineNumber);
+                const selectBottomLine = Math.max(startWord.documentLineNumber, endWord.documentLineNumber);
+                const selectLeft = Math.min(startWord.left, endWord.left);
+                const selectRight = Math.max(startWord.right, endWord.right);
 
                 Object.values(this.tokens).forEach((wordToken, wordTokenIndex) =>
                 {
                     const shouldSelectHorizontal = (wordToken.props.word.left <= selectRight) && (wordToken.props.word.right >= selectLeft);
-                    const shouldSelectVertical = (wordToken.props.word.top <= selectBottom) && (wordToken.props.word.bottom >= selectTop);
+                    const shouldSelectVertical = (wordToken.props.word.documentLineNumber <= selectBottomLine) && (wordToken.props.word.documentLineNumber >= selectTopLine);
 
                     const shouldSelect = shouldSelectHorizontal && shouldSelectVertical;
 
@@ -494,13 +494,13 @@ class AnnotationEditor extends React.Component
             }
             else if (selectMode === 'line')
             {
-                const startLine = Math.min(startWord.lineNumber, endWord.lineNumber);
-                const endLine = Math.max(startWord.lineNumber, endWord.lineNumber);
+                const startLine = Math.min(startWord.documentLineNumber, endWord.documentLineNumber);
+                const endLine = Math.max(startWord.documentLineNumber, endWord.documentLineNumber);
 
 
                 Object.values(this.tokens).forEach((wordToken, wordTokenIndex) =>
                 {
-                    const shouldSelect = wordToken.state.word.lineNumber >= startLine && wordToken.state.word.lineNumber <= endLine;
+                    const shouldSelect = wordToken.state.word.documentLineNumber >= startLine && wordToken.state.word.documentLineNumber <= endLine;
 
                     // const shouldSelect = (wordTokenIndex >= wordIndex && wordTokenIndex <= this.selectStart) || (wordTokenIndex >= this.selectStart && wordTokenIndex <= wordIndex);
                     if (wordToken.state.selected && !shouldSelect)
@@ -586,13 +586,13 @@ class AnnotationEditor extends React.Component
             if (wordToken.state.selected || wordToken.state.word[AnnotationEditor._hover])
             {
                 const word = wordToken.state.word;
-                selectedLines[word.lineNumber] = true;
+                selectedLines[word.documentLineNumber] = true;
             }
         });
         Object.values(this.tokens).forEach((wordToken) =>
         {
             const word = wordToken.state.word;
-            if (selectedLines[word.lineNumber] && word.page === this.state.currentPage)
+            if (selectedLines[word.documentLineNumber] && word.page === this.state.currentPage)
             {
                 word.textType = newTextType;
                 wordToken.setState({word: word, selected: false});
