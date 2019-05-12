@@ -143,8 +143,8 @@ export default [
                 "textType": "table"
             },
             {
-                "name": "Forecast",
-                "placeholder": "Forecast",
+                "name": "Forecast / Budget",
+                "placeholder": "Forecast / Budget",
                 "value": "FORECAST",
                 "anyOfGroups": ["INCOME_STATEMENT", "EXPENSE_STATEMENT"],
                 "textType": "table"

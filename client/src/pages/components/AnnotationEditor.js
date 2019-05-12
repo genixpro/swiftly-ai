@@ -815,14 +815,14 @@ class AnnotationEditor extends React.Component
         return {present: Object.keys(present), all: _.filter(Object.keys(all), (key) => all[key])};
     }
 
-    selectedLineNumbers()
+    selectedDocumentLineNumbers()
     {
         const present = {};
         Object.values(this.tokens).forEach((wordToken) =>
         {
             if (wordToken.state.selected || wordToken.state.word[AnnotationEditor._hover])
             {
-                present[wordToken.state.word.lineNumber] = true;
+                present[wordToken.state.word.documentLineNumber] = true;
             }
         });
 
@@ -836,11 +836,11 @@ class AnnotationEditor extends React.Component
 
         if (this.getAnnotationInformation(newModifier).applyAcrossLine)
         {
-            const selectionLineNumbers = this.selectedLineNumbers();
+            const selectionLineNumbers = this.selectedDocumentLineNumbers();
             Object.values(this.tokens).forEach((wordToken) =>
             {
                 const word = wordToken.state.word;
-                if (selectionLineNumbers.indexOf(word.lineNumber) !== -1)
+                if (selectionLineNumbers.indexOf(word.documentLineNumber) !== -1)
                 {
                     if (!word.modifiers)
                     {
@@ -887,11 +887,11 @@ class AnnotationEditor extends React.Component
 
         if (this.getAnnotationInformation(newModifier).applyAcrossLine)
         {
-            const selectionLineNumbers = this.selectedLineNumbers();
+            const selectionLineNumbers = this.selectedDocumentLineNumbers();
             Object.values(this.tokens).forEach((wordToken) =>
             {
                 const word = wordToken.state.word;
-                if (selectionLineNumbers.indexOf(word.lineNumber) !== -1)
+                if (selectionLineNumbers.indexOf(word.documentLineNumber) !== -1)
                 {
                     if (!word.modifiers)
                     {
