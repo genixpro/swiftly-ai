@@ -630,6 +630,13 @@ export default [
                 "anyOfGroups": ["COMPARABLE_SALE"],
                 "textType": "block"
             },
+            {
+                "name": "Sale Price",
+                "placeholder": "Sale Price",
+                "value": "SALE_PRICE",
+                "anyOfGroups": ["COMPARABLE_SALE"],
+                "textType": "block"
+            },
         ]
     },
     {
