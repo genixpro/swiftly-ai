@@ -106,8 +106,13 @@ class DocumentProcessor:
         file.fileType = self.classifier.classifyFile(file)
         file.pageTypes = self.pageClassifier.classifyFile(file)
 
-        extractor = DocumentExtractor(self.db)
-        extractor.predictDocument(file)
+        # extractor = DocumentExtractor(self.db)
+        # extractor.predictDocument(file)
+        for word in file.words:
+            word.classification = "null"
+            word.modifiers = []
+            word.textType = "block"
+            word.groups = {}
 
 
     def extractAndMergeAppraisalData(self, file, appraisal):

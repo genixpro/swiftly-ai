@@ -501,33 +501,324 @@ export default [
             {
                 "name": "Building Name",
                 "placeholder": "Name",
-                "value": "building_name",
+                "value": "BUILDING_NAME",
                 "anyOfGroups": ["COMPARABLE_SALE"],
                 "textType": "table"
             },
             {
                 "name": "Building Address",
                 "placeholder": "Address",
-                "value": "building_address",
+                "value": "BUILDING_ADDRESS",
                 "anyOfGroups": ["COMPARABLE_SALE"],
                 "textType": "table"
-            }
+            },
+            {
+                "name": "Property Type",
+                "placeholder": "Property Type",
+                "value": "PROPERTY_TYPE",
+                "anyOfGroups": ["COMPARABLE_SALE"],
+                "textType": "table"
+            },
+            {
+                "name": "Tenants",
+                "placeholder": "Tenants",
+                "value": "TENANTS",
+                "anyOfGroups": ["COMPARABLE_SALE"],
+                "textType": "table"
+            },
+            {
+                "name": "Additional Info",
+                "placeholder": "Additional Info",
+                "value": "ADDITIONAL_INFO",
+                "anyOfGroups": ["COMPARABLE_SALE"],
+                "textType": "table"
+            },
+            {
+                "name": "Parking",
+                "placeholder": "Parking",
+                "value": "PARKING",
+                "anyOfGroups": ["COMPARABLE_SALE"],
+                "textType": "table"
+            },
+            {
+                "name": "Zoning",
+                "placeholder": "Zoning",
+                "value": "ZONING",
+                "anyOfGroups": ["COMPARABLE_SALE"],
+                "textType": "table"
+            },
+        ]
+    },
+    {
+        "name": "Comparable Sale Building Information",
+        "fields": [
+            {
+                "name": "Building Size (sqft)",
+                "placeholder": "Building Size (sqft)",
+                "value": "BUILDING_SIZE",
+                "anyOfGroups": ["COMPARABLE_SALE"],
+                "textType": "table"
+            },
+            {
+                "name": "Construction Date",
+                "placeholder": "Construction Date",
+                "value": "CONSTRUCTION_DATE",
+                "anyOfGroups": ["COMPARABLE_SALE"],
+                "textType": "table"
+            },
+            {
+                "name": "Floors",
+                "placeholder": "Floors",
+                "value": "FLOORS",
+                "anyOfGroups": ["COMPARABLE_SALE"],
+                "textType": "table"
+            },
+            {
+                "name": "Number of Units",
+                "placeholder": "Number of Units",
+                "value": "NUMBER_OF_UNITS",
+                "anyOfGroups": ["COMPARABLE_SALE"],
+                "textType": "table"
+            },
+        ]
+    },
+    {
+        "name": "Comparable Sale Purchase Information",
+        "fields": [
+            {
+                "name": "Purchaser",
+                "placeholder": "Purchaser",
+                "value": "PURCHASER",
+                "anyOfGroups": ["COMPARABLE_SALE"],
+                "textType": "table"
+            },
+            {
+                "name": "Vendor",
+                "placeholder": "Vendor",
+                "value": "VENDOR",
+                "anyOfGroups": ["COMPARABLE_SALE"],
+                "textType": "table"
+            },
+            {
+                "name": "Sale Date",
+                "placeholder": "Sale Date",
+                "value": "SALE_DATE",
+                "anyOfGroups": ["COMPARABLE_SALE"],
+                "textType": "table"
+            },
         ]
     },
     {
         "name": "Comparable Sale Financial Information",
         "fields": [
             {
+                "name": "Net Operating Income",
+                "placeholder": "Net Operating Income",
+                "value": "NET_OPERATING_INCOME",
+                "anyOfGroups": ["COMPARABLE_SALE"],
+                "textType": "table"
+            },
+            {
                 "name": "Price Per Square Foot",
                 "placeholder": "Price Per Square Foot",
-                "value": "price_per_square_foot",
+                "value": "PRICE_PER_SQUARE_FOOT",
                 "anyOfGroups": ["COMPARABLE_SALE"],
                 "textType": "table"
             },
             {
                 "name": "Capitalization Rate",
                 "placeholder": "Capitalization Rate",
-                "value": "capitalization_rate",
+                "value": "CAPITALIZATION_RATE",
+                "anyOfGroups": ["COMPARABLE_SALE"],
+                "textType": "table"
+            },
+            {
+                "name": "Occupancy Rate",
+                "placeholder": "Occupancy Rate",
+                "value": "OCCUPANCY_RATE",
+                "anyOfGroups": ["COMPARABLE_SALE"],
+                "textType": "table"
+            },
+            {
+                "name": "Vacancy Rate",
+                "placeholder": "Vacancy Rate",
+                "value": "VACANCY_RATE",
+                "anyOfGroups": ["COMPARABLE_SALE"],
+                "textType": "table"
+            },
+            {
+                "name": "Price Per Square Foot (Land)",
+                "placeholder": "Price Per Square Foot (Land)",
+                "value": "PRICE_PER_SQUARE_FOOT_LAND",
+                "anyOfGroups": ["COMPARABLE_SALE"],
+                "textType": "table"
+            },
+            {
+                "name": "Price Per Acre (Land)",
+                "placeholder": "Price Per Acre (Land)",
+                "value": "PRICE_PER_ACRE_LAND",
+                "anyOfGroups": ["COMPARABLE_SALE"],
+                "textType": "table"
+            },
+            {
+                "name": "Price Per Square Foot Buildable Area",
+                "placeholder": "Price Per Square Foot Buildable Area",
+                "value": "PRICE_PER_SQUARE_FOOT_BUILDABLE_AREA",
+                "anyOfGroups": ["COMPARABLE_SALE"],
+                "textType": "table"
+            },
+            {
+                "name": "Price Per Buildable Unit",
+                "placeholder": "Price Per Buildable Unit",
+                "value": "PRICE_PER_BUILDABLE_UNIT",
+                "anyOfGroups": ["COMPARABLE_SALE"],
+                "textType": "table"
+            },
+            {
+                "name": "Floor Space Index",
+                "placeholder": "Floor Space Index",
+                "value": "FLOOR_SPACE_INDEX",
+                "anyOfGroups": ["COMPARABLE_SALE"],
+                "textType": "table"
+            },
+            {
+                "name": "Net Operating Income (PSF)",
+                "placeholder": "Net Operating Income (PSF)",
+                "value": "NET_OPERATING_INCOME_PSF",
+                "anyOfGroups": ["COMPARABLE_SALE"],
+                "textType": "table"
+            },
+            {
+                "name": "Average Monthly Rent Per Unit",
+                "placeholder": "Average Monthly Rent Per Unit",
+                "value": "AVERAGE_MONTHLY_RENT_PER_UNIT",
+                "anyOfGroups": ["COMPARABLE_SALE"],
+                "textType": "table"
+            },
+            {
+                "name": "Price Per Unit",
+                "placeholder": "Price Per Unit",
+                "value": "PRICE_PER_UNIT",
+                "anyOfGroups": ["COMPARABLE_SALE"],
+                "textType": "table"
+            }
+        ]
+    },
+    {
+        "name": "Comparable Sale Land Information",
+        "fields": [
+            {
+                "name": "Site Area",
+                "placeholder": "Site Area",
+                "value": "SITE_AREA",
+                "anyOfGroups": ["COMPARABLE_SALE"],
+                "textType": "table"
+            },
+            {
+                "name": "Site Coverage",
+                "placeholder": "Site Coverage",
+                "value": "SITE_COVERAGE",
+                "anyOfGroups": ["COMPARABLE_SALE"],
+                "textType": "table"
+            },
+            {
+                "name": "Development Proposals",
+                "placeholder": "Development Proposals",
+                "value": "DEVELOPMENT_PROPOSALS",
+                "anyOfGroups": ["COMPARABLE_SALE"],
+                "textType": "table"
+            },
+            {
+                "name": "Size of Land (sqft)",
+                "placeholder": "Size of Land (sqft)",
+                "value": "SIZE_OF_LAND_SQFT",
+                "anyOfGroups": ["COMPARABLE_SALE"],
+                "textType": "table"
+            },
+            {
+                "name": "Size of Land (acres)",
+                "placeholder": "Size of Land (acres)",
+                "value": "SIZE_OF_LAND_ACRES",
+                "anyOfGroups": ["COMPARABLE_SALE"],
+                "textType": "table"
+            },
+            {
+                "name": "Size of Buildable Area (sqft)",
+                "placeholder": "Size of Buildable Area (sqft)",
+                "value": "SIZE_OF_BUILDABLE_AREA_SQFT",
+                "anyOfGroups": ["COMPARABLE_SALE"],
+                "textType": "table"
+            },
+            {
+                "name": "Buildable Units",
+                "placeholder": "Buildable Units",
+                "value": "BUILDABLE_UNITS",
+                "anyOfGroups": ["COMPARABLE_SALE"],
+                "textType": "table"
+            }
+        ]
+    },
+    {
+        "name": "Comparable Sale Industrial Information",
+        "fields": [
+            {
+                "name": "Clear Ceiling Height (ft.)",
+                "placeholder": "Clear Ceiling Height (ft.)",
+                "value": "CLEAR_CEILING_HEIGHT",
+                "anyOfGroups": ["COMPARABLE_SALE"],
+                "textType": "table"
+            },
+            {
+                "name": "Shipping Doors",
+                "placeholder": "Shipping Doors",
+                "value": "SHIPPING_DOORS",
+                "anyOfGroups": ["COMPARABLE_SALE"],
+                "textType": "table"
+            }
+        ]
+    },
+    {
+        "name": "Comparable Sale Residential Information",
+        "fields": [
+            {
+                "name": "Price Per Bedroom",
+                "placeholder": "Price Per Bedroom",
+                "value": "PRICE_PER_BEDROOM",
+                "anyOfGroups": ["COMPARABLE_SALE"],
+                "textType": "table"
+            },
+            {
+                "name": "Bachelor Units",
+                "placeholder": "Bachelor Units",
+                "value": "BACHELOR_UNITS",
+                "anyOfGroups": ["COMPARABLE_SALE"],
+                "textType": "table"
+            },
+            {
+                "name": "One Bedroom Units",
+                "placeholder": "One Bedroom Units",
+                "value": "ONE_BEDROOM_UNITS",
+                "anyOfGroups": ["COMPARABLE_SALE"],
+                "textType": "table"
+            },
+            {
+                "name": "Two Bedroom Units",
+                "placeholder": "Two Bedroom Units",
+                "value": "TWO_BEDROOM_UNITS",
+                "anyOfGroups": ["COMPARABLE_SALE"],
+                "textType": "table"
+            },
+            {
+                "name": "Three+ Bedroom Units",
+                "placeholder": "Three+ Bedroom Units",
+                "value": "THREE_PLUS_BEDROOM_UNITS",
+                "anyOfGroups": ["COMPARABLE_SALE"],
+                "textType": "table"
+            },
+            {
+                "name": "Total Bedrooms",
+                "placeholder": "Total Bedrooms",
+                "value": "TOTAL_BEDROOMS",
                 "anyOfGroups": ["COMPARABLE_SALE"],
                 "textType": "table"
             }
