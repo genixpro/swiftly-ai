@@ -469,11 +469,10 @@ class AnnotationEditor extends React.Component
 
             if (selectMode === 'box')
             {
-                const selectTop = Math.min(startWord.top, endWord.top);
-                const selectBottom = Math.max(startWord.bottom, endWord.bottom);
-                const selectLeft = Math.min(startWord.left, endWord.left);
-                const selectRight = Math.max(startWord.right, endWord.right);
-
+                const selectTop = Math.min(startWord.top+startWord.height/5, endWord.top+endWord.height/5);
+                const selectBottom = Math.max(startWord.bottom-startWord.height/5, endWord.bottom-endWord.height/5);
+                const selectLeft = Math.min(startWord.left+startWord.left/5, endWord.left+endWord.left/5);
+                const selectRight = Math.max(startWord.right-startWord.right/5, endWord.right-endWord.right/5);
 
                 Object.values(this.tokens).forEach((wordToken, wordTokenIndex) =>
                 {

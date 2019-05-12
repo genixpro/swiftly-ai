@@ -32,6 +32,16 @@ class WordModel extends BaseModel
     static top = new FloatField();
     static bottom = new FloatField();
 
+    get height()
+    {
+        return this.bottom - this.top;
+    }
+
+    get width()
+    {
+        return this.right - this.left;
+    }
+
     static textType = new StringField();
 
     static groups = new DictField(new StringField());
