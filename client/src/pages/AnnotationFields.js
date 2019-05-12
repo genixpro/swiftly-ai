@@ -550,6 +550,27 @@ export default [
                 "anyOfGroups": ["COMPARABLE_SALE"],
                 "textType": "block"
             },
+            {
+                "name": "Tenancy - Single Tenant",
+                "placeholder": "Tenancy - Single Tenant",
+                "value": "SINGLE_TENANT",
+                "anyOfGroups": ["COMPARABLE_SALE"],
+                "textType": "block"
+            },
+            {
+                "name": "Tenancy - Multi Tenant",
+                "placeholder": "Tenancy - Multi Tenant",
+                "value": "MULTI_TENANT",
+                "anyOfGroups": ["COMPARABLE_SALE"],
+                "textType": "block"
+            },
+            {
+                "name": "Tenancy - Vacant",
+                "placeholder": "Tenancy - Vacant",
+                "value": "VACANT",
+                "anyOfGroups": ["COMPARABLE_SALE"],
+                "textType": "block"
+            },
         ]
     },
     {
@@ -772,9 +793,30 @@ export default [
                 "textType": "block"
             },
             {
-                "name": "Shipping Doors",
-                "placeholder": "Shipping Doors",
+                "name": "Shipping Doors (total)",
+                "placeholder": "Shipping Doors (total)",
                 "value": "SHIPPING_DOORS",
+                "anyOfGroups": ["COMPARABLE_SALE"],
+                "textType": "block"
+            },
+            {
+                "name": "Shipping Doors (drive-in)",
+                "placeholder": "Shipping Doors (drive-in)",
+                "value": "SHIPPING_DOORS_DRIVE_IN",
+                "anyOfGroups": ["COMPARABLE_SALE"],
+                "textType": "block"
+            },
+            {
+                "name": "Shipping Doors (double-man)",
+                "placeholder": "Shipping Doors (double-man)",
+                "value": "SHIPPING_DOORS_DOUBLE_MAN",
+                "anyOfGroups": ["COMPARABLE_SALE"],
+                "textType": "block"
+            },
+            {
+                "name": "Shipping Doors (truck-level)",
+                "placeholder": "Shipping Doors (truck-level)",
+                "value": "SHIPPING_DOORS_TRUCK_LEVEL",
                 "anyOfGroups": ["COMPARABLE_SALE"],
                 "textType": "block"
             }
