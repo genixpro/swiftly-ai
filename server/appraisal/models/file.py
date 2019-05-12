@@ -62,6 +62,9 @@ class File(Document):
     owner = StringField()
 
     # The review status for this document
+    fileName = StringField()
+
+    # The review status for this document
     reviewStatus = StringField(default="fresh")
 
     # The ID of the Appraisal object that this File is attached to
