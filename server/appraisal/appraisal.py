@@ -18,7 +18,7 @@ class AppraisalAPI(object):
     def __init__(self, request, context=None):
         self.request = request
 
-        self.processor = DocumentProcessor(request.registry.db, request.registry.storageBucket)
+        self.processor = DocumentProcessor(request.registry.db, request.registry.storageBucket, request.registry.vectorServerURL)
 
     def __acl__(self):
         return [

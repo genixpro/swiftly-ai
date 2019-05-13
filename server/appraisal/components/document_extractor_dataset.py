@@ -9,7 +9,9 @@ import concurrent.futures
 from pprint import pprint
 import copy
 import multiprocessing
+import requests
 import functools
+from appraisal.vectorserver import vectorServerSymmetricKey
 from appraisal.models.file import File
 
 globalVectorProcess = None
@@ -17,8 +19,10 @@ globalVectorProcess = None
 class DocumentExtractorDataset:
     manager = multiprocessing.Manager()
 
-    def __init__(self):
+    def __init__(self, vectorServerURL=None):
         self.generator = DocumentGenerator()
+
+        self.vectorServerURL = vectorServerURL
 
         self.labels = [
             "null",
@@ -71,9 +75,20 @@ class DocumentExtractorDataset:
         return vector
 
     def prepareDocument(self, file):
+        neededWordVectors = list(set(word['word'] for word in file.words))
+        wordVectorMap = {}
+        if self.vectorServerURL is None:
+            for word in neededWordVectors:
+                wordVectorMap[word] = numpy.array(self.getWordVector(word))
+        else:
+            response = requests.post(self.vectorServerURL, json={"words": neededWordVectors, "key": vectorServerSymmetricKey})
+            vectors = response.json()
+            for wordIndex, word in enumerate(neededWordVectors):
+                wordVectorMap[word] = numpy.array(vectors[wordIndex])
+
         wordVectors = []
         for word in file.words:
-            wordVectors.append(numpy.array(self.getWordVector(word['word'])))
+            wordVectors.append(wordVectorMap[word['word']])
 
         lineSortedWordIndexes = [word['index'] for word in sorted(file.words, key=lambda word: (word['page'], word['lineNumber'], word['left']))]
         columnSortedWordIndexes = [word['index'] for word in sorted(file.words, key=lambda word: (word['page'], word['column'], word['lineNumber'], word['left']))]

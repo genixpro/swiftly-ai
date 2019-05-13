@@ -35,7 +35,7 @@ RUN apt-get install \
     poppler-utils \
     gfortran -y
 
-# Install some dependencies which can take a long time to install. We do this ahead of running "ADD . /fathion" so the builds run faster when your
+# Install some dependencies which can take a long time to install. We do this ahead of running "ADD . /swiftly" so the builds run faster when your
 # making code changes regularly
 RUN pip3 install --upgrade pip
 RUN pip3 install --upgrade setuptools
@@ -43,11 +43,6 @@ RUN pip3 install numpy
 RUN pip3 install scikit-learn
 RUN pip3 install matplotlib
 RUN pip3 install gunicorn
-
-# Forward request logs to Docker log collector
-RUN ln -sf /dev/stdout /var/log/nginx/access.log \
-  && ln -sf /dev/stderr /var/log/nginx/error.log
-#  && ln -sf /dev/stdout /var/log/supervisord.log
 
 RUN  \
   git clone https://github.com/facebookresearch/fastText.git /tmp/fastText && \
@@ -67,11 +62,11 @@ ADD . /swiftly
 ARG SWIFTLY_ENV
 
 # Copy the NGINX configuration
-ADD nginx_config /etc/nginx/sites-enabled/default
-ADD ssl/swiftly.key /etc/nginx/ssl/nginx.key
-ADD ssl/certbundle.pem /etc/nginx/ssl/nginx.pem
+ADD deployment/nginx_config /etc/nginx/sites-enabled/default
+ADD deployment/ssl/swiftly.key /etc/nginx/ssl/nginx.key
+ADD deployment/ssl/certbundle.pem /etc/nginx/ssl/nginx.pem
 
-ADD supervisord_${SWIFTLY_ENV}.conf /etc/supervisor/conf.d/supervisord.conf
+ADD deployment/supervisord_${SWIFTLY_ENV}.conf /etc/supervisor/conf.d/supervisord.conf
 
 WORKDIR /swiftly
 RUN gcloud auth activate-service-account --key-file appraisalai-be8f24d217e0.json

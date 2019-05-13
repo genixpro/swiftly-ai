@@ -15,7 +15,6 @@ def main(global_config, **settings):
     """ This function returns a Pyramid WSGI application.
     """
     with Configurator(settings=settings) as config:
-        config.add_route("graphql", "/graphql")
         config.scan()
 
         config.add_renderer('bson', 'appraisal.bson_renderer.BSONRenderer')
@@ -39,6 +38,8 @@ def main(global_config, **settings):
         registry.db = db
 
         registry.apiUrl = settings.get('api.url')
+
+        registry.vectorServerURL = settings.get('vectorServerURL')
 
         connect(settings.get('db.name'), host=settings.get('db.uri'))
 

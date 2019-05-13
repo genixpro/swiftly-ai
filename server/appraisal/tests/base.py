@@ -19,7 +19,7 @@ class GenericStabilizedStatementTest:
 
         originalAppraisal.validate()
 
-        processor = DocumentProcessor(None, None)
+        processor = DocumentProcessor(None, None, None)
 
         processor.processAppraisalResults(processedAppraisal)
 

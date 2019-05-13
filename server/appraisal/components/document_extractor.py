@@ -17,8 +17,8 @@ from appraisal.components.document_extractor_dataset import DocumentExtractorDat
 
 
 class DocumentExtractor:
-    def __init__(self, db):
-        self.dataset = DocumentExtractorDataset()
+    def __init__(self, db, vectorServerURL=None):
+        self.dataset = DocumentExtractorDataset(vectorServerURL)
 
         self.db = db
 

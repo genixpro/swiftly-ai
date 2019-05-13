@@ -18,12 +18,13 @@ class DocumentProcessor:
         This system manages the end-to-end process of parsing and interpreting a document that is uploaded to this system.
     """
 
-    def __init__(self, db, storageBucket):
+    def __init__(self, db, storageBucket, vectorServerURL=None):
         self.classifier = DocumentClassifier()
         self.parser = DocumentParser()
         self.pageClassifier = PageClassifier()
         self.storageBucket = storageBucket
         self.db = db
+        self.vectorServerURL = vectorServerURL
         self.tenancyDataExtractor = TenancyDataExtractor()
         self.incomeStatementExtractor = IncomeStatementDataExtractor()
         self.discountedCashFlow = DiscountedCashFlowModel()
@@ -51,18 +52,8 @@ class DocumentProcessor:
         fileId = str(file.id)
 
         file.uploadFileData(self.storageBucket, fileId)
-
-        existingFile = File.objects(fileName=file.fileName).first()
-        hasExistingData = existingFile and len(existingFile.words) > 0
-
-        self.renderImagesAndExtractWords(file, fileData, extractWords=(not hasExistingData))
-
-        if hasExistingData:
-            file.words = existingFile.words
-            file.pageTypes = existingFile.pageTypes
-            file.fileType = existingFile.fileType
-        else:
-            self.classifyAndProcessDocument(file)
+        self.renderImagesAndExtractWords(file, fileData, extractWords=True)
+        self.classifyAndProcessDocument(file)
 
         # Save
         file.save()
@@ -106,13 +97,13 @@ class DocumentProcessor:
         file.fileType = self.classifier.classifyFile(file)
         file.pageTypes = self.pageClassifier.classifyFile(file)
 
-        # extractor = DocumentExtractor(self.db)
-        # extractor.predictDocument(file)
-        for word in file.words:
-            word.classification = "null"
-            word.modifiers = []
-            word.textType = "block"
-            word.groups = {}
+        extractor = DocumentExtractor(self.db, self.vectorServerURL)
+        extractor.predictDocument(file)
+        # for word in file.words:
+        #     word.classification = "null"
+        #     word.modifiers = []
+        #     word.textType = "block"
+        #     word.groups = {}
 
 
     def extractAndMergeAppraisalData(self, file, appraisal):
