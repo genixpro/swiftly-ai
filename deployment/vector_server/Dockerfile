@@ -66,4 +66,5 @@ RUN python3 setup.py install
 # Setup and configure systemd
 ENTRYPOINT ["gunicorn", "-t", "600", "-w", "1", "-b", "0.0.0.0:5000", "--paste", "vectorserver.ini"]
 EXPOSE 5000
+HEALTHCHECK CMD curl --fail http://localhost:5000/vectors --data '["test","words"]' -h "Content-Type: application/json" || exit 1
 

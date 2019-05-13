@@ -95,10 +95,12 @@ RUN npm install
 WORKDIR /swiftly/server
 RUN python3 setup.py install
 
+RUN echo "\n127.0.0.1   ${SWIFTLY_ENV}.swiftlyai.com\n" > /etc/hosts
+
 # Setup and configure systemd
 ENTRYPOINT ["/usr/bin/supervisord"]
 #ENTRYPOINT ["gunicorn", "-t", "600", "-w", "4", "-b", "0.0.0.0:5000", "--paste", "testing.ini"]
 #ENTRYPOINT ["/usr/sbin/nginx", "-g", "daemon off;"]
 EXPOSE 80
 EXPOSE 443
-
+HEALTHCHECK CMD curl --fail https://${SWIFTLY_ENV}.swiftlyai.com/api/home || exit 1
