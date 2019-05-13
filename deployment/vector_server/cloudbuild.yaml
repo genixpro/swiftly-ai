@@ -11,7 +11,7 @@ steps:
   - 'resources'
   - 'deployment'
   - 'swiftly-vectorserver'
-  - '--requests=cpu=1,memory=10Gi'
+  - '--requests=cpu=1,memory=9Gi'
   env:
   - 'CLOUDSDK_COMPUTE_ZONE=us-central1-a'
   - 'CLOUDSDK_CONTAINER_CLUSTER=swiftly-cluster-api'
