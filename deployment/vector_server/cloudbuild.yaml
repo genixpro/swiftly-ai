@@ -8,6 +8,17 @@ steps:
 - name: 'gcr.io/cloud-builders/kubectl'
   args:
   - 'set'
+  - 'resources'
+  - 'deployment'
+  - 'swiftly-vectorserver'
+  - '--requests=cpu=1,memory=10Gi'
+  env:
+  - 'CLOUDSDK_COMPUTE_ZONE=us-central1-a'
+  - 'CLOUDSDK_CONTAINER_CLUSTER=swiftly-cluster-api'
+  timeout: 60s
+- name: 'gcr.io/cloud-builders/kubectl'
+  args:
+  - 'set'
   - 'image'
   - 'deployment'
   - 'swiftly-vectorserver'
