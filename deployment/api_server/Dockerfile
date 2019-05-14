@@ -84,9 +84,9 @@ WORKDIR /swiftly/server
 RUN python3 setup.py install
 
 # Uninstall programs no longer needed
-RUN apt-get purge -y gcc g++ git wget sudo vim unzip gfortran
+RUN apt-get purge gcc g++ git wget sudo vim unzip gfortran -y
 
 # Setup and configure systemd
 ENTRYPOINT ["gunicorn", "-t", "600", "-w", "4", "-b", "0.0.0.0:80", "--paste", "${SWIFTLY_ENV}.ini"]
 EXPOSE 80
-HEALTHCHECK CMD curl --fail http://localhost:5000/home || exit 1
+HEALTHCHECK CMD curl --fail http://localhost:80/home || exit 1
