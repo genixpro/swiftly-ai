@@ -84,7 +84,7 @@ WORKDIR /swiftly/server
 RUN python3 setup.py install
 
 # Uninstall programs no longer needed
-RUN apt-get purge gcc g++ git wget vim unzip gfortran -y
+#RUN apt-get purge gcc g++ git vim unzip gfortran -y
 
 # Setup and configure systemd
 ENTRYPOINT gunicorn -t 600 -w 4 -b 0.0.0.0:80 --paste "$SWIFTLY_ENV.ini"
