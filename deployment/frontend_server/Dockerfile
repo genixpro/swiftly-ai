@@ -20,7 +20,7 @@ ADD . /swiftly
 ARG SWIFTLY_ENV
 
 # Copy the NGINX configuration
-ADD deployment/nginx_config /etc/nginx/sites-enabled/default
+ADD deployment/nginx_${SWIFTLY_ENV} /etc/nginx/sites-enabled/default
 ADD deployment/ssl/swiftly.key /etc/nginx/ssl/nginx.key
 ADD deployment/ssl/certbundle.pem /etc/nginx/ssl/nginx.pem
 
@@ -36,7 +36,7 @@ RUN mv build/* /build
 RUN rm -rf /swiftly
 
 # Delete nodejs to trim down the image size
-RUN apt-get purge nodejs -y
+RUN apt-get purge nodejs python3 -y
 
 # Setup and configure systemd
 ENTRYPOINT ["/usr/sbin/nginx", "-g", "daemon off;"]

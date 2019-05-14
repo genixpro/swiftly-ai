@@ -47,7 +47,7 @@ server {
         ssl_certificate /etc/nginx/ssl/nginx.pem;
         ssl_certificate_key /etc/nginx/ssl/nginx.key;
 
-	root /var/www;
+	root /root;
 
 	# Add index.php to the list if you are using PHP
 	index index.html index.htm index.nginx-debian.html;
@@ -59,7 +59,7 @@ server {
         rewrite ^/callback(/)? / last;
 
         location /api/ {
-            proxy_pass http://localhost:5000/;
+            proxy_pass http://10.11.240.42/;
         }
 
 	location / {

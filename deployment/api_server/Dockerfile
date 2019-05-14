@@ -8,8 +8,7 @@ RUN curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add -
 RUN curl -sL https://deb.nodesource.com/setup_8.x | bash
 
 # Install some basic system dependencies
-RUN apt-get update
-RUN apt-get install \
+RUN apt-get update && apt-get install \
     gcc \
     g++ \
     git \
@@ -26,14 +25,13 @@ RUN apt-get install \
     libblas-dev \
     liblapack-dev \
     libatlas-base-dev \
-    supervisor \
-    nginx \
     unzip \
     google-cloud-sdk \
     nodejs \
     libreoffice \
     poppler-utils \
-    gfortran -y
+    gfortran -y && \
+    rm -rf /var/lib/apt/lists/*
 
 # Install some dependencies which can take a long time to install. We do this ahead of running "ADD . /swiftly" so the builds run faster when your
 # making code changes regularly
@@ -61,13 +59,6 @@ ADD . /swiftly
 
 ARG SWIFTLY_ENV
 
-# Copy the NGINX configuration
-ADD deployment/nginx_config /etc/nginx/sites-enabled/default
-ADD deployment/ssl/swiftly.key /etc/nginx/ssl/nginx.key
-ADD deployment/ssl/certbundle.pem /etc/nginx/ssl/nginx.pem
-
-ADD deployment/supervisord_${SWIFTLY_ENV}.conf /etc/supervisor/conf.d/supervisord.conf
-
 WORKDIR /swiftly
 RUN gcloud auth activate-service-account --key-file appraisalai-be8f24d217e0.json
 
@@ -82,23 +73,20 @@ RUN gsutil cp gs://swiftly-deployment/file_type_model.bin .
 RUN gsutil cp gs://swiftly-deployment/page_type_model.bin .
 RUN gsutil cp gs://swiftly-deployment/page_type_model.vec .
 
-# Set the working directory to /swiftly
-WORKDIR /swiftly/client
-RUN npm install
-ENV VALUATE_ENV=${SWIFTLY_ENV}
-RUN npm run-script build
+# Delete everything in the client directory
+RUN rm -rf /swiftly/client
 
-# Set the working directory to /swiftly
+# Install dependencies for server
 WORKDIR /swiftly/server/appraisal/word_documents
 RUN npm install
 
 WORKDIR /swiftly/server
 RUN python3 setup.py install
 
+# Uninstall programs no longer needed
+RUN apt-get purge -y gcc g++ git wget sudo vim unzip gfortran
+
 # Setup and configure systemd
-ENTRYPOINT ["/usr/bin/supervisord"]
-#ENTRYPOINT ["gunicorn", "-t", "600", "-w", "4", "-b", "0.0.0.0:5000", "--paste", "testing.ini"]
-#ENTRYPOINT ["/usr/sbin/nginx", "-g", "daemon off;"]
+ENTRYPOINT ["gunicorn", "-t", "600", "-w", "4", "-b", "0.0.0.0:80", "--paste", "${SWIFTLY_ENV}.ini"]
 EXPOSE 80
-EXPOSE 443
 HEALTHCHECK CMD curl --fail http://localhost:5000/home || exit 1
