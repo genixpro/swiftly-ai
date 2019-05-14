@@ -29,6 +29,11 @@ WORKDIR /swiftly/client
 RUN npm install
 ENV VALUATE_ENV=${SWIFTLY_ENV}
 RUN npm run-script build
+RUN mkdir /var/www
+RUN mv build/* /var/www
+
+# Delete all the swiftly code to trim down the image size
+RUN rm -rf /swiftly
 
 # Delete nodejs to trim down the image size
 RUN apt-get uninstall nodejs -y
