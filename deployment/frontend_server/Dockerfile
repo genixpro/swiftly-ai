@@ -6,10 +6,10 @@ MAINTAINER Electric Brain <info@electricbrain.io>
 RUN curl -sL https://deb.nodesource.com/setup_8.x | bash
 
 # Install some basic system dependencies
-RUN apt-get update
-RUN apt-get install \
+RUN apt-get update && apt-get install \
     nginx \
-    nodejs -y
+    nodejs -y && \
+    rm -rf /var/lib/apt/lists/*
 
 # Set the working directory to /app
 WORKDIR /swiftly
@@ -36,7 +36,7 @@ RUN mv build/* /var/www
 RUN rm -rf /swiftly
 
 # Delete nodejs to trim down the image size
-RUN apt-get uninstall nodejs -y
+RUN apt-get purge nodejs -y
 
 # Setup and configure systemd
 ENTRYPOINT ["/usr/sbin/nginx", "-g", "daemon off;"]
