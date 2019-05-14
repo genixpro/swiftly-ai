@@ -47,7 +47,7 @@ server {
         ssl_certificate /etc/nginx/ssl/nginx.pem;
         ssl_certificate_key /etc/nginx/ssl/nginx.key;
 
-	root /var/www;
+	root /build;
 
 	# Add index.php to the list if you are using PHP
 	index index.html index.htm index.nginx-debian.html;
