@@ -1,0 +1,19 @@
+steps:
+- name: 'gcr.io/cloud-builders/docker'
+  args: ["build", "-t", "gcr.io/appraisalai/swiftly:$REVISION_ID-$_SWIFTLY_ENV-frontend", ".", "--build-arg", "SWIFTLY_ENV=$_SWIFTLY_ENV", "-f", "deployment/frontend_server/Dockerfile"]
+  timeout: 7200s
+- name: 'gcr.io/cloud-builders/docker'
+  args: ["push", "gcr.io/appraisalai/swiftly:$REVISION_ID-$_SWIFTLY_ENV-frontend"]
+  timeout: 3600s
+- name: 'gcr.io/cloud-builders/kubectl'
+  args:
+  - 'set'
+  - 'image'
+  - 'deployment'
+  - 'swiftly-$_SWIFTLY_ENV-frontend'
+  - 'eb-appraisal-sha256=gcr.io/appraisalai/swiftly:$REVISION_ID-$_SWIFTLY_ENV-frontend'
+  env:
+  - 'CLOUDSDK_COMPUTE_ZONE=us-central1-a'
+  - 'CLOUDSDK_CONTAINER_CLUSTER=swiftly-cluster-api'
+  timeout: 600s
+timeout: 15000s
