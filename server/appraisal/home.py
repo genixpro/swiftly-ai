@@ -14,8 +14,7 @@ class HomeAPI(object):
 
     def __acl__(self):
         return [
-            (Allow, Authenticated, 'everything'),
-            (Deny, Everyone, 'everything')
+            (Allow, Everyone, 'everything')
         ]
 
     def get(self):
