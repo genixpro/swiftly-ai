@@ -59,7 +59,7 @@ server {
         rewrite ^/callback(/)? / last;
 
         location /api/ {
-            proxy_pass http://localhost:5000/;
+            proxy_pass http://10.11.244.196/;
         }
 
 	location / {
