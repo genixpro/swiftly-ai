@@ -85,6 +85,7 @@ setup(
             'appraisal_load_test_cases = appraisal.bin.load_test_cases:main',
             'appraisal_load_sample_data = appraisal.bin.load_sample_data:main',
             'appraisal_save_sample_data = appraisal.bin.save_sample_data:main',
+            'appraisal_migrate_azure_to_gcp = appraisal.bin.migrate_azure_to_gcp:main',
         ]
     },
 )
