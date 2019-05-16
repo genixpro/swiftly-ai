@@ -2,13 +2,36 @@ from pyramid.config import Configurator
 import pymongo
 from appraisal.authorization import CustomAuthenticationPolicy
 from pyramid.authorization import ACLAuthorizationPolicy
+import collections
 from mongoengine import connect
 from azure.storage.blob import BlockBlobService, PublicAccess
 import os
 import pkg_resources
 from google.cloud import storage
 
-# You can connect to a real mongo server instance by your own.
+
+def conditional_http_tween_factory(handler, registry):
+    def conditional_http_tween(request):
+        response = handler(request)
+
+        if request.method == 'GET':
+            # If the Last-Modified header has been set, we want to enable the
+            # conditional response processing.
+            if response.last_modified is not None:
+                response.conditional_response = True
+
+            # We want to only enable the conditional machinery if either we
+            # were given an explicit ETag header by the view or we have a
+            # buffered response and can generate the ETag header ourself.
+            if response.etag is not None:
+                response.conditional_response = True
+            elif (isinstance(response.app_iter, collections.abc.Sequence) and
+                    len(response.app_iter) == 1):
+                response.conditional_response = True
+                response.md5_etag()
+
+        return response
+    return conditional_http_tween
 
 
 def main(global_config, **settings):
@@ -18,6 +41,8 @@ def main(global_config, **settings):
         config.scan()
 
         config.add_renderer('bson', 'appraisal.bson_renderer.BSONRenderer')
+
+        config.add_tween("appraisal.conditional_http_tween_factory")
 
         auth_policy = CustomAuthenticationPolicy(settings)
         config.set_authentication_policy(auth_policy)
