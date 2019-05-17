@@ -25,7 +25,7 @@ requires = [
     'python-dateutil',
     'mongoengine',
     'pycollada',
-    'tensorflow===1.13.1',
+    'tensorflow-gpu===1.12.2',
     'gunicorn',
     'scipy',
     'scikit-learn',
@@ -86,6 +86,8 @@ setup(
             'appraisal_load_sample_data = appraisal.bin.load_sample_data:main',
             'appraisal_save_sample_data = appraisal.bin.save_sample_data:main',
             'appraisal_migrate_azure_to_gcp = appraisal.bin.migrate_azure_to_gcp:main',
+            'appraisal_dump_files = appraisal.bin.dump_files:main',
+            'appraisal_import_files = appraisal.bin.import_files:main',
         ]
     },
 )

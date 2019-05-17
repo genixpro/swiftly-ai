@@ -7,48 +7,30 @@ import pickle
 import random
 import concurrent.futures
 from pprint import pprint
+import json
 import copy
 import multiprocessing
 import requests
 import functools
 from appraisal.vectorserver import vectorServerSymmetricKey
-from appraisal.models.file import File
+from appraisal.models.file import File, Word
 
 globalVectorProcess = None
 
 class DocumentExtractorDataset:
-    manager = multiprocessing.Manager()
-
-    def __init__(self, vectorServerURL=None):
+    def __init__(self, vectorServerURL=None, manager=None):
         self.generator = DocumentGenerator()
 
         self.vectorServerURL = vectorServerURL
 
-        self.labels = [
-            "null",
-            "DOCUMENT_NUMBER", "DOCUMENT_DATE", "DOCUMENT_TIME", "DOCUMENT_TIME", "STATEMENT_DATE",
-            "BUILDING_ADDRESS", "USER_ID", "STATEMENT_YEAR", "STATEMENT_NEXT_YEAR", "ACC_NUM", "ACC_NAME",
-            "FORECAST", "BUDGET", "VARIANCE", "UNIT_NUM", "TENANT_NAME", "RENTABLE_AREA", "TERM_START",
-            "TERM_END", "MONTHLY_RENT", "YEARLY_RENT"
-        ]
-
-        self.modifiers = [
-            "SUM", "NEXT_YEAR", "PERCENTAGE", "INCOME", "EXPENSE", "SUMMARY", "RENT", "ADDITIONAL_INCOME",#  "EXPENSE_RECOVERY",
-            #"OPERATING_EXPENSE", "NON_RECOVERABLE_EXPENSE", "TAXES", "MANAGEMENT_EXPENSE", "STRUCTURAL_ALLOWANCE"
-        ]
-
-        self.numberLabels = ['FORECAST', 'BUDGET', 'VARIANCE']
+        self.numberLabels = ['FORECAST', 'BUDGET', 'VARIANCE', "YEAR_TO_DATE"]
 
         self.lengthMin = 500
         self.lengthMax = 1000
-        self.wordVectorSize = 300
+        self.wordVectorSize = 307
         self.wordOmissionRate = 0.05
 
-        self.dataset = DocumentExtractorDataset.manager.list()
-
-        self.augmentationValues = {
-            label: [] for label in self.labels
-        }
+        self.dataset = manager.list()
 
     def getFasttextProcess(self):
         global globalVectorProcess
@@ -74,7 +56,10 @@ class DocumentExtractorDataset:
 
         return vector
 
-    def prepareDocument(self, file):
+    def prepareDocument(self, file, allowColumnProcessing=True):
+        # Just do this as a precaution
+        file.updateDescriptiveWordFeatures()
+
         neededWordVectors = list(set(word['word'] for word in file.words))
         wordVectorMap = {}
         if self.vectorServerURL is None:
@@ -88,20 +73,38 @@ class DocumentExtractorDataset:
 
         wordVectors = []
         for word in file.words:
-            wordVectors.append(wordVectorMap[word['word']])
+            baseVector = wordVectorMap[word['word']]
+
+            positionVector = [
+                word.left,
+                word.right,
+                word.top,
+                word.bottom,
+                word.right-word.left,
+                word.bottom-word.top,
+                (word.right - word.left) / len(word['word'])
+            ]
+
+            wordVectors.append(numpy.concatenate([numpy.array(positionVector), baseVector]))
 
         lineSortedWordIndexes = [word['index'] for word in sorted(file.words, key=lambda word: (word['page'], word['lineNumber'], word['left']))]
-        columnSortedWordIndexes = [word['index'] for word in sorted(file.words, key=lambda word: (word['page'], word['column'], word['lineNumber'], word['left']))]
+
+        if allowColumnProcessing:
+            columnSortedWordIndexes = [word['index'] for word in sorted(file.words, key=lambda word: (word['page'], word['column'], word['lineNumber'], word['left']))]
+        else:
+            columnSortedWordIndexes = [word['index'] for word in sorted(file.words, key=lambda word: (word['page'], word['lineNumber'], word['left']))]
 
         lineSortedReverseWordIndexes = [lineSortedWordIndexes.index(word['index']) for word in file.words]
         columnReverseWordIndexes = [columnSortedWordIndexes.index(word['index']) for word in file.words]
 
         classificationOutputs = []
         modifierOutputs = []
+        groupOutputs = []
+        textTypeOutputs = []
 
         for word in file.words:
             oneHotCodeClassification = [0] * len(self.labels)
-            oneHotCodeModifiers = [0] * len(self.modifiers)
+            modifiersVector = [0] * len(self.modifiers)
 
             if 'classification' in word:
                 oneHotCodeClassification[self.labels.index(word['classification'])] = 1
@@ -111,8 +114,40 @@ class DocumentExtractorDataset:
 
             if 'modifiers' in word:
                 for modifier in word['modifiers']:
-                    oneHotCodeModifiers[self.modifiers.index(modifier)] = 1
-            modifierOutputs.append(oneHotCodeModifiers)
+                    modifiersVector[self.modifiers.index(modifier)] = 1
+            modifierOutputs.append(modifiersVector)
+
+            groupsVector = []
+            for groupSet in self.groupSets:
+                groupSetLabels = self.groups[groupSet]
+                for label in groupSetLabels:
+                    if word.groups.get(groupSet, 'null') == label:
+                        if label == 'null':
+                            groupsVector.append(0)
+                            groupsVector.append(1)
+                            groupsVector.append(0)
+                        elif word.lineNumberWithinGroup[groupSet] == 0:
+                            groupsVector.append(1)
+                            groupsVector.append(0)
+                            groupsVector.append(0)
+                        elif word.reverseLineNumberWithinGroup[groupSet] == 0:
+                            groupsVector.append(0)
+                            groupsVector.append(0)
+                            groupsVector.append(1)
+                        else:
+                            groupsVector.append(0)
+                            groupsVector.append(1)
+                            groupsVector.append(0)
+                    else:
+                        groupsVector.append(0)
+                        groupsVector.append(0)
+                        groupsVector.append(0)
+
+            groupOutputs.append(groupsVector)
+
+            textTypeVector = [0] * len(self.textTypes)
+            textTypeVector[self.textTypes.index(word.textType)] = 1
+            textTypeOutputs.append(textTypeVector)
 
 
         return (
@@ -122,16 +157,79 @@ class DocumentExtractorDataset:
             columnSortedWordIndexes,
             columnReverseWordIndexes,
             classificationOutputs,
-            modifierOutputs)
+            modifierOutputs,
+            groupOutputs,
+            textTypeOutputs)
 
     def loadDataset(self, db):
-        files = File.objects(type="financials")
+        files = File.objects(reviewStatus__in=["verifed","verified"])
+
+        labels = {'null'}
+        modifiers = set()
+        groups = {}
+        groupSets = set()
+        textTypes = set()
+
+        self.augmentationValues = {}
 
         for file in files:
+            for word in file.words:
+                labels.add(word.classification)
+                for modifier in word.modifiers:
+                    modifiers.add(modifier)
+                for groupSet, group in word.groups.items():
+                    groupSets.add(groupSet)
+                    if groupSet not in groups:
+                        groups[groupSet] = {'null', group}
+                    else:
+                        groups[groupSet].add(group)
+
+                textTypes.add(word.textType)
+
             for token in file.breakIntoTokens():
-                self.augmentationValues[token['classification']].append(token['text'])
+                augmentationKey = token['classification'] + "-".join(token['modifiers'])
+
+                if augmentationKey in self.augmentationValues:
+                    self.augmentationValues[augmentationKey].append(token['text'])
+                else:
+                    self.augmentationValues[augmentationKey] = [token['text']]
 
             self.dataset.append(file)
+
+        self.labels = sorted(list(labels))
+        self.modifiers = sorted(list(modifiers))
+        self.groups = {groupSet: sorted(list(groups)) for groupSet, groups in groups.items()}
+        self.groupSets = sorted(list(groupSets))
+
+        self.totalGroupLabels = 0
+        for groupSet in self.groupSets:
+            self.totalGroupLabels += len(self.groups[groupSet])
+
+        self.textTypes = sorted(list(textTypes))
+
+    def loadLabels(self, labelsFile):
+        # Also restore the labels
+        data = json.load(open(labelsFile, 'rt'))
+        self.labels = data['labels']
+        self.modifiers = data['modifiers']
+        self.groups = data['groups']
+        self.textTypes = data['textTypes']
+
+        self.augmentationValues = {
+            label: [] for label in self.labels
+        }
+
+    def saveLabels(self, labelsFile):
+        data = {
+            "labels": self.labels,
+            "modifiers": self.modifiers,
+            "groups": self.groups,
+            "textTypes": self.textTypes
+        }
+
+        # Also restore the labels
+        json.dump(data, open(labelsFile, 'wt'))
+
 
     def augmentToken(self, token):
         if token['classification'] in self.numberLabels:
@@ -154,7 +252,9 @@ class DocumentExtractorDataset:
                     text = "(" + text + ")"
             newText = text
         else:
-            newText = random.choice(self.augmentationValues[token['classification']])
+            augmentationKey = token['classification'] + "-".join(token['modifiers'])
+
+            newText = random.choice(self.augmentationValues[augmentationKey])
 
         if len(set([word['page'] for word in token['words']])) > 1:
             raise NotImplemented("Support for augmenting tokens that cross multiple pages not yet implemented")
@@ -172,15 +272,20 @@ class DocumentExtractorDataset:
         endLine = max(wordsByLine.keys())
         lineDelta = endLine - startLine
 
+        newTextSplit = newText.split()
+
         # Create the words for the new token
         newWords = [
-            {
+            Word(**{
                 "word": word,
                 "classification": token['classification'],
                 "modifiers": token['modifiers'],
                 "page": token['words'][0]['page'],
-                "lineNumber": startLine + int(round((wordIndex / len(token['words'])) * lineDelta))
-            } for wordIndex, word in enumerate(newText.split())
+                "groups": token['groups'],
+                "groupNumbers": token['groupNumbers'],
+                "textType": token['textType'],
+                "lineNumber": startLine + int(round((wordIndex / len(newTextSplit)) * lineDelta))
+            }) for wordIndex, word in enumerate(newTextSplit)
         ]
 
         newWordsByLine = {}
@@ -190,8 +295,16 @@ class DocumentExtractorDataset:
             else:
                 newWordsByLine[word['lineNumber']] = [word]
 
+        # print(startLine)
+        # print(endLine)
+        # print(lineDelta)
+        # print(len(token['words']))
+        # print(wordsByLine)
+        # print(newWordsByLine)
+
         for lineNumber in newWordsByLine:
             for wordIndex, word in enumerate(newWordsByLine[lineNumber]):
+                # print(lineNumber)
                 lineOriginalWords = wordsByLine[lineNumber]
 
                 lineLeft = min([word['left'] for word in lineOriginalWords])
@@ -278,7 +391,7 @@ class DocumentExtractorDataset:
     #             dataset.append(result)
     #     return dataset
 
-    def createBatch(self, batchSize):
+    def createBatch(self, batchSize, allowColumnProcessing=False):
         batchWordVectors = []
         batchLineSortedWordIndexes = []
         batchLineSortedReverseWordIndexes = []
@@ -286,11 +399,13 @@ class DocumentExtractorDataset:
         batchColumnReverseWordIndexes = []
         batchClassificationOutputs = []
         batchModifierOutputs = []
+        batchGroupOutputs = []
+        batchTextTypeOutputs = []
 
         results = []
         for n in range(batchSize):
             randomIndex = random.randint(0, len(self.dataset)-1)
-            result = self.prepareDocument(self.augmentDocument(self.dataset[randomIndex]))
+            result = self.prepareDocument(self.augmentDocument(self.dataset[randomIndex]), allowColumnProcessing)
             results.append(result)
 
         maxLength = min(random.randint(self.lengthMin, self.lengthMax), max([len(result[0]) for result in results]))
@@ -305,6 +420,8 @@ class DocumentExtractorDataset:
             columnReverseWordIndexes = result[4]
             classificationOutputs = result[5]
             modifierOutputs = result[6]
+            groupOutputs = result[7]
+            textTypeOutputs = result[8]
 
             while len(wordVectors) < maxLength:
                 index = len(wordVectors)
@@ -321,6 +438,22 @@ class DocumentExtractorDataset:
                 classificationOutputs.append(oneHotCodeClassification)
                 modifierOutputs.append(oneHotCodeModifiers)
 
+                groupsVector = []
+                for groupSet in self.groupSets:
+                    groupSetLabels = self.groups[groupSet]
+                    for label in groupSetLabels:
+                        if label == 'null':
+                            groupsVector.append(0)
+                            groupsVector.append(1)
+                            groupsVector.append(0)
+                        else:
+                            groupsVector.append(0)
+                            groupsVector.append(0)
+                            groupsVector.append(0)
+
+                groupOutputs.append(groupsVector)
+                textTypeOutputs.append([1, 0])
+
             if len(wordVectors) > maxLength:
                 start = random.randint(0, len(wordVectors) - maxLength - 1)
 
@@ -332,6 +465,8 @@ class DocumentExtractorDataset:
 
                 classificationOutputs = classificationOutputs[start:start + maxLength]
                 modifierOutputs = modifierOutputs[start:start + maxLength]
+                groupOutputs = groupOutputs[start:start + maxLength]
+                textTypeOutputs = textTypeOutputs[start:start + maxLength]
 
             batchWordVectors.append(wordVectors)
             batchLineSortedWordIndexes.append(lineSortedWordIndexes)
@@ -340,6 +475,8 @@ class DocumentExtractorDataset:
             batchColumnReverseWordIndexes.append(columnReverseWordIndexes)
             batchClassificationOutputs.append(classificationOutputs)
             batchModifierOutputs.append(modifierOutputs)
+            batchGroupOutputs.append(groupOutputs)
+            batchTextTypeOutputs.append(textTypeOutputs)
 
         # print(batchWordVectors[0][0])
         # print(batchLineSortedWordIndexes)
@@ -351,5 +488,7 @@ class DocumentExtractorDataset:
             numpy.array(batchColumnSortedWordIndexes),
             numpy.array(batchColumnReverseWordIndexes),
             numpy.array(batchClassificationOutputs),
-            numpy.array(batchModifierOutputs)
+            numpy.array(batchModifierOutputs),
+            numpy.array(batchGroupOutputs),
+            numpy.array(batchTextTypeOutputs)
         )

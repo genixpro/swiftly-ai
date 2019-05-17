@@ -50,10 +50,14 @@ class Word(EmbeddedDocument):
 
 
     textType = StringField(default='block')
+    textTypeProbabilities = DictField(default={})
 
     groups = DictField(StringField(), default={})
     groupProbabilities = DictField(DictField(default={}))
     groupNumbers = DictField(IntField())
+
+    lineNumberWithinGroup = DictField(IntField())
+    reverseLineNumberWithinGroup = DictField(IntField())
 
 
 class File(Document):
@@ -94,6 +98,9 @@ class File(Document):
                     currentToken = {
                         "classification": word.classification,
                         "modifiers": word.modifiers,
+                        "groups": word.groups,
+                        "groupNumbers": word.groupNumbers,
+                        "textType": word.textType,
                         "words": [word],
                         "startIndex": word.index
                     }
@@ -105,6 +112,9 @@ class File(Document):
                     currentToken = {
                         "classification": word.classification,
                         "modifiers": word.modifiers,
+                        "groups": word.groups,
+                        "groupNumbers": word.groupNumbers,
+                        "textType": word.textType,
                         "words": [word],
                         "startIndex": word.index
                     }
@@ -197,6 +207,59 @@ class File(Document):
             lineItems.extend(items)
 
         return lineItems
+
+    def updateDescriptiveWordFeatures(self):
+        """ This function updates fields like lineNumberWithinGroup and reverseLineNumberWithinGroup on the Word object."""
+
+        currentGroupTypes = {}
+        currentGroupNumbers = {}
+        currentGroupStartLineNumber = {}
+        currentGroupWords = {}
+
+        def finishGroup(groupSet):
+            nonlocal currentGroupWords
+            if len(currentGroupWords[groupSet]):
+                maxLineNumber = max([groupWord.lineNumber for groupWord in currentGroupWords[groupSet]])
+                for groupWord in currentGroupWords[groupSet]:
+                    groupWord.reverseLineNumberWithinGroup[groupSet] = maxLineNumber - groupWord.lineNumberWithinGroup[groupSet]
+
+
+        for word in self.words:
+            word.lineNumberWithinGroup = {}
+
+            for groupSet, group in word.groups.items():
+                if group != 'null':
+                    if groupSet not in currentGroupTypes:
+                        word.lineNumberWithinGroup[groupSet] = 0
+
+                        currentGroupWords[groupSet] = [word]
+                        currentGroupNumbers[groupSet] = word.groupNumbers[groupSet]
+                        currentGroupTypes[groupSet] = word.groups[groupSet]
+                        currentGroupStartLineNumber[groupSet] = word.lineNumber
+                    elif group == currentGroupTypes[groupSet] and word.groupNumbers[groupSet] == currentGroupNumbers[groupSet]:
+                        word.lineNumberWithinGroup[groupSet] = word.lineNumber - currentGroupStartLineNumber[groupSet]
+                        currentGroupWords[groupSet].append(word)
+                    else:
+                        finishGroup(groupSet)
+
+                        word.lineNumberWithinGroup[groupSet] = 0
+
+                        currentGroupWords[groupSet] = [word]
+                        currentGroupNumbers[groupSet] = word.groupNumbers[groupSet]
+                        currentGroupTypes[groupSet] = word.groups[groupSet]
+                        currentGroupStartLineNumber[groupSet] = word.lineNumber
+
+            for groupSet in currentGroupWords.keys():
+                if word.groups.get(groupSet, 'null') == 'null':
+                    finishGroup(groupSet)
+
+                    currentGroupWords[groupSet] = []
+                    currentGroupNumbers[groupSet] = None
+                    currentGroupTypes[groupSet] = 'null'
+                    currentGroupStartLineNumber[groupSet] = None
+
+        for groupSet in currentGroupWords.keys():
+            finishGroup(groupSet)
 
     def downloadFileData(self, bucket, azureBlobStorage=None):
         fileId = str(self.id)
