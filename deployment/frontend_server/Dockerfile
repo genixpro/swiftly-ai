@@ -8,7 +8,7 @@ RUN curl -sL https://deb.nodesource.com/setup_8.x | bash
 # Install some basic system dependencies
 RUN apt-get update && apt-get install \
     nginx \
-    nodejs -y && \
+    nodejs -q -y && \
     rm -rf /var/lib/apt/lists/*
 
 # Set the working directory to /app
