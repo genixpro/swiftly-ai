@@ -26,7 +26,7 @@ ADD deployment/ssl/certbundle.pem /etc/nginx/ssl/nginx.pem
 
 # Set the working directory to /swiftly/client, and build the frontend package
 WORKDIR /swiftly/client
-RUN npm install
+RUN npm install > "/dev/null" 2>&1
 ENV VALUATE_ENV=${SWIFTLY_ENV}
 RUN npm run-script build
 RUN mkdir /build

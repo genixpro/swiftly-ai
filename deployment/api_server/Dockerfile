@@ -78,10 +78,10 @@ RUN rm -rf /swiftly/client
 
 # Install dependencies for server
 WORKDIR /swiftly/server/appraisal/word_documents
-RUN npm install
+RUN npm install > "/dev/null" 2>&1
 
 WORKDIR /swiftly/server
-RUN python3 setup.py install
+RUN python3 setup.py install > "/dev/null" 2>&1
 
 # Setup and configure systemd
 ENTRYPOINT ["bash", "-c", "gunicorn -t 600 -w 4 -b 0.0.0.0:80 --paste $SWIFTLY_ENV.ini"]
