@@ -2,7 +2,6 @@ from mongoengine import *
 import datetime
 from appraisal.models.extraction_reference import ExtractionReference
 import google.api_core.exceptions
-import azure.common
 import dateparser
 
 class Word(EmbeddedDocument):
