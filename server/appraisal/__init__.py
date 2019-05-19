@@ -26,7 +26,8 @@ def main(global_config, **settings):
         config.set_authorization_policy(acl_policy)
 
         # Create the BlockBlockService that is used to call the Blob service for the storage account
-        config.registry.azureBlobStorage =BlockBlobService(account_name=settings['storage.azureBucket'], account_key=settings['storage.azureAccountKey'])
+        # config.registry.azureBlobStorage =BlockBlobService(account_name=settings['storage.azureBucket'], account_key=settings['storage.azureAccountKey'])
+        config.registry.azureBlobStorage = None
 
         os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = pkg_resources.resource_filename("appraisal", "gcloud-storage-key.json")
 
