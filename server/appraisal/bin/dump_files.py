@@ -10,7 +10,6 @@ import bz2
 import sys
 import os
 import json
-from azure.storage.blob import BlockBlobService, PublicAccess
 import os
 from google.cloud import storage
 

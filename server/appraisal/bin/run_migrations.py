@@ -3,7 +3,6 @@ import bz2
 import sys
 import os
 import json
-from azure.storage.blob import BlockBlobService, PublicAccess
 import os
 from google.cloud import storage
 from mongoengine.queryset.visitor import Q
@@ -36,12 +35,10 @@ def main():
 
     settings = get_appsettings(config_uri)
 
-    os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = pkg_resources.resource_filename("appraisal", "gcloud-storage-key.json")
+    # os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = pkg_resources.resource_filename("appraisal", "gcloud-storage-key.json")
 
-    azureBlobStorage = BlockBlobService(account_name=settings['storage.azureBucket'], account_key=settings['storage.azureAccountKey'])
-    storage_client = storage.Client()
+    # storageBucket = storage_client.get_bucket(settings['storage.bucket'])
 
-    storageBucket = storage_client.get_bucket(settings['storage.bucket'])
     connect(db=settings.get('db.name'), host=settings.get('db.uri'))
 
     for migration in migrations:

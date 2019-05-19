@@ -234,7 +234,7 @@ class FileContentsAPI(object):
         if not auth:
             raise HTTPForbidden("You do not have access to this file.")
 
-        data = file.downloadFileData(self.storageBucket, self.request.registry.azureBlobStorage)
+        data = file.downloadFileData(self.storageBucket)
 
         if data is None:
             return Response(status=404)
@@ -276,7 +276,7 @@ class FileRenderedImagesAPI(object):
 
         page = self.request.matchdict['page']
 
-        data = file.downloadRenderedImage(page, self.storageBucket, self.request.registry.azureBlobStorage)
+        data = file.downloadRenderedImage(page, self.storageBucket)
 
         if data is None:
             return Response(status=404)

@@ -4,7 +4,6 @@ from appraisal.authorization import CustomAuthenticationPolicy
 from pyramid.authorization import ACLAuthorizationPolicy
 import collections
 from mongoengine import connect
-from azure.storage.blob import BlockBlobService, PublicAccess
 import os
 import pkg_resources
 from google.cloud import storage
@@ -49,9 +48,6 @@ def main(global_config, **settings):
 
         acl_policy = ACLAuthorizationPolicy()
         config.set_authorization_policy(acl_policy)
-
-        # Create the BlockBlockService that is used to call the Blob service for the storage account
-        config.registry.azureBlobStorage =BlockBlobService(account_name=settings['storage.azureBucket'], account_key=settings['storage.azureAccountKey'])
 
         os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = pkg_resources.resource_filename("appraisal", "gcloud-storage-key.json")
 

@@ -88,7 +88,7 @@ class ImageAPI(object):
         if not auth:
             raise HTTPForbidden("You do not have access to this zone")
 
-        data = image.downloadImageData(self.storageBucket, self.request.registry.azureBlobStorage, cropped=True)
+        data = image.downloadImageData(self.storageBucket, cropped=True)
 
         if data is None:
             return Response(status=404)

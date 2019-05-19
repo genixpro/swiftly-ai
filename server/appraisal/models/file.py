@@ -205,7 +205,7 @@ class File(Document):
         for groupSet in currentGroupWords.keys():
             finishGroup(groupSet)
 
-    def downloadFileData(self, bucket, azureBlobStorage=None):
+    def downloadFileData(self, bucket):
         fileId = str(self.id)
 
         data = None
@@ -213,15 +213,11 @@ class File(Document):
             blob = bucket.blob(fileId)
             data = blob.download_as_string()
         except google.api_core.exceptions.NotFound:
-            if azureBlobStorage:
-                try:
-                    data = azureBlobStorage.get_blob_to_bytes('files', fileId).content
-                except azure.common.AzureMissingResourceHttpError:
-                    pass
+            return None
 
         return data
 
-    def downloadRenderedImage(self, page, bucket, azureBlobStorage=None):
+    def downloadRenderedImage(self, page, bucket):
         fileId = str(self.id)
         imageFilename = fileId + "-image-" + str(page) + ".png"
 
@@ -230,11 +226,7 @@ class File(Document):
             blob = bucket.blob(imageFilename)
             data = blob.download_as_string()
         except google.api_core.exceptions.NotFound:
-            if azureBlobStorage:
-                try:
-                    data = azureBlobStorage.get_blob_to_bytes('files', imageFilename).content
-                except azure.common.AzureMissingResourceHttpError:
-                    pass
+            return None
 
         return data
 
