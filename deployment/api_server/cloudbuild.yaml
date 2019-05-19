@@ -24,7 +24,7 @@ steps:
   - sed "s/REVISION_ID/$REVISION_ID/g;s/SWIFTLY_ENV/$_SWIFTLY_ENV/g" deployment/api_server/migration_job.yaml > migration_job_$_SWIFTLY_ENV.yaml
 - name: 'gcr.io/cloud-builders/kubectl'
   args:
-  - 'apply'
+  - 'create'
   - '-f'
   - 'migration_job_$_SWIFTLY_ENV.yaml'
   env:
