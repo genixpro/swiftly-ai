@@ -6,6 +6,7 @@ import BaseModel from "../orm/BaseModel";
 import _ from "underscore";
 import StringField from "../orm/StringField";
 import FloatField from "../orm/FloatField";
+import IntField from "../orm/IntField";
 import ModelField from "../orm/ModelField";
 
 class RentEscalation extends BaseModel
@@ -36,6 +37,8 @@ class ComparableLeaseModel extends BaseModel
 
     static tenantInducements = new StringField();
     static freeRent = new StringField();
+    static freeRentMonths = new IntField();
+    static freeRentType = new StringField();
 
     static floorNumber = new FloatField();
     static retailLocationType = new StringField();

@@ -44,7 +44,7 @@ class ComparableLeaseListItemHeaderColumn extends React.Component
                     return this.props.comparableLease[field] && !(_.isArray(this.props.comparableLease[field]) && this.props.comparableLease[field].length === 0)
                         ? <span key={fieldIndex}>
                             {
-                                this.props.renders[fieldIndex](this.props.comparableLease[field])
+                                this.props.renders[fieldIndex](this.props.comparableLease[field], this.props.comparableLease)
                             }
                             {fieldIndex !== this.props.fields.length - 1 ? <br /> : null}
                             </span>
@@ -251,8 +251,8 @@ class ComparableLeaseListItem extends React.Component
                 render: (value) => <span>{value}</span>,
                 size: 3
             },
-            freeRent: {
-                render: (value) => <span>{value}</span>,
+            freeRentMonths: {
+                render: (value, lease) => <span><IntegerFormat value={lease.freeRentMonths}/>/mo {lease.freeRentType} free rent</span>,
                 size: 3
             }
         };
@@ -465,13 +465,22 @@ class ComparableLeaseListItem extends React.Component
 
                                     <span className={"comparable-field-label"}>Free Rent:</span>
 
-                                    <FieldDisplayEdit
-                                        type={"text"}
-                                        edit={this.props.edit}
-                                        placeholder={"Free Rent"}
-                                        value={comparableLease.freeRent}
-                                        onChange={(newValue) => this.changeComparableField('freeRent', newValue)}
-                                    />
+                                    <div className={"free-rent"}>
+                                        <FieldDisplayEdit
+                                            type={"months"}
+                                            edit={this.props.edit}
+                                            placeholder={"Free Rent Months"}
+                                            value={comparableLease.freeRentMonths}
+                                            onChange={(newValue) => this.changeComparableField('freeRentMonths', newValue)}
+                                        />
+                                        <FieldDisplayEdit
+                                            type={"rentType"}
+                                            edit={this.props.edit}
+                                            placeholder={"Free Rent Type"}
+                                            value={comparableLease.freeRentType}
+                                            onChange={(newValue) => this.changeComparableField('freeRentType', newValue)}
+                                        />
+                                    </div>
 
                                     <span className={"comparable-field-label"}>Tenant Inducements:</span>
 

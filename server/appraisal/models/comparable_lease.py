@@ -100,5 +100,5 @@ def migration_001_update_free_rent(lease):
 
         if 'net' in lease.freeRent.lower():
             lease.freeRentType = "net"
-        elif 'lease' in lease.freeRent.lower():
-            lease.freeRentType = "net"
+        elif 'gross' in lease.freeRent.lower():
+            lease.freeRentType = "gross"
