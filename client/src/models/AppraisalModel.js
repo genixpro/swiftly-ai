@@ -45,6 +45,8 @@ class AppraisalModel extends BaseModel
     static legalDescription = new StringField();
     static zoning = new StringField();
     static propertyTags = new ListField(new StringField());
+    static tenancyType = new StringField();
+
     static units = new ListField(new ModelField(UnitModel));
     static incomeStatement = new ModelField(IncomeStatementModel);
     static discountedCashFlowInputs = new ModelField(DiscountedCashFlowInputsModel);

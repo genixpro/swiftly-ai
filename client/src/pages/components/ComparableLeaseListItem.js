@@ -376,6 +376,16 @@ class ComparableLeaseListItem extends React.Component
                                         onChange={(newValue) => this.changeComparableField('propertyTags', newValue)}
                                     />
 
+                                    <span className={"comparable-field-label"}>Tenancy Is:</span>
+
+                                    <FieldDisplayEdit
+                                        type={"tenancyType"}
+                                        edit={this.props.edit}
+                                        placeholder={"Tenancy Is"}
+                                        value={comparableLease.tenancyType}
+                                        onChange={(newValue) => this.changeComparableField('tenancyType', newValue)}
+                                    />
+
                                     <span className={"comparable-field-label"}>Size Of Unit: </span>
 
                                     <FieldDisplayEdit

@@ -67,6 +67,23 @@ class ComparableSaleSearch extends React.Component
                                     </tr>
                                     <tr>
                                         <td>
+                                            <strong>Tenancy Is:</strong>
+                                        </td>
+                                        <td>
+                                            {
+                                                <FieldDisplayEdit
+                                                    isSearch={true}
+                                                    type={"tenancyType"}
+                                                    value={this.state.search.tenancyType}
+                                                    onChange={(newValue) => this.changeSearchField("tenancyType", newValue)}
+                                                    hideInput={false}
+                                                    hideIcon={true}
+                                                />
+                                            }
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
                                             <strong>Sub Type:</strong>
                                         </td>
                                         <td>

@@ -87,6 +87,7 @@ class ViewBuildingInformation extends React.Component
 
                                                 {this.renderFieldRow("Property Type", "propertyType", "propertyType")}
                                                 {this.renderFieldRow("Sub Type", "propertyTags", "tags")}
+                                                {this.renderFieldRow("Tenancy Is", "tenancyType", "tenancyType")}
                                                 {this.renderFieldRow("Lot Size", "sizeOfLand", "acres")}
                                                 <tr>
                                                     <td>

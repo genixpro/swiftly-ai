@@ -85,6 +85,8 @@ class ComparableSaleModel extends EquationMdoel
     static numberOfThreePlusBedrooms = new FloatField("numberOfThreePlusBedrooms", 0);
     static totalBedrooms = new FloatField("totalBedrooms");
 
+    static tenancyType = new StringField();
+
     static equations = {
         "netOperatingIncome": [
             {

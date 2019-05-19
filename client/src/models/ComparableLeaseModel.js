@@ -43,6 +43,7 @@ class ComparableLeaseModel extends BaseModel
     static shippingDoors = new StringField();
 
     static remarks = new StringField();
+    static tenancyType = new StringField();
 
     get startingYearlyRent()
     {

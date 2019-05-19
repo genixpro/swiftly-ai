@@ -75,3 +75,5 @@ class ComparableLease(Document):
 
     # Shipping Doors
     remarks = StringField()
+
+    tenancyType = StringField(choices=['single_tenant', 'multi_tenant', 'vacant'])

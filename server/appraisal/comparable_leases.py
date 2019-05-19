@@ -49,6 +49,8 @@ class ComparableLeaseAPI(object):
             query['propertyType'] = self.request.GET['propertyType']
         if 'tenantName' in self.request.GET:
             query['tenantName__contains'] = self.request.GET['tenantName']
+        if 'tenancyType' in self.request.GET:
+            query['tenancyType'] = self.request.GET['tenancyType']
 
         if 'propertyTags[]' in self.request.GET:
             query['propertyTags__all'] = [value for key, value in self.request.GET.items() if key == 'propertyTags[]']

@@ -511,6 +511,15 @@ class ComparableSaleListItem extends React.Component
                                     />
 
                                     <ComparableSaleListItemField
+                                        title="Tenancy Type"
+                                        field="tenancyType"
+                                        fieldType="tenancyType"
+                                        edit={this.props.edit}
+                                        comparableSale={comparableSale}
+                                        onChange={this.changeComparableField.bind(this)}
+                                    />
+
+                                    <ComparableSaleListItemField
                                         title="Building Size"
                                         field="sizeSquareFootage"
                                         fieldType="area"

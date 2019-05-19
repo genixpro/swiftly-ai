@@ -107,6 +107,9 @@ class ComparableSaleAPI(object):
                 (float(self.request.GET['locationRight']), float(self.request.GET['locationTop']))
             ]
 
+        if 'tenancyType' in self.request.GET:
+            query['tenancyType'] = self.request.GET['tenancyType']
+
         if "view_all" not in self.request.effective_principals:
             query["owner"] = self.request.authenticated_userid
 
