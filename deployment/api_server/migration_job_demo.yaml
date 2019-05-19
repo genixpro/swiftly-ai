@@ -1,0 +1,17 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: swiftly-migration-demo
+spec:
+  template:
+    spec:
+      containers:
+      - name: eb-appraisal-sha256
+        image: gcr.io/appraisalai/swiftly:latest-demo-frontend
+        command: ["appraisal_run_migrations",  "demo.ini"]
+        resources:
+          requests:
+            cpu: 1
+            memory: 512Mi
+      restartPolicy: Never
+  backoffLimit: 4

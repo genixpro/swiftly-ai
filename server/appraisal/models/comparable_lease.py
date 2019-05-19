@@ -2,7 +2,8 @@ from mongoengine import *
 import datetime
 from appraisal.models.unit import Unit
 from appraisal.models.date_field import ConvertingDateField
-
+from ..migrations import registerMigration
+import re
 
 class RentEscalation(EmbeddedDocument):
     meta = {'strict': False}
@@ -46,6 +47,12 @@ class ComparableLease(Document):
     # Free rent in plain text
     freeRent = StringField()
 
+    # Number of months of free rent
+    freeRentMonths = IntField()
+
+    # The type of free rent - net / gross
+    freeRentType = StringField(choices=["net", "gross", "", None], default="", null=True)
+
     # The description of the comparable
     description = StringField()
 
@@ -77,3 +84,21 @@ class ComparableLease(Document):
     remarks = StringField()
 
     tenancyType = StringField(choices=['single_tenant', 'multi_tenant', 'vacant'])
+
+    version = IntField(default=1)
+
+
+@registerMigration(ComparableLease, 1)
+def migration_001_update_free_rent(lease):
+    if lease.freeRent:
+        freeRentNumbers = re.sub("[^0-9.]*", "", lease.freeRent)
+
+        if freeRentNumbers:
+            lease.freeRentMonths = int(float(freeRentNumbers))
+        else:
+            lease.freeRentMonths = None
+
+        if 'net' in lease.freeRent.lower():
+            lease.freeRentType = "net"
+        elif 'lease' in lease.freeRent.lower():
+            lease.freeRentType = "net"

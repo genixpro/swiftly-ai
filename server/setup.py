@@ -88,6 +88,7 @@ setup(
             'appraisal_migrate_azure_to_gcp = appraisal.bin.migrate_azure_to_gcp:main',
             'appraisal_dump_files = appraisal.bin.dump_files:main',
             'appraisal_import_files = appraisal.bin.import_files:main',
+            'appraisal_run_migrations = appraisal.bin.run_migrations:main',
         ]
     },
 )
