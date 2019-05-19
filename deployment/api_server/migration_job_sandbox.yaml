@@ -7,7 +7,7 @@ spec:
     spec:
       containers:
       - name: eb-appraisal-sha256
-        image: gcr.io/appraisalai/swiftly:latest-sandbox-frontend
+        image: gcr.io/appraisalai/swiftly:latest-sandbox-api
         command: ["appraisal_run_migrations",  "sandbox.ini"]
         resources:
           requests:

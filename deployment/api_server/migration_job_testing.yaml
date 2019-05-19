@@ -7,7 +7,7 @@ spec:
     spec:
       containers:
       - name: eb-appraisal-sha256
-        image: gcr.io/appraisalai/swiftly:latest-testing-frontend
+        image: gcr.io/appraisalai/swiftly:latest-testing-api
         command: ["appraisal_run_migrations",  "testing.ini"]
         resources:
           requests:
