@@ -3,6 +3,7 @@ kind: Job
 metadata:
   name: swiftly-migration-demo
 spec:
+  ttlSecondsAfterFinished: 3600
   template:
     spec:
       containers:

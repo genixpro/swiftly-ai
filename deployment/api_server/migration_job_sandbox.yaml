@@ -3,6 +3,7 @@ kind: Job
 metadata:
   name: swiftly-migration-sandbox
 spec:
+  ttlSecondsAfterFinished: 3600
   template:
     spec:
       containers:
