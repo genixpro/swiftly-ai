@@ -4,6 +4,7 @@ import tensorflow as tf
 from appraisal.components.document_generator import DocumentGenerator
 import numpy
 import pickle
+import math
 import random
 import json
 import io
@@ -258,6 +259,9 @@ class DocumentExtractorNetwork:
             outputDesired.append(self.textTypeProbabilities)
 
         outputs = self.session.run(outputDesired, feed_dict)
+        currentGroup = {}
+        currentGroupNumbers = {}
+        currentGroupStartLineNumbers = {}
 
         for wordIndex in range(len(wordVectors[0])):
             word = file.words[wordIndex]
@@ -295,13 +299,43 @@ class DocumentExtractorNetwork:
                     outputIndex += 2
                     
                     groupPrediction = predictions[0][wordIndex]
-                        
-                    word['groups'][groupSet] = self.dataset.groups[groupSet][groupPrediction]
-                    word['groupProbabilities'][groupSet] = {
-                        label: float(probabilities[0][wordIndex][labelIndex])
-                        for labelIndex, label in enumerate(self.dataset.groups[groupSet])
-                    }
-            
+
+                    groupIndex = math.floor(groupPrediction/3)
+                    startEndIndex = groupPrediction % 3
+
+                    group = self.dataset.groups[groupSet][groupIndex]
+
+                    word['groupProbabilities'][groupSet] = {}
+                    for labelIndex, label in enumerate(self.dataset.groups[groupSet]):
+                        word['groupProbabilities'][groupSet][label+"-start"] = float(probabilities[0][wordIndex][labelIndex * 3])
+                        word['groupProbabilities'][groupSet][label+"-middle"] = float(probabilities[0][wordIndex][labelIndex * 3 + 1])
+                        word['groupProbabilities'][groupSet][label+"-end"] = float(probabilities[0][wordIndex][labelIndex * 3 + 2])
+
+                    if group != "null":
+                        word['groups'][groupSet] = group
+                        if group == currentGroup.get(groupSet, None):
+                            if startEndIndex == 0:
+                                if currentGroupStartLineNumbers[groupSet] == word.documentLineNumber:
+                                    word['groupNumbers'][groupSet] = currentGroupNumbers[groupSet]
+                                else:
+                                    currentGroupNumbers[groupSet] += 1
+                                    currentGroupStartLineNumbers[groupSet] = word.documentLineNumber
+                                    word['groupNumbers'][groupSet] = currentGroupNumbers[groupSet]
+                            elif startEndIndex == 1 or startEndIndex == 2:
+                                word['groupNumbers'][groupSet] = currentGroupNumbers[groupSet]
+                        else:
+                            currentGroup[groupSet] = group
+                            if groupSet not in currentGroupNumbers:
+                                currentGroupNumbers[groupSet] = 0
+                            else:
+                                currentGroupNumbers[groupSet] += 1
+
+                            currentGroupStartLineNumbers[groupSet] = word.documentLineNumber
+                            word['groupNumbers'][groupSet] = currentGroupNumbers[groupSet]
+                    else:
+                        currentGroup[groupSet] = None
+                        currentGroupStartLineNumbers[groupSet] = None
+
             if 'textType' in self.networkOutputs:
                 predictions = outputs[outputIndex]
                 probabilities = outputs[outputIndex + 1]
@@ -516,9 +550,11 @@ class DocumentExtractorNetwork:
                     correct_group = tf.equal(groupSetPredictionsFlat, groupSetActualFlat)
     
                     self.groupSetAccuracy[groupSet] = tf.reduce_mean(tf.cast(correct_group, tf.float32))
-    
-                    groupAccuracyMask = tf.cast(tf.equal(groupSetPredictionsFlat, 0), tf.int32) * \
-                                           tf.cast(tf.equal(groupSetActualFlat, 0), tf.int32)
+
+                    nullIndex = self.dataset.groups[groupSet].index('null') * 3 + 1
+
+                    groupAccuracyMask = tf.cast(tf.equal(groupSetPredictionsFlat, nullIndex), tf.int32) * \
+                                           tf.cast(tf.equal(groupSetActualFlat, nullIndex), tf.int32)
     
                     groupAccuracyMask = 1 - groupAccuracyMask
     

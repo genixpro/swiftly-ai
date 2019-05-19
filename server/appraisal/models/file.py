@@ -3,6 +3,7 @@ import datetime
 from appraisal.models.extraction_reference import ExtractionReference
 import google.api_core.exceptions
 import azure.common
+import dateparser
 
 class Word(EmbeddedDocument):
     meta = {'strict': False}
@@ -130,7 +131,6 @@ class File(Document):
                 text += word['word'] + " "
             text = text.strip()
             token['text'] = text
-            token['pageType'] = self.pageTypes[token['words'][0]['page']]
 
 
         return tokens
@@ -152,62 +152,6 @@ class File(Document):
 
         return int(parsed.year)
 
-    def getLineItems(self, pageType):
-        tokens = self.breakIntoTokens()
-
-        tokens = [token for token in tokens if token['pageType'] == pageType]
-
-        year = int(self.getDocumentYear())
-
-        tokensByLineNumberAndPage = {}
-        for token in tokens:
-            if token['classification'] != "null":
-                lineNumberPage = (token['words'][0]['page'], token['words'][0]['lineNumber'])
-                if lineNumberPage in tokensByLineNumberAndPage:
-                    tokensByLineNumberAndPage[lineNumberPage].append(token)
-                else:
-                    tokensByLineNumberAndPage[lineNumberPage] = [token]
-
-        lineItems = []
-
-        for lineNumberPage in tokensByLineNumberAndPage:
-            groupedByClassification = {}
-            for token in tokensByLineNumberAndPage[lineNumberPage]:
-                if token['classification'] in groupedByClassification:
-                    groupedByClassification[token['classification']].append(token)
-                else:
-                    groupedByClassification[token['classification']] = [token]
-
-            maxSize = max([len(groupedByClassification[classification]) for classification in groupedByClassification])
-
-            items = [{
-                'modifiers': set()
-            } for n in range(maxSize)]
-            for classification in groupedByClassification:
-                for tokenIndex, token in enumerate(groupedByClassification[classification]):
-                    if len(groupedByClassification[classification]) == 1:
-                        itemsForGroup = items
-                    else:
-                        itemsForGroup = [items[tokenIndex]]
-
-                    for item in itemsForGroup:
-                        item[token['classification']] = token['text']
-                        item[token['classification'] + "_reference"] = ExtractionReference(fileId=str(self.id), appraisalId=str(self.appraisalId), wordIndexes=[word['index'] for word in token['words']])
-                        for modifier in token['modifiers']:
-                            item['modifiers'].add(modifier)
-
-            for item in items:
-                if 'NEXT_YEAR' in item['modifiers']:
-                    item['year'] = year + 1
-                elif 'PREVIOUS_YEAR' in item['modifiers']:
-                    item['year'] = year - 1
-                else:
-                    item['year'] = year
-
-            lineItems.extend(items)
-
-        return lineItems
-
     def updateDescriptiveWordFeatures(self):
         """ This function updates fields like lineNumberWithinGroup and reverseLineNumberWithinGroup on the Word object."""
 
@@ -219,7 +163,7 @@ class File(Document):
         def finishGroup(groupSet):
             nonlocal currentGroupWords
             if len(currentGroupWords[groupSet]):
-                maxLineNumber = max([groupWord.lineNumber for groupWord in currentGroupWords[groupSet]])
+                maxLineNumber = max([groupWord.documentLineNumber for groupWord in currentGroupWords[groupSet]])
                 for groupWord in currentGroupWords[groupSet]:
                     groupWord.reverseLineNumberWithinGroup[groupSet] = maxLineNumber - groupWord.lineNumberWithinGroup[groupSet]
 
@@ -235,9 +179,9 @@ class File(Document):
                         currentGroupWords[groupSet] = [word]
                         currentGroupNumbers[groupSet] = word.groupNumbers[groupSet]
                         currentGroupTypes[groupSet] = word.groups[groupSet]
-                        currentGroupStartLineNumber[groupSet] = word.lineNumber
+                        currentGroupStartLineNumber[groupSet] = word.documentLineNumber
                     elif group == currentGroupTypes[groupSet] and word.groupNumbers[groupSet] == currentGroupNumbers[groupSet]:
-                        word.lineNumberWithinGroup[groupSet] = word.lineNumber - currentGroupStartLineNumber[groupSet]
+                        word.lineNumberWithinGroup[groupSet] = word.documentLineNumber - currentGroupStartLineNumber[groupSet]
                         currentGroupWords[groupSet].append(word)
                     else:
                         finishGroup(groupSet)
@@ -247,7 +191,7 @@ class File(Document):
                         currentGroupWords[groupSet] = [word]
                         currentGroupNumbers[groupSet] = word.groupNumbers[groupSet]
                         currentGroupTypes[groupSet] = word.groups[groupSet]
-                        currentGroupStartLineNumber[groupSet] = word.lineNumber
+                        currentGroupStartLineNumber[groupSet] = word.documentLineNumber
 
             for groupSet in currentGroupWords.keys():
                 if word.groups.get(groupSet, 'null') == 'null':

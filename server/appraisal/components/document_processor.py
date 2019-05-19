@@ -1,7 +1,5 @@
-from appraisal.components.document_classifier import DocumentClassifier
 from appraisal.components.document_parser import DocumentParser
 from appraisal.components.document_extractor import DocumentExtractor
-from appraisal.components.page_classifier import PageClassifier
 from appraisal.models.file import File, Word
 import filetype
 import re
@@ -19,9 +17,7 @@ class DocumentProcessor:
     """
 
     def __init__(self, db, storageBucket, vectorServerURL=None):
-        self.classifier = DocumentClassifier()
         self.parser = DocumentParser()
-        self.pageClassifier = PageClassifier()
         self.storageBucket = storageBucket
         self.db = db
         self.vectorServerURL = vectorServerURL
@@ -94,9 +90,6 @@ class DocumentProcessor:
 
 
     def classifyAndProcessDocument(self, file):
-        file.fileType = self.classifier.classifyFile(file)
-        file.pageTypes = self.pageClassifier.classifyFile(file)
-
         # extractor = DocumentExtractor(self.db, self.vectorServerURL)
         # extractor.predictDocument(file)
         for word in file.words:
