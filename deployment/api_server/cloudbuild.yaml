@@ -1,12 +1,14 @@
 steps:
 - name: 'gcr.io/cloud-builders/docker'
+  id: Build API Server Docker Image
   args: ["build", "-t", "gcr.io/appraisalai/swiftly:$REVISION_ID-$_SWIFTLY_ENV-api", ".", "--build-arg", "SWIFTLY_ENV=$_SWIFTLY_ENV", "-f", "deployment/api_server/Dockerfile"]
   timeout: 7200s
 - name: 'gcr.io/cloud-builders/docker'
+  id: Upload API Server Docker Image
   args: ["push", "gcr.io/appraisalai/swiftly:$REVISION_ID-$_SWIFTLY_ENV-api"]
   timeout: 3600s
 - name: 'gcr.io/cloud-builders/gcloud'
-  id: Update API Server Deployment
+  id: Update Deployment on Kubernetes
   entrypoint: /bin/bash
   args:
   - "./deployment/api_server/update_api_server.sh"
@@ -17,7 +19,7 @@ steps:
   - 'REVISION_ID=$REVISION_ID'
   timeout: 600s
 - name: 'gcr.io/cloud-builders/gcloud'
-  id: Run Migration
+  id: Run Migration Job
   entrypoint: /bin/bash
   args:
   - "./deployment/api_server/run_migration_job.sh"
@@ -28,7 +30,7 @@ steps:
   - 'REVISION_ID=$REVISION_ID'
   timeout: 600s
 - name: 'gcr.io/cloud-builders/gcloud'
-  id: Update Demo Job
+  id: Update Demo CronJob
   entrypoint: /bin/bash
   args:
   - "./deployment/api_server/update_demo_reset.sh"

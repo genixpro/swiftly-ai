@@ -1,8 +1,10 @@
 steps:
 - name: 'gcr.io/cloud-builders/docker'
+  id: Build Frontend Docker Image
   args: ["build", "-t", "gcr.io/appraisalai/swiftly:$REVISION_ID-$_SWIFTLY_ENV-frontend", ".", "--build-arg", "SWIFTLY_ENV=$_SWIFTLY_ENV", "-f", "deployment/frontend_server/Dockerfile"]
   timeout: 7200s
 - name: 'gcr.io/cloud-builders/docker'
+  id: Upload Docker Image
   args: ["push", "gcr.io/appraisalai/swiftly:$REVISION_ID-$_SWIFTLY_ENV-frontend"]
   timeout: 3600s
 - name: 'gcr.io/cloud-builders/gcloud'
