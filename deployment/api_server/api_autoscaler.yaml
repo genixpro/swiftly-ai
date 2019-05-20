@@ -1,0 +1,16 @@
+apiVersion: autoscaling/v1
+kind: HorizontalPodAutoscaler
+metadata:
+  labels:
+    app: swiftly-SWIFTLY_ENV-api
+  name: swiftly-SWIFTLY_ENV-api-hpa
+  selfLink: /apis/autoscaling/v1/namespaces/default/horizontalpodautoscalers/swiftly-SWIFTLY_ENV-api-hpa
+spec:
+  maxReplicas: 10
+  minReplicas: 2
+  scaleTargetRef:
+    apiVersion: apps/v1beta1
+    kind: Deployment
+    name: swiftly-SWIFTLY_ENV-api
+  targetCPUUtilizationPercentage: 80
+

@@ -137,4 +137,4 @@ class ComparableSale(Document):
     numberOfThreePlusBedrooms = FloatField()
     totalBedrooms = FloatField()
 
-    tenancyType = StringField(choices=['single_tenant', 'multi_tenant', 'vacant'])
+    tenancyType = StringField(choices=['single_tenant', 'multi_tenant', 'vacant', ""], null=True)

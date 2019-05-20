@@ -68,7 +68,7 @@ class Appraisal(Document):
 
     buildableUnits = FloatField()
 
-    tenancyType = StringField(choices=['single_tenant', 'multi_tenant', 'vacant', ''])
+    tenancyType = StringField(choices=['single_tenant', 'multi_tenant', 'vacant', ""], null=True)
 
     # A list of units within this Appraisal
     units = ListField(EmbeddedDocumentField(Unit))
