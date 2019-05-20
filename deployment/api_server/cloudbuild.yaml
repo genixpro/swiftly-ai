@@ -35,7 +35,7 @@ steps:
   id: Update Demo Job
   entrypoint: /bin/bash
   args:
-  - "./deployment/apli_server/update_demo_reset.sh"
+  - "./deployment/api_server/update_demo_reset.sh"
   env:
   - 'CLOUDSDK_COMPUTE_ZONE=us-central1-a'
   - 'CLOUDSDK_CONTAINER_CLUSTER=swiftly-cluster-api'
