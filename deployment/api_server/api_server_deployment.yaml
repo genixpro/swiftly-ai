@@ -20,7 +20,10 @@ spec:
         app: swiftly-__SWIFTLY_ENV__-api
     spec:
       containers:
-      - image: gcr.io/appraisalai/swiftly:__REVISION_ID__-__SWIFTLY_ENV__-api
+      - env:
+        - name: SWIFTLY_ENV
+          value: __SWIFTLY_ENV__
+        image: gcr.io/appraisalai/swiftly:__REVISION_ID__-__SWIFTLY_ENV__-api
         imagePullPolicy: IfNotPresent
         livenessProbe:
           failureThreshold: 3
