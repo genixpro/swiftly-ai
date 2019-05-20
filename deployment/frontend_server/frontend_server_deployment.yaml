@@ -19,6 +19,20 @@ spec:
       labels:
         app: swiftly-__SWIFTLY_ENV__-frontend
     spec:
+      affinity:
+        nodeAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 1
+            preference:
+              matchExpressions:
+              - key: cloud.google.com/gke-preemptible
+                operator: In
+                values:
+      tolerations:
+      - key: "gke-preemptible"
+        operator: "Equal"
+        value: "true"
+        effect: "NoSchedule"
       containers:
       - image: gcr.io/appraisalai/swiftly:__REVISION_ID__-__SWIFTLY_ENV__-frontend
         imagePullPolicy: IfNotPresent
