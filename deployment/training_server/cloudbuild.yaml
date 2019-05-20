@@ -1,0 +1,8 @@
+steps:
+- name: 'gcr.io/cloud-builders/docker'
+  args: ["build", "-t", "gcr.io/appraisalai/swiftly:$REVISION_ID-trainingserver", ".", "-f", "deployment/vector_server/Dockerfile"]
+  timeout: 7200s
+- name: 'gcr.io/cloud-builders/docker'
+  args: ["push", "gcr.io/appraisalai/swiftly:$REVISION_ID-trainingserver"]
+  timeout: 3600s
+

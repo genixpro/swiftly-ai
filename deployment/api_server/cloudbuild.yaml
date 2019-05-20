@@ -31,5 +31,17 @@ steps:
   - 'CLOUDSDK_COMPUTE_ZONE=us-central1-a'
   - 'CLOUDSDK_CONTAINER_CLUSTER=swiftly-cluster-api'
   timeout: 600s
+- name: 'gcr.io/cloud-builders/gcloud'
+  id: Update Demo Job
+  entrypoint: /bin/sh
+  args:
+  - '-c'
+  - if test $SWIFTLY_ENV -eq testing then sed "s/REVISION_ID/$REVISION_ID/g;s/SWIFTLY_ENV/$_SWIFTLY_ENV/g" deployment/api_server/demo_reset_job.yaml > demo_reset_job_$_SWIFTLY_ENV.yaml && \
+    kubectl apply -f demo_reset_job_$_SWIFTLY_ENV.yaml fi
+  env:
+  - 'CLOUDSDK_COMPUTE_ZONE=us-central1-a'
+  - 'CLOUDSDK_CONTAINER_CLUSTER=swiftly-cluster-api'
+  - 'SWIFTLY_ENV=$_SWIFTLY_ENV'
 timeout: 15000s
+
 
