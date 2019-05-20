@@ -1,0 +1,21 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: swiftly-__SWIFTLY_ENV__-frontend
+  labels:
+    app: swiftly-__SWIFTLY_ENV__-frontend
+  name: swiftly-__SWIFTLY_ENV__-frontend
+  namespace: default
+spec:
+  ports:
+  - port: 80
+    protocol: TCP
+    targetPort: 80
+  selector:
+    app: swiftly-__SWIFTLY_ENV__-frontend
+  - name: https
+    port: 443
+    protocol: TCP
+    targetPort: 443
+  sessionAffinity: None
+  type: LoadBalancer

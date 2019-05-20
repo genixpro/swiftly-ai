@@ -1,0 +1,24 @@
+apiVersion: batch/v1beta1
+kind: CronJob
+metadata:
+  name: swiftly-training-__SWIFTLY_ENV__
+spec:
+  schedule: "0 0 * * 0"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: eb-appraisal-sha256
+            image: gcr.io/appraisalai/swiftly:__REVISION_ID__-trainingserver
+            resources:
+              requests:
+                cpu: 1.5
+                memory: 10Gi
+              limits:
+                nvidia.com/gpu: 1
+          restartPolicy: OnFailure
+      backoffLimit: 4
+
+
+

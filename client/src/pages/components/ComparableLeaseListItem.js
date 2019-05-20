@@ -252,7 +252,7 @@ class ComparableLeaseListItem extends React.Component
                 size: 3
             },
             freeRentMonths: {
-                render: (value, lease) => <span><IntegerFormat value={lease.freeRentMonths}/>/mo {lease.freeRentType} free rent</span>,
+                render: (value, lease) => <span><IntegerFormat value={lease.freeRentMonths}/> month{lease.freeRentMonths !== 1 ? "s" : ""} free {lease.freeRentType} rent</span>,
                 size: 3
             }
         };
@@ -469,7 +469,7 @@ class ComparableLeaseListItem extends React.Component
                                         <FieldDisplayEdit
                                             type={"months"}
                                             edit={this.props.edit}
-                                            placeholder={"Free Rent Months"}
+                                            placeholder={"# of Months"}
                                             value={comparableLease.freeRentMonths}
                                             onChange={(newValue) => this.changeComparableField('freeRentMonths', newValue)}
                                         />

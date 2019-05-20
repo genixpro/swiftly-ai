@@ -2,14 +2,14 @@ apiVersion: autoscaling/v1
 kind: HorizontalPodAutoscaler
 metadata:
   labels:
-    app: swiftly-SWIFTLY_ENV-frontend
-  name: swiftly-SWIFTLY_ENV-frontend-hpa
+    app: swiftly-vectorserver
+  name: swiftly-vectorserver-hpa
 spec:
   maxReplicas: 10
   minReplicas: 2
   scaleTargetRef:
     apiVersion: apps/v1beta1
     kind: Deployment
-    name: swiftly-SWIFTLY_ENV-frontend
+    name: swiftly-vectorserver
   targetCPUUtilizationPercentage: 80
 

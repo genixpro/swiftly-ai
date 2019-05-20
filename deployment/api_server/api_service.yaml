@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: swiftly-__SWIFTLY_ENV__-api
+  labels:
+    app: swiftly-__SWIFTLY_ENV__-api
+  name: swiftly-__SWIFTLY_ENV__-api
+  namespace: default
+spec:
+  ports:
+  - port: 80
+    protocol: TCP
+    targetPort: 80
+  selector:
+    app: swiftly-__SWIFTLY_ENV__-api
+  sessionAffinity: None
+  type: ClusterIP

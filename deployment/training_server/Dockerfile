@@ -57,8 +57,6 @@ WORKDIR /swiftly
 # Copy the current directory contents into the container at /swiftly
 ADD . /swiftly
 
-ARG SWIFTLY_ENV
-
 WORKDIR /swiftly
 RUN gcloud auth activate-service-account --key-file appraisalai-be8f24d217e0.json
 
@@ -82,6 +80,6 @@ RUN pip3 uninstall tensorflow
 RUN pip3 install tensorflow-gpu===1.12.2
 
 # Setup and configure systemd
-ENTRYPOINT ["bash", "-c", "appraisal_train_extractor $SWIFTLY_ENV.ini"]
+ENTRYPOINT ["bash", "-c", "appraisal_train_extractor production.ini"]
 
 EXPOSE 80

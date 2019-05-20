@@ -1,8 +1,27 @@
 steps:
 - name: 'gcr.io/cloud-builders/docker'
-  args: ["build", "-t", "gcr.io/appraisalai/swiftly:$REVISION_ID-trainingserver", ".", "-f", "deployment/vector_server/Dockerfile"]
+  id: Build training server image
+  args: ["build", "-t", "gcr.io/appraisalai/swiftly:$REVISION_ID-trainingserver", ".", "-f", "deployment/training_server/Dockerfile"]
   timeout: 7200s
 - name: 'gcr.io/cloud-builders/docker'
+  id: Upload training server image
   args: ["push", "gcr.io/appraisalai/swiftly:$REVISION_ID-trainingserver"]
   timeout: 3600s
-
+- name: 'gcr.io/cloud-builders/kubectl'
+  id: Fetch Kubernetes Auth
+  args:
+  - 'cluster-info'
+  env:
+  - 'CLOUDSDK_COMPUTE_ZONE=us-central1-a'
+  - 'CLOUDSDK_CONTAINER_CLUSTER=swiftly-cluster-api'
+  timeout: 30s
+- name: 'gcr.io/cloud-builders/gcloud'
+  id: Update Training Server Cron Job
+  entrypoint: /bin/bash
+  args:
+  - "./deployment/training_server/update_training_server.sh"
+  env:
+  - 'CLOUDSDK_COMPUTE_ZONE=us-central1-a'
+  - 'CLOUDSDK_CONTAINER_CLUSTER=swiftly-cluster-api'
+  - 'REVISION_ID=$REVISION_ID'
+  timeout: 600s

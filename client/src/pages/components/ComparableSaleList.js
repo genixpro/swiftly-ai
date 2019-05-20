@@ -98,14 +98,7 @@ class ComparableSaleList extends React.Component
             headerFields.push(["sizeOfLandAcres", "sizeOfBuildableAreaSqft"])
         }
 
-        if(this.props.search.propertyType !== 'industrial')
-        {
-            headerFields.push(["salePrice"]);
-        }
-        else
-        {
-            headerFields.push(["salePrice", "shippingDoorsDoubleMan", "shippingDoorsDriveIn", "shippingDoorsTruckLevel"]);
-        }
+        headerFields.push(["salePrice"]);
 
         headerFields.push(["propertyType", "propertyTags"]);
 
