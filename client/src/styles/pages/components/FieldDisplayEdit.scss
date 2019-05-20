@@ -83,7 +83,7 @@
     flex-grow: 1;
   }
 
-  .zone-selector__indicators, .tag-editor__indicators, .tenant-name-selector__indicators
+  .zone-selector__indicators, .tag-editor__indicators, .tenant-name-selector__dropdown-indicator, .tenant-name-selector__indicator-separator, .tenant-name-selector__loading-indicator
   {
     display: none;
   }

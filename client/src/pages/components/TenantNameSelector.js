@@ -33,8 +33,16 @@ class TenantNameSelector extends React.Component {
     {
         if (this.props.onChange)
         {
-            this.props.onChange(newTenant.value);
-            this.setState({tenant: newTenant});
+            if (newTenant)
+            {
+                this.props.onChange(newTenant.value);
+                this.setState({tenant: newTenant});
+            }
+            else
+            {
+                this.props.onChange(null);
+                this.setState({tenant: null});
+            }
         }
     }
 
@@ -46,8 +54,9 @@ class TenantNameSelector extends React.Component {
             <AsyncCreatable
                 className={"tenant-name-selector"}
                 classNamePrefix={"tenant-name-selector"}
-                value={{value: this.props.value, label: this.props.value}}
+                value={this.state.tenant ? this.state.tenant : this.props.value ? {value: this.props.value, label: this.props.value} : null}
                 cacheOptions
+                isClearable={true}
                 title={this.props.title || this.props.placeholder}
                 loadOptions={this.loadOptions.bind(this)}
                 onCreateOption={(data) => this.onCreateTenant(data)}

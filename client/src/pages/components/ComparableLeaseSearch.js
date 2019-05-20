@@ -200,7 +200,7 @@ class ComparableLeaseSearch extends React.Component
                                             {
                                                 <FieldDisplayEdit
                                                     isSearch={true}
-                                                    type={"text"}
+                                                    type={"tenantName"}
                                                     value={this.state.search.tenantName}
                                                     onChange={(newValue) => this.changeSearchField("tenantName", newValue)}
                                                     hideInput={false}
