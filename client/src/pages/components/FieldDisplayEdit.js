@@ -287,6 +287,15 @@ class FieldDisplayEdit extends React.Component
         this.props.onChange(newValue);
     }
 
+    zoneInputUpdated(newValue)
+    {
+        // if (newValue)
+        // {
+        this.setState({value: newValue});
+        this.props.onChange(newValue);
+        // }
+    }
+
 
     finishEditing()
     {
@@ -527,7 +536,7 @@ class FieldDisplayEdit extends React.Component
                             title={this.props.title || this.props.placeholder}
                             disabled={!this.props.edit}
                             value={this.state.isEditing ? this.state.value : this.props.value}
-                            onChange={(newValue) => this.selectInputUpdated(newValue) }
+                            onChange={(newValue) => this.zoneInputUpdated(newValue) }
                             onBlur={() => this.finishEditing()}
                         /> : null
                 }

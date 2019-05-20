@@ -269,6 +269,7 @@ class ComparableSaleSearch extends React.Component
                                                 </td>
                                             </tr> : null
                                     }
+
                                     </tbody>
                                     </table>
                                 </Col>
@@ -520,6 +521,27 @@ class ComparableSaleSearch extends React.Component
                                                             hideInput={false}
                                                             hideIcon={true}
 
+                                                        />
+                                                    }
+                                                </td>
+                                            </tr> : null
+                                    }
+
+                                    {
+                                        this.state.search.propertyType === 'land' ?
+                                            <tr>
+                                                <td>
+                                                    <strong>Zoning:</strong>
+                                                </td>
+                                                <td>
+                                                    {
+                                                        <FieldDisplayEdit
+                                                            isSearch={true}
+                                                            type={"zone"}
+                                                            value={this.state.search.zoning}
+                                                            onChange={(newValue) => this.changeSearchField("zoning", newValue)}
+                                                            hideInput={false}
+                                                            hideIcon={true}
                                                         />
                                                     }
                                                 </td>
