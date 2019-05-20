@@ -555,14 +555,38 @@ class ComparableLeaseListItem extends React.Component
                                                     onChange={(newValue) => this.changeComparableField('clearCeilingHeight', newValue)}
                                                 />,
                                                 <span className={"comparable-field-label"} key={3} >Shipping Doors:</span>,
-                                                <FieldDisplayEdit
-                                                    key={4}
-                                                    type={"number"}
-                                                    edit={this.props.edit}
-                                                    placeholder={"Shipping Doors"}
-                                                    value={comparableLease.shippingDoors}
-                                                    onChange={(newValue) => this.changeComparableField('shippingDoors', newValue)}
-                                                />
+                                                <div className={"shipping-doors"} key={4}>
+                                                    <div className={"shipping-doors-line"}>
+                                                        <div><span>Double Man:</span></div>
+                                                        <FieldDisplayEdit
+                                                            type={"number"}
+                                                            edit={this.props.edit}
+                                                            placeholder={"Shipping Doors Double Man"}
+                                                            value={comparableLease.shippingDoorsDoubleMan}
+                                                            onChange={(newValue) => this.changeComparableField('shippingDoorsDoubleMan', newValue)}
+                                                        />
+                                                    </div>
+                                                    <div className={"shipping-doors-line"}>
+                                                        <div><span>Drive In:</span></div>
+                                                        <FieldDisplayEdit
+                                                            type={"number"}
+                                                            edit={this.props.edit}
+                                                            placeholder={"Shipping Doors Drive In"}
+                                                            value={comparableLease.shippingDoorsDriveIn}
+                                                            onChange={(newValue) => this.changeComparableField('shippingDoorsDriveIn', newValue)}
+                                                        />
+                                                    </div>
+                                                    <div className={"shipping-doors-line"}>
+                                                        <div><span>Truck Level:</span></div>
+                                                        <FieldDisplayEdit
+                                                            type={"number"}
+                                                            edit={this.props.edit}
+                                                            placeholder={"Shipping Doors Truck Level"}
+                                                            value={comparableLease.shippingDoorsTruckLevel}
+                                                            onChange={(newValue) => this.changeComparableField('shippingDoorsTruckLevel', newValue)}
+                                                        />
+                                                    </div>
+                                                </div>
 
                                             ] : null
                                     }

@@ -52,6 +52,11 @@ class WordModel extends BaseModel
     static classificationProbabilities = new DictField(new FloatField());
     static modifiers = new ListField(new StringField());
     static modifierProbabilities = new DictField(new FloatField());
+
+    static textTypeProbabilities = new DictField(new FloatField());
+
+    static lineNumberWithinGroup = new DictField(new IntField());
+    static reverseLineNumberWithinGroup = new DictField(new IntField());
 }
 
 

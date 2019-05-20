@@ -45,6 +45,10 @@ class ComparableLeaseModel extends BaseModel
     static clearCeilingHeight = new StringField();
     static shippingDoors = new StringField();
 
+    static shippingDoorsTruckLevel = new FloatField();
+    static shippingDoorsDoubleMan = new FloatField();
+    static shippingDoorsDriveIn = new FloatField();
+
     static remarks = new StringField();
     static tenancyType = new StringField();
 

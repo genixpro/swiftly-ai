@@ -54,6 +54,11 @@ class ComparableSaleModel extends EquationMdoel
 
     static clearCeilingHeight = new FloatField();
     static shippingDoors = new StringField();
+
+    static shippingDoorsTruckLevel = new FloatField();
+    static shippingDoorsDoubleMan = new FloatField();
+    static shippingDoorsDriveIn = new FloatField();
+
     static siteCoverage = new FloatField();
 
     static buildableUnits = new FloatField();

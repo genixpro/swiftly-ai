@@ -159,6 +159,29 @@
     padding-top: 10px;
     margin-bottom: 0;
   }
+
+  .shipping-doors
+  {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    .shipping-doors-line
+    {
+      width: 100%;
+      display: flex;
+      flex-direction: row;
+      align-items: stretch;
+
+      span {
+        position: relative;
+        white-space: nowrap;
+        padding-left: 18px;
+        flex-grow: 0;
+        top: 7px;
+      }
+    }
+  }
 }
 
 .comparable-sale-list-header

@@ -44,7 +44,7 @@ class ComparableLease(Document):
     # Tenant inducements in plain text
     tenantInducements = StringField()
 
-    # Free rent in plain text
+    # Free rent in plain text. DEPRECATED
     freeRent = StringField()
 
     # Number of months of free rent
@@ -65,8 +65,17 @@ class ComparableLease(Document):
     # Clear Ceiling Height
     clearCeilingHeight = FloatField()
 
-    # Shipping Doors
+    # Shipping Doors. DEPRECATED
     shippingDoors = FloatField()
+
+    # Shipping Doors - Truck Level
+    shippingDoorsTruckLevel = FloatField()
+
+    # Shipping Doors - Double Man
+    shippingDoorsDoubleMan = FloatField()
+
+    # Shipping Doors - Drive In
+    shippingDoorsDriveIn = FloatField()
 
     # The date of the lease
     leaseDate = ConvertingDateField()

@@ -56,7 +56,17 @@ class ComparableSale(Document):
 
     clearCeilingHeight = FloatField()
 
+    # Old shipping doors. DEPRECATED.
     shippingDoors = StringField()
+
+    # Shipping Doors - Truck Level
+    shippingDoorsTruckLevel = FloatField()
+
+    # Shipping Doors - Double Man
+    shippingDoorsDoubleMan = FloatField()
+
+    # Shipping Doors - Drive In
+    shippingDoorsDriveIn = FloatField()
 
     siteCoverage = FloatField()
 
