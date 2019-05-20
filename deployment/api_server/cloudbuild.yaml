@@ -7,6 +7,13 @@ steps:
   id: Upload API Server Docker Image
   args: ["push", "gcr.io/appraisalai/swiftly:$REVISION_ID-$_SWIFTLY_ENV-api"]
   timeout: 3600s
+- name: 'gcr.io/cloud-builders/kubectl'
+  args:
+  - 'cluster-info'
+  env:
+  - 'CLOUDSDK_COMPUTE_ZONE=us-central1-a'
+  - 'CLOUDSDK_CONTAINER_CLUSTER=swiftly-cluster-api'
+  timeout: 30s
 - name: 'gcr.io/cloud-builders/gcloud'
   id: Update Deployment on Kubernetes
   entrypoint: /bin/bash
