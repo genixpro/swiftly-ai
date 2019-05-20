@@ -16,7 +16,6 @@ spec:
     type: RollingUpdate
   template:
     metadata:
-      creationTimestamp: null
       labels:
         app: swiftly-__SWIFTLY_ENV__-api
     spec:
