@@ -24,6 +24,7 @@ import LeasingComissionModeSelector from "./LeasingCommissionModeSelector";
 import ManagementRecoveryModeSelector from "./ManagementRecoveryModeSelector";
 import DirectComparisonMetricSelector from "./DirectComparisonMetricSelector";
 import TenancyTypeSelector from "./TenancyTypeSelector";
+import TenantNameSelector from "./TenantNameSelector";
 
 class FieldDisplayEdit extends React.Component
 {
@@ -538,6 +539,17 @@ class FieldDisplayEdit extends React.Component
                 {
                     this.props.type === "tenancyType" ?
                         <TenancyTypeSelector
+                            value={this.state.isEditing ? this.state.value : this.props.value}
+                            title={this.props.title || this.props.placeholder}
+                            disabled={!this.props.edit}
+                            onChange={(newValue) => this.selectInputUpdated(newValue) }
+                            onBlur={() => this.finishEditing()}
+                            innerRef={(inputElem) => this.inputElem = inputElem}
+                        /> : null
+                }
+                {
+                    this.props.type === "tenantName" ?
+                        <TenantNameSelector
                             value={this.state.isEditing ? this.state.value : this.props.value}
                             title={this.props.title || this.props.placeholder}
                             disabled={!this.props.edit}

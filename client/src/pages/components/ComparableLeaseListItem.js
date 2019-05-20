@@ -594,7 +594,7 @@ class ComparableLeaseListItem extends React.Component
                                     <span className={"comparable-field-label"}>Tenant Name:</span>
 
                                     <FieldDisplayEdit
-                                        type={"text"}
+                                        type={"tenantName"}
                                         edit={this.props.edit}
                                         placeholder={"Tenant Name"}
                                         value={comparableLease.tenantName}
