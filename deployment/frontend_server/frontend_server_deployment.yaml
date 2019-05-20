@@ -1,0 +1,39 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  labels:
+    app: swiftly-SWIFTLY_ENV-frontend
+  name: swiftly-SWIFTLY_ENV-frontend
+  namespace: default
+spec:
+  selector:
+    matchLabels:
+      app: swiftly-SWIFTLY_ENV-frontend
+  strategy:
+    rollingUpdate:
+      maxSurge: 2
+      maxUnavailable: 0
+    type: RollingUpdate
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: swiftly-SWIFTLY_ENV-frontend
+    spec:
+      containers:
+      - env:
+        - name: SWIFTLY_ENV
+          valueFrom:
+            configMapKeyRef:
+              key: SWIFTLY_ENV
+              name: swiftly-SWIFTLY_ENV-frontend-config
+        image: gcr.io/appraisalai/swiftly:REVISION_ID-SWIFTLY_ENV-frontend
+        imagePullPolicy: IfNotPresent
+        resources:
+          requests:
+            cpu: 100m
+            memory: 250Mi
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      terminationGracePeriodSeconds: 30
