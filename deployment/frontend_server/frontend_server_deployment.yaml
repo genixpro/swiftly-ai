@@ -21,10 +21,7 @@ spec:
         app: swiftly-__SWIFTLY_ENV__-frontend
     spec:
       containers:
-      - env:
-        - name: SWIFTLY_ENV
-          value: __SWIFTLY_ENV__
-        image: gcr.io/appraisalai/swiftly:__REVISION_ID__-__SWIFTLY_ENV__-frontend
+      - image: gcr.io/appraisalai/swiftly:__REVISION_ID__-__SWIFTLY_ENV__-frontend
         imagePullPolicy: IfNotPresent
         name: eb-appraisal-sha256
         resources:
