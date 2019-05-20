@@ -17,28 +17,15 @@ steps:
   - 'CLOUDSDK_CONTAINER_CLUSTER=swiftly-cluster-api'
   timeout: 600s
 - name: 'gcr.io/cloud-builders/gcloud'
-  id: Run Migrations
-  entrypoint: /bin/sh
+  id: Update Demo Job
+  entrypoint: /bin/bash
   args:
-  - '-c'
-  - sed "s/REVISION_ID/$REVISION_ID/g;s/SWIFTLY_ENV/$_SWIFTLY_ENV/g" deployment/api_server/migration_job.yaml > migration_job_$_SWIFTLY_ENV.yaml
-- name: 'gcr.io/cloud-builders/kubectl'
-  args:
-  - 'delete'
-  - '-f'
-  - 'migration_job_$_SWIFTLY_ENV.yaml'
+  - "./deployment/api_server/run_migration_job.sh"
   env:
   - 'CLOUDSDK_COMPUTE_ZONE=us-central1-a'
   - 'CLOUDSDK_CONTAINER_CLUSTER=swiftly-cluster-api'
-  timeout: 600s
-- name: 'gcr.io/cloud-builders/kubectl'
-  args:
-  - 'create'
-  - '-f'
-  - 'migration_job_$_SWIFTLY_ENV.yaml'
-  env:
-  - 'CLOUDSDK_COMPUTE_ZONE=us-central1-a'
-  - 'CLOUDSDK_CONTAINER_CLUSTER=swiftly-cluster-api'
+  - 'SWIFTLY_ENV=$_SWIFTLY_ENV'
+  - 'REVISION_ID=$REVISION_ID'
   timeout: 600s
 - name: 'gcr.io/cloud-builders/gcloud'
   id: Update Demo Job
@@ -50,6 +37,7 @@ steps:
   - 'CLOUDSDK_CONTAINER_CLUSTER=swiftly-cluster-api'
   - 'SWIFTLY_ENV=$_SWIFTLY_ENV'
   - 'REVISION_ID=$REVISION_ID'
+  timeout: 600s
 timeout: 15000s
 
 
