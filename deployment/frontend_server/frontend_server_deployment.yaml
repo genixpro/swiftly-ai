@@ -29,6 +29,7 @@ spec:
               name: swiftly-SWIFTLY_ENV-frontend-config
         image: gcr.io/appraisalai/swiftly:REVISION_ID-SWIFTLY_ENV-frontend
         imagePullPolicy: IfNotPresent
+        name: eb-appraisal-sha256
         resources:
           requests:
             cpu: 100m
