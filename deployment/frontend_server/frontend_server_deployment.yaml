@@ -2,13 +2,13 @@ apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
   labels:
-    app: swiftly-SWIFTLY_ENV-frontend
-  name: swiftly-SWIFTLY_ENV-frontend
+    app: swiftly-__SWIFTLY_ENV__-frontend
+  name: swiftly-__SWIFTLY_ENV__-frontend
   namespace: default
 spec:
   selector:
     matchLabels:
-      app: swiftly-SWIFTLY_ENV-frontend
+      app: swiftly-__SWIFTLY_ENV__-frontend
   strategy:
     rollingUpdate:
       maxSurge: 2
@@ -18,16 +18,13 @@ spec:
     metadata:
       creationTimestamp: null
       labels:
-        app: swiftly-SWIFTLY_ENV-frontend
+        app: swiftly-__SWIFTLY_ENV__-frontend
     spec:
       containers:
       - env:
         - name: SWIFTLY_ENV
-          valueFrom:
-            configMapKeyRef:
-              key: SWIFTLY_ENV
-              name: swiftly-SWIFTLY_ENV-frontend-config
-        image: gcr.io/appraisalai/swiftly:REVISION_ID-SWIFTLY_ENV-frontend
+          value: __SWIFTLY_ENV__
+        image: gcr.io/appraisalai/swiftly:__REVISION_ID__-__SWIFTLY_ENV__-frontend
         imagePullPolicy: IfNotPresent
         name: eb-appraisal-sha256
         resources:

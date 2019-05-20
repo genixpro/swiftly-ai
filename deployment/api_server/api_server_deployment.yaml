@@ -2,13 +2,13 @@ apiVersion: extensions/v1beta1
 kind: Deployment
 metadata:
   labels:
-    app: swiftly-SWIFTLY_ENV-api
-  name: swiftly-SWIFTLY_ENV-api
+    app: swiftly-__SWIFTLY_ENV__-api
+  name: swiftly-__SWIFTLY_ENV__-api
   namespace: default
 spec:
   selector:
     matchLabels:
-      app: swiftly-SWIFTLY_ENV-api
+      app: swiftly-__SWIFTLY_ENV__-api
   strategy:
     rollingUpdate:
       maxSurge: 2
@@ -18,16 +18,13 @@ spec:
     metadata:
       creationTimestamp: null
       labels:
-        app: swiftly-SWIFTLY_ENV-api
+        app: swiftly-__SWIFTLY_ENV__-api
     spec:
       containers:
       - env:
         - name: SWIFTLY_ENV
-          valueFrom:
-            configMapKeyRef:
-              key: SWIFTLY_ENV
-              name: swiftly-SWIFTLY_ENV-api-config
-        image: gcr.io/appraisalai/swiftly:REVISION_ID-SWIFTLY_ENV-api
+          value: __SWIFTLY_ENV__
+        image: gcr.io/appraisalai/swiftly:__REVISION_ID__-__SWIFTLY_ENV__-api
         imagePullPolicy: IfNotPresent
         livenessProbe:
           failureThreshold: 3
