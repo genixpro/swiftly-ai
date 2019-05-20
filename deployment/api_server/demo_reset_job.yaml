@@ -3,7 +3,7 @@ kind: CronJob
 metadata:
   name: swiftly-demo-reset-SWIFTLY_ENV
 spec:
-  schedule: "* * * * *"
+  schedule: "0 0 * * *"
   jobTemplate:
     spec:
       template:
