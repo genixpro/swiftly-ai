@@ -5,7 +5,7 @@ import _ from 'underscore';
 import axios from "axios/index";
 import CurrencyFormat from './CurrencyFormat';
 import IntegerFormat from './IntegerFormat';
-import UploadableImage from "./UploadableImage";
+import UploadableImageSet from "./UploadableImageSet";
 import {RentEscalation} from "../../models/ComparableLeaseModel";
 import ComparableLeaseModel from "../../models/ComparableLeaseModel";
 import PropTypes from "prop-types";
@@ -325,18 +325,18 @@ class ComparableLeaseListItem extends React.Component
                         <div className={`card-body comparable-lease-list-item-body ${editableClass}`}>
                             {
                                 (comparableLease.imageUrl) ?
-                                    <UploadableImage
+                                    <UploadableImageSet
                                         editable={this.props.edit}
                                         value={comparableLease.imageUrl + `?access_token=${Auth.getAccessToken()}`}
                                         onChange={(newUrl) => this.changeComparableField('imageUrl', newUrl)} />
                                     :
                                     (comparableLease.address && comparableLease.address !== "") ?
-                                        <UploadableImage
+                                        <UploadableImageSet
                                             editable={this.props.edit}
                                             value={`https://maps.googleapis.com/maps/api/streetview?key=AIzaSyBRmZ2N4EhJjXmC29t3VeiLUQssNG-MY1I&size=640x480&source=outdoor&location=${comparableLease.address}`}
                                             onChange={(newUrl) => this.changeComparableField('imageUrl', newUrl)}
                                         />
-                                        : <UploadableImage
+                                        : <UploadableImageSet
                                             editable={this.props.edit}
                                             onChange={(newUrl) => this.changeAppraisalField('imageUrl', newUrl)}
                                         />

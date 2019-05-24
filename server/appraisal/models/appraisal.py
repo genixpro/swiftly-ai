@@ -18,6 +18,7 @@ from appraisal.models.date_field import ConvertingDateField
 from appraisal.components.document_processor import DocumentProcessor
 import numpy
 from mongoengine import signals
+from ..migrations import registerMigration
 
 class Appraisal(Document):
     meta = {'collection': 'appraisals', 'strict': False}
@@ -37,8 +38,11 @@ class Appraisal(Document):
     # The client of this appraisal
     client = StringField()
 
-    # The URL for the image of this building
+    # The URL for the image of this building. DEPRECATED.
     imageUrl = StringField()
+
+    # The URLs for the images of this building.
+    imageUrls = ListField(StringField(), default=[])
 
     # The Effective Date for this appraisal
     effectiveDate = ConvertingDateField()
@@ -127,3 +131,11 @@ class Appraisal(Document):
     @property
     def sizeOfBuilding(self):
         return float(numpy.sum([unit.squareFootage for unit in self.units]))
+
+
+@registerMigration(Appraisal, 1)
+def migration_001_image_urls(appraisal):
+    if appraisal.imageUrl:
+        if appraisal.imageUrl not in appraisal.imageUrls:
+            appraisal.imageUrls.append(appraisal.imageUrl)
+

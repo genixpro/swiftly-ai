@@ -1,0 +1,126 @@
+
+.uploadable-image {
+  position: relative;
+  background-color: white;
+
+  .uploadable-image-wrapper {
+    position: relative;
+    max-width: 65vw;
+  }
+
+  &.fullscreen
+  {
+    .uploadable-image-wrapper
+    {
+      margin-left: auto;
+      margin-right: auto;
+    }
+  }
+
+  img {
+    width: 100%;
+  }
+
+  .upload-image-overlay {
+    position: absolute;
+    left: 0;
+    width: 100%;
+    top: 0;
+    height: 100%;
+    background-color: black;
+    opacity: 0.0;
+    transition: opacity 0.2s ease-in-out;
+  }
+
+  .uploadable-icons-nav
+  {
+    margin-top: 25px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    width: 100%;
+    flex-wrap: wrap;
+    align-items: stretch;
+  }
+
+  .uploadable-image-carousel-spacer
+  {
+    margin-top: 10px;
+    width: 100px;
+  }
+
+  .image-wrapper
+  {
+    position: relative;
+  }
+
+  .delete-image-button
+  {
+    position: absolute;
+    right: 0;
+    top: 0;
+    padding-left: 4px;
+    padding-right: 4px;
+    padding-top: 1px;
+    padding-bottom: 1px;
+    color: red;
+  }
+
+  .uploadable-image-carousel-image
+  {
+    margin-top: 10px;
+    width: 100px;
+    cursor: pointer;
+  }
+
+  .uploadable-image-new-image-button
+  {
+    margin-top: 10px;
+    width: 100px;
+    height: calc(100% - 10px);
+    min-height: 60px;
+  }
+
+  .full-screen-button
+  {
+    position: absolute;
+    right: 10px;
+    top: 10px;
+
+  }
+
+  .file-upload-box
+  {
+    display: inline-block;
+  }
+
+  .loading-icon-box
+  {
+    margin-top: 10px;
+    width: 100px;
+    height: calc(100% - 10px);
+    min-height: 60px;
+    padding-left: 20px;
+    padding-top: 25px;
+    div {
+      div {
+        background-color: blue;
+      }
+    }
+  }
+
+  &.editable {
+    .uploadable-image-wrapper {
+
+      &:hover {
+        .upload-image-overlay {
+          opacity: 0.3;
+        }
+        .upload-image-icon {
+          opacity: 1.0;
+        }
+      }
+    }
+  }
+
+}
