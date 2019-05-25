@@ -80,6 +80,6 @@ RUN pip3 uninstall tensorflow
 RUN pip3 install tensorflow-gpu===1.12.2
 
 # Setup and configure systemd
-ENTRYPOINT ["bash", "-c", "appraisal_train_extractor production.ini"]
+ENTRYPOINT ["bash", "-c", "appraisal_train_extractor production_readonly.ini"]
 
 EXPOSE 80
