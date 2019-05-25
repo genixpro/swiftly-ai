@@ -323,25 +323,13 @@ class ComparableLeaseListItem extends React.Component
                     }
                     <Collapse isOpen={_.isUndefined(this.state.detailsOpen) ? this.state.openByDefault : this.state.detailsOpen}>
                         <div className={`card-body comparable-lease-list-item-body ${editableClass}`}>
-                            {
-                                (comparableLease.imageUrl) ?
-                                    <UploadableImageSet
-                                        editable={this.props.edit}
-                                        value={comparableLease.imageUrl + `?access_token=${Auth.getAccessToken()}`}
-                                        onChange={(newUrl) => this.changeComparableField('imageUrl', newUrl)} />
-                                    :
-                                    (comparableLease.address && comparableLease.address !== "") ?
-                                        <UploadableImageSet
-                                            editable={this.props.edit}
-                                            value={`https://maps.googleapis.com/maps/api/streetview?key=AIzaSyBRmZ2N4EhJjXmC29t3VeiLUQssNG-MY1I&size=640x480&source=outdoor&location=${comparableLease.address}`}
-                                            onChange={(newUrl) => this.changeComparableField('imageUrl', newUrl)}
-                                        />
-                                        : <UploadableImageSet
-                                            editable={this.props.edit}
-                                            onChange={(newUrl) => this.changeAppraisalField('imageUrl', newUrl)}
-                                        />
-                            }
-
+                            <UploadableImageSet
+                                editable={this.props.edit}
+                                address={this.props.comparableLease.address}
+                                accessToken={Auth.getAccessToken()}
+                                value={this.props.comparableLease.imageUrls}
+                                onChange={(newUrls) => this.changeComparableField('imageUrls', newUrls)}
+                            />
                             <div className={`comparable-lease-content`}>
                                 <div className={"comparable-fields-area"}>
                                     <span className={"comparable-field-label"}>Address:</span>

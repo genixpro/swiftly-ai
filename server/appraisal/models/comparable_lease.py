@@ -4,6 +4,7 @@ from appraisal.models.unit import Unit
 from appraisal.models.date_field import ConvertingDateField
 from ..migrations import registerMigration
 import re
+from ..migrations import registerMigration
 
 class RentEscalation(EmbeddedDocument):
     meta = {'strict': False}
@@ -27,7 +28,9 @@ class ComparableLease(Document):
     # This provides the GPS coordinates of the comparable
     location = PointField()
 
-    imageUrl = StringField()
+    imageUrl = StringField() # Deprecated
+
+    imageUrls = ListField(StringField())
 
     # The type of property, as an enumeration.
     propertyType = StringField()
@@ -94,7 +97,7 @@ class ComparableLease(Document):
 
     tenancyType = StringField(choices=['single_tenant', 'multi_tenant', 'vacant', ""], null=True)
 
-    version = IntField(default=1)
+    version = IntField(default=2)
 
 
 @registerMigration(ComparableLease, 1)
@@ -111,3 +114,10 @@ def migration_001_update_free_rent(lease):
             lease.freeRentType = "net"
         elif 'gross' in lease.freeRent.lower():
             lease.freeRentType = "gross"
+
+@registerMigration(ComparableLease, 2)
+def migration_002_update_image_urls(comparable):
+    if comparable.imageUrl:
+        if comparable.imageUrl not in comparable.imageUrls:
+            comparable.imageUrls.append(comparable.imageUrl)
+

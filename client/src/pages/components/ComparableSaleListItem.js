@@ -460,24 +460,14 @@ class ComparableSaleListItem extends React.Component
                     <Collapse isOpen={_.isUndefined(this.state.detailsOpen) ? this.state.openByDefault : this.state.detailsOpen}>
                         <div className={`card-body comparable-sale-list-item-body ${editableClass}`}>
                                 <div className={"comparable-sale-list-item-left-column"}>
-                                    {
-                                    (comparableSale.imageUrl) ?
                                     <UploadableImageSet
                                         editable={this.props.edit}
-                                        value={comparableSale.imageUrl + `?access_token=${Auth.getAccessToken()}`}
-                                        onChange={(newUrl) => this.changeComparableField('imageUrl', newUrl)} />
-                                    :
-                                    (comparableSale.address && comparableSale.address !== "") ?
-                                    <UploadableImageSet
-                                        editable={this.props.edit}
-                                        value={`https://maps.googleapis.com/maps/api/streetview?key=AIzaSyBRmZ2N4EhJjXmC29t3VeiLUQssNG-MY1I&size=640x480&source=outdoor&location=${comparableSale.address}`}
-                                        onChange={(newUrl) => this.changeComparableField('imageUrl', newUrl)}
+                                        address={this.props.comparableSale.address}
+                                        accessToken={Auth.getAccessToken()}
+                                        value={this.props.comparableSale.imageUrls}
+                                        onChange={(newUrls) => this.changeComparableField('imageUrls', newUrls)}
                                     />
-                                    : <UploadableImageSet
-                                            editable={this.props.edit}
-                                            onChange={(newUrl) => this.changeAppraisalField('imageUrl', newUrl)}
-                                        />
-                                    }
+
                                     {
                                         this.props.onRemoveDCAClicked ? <div className={"comparable-list-boxes"}>
                                             <span>Include in Direct Comparison&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>

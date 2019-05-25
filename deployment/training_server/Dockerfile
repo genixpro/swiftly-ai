@@ -76,7 +76,7 @@ RUN rm -rf /swiftly/client
 # Install dependencies for server
 WORKDIR /swiftly/server
 RUN python3 setup.py install > "/dev/null" 2>&1
-RUN pip3 uninstall tensorflow
+RUN pip3 uninstall -y tensorflow
 RUN pip3 install tensorflow-gpu===1.12.2
 
 # Setup and configure systemd

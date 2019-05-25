@@ -132,6 +132,8 @@ class Appraisal(Document):
     def sizeOfBuilding(self):
         return float(numpy.sum([unit.squareFootage for unit in self.units]))
 
+    version = IntField(default=1)
+
 
 @registerMigration(Appraisal, 1)
 def migration_001_image_urls(appraisal):

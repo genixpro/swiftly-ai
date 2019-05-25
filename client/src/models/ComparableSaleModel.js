@@ -21,7 +21,10 @@ class ComparableSaleModel extends EquationMdoel
 
     static owner = new StringField();
 
-    static imageUrl = new StringField();
+    static imageUrl = new StringField(); // DEPRECATED
+
+    static imageUrls = new ListField(new StringField());
+
     static address = new StringField();
     static location = new GenericField();
     static propertyType = new StringField();

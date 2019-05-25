@@ -22,7 +22,8 @@ class ComparableLeaseModel extends BaseModel
     static owner = new StringField();
     static address = new StringField();
     static location = new GenericField();
-    static imageUrl = new StringField();
+    static imageUrl = new StringField(); // DEPRECATED.
+    static imageUrls = new ListField(new StringField());
     static propertyType = new StringField();
     static sizeOfUnit = new FloatField();
     static rentEscalations = new ListField(new ModelField(RentEscalation));
