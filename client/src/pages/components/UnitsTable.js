@@ -23,7 +23,8 @@ class UnitRow extends React.Component
     static instance = 0;
 
     state = {
-        collapse: false
+        collapse: false,
+        collapseAnimating: false
     };
 
     static propTypes = {
@@ -62,7 +63,12 @@ class UnitRow extends React.Component
 
     toggleDetails()
     {
-        this.setState({collapse: !this.state.collapse});
+        this.setState({collapse: !this.state.collapse, collapseAnimating: true});
+
+        setTimeout(() =>
+        {
+            this.setState({collapseAnimating: false});
+        }, 750)
     }
 
     onUnitClicked()
@@ -114,11 +120,14 @@ class UnitRow extends React.Component
             (this.props.allowSelection) ? <tr key={1} className={"unit-details-row"}>
                 <td colSpan={this.props.fields.length + 2}>
                     <Collapse isOpen={this.state.collapse}>
-                        <UnitDetailsEditor
-                            unit={this.props.unit}
-                            appraisal={this.props.appraisal}
-                            onChange={(newUnit) => this.props.onChangeUnit(newUnit)}
-                        />
+                        {
+                            this.state.collapse || this.state.collapseAnimating ?
+                                <UnitDetailsEditor
+                                    unit={this.props.unit}
+                                    appraisal={this.props.appraisal}
+                                    onChange={(newUnit) => this.props.onChangeUnit(newUnit)}
+                                /> : null
+                        }
                     </Collapse>
                 </td>
             </tr> : null
