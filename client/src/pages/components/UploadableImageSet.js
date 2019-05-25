@@ -1,10 +1,12 @@
 import React from 'react';
 import axios from "axios/index";
 import Dropzone from 'react-dropzone'
-import "react-responsive-carousel/lib/styles/carousel.min.css";
-import { Carousel } from 'react-responsive-carousel';
-import AliceCarousel from 'react-alice-carousel';
-import {Button} from 'reactstrap';
+import {Button,
+    Carousel,
+    CarouselItem,
+    CarouselControl,
+    CarouselIndicators,
+    CarouselCaption} from 'reactstrap';
 import _ from 'underscore';
 
 class UploadableImageSet extends React.Component
@@ -13,9 +15,20 @@ class UploadableImageSet extends React.Component
         editable: true
     };
 
+    static uniqueIdCounter = 0;
+
     state = {
+        activeIndex: 0,
         loading: false
     };
+
+    constructor()
+    {
+        super();
+
+        this.uniqueId = UploadableImageSet.uniqueIdCounter;
+        UploadableImageSet.uniqueIdCounter += 1;
+    }
 
     onFileUpload(files)
     {
@@ -69,16 +82,23 @@ class UploadableImageSet extends React.Component
         }
         else
         {
-            document.getElementById("uploadable-image-set").requestFullscreen();
+            document.getElementById(`uploadable-image-set-${this.uniqueId}`).requestFullscreen();
             this.setState({fullscreen: true});
         }
     }
 
-
-    render()
+    onExiting()
     {
-        const editableClass = this.props.editable ? " editable" : "";
+        this.animating = true;
+    }
 
+    onExited()
+    {
+        this.animating = false;
+    }
+
+    getUrlsForDisplay()
+    {
         const streetViewUrl = `https://maps.googleapis.com/maps/api/streetview?key=AIzaSyBRmZ2N4EhJjXmC29t3VeiLUQssNG-MY1I&size=640x480&source=outdoor&location=${this.props.address}`;
 
         let urls = this.props.value.map((url) => url + "?access_token=" + this.props.accessToken);
@@ -92,16 +112,73 @@ class UploadableImageSet extends React.Component
             urls.push("/img/no_building_image.png");
         }
 
+        return urls;
+    }
+
+    next()
+    {
+        if (this.animating) return;
+        const nextIndex = this.state.activeIndex === this.getUrlsForDisplay().length - 1 ? 0 : this.state.activeIndex + 1;
+        this.setState({ activeIndex: nextIndex });
+    }
+
+    previous()
+    {
+        if (this.animating) return;
+        const nextIndex = this.state.activeIndex === 0 ? this.getUrlsForDisplay().length - 1 : this.state.activeIndex - 1;
+        this.setState({ activeIndex: nextIndex });
+    }
+
+    goToIndex(newIndex) {
+        if (this.animating) return;
+        this.setState({ activeIndex: newIndex });
+    }
+
+
+    render()
+    {
+        const editableClass = this.props.editable ? " editable" : "";
+
+        const urls = this.getUrlsForDisplay();
+
         return (
-            <div className={`uploadable-image ${editableClass} ${this.state.fullscreen ? "fullscreen" : ""}`} id={"uploadable-image-set"}>
+            <div className={`uploadable-image ${editableClass} ${this.state.fullscreen ? "fullscreen" : ""}`} id={`uploadable-image-set-${this.uniqueId}`}>
                 <div className={`uploadable-image-wrapper`}>
                     <div>
-                        <AliceCarousel ref={(el) => this.Carousel = el} buttonsDisabled={true} dotsDisabled={true} items={urls.map((url) => <img src={url}/>)} />
+
+                        <Carousel
+                            activeIndex={this.state.activeIndex}
+                            next={this.next.bind(this)}
+                            previous={this.previous.bind(this)}
+                        >
+                            <CarouselIndicators items={urls} activeIndex={this.state.activeIndex} onClickHandler={this.goToIndex.bind(this)} />
+
+                            {
+                                urls.map((url) =>
+                                {
+                                    return <CarouselItem
+                                        onExiting={this.onExiting.bind(this)}
+                                        onExited={this.onExited.bind(this)}
+                                        key={url}
+                                    >
+                                        <img src={url} alt={"Image of Property"} />
+                                        {/*<CarouselCaption captionText={item.caption} captionHeader={item.caption} />*/}
+                                    </CarouselItem>
+                                })
+                            }
+                            <CarouselControl direction="prev" directionText="Previous" onClickHandler={this.previous.bind(this)} />
+                            <CarouselControl direction="next" directionText="Next" onClickHandler={this.next.bind(this)} />
+                        </Carousel>
+
+
+
+
+                        {/*<AliceCarousel ref={(el) => this.Carousel = el} buttonsDisabled={true} dotsDisabled={true} items={urls.map((url) => <img src={url}/>)} />*/}
                         <nav className={"uploadable-icons-nav"}>
                             {
                                 this.props.value.map((item, itemIndex) =>
                                 {
-                                    return <div className={"image-wrapper"} key={item} onClick={() => this.Carousel._onDotClick(itemIndex)} >
+                                    return <div className={"image-wrapper"} key={item} onClick={() => this.setState({activeIndex: itemIndex})} >
                                             <img src={item + "?access_token=" + this.props.accessToken} className={"uploadable-image-carousel-image"} />
                                             <Button
                                                 color="secondary"
