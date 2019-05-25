@@ -1,7 +1,7 @@
 apiVersion: batch/v1beta1
 kind: CronJob
 metadata:
-  name: swiftly-training-__SWIFTLY_ENV__
+  name: swiftly-training
 spec:
   schedule: "0 0 * * 0"
   jobTemplate:
