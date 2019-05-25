@@ -79,6 +79,6 @@ RUN sed "s/tensorflow/tensorflow-gpu/g" setup.py > setup.py
 RUN python3 setup.py install > "/dev/null" 2>&1
 
 # Setup and configure systemd
-ENTRYPOINT ["bash", "-c", "appraisal_train_extractor production_readonly.ini"]
+ENTRYPOINT ["/usr/local/bin/appraisal_train_extractor", "production_readonly.ini"]
 
 EXPOSE 80
