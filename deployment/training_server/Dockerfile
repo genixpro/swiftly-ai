@@ -3,7 +3,7 @@
 FROM ubuntu:18.04
 MAINTAINER Electric Brain <info@electricbrain.io>
 
-RUN apt-get update && apt-get install -y --no-install-recommends ca-certificates apt-transport-https && \
+RUN apt-get update && apt-get install -y --no-install-recommends ca-certificates apt-transport-https gnupg && \
     rm -rf /var/lib/apt/lists/* && \
     NVIDIA_GPGKEY_SUM=d1be581509378368edeec8c1eb2958702feedf3bc3d17011adbf24efacce4ab5 && \
     NVIDIA_GPGKEY_FPR=ae09fe4bbd223a84b2ccfce3f60f4b3d7fa2af80 && \
