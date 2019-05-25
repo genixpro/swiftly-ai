@@ -19,6 +19,7 @@ import AreaFormat from "./components/AreaFormat";
 import Moment from "react-moment";
 import axios from "axios/index";
 import FileModel from "../models/FileModel";
+import ActionButton from "./components/ActionButton";
 
 class ViewTenantsRentRoll extends React.Component
 {
@@ -97,6 +98,15 @@ class ViewTenantsRentRoll extends React.Component
         }
     }
 
+    createComparablesForTenancies()
+    {
+        const promise = axios.post(`/appraisal/${this.props.appraisal._id}/convert_tenants`).then((response) =>
+        {
+
+        });
+        return promise;
+    }
+
 
     render()
     {
@@ -104,10 +114,13 @@ class ViewTenantsRentRoll extends React.Component
             (this.props.appraisal) ?
                 <div id={"view-tenants-rent-roll"} className={"view-tenants-rent-roll"}>
                     <Row>
-                        <Col xs={10}>
+                        <Col xs={6}>
                             <h3>View Tenants</h3>
                         </Col>
-                        <Col xs={2}>
+                        <Col xs={6} className={"button-bar"}>
+                            <ActionButton onClick={() => this.createComparablesForTenancies()} color={"primary"}>
+                                Add Tenancies to your Comparable Leases Database
+                            </ActionButton>
                             <Dropdown isOpen={this.state.downloadDropdownOpen} toggle={this.toggleDownload.bind(this)}>
                                 <DropdownToggle caret color={"primary"} className={"download-dropdown-button"}>
                                     Download

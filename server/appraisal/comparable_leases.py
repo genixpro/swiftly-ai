@@ -123,4 +123,4 @@ class ComparableLeaseAPI(object):
         if not auth:
             raise HTTPForbidden("You do not have access to this comparable lease.")
 
-            comparable.delete()
+        comparable.delete()

@@ -135,6 +135,13 @@ class Appraisal(Document):
     version = IntField(default=1)
 
 
+    def getLeasingCostStructureWithName(self, name):
+        for structure in self.leasingCosts:
+            if structure.name == name:
+                return structure
+        return None
+
+
 @registerMigration(Appraisal, 1)
 def migration_001_image_urls(appraisal):
     if appraisal.imageUrl:
