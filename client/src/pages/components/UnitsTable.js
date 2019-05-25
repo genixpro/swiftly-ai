@@ -455,7 +455,9 @@ class UnitsTable extends React.Component
                     {
                         this.props.statsMode === 'total' || this.props.statsMode === 'all' ?
                             <tr className={"first-total-row " + (this.props.statsMode === 'total' ? "last-total-row" : "")}>
-                                <td />
+                                {
+                                    this.props.allowSelection ? <td /> : null
+                                }
                                 <td className={"unit-number-column"}></td>
                                 <td className={"tenant-name-column"}><strong>Total</strong></td>
                                 <td className={"square-footage-column"}>
