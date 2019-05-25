@@ -11,37 +11,8 @@ import {IncomeStatementItemModel} from "../../models/IncomeStatementModel";
 import FileModel from "../../models/FileModel";
 import CurrencyFormat from "./CurrencyFormat";
 import YearlySourceTypeFormat from "./YearlySourceTypeFormat";
-import { DropTarget } from 'react-dnd';
 
 const sortableIndex = Symbol("sortableIndex");
-
-/**
- * Your Component
- */
-function FieldDisplayEditWrapper({ isDragging, connectDropTarget, ...props}) {
-    return connectDropTarget(<div><FieldDisplayEdit {...props} /></div>)
-}
-
-/**
- * Implement the drag source contract.
- */
-const dragTarget = {
-    drop: (props, monitor) => {
-        props.onChange(monitor.getItem().word.word, [monitor.getItem().word.index])
-    }
-};
-
-
-function collect(connect, monitor) {
-    return {
-        connectDropTarget: connect.dropTarget(),
-        isOver: monitor.isOver(),
-    }
-}
-
-// Export the wrapped component:
-const DroppableFieldDisplayEdit = DropTarget("Word", dragTarget, collect)(FieldDisplayEditWrapper);
-
 
 class IncomeStatementEditor extends React.Component
 {
@@ -186,7 +157,7 @@ class IncomeStatementEditor extends React.Component
                                     {year}
                                     <br/>
                                         {
-                                            <DroppableFieldDisplayEdit
+                                            <FieldDisplayEdit
                                                 type={'text'}
                                                 hideIcon={true}
                                                 value={this.props.appraisal.incomeStatement.customYearTitles[year]}
@@ -642,7 +613,7 @@ class IncomeStatementEditor extends React.Component
                 </div>
             </Col>
             <Col className={"name-column"}>
-                <DroppableFieldDisplayEdit
+                <FieldDisplayEdit
                     hideIcon={true}
                     value={incomeStatementItem.name}
                     onChange={(newValue) => this.changeIncomeItemName(incomeStatementItem, newValue)}
@@ -658,7 +629,7 @@ class IncomeStatementEditor extends React.Component
                     }
 
                     return [<Col key={year.toString() + "1"} className={"amount-column"}>
-                        <DroppableFieldDisplayEdit
+                        <FieldDisplayEdit
                             type="currency"
                             hideIcon={true}
                             edit={true}
@@ -670,7 +641,7 @@ class IncomeStatementEditor extends React.Component
                     </Col>,
                         this.props.appraisal.sizeOfBuilding ?
                             <Col key={year.toString() + "2"} className={"amount-column psf"}>
-                                <DroppableFieldDisplayEdit
+                                <FieldDisplayEdit
                                     type="currency"
                                     hideIcon={true}
                                     edit={true}
@@ -749,7 +720,7 @@ class IncomeStatementEditor extends React.Component
         return <li className={"row expense-row"}>
             {this.renderHiddenHandleColumn()}
             <Col className={"name-column"}>
-                <DroppableFieldDisplayEdit
+                <FieldDisplayEdit
                     hideIcon={true}
                     value={""}
                     onChange={_.once((newValue) => this.createNewIncomeItem("name", newValue, incomeStatementItemType))}
@@ -764,7 +735,7 @@ class IncomeStatementEditor extends React.Component
                     }
 
                     return [<Col key={year.toString() + "1"} className={"amount-column"}>
-                        <DroppableFieldDisplayEdit
+                        <FieldDisplayEdit
                             type="currency"
                             hideIcon={true}
                             value={""}
