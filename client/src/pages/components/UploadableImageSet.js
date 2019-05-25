@@ -56,7 +56,7 @@ class UploadableImageSet extends React.Component
         images.splice(index, 1);
         this.props.onChange(images);
     }
-    
+
 
 
 
