@@ -28,7 +28,9 @@ def main():
 
     os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = pkg_resources.resource_filename("appraisal", "gcloud-storage-key.json")
 
-    classifier = DocumentExtractor(db)
+    vectorServerURL = settings.get('vectorServerURL')
+
+    classifier = DocumentExtractor(db, vectorServerURL)
     classifier.trainAlgorithm()
 
 

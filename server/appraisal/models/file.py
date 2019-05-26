@@ -171,7 +171,7 @@ class File(Document):
             word.lineNumberWithinGroup = {}
 
             for groupSet, group in word.groups.items():
-                if group != 'null':
+                if group != 'null' and group is not None:
                     if groupSet not in currentGroupTypes:
                         word.lineNumberWithinGroup[groupSet] = 0
 
