@@ -52,7 +52,7 @@ class DocumentExtractorNetwork:
         self.epochs = 10
         self.stepsPerEpoch = 1000
 
-        self.maxWorkers = 3
+        self.maxWorkers = 4
         self.batchPreload = 20
 
     def trainAlgorithm(self):

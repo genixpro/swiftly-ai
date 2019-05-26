@@ -15,7 +15,7 @@ spec:
             resources:
               requests:
                 cpu: 1.5
-                memory: 10Gi
+                memory: 5Gi
               limits:
                 nvidia.com/gpu: 1
           restartPolicy: OnFailure

@@ -98,15 +98,6 @@ RUN pip3 install scikit-learn
 RUN pip3 install matplotlib
 RUN pip3 install gunicorn
 
-RUN  \
-  git clone https://github.com/facebookresearch/fastText.git /tmp/fastText && \
-  rm -rf /tmp/fastText/.git* && \
-  cd /tmp/fastText/ && \
-  make -j 8 && \
-  mv /tmp/fastText/fasttext /usr/bin && \
-  rm -rf /tmp/fastText
-
-
 # Set the working directory to /app
 WORKDIR /swiftly
 
@@ -115,16 +106,6 @@ ADD . /swiftly
 
 WORKDIR /swiftly
 RUN gcloud auth activate-service-account --key-file appraisalai-be8f24d217e0.json
-
-# Download models from gs cloud
-WORKDIR /swiftly/server
-RUN gsutil cp gs://swiftly-deployment/models.zip . && \
-    unzip models.zip && \
-    rm -rf models.zip
-
-# Download the vector model from google cloud
-WORKDIR /swiftly/server
-RUN gsutil cp gs://swiftly-deployment/crawl-300d-2M-subword.bin .
 
 # Delete everything in the client directory
 RUN rm -rf /swiftly/client
