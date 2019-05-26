@@ -1,7 +1,6 @@
 import subprocess
 import copy
 import tensorflow as tf
-from appraisal.components.document_generator import DocumentGenerator
 import numpy
 import pickle
 import random
@@ -19,8 +18,6 @@ globalVectorProcess = None
 
 class DocumentExtractorDataset:
     def __init__(self, vectorServerURL=None, manager=None):
-        self.generator = DocumentGenerator()
-
         self.vectorServerURL = vectorServerURL
 
         self.numberLabels = ['FORECAST', 'BUDGET', 'VARIANCE', "YEAR_TO_DATE"]

@@ -19,23 +19,23 @@ ENV CUDA_PKG_VERSION 10-0=$CUDA_VERSION-1
 # For libraries in the cuda-compat-* package: https://docs.nvidia.com/cuda/eula/index.html#attachment-a
 RUN apt-get update && apt-get install -y --no-install-recommends \
         cuda-cudart-$CUDA_PKG_VERSION \
-        cuda-compat-10-0 && \
+        cuda-compat-10-0 > "/dev/null" 2>&1 && \
     ln -s cuda-10.0 /usr/local/cuda
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
             libcudnn7=$CUDNN_VERSION-1+cuda10.0 \
-            libcudnn7-dev=$CUDNN_VERSION-1+cuda10.0 && \
+            libcudnn7-dev=$CUDNN_VERSION-1+cuda10.0 > "/dev/null" 2>&1 && \
     apt-mark hold libcudnn7
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
         cuda-libraries-dev-$CUDA_PKG_VERSION \
         cuda-nvml-dev-$CUDA_PKG_VERSION \
         cuda-minimal-build-$CUDA_PKG_VERSION \
-        cuda-command-line-tools-$CUDA_PKG_VERSION
+        cuda-command-line-tools-$CUDA_PKG_VERSION > "/dev/null" 2>&1
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
         cuda-libraries-$CUDA_PKG_VERSION \
-        cuda-nvtx-$CUDA_PKG_VERSION
+        cuda-nvtx-$CUDA_PKG_VERSION > "/dev/null" 2>&1
 
 ENV LIBRARY_PATH /usr/local/cuda/lib64/stubs
 
@@ -55,7 +55,7 @@ ENV NVIDIA_REQUIRE_CUDA "cuda>=10.0 brand=tesla,driver>=384,driver<385 brand=tes
 ENV DEBIAN_FRONTEND noninteractive
 
 RUN apt-get install -y tzdata
-RUN ln -fs /usr/share/zoneinfo/America/New_York /etc/localtime
+RUN ln -fs /usr/share/zoneinfo/America/Toronto /etc/localtime
 RUN dpkg-reconfigure --frontend noninteractive tzdata
 
 
@@ -86,7 +86,7 @@ RUN apt-get update && apt-get install \
     nodejs \
     libreoffice \
     poppler-utils \
-    gfortran -y && \
+    gfortran -y > "/dev/null" 2>&1 && \
     rm -rf /var/lib/apt/lists/*
 
 # Install some dependencies which can take a long time to install. We do this ahead of running "ADD . /swiftly" so the builds run faster when your

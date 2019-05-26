@@ -24,6 +24,6 @@ steps:
   - 'CLOUDSDK_COMPUTE_ZONE=us-central1-a'
   - 'CLOUDSDK_CONTAINER_CLUSTER=swiftly-cluster-api'
   - 'REVISION_ID=$REVISION_ID'
-  timeout: 600s
+  timeout: 1200s
 
 timeout: 15000s
