@@ -86,7 +86,7 @@ RUN apt-get update && apt-get install \
     nodejs \
     libreoffice \
     poppler-utils \
-    gfortran -y > "/dev/null" 2>&1 && \
+    gfortran -y && \
     rm -rf /var/lib/apt/lists/*
 
 # Install some dependencies which can take a long time to install. We do this ahead of running "ADD . /swiftly" so the builds run faster when your
