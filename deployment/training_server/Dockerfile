@@ -38,13 +38,6 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         libnccl-dev=$NCCL_VERSION-1+cuda10.0 && \
     rm -rf /var/lib/apt/lists/*
 
-RUN apt-get update && apt-get install -y --no-install-recommends \
-        cuda-libraries-$CUDA_PKG_VERSION \
-        cuda-nvtx-$CUDA_PKG_VERSION \
-        libnccl2=$NCCL_VERSION-1+cuda10.0 && \
-    apt-mark hold libnccl2 && \
-    rm -rf /var/lib/apt/lists/*
-
 ENV LIBRARY_PATH /usr/local/cuda/lib64/stubs
 
 # Required for nvidia-docker v1
