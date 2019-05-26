@@ -9,6 +9,7 @@ from pprint import pprint
 import json
 import copy
 import multiprocessing
+from .document_parser import DocumentParser
 import requests
 import functools
 from appraisal.vectorserver import vectorServerSymmetricKey
@@ -19,6 +20,7 @@ globalVectorProcess = None
 class DocumentExtractorDataset:
     def __init__(self, vectorServerURL=None, manager=None):
         self.vectorServerURL = vectorServerURL
+        self.parser = DocumentParser()
 
         self.numberLabels = ['FORECAST', 'BUDGET', 'VARIANCE', "YEAR_TO_DATE"]
 
@@ -55,6 +57,9 @@ class DocumentExtractorDataset:
 
     def prepareDocument(self, file, allowColumnProcessing=True):
         # Just do this as a precaution
+        file.words = self.parser.assignLineNumbersToWords(file.words)
+        file.words = self.parser.assignColumnNumbersToWords(file.words)
+        file.words = sorted(file.words, key=lambda word: (word.page, word.lineNumber, word.left))
         file.updateDescriptiveWordFeatures()
 
         neededWordVectors = list(set(word['word'] for word in file.words))
@@ -192,6 +197,8 @@ class DocumentExtractorDataset:
                     self.augmentationValues[augmentationKey] = [token['text']]
 
             self.dataset.append(file)
+
+        print(f"Loaded {len(self.dataset)} files.")
 
         self.labels = sorted(list(labels))
         self.modifiers = sorted(list(modifiers))

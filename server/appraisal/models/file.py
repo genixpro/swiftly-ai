@@ -168,6 +168,7 @@ class File(Document):
 
 
         for word in self.words:
+            # print(word.index, word.lineNumber, word.documentLineNumber)
             word.lineNumberWithinGroup = {}
 
             for groupSet, group in word.groups.items():
