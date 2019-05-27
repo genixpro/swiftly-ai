@@ -12,6 +12,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends gnupg2 curl ca-
 ENV CUDA_VERSION 10.0.130
 ENV NCCL_VERSION 2.4.2
 ENV CUDNN_VERSION 7.5.1.10
+ENV NCCL_VERSION 2.4.2
 
 
 ENV CUDA_PKG_VERSION 10-0=$CUDA_VERSION-1
@@ -31,11 +32,15 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         cuda-libraries-dev-$CUDA_PKG_VERSION \
         cuda-nvml-dev-$CUDA_PKG_VERSION \
         cuda-minimal-build-$CUDA_PKG_VERSION \
-        cuda-command-line-tools-$CUDA_PKG_VERSION > "/dev/null" 2>&1
+        cuda-command-line-tools-$CUDA_PKG_VERSION \
+        libnccl-dev=$NCCL_VERSION-1+cuda10.0 > "/dev/null" 2>&1
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
         cuda-libraries-$CUDA_PKG_VERSION \
-        cuda-nvtx-$CUDA_PKG_VERSION > "/dev/null" 2>&1
+        cuda-nvtx-$CUDA_PKG_VERSION \
+        libnccl2=$NCCL_VERSION-1+cuda10.0 > "/dev/null" && \
+        apt-mark hold libnccl2
+
 
 ENV LIBRARY_PATH /usr/local/cuda/lib64/stubs
 
