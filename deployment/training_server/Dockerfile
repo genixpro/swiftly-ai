@@ -29,17 +29,18 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     apt-mark hold libcudnn7
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
+        cuda-libraries-$CUDA_PKG_VERSION \
+        cuda-nvtx-$CUDA_PKG_VERSION \
+        libnccl2=$NCCL_VERSION-1+cuda10.0 > "/dev/null" 2>&1 && \
+        apt-mark hold libnccl2
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
         cuda-libraries-dev-$CUDA_PKG_VERSION \
         cuda-nvml-dev-$CUDA_PKG_VERSION \
         cuda-minimal-build-$CUDA_PKG_VERSION \
         cuda-command-line-tools-$CUDA_PKG_VERSION \
-        libnccl-dev=$NCCL_VERSION-1+cuda10.0 > "/dev/null" 2>&1
+        libnccl-dev=$NCCL_VERSION-1+cuda10.0  > "/dev/null" 2>&1 
 
-RUN apt-get update && apt-get install -y --no-install-recommends \
-        cuda-libraries-$CUDA_PKG_VERSION \
-        cuda-nvtx-$CUDA_PKG_VERSION \
-        libnccl2=$NCCL_VERSION-1+cuda10.0 > "/dev/null" && \
-        apt-mark hold libnccl2
 
 
 ENV LIBRARY_PATH /usr/local/cuda/lib64/stubs
