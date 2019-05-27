@@ -57,8 +57,8 @@ class DocumentExtractorNetwork:
 
     def trainAlgorithm(self):
         with self.session.as_default():
-            with tf.device('/gpu:0'):
-                self.createNetwork()
+            # with tf.device('/gpu:0'):
+            self.createNetwork()
 
             # Define Training procedure
             global_step = tf.Variable(0, name="global_step", trainable=False)
