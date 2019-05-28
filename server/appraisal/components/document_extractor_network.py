@@ -38,7 +38,7 @@ class DocumentExtractorNetwork:
 
         self.session = tf.Session(config=session_conf)
 
-        self.lstmSize = 100
+        self.lstmSize = 150
         self.lstmDropout = 0.5
         self.denseSize = 100
 
@@ -52,13 +52,13 @@ class DocumentExtractorNetwork:
         self.epochs = 10
         self.stepsPerEpoch = 1000
 
-        self.maxWorkers = 4
+        self.maxWorkers = 8
         self.batchPreload = 20
 
     def trainAlgorithm(self):
         with self.session.as_default():
-            # with tf.device('/gpu:0'):
-            self.createNetwork()
+            with tf.device('/gpu:0'):
+                self.createNetwork()
 
             # Define Training procedure
             global_step = tf.Variable(0, name="global_step", trainable=False)
