@@ -89,7 +89,7 @@ class DocumentExtractorDataset:
             for word in neededWordVectors:
                 wordVectorMap[word] = numpy.array(self.getWordVector(word))
         else:
-            response = requests_retry_session().post(self.vectorServerURL, json={"words": neededWordVectors, "key": vectorServerSymmetricKey})
+            response = self.requests_retry_session().post(self.vectorServerURL, json={"words": neededWordVectors, "key": vectorServerSymmetricKey})
             vectors = response.json()
             for wordIndex, word in enumerate(neededWordVectors):
                 wordVectorMap[word] = numpy.array(vectors[wordIndex])
