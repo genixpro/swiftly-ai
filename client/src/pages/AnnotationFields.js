@@ -502,20 +502,6 @@ export default [
         "name": "Comp Basic Information",
         "fields": [
             {
-                "name": "Building Name",
-                "placeholder": "Name",
-                "value": "BUILDING_NAME",
-                "anyOfGroups": ["COMPARABLE_SALE"],
-                "textType": "block"
-            },
-            {
-                "name": "Building Address",
-                "placeholder": "Address",
-                "value": "BUILDING_ADDRESS",
-                "anyOfGroups": ["COMPARABLE_SALE"],
-                "textType": "block"
-            },
-            {
                 "name": "Property Type",
                 "placeholder": "Property Type",
                 "value": "PROPERTY_TYPE",
@@ -523,16 +509,16 @@ export default [
                 "textType": "block"
             },
             {
-                "name": "Tenants",
-                "placeholder": "Tenants",
-                "value": "TENANTS",
+                "name": "Sub Type",
+                "placeholder": "Sub Type",
+                "value": "SUB_TYPE",
                 "anyOfGroups": ["COMPARABLE_SALE"],
                 "textType": "block"
             },
             {
-                "name": "Additional Info",
-                "placeholder": "Additional Info",
-                "value": "ADDITIONAL_INFO",
+                "name": "Tenants",
+                "placeholder": "Tenants",
+                "value": "TENANTS",
                 "anyOfGroups": ["COMPARABLE_SALE"],
                 "textType": "block"
             },
@@ -551,6 +537,48 @@ export default [
                 "textType": "block"
             },
             {
+                "name": "Occupancy Rate",
+                "placeholder": "Occupancy Rate",
+                "value": "OCCUPANCY_RATE",
+                "anyOfGroups": ["COMPARABLE_SALE"],
+                "textType": "block"
+            },
+            {
+                "name": "Vacancy Rate",
+                "placeholder": "Vacancy Rate",
+                "value": "VACANCY_RATE",
+                "anyOfGroups": ["COMPARABLE_SALE"],
+                "textType": "block"
+            },
+            {
+                "name": "Site Area",
+                "placeholder": "Site Area",
+                "value": "SITE_AREA",
+                "anyOfGroups": ["COMPARABLE_SALE"],
+                "textType": "block"
+            },
+            {
+                "name": "Site Coverage",
+                "placeholder": "Site Coverage",
+                "value": "SITE_COVERAGE",
+                "anyOfGroups": ["COMPARABLE_SALE"],
+                "textType": "block"
+            },
+            {
+                "name": "Size of Land (sqft)",
+                "placeholder": "Size of Land (sqft)",
+                "value": "SIZE_OF_LAND_SQFT",
+                "anyOfGroups": ["COMPARABLE_SALE"],
+                "textType": "block"
+            },
+            {
+                "name": "Size of Land (acres)",
+                "placeholder": "Size of Land (acres)",
+                "value": "SIZE_OF_LAND_ACRES",
+                "anyOfGroups": ["COMPARABLE_SALE"],
+                "textType": "block"
+            },
+            {
                 "name": "Tenancy - Single Tenant",
                 "placeholder": "Tenancy - Single Tenant",
                 "value": "SINGLE_TENANT",
@@ -563,19 +591,26 @@ export default [
                 "value": "MULTI_TENANT",
                 "anyOfGroups": ["COMPARABLE_SALE"],
                 "textType": "block"
-            },
-            {
-                "name": "Tenancy - Vacant",
-                "placeholder": "Tenancy - Vacant",
-                "value": "VACANT",
-                "anyOfGroups": ["COMPARABLE_SALE"],
-                "textType": "block"
-            },
+            }
         ]
     },
     {
         "name": "Comp Building Information",
         "fields": [
+            {
+                "name": "Building Location",
+                "placeholder": "Name",
+                "value": "BUILDING_NAME",
+                "anyOfGroups": ["COMPARABLE_SALE"],
+                "textType": "block"
+            },
+            {
+                "name": "Building Address",
+                "placeholder": "Address",
+                "value": "BUILDING_ADDRESS",
+                "anyOfGroups": ["COMPARABLE_SALE"],
+                "textType": "block"
+            },
             {
                 "name": "Building Size (sqft)",
                 "placeholder": "Building Size (sqft)",
@@ -607,8 +642,34 @@ export default [
         ]
     },
     {
+        "name": "Comp Additional Info",
+        "fields": [
+            {
+                "name": "Additional Info",
+                "placeholder": "Additional Info",
+                "value": "ADDITIONAL_INFO",
+                "anyOfGroups": ["COMPARABLE_SALE"],
+                "textType": "block"
+            },
+        ]
+    },
+    {
         "name": "Comp Purchase Information",
         "fields": [
+            {
+                "name": "Capitalization Rate",
+                "placeholder": "Capitalization Rate",
+                "value": "CAPITALIZATION_RATE",
+                "anyOfGroups": ["COMPARABLE_SALE"],
+                "textType": "block"
+            },
+            {
+                "name": "Net Operating Income",
+                "placeholder": "Net Operating Income",
+                "value": "NET_OPERATING_INCOME",
+                "anyOfGroups": ["COMPARABLE_SALE"],
+                "textType": "block"
+            },
             {
                 "name": "Purchaser",
                 "placeholder": "Purchaser",
@@ -637,43 +698,80 @@ export default [
                 "anyOfGroups": ["COMPARABLE_SALE"],
                 "textType": "block"
             },
+            {
+                "name": "Purchase Interest Percentage",
+                "placeholder": "Purchase Interest Percentage",
+                "value": "PURCHASE_INTEREST_PERCENTAGE",
+                "anyOfGroups": ["COMPARABLE_SALE"],
+                "textType": "block"
+            }
         ]
     },
     {
-        "name": "Comp Financial Information",
+        "name": "Comp Portfolio Information",
         "fields": [
             {
-                "name": "Net Operating Income",
-                "placeholder": "Net Operating Income",
-                "value": "NET_OPERATING_INCOME",
-                "anyOfGroups": ["COMPARABLE_SALE"],
-                "textType": "block"
+                "name": "Portfolio Other Building Address",
+                "placeholder": "Portfolio Other Building Address",
+                "value": "PORTFOLIO_OTHER_BUILDING_ADDRESS",
+                "anyOfGroups": ["COMPARABLE_SALE"]
             },
+            {
+                "name": "Portfolio Other Building Name",
+                "placeholder": "Portfolio Other Building Name",
+                "value": "PORTFOLIO_OTHER_BUILDING_NAME",
+                "anyOfGroups": ["COMPARABLE_SALE"]
+            },
+            {
+                "name": "Portfolio Other Building Price",
+                "placeholder": "Portfolio Other Building Price",
+                "value": "PORTFOLIO_OTHER_BUILDING_PRICE",
+                "anyOfGroups": ["COMPARABLE_SALE"]
+            },
+            {
+                "name": "Portfolio Other Building Square Footage",
+                "placeholder": "Portfolio Other Building Square Footage",
+                "value": "PORTFOLIO_OTHER_BUILDING_SQUARE_FOOTAGE",
+                "anyOfGroups": ["COMPARABLE_SALE"]
+            }
+        ]
+    },
+    {
+        "name": "Comp Complex Information",
+        "fields": [
+            {
+                "name": "Complex Building Address",
+                "placeholder": "Complex Building Address",
+                "value": "COMPLEX_BUILDING_ADDRESS",
+                "anyOfGroups": ["COMPARABLE_SALE"]
+            },
+            {
+                "name": "Complex Building Floors",
+                "placeholder": "Complex Building Floors",
+                "value": "COMPLEX_BUILDING_FLOORS",
+                "anyOfGroups": ["COMPARABLE_SALE"]
+            },
+            {
+                "name": "Complex Building Square Footage",
+                "placeholder": "Complex Building Square Footage",
+                "value": "COMPLEX_BUILDING_SQUARE_FOOTAGE",
+                "anyOfGroups": ["COMPARABLE_SALE"]
+            },
+            {
+                "name": "Complex Building Construction Date",
+                "placeholder": "Complex Building Construction Date",
+                "value": "COMPLEX_BUILDING_CONSTRUCTION_DATE",
+                "anyOfGroups": ["COMPARABLE_SALE"]
+            }
+        ]
+    },
+    {
+        "name": "Comp Financial Statistics",
+        "fields": [
             {
                 "name": "Price Per Square Foot",
                 "placeholder": "Price Per Square Foot",
                 "value": "PRICE_PER_SQUARE_FOOT",
-                "anyOfGroups": ["COMPARABLE_SALE"],
-                "textType": "block"
-            },
-            {
-                "name": "Capitalization Rate",
-                "placeholder": "Capitalization Rate",
-                "value": "CAPITALIZATION_RATE",
-                "anyOfGroups": ["COMPARABLE_SALE"],
-                "textType": "block"
-            },
-            {
-                "name": "Occupancy Rate",
-                "placeholder": "Occupancy Rate",
-                "value": "OCCUPANCY_RATE",
-                "anyOfGroups": ["COMPARABLE_SALE"],
-                "textType": "block"
-            },
-            {
-                "name": "Vacancy Rate",
-                "placeholder": "Vacancy Rate",
-                "value": "VACANCY_RATE",
                 "anyOfGroups": ["COMPARABLE_SALE"],
                 "textType": "block"
             },
@@ -706,13 +804,6 @@ export default [
                 "textType": "block"
             },
             {
-                "name": "Floor Space Index",
-                "placeholder": "Floor Space Index",
-                "value": "FLOOR_SPACE_INDEX",
-                "anyOfGroups": ["COMPARABLE_SALE"],
-                "textType": "block"
-            },
-            {
                 "name": "Net Operating Income (PSF)",
                 "placeholder": "Net Operating Income (PSF)",
                 "value": "NET_OPERATING_INCOME_PSF",
@@ -739,16 +830,9 @@ export default [
         "name": "Comp Land Information",
         "fields": [
             {
-                "name": "Site Area",
-                "placeholder": "Site Area",
-                "value": "SITE_AREA",
-                "anyOfGroups": ["COMPARABLE_SALE"],
-                "textType": "block"
-            },
-            {
-                "name": "Site Coverage",
-                "placeholder": "Site Coverage",
-                "value": "SITE_COVERAGE",
+                "name": "Floor Space Index",
+                "placeholder": "Floor Space Index",
+                "value": "FLOOR_SPACE_INDEX",
                 "anyOfGroups": ["COMPARABLE_SALE"],
                 "textType": "block"
             },
@@ -760,23 +844,37 @@ export default [
                 "textType": "block"
             },
             {
-                "name": "Size of Land (sqft)",
-                "placeholder": "Size of Land (sqft)",
-                "value": "SIZE_OF_LAND_SQFT",
-                "anyOfGroups": ["COMPARABLE_SALE"],
-                "textType": "block"
-            },
-            {
-                "name": "Size of Land (acres)",
-                "placeholder": "Size of Land (acres)",
-                "value": "SIZE_OF_LAND_ACRES",
-                "anyOfGroups": ["COMPARABLE_SALE"],
-                "textType": "block"
-            },
-            {
-                "name": "Size of Buildable Area (sqft)",
-                "placeholder": "Size of Buildable Area (sqft)",
+                "name": "Size of Buildable Area Total (sqft)",
+                "placeholder": "Size of Buildable Area Total (sqft)",
                 "value": "SIZE_OF_BUILDABLE_AREA_SQFT",
+                "anyOfGroups": ["COMPARABLE_SALE"],
+                "textType": "block"
+            },
+            {
+                "name": "Size of Buildable Area Office (sqft)",
+                "placeholder": "Size of Buildable Area Office (sqft)",
+                "value": "SIZE_OF_BUILDABLE_AREA_OFFICE_SQFT",
+                "anyOfGroups": ["COMPARABLE_SALE"],
+                "textType": "block"
+            },
+            {
+                "name": "Size of Buildable Area Residential (sqft)",
+                "placeholder": "Size of Buildable Area Residential (sqft)",
+                "value": "SIZE_OF_BUILDABLE_AREA_RESIDENTIAL_SQFT",
+                "anyOfGroups": ["COMPARABLE_SALE"],
+                "textType": "block"
+            },
+            {
+                "name": "Size of Buildable Area Institutional (sqft)",
+                "placeholder": "Size of Buildable Area Institutional (sqft)",
+                "value": "SIZE_OF_BUILDABLE_AREA_INSTITUTIONAL_SQFT",
+                "anyOfGroups": ["COMPARABLE_SALE"],
+                "textType": "block"
+            },
+            {
+                "name": "Size of Buildable Area Retail (sqft)",
+                "placeholder": "Size of Buildable Area Retail (sqft)",
+                "value": "SIZE_OF_BUILDABLE_AREA_RETAIL_SQFT",
                 "anyOfGroups": ["COMPARABLE_SALE"],
                 "textType": "block"
             },
@@ -784,6 +882,74 @@ export default [
                 "name": "Buildable Units",
                 "placeholder": "Buildable Units",
                 "value": "BUILDABLE_UNITS",
+                "anyOfGroups": ["COMPARABLE_SALE"],
+                "textType": "block"
+            }
+        ]
+    },
+    {
+        "name": "Comp Land Assembly Information",
+        "fields": [
+            {
+                "name": "Assembly Sub-Property Address",
+                "placeholder": "Assembly Sub-Property Address",
+                "value": "ASSEMBLY_SUB_PROPERTY_ADDRESS",
+                "anyOfGroups": ["COMPARABLE_SALE"],
+                "textType": "block"
+            },
+            {
+                "name": "Assembly Sub-Property Land Acreage",
+                "placeholder": "Assembly Sub-Property Land Acreage",
+                "value": "ASSEMBLY_SUB_PROPERTY_LAND_ACREAGE",
+                "anyOfGroups": ["COMPARABLE_SALE"],
+                "textType": "block"
+            },
+            {
+                "name": "Assembly Sub-Property Land Square Footage",
+                "placeholder": "Assembly Sub-Property Square Footage",
+                "value": "ASSEMBLY_SUB_PROPERTY_SQUARE_FOOTAGE",
+                "anyOfGroups": ["COMPARABLE_SALE"],
+                "textType": "block"
+            },
+            {
+                "name": "Assembly Sub-Property Purchase Price",
+                "placeholder": "Assembly Sub-Property Purchase Price",
+                "value": "ASSEMBLY_SUB_PROPERTY_PURCHASE_PRICE",
+                "anyOfGroups": ["COMPARABLE_SALE"],
+                "textType": "block"
+            },
+            {
+                "name": "Assembly Sub-Property Purchase Date",
+                "placeholder": "Assembly Sub-Property Purchase Date",
+                "value": "ASSEMBLY_SUB_PROPERTY_PURCHASE_DATE",
+                "anyOfGroups": ["COMPARABLE_SALE"],
+                "textType": "block"
+            },
+            {
+                "name": "Assembly Aggregate Price",
+                "placeholder": "Assembly Aggregate Price",
+                "value": "ASSEMBLY_AGGREGATE_PRICE",
+                "anyOfGroups": ["COMPARABLE_SALE"],
+                "textType": "block"
+            },
+            {
+                "name": "Assembly Aggregate Price Per Acre Land",
+                "placeholder": "Assembly Aggregate Price Per Acre Land",
+                "value": "ASSEMBLY_AGGREGATE_PRICE_PER_ACRE_LAND",
+                "anyOfGroups": ["COMPARABLE_SALE"],
+                "textType": "block"
+            },
+            {
+                "name": "Assembly Aggregate Price Per Square Foot Land",
+                "placeholder": "Assembly Aggregate Price Per Square Foot Land",
+                "value": "ASSEMBLY_AGGREGATE_PRICE_PER_SQUARE_FOOT_LAND",
+                "anyOfGroups": ["COMPARABLE_SALE"],
+                "textType": "block"
+            },
+            {
+                "name": "Assembly Aggregate Price Per Square Foot Buildable Area",
+                "placeholder": "Assembly Aggregate Price Per Square Foot Buildable Area",
+                "value": "ASSEMBLY_AGGREGATE_PRICE_PER_SQUARE_FOOT_BUILDABLE_AREA",
                 "anyOfGroups": ["COMPARABLE_SALE"],
                 "textType": "block"
             }
@@ -824,6 +990,20 @@ export default [
                 "name": "Shipping Doors (truck-level)",
                 "placeholder": "Shipping Doors (truck-level)",
                 "value": "SHIPPING_DOORS_TRUCK_LEVEL",
+                "anyOfGroups": ["COMPARABLE_SALE"],
+                "textType": "block"
+            },
+            {
+                "name": "Finished Office Percentage",
+                "placeholder": "Finished Office Percentage",
+                "value": "FINISHED_OFFICE_PERCENTAGE",
+                "anyOfGroups": ["COMPARABLE_SALE"],
+                "textType": "block"
+            },
+            {
+                "name": "Finished Office Square Footage",
+                "placeholder": "Finished Office Square Footage",
+                "value": "FINISHED_OFFICE_SQUARE_FOOTAGE",
                 "anyOfGroups": ["COMPARABLE_SALE"],
                 "textType": "block"
             }
@@ -871,6 +1051,20 @@ export default [
                 "name": "Total Bedrooms",
                 "placeholder": "Total Bedrooms",
                 "value": "TOTAL_BEDROOMS",
+                "anyOfGroups": ["COMPARABLE_SALE"],
+                "textType": "block"
+            },
+            {
+                "name": "Amenity Square-Footage",
+                "placeholder": "Amenity Square-Footage",
+                "value": "AMENITY_SQUARE_FOOTAGE",
+                "anyOfGroups": ["COMPARABLE_SALE"],
+                "textType": "block"
+            },
+            {
+                "name": "Amenity Description",
+                "placeholder": "Amenity Description",
+                "value": "AMENITY_DESCRIPTION",
                 "anyOfGroups": ["COMPARABLE_SALE"],
                 "textType": "block"
             }

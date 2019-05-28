@@ -343,6 +343,7 @@ class AnnotationEditor extends React.Component
                     currentFieldBlock = {
                         classification: word.classification,
                         modifiers: word.modifiers,
+                        lineNumber: word.lineNumber,
                         left: word.left,
                         top: word.top,
                         right: word.right,
@@ -351,11 +352,13 @@ class AnnotationEditor extends React.Component
                 }
                 else if (word.classification === currentFieldBlock.classification &&
                     word.modifiers.length === currentFieldBlock.modifiers.length &&
+                    word.lineNumber === currentFieldBlock.lineNumber &&
                     _.all(word.modifiers, (modifier) => currentFieldBlock.modifiers.indexOf(modifier) !== -1))
                 {
                     currentFieldBlock = {
                         classification: word.classification,
                         modifiers: word.modifiers,
+                        lineNumber: word.lineNumber,
                         left: Math.min(currentFieldBlock.left, word.left),
                         top: Math.min(currentFieldBlock.top, word.top),
                         right: Math.max(currentFieldBlock.right, word.right),
@@ -369,6 +372,7 @@ class AnnotationEditor extends React.Component
                     currentFieldBlock = {
                         classification: word.classification,
                         modifiers: word.modifiers,
+                        lineNumber: word.lineNumber,
                         left: word.left,
                         top: word.top,
                         right: word.right,
@@ -1070,7 +1074,7 @@ class AnnotationEditor extends React.Component
         return (
             <div id={"annotation-editor-extractions"} onMouseUp={this.onMouseUp.bind(this)} onMouseMove={this.onMouseMove.bind(this)}>
                 <Row>
-                    <Col xs={2}>
+                    <Col xs={1}>
                         {
                             _.range(this.state.file.pages).map((page) =>
                             {
@@ -1088,7 +1092,7 @@ class AnnotationEditor extends React.Component
                             })
                         }
                     </Col>
-                    <Col xs={7}>
+                    <Col xs={9}>
                         <div className={"extractions-toolbar"}>
                             <div>
                                 <span>View:</span>
@@ -1244,7 +1248,7 @@ class AnnotationEditor extends React.Component
                             </div>
                         </div>
                     </Col>
-                    <Col xs={3} id="annotation-editor-side-menu">
+                    <Col xs={2} id="annotation-editor-side-menu">
                         <div style={{"marginTop": `${this.state.menuScroll}px`}} className={"side-menu-scroll-area"}>
                             {
                                 this.state.selectedWord ? <Row>
