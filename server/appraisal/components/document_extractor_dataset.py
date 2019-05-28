@@ -14,6 +14,8 @@ import requests
 import functools
 from appraisal.vectorserver import vectorServerSymmetricKey
 from appraisal.models.file import File, Word
+from requests.adapters import HTTPAdapter
+from requests.packages.urllib3.util.retry import Retry
 
 globalVectorProcess = None
 
@@ -55,6 +57,25 @@ class DocumentExtractorDataset:
 
         return vector
 
+    def requests_retry_session(
+            retries=5,
+            backoff_factor=0.3,
+            status_forcelist=(500, 502, 504),
+            session=None,
+    ):
+        session = session or requests.Session()
+        retry = Retry(
+            total=retries,
+            read=retries,
+            connect=retries,
+            backoff_factor=backoff_factor,
+            status_forcelist=status_forcelist,
+        )
+        adapter = HTTPAdapter(max_retries=retry)
+        session.mount('http://', adapter)
+        session.mount('https://', adapter)
+        return session
+
     def prepareDocument(self, file, allowColumnProcessing=True):
         # Just do this as a precaution
         file.words = self.parser.assignLineNumbersToWords(file.words)
@@ -68,7 +89,7 @@ class DocumentExtractorDataset:
             for word in neededWordVectors:
                 wordVectorMap[word] = numpy.array(self.getWordVector(word))
         else:
-            response = requests.post(self.vectorServerURL, json={"words": neededWordVectors, "key": vectorServerSymmetricKey})
+            response = requests_retry_session().post(self.vectorServerURL, json={"words": neededWordVectors, "key": vectorServerSymmetricKey})
             vectors = response.json()
             for wordIndex, word in enumerate(neededWordVectors):
                 wordVectorMap[word] = numpy.array(vectors[wordIndex])

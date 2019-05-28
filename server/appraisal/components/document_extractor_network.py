@@ -12,6 +12,7 @@ from pprint import pprint
 import concurrent.futures
 import csv
 import multiprocessing
+import traceback
 from appraisal.components.document_extractor_dataset import DocumentExtractorDataset
 
 
@@ -80,97 +81,103 @@ class DocumentExtractorNetwork:
                 for epoch in range(self.epochs):
                     # Training loop. For each batch...
                     for batchIndex in range(self.stepsPerEpoch):
-                        batchFuture = batchFutures.pop(0)
-                        batchFutures.append(executor.submit(self.dataset.createBatch, self.batchSize, self.allowColumnProcessing))
+                        try:
+                            batchFuture = batchFutures.pop(0)
+                            batchFutures.append(executor.submit(self.dataset.createBatch, self.batchSize, self.allowColumnProcessing))
 
-                        batch = batchFuture.result()
+                            batch = batchFuture.result()
 
-                        wordVectors = batch[0]
-                        lineSortedWordIndexes = batch[1]
-                        lineSortedReverseWordIndexes = batch[2]
-                        columnSortedWordIndexes = batch[3]
-                        columnReverseWordIndexes = batch[4]
-                        classificationOutputs = batch[5]
-                        modifierOutputs = batch[6]
-                        groupOutputs = batch[7]
-                        textTypeOutputs = batch[8]
+                            wordVectors = batch[0]
+                            lineSortedWordIndexes = batch[1]
+                            lineSortedReverseWordIndexes = batch[2]
+                            columnSortedWordIndexes = batch[3]
+                            columnReverseWordIndexes = batch[4]
+                            classificationOutputs = batch[5]
+                            modifierOutputs = batch[6]
+                            groupOutputs = batch[7]
+                            textTypeOutputs = batch[8]
 
-                        # Train
-                        feed_dict = {
-                            self.inputWordVectors: wordVectors,
-                            self.lineSortedWordIndexesInput: lineSortedWordIndexes,
-                            self.lineSortedReverseIndexesInput: lineSortedReverseWordIndexes,
-                            self.columnSortedWordIndexesInput: columnSortedWordIndexes,
-                            self.columnSortedReverseIndexesInput: columnReverseWordIndexes,
-                        }
+                            # Train
+                            feed_dict = {
+                                self.inputWordVectors: wordVectors,
+                                self.lineSortedWordIndexesInput: lineSortedWordIndexes,
+                                self.lineSortedReverseIndexesInput: lineSortedReverseWordIndexes,
+                                self.columnSortedWordIndexesInput: columnSortedWordIndexes,
+                                self.columnSortedReverseIndexesInput: columnReverseWordIndexes,
+                            }
 
-                        operations = [train_op, global_step, self.loss]
+                            operations = [train_op, global_step, self.loss]
 
-                        if 'classification' in self.networkOutputs:
-                            feed_dict[self.inputClassification] = classificationOutputs
-                            operations.append(self.classificationAccuracy)
-                            operations.append(self.classificationNonNullAccuracy)
-                            operations.append(self.confusionMatrix)
+                            if 'classification' in self.networkOutputs:
+                                feed_dict[self.inputClassification] = classificationOutputs
+                                operations.append(self.classificationAccuracy)
+                                operations.append(self.classificationNonNullAccuracy)
+                                operations.append(self.confusionMatrix)
 
-                        if 'modifiers' in self.networkOutputs:
-                            feed_dict[self.inputModifiers] = modifierOutputs
-                            operations.append(self.modifierAccuracy)
-                            operations.append(self.modifierNonNullAccuracy)
-                            
-                        if 'groups' in self.networkOutputs:
-                            feed_dict[self.inputGroups] = groupOutputs
-                            for groupSet in self.dataset.groupSets:
-                                operations.append(self.groupSetAccuracy[groupSet])
-                                operations.append(self.groupNonNullAccuracy[groupSet])
+                            if 'modifiers' in self.networkOutputs:
+                                feed_dict[self.inputModifiers] = modifierOutputs
+                                operations.append(self.modifierAccuracy)
+                                operations.append(self.modifierNonNullAccuracy)
 
-                        if 'textType' in self.networkOutputs:
-                            feed_dict[self.inputTextType] = textTypeOutputs
-                            operations.append(self.textTypeAccuracy)
+                            if 'groups' in self.networkOutputs:
+                                feed_dict[self.inputGroups] = groupOutputs
+                                for groupSet in self.dataset.groupSets:
+                                    operations.append(self.groupSetAccuracy[groupSet])
+                                    operations.append(self.groupNonNullAccuracy[groupSet])
 
-                        results = self.session.run(operations, feed_dict)
+                            if 'textType' in self.networkOutputs:
+                                feed_dict[self.inputTextType] = textTypeOutputs
+                                operations.append(self.textTypeAccuracy)
 
-                        step = results[1]
-                        loss = results[2]
+                            results = self.session.run(operations, feed_dict)
 
-                        message = f"Epoch: {epoch} Batch: {batchIndex} Loss: {loss}"
+                            step = results[1]
+                            loss = results[2]
 
-
-                        resultIndex = 3
-                        if 'classification' in self.networkOutputs:
-                            accuracy = results[resultIndex]
-                            nonNullAccuracy = results[resultIndex + 1]
-                            confusionMatrix = results[resultIndex + 2]
-                            resultIndex += 3
-
-                            if batchIndex % 10 == 0:
-                                with open("matrix.csv", "wt") as file:
-                                    file.write(self.formatConfusionMatrix(confusionMatrix))
+                            message = f"Epoch: {epoch} Batch: {batchIndex} Loss: {loss}"
 
 
-                            message += f" Classification: {accuracy:.3f} Non Null: {nonNullAccuracy:.3f}"
+                            resultIndex = 3
+                            if 'classification' in self.networkOutputs:
+                                accuracy = results[resultIndex]
+                                nonNullAccuracy = results[resultIndex + 1]
+                                confusionMatrix = results[resultIndex + 2]
+                                resultIndex += 3
 
-                        if 'modifiers' in self.networkOutputs:
-                            accuracy = results[resultIndex]
-                            nonNullAccuracy = results[resultIndex + 1]
-                            resultIndex += 2
+                                if batchIndex % 10 == 0:
+                                    with open("matrix.csv", "wt") as file:
+                                        file.write(self.formatConfusionMatrix(confusionMatrix))
 
-                            message += f" Modifiers: {accuracy:.3f} Non Null: {nonNullAccuracy:.3f}"
 
-                        if 'groups' in self.networkOutputs:
-                            for groupSet in self.dataset.groupSets:
+                                message += f" Classification: {accuracy:.3f} Non Null: {nonNullAccuracy:.3f}"
+
+                            if 'modifiers' in self.networkOutputs:
                                 accuracy = results[resultIndex]
                                 nonNullAccuracy = results[resultIndex + 1]
                                 resultIndex += 2
 
-                                message += f" {groupSet}: {accuracy:.3f} Non Null: {nonNullAccuracy:.3f}"
+                                message += f" Modifiers: {accuracy:.3f} Non Null: {nonNullAccuracy:.3f}"
 
-                        if 'textType' in self.networkOutputs:
-                            accuracy = results[resultIndex]
-                            resultIndex += 1
+                            if 'groups' in self.networkOutputs:
+                                for groupSet in self.dataset.groupSets:
+                                    accuracy = results[resultIndex]
+                                    nonNullAccuracy = results[resultIndex + 1]
+                                    resultIndex += 2
 
-                            message += f" Text-Type: {accuracy:.3f}"
+                                    message += f" {groupSet}: {accuracy:.3f} Non Null: {nonNullAccuracy:.3f}"
 
-                        print(message, flush=True)
+                            if 'textType' in self.networkOutputs:
+                                accuracy = results[resultIndex]
+                                resultIndex += 1
+
+                                message += f" Text-Type: {accuracy:.3f}"
+
+                            print(message, flush=True)
+                        except Exception as e:
+                            traceback.print_exc()
+                            # Otherwise just ignore the exception and try to move on to the next batch.
+                            # This helps to hedge against any rare errors in data prep from killing the
+                            # training process entirely.
 
                     # self.saver.save(self.session, f"models/model-{self.name}-{epoch}.ckpt")
                     self.saver.save(self.session, f"models/model-{self.name}.ckpt")
