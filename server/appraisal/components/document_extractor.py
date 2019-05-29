@@ -40,11 +40,11 @@ class DocumentExtractor:
 
         self.classificationNetwork = DocumentExtractorNetwork(['groups', 'classification', 'modifiers'], self.dataset, allowColumnProcessing=True)
 
+        self.classificationNetwork.trainAlgorithm()
+
         del self.classificationNetwork
 
         self.textTypeNetwork = DocumentExtractorNetwork(['textType'], self.dataset, allowColumnProcessing=False)
-
-        self.classificationNetwork.trainAlgorithm()
 
         self.textTypeNetwork.trainAlgorithm()
 
