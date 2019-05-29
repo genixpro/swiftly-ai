@@ -39,7 +39,7 @@ class DocumentExtractorNetwork:
 
         self.session = tf.Session(config=session_conf)
 
-        self.lstmSize = 150
+        self.lstmSize = 250
         self.lstmDropout = 0.5
         self.denseSize = 100
 
@@ -398,190 +398,191 @@ class DocumentExtractorNetwork:
         return layerOutputs
 
     def createNetwork(self):
-        numClasses = len(self.dataset.labels)
-        numModifiers = len(self.dataset.modifiers)
+        with tf.name_scope(self.name), tf.variable_scope(self.name, reuse=tf.AUTO_REUSE):
+            numClasses = len(self.dataset.labels)
+            numModifiers = len(self.dataset.modifiers)
 
-        numGroups = self.dataset.totalGroupLabels * 3
-        numTextType = len(self.dataset.textTypes)
+            numGroups = self.dataset.totalGroupLabels * 3
+            numTextType = len(self.dataset.textTypes)
 
-        # Placeholders for input, output and dropout
-        self.inputWordVectors = tf.placeholder(tf.float32, shape=[None, None, self.wordVectorSize], name='input_word_vectors')
-        self.inputLength = tf.placeholder(tf.int32, shape=[None], name='input_length')
+            # Placeholders for input, output and dropout
+            self.inputWordVectors = tf.placeholder(tf.float32, shape=[None, None, self.wordVectorSize], name='input_word_vectors')
+            self.inputLength = tf.placeholder(tf.int32, shape=[None], name='input_length')
 
-        self.inputClassification = tf.placeholder(tf.float32, shape=[None, None, numClasses], name='input_classification')
-        self.inputModifiers = tf.placeholder(tf.float32, shape=[None, None, numModifiers], name='input_modifiers')
-        self.inputGroups = tf.placeholder(tf.float32, shape=[None, None, numGroups], name='input_groups')
-        self.inputTextType = tf.placeholder(tf.float32, shape=[None, None, numTextType], name='input_text_types')
+            self.inputClassification = tf.placeholder(tf.float32, shape=[None, None, numClasses], name='input_classification')
+            self.inputModifiers = tf.placeholder(tf.float32, shape=[None, None, numModifiers], name='input_modifiers')
+            self.inputGroups = tf.placeholder(tf.float32, shape=[None, None, numGroups], name='input_groups')
+            self.inputTextType = tf.placeholder(tf.float32, shape=[None, None, numTextType], name='input_text_types')
 
-        self.lineSortedWordIndexesInput = tf.placeholder(tf.int32, shape=[None, None], name='line_sorted_indexes')
-        self.lineSortedReverseIndexesInput = tf.placeholder(tf.int32, shape=[None, None], name='line_sorted_reverse_indexes')
+            self.lineSortedWordIndexesInput = tf.placeholder(tf.int32, shape=[None, None], name='line_sorted_indexes')
+            self.lineSortedReverseIndexesInput = tf.placeholder(tf.int32, shape=[None, None], name='line_sorted_reverse_indexes')
 
-        self.columnSortedWordIndexesInput = tf.placeholder(tf.int32, shape=[None, None], name='column_sorted_indexes')
-        self.columnSortedReverseIndexesInput = tf.placeholder(tf.int32, shape=[None, None], name='column_sorted_reverse_indexes')
+            self.columnSortedWordIndexesInput = tf.placeholder(tf.int32, shape=[None, None], name='column_sorted_indexes')
+            self.columnSortedReverseIndexesInput = tf.placeholder(tf.int32, shape=[None, None], name='column_sorted_reverse_indexes')
 
-        # Recurrent Neural Network
-        with tf.name_scope("rnn"), tf.variable_scope("rnn", reuse=tf.AUTO_REUSE):
-            currentOutput = self.inputWordVectors
-            for layer in range(self.layers):
-                with tf.name_scope(f"layer{layer}"), tf.variable_scope(f"layer{layer}"):
-                    currentOutput = self.createComboLineColumnLayer(currentOutput)
+            # Recurrent Neural Network
+            with tf.name_scope("rnn"), tf.variable_scope("rnn", reuse=tf.AUTO_REUSE):
+                currentOutput = self.inputWordVectors
+                for layer in range(self.layers):
+                    with tf.name_scope(f"layer{layer}"), tf.variable_scope(f"layer{layer}"):
+                        currentOutput = self.createComboLineColumnLayer(currentOutput)
 
-            batchSize = tf.shape(currentOutput)[0]
-            length = tf.shape(currentOutput)[1]
-            vectorSize = currentOutput.shape[2]
+                batchSize = tf.shape(currentOutput)[0]
+                length = tf.shape(currentOutput)[1]
+                vectorSize = currentOutput.shape[2]
 
-            reshaped = tf.reshape(currentOutput, shape=(batchSize * length, vectorSize))
+                reshaped = tf.reshape(currentOutput, shape=(batchSize * length, vectorSize))
 
-            with tf.name_scope("denseLayers"), tf.variable_scope("denseLayers"):
-                dense1 = tf.layers.dense(tf.layers.dropout(reshaped, rate=self.denseDropout), self.denseSize, activation=tf.nn.relu)
-                batchNorm1 = tf.layers.batch_normalization(dense1)
-                dense2 = tf.layers.dense(tf.layers.dropout(batchNorm1, rate=self.denseDropout), self.denseSize, activation=tf.nn.relu)
-                batchNorm2 = tf.layers.batch_normalization(dense2)
-                
+                with tf.name_scope("denseLayers"), tf.variable_scope("denseLayers"):
+                    dense1 = tf.layers.dense(tf.layers.dropout(reshaped, rate=self.denseDropout), self.denseSize, activation=tf.nn.relu)
+                    batchNorm1 = tf.layers.batch_normalization(dense1)
+                    dense2 = tf.layers.dense(tf.layers.dropout(batchNorm1, rate=self.denseDropout), self.denseSize, activation=tf.nn.relu)
+                    batchNorm2 = tf.layers.batch_normalization(dense2)
+
+                    if 'classification' in self.networkOutputs:
+                        self.classificationLogits = tf.layers.dense(batchNorm2, numClasses)
+                        self.classificationProbabilities = tf.reshape(tf.nn.softmax(self.classificationLogits), shape=[batchSize, length, numClasses])
+                        self.classificationPredictions = tf.reshape(tf.argmax(self.classificationLogits, 1, name="classificationPredictions"), shape=[batchSize, length])
+
+                    if 'modifiers' in self.networkOutputs:
+                        self.modifierLogits = tf.layers.dense(batchNorm2, numModifiers)
+                        self.modifierProbabilities = tf.reshape(tf.nn.sigmoid(self.modifierLogits), shape=[batchSize, length, numModifiers])
+                        self.modifierPredictions = tf.reshape(tf.round(tf.nn.sigmoid(self.modifierLogits)), shape=[batchSize, length, numModifiers])
+
+                    if 'groups' in self.networkOutputs:
+                        self.groupLogits = {}
+                        self.groupProbabilities = {}
+                        self.groupPredictions = {}
+
+                        for groupSet in self.dataset.groupSets:
+                            numGroupSetItems = len(self.dataset.groups[groupSet]) * 3
+
+                            self.groupLogits[groupSet] = tf.layers.dense(batchNorm2, numGroupSetItems)
+                            self.groupProbabilities[groupSet] = tf.reshape(tf.nn.sigmoid(self.groupLogits[groupSet]), shape=[batchSize, length, numGroupSetItems])
+                            self.groupPredictions[groupSet] = tf.reshape(tf.round(tf.nn.sigmoid(self.groupLogits[groupSet])), shape=[batchSize, length, numGroupSetItems])
+
+                    if 'textType' in self.networkOutputs:
+                        self.textTypeLogits = tf.layers.dense(batchNorm2, numTextType)
+                        self.textTypeProbabilities = tf.reshape(tf.nn.softmax(self.textTypeLogits), shape=[batchSize, length, numTextType])
+                        self.textTypePredictions = tf.reshape(tf.argmax(self.textTypeLogits, 1, name="textTypePredictions"), shape=[batchSize, length])
+
+            # Calculate mean cross-entropy loss
+            with tf.name_scope("loss"):
+                losses = []
+
                 if 'classification' in self.networkOutputs:
-                    self.classificationLogits = tf.layers.dense(batchNorm2, numClasses)
-                    self.classificationProbabilities = tf.reshape(tf.nn.softmax(self.classificationLogits), shape=[batchSize, length, numClasses])
-                    self.classificationPredictions = tf.reshape(tf.argmax(self.classificationLogits, 1, name="classificationPredictions"), shape=[batchSize, length])
+                    classificationLosses = tf.nn.softmax_cross_entropy_with_logits_v2(logits=self.classificationLogits,
+                                                                                      labels=tf.reshape(self.inputClassification, shape=[batchSize * length, numClasses]))
+                    losses.append(tf.reduce_mean(classificationLosses))
 
                 if 'modifiers' in self.networkOutputs:
-                    self.modifierLogits = tf.layers.dense(batchNorm2, numModifiers)
-                    self.modifierProbabilities = tf.reshape(tf.nn.sigmoid(self.modifierLogits), shape=[batchSize, length, numModifiers])
-                    self.modifierPredictions = tf.reshape(tf.round(tf.nn.sigmoid(self.modifierLogits)), shape=[batchSize, length, numModifiers])
+                    modifierLosses = tf.nn.sigmoid_cross_entropy_with_logits(logits=self.modifierLogits, labels=tf.reshape(self.inputModifiers, shape=[batchSize * length, numModifiers]))
+                    losses.append(tf.reduce_mean(modifierLosses))
 
                 if 'groups' in self.networkOutputs:
-                    self.groupLogits = {}
-                    self.groupProbabilities = {}
-                    self.groupPredictions = {}
-                    
+                    groupInputIndex = 0
                     for groupSet in self.dataset.groupSets:
                         numGroupSetItems = len(self.dataset.groups[groupSet]) * 3
-                        
-                        self.groupLogits[groupSet] = tf.layers.dense(batchNorm2, numGroupSetItems)
-                        self.groupProbabilities[groupSet] = tf.reshape(tf.nn.sigmoid(self.groupLogits[groupSet]), shape=[batchSize, length, numGroupSetItems])
-                        self.groupPredictions[groupSet] = tf.reshape(tf.round(tf.nn.sigmoid(self.groupLogits[groupSet])), shape=[batchSize, length, numGroupSetItems])
+
+                        groupSetLosses = tf.nn.softmax_cross_entropy_with_logits_v2(logits=self.groupLogits[groupSet],
+                                                                                          labels=tf.reshape(self.inputGroups[:, :, groupInputIndex:groupInputIndex+numGroupSetItems], shape=[batchSize * length, numGroupSetItems]))
+                        losses.append(tf.reduce_mean(groupSetLosses))
+
+                        groupInputIndex += numGroupSetItems
 
                 if 'textType' in self.networkOutputs:
-                    self.textTypeLogits = tf.layers.dense(batchNorm2, numTextType)
-                    self.textTypeProbabilities = tf.reshape(tf.nn.softmax(self.textTypeLogits), shape=[batchSize, length, numTextType])
-                    self.textTypePredictions = tf.reshape(tf.argmax(self.textTypeLogits, 1, name="textTypePredictions"), shape=[batchSize, length])
+                    textTypeLosses = tf.nn.softmax_cross_entropy_with_logits_v2(logits=self.textTypeLogits,
+                                                                                labels=tf.reshape(self.inputTextType, shape=[batchSize * length, numTextType]))
+                    losses.append(tf.reduce_mean(textTypeLosses))
 
-        # Calculate mean cross-entropy loss
-        with tf.name_scope("loss"):
-            losses = []
-            
+                self.loss = tf.reduce_sum(losses)
+
             if 'classification' in self.networkOutputs:
-                classificationLosses = tf.nn.softmax_cross_entropy_with_logits_v2(logits=self.classificationLogits,
-                                                                                  labels=tf.reshape(self.inputClassification, shape=[batchSize * length, numClasses]))
-                losses.append(tf.reduce_mean(classificationLosses))
-            
+                classificationPredictionsFlat = tf.cast(tf.reshape(self.classificationPredictions, shape=[batchSize * length]), tf.int32)
+                classificationActualFlat = tf.cast(tf.argmax(tf.reshape(self.inputClassification, shape=[batchSize * length, numClasses]), axis=1), tf.int32)
+
+                # Accuracy
+                with tf.name_scope("accuracy"):
+                    correct_classifications = tf.equal(classificationPredictionsFlat, classificationActualFlat)
+
+                    self.classificationAccuracy = tf.reduce_mean(tf.cast(correct_classifications, tf.float32), name="classificationAccuracy")
+
+                    # Replace class_id_preds with class_id_true for recall here
+                    classificationAccuracyMask = tf.cast(tf.equal(classificationPredictionsFlat, self.dataset.labels.index('null')), tf.int32) * \
+                                                 tf.cast(tf.equal(classificationActualFlat, self.dataset.labels.index('null')), tf.int32)
+
+                    classificationAccuracyMask = 1 - classificationAccuracyMask
+
+                    class_acc_tensor = tf.cast(tf.equal(classificationActualFlat, classificationPredictionsFlat), tf.int32) * classificationAccuracyMask
+                    class_acc = tf.reduce_sum(class_acc_tensor) / tf.maximum(tf.reduce_sum(classificationAccuracyMask), 1)
+
+                    self.classificationNonNullAccuracy = class_acc
+
+                with tf.device('/cpu:0'):
+                    with tf.name_scope("confusion_matrix"):
+                        self.confusionMatrix = tf.confusion_matrix(classificationActualFlat, classificationPredictionsFlat)
+
             if 'modifiers' in self.networkOutputs:
-                modifierLosses = tf.nn.sigmoid_cross_entropy_with_logits(logits=self.modifierLogits, labels=tf.reshape(self.inputModifiers, shape=[batchSize * length, numModifiers]))
-                losses.append(tf.reduce_mean(modifierLosses))
-                
+                modifierPredictionsFlat = tf.cast(tf.reshape(self.modifierPredictions, shape=[batchSize * length, numModifiers]), tf.int32)
+                modifierActualFlat = tf.cast(tf.reshape(self.inputModifiers, shape=[batchSize * length, numModifiers]), tf.int32)
+
+                # Accuracy
+                with tf.name_scope("accuracy"):
+                    correct_modifiers = tf.equal(modifierPredictionsFlat, modifierActualFlat)
+
+                    self.modifierAccuracy = tf.reduce_mean(tf.cast(correct_modifiers, tf.float32), name="modifierAccuracy")
+
+                    modifierAccuracyMask = tf.cast(tf.equal(modifierPredictionsFlat, 0), tf.int32) * \
+                                           tf.cast(tf.equal(modifierActualFlat, 0), tf.int32)
+
+                    modifierAccuracyMask = 1 - modifierAccuracyMask
+
+                    modifier_class_acc_tensor = tf.cast(tf.equal(modifierActualFlat, modifierPredictionsFlat), tf.int32) * modifierAccuracyMask
+                    modifier_class_acc = tf.reduce_sum(modifier_class_acc_tensor) / tf.maximum(tf.reduce_sum(modifierAccuracyMask), 1)
+
+                    self.modifierNonNullAccuracy = modifier_class_acc
+
             if 'groups' in self.networkOutputs:
+                self.groupSetAccuracy = {}
+                self.groupNonNullAccuracy = {}
+
                 groupInputIndex = 0
                 for groupSet in self.dataset.groupSets:
                     numGroupSetItems = len(self.dataset.groups[groupSet]) * 3
-                    
-                    groupSetLosses = tf.nn.softmax_cross_entropy_with_logits_v2(logits=self.groupLogits[groupSet],
-                                                                                      labels=tf.reshape(self.inputGroups[:, :, groupInputIndex:groupInputIndex+numGroupSetItems], shape=[batchSize * length, numGroupSetItems]))
-                    losses.append(tf.reduce_mean(groupSetLosses))
-                    
+
+                    groupSetPredictionsFlat = tf.cast(tf.reshape(self.groupPredictions[groupSet], shape=[batchSize * length, numGroupSetItems]), tf.int32)
+                    groupSetActualFlat = tf.cast(tf.reshape(self.inputGroups[:, :, groupInputIndex:groupInputIndex+numGroupSetItems], shape=[batchSize * length, numGroupSetItems]), tf.int32)
+
+                    # Accuracy
+                    with tf.name_scope("accuracy"):
+                        correct_group = tf.equal(groupSetPredictionsFlat, groupSetActualFlat)
+
+                        self.groupSetAccuracy[groupSet] = tf.reduce_mean(tf.cast(correct_group, tf.float32))
+
+                        nullIndex = self.dataset.groups[groupSet].index('null') * 3 + 1
+
+                        groupAccuracyMask = tf.cast(tf.equal(groupSetPredictionsFlat, nullIndex), tf.int32) * \
+                                               tf.cast(tf.equal(groupSetActualFlat, nullIndex), tf.int32)
+
+                        groupAccuracyMask = 1 - groupAccuracyMask
+
+                        group_class_acc_tensor = tf.cast(tf.equal(groupSetActualFlat, groupSetPredictionsFlat), tf.int32) * groupAccuracyMask
+                        group_class_acc = tf.reduce_sum(group_class_acc_tensor) / tf.maximum(tf.reduce_sum(groupAccuracyMask), 1)
+
+                        self.groupNonNullAccuracy[groupSet] = group_class_acc
+
                     groupInputIndex += numGroupSetItems
-                
+
             if 'textType' in self.networkOutputs:
-                textTypeLosses = tf.nn.softmax_cross_entropy_with_logits_v2(logits=self.textTypeLogits,
-                                                                            labels=tf.reshape(self.inputTextType, shape=[batchSize * length, numTextType]))
-                losses.append(tf.reduce_mean(textTypeLosses))
-            
-            self.loss = tf.reduce_sum(losses)
+                textTypePredictionsFlat = tf.cast(tf.reshape(self.textTypePredictions, shape=[batchSize * length]), tf.int32)
+                textTypeActualFlat = tf.cast(tf.argmax(tf.reshape(self.inputTextType, shape=[batchSize * length, numTextType]), axis=1), tf.int32)
 
-        if 'classification' in self.networkOutputs:
-            classificationPredictionsFlat = tf.cast(tf.reshape(self.classificationPredictions, shape=[batchSize * length]), tf.int32)
-            classificationActualFlat = tf.cast(tf.argmax(tf.reshape(self.inputClassification, shape=[batchSize * length, numClasses]), axis=1), tf.int32)
-
-            # Accuracy
-            with tf.name_scope("accuracy"):
-                correct_classifications = tf.equal(classificationPredictionsFlat, classificationActualFlat)
-
-                self.classificationAccuracy = tf.reduce_mean(tf.cast(correct_classifications, tf.float32), name="classificationAccuracy")
-
-                # Replace class_id_preds with class_id_true for recall here
-                classificationAccuracyMask = tf.cast(tf.equal(classificationPredictionsFlat, self.dataset.labels.index('null')), tf.int32) * \
-                                             tf.cast(tf.equal(classificationActualFlat, self.dataset.labels.index('null')), tf.int32)
-
-                classificationAccuracyMask = 1 - classificationAccuracyMask
-
-                class_acc_tensor = tf.cast(tf.equal(classificationActualFlat, classificationPredictionsFlat), tf.int32) * classificationAccuracyMask
-                class_acc = tf.reduce_sum(class_acc_tensor) / tf.maximum(tf.reduce_sum(classificationAccuracyMask), 1)
-
-                self.classificationNonNullAccuracy = class_acc
-
-            with tf.device('/cpu:0'):
-                with tf.name_scope("confusion_matrix"):
-                    self.confusionMatrix = tf.confusion_matrix(classificationActualFlat, classificationPredictionsFlat)
-
-        if 'modifiers' in self.networkOutputs:
-            modifierPredictionsFlat = tf.cast(tf.reshape(self.modifierPredictions, shape=[batchSize * length, numModifiers]), tf.int32)
-            modifierActualFlat = tf.cast(tf.reshape(self.inputModifiers, shape=[batchSize * length, numModifiers]), tf.int32)
-    
-            # Accuracy
-            with tf.name_scope("accuracy"):
-                correct_modifiers = tf.equal(modifierPredictionsFlat, modifierActualFlat)
-    
-                self.modifierAccuracy = tf.reduce_mean(tf.cast(correct_modifiers, tf.float32), name="modifierAccuracy")
-    
-                modifierAccuracyMask = tf.cast(tf.equal(modifierPredictionsFlat, 0), tf.int32) * \
-                                       tf.cast(tf.equal(modifierActualFlat, 0), tf.int32)
-    
-                modifierAccuracyMask = 1 - modifierAccuracyMask
-    
-                modifier_class_acc_tensor = tf.cast(tf.equal(modifierActualFlat, modifierPredictionsFlat), tf.int32) * modifierAccuracyMask
-                modifier_class_acc = tf.reduce_sum(modifier_class_acc_tensor) / tf.maximum(tf.reduce_sum(modifierAccuracyMask), 1)
-    
-                self.modifierNonNullAccuracy = modifier_class_acc
-
-        if 'groups' in self.networkOutputs:
-            self.groupSetAccuracy = {}
-            self.groupNonNullAccuracy = {}
-            
-            groupInputIndex = 0
-            for groupSet in self.dataset.groupSets:
-                numGroupSetItems = len(self.dataset.groups[groupSet]) * 3
-                
-                groupSetPredictionsFlat = tf.cast(tf.reshape(self.groupPredictions[groupSet], shape=[batchSize * length, numGroupSetItems]), tf.int32)
-                groupSetActualFlat = tf.cast(tf.reshape(self.inputGroups[:, :, groupInputIndex:groupInputIndex+numGroupSetItems], shape=[batchSize * length, numGroupSetItems]), tf.int32)
-    
                 # Accuracy
                 with tf.name_scope("accuracy"):
-                    correct_group = tf.equal(groupSetPredictionsFlat, groupSetActualFlat)
-    
-                    self.groupSetAccuracy[groupSet] = tf.reduce_mean(tf.cast(correct_group, tf.float32))
+                    correctTextType = tf.equal(textTypePredictionsFlat, textTypeActualFlat)
 
-                    nullIndex = self.dataset.groups[groupSet].index('null') * 3 + 1
+                    self.textTypeAccuracy = tf.reduce_mean(tf.cast(correctTextType, tf.float32), name="textTypeAccuracy")
 
-                    groupAccuracyMask = tf.cast(tf.equal(groupSetPredictionsFlat, nullIndex), tf.int32) * \
-                                           tf.cast(tf.equal(groupSetActualFlat, nullIndex), tf.int32)
-    
-                    groupAccuracyMask = 1 - groupAccuracyMask
-    
-                    group_class_acc_tensor = tf.cast(tf.equal(groupSetActualFlat, groupSetPredictionsFlat), tf.int32) * groupAccuracyMask
-                    group_class_acc = tf.reduce_sum(group_class_acc_tensor) / tf.maximum(tf.reduce_sum(groupAccuracyMask), 1)
-    
-                    self.groupNonNullAccuracy[groupSet] = group_class_acc
-
-                groupInputIndex += numGroupSetItems
-
-        if 'textType' in self.networkOutputs:
-            textTypePredictionsFlat = tf.cast(tf.reshape(self.textTypePredictions, shape=[batchSize * length]), tf.int32)
-            textTypeActualFlat = tf.cast(tf.argmax(tf.reshape(self.inputTextType, shape=[batchSize * length, numTextType]), axis=1), tf.int32)
-    
-            # Accuracy
-            with tf.name_scope("accuracy"):
-                correctTextType = tf.equal(textTypePredictionsFlat, textTypeActualFlat)
-    
-                self.textTypeAccuracy = tf.reduce_mean(tf.cast(correctTextType, tf.float32), name="textTypeAccuracy")
-    
     @staticmethod
     def _get_cell(hidden_size, cell_type):
         if cell_type == "vanilla":

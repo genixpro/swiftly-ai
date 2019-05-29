@@ -38,9 +38,11 @@ class DocumentExtractor:
 
         self.dataset.saveLabels("models/labels.json")
 
-        self.textTypeNetwork = DocumentExtractorNetwork(['textType'], self.dataset, allowColumnProcessing=False)
-
         self.classificationNetwork = DocumentExtractorNetwork(['groups', 'classification', 'modifiers'], self.dataset, allowColumnProcessing=True)
+
+        del self.classificationNetwork
+
+        self.textTypeNetwork = DocumentExtractorNetwork(['textType'], self.dataset, allowColumnProcessing=False)
 
         self.classificationNetwork.trainAlgorithm()
 
