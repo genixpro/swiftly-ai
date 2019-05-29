@@ -50,7 +50,7 @@ class DocumentExtractorNetwork:
         self.denseDropout = 0.5
         self.learningRate = 1e-3
         self.layers = 2
-        self.epochs = 10
+        self.epochs = 1
         self.stepsPerEpoch = 1000
 
         self.maxWorkers = 8
