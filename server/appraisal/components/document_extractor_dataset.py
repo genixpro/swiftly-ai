@@ -168,7 +168,9 @@ class DocumentExtractorDataset:
                 word.bottom,
                 word.right-word.left,
                 word.bottom-word.top,
-                (word.right - word.left) / len(word.word)
+                (word.right - word.left) / len(word.word),
+                float(word.page) / float(file.pages),
+                float(file.pages) / 20
             ]
 
             wordVectors.append(numpy.concatenate([numpy.array(positionVector), baseVector]))
