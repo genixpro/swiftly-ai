@@ -41,7 +41,7 @@ class DocumentExtractorNetwork:
 
         self.lstmSize = 250
         self.lstmDropout = 0.5
-        self.denseSize = 100
+        self.denseSize = 250
 
         self.attentionDropout = 0.5
         self.attentionSize = 256
@@ -50,8 +50,8 @@ class DocumentExtractorNetwork:
         self.denseDropout = 0.5
         self.learningRate = 1e-3
         self.layers = 2
-        self.epochs = 1
-        self.stepsPerEpoch = 100
+        self.epochs = 20
+        self.stepsPerEpoch = 1000
 
         self.maxWorkers = 8
         self.batchPreload = 20
