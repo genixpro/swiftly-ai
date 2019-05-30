@@ -30,7 +30,7 @@ class DocumentExtractorNetwork:
         self.name = "-".join(networkOutputs)
 
         self.wordVectorSize = self.dataset.wordVectorSize
-        self.batchSize = 8
+        self.batchSize = 16
 
         session_conf = tf.ConfigProto(
             # allow_soft_placement=params['allow_soft_placement'],
@@ -50,10 +50,10 @@ class DocumentExtractorNetwork:
         self.denseDropout = 0.5
         self.learningRate = 1e-3
         self.layers = 2
-        self.epochs = 1
-        self.stepsPerEpoch = 200
+        self.epochs = 20
+        self.stepsPerEpoch = 1000
 
-        self.maxWorkers = 5
+        self.maxWorkers = 8
         self.batchPreload = 20
 
         self.rollingAverageAccuracies = {}
