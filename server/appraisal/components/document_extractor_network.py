@@ -58,6 +58,7 @@ class DocumentExtractorNetwork:
 
         self.rollingAverageAccuracies = {}
         self.rollingAverageHorizon = 100
+        self.printTime = 50
 
     def applyRollingAverage(self, name, value):
         if name not in self.rollingAverageAccuracies:
@@ -80,11 +81,18 @@ class DocumentExtractorNetwork:
             train_op = tf.train.AdamOptimizer(self.learningRate, beta1=0.99).minimize(self.loss, global_step=global_step)
 
             with concurrent.futures.ProcessPoolExecutor(max_workers=self.maxWorkers) as executor:
-                batchFutures = []
+                testBatchFutures = []
                 for n in range(self.batchPreload):
-                    batchFutures.append(executor.submit(self.dataset.createBatch, self.batchSize, self.allowColumnProcessing))
+                    testBatchFutures.append(executor.submit(self.dataset.createBatch, self.batchSize, True, self.allowColumnProcessing))
 
-                for future in batchFutures:
+                for future in testBatchFutures:
+                    future.result()
+
+                trainBatchFutures = []
+                for n in range(self.batchPreload):
+                    trainBatchFutures.append(executor.submit(self.dataset.createBatch, self.batchSize, False, self.allowColumnProcessing))
+
+                for future in trainBatchFutures:
                     future.result()
 
                 self.createSaver()
@@ -96,8 +104,8 @@ class DocumentExtractorNetwork:
                     # Training loop. For each batch...
                     for batchIndex in range(self.stepsPerEpoch):
                         try:
-                            batchFuture = batchFutures.pop(0)
-                            batchFutures.append(executor.submit(self.dataset.createBatch, self.batchSize, self.allowColumnProcessing))
+                            batchFuture = trainBatchFutures.pop(0)
+                            trainBatchFutures.append(executor.submit(self.dataset.createBatch, self.batchSize, False, self.allowColumnProcessing))
 
                             batch = batchFuture.result()
 
@@ -187,8 +195,102 @@ class DocumentExtractorNetwork:
 
                                 message += f" Text-Type: {accuracy:.3f}"
 
-                            if step % self.rollingAverageHorizon == 0:
+                            if step % self.printTime == 0:
                                 print(message, flush=True)
+
+                            if step % 10 == 0:
+                                batchFuture = testBatchFutures.pop(0)
+                                testBatchFutures.append(executor.submit(self.dataset.createBatch, self.batchSize, True, self.allowColumnProcessing))
+
+                                batch = batchFuture.result()
+
+                                wordVectors = batch[0]
+                                lineSortedWordIndexes = batch[1]
+                                lineSortedReverseWordIndexes = batch[2]
+                                columnSortedWordIndexes = batch[3]
+                                columnReverseWordIndexes = batch[4]
+                                classificationOutputs = batch[5]
+                                modifierOutputs = batch[6]
+                                groupOutputs = batch[7]
+                                textTypeOutputs = batch[8]
+
+                                # Train
+                                feed_dict = {
+                                    self.inputWordVectors: wordVectors,
+                                    self.lineSortedWordIndexesInput: lineSortedWordIndexes,
+                                    self.lineSortedReverseIndexesInput: lineSortedReverseWordIndexes,
+                                    self.columnSortedWordIndexesInput: columnSortedWordIndexes,
+                                    self.columnSortedReverseIndexesInput: columnReverseWordIndexes,
+                                    self.trainingInput: False
+                                }
+
+                                operations = [self.loss]
+
+                                if 'classification' in self.networkOutputs:
+                                    feed_dict[self.inputClassification] = classificationOutputs
+                                    operations.append(self.classificationAccuracy)
+                                    operations.append(self.classificationNonNullAccuracy)
+                                    operations.append(self.confusionMatrix)
+
+                                if 'modifiers' in self.networkOutputs:
+                                    feed_dict[self.inputModifiers] = modifierOutputs
+                                    operations.append(self.modifierAccuracy)
+                                    operations.append(self.modifierNonNullAccuracy)
+
+                                if 'groups' in self.networkOutputs:
+                                    feed_dict[self.inputGroups] = groupOutputs
+                                    for groupSet in self.dataset.groupSets:
+                                        operations.append(self.groupSetAccuracy[groupSet])
+                                        operations.append(self.groupNonNullAccuracy[groupSet])
+
+                                if 'textType' in self.networkOutputs:
+                                    feed_dict[self.inputTextType] = textTypeOutputs
+                                    operations.append(self.textTypeAccuracy)
+
+                                results = self.session.run(operations, feed_dict)
+
+                                loss = results[0]
+
+                                message = f"Testing Loss: {loss}"
+
+
+                                resultIndex = 1
+                                if 'classification' in self.networkOutputs:
+                                    accuracy = self.applyRollingAverage("testing-classification", results[resultIndex])
+                                    nonNullAccuracy = self.applyRollingAverage("testing-classificationNonNull", results[resultIndex + 1])
+                                    confusionMatrix = results[resultIndex + 2]
+                                    resultIndex += 3
+
+                                    if batchIndex % 10 == 0:
+                                        with open("matrix.csv", "wt") as file:
+                                            file.write(self.formatConfusionMatrix(confusionMatrix))
+
+
+                                    message += f" Classification: {accuracy:.3f} Non Null: {nonNullAccuracy:.3f}"
+
+                                if 'modifiers' in self.networkOutputs:
+                                    accuracy = self.applyRollingAverage("testing-modifiers", results[resultIndex])
+                                    nonNullAccuracy = self.applyRollingAverage("testing-modifiersNonNull", results[resultIndex + 1])
+                                    resultIndex += 2
+
+                                    message += f" Modifiers: {accuracy:.3f} Non Null: {nonNullAccuracy:.3f}"
+
+                                if 'groups' in self.networkOutputs:
+                                    for groupSet in self.dataset.groupSets:
+                                        accuracy = self.applyRollingAverage(f"testing-group-{groupSet}", results[resultIndex])
+                                        nonNullAccuracy = self.applyRollingAverage(f"testing-groupNonNull-{groupSet}", results[resultIndex + 1])
+                                        resultIndex += 2
+
+                                        message += f" {groupSet}: {accuracy:.3f} Non Null: {nonNullAccuracy:.3f}"
+
+                                if 'textType' in self.networkOutputs:
+                                    accuracy = self.applyRollingAverage("testing-textType", results[resultIndex])
+                                    resultIndex += 1
+
+                                    message += f" Text-Type: {accuracy:.3f}"
+                                    
+                                print(message, flush=True)
+
                         except Exception as e:
                             traceback.print_exc()
                             # Otherwise just ignore the exception and try to move on to the next batch.

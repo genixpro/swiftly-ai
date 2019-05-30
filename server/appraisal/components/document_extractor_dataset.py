@@ -219,6 +219,14 @@ class DocumentExtractorDataset:
 
             self.dataset.append(file)
 
+        random.shuffle(self.dataset)
+
+        self.trainingCount = int(len(self.dataset) * 0.8)
+        self.testingCount = len(self.dataset) - self.trainingCount
+
+        self.trainingDataset = self.dataset[:self.trainingCount]
+        self.testingDataset = self.dataset[self.trainingCount:]
+
         print(f"Loaded {len(self.dataset)} files.")
 
         self.labels = sorted(list(labels))
@@ -421,7 +429,7 @@ class DocumentExtractorDataset:
     #             dataset.append(result)
     #     return dataset
 
-    def createBatch(self, batchSize, allowColumnProcessing=False):
+    def createBatch(self, batchSize, testing=False, allowColumnProcessing=False):
         batchWordVectors = []
         batchLineSortedWordIndexes = []
         batchLineSortedReverseWordIndexes = []
@@ -434,8 +442,12 @@ class DocumentExtractorDataset:
 
         results = []
         for n in range(batchSize):
-            randomIndex = random.randint(0, len(self.dataset)-1)
-            result = self.prepareDocument(self.augmentDocument(self.dataset[randomIndex]), allowColumnProcessing)
+            if testing:
+                randomIndex = random.randint(0, len(self.testingDataset) - 1)
+                result = self.prepareDocument(self.augmentDocument(self.testingDataset[randomIndex]), allowColumnProcessing)
+            else:
+                randomIndex = random.randint(0, len(self.trainingDataset)-1)
+                result = self.prepareDocument(self.augmentDocument(self.trainingDataset[randomIndex]), allowColumnProcessing)
             results.append(result)
 
         maxLength = min(random.randint(self.lengthMin, self.lengthMax), max([len(result[0]) for result in results]))
