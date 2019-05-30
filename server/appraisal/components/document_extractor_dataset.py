@@ -141,7 +141,7 @@ class DocumentExtractorDataset:
 
     def prepareDocument(self, file, allowColumnProcessing=True):
         # Just do this as a precaution
-        file.words = self.parser.assignLineNumbersToWords(file.words)
+        # file.words = self.parser.assignLineNumbersToWords(file.words)
         file.words = self.parser.assignColumnNumbersToWords(file.words)
         file.words = sorted(file.words, key=lambda word: (word.page, word.lineNumber, word.left))
         file.updateDescriptiveWordFeatures()
