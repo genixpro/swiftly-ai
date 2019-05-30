@@ -30,7 +30,7 @@ class DocumentExtractorNetwork:
         self.name = "-".join(networkOutputs)
 
         self.wordVectorSize = self.dataset.wordVectorSize
-        self.batchSize = 8
+        self.batchSize = 16
 
         session_conf = tf.ConfigProto(
             # allow_soft_placement=params['allow_soft_placement'],
