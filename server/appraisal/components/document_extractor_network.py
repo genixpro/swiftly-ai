@@ -41,7 +41,7 @@ class DocumentExtractorNetwork:
 
         self.lstmSize = 250
         self.lstmDropout = 0.5
-        self.denseSize = 100
+        self.denseSize = 250
 
         self.attentionDropout = 0.5
         self.attentionSize = 256
