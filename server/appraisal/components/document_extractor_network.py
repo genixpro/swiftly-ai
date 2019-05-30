@@ -51,7 +51,7 @@ class DocumentExtractorNetwork:
         self.learningRate = 1e-3
         self.layers = 2
         self.epochs = 1
-        self.stepsPerEpoch = 1000
+        self.stepsPerEpoch = 100
 
         self.maxWorkers = 8
         self.batchPreload = 20
