@@ -238,7 +238,12 @@ class DocumentExtractorDataset:
         self.labels = data['labels']
         self.modifiers = data['modifiers']
         self.groups = data['groups']
+        self.groupSets = sorted(list(self.groups.keys()))
         self.textTypes = data['textTypes']
+
+        self.totalGroupLabels = 0
+        for groupSet in self.groupSets:
+            self.totalGroupLabels += len(self.groups[groupSet])
 
         self.augmentationValues = {
             label: [] for label in self.labels

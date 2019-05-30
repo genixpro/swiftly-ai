@@ -118,6 +118,7 @@ class DocumentExtractorNetwork:
                                 self.lineSortedReverseIndexesInput: lineSortedReverseWordIndexes,
                                 self.columnSortedWordIndexesInput: columnSortedWordIndexes,
                                 self.columnSortedReverseIndexesInput: columnReverseWordIndexes,
+                                self.trainingInput: True
                             }
 
                             operations = [train_op, global_step, self.loss]
@@ -238,7 +239,7 @@ class DocumentExtractorNetwork:
             self.saver.restore(self.session, f"models/model-{self.name}.ckpt")
 
     def createSaver(self):
-        all_variables = tf.get_collection_ref(tf.GraphKeys.GLOBAL_VARIABLES)
+        all_variables = tf.get_collection_ref(tf.GraphKeys.TRAINABLE_VARIABLES)
         self.saver = tf.train.Saver(var_list=[v for v in all_variables])
 
     def predictDocument(self, file):
@@ -258,7 +259,8 @@ class DocumentExtractorNetwork:
             self.lineSortedWordIndexesInput: lineSortedWordIndexes,
             self.lineSortedReverseIndexesInput: lineSortedReverseWordIndexes,
             self.columnSortedWordIndexesInput: columnSortedWordIndexes,
-            self.columnSortedReverseIndexesInput: columnReverseWordIndexes
+            self.columnSortedReverseIndexesInput: columnReverseWordIndexes,
+            self.trainingInput: False
         }
         
         outputDesired = []
@@ -365,10 +367,10 @@ class DocumentExtractorNetwork:
                 
                 textTypePrediction = predictions[0][wordIndex]
                     
-                word['textType'] = self.dataset.textType[textTypePrediction]
+                word['textType'] = self.dataset.textTypes[textTypePrediction]
                 word['textTypeProbabilities'] = {
                     label: float(probabilities[0][wordIndex][labelIndex])
-                    for labelIndex, label in enumerate(self.dataset.textType)
+                    for labelIndex, label in enumerate(self.dataset.textTypes)
                 }
 
     def createRecurrentAttentionLayer(self, inputs, wordIndexes, reverseWordIndexes):
@@ -388,8 +390,8 @@ class DocumentExtractorNetwork:
         # rnnInput = tf.reshape(dense, [batchSize, length, self.attentionSize])
 
         rnnInput = inputs
-        rnnOutputs, _ = tf.nn.bidirectional_dynamic_rnn(cell_fw=tf.nn.rnn_cell.DropoutWrapper(tf.nn.rnn_cell.LSTMCell(self.lstmSize), output_keep_prob=self.lstmDropout),
-                                                        cell_bw=tf.nn.rnn_cell.DropoutWrapper(tf.nn.rnn_cell.LSTMCell(self.lstmSize), output_keep_prob=self.lstmDropout),
+        rnnOutputs, _ = tf.nn.bidirectional_dynamic_rnn(cell_fw=tf.nn.rnn_cell.DropoutWrapper(tf.nn.rnn_cell.LSTMCell(self.lstmSize), output_keep_prob=self.lstmDropoutAdjusted),
+                                                        cell_bw=tf.nn.rnn_cell.DropoutWrapper(tf.nn.rnn_cell.LSTMCell(self.lstmSize), output_keep_prob=self.lstmDropoutAdjusted),
                                                         inputs=rnnInput,
                                                         # sequence_length=self.inputLength,
                                                         dtype=tf.float32)
@@ -408,7 +410,7 @@ class DocumentExtractorNetwork:
 
         layerOutputs = tf.concat(values=[lineSortedOutput, columnOutput], axis=2)
 
-        layerOutputs = tf.layers.batch_normalization(layerOutputs)
+        layerOutputs = tf.layers.batch_normalization(layerOutputs, training=self.trainingInput)
 
         return layerOutputs
 
@@ -434,6 +436,9 @@ class DocumentExtractorNetwork:
 
             self.columnSortedWordIndexesInput = tf.placeholder(tf.int32, shape=[None, None], name='column_sorted_indexes')
             self.columnSortedReverseIndexesInput = tf.placeholder(tf.int32, shape=[None, None], name='column_sorted_reverse_indexes')
+            self.trainingInput = tf.placeholder(tf.bool, name='training')
+
+            self.lstmDropoutAdjusted = tf.where(self.trainingInput, self.lstmDropout, 1.0)
 
             # Recurrent Neural Network
             with tf.name_scope("rnn"), tf.variable_scope("rnn", reuse=tf.AUTO_REUSE):
@@ -449,10 +454,10 @@ class DocumentExtractorNetwork:
                 reshaped = tf.reshape(currentOutput, shape=(batchSize * length, vectorSize))
 
                 with tf.name_scope("denseLayers"), tf.variable_scope("denseLayers"):
-                    dense1 = tf.layers.dense(tf.layers.dropout(reshaped, rate=self.denseDropout), self.denseSize, activation=tf.nn.relu)
-                    batchNorm1 = tf.layers.batch_normalization(dense1)
-                    dense2 = tf.layers.dense(tf.layers.dropout(batchNorm1, rate=self.denseDropout), self.denseSize, activation=tf.nn.relu)
-                    batchNorm2 = tf.layers.batch_normalization(dense2)
+                    dense1 = tf.layers.dense(tf.layers.dropout(reshaped, rate=self.denseDropout, training=self.trainingInput), self.denseSize, activation=tf.nn.relu)
+                    batchNorm1 = tf.layers.batch_normalization(dense1, training=self.trainingInput)
+                    dense2 = tf.layers.dense(tf.layers.dropout(batchNorm1, rate=self.denseDropout, training=self.trainingInput), self.denseSize, activation=tf.nn.relu)
+                    batchNorm2 = tf.layers.batch_normalization(dense2, training=self.trainingInput)
 
                     if 'classification' in self.networkOutputs:
                         self.classificationLogits = tf.layers.dense(batchNorm2, numClasses)

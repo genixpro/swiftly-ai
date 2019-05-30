@@ -90,13 +90,14 @@ class DocumentProcessor:
 
 
     def classifyAndProcessDocument(self, file):
-        # extractor = DocumentExtractor(self.db, self.vectorServerURL)
-        # extractor.predictDocument(file)
-        for word in file.words:
-            word.classification = "null"
-            word.modifiers = []
-            word.textType = "block"
-            word.groups = {}
+        extractor = DocumentExtractor(self.db, self.vectorServerURL)
+        extractor.loadAlgorithm()
+        extractor.predictDocument(file)
+        # for word in file.words:
+        #     word.classification = "null"
+        #     word.modifiers = []
+        #     word.textType = "block"
+        #     word.groups = {}
 
 
     def extractAndMergeAppraisalData(self, file, appraisal):

@@ -37,7 +37,6 @@ class Connection(_http.JSONConnection):
     """A template for the URL of a particular API call."""
 
 
-
 class TriggerClient(google.cloud.client.ClientWithProject):
 
     SCOPE = (
