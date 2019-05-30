@@ -53,3 +53,6 @@ def main():
             obj = File(**file)
             obj.save()
 
+
+if __name__ == '__main__':
+    main()

@@ -31,3 +31,6 @@ def main():
     generator = DocumentGenerator()
     generator.generateDocument("financial_statement_1.docx", "financial_statement")
 
+
+if __name__ == '__main__':
+    main()

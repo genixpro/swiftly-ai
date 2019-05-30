@@ -73,3 +73,6 @@ def main():
             print("Completed migrating", completed, "objects")
         else:
             print("No need to run", func.__name__, "all objects already updated.")
+
+if __name__ == '__main__':
+    main()

@@ -166,7 +166,7 @@ class DocumentParser:
                 bestIoU = None
                 bestLine = None
                 for line in lines:
-                    iou = self.verticalIntersectionOverUnion(word, line)
+                    iou = self.verticalIntersectionOverUnion({"top": word.top, "bottom": word.bottom}, line)
                     if bestIoU is None or iou > bestIoU:
                         bestIoU = iou
                         bestLine = line

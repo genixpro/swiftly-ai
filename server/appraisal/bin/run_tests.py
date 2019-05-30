@@ -5,3 +5,6 @@ def main():
     runner = unittest.TextTestRunner()
     runner.run(suite)
 
+
+if __name__ == '__main__':
+    main()

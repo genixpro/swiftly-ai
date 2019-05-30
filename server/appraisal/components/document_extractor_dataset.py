@@ -19,6 +19,69 @@ from requests.packages.urllib3.util.retry import Retry
 
 globalVectorProcess = None
 
+class FastWord:
+    """ This class is used to bypass overheard introduced by MongoEngine"""
+    def __init__(self, word=None):
+        if word is not None:
+            self.word = word.word
+            if hasattr(word, "classification"):
+                self.classification = word.classification
+            else:
+                self.classification = "null"
+
+            if hasattr(word, "modifiers"):
+                self.modifiers = word.modifiers
+            else:
+                self.modifiers = []
+
+            self.page = word.page
+            self.groups = word.groups
+            self.groupNumbers = word.groupNumbers
+            self.textType = word.textType
+            self.lineNumber = word.lineNumber
+            self.documentLineNumber = word.documentLineNumber
+            self.column = word.column
+            self.left = word.left
+            self.right = word.right
+            self.top = word.top
+            self.bottom = word.bottom
+            self.index = word.index
+            self.lineNumberWithinGroup = word.lineNumberWithinGroup
+            self.reverseLineNumberWithinGroup = word.reverseLineNumberWithinGroup
+        else:
+            self.word = ""
+            self.classification = "null"
+            self.modifiers = []
+            self.page = None
+            self.groups = {}
+            self.groupNumbers = {}
+            self.textType = None
+            self.lineNumber = None
+            self.documentLineNumber = None
+            self.column = None
+            self.left = None
+            self.right = None
+            self.top = None
+            self.bottom = None
+            self.index = None
+            self.lineNumberWithinGroup = {}
+            self.reverseLineNumberWithinGroup = {}
+
+class FastFile:
+    """ This class is used to bypass overheard introduced by MongoEngine"""
+    def __init__(self, file=None, words=None, pages=None):
+        if file is not None:
+            self.words = [FastWord(word) for word in file.words]
+            self.tokens = file.breakIntoTokens()
+            self.pages = file.pages
+        else:
+            self.words = words
+            self.tokens = None
+            self.pages = pages
+
+    def updateDescriptiveWordFeatures(self):
+        File.updateDescriptiveWordFeatures(self)
+
 class DocumentExtractorDataset:
     def __init__(self, vectorServerURL=None, manager=None):
         self.vectorServerURL = vectorServerURL
@@ -83,7 +146,7 @@ class DocumentExtractorDataset:
         file.words = sorted(file.words, key=lambda word: (word.page, word.lineNumber, word.left))
         file.updateDescriptiveWordFeatures()
 
-        neededWordVectors = list(set(word['word'] for word in file.words))
+        neededWordVectors = list(set(word.word for word in file.words))
         wordVectorMap = {}
         if self.vectorServerURL is None:
             for word in neededWordVectors:
@@ -96,7 +159,7 @@ class DocumentExtractorDataset:
 
         wordVectors = []
         for word in file.words:
-            baseVector = wordVectorMap[word['word']]
+            baseVector = wordVectorMap[word.word]
 
             positionVector = [
                 word.left,
@@ -105,20 +168,20 @@ class DocumentExtractorDataset:
                 word.bottom,
                 word.right-word.left,
                 word.bottom-word.top,
-                (word.right - word.left) / len(word['word'])
+                (word.right - word.left) / len(word.word)
             ]
 
             wordVectors.append(numpy.concatenate([numpy.array(positionVector), baseVector]))
 
-        lineSortedWordIndexes = [word['index'] for word in sorted(file.words, key=lambda word: (word['page'], word['lineNumber'], word['left']))]
+        lineSortedWordIndexes = [word.index for word in sorted(file.words, key=lambda word: (word.page, word.lineNumber, word.left))]
 
         if allowColumnProcessing:
-            columnSortedWordIndexes = [word['index'] for word in sorted(file.words, key=lambda word: (word['page'], word['column'], word['lineNumber'], word['left']))]
+            columnSortedWordIndexes = [word.index for word in sorted(file.words, key=lambda word: (word.page, word.column, word.lineNumber, word.left))]
         else:
-            columnSortedWordIndexes = [word['index'] for word in sorted(file.words, key=lambda word: (word['page'], word['lineNumber'], word['left']))]
+            columnSortedWordIndexes = [word.index for word in sorted(file.words, key=lambda word: (word.page, word.lineNumber, word.left))]
 
-        lineSortedReverseWordIndexes = [lineSortedWordIndexes.index(word['index']) for word in file.words]
-        columnReverseWordIndexes = [columnSortedWordIndexes.index(word['index']) for word in file.words]
+        lineSortedReverseWordIndexes = [lineSortedWordIndexes.index(word.index) for word in file.words]
+        columnReverseWordIndexes = [columnSortedWordIndexes.index(word.index) for word in file.words]
 
         classificationOutputs = []
         modifierOutputs = []
@@ -129,15 +192,11 @@ class DocumentExtractorDataset:
             oneHotCodeClassification = [0] * len(self.labels)
             modifiersVector = [0] * len(self.modifiers)
 
-            if 'classification' in word:
-                oneHotCodeClassification[self.labels.index(word['classification'])] = 1
-            else:
-                oneHotCodeClassification[self.labels.index('null')] = 1
+            oneHotCodeClassification[self.labels.index(word.classification)] = 1
             classificationOutputs.append(oneHotCodeClassification)
 
-            if 'modifiers' in word:
-                for modifier in word['modifiers']:
-                    modifiersVector[self.modifiers.index(modifier)] = 1
+            for modifier in word.modifiers:
+                modifiersVector[self.modifiers.index(modifier)] = 1
             modifierOutputs.append(modifiersVector)
 
             groupsVector = []
@@ -217,7 +276,7 @@ class DocumentExtractorDataset:
                 else:
                     self.augmentationValues[augmentationKey] = [token['text']]
 
-            self.dataset.append(file)
+            self.dataset.append(FastFile(file))
 
         random.shuffle(self.dataset)
 
@@ -294,16 +353,16 @@ class DocumentExtractorDataset:
 
             newText = random.choice(self.augmentationValues[augmentationKey])
 
-        if len(set([word['page'] for word in token['words']])) > 1:
+        if len(set([word.page for word in token['words']])) > 1:
             raise NotImplemented("Support for augmenting tokens that cross multiple pages not yet implemented")
 
         # Break the words on the token down into lines
         wordsByLine = {}
         for word in token['words']:
-            if word['lineNumber'] in wordsByLine:
-                wordsByLine[word['lineNumber']].append(word)
+            if word.lineNumber in wordsByLine:
+                wordsByLine[word.lineNumber].append(word)
             else:
-                wordsByLine[word['lineNumber']] = [word]
+                wordsByLine[word.lineNumber] = [word]
 
         # Set the start line and finish line
         startLine = min(wordsByLine.keys())
@@ -313,25 +372,25 @@ class DocumentExtractorDataset:
         newTextSplit = newText.split()
 
         # Create the words for the new token
-        newWords = [
-            Word(**{
-                "word": word,
-                "classification": token['classification'],
-                "modifiers": token['modifiers'],
-                "page": token['words'][0]['page'],
-                "groups": token['groups'],
-                "groupNumbers": token['groupNumbers'],
-                "textType": token['textType'],
-                "lineNumber": startLine + int(round((wordIndex / len(newTextSplit)) * lineDelta))
-            }) for wordIndex, word in enumerate(newTextSplit)
-        ]
+        newWords = []
+        for wordIndex, word in enumerate(newTextSplit):
+            newWord = FastWord()
+            newWord.word = word
+            newWord.classification = token['classification']
+            newWord.modifiers = token['modifiers']
+            newWord.page = token['words'][0]['page']
+            newWord.groups = token['groups']
+            newWord.groupNumbers = token['groupNumbers']
+            newWord.textType = token['textType']
+            newWord.lineNumber = startLine + int(round((wordIndex / len(newTextSplit)) * lineDelta))
+            newWords.append(newWord)
 
         newWordsByLine = {}
         for word in newWords:
-            if word['lineNumber'] in newWordsByLine:
-                newWordsByLine[word['lineNumber']].append(word)
+            if word.lineNumber in newWordsByLine:
+                newWordsByLine[word.lineNumber].append(word)
             else:
-                newWordsByLine[word['lineNumber']] = [word]
+                newWordsByLine[word.lineNumber] = [word]
 
         # print(startLine)
         # print(endLine)
@@ -345,20 +404,20 @@ class DocumentExtractorDataset:
                 # print(lineNumber)
                 lineOriginalWords = wordsByLine[lineNumber]
 
-                lineLeft = min([word['left'] for word in lineOriginalWords])
-                lineRight = max([word['right'] for word in lineOriginalWords])
+                lineLeft = min([word.left for word in lineOriginalWords])
+                lineRight = max([word.right for word in lineOriginalWords])
                 lineWordSize = (lineRight - lineLeft) / len(newWordsByLine[lineNumber])
 
-                columnStart = min([word['column'] for word in lineOriginalWords])
-                columnEnd = max([word['column'] for word in lineOriginalWords])
+                columnStart = min([word.column for word in lineOriginalWords])
+                columnEnd = max([word.column for word in lineOriginalWords])
                 columnSize = (columnEnd - columnStart) / len(newWordsByLine[lineNumber])
 
-                word['top'] = min([word['top'] for word in lineOriginalWords])
-                word['bottom'] = max([word['bottom'] for word in lineOriginalWords])
-                word['left'] = lineLeft + lineWordSize * wordIndex
-                word['right'] = lineLeft + lineWordSize * (wordIndex+1)
+                word.top = min([word.top for word in lineOriginalWords])
+                word.bottom = max([word.bottom for word in lineOriginalWords])
+                word.left = lineLeft + lineWordSize * wordIndex
+                word.right = lineLeft + lineWordSize * (wordIndex+1)
 
-                word['column'] = int(round(columnStart + columnSize * wordIndex))
+                word.column = int(round(columnStart + columnSize * wordIndex))
 
 
         return {
@@ -369,14 +428,12 @@ class DocumentExtractorDataset:
 
 
     def augmentDocument(self, file):
-        file = copy.copy(file)
-
         # Select a random page within the document
         pages = set(word.page for word in file.words)
         chosenPage = random.choice(list(pages))
-        file.words = [word for word in file.words if word.page == chosenPage]
+        words = [copy.copy(word) for word in file.words if word.page == chosenPage]
 
-        tokens = file.breakIntoTokens()
+        tokens = file.tokens
 
         indexAdjustment = 0
         for token in tokens:
@@ -384,7 +441,7 @@ class DocumentExtractorDataset:
                 start = token['startIndex'] + indexAdjustment
                 end = token['endIndex'] + indexAdjustment
 
-                file.words[start:end] = []
+                words[start:end] = []
 
                 indexAdjustment -= len(token['words'])
             else:
@@ -393,19 +450,15 @@ class DocumentExtractorDataset:
                 start = token['startIndex'] + indexAdjustment
                 end = token['endIndex'] + indexAdjustment
 
-                file.words[start:end] = newToken['words']
+                words[start:end] = newToken['words']
 
                 indexAdjustment += (len(newToken['words']) - len(token['words']))
 
-            # print("token")
-            # pprint(token)
-            # print("newToken")
-            # pprint(newToken)
+        newFile = FastFile(words=words, pages=file.pages)
+        for wordIndex, word in enumerate(newFile.words):
+            word.index = wordIndex
 
-        for wordIndex, word in enumerate(file.words):
-            word['index'] = wordIndex
-
-        return file
+        return newFile
 
     # def generateAndSaveDocument(self, n):
     #     data = self.generator.generateDocument("financial_statement_1.docx", "financial_statement")

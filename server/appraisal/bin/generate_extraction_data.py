@@ -31,3 +31,6 @@ def main():
     dataset = DocumentExtractorDataset()
     dataset.generateAndSaveDataset()
 
+
+if __name__ == '__main__':
+    main()

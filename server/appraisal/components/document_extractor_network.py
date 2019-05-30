@@ -30,7 +30,7 @@ class DocumentExtractorNetwork:
         self.name = "-".join(networkOutputs)
 
         self.wordVectorSize = self.dataset.wordVectorSize
-        self.batchSize = 16
+        self.batchSize = 8
 
         session_conf = tf.ConfigProto(
             # allow_soft_placement=params['allow_soft_placement'],
@@ -41,7 +41,7 @@ class DocumentExtractorNetwork:
 
         self.lstmSize = 250
         self.lstmDropout = 0.5
-        self.denseSize = 250
+        self.denseSize = 100
 
         self.attentionDropout = 0.5
         self.attentionSize = 256
@@ -50,10 +50,10 @@ class DocumentExtractorNetwork:
         self.denseDropout = 0.5
         self.learningRate = 1e-3
         self.layers = 2
-        self.epochs = 20
-        self.stepsPerEpoch = 1000
+        self.epochs = 1
+        self.stepsPerEpoch = 200
 
-        self.maxWorkers = 8
+        self.maxWorkers = 5
         self.batchPreload = 20
 
         self.rollingAverageAccuracies = {}
@@ -341,7 +341,7 @@ class DocumentExtractorNetwork:
             self.saver.restore(self.session, f"models/model-{self.name}.ckpt")
 
     def createSaver(self):
-        all_variables = tf.get_collection_ref(tf.GraphKeys.TRAINABLE_VARIABLES)
+        all_variables = tf.get_collection_ref(tf.GraphKeys.GLOBAL_VARIABLES)
         self.saver = tf.train.Saver(var_list=[v for v in all_variables])
 
     def predictDocument(self, file):

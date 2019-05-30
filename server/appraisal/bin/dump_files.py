@@ -46,3 +46,7 @@ def main():
 
     with open('files.json', 'wt') as file:
         file.write(files.to_json())
+
+
+if __name__ == '__main__':
+    main()

@@ -7,6 +7,9 @@ import dateparser
 class Word(EmbeddedDocument):
     meta = {'strict': False}
 
+    def __init__(self, *args, **kwargs):
+        super(Word, self).__init__(*args, **kwargs)
+
     # This is the raw text of the word
     word = StringField()
 
