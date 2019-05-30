@@ -56,6 +56,20 @@ class DocumentExtractorNetwork:
         self.maxWorkers = 8
         self.batchPreload = 20
 
+        self.rollingAverageAccuracies = {}
+        self.rollingAverageHorizon = 100
+
+    def applyRollingAverage(self, name, value):
+        if name not in self.rollingAverageAccuracies:
+            self.rollingAverageAccuracies[name] = [value]
+            return value
+        else:
+            self.rollingAverageAccuracies[name].append(value)
+            if len(self.rollingAverageAccuracies[name]) > self.rollingAverageHorizon:
+                self.rollingAverageAccuracies[name].pop(0)
+            return numpy.average(self.rollingAverageAccuracies[name])
+
+
     def trainAlgorithm(self):
         with self.session.as_default():
             with tf.device('/gpu:0'):
@@ -139,8 +153,8 @@ class DocumentExtractorNetwork:
 
                             resultIndex = 3
                             if 'classification' in self.networkOutputs:
-                                accuracy = results[resultIndex]
-                                nonNullAccuracy = results[resultIndex + 1]
+                                accuracy = self.applyRollingAverage("classification", results[resultIndex])
+                                nonNullAccuracy = self.applyRollingAverage("classificationNonNull", results[resultIndex + 1])
                                 confusionMatrix = results[resultIndex + 2]
                                 resultIndex += 3
 
@@ -152,27 +166,28 @@ class DocumentExtractorNetwork:
                                 message += f" Classification: {accuracy:.3f} Non Null: {nonNullAccuracy:.3f}"
 
                             if 'modifiers' in self.networkOutputs:
-                                accuracy = results[resultIndex]
-                                nonNullAccuracy = results[resultIndex + 1]
+                                accuracy = self.applyRollingAverage("modifiers", results[resultIndex])
+                                nonNullAccuracy = self.applyRollingAverage("modifiersNonNull", results[resultIndex + 1])
                                 resultIndex += 2
 
                                 message += f" Modifiers: {accuracy:.3f} Non Null: {nonNullAccuracy:.3f}"
 
                             if 'groups' in self.networkOutputs:
                                 for groupSet in self.dataset.groupSets:
-                                    accuracy = results[resultIndex]
-                                    nonNullAccuracy = results[resultIndex + 1]
+                                    accuracy = self.applyRollingAverage(f"group-{groupSet}", results[resultIndex])
+                                    nonNullAccuracy = self.applyRollingAverage(f"groupNonNull-{groupSet}", results[resultIndex + 1])
                                     resultIndex += 2
 
                                     message += f" {groupSet}: {accuracy:.3f} Non Null: {nonNullAccuracy:.3f}"
 
                             if 'textType' in self.networkOutputs:
-                                accuracy = results[resultIndex]
+                                accuracy = self.applyRollingAverage("textType", results[resultIndex])
                                 resultIndex += 1
 
                                 message += f" Text-Type: {accuracy:.3f}"
 
-                            print(message, flush=True)
+                            if step % self.rollingAverageHorizon == 0:
+                                print(message, flush=True)
                         except Exception as e:
                             traceback.print_exc()
                             # Otherwise just ignore the exception and try to move on to the next batch.
