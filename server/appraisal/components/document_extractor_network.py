@@ -597,7 +597,7 @@ class DocumentExtractorNetwork:
 
         layerOutputs = tf.concat(values=[lineOutput, columnOutput], axis=2)
 
-        # layerOutputs = tf.layers.batch_normalization(layerOutputs, training=self.trainingInput)
+        # layerOutputs = tf.layers.BatchNormalization(layerOutputs)
 
         return layerOutputs
 
@@ -643,9 +643,10 @@ class DocumentExtractorNetwork:
 
                 with tf.name_scope("denseLayers"), tf.variable_scope("denseLayers"):
                     dense1 = tf.layers.dense(tf.layers.dropout(reshaped, rate=self.denseDropout, training=self.trainingInput), self.denseSize, activation=tf.nn.relu)
-                    batchNorm1 = tf.layers.batch_normalization(dense1, training=self.trainingInput)
-                    dense2 = tf.layers.dense(tf.layers.dropout(batchNorm1, rate=self.denseDropout, training=self.trainingInput), self.denseSize, activation=tf.nn.relu)
-                    batchNorm2 = tf.layers.batch_normalization(dense2, training=self.trainingInput)
+                    # batchNorm1 = tf.layers.batch_normalization(dense1)
+                    dense2 = tf.layers.dense(tf.layers.dropout(dense1, rate=self.denseDropout, training=self.trainingInput), self.denseSize, activation=tf.nn.relu)
+                    # batchNorm2 = tf.layers.batch_normalization(dense2)
+                    batchNorm2 = dense2
 
                     if 'classification' in self.networkOutputs:
                         self.classificationLogits = tf.layers.dense(batchNorm2, numClasses)

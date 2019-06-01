@@ -67,7 +67,7 @@ setup(
         'appraisal': [
             'tests/data/*.json',
             "gcloud-storage-key.json",
-            "configuration/*.json"
+            "model_configuration/*.json"
         ]
     },
     install_requires=requires,

@@ -56,6 +56,7 @@ class DocumentExtractor:
 
         self.textTypeNetwork.trainAlgorithm()
 
+    def uploadAlgorithm(self):
         modelsZipFile = 'models.zip'
         with open(modelsZipFile, 'wb') as file:
             zip = zipfile.ZipFile(file, 'w', zipfile.ZIP_DEFLATED)

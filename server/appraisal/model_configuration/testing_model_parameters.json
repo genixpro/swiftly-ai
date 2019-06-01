@@ -10,7 +10,7 @@
   "learningRate": 1e-3,
   "layers": 2,
   "epochs": 2,
-  "stepsPerEpoch": 25,
+  "stepsPerEpoch": 10,
   "maxWorkers": 1,
   "batchPreload": 5,
   "rollingAverageHorizon": 100,

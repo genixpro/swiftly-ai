@@ -90,10 +90,12 @@ def main():
     classifier = DocumentExtractor(db, modelConfig, vectorServerURL)
     classifier.trainAlgorithm()
 
-    triggerRebuild("sandbox", "4b7493de-9a42-4665-802f-e83014644276")
-    triggerRebuild("demo", "f7669f8d-9920-48af-9d0d-de0af853cc8b")
-    triggerRebuild("production", "f3d1b42b-1f92-4159-b073-925f66df9056")
-    triggerRebuild("testing", "2e790270-2307-419c-86d6-49970cc29ce6")
+    if settings.get('environment') != "development":
+        classifier.uploadAlgorithm()
+        triggerRebuild("sandbox", "4b7493de-9a42-4665-802f-e83014644276")
+        triggerRebuild("demo", "f7669f8d-9920-48af-9d0d-de0af853cc8b")
+        triggerRebuild("production", "f3d1b42b-1f92-4159-b073-925f66df9056")
+        triggerRebuild("testing", "2e790270-2307-419c-86d6-49970cc29ce6")
 
 
 
