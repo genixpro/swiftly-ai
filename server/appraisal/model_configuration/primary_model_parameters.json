@@ -1,5 +1,5 @@
 {
-  "batchSize": 4,
+  "batchSize": 2,
   "lstmSize": 150,
   "lstmDropout": 0.5,
   "denseSize": 150,
