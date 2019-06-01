@@ -11,8 +11,9 @@ class TenancyDataExtractor (DataExtractor):
         pass
 
     def extractUnits(self, file):
-        rentRolls = self.extractRentRoll(file)
 
+        return []
+        rentRolls = self.extractRentRoll(file)
 
         # Group the rent rolls by their unit number
         rentRollsByUnitNumber = {}

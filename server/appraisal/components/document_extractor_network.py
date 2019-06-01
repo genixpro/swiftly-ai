@@ -39,7 +39,8 @@ class DocumentExtractorNetwork:
             # log_device_placement=params['log_device_placement']
         )
 
-        self.session = tf.Session(config=session_conf)
+        self.graph = tf.Graph()
+        self.session = tf.Session(graph=self.graph, config=session_conf)
 
         self.lstmSize = configuration['lstmSize']
         self.lstmDropout = configuration['lstmDropout']
@@ -88,7 +89,7 @@ class DocumentExtractorNetwork:
 
 
     def trainAlgorithm(self):
-        with self.session.as_default():
+        with self.session.as_default(), self.graph.as_default():
             primaryDevice = "/cpu:0"
             if self.numGPUs == 1:
                 primaryDevice = "/gpu:0"
@@ -359,7 +360,7 @@ class DocumentExtractorNetwork:
             return ""
 
     def loadAlgorithm(self):
-        with self.session.as_default():
+        with self.session.as_default(), self.graph.as_default():
             primaryDevice = "/cpu:0"
             if self.numGPUs == 1:
                 primaryDevice = "/gpu:0"
@@ -668,7 +669,7 @@ class DocumentExtractorNetwork:
 
                             self.groupLogits[groupSet] = tf.layers.dense(batchNorm2, numGroupSetItems)
                             self.groupProbabilities[groupSet] = tf.reshape(tf.nn.sigmoid(self.groupLogits[groupSet]), shape=[batchSize, length, numGroupSetItems])
-                            self.groupPredictions[groupSet] = tf.reshape(tf.round(tf.nn.sigmoid(self.groupLogits[groupSet])), shape=[batchSize, length, numGroupSetItems])
+                            self.groupPredictions[groupSet] = tf.reshape(tf.argmax(self.groupLogits[groupSet], 1), shape=[batchSize, length])
 
                     if 'textType' in self.networkOutputs:
                         self.textTypeLogits = tf.layers.dense(batchNorm2, numTextType)
@@ -759,8 +760,8 @@ class DocumentExtractorNetwork:
                 for groupSet in self.dataset.groupSets:
                     numGroupSetItems = len(self.dataset.groups[groupSet]) * 3
 
-                    groupSetPredictionsFlat = tf.cast(tf.reshape(self.groupPredictions[groupSet], shape=[batchSize * length, numGroupSetItems]), tf.int32)
-                    groupSetActualFlat = tf.cast(tf.reshape(self.inputGroups[:, :, groupInputIndex:groupInputIndex+numGroupSetItems], shape=[batchSize * length, numGroupSetItems]), tf.int32)
+                    groupSetPredictionsFlat = tf.cast(tf.reshape(self.groupPredictions[groupSet], shape=[batchSize * length]), tf.int32)
+                    groupSetActualFlat = tf.cast(tf.argmax(tf.reshape(self.inputGroups[:, :, groupInputIndex:groupInputIndex+numGroupSetItems], shape=[batchSize * length, numGroupSetItems]), 1), tf.int32)
 
                     # Accuracy
                     with tf.name_scope("accuracy"):
