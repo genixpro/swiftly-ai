@@ -16,10 +16,11 @@ class DocumentProcessor:
         This system manages the end-to-end process of parsing and interpreting a document that is uploaded to this system.
     """
 
-    def __init__(self, db, storageBucket, vectorServerURL=None):
+    def __init__(self, db, storageBucket, modelConfig, vectorServerURL=None):
         self.parser = DocumentParser()
         self.storageBucket = storageBucket
         self.db = db
+        self.modelConfig = modelConfig
         self.vectorServerURL = vectorServerURL
         self.tenancyDataExtractor = TenancyDataExtractor()
         self.incomeStatementExtractor = IncomeStatementDataExtractor()
@@ -90,7 +91,7 @@ class DocumentProcessor:
 
 
     def classifyAndProcessDocument(self, file):
-        extractor = DocumentExtractor(self.db, self.vectorServerURL)
+        extractor = DocumentExtractor(self.db, self.modelConfig, self.vectorServerURL)
         extractor.loadAlgorithm()
         extractor.predictDocument(file)
         # for word in file.words:

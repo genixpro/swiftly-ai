@@ -1,0 +1,27 @@
+{
+  "batchSize": 16,
+  "lstmSize": 250,
+  "lstmDropout": 0.5,
+  "denseSize": 250,
+  "attentionDropout": 0.5,
+  "attentionSize": 256,
+  "attentionHeads": 4,
+  "denseDropout": 0.5,
+  "learningRate": 1e-3,
+  "layers": 2,
+  "epochs": 20,
+  "stepsPerEpoch": 1000,
+  "maxWorkers": 8,
+  "batchPreload": 20,
+  "rollingAverageHorizon": 100,
+  "testingRollingAverageHorizon": 10,
+  "printTime": 50,
+  "lengthMin": 500,
+  "lengthMax": 1000,
+  "wordVectorSize": 309,
+  "wordOmissionRate": 0.05,
+  "numGPUs": -1,
+  "query": {
+    "reviewStatus__in": ["verifed", "verified"]
+  }
+}

@@ -20,7 +20,7 @@ from requests.packages.urllib3.util.retry import Retry
 globalVectorProcess = None
 
 class FastWord:
-    """ This class is used to bypass overheard introduced by MongoEngine"""
+    """ This class is used to bypass overhead introduced by MongoEngine"""
     def __init__(self, word=None):
         if word is not None:
             self.word = word.word
@@ -41,6 +41,7 @@ class FastWord:
             self.lineNumber = word.lineNumber
             self.documentLineNumber = word.documentLineNumber
             self.column = word.column
+            self.documentColumn = word.documentColumn
             self.left = word.left
             self.right = word.right
             self.top = word.top
@@ -59,6 +60,7 @@ class FastWord:
             self.lineNumber = None
             self.documentLineNumber = None
             self.column = None
+            self.documentColumn = None
             self.left = None
             self.right = None
             self.top = None
@@ -68,7 +70,7 @@ class FastWord:
             self.reverseLineNumberWithinGroup = {}
 
 class FastFile:
-    """ This class is used to bypass overheard introduced by MongoEngine"""
+    """ This class is used to bypass overhead introduced by MongoEngine"""
     def __init__(self, file=None, words=None, pages=None):
         if file is not None:
             self.words = [FastWord(word) for word in file.words]
@@ -83,16 +85,17 @@ class FastFile:
         File.updateDescriptiveWordFeatures(self)
 
 class DocumentExtractorDataset:
-    def __init__(self, vectorServerURL=None, manager=None):
+    def __init__(self, configuration, vectorServerURL=None, manager=None):
         self.vectorServerURL = vectorServerURL
         self.parser = DocumentParser()
+        self.configuration = configuration
 
         self.numberLabels = ['FORECAST', 'BUDGET', 'VARIANCE', "YEAR_TO_DATE"]
 
-        self.lengthMin = 500
-        self.lengthMax = 1000
-        self.wordVectorSize = 307
-        self.wordOmissionRate = 0.05
+        self.lengthMin = configuration['lengthMin']
+        self.lengthMax = configuration['lengthMax']
+        self.wordVectorSize = configuration['wordVectorSize']
+        self.wordOmissionRate = configuration['wordOmissionRate']
 
         self.dataset = manager.list()
 
@@ -176,14 +179,76 @@ class DocumentExtractorDataset:
             wordVectors.append(numpy.concatenate([numpy.array(positionVector), baseVector]))
 
         lineSortedWordIndexes = [word.index for word in sorted(file.words, key=lambda word: (word.page, word.lineNumber, word.left))]
-
-        if allowColumnProcessing:
-            columnSortedWordIndexes = [word.index for word in sorted(file.words, key=lambda word: (word.page, word.column, word.lineNumber, word.left))]
-        else:
-            columnSortedWordIndexes = [word.index for word in sorted(file.words, key=lambda word: (word.page, word.lineNumber, word.left))]
-
         lineSortedReverseWordIndexes = [lineSortedWordIndexes.index(word.index) for word in file.words]
-        columnReverseWordIndexes = [columnSortedWordIndexes.index(word.index) for word in file.words]
+
+        lineWordIndexes = []
+        lineReverseWordIndexes = []
+        currentLine = []
+        currentDocumentLineNumber = file.words[0].documentLineNumber
+        startLine = file.words[0].documentLineNumber
+        for word in sorted(file.words, key=lambda word: (word.page, word.lineNumber, word.left)):
+            if word.documentLineNumber == currentDocumentLineNumber:
+                currentLine.append(word.index)
+            else:
+                while currentDocumentLineNumber < word.documentLineNumber:
+                    lineWordIndexes.append(currentLine)
+                    currentLine = []
+                    currentDocumentLineNumber += 1
+
+                currentLine = [word.index]
+
+        if len(currentLine) > 0:
+            lineWordIndexes.append(currentLine)
+
+        lineLengths = [len(line) for line in lineWordIndexes]
+
+        for word in file.words:
+            lineReverseWordIndexes.append((word.documentLineNumber - startLine, lineWordIndexes[word.documentLineNumber - startLine].index(word.index)))
+
+        longestLine = max(len(line) for line in lineWordIndexes)
+        for line in lineWordIndexes:
+            while len(line) < longestLine:
+                line.append(-1)
+
+        columnWordIndexes = []
+        columnReverseWordIndexes = []
+        columnLengths = []
+        if allowColumnProcessing:
+            columnSortedWordIndexes = [word.index for word in sorted(file.words, key=lambda word: (word.page, word.documentColumn, word.lineNumber, word.left))]
+
+            currentColumn = []
+            startColumn = min(word.documentColumn for word in file.words)
+            currentColumnNumber = startColumn
+            for word in sorted(file.words, key=lambda word: (word.documentColumn, word.lineNumber, word.left)):
+                if word.documentColumn == currentColumnNumber:
+                    currentColumn.append(word.index)
+                else:
+                    while currentColumnNumber < word.documentColumn:
+                        columnWordIndexes.append(currentColumn)
+                        currentColumn = []
+                        currentColumnNumber += 1
+
+                    currentColumn = [word.index]
+
+            if len(currentColumn) > 0:
+                columnWordIndexes.append(currentColumn)
+
+            columnLengths = [len(column) for column in columnWordIndexes]
+
+            for word in file.words:
+                columnReverseWordIndexes.append((word.documentColumn - startColumn, columnWordIndexes[word.documentColumn - startColumn].index(word.index)))
+
+            longestColumn = max(len(column) for column in columnWordIndexes)
+            for column in columnWordIndexes:
+                while len(column) < longestColumn:
+                    column.append(-1)
+        else:
+            columnSortedWordIndexes = copy.copy(lineSortedWordIndexes)
+            columnWordIndexes = copy.copy(lineWordIndexes)
+            columnReverseWordIndexes = copy.copy(lineReverseWordIndexes)
+            columnLengths = copy.copy(lineLengths)
+
+        columnSortedReverseWordIndexes = [columnSortedWordIndexes.index(word.index) for word in file.words]
 
         classificationOutputs = []
         modifierOutputs = []
@@ -233,20 +298,34 @@ class DocumentExtractorDataset:
             textTypeVector[self.textTypes.index(word.textType)] = 1
             textTypeOutputs.append(textTypeVector)
 
+        lineSortedLength = len(file.words)
+        columnSortedLength = len(file.words)
 
         return (
             wordVectors,
             lineSortedWordIndexes,
             lineSortedReverseWordIndexes,
+            lineSortedLength,
+
             columnSortedWordIndexes,
+            columnSortedReverseWordIndexes,
+            columnSortedLength,
+
+            lineWordIndexes,
+            lineReverseWordIndexes,
+            lineLengths,
+
+            columnWordIndexes,
             columnReverseWordIndexes,
+            columnLengths,
+
             classificationOutputs,
             modifierOutputs,
             groupOutputs,
             textTypeOutputs)
 
     def loadDataset(self, db):
-        files = File.objects(reviewStatus__in=["verifed","verified"])
+        files = File.objects(**self.configuration['query'])
 
         labels = {'null'}
         modifiers = set()
@@ -257,6 +336,17 @@ class DocumentExtractorDataset:
         self.augmentationValues = {}
 
         for file in files:
+            if len(file.words) == 0:
+                # skip this file
+                continue
+
+            # Make sure to update the all of the features for the file before we save it into our dataset. This
+            # just ensures everything is up to date.
+            file.words = self.parser.assignLineNumbersToWords(file.words)
+            file.words = self.parser.assignColumnNumbersToWords(file.words)
+            file.words = sorted(file.words, key=lambda word: (word.page, word.lineNumber, word.left))
+            file.updateDescriptiveWordFeatures()
+
             for word in file.words:
                 labels.add(word.classification)
                 for modifier in word.modifiers:
@@ -371,6 +461,8 @@ class DocumentExtractorDataset:
         endLine = max(wordsByLine.keys())
         lineDelta = endLine - startLine
 
+        startDocumentLineNumber = min([word.documentLineNumber for word in token['words']])
+
         newTextSplit = newText.split()
 
         # Create the words for the new token
@@ -385,6 +477,7 @@ class DocumentExtractorDataset:
             newWord.groupNumbers = token['groupNumbers']
             newWord.textType = token['textType']
             newWord.lineNumber = startLine + int(round((wordIndex / len(newTextSplit)) * lineDelta))
+            newWord.documentLineNumber = startDocumentLineNumber + int(round((wordIndex / len(newTextSplit)) * lineDelta))
             newWords.append(newWord)
 
         newWordsByLine = {}
@@ -414,12 +507,17 @@ class DocumentExtractorDataset:
                 columnEnd = max([word.column for word in lineOriginalWords])
                 columnSize = (columnEnd - columnStart) / len(newWordsByLine[lineNumber])
 
+                documentColumnStart = min([word.documentColumn for word in lineOriginalWords])
+                documentColumnEnd = max([word.documentColumn for word in lineOriginalWords])
+                documentColumnSize = (documentColumnEnd - documentColumnStart) / len(newWordsByLine[lineNumber])
+
                 word.top = min([word.top for word in lineOriginalWords])
                 word.bottom = max([word.bottom for word in lineOriginalWords])
                 word.left = lineLeft + lineWordSize * wordIndex
                 word.right = lineLeft + lineWordSize * (wordIndex+1)
 
                 word.column = int(round(columnStart + columnSize * wordIndex))
+                word.documentColumn = int(round(documentColumnStart + documentColumnSize * wordIndex))
 
 
         return {
@@ -487,13 +585,25 @@ class DocumentExtractorDataset:
     def createBatch(self, batchSize, testing=False, allowColumnProcessing=False):
         batchWordVectors = []
         batchLineSortedWordIndexes = []
+        batchLineSortedLengths = []
         batchLineSortedReverseWordIndexes = []
+        batchColumnSortedLengths = []
         batchColumnSortedWordIndexes = []
+        batchColumnSortedReverseWordIndexes = []
+
+        batchLineLengths = []
+        batchLineWordIndexes = []
+        batchLineReverseWordIndexes = []
+        batchColumnLengths = []
+        batchColumnWordIndexes = []
         batchColumnReverseWordIndexes = []
+
         batchClassificationOutputs = []
         batchModifierOutputs = []
         batchGroupOutputs = []
         batchTextTypeOutputs = []
+
+        batchLengths = []
 
         results = []
         for n in range(batchSize):
@@ -507,25 +617,57 @@ class DocumentExtractorDataset:
 
         maxLength = min(random.randint(self.lengthMin, self.lengthMax), max([len(result[0]) for result in results]))
 
+        maxLines = 0
+        maxColumns = 0
+
+        longestLine = 0
+        longestColumn = 0
+
         for n in range(batchSize):
             result = results[n]
 
             wordVectors = result[0]
             lineSortedWordIndexes = result[1]
             lineSortedReverseWordIndexes = result[2]
-            columnSortedWordIndexes = result[3]
-            columnReverseWordIndexes = result[4]
-            classificationOutputs = result[5]
-            modifierOutputs = result[6]
-            groupOutputs = result[7]
-            textTypeOutputs = result[8]
+            lineSortedLength = result[3]
+
+            columnSortedWordIndexes = result[4]
+            columnSortedReverseWordIndexes = result[5]
+            columnSortedLength = result[6]
+
+            lineWordIndexes = result[7]
+            lineReverseWordIndexes = result[8]
+            lineLengths = result[9]
+
+            columnWordIndexes = result[10]
+            columnReverseWordIndexes = result[11]
+            columnLengths = result[12]
+
+            classificationOutputs = result[13]
+            modifierOutputs = result[14]
+            groupOutputs = result[15]
+            textTypeOutputs = result[16]
+
+            # print(numpy.array(lineWordIndexes).shape)
+            # print(numpy.array(columnWordIndexes).shape)
+
+            if len(wordVectors) < maxLength:
+                lineWordIndexes.append([])
+                columnWordIndexes.append([])
 
             while len(wordVectors) < maxLength:
                 index = len(wordVectors)
                 lineSortedWordIndexes.append(index)
                 lineSortedReverseWordIndexes.append(index)
                 columnSortedWordIndexes.append(index)
-                columnReverseWordIndexes.append(index)
+                columnSortedReverseWordIndexes.append(index)
+
+                lineWordIndexes[-1].append(index)
+                lineReverseWordIndexes.append((len(lineWordIndexes) - 1, 0))
+
+                columnWordIndexes[-1].append(index)
+                columnReverseWordIndexes.append((len(columnWordIndexes) - 1, 0))
+
                 wordVectors.append([0] * self.wordVectorSize)
 
                 oneHotCodeClassification = [0] * len(self.labels)
@@ -557,19 +699,63 @@ class DocumentExtractorDataset:
                 wordVectors = wordVectors[start:start + maxLength]
                 lineSortedWordIndexes = [index-start for index in lineSortedWordIndexes if index >= start and index < (start + maxLength)]
                 lineSortedReverseWordIndexes = [lineSortedWordIndexes.index(index) for index in range(0, maxLength)]
+
+                startLine = None
+                newLineWordIndexes = []
+                for lineIndex, line in enumerate(lineWordIndexes):
+                    newLine = [index-start for index in line if index >= start and index < (start + maxLength)]
+                    if len(newLine) > 0:
+                        if startLine is None:
+                            startLine = lineIndex
+                        newLineWordIndexes.append(newLine)
+
+                newLineReverseIndexes = [(reverseIndex[0] - startLine, reverseIndex[1]) for index, reverseIndex in enumerate(lineReverseWordIndexes) if index >= start and index < (start + maxLength)]
+
+                lineWordIndexes = newLineWordIndexes
+                lineReverseWordIndexes = newLineReverseIndexes
+
                 columnSortedWordIndexes = [index-start for index in columnSortedWordIndexes if index >= start and index < (start + maxLength)]
-                columnReverseWordIndexes = [columnSortedWordIndexes.index(index) for index in range(0, maxLength)]
+                columnSortedReverseWordIndexes = [columnSortedWordIndexes.index(index) for index in range(0, maxLength)]
+
+                startColumn = None
+                newColumnWordIndexes = []
+                for columnIndex, column in enumerate(columnWordIndexes):
+                    newColumn = [index-start for index in column if index >= start and index < (start + maxLength)]
+                    if len(newColumn) > 0:
+                        if startColumn is None:
+                            startColumn = columnIndex
+                        newColumnWordIndexes.append(newColumn)
+
+                newColumnReverseIndexes = [(reverseIndex[0] - startColumn, reverseIndex[1]) for index, reverseIndex in enumerate(columnReverseWordIndexes) if index >= start and index < (start + maxLength)]
+
+                columnWordIndexes = newColumnWordIndexes
+                columnReverseWordIndexes = newColumnReverseIndexes
 
                 classificationOutputs = classificationOutputs[start:start + maxLength]
                 modifierOutputs = modifierOutputs[start:start + maxLength]
                 groupOutputs = groupOutputs[start:start + maxLength]
                 textTypeOutputs = textTypeOutputs[start:start + maxLength]
 
+            maxLines = max(len(lineWordIndexes), maxLines)
+            maxColumns = max(len(columnWordIndexes), maxColumns)
+
+            longestLine = max(longestLine, max(len(line) for line in lineWordIndexes))
+            longestColumn = max(longestColumn, max(len(column) for column in columnWordIndexes))
+
             batchWordVectors.append(wordVectors)
             batchLineSortedWordIndexes.append(lineSortedWordIndexes)
             batchLineSortedReverseWordIndexes.append(lineSortedReverseWordIndexes)
+            batchLineSortedLengths.append(lineSortedLength)
+
             batchColumnSortedWordIndexes.append(columnSortedWordIndexes)
+            batchColumnSortedReverseWordIndexes.append(columnSortedReverseWordIndexes)
+            batchColumnSortedLengths.append(columnSortedLength)
+
+            batchLineWordIndexes.append(lineWordIndexes)
+            batchLineReverseWordIndexes.append(lineReverseWordIndexes)
+            batchColumnWordIndexes.append(columnWordIndexes)
             batchColumnReverseWordIndexes.append(columnReverseWordIndexes)
+
             batchClassificationOutputs.append(classificationOutputs)
             batchModifierOutputs.append(modifierOutputs)
             batchGroupOutputs.append(groupOutputs)
@@ -578,12 +764,33 @@ class DocumentExtractorDataset:
         # print(batchWordVectors[0][0])
         # print(batchLineSortedWordIndexes)
 
+        for sample in batchLineWordIndexes:
+            for line in sample:
+                while len(line) < longestLine:
+                    line.append(-1)
+            while len(sample) < maxLines:
+                sample.append([-1] * longestLine)
+
+        for sample in batchColumnWordIndexes:
+            for column in sample:
+                while len(column) < longestColumn:
+                    column.append(-1)
+            while len(sample) < maxColumns:
+                sample.append([-1] * longestColumn)
+
         return (
             numpy.array(batchWordVectors),
             numpy.array(batchLineSortedWordIndexes),
             numpy.array(batchLineSortedReverseWordIndexes),
             numpy.array(batchColumnSortedWordIndexes),
+            numpy.array(batchColumnSortedReverseWordIndexes),
+
+            numpy.reshape(numpy.array(batchLineWordIndexes), newshape=[batchSize, maxLines, longestLine]),
+            numpy.array(batchLineReverseWordIndexes),
+
+            numpy.reshape(numpy.array(batchColumnWordIndexes), newshape=[batchSize, maxColumns, longestColumn]),
             numpy.array(batchColumnReverseWordIndexes),
+
             numpy.array(batchClassificationOutputs),
             numpy.array(batchModifierOutputs),
             numpy.array(batchGroupOutputs),

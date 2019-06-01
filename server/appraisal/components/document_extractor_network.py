@@ -2,6 +2,7 @@ import subprocess
 import copy
 import tensorflow as tf
 from appraisal.components.document_generator import DocumentGenerator
+from tensorflow.python.client import device_lib
 import numpy
 import pickle
 import math
@@ -16,12 +17,12 @@ import traceback
 from appraisal.components.document_extractor_dataset import DocumentExtractorDataset
 
 
-# from appraisal.libs.transformer.model.attention_layer import SelfAttention
-# from appraisal.libs.transformer.model import model_utils
+from appraisal.libs.transformer.model.attention_layer import SelfAttention
+from appraisal.libs.transformer.model import model_utils
 
 
 class DocumentExtractorNetwork:
-    def __init__(self, networkOutputs, dataset, allowColumnProcessing):
+    def __init__(self, networkOutputs, dataset, configuration, allowColumnProcessing):
         self.dataset = dataset
 
         self.networkOutputs = networkOutputs
@@ -30,7 +31,7 @@ class DocumentExtractorNetwork:
         self.name = "-".join(networkOutputs)
 
         self.wordVectorSize = self.dataset.wordVectorSize
-        self.batchSize = 16
+        self.batchSize = configuration['batchSize']
 
         session_conf = tf.ConfigProto(
             # allow_soft_placement=params['allow_soft_placement'],
@@ -39,28 +40,42 @@ class DocumentExtractorNetwork:
 
         self.session = tf.Session(config=session_conf)
 
-        self.lstmSize = 250
-        self.lstmDropout = 0.5
-        self.denseSize = 250
+        self.lstmSize = configuration['lstmSize']
+        self.lstmDropout = configuration['lstmDropout']
+        self.denseSize = configuration['denseSize']
 
-        self.attentionDropout = 0.5
-        self.attentionSize = 256
-        self.attentionHeads = 4
+        self.attentionDropout = configuration['attentionDropout']
+        self.attentionSize = configuration['attentionSize']
+        self.attentionHeads = configuration['attentionHeads']
 
-        self.denseDropout = 0.5
-        self.learningRate = 1e-3
-        self.layers = 2
-        self.epochs = 20
-        self.stepsPerEpoch = 1000
+        self.denseDropout = configuration['denseDropout']
+        self.learningRate = configuration['learningRate']
+        self.layers = configuration['layers']
+        self.epochs = configuration['epochs']
+        self.stepsPerEpoch = configuration['stepsPerEpoch']
 
-        self.maxWorkers = 8
-        self.batchPreload = 20
+        self.maxWorkers = configuration['maxWorkers']
+        self.batchPreload = configuration['batchPreload']
 
         self.rollingAverageAccuracies = {}
-        self.rollingAverageHorizon = 100
-        self.printTime = 50
+        self.rollingAverageHorizon = configuration['rollingAverageHorizon']
+        self.testingRollingAverageHorizon = configuration['testingRollingAverageHorizon']
+        self.printTime = configuration['printTime']
 
-    def applyRollingAverage(self, name, value):
+        if configuration['numGPUs'] == -1:
+            self.numGPUs = len(self.getAvailableGpus())
+        else:
+            self.numGPUs = min(configuration['numGPUs'], len(self.getAvailableGpus()))
+
+
+    def getAvailableGpus(self):
+        local_device_protos = device_lib.list_local_devices()
+        return [x.name for x in local_device_protos if x.device_type == 'GPU']
+
+    def applyRollingAverage(self, name, value, horizon=None):
+        if horizon is None:
+            horizon = self.rollingAverageHorizon
+
         if name not in self.rollingAverageAccuracies:
             self.rollingAverageAccuracies[name] = [value]
             return value
@@ -73,7 +88,11 @@ class DocumentExtractorNetwork:
 
     def trainAlgorithm(self):
         with self.session.as_default():
-            with tf.device('/gpu:0'):
+            primaryDevice = "/cpu:0"
+            if self.numGPUs == 1:
+                primaryDevice = "/gpu:0"
+
+            with tf.device(primaryDevice):
                 self.createNetwork()
 
             # Define Training procedure
@@ -112,20 +131,23 @@ class DocumentExtractorNetwork:
                             wordVectors = batch[0]
                             lineSortedWordIndexes = batch[1]
                             lineSortedReverseWordIndexes = batch[2]
-                            columnSortedWordIndexes = batch[3]
-                            columnReverseWordIndexes = batch[4]
-                            classificationOutputs = batch[5]
-                            modifierOutputs = batch[6]
-                            groupOutputs = batch[7]
-                            textTypeOutputs = batch[8]
+
+                            columnWordIndexes = batch[7]
+                            columnReverseWordIndexes = batch[8]
+
+
+                            classificationOutputs = batch[9]
+                            modifierOutputs = batch[10]
+                            groupOutputs = batch[11]
+                            textTypeOutputs = batch[12]
 
                             # Train
                             feed_dict = {
                                 self.inputWordVectors: wordVectors,
                                 self.lineSortedWordIndexesInput: lineSortedWordIndexes,
                                 self.lineSortedReverseIndexesInput: lineSortedReverseWordIndexes,
-                                self.columnSortedWordIndexesInput: columnSortedWordIndexes,
-                                self.columnSortedReverseIndexesInput: columnReverseWordIndexes,
+                                self.columnWordIndexesInput: columnWordIndexes,
+                                self.columnReverseIndexesInput: columnReverseWordIndexes,
                                 self.trainingInput: True
                             }
 
@@ -207,20 +229,22 @@ class DocumentExtractorNetwork:
                                 wordVectors = batch[0]
                                 lineSortedWordIndexes = batch[1]
                                 lineSortedReverseWordIndexes = batch[2]
-                                columnSortedWordIndexes = batch[3]
-                                columnReverseWordIndexes = batch[4]
-                                classificationOutputs = batch[5]
-                                modifierOutputs = batch[6]
-                                groupOutputs = batch[7]
-                                textTypeOutputs = batch[8]
+
+                                columnWordIndexes = batch[7]
+                                columnReverseWordIndexes = batch[8]
+
+                                classificationOutputs = batch[9]
+                                modifierOutputs = batch[10]
+                                groupOutputs = batch[11]
+                                textTypeOutputs = batch[12]
 
                                 # Train
                                 feed_dict = {
                                     self.inputWordVectors: wordVectors,
                                     self.lineSortedWordIndexesInput: lineSortedWordIndexes,
                                     self.lineSortedReverseIndexesInput: lineSortedReverseWordIndexes,
-                                    self.columnSortedWordIndexesInput: columnSortedWordIndexes,
-                                    self.columnSortedReverseIndexesInput: columnReverseWordIndexes,
+                                    self.columnWordIndexesInput: columnWordIndexes,
+                                    self.columnReverseIndexesInput: columnReverseWordIndexes,
                                     self.trainingInput: False
                                 }
 
@@ -256,8 +280,8 @@ class DocumentExtractorNetwork:
 
                                 resultIndex = 1
                                 if 'classification' in self.networkOutputs:
-                                    accuracy = self.applyRollingAverage("testing-classification", results[resultIndex])
-                                    nonNullAccuracy = self.applyRollingAverage("testing-classificationNonNull", results[resultIndex + 1])
+                                    accuracy = self.applyRollingAverage("testing-classification", results[resultIndex], self.testingRollingAverageHorizon)
+                                    nonNullAccuracy = self.applyRollingAverage("testing-classificationNonNull", results[resultIndex + 1], self.testingRollingAverageHorizon)
                                     confusionMatrix = results[resultIndex + 2]
                                     resultIndex += 3
 
@@ -269,22 +293,22 @@ class DocumentExtractorNetwork:
                                     message += f" Classification: {accuracy:.3f} Non Null: {nonNullAccuracy:.3f}"
 
                                 if 'modifiers' in self.networkOutputs:
-                                    accuracy = self.applyRollingAverage("testing-modifiers", results[resultIndex])
-                                    nonNullAccuracy = self.applyRollingAverage("testing-modifiersNonNull", results[resultIndex + 1])
+                                    accuracy = self.applyRollingAverage("testing-modifiers", results[resultIndex], self.testingRollingAverageHorizon)
+                                    nonNullAccuracy = self.applyRollingAverage("testing-modifiersNonNull", results[resultIndex + 1], self.testingRollingAverageHorizon)
                                     resultIndex += 2
 
                                     message += f" Modifiers: {accuracy:.3f} Non Null: {nonNullAccuracy:.3f}"
 
                                 if 'groups' in self.networkOutputs:
                                     for groupSet in self.dataset.groupSets:
-                                        accuracy = self.applyRollingAverage(f"testing-group-{groupSet}", results[resultIndex])
-                                        nonNullAccuracy = self.applyRollingAverage(f"testing-groupNonNull-{groupSet}", results[resultIndex + 1])
+                                        accuracy = self.applyRollingAverage(f"testing-group-{groupSet}", results[resultIndex], self.testingRollingAverageHorizon)
+                                        nonNullAccuracy = self.applyRollingAverage(f"testing-groupNonNull-{groupSet}", results[resultIndex + 1], self.testingRollingAverageHorizon)
                                         resultIndex += 2
 
                                         message += f" {groupSet}: {accuracy:.3f} Non Null: {nonNullAccuracy:.3f}"
 
                                 if 'textType' in self.networkOutputs:
-                                    accuracy = self.applyRollingAverage("testing-textType", results[resultIndex])
+                                    accuracy = self.applyRollingAverage("testing-textType", results[resultIndex], self.testingRollingAverageHorizon)
                                     resultIndex += 1
 
                                     message += f" Text-Type: {accuracy:.3f}"
@@ -332,8 +356,12 @@ class DocumentExtractorNetwork:
 
     def loadAlgorithm(self):
         with self.session.as_default():
-            # with tf.device('/gpu:0'):
-            self.createNetwork()
+            primaryDevice = "/cpu:0"
+            if self.numGPUs == 1:
+                primaryDevice = "/gpu:0"
+
+            with tf.device(primaryDevice):
+                self.createNetwork()
 
             self.createSaver()
 
@@ -352,16 +380,16 @@ class DocumentExtractorNetwork:
         wordVectors = [data[0]]
         lineSortedWordIndexes = [data[1]]
         lineSortedReverseWordIndexes = [data[2]]
-        columnSortedWordIndexes = [data[3]]
-        columnReverseWordIndexes = [data[4]]
+        columnWordIndexes = [data[7]]
+        columnReverseWordIndexes = [data[8]]
 
         # Train
         feed_dict = {
             self.inputWordVectors: wordVectors,
             self.lineSortedWordIndexesInput: lineSortedWordIndexes,
             self.lineSortedReverseIndexesInput: lineSortedReverseWordIndexes,
-            self.columnSortedWordIndexesInput: columnSortedWordIndexes,
-            self.columnSortedReverseIndexesInput: columnReverseWordIndexes,
+            self.columnWordIndexesInput: columnWordIndexes,
+            self.columnReverseIndexesInput: columnReverseWordIndexes,
             self.trainingInput: False
         }
         
@@ -475,40 +503,82 @@ class DocumentExtractorNetwork:
                     for labelIndex, label in enumerate(self.dataset.textTypes)
                 }
 
-    def createRecurrentAttentionLayer(self, inputs, wordIndexes, reverseWordIndexes):
+    def createRecurrentAttentionLayer(self, inputs, wordIndexes):
         batchSize = tf.shape(inputs)[0]
         length = tf.shape(inputs)[1]
         vectorSize = inputs.shape[2]
 
-        inputs = tf.batch_gather(inputs, wordIndexes)
+        sequencesPerSample = tf.shape(wordIndexes)[1]
+        sequenceLength = tf.shape(wordIndexes)[2]
+
+        blank = tf.zeros(shape=[batchSize, 1, vectorSize])
+
+        indexesReshaped = tf.reshape(wordIndexes, shape=[batchSize, sequencesPerSample * sequenceLength ])
+
+        inputs = tf.batch_gather(tf.concat((blank, inputs), axis=1), indexesReshaped + tf.ones_like(indexesReshaped))
+
+        inputs = tf.reshape(inputs, shape=[batchSize, sequencesPerSample, sequenceLength, vectorSize ])
+        inputs = tf.reshape(inputs, shape=[batchSize * sequencesPerSample, sequenceLength, vectorSize ])
+
         # inputs = tf.reshape(inputs, shape=[batchSize, length, vectorSize])
-        #
-        # positionEncodiing = model_utils.get_position_encoding(length, vectorSize)
-        # attention_bias = model_utils.get_padding_bias(tf.reduce_sum(inputs, axis=2))
-        # attention = SelfAttention(self.attentionSize, self.attentionHeads, self.attentionDropout, True)(inputs + positionEncodiing, attention_bias)
-        #
-        # denseInput = tf.reshape(attention, shape=[batchSize * length, self.attentionSize])
-        # dense = tf.layers.dense(denseInput, self.attentionSize, activation=tf.nn.relu)
-        # rnnInput = tf.reshape(dense, [batchSize, length, self.attentionSize])
 
-        rnnInput = inputs
-        rnnOutputs, _ = tf.nn.bidirectional_dynamic_rnn(cell_fw=tf.nn.rnn_cell.DropoutWrapper(tf.nn.rnn_cell.LSTMCell(self.lstmSize), output_keep_prob=self.lstmDropoutAdjusted),
-                                                        cell_bw=tf.nn.rnn_cell.DropoutWrapper(tf.nn.rnn_cell.LSTMCell(self.lstmSize), output_keep_prob=self.lstmDropoutAdjusted),
-                                                        inputs=rnnInput,
+        # positionEncoding = model_utils.get_position_encoding(sequenceLength, vectorSize)
+        attention_bias = model_utils.get_padding_bias(tf.reduce_sum(inputs, axis=2))
+        # attention = SelfAttention(self.attentionSize, self.attentionHeads, self.attentionDropout, True)(inputs + positionEncoding, attention_bias)
+        attention = SelfAttention(self.attentionSize, self.attentionHeads, self.attentionDropout, True)(inputs, attention_bias)
+        #
+        denseInput = tf.reshape(attention, shape=[batchSize * sequencesPerSample * sequenceLength, self.attentionSize])
+        dense = tf.layers.dense(denseInput, self.lstmSize, activation=tf.nn.relu)
+        output = tf.reshape(dense, [batchSize* sequencesPerSample, sequenceLength, self.lstmSize])
+
+        # rnnInput = inputs
+        # rnnOutputs, _ = tf.nn.bidirectional_dynamic_rnn(cell_fw=tf.nn.rnn_cell.DropoutWrapper(tf.nn.rnn_cell.LSTMCell(self.lstmSize), output_keep_prob=self.lstmDropoutAdjusted),
+        #                                                 cell_bw=tf.nn.rnn_cell.DropoutWrapper(tf.nn.rnn_cell.LSTMCell(self.lstmSize), output_keep_prob=self.lstmDropoutAdjusted),
+        #                                                 inputs=rnnInput,
                                                         # sequence_length=self.inputLength,
-                                                        dtype=tf.float32)
-
-        output = tf.batch_gather(rnnOutputs[0] + rnnOutputs[1], reverseWordIndexes)
+                                                        # dtype=tf.float32)
+        #
+        # output = tf.batch_gather(rnnOutputs[0] + rnnOutputs[1], reverseWordIndexes)
         # output = tf.batch_gather(rnnInput, reverseWordIndexes)
 
-        return output
+        # output = rnnOutputs[0] + rnnOutputs[1]
+
+        reshapedOutput = tf.reshape(output, shape=[batchSize, sequencesPerSample, sequenceLength, self.lstmSize])
+
+        return reshapedOutput
+
+    def debug(self, tensor):
+        return tf.Print(tensor, [tensor.name, tf.shape(tensor)], summarize=1000)
 
     def createComboLineColumnLayer(self, inputs):
+        batchSize = tf.shape(inputs)[0]
+        length = tf.shape(inputs)[1]
+        vectorSize = self.wordVectorSize
+
         with tf.name_scope("lineSorted"), tf.variable_scope("lineSorted"):
-            lineSortedOutput = self.createRecurrentAttentionLayer(inputs, self.lineSortedWordIndexesInput, self.lineSortedReverseIndexesInput)
+            transformedIndexes = tf.reshape(self.lineSortedWordIndexesInput, shape=[batchSize, 1, length])
+
+            lineSortedOutput = self.createRecurrentAttentionLayer(inputs, transformedIndexes)
+
+            lineSortedOutput = tf.reshape(lineSortedOutput, shape=[batchSize, length, self.lstmSize])
+
+            lineSortedOutput = tf.batch_gather(lineSortedOutput, self.lineSortedReverseIndexesInput)
 
         with tf.name_scope("column"), tf.variable_scope("column"):
-            columnOutput = self.createRecurrentAttentionLayer(inputs, self.columnSortedWordIndexesInput, self.columnSortedReverseIndexesInput)
+            rawColumnOutput = self.createRecurrentAttentionLayer(inputs, self.columnWordIndexesInput)
+
+            rawColumnOutput = self.debug(rawColumnOutput)
+
+            sequencesPerSample = tf.shape(self.columnWordIndexesInput)[1]
+            sequenceLength = tf.shape(self.columnWordIndexesInput)[2]
+
+            rawColumnOutput = tf.reshape(rawColumnOutput, shape=[batchSize, sequencesPerSample * sequenceLength, self.lstmSize])
+
+            newIndexes = self.columnReverseIndexesInput[:, :, 0] * sequenceLength + self.columnReverseIndexesInput[:, :, 1]
+
+            columnOutput = tf.batch_gather(rawColumnOutput, newIndexes)
+
+            columnOutput = tf.reshape(columnOutput, shape=[batchSize, length, self.lstmSize])
 
         layerOutputs = tf.concat(values=[lineSortedOutput, columnOutput], axis=2)
 
@@ -526,7 +596,7 @@ class DocumentExtractorNetwork:
 
             # Placeholders for input, output and dropout
             self.inputWordVectors = tf.placeholder(tf.float32, shape=[None, None, self.wordVectorSize], name='input_word_vectors')
-            self.inputLength = tf.placeholder(tf.int32, shape=[None], name='input_length')
+            # self.inputLength = tf.placeholder(tf.int32, shape=[None], name='input_length')
 
             self.inputClassification = tf.placeholder(tf.float32, shape=[None, None, numClasses], name='input_classification')
             self.inputModifiers = tf.placeholder(tf.float32, shape=[None, None, numModifiers], name='input_modifiers')
@@ -536,8 +606,9 @@ class DocumentExtractorNetwork:
             self.lineSortedWordIndexesInput = tf.placeholder(tf.int32, shape=[None, None], name='line_sorted_indexes')
             self.lineSortedReverseIndexesInput = tf.placeholder(tf.int32, shape=[None, None], name='line_sorted_reverse_indexes')
 
-            self.columnSortedWordIndexesInput = tf.placeholder(tf.int32, shape=[None, None], name='column_sorted_indexes')
-            self.columnSortedReverseIndexesInput = tf.placeholder(tf.int32, shape=[None, None], name='column_sorted_reverse_indexes')
+            self.columnWordIndexesInput = tf.placeholder(tf.int32, shape=[None, None, None], name='column_indexes')
+            self.columnReverseIndexesInput = tf.placeholder(tf.int32, shape=[None, None, None], name='column_reverse_indexes')
+
             self.trainingInput = tf.placeholder(tf.bool, name='training')
 
             self.lstmDropoutAdjusted = tf.where(self.trainingInput, self.lstmDropout, 1.0)

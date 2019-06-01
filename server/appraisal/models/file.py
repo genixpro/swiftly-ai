@@ -24,6 +24,8 @@ class Word(EmbeddedDocument):
     # The column number for this word
     column = IntField()
 
+    documentColumn = IntField()
+
     # The index of the word within the larger array of words
     index = IntField()
 
