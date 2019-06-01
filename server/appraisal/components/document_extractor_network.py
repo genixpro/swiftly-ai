@@ -12,6 +12,7 @@ import io
 from pprint import pprint
 import concurrent.futures
 import csv
+import datetime
 import multiprocessing
 import traceback
 from appraisal.components.document_extractor_dataset import DocumentExtractorDataset
@@ -114,6 +115,8 @@ class DocumentExtractorNetwork:
                 for future in trainBatchFutures:
                     future.result()
 
+                lastTime = datetime.datetime.now()
+
                 self.createSaver()
 
                 # Initialize all variables
@@ -129,8 +132,8 @@ class DocumentExtractorNetwork:
                             batch = batchFuture.result()
 
                             wordVectors = batch[0]
-                            lineSortedWordIndexes = batch[1]
-                            lineSortedReverseWordIndexes = batch[2]
+                            lineWordIndexes = batch[5]
+                            lineReverseWordIndexes = batch[6]
 
                             columnWordIndexes = batch[7]
                             columnReverseWordIndexes = batch[8]
@@ -144,8 +147,8 @@ class DocumentExtractorNetwork:
                             # Train
                             feed_dict = {
                                 self.inputWordVectors: wordVectors,
-                                self.lineSortedWordIndexesInput: lineSortedWordIndexes,
-                                self.lineSortedReverseIndexesInput: lineSortedReverseWordIndexes,
+                                self.lineWordIndexesInput: lineWordIndexes,
+                                self.lineReverseIndexesInput: lineReverseWordIndexes,
                                 self.columnWordIndexesInput: columnWordIndexes,
                                 self.columnReverseIndexesInput: columnReverseWordIndexes,
                                 self.trainingInput: True
@@ -194,14 +197,14 @@ class DocumentExtractorNetwork:
                                         file.write(self.formatConfusionMatrix(confusionMatrix))
 
 
-                                message += f" Classification: {accuracy:.3f} Non Null: {nonNullAccuracy:.3f}"
+                                message += f" Classification: {nonNullAccuracy:.3f}"
 
                             if 'modifiers' in self.networkOutputs:
                                 accuracy = self.applyRollingAverage("modifiers", results[resultIndex])
                                 nonNullAccuracy = self.applyRollingAverage("modifiersNonNull", results[resultIndex + 1])
                                 resultIndex += 2
 
-                                message += f" Modifiers: {accuracy:.3f} Non Null: {nonNullAccuracy:.3f}"
+                                message += f" Modifiers: {nonNullAccuracy:.3f}"
 
                             if 'groups' in self.networkOutputs:
                                 for groupSet in self.dataset.groupSets:
@@ -209,7 +212,7 @@ class DocumentExtractorNetwork:
                                     nonNullAccuracy = self.applyRollingAverage(f"groupNonNull-{groupSet}", results[resultIndex + 1])
                                     resultIndex += 2
 
-                                    message += f" {groupSet}: {accuracy:.3f} Non Null: {nonNullAccuracy:.3f}"
+                                    message += f" {groupSet}: {nonNullAccuracy:.3f}"
 
                             if 'textType' in self.networkOutputs:
                                 accuracy = self.applyRollingAverage("textType", results[resultIndex])
@@ -217,18 +220,19 @@ class DocumentExtractorNetwork:
 
                                 message += f" Text-Type: {accuracy:.3f}"
 
-                            if step % self.printTime == 0:
-                                print(message, flush=True)
+                            if batchIndex % self.printTime == 0:
+                                print(f"{(datetime.datetime.now() - lastTime).total_seconds() / self.printTime:.2f}s", message, flush=True)
+                                lastTime = datetime.datetime.now()
 
-                            if step % 10 == 0:
+                            if batchIndex % 10 == 0:
                                 batchFuture = testBatchFutures.pop(0)
                                 testBatchFutures.append(executor.submit(self.dataset.createBatch, self.batchSize, True, self.allowColumnProcessing))
 
                                 batch = batchFuture.result()
 
                                 wordVectors = batch[0]
-                                lineSortedWordIndexes = batch[1]
-                                lineSortedReverseWordIndexes = batch[2]
+                                lineWordIndexes = batch[5]
+                                lineReverseWordIndexes = batch[6]
 
                                 columnWordIndexes = batch[7]
                                 columnReverseWordIndexes = batch[8]
@@ -241,8 +245,8 @@ class DocumentExtractorNetwork:
                                 # Train
                                 feed_dict = {
                                     self.inputWordVectors: wordVectors,
-                                    self.lineSortedWordIndexesInput: lineSortedWordIndexes,
-                                    self.lineSortedReverseIndexesInput: lineSortedReverseWordIndexes,
+                                    self.lineWordIndexesInput: lineWordIndexes,
+                                    self.lineReverseIndexesInput: lineReverseWordIndexes,
                                     self.columnWordIndexesInput: columnWordIndexes,
                                     self.columnReverseIndexesInput: columnReverseWordIndexes,
                                     self.trainingInput: False
@@ -290,14 +294,14 @@ class DocumentExtractorNetwork:
                                             file.write(self.formatConfusionMatrix(confusionMatrix))
 
 
-                                    message += f" Classification: {accuracy:.3f} Non Null: {nonNullAccuracy:.3f}"
+                                    message += f" Classification: {nonNullAccuracy:.3f}"
 
                                 if 'modifiers' in self.networkOutputs:
                                     accuracy = self.applyRollingAverage("testing-modifiers", results[resultIndex], self.testingRollingAverageHorizon)
                                     nonNullAccuracy = self.applyRollingAverage("testing-modifiersNonNull", results[resultIndex + 1], self.testingRollingAverageHorizon)
                                     resultIndex += 2
 
-                                    message += f" Modifiers: {accuracy:.3f} Non Null: {nonNullAccuracy:.3f}"
+                                    message += f" Modifiers: {nonNullAccuracy:.3f}"
 
                                 if 'groups' in self.networkOutputs:
                                     for groupSet in self.dataset.groupSets:
@@ -305,7 +309,7 @@ class DocumentExtractorNetwork:
                                         nonNullAccuracy = self.applyRollingAverage(f"testing-groupNonNull-{groupSet}", results[resultIndex + 1], self.testingRollingAverageHorizon)
                                         resultIndex += 2
 
-                                        message += f" {groupSet}: {accuracy:.3f} Non Null: {nonNullAccuracy:.3f}"
+                                        message += f" {groupSet}: {nonNullAccuracy:.3f}"
 
                                 if 'textType' in self.networkOutputs:
                                     accuracy = self.applyRollingAverage("testing-textType", results[resultIndex], self.testingRollingAverageHorizon)
@@ -378,16 +382,16 @@ class DocumentExtractorNetwork:
         data = self.dataset.prepareDocument(file, self.allowColumnProcessing)
 
         wordVectors = [data[0]]
-        lineSortedWordIndexes = [data[1]]
-        lineSortedReverseWordIndexes = [data[2]]
-        columnWordIndexes = [data[7]]
-        columnReverseWordIndexes = [data[8]]
+        lineWordIndexes = [data[7]]
+        lineReverseWordIndexes = [data[8]]
+        columnWordIndexes = [data[10]]
+        columnReverseWordIndexes = [data[11]]
 
         # Train
         feed_dict = {
             self.inputWordVectors: wordVectors,
-            self.lineSortedWordIndexesInput: lineSortedWordIndexes,
-            self.lineSortedReverseIndexesInput: lineSortedReverseWordIndexes,
+            self.lineWordIndexesInput: lineWordIndexes,
+            self.lineReverseIndexesInput: lineReverseWordIndexes,
             self.columnWordIndexesInput: columnWordIndexes,
             self.columnReverseIndexesInput: columnReverseWordIndexes,
             self.trainingInput: False
@@ -560,13 +564,20 @@ class DocumentExtractorNetwork:
         vectorSize = self.wordVectorSize
 
         with tf.name_scope("lineSorted"), tf.variable_scope("lineSorted"):
-            transformedIndexes = tf.reshape(self.lineSortedWordIndexesInput, shape=[batchSize, 1, length])
+            rawLineOutput = self.createRecurrentAttentionLayer(inputs, self.lineWordIndexesInput, "attention")
 
-            lineSortedOutput = self.createRecurrentAttentionLayer(inputs, transformedIndexes, "recurrent")
+            # rawLineOutput = self.debug(rawLineOutput)
 
-            lineSortedOutput = tf.reshape(lineSortedOutput, shape=[batchSize, length, self.lstmSize])
+            sequencesPerSample = tf.shape(self.lineWordIndexesInput)[1]
+            sequenceLength = tf.shape(self.lineWordIndexesInput)[2]
 
-            lineSortedOutput = tf.batch_gather(lineSortedOutput, self.lineSortedReverseIndexesInput)
+            rawLineOutput = tf.reshape(rawLineOutput, shape=[batchSize, sequencesPerSample * sequenceLength, self.lstmSize])
+
+            newIndexes = self.lineReverseIndexesInput[:, :, 0] * sequenceLength + self.lineReverseIndexesInput[:, :, 1]
+
+            lineOutput = tf.batch_gather(rawLineOutput, newIndexes)
+
+            lineOutput = tf.reshape(lineOutput, shape=[batchSize, length, self.lstmSize])
 
         with tf.name_scope("column"), tf.variable_scope("column"):
             rawColumnOutput = self.createRecurrentAttentionLayer(inputs, self.columnWordIndexesInput, "attention")
@@ -584,9 +595,9 @@ class DocumentExtractorNetwork:
 
             columnOutput = tf.reshape(columnOutput, shape=[batchSize, length, self.lstmSize])
 
-        layerOutputs = tf.concat(values=[lineSortedOutput, columnOutput], axis=2)
+        layerOutputs = tf.concat(values=[lineOutput, columnOutput], axis=2)
 
-        layerOutputs = tf.layers.batch_normalization(layerOutputs, training=self.trainingInput)
+        # layerOutputs = tf.layers.batch_normalization(layerOutputs, training=self.trainingInput)
 
         return layerOutputs
 
@@ -607,8 +618,8 @@ class DocumentExtractorNetwork:
             self.inputGroups = tf.placeholder(tf.float32, shape=[None, None, numGroups], name='input_groups')
             self.inputTextType = tf.placeholder(tf.float32, shape=[None, None, numTextType], name='input_text_types')
 
-            self.lineSortedWordIndexesInput = tf.placeholder(tf.int32, shape=[None, None], name='line_sorted_indexes')
-            self.lineSortedReverseIndexesInput = tf.placeholder(tf.int32, shape=[None, None], name='line_sorted_reverse_indexes')
+            self.lineWordIndexesInput = tf.placeholder(tf.int32, shape=[None, None, None], name='line_indexes')
+            self.lineReverseIndexesInput = tf.placeholder(tf.int32, shape=[None, None, None], name='line_reverse_indexes')
 
             self.columnWordIndexesInput = tf.placeholder(tf.int32, shape=[None, None, None], name='column_indexes')
             self.columnReverseIndexesInput = tf.placeholder(tf.int32, shape=[None, None, None], name='column_reverse_indexes')

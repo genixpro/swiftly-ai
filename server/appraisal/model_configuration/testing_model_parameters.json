@@ -15,7 +15,7 @@
   "batchPreload": 5,
   "rollingAverageHorizon": 100,
   "testingRollingAverageHorizon": 10,
-  "printTime": 50,
+  "printTime": 5,
   "lengthMin": 500,
   "lengthMax": 1000,
   "wordVectorSize": 309,

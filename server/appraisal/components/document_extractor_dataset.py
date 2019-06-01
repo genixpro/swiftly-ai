@@ -259,7 +259,10 @@ class DocumentExtractorDataset:
             oneHotCodeClassification = [0] * len(self.labels)
             modifiersVector = [0] * len(self.modifiers)
 
-            oneHotCodeClassification[self.labels.index(word.classification)] = 1
+            if word.classification in self.labels:
+                oneHotCodeClassification[self.labels.index(word.classification)] = 1
+            else:
+                oneHotCodeClassification[self.labels.index("null")] = 1
             classificationOutputs.append(oneHotCodeClassification)
 
             for modifier in word.modifiers:
