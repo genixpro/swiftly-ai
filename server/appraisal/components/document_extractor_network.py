@@ -503,7 +503,7 @@ class DocumentExtractorNetwork:
                     for labelIndex, label in enumerate(self.dataset.textTypes)
                 }
 
-    def createRecurrentAttentionLayer(self, inputs, wordIndexes):
+    def createRecurrentAttentionLayer(self, inputs, wordIndexes, mode):
         batchSize = tf.shape(inputs)[0]
         length = tf.shape(inputs)[1]
         vectorSize = inputs.shape[2]
@@ -522,30 +522,34 @@ class DocumentExtractorNetwork:
 
         # inputs = tf.reshape(inputs, shape=[batchSize, length, vectorSize])
 
-        # positionEncoding = model_utils.get_position_encoding(sequenceLength, vectorSize)
-        attention_bias = model_utils.get_padding_bias(tf.reduce_sum(inputs, axis=2))
-        # attention = SelfAttention(self.attentionSize, self.attentionHeads, self.attentionDropout, True)(inputs + positionEncoding, attention_bias)
-        attention = SelfAttention(self.attentionSize, self.attentionHeads, self.attentionDropout, True)(inputs, attention_bias)
-        #
-        denseInput = tf.reshape(attention, shape=[batchSize * sequencesPerSample * sequenceLength, self.attentionSize])
-        dense = tf.layers.dense(denseInput, self.lstmSize, activation=tf.nn.relu)
-        output = tf.reshape(dense, [batchSize* sequencesPerSample, sequenceLength, self.lstmSize])
+        if mode == 'attention':
+            # positionEncoding = model_utils.get_position_encoding(sequenceLength, vectorSize)
+            attention_bias = model_utils.get_padding_bias(tf.reduce_sum(inputs, axis=2))
+            # attention = SelfAttention(self.attentionSize, self.attentionHeads, self.attentionDropout, True)(inputs + positionEncoding, attention_bias)
+            attention = SelfAttention(self.attentionSize, self.attentionHeads, self.attentionDropout, True)(inputs, attention_bias)
+            #
+            denseInput = tf.reshape(attention, shape=[batchSize * sequencesPerSample * sequenceLength, self.attentionSize])
+            dense = tf.layers.dense(denseInput, self.lstmSize, activation=tf.nn.relu)
+            output = tf.reshape(dense, [batchSize* sequencesPerSample, sequenceLength, self.lstmSize])
 
-        # rnnInput = inputs
-        # rnnOutputs, _ = tf.nn.bidirectional_dynamic_rnn(cell_fw=tf.nn.rnn_cell.DropoutWrapper(tf.nn.rnn_cell.LSTMCell(self.lstmSize), output_keep_prob=self.lstmDropoutAdjusted),
-        #                                                 cell_bw=tf.nn.rnn_cell.DropoutWrapper(tf.nn.rnn_cell.LSTMCell(self.lstmSize), output_keep_prob=self.lstmDropoutAdjusted),
-        #                                                 inputs=rnnInput,
-                                                        # sequence_length=self.inputLength,
-                                                        # dtype=tf.float32)
-        #
-        # output = tf.batch_gather(rnnOutputs[0] + rnnOutputs[1], reverseWordIndexes)
-        # output = tf.batch_gather(rnnInput, reverseWordIndexes)
+            reshapedOutput = tf.reshape(output, shape=[batchSize, sequencesPerSample, sequenceLength, self.lstmSize])
+            return reshapedOutput
+        elif mode == 'recurrent':
+            rnnInput = inputs
+            rnnOutputs, _ = tf.nn.bidirectional_dynamic_rnn(cell_fw=tf.nn.rnn_cell.DropoutWrapper(tf.nn.rnn_cell.LSTMCell(self.lstmSize), output_keep_prob=self.lstmDropoutAdjusted),
+                                                            cell_bw=tf.nn.rnn_cell.DropoutWrapper(tf.nn.rnn_cell.LSTMCell(self.lstmSize), output_keep_prob=self.lstmDropoutAdjusted),
+                                                            inputs=rnnInput,
+                                                            # sequence_length=self.inputLength,
+                                                            dtype=tf.float32)
 
-        # output = rnnOutputs[0] + rnnOutputs[1]
+            # output = tf.batch_gather(rnnOutputs[0] + rnnOutputs[1], reverseWordIndexes)
+            # output = tf.batch_gather(rnnInput, reverseWordIndexes)
 
-        reshapedOutput = tf.reshape(output, shape=[batchSize, sequencesPerSample, sequenceLength, self.lstmSize])
+            output = rnnOutputs[0] + rnnOutputs[1]
 
-        return reshapedOutput
+            reshapedOutput = tf.reshape(output, shape=[batchSize, sequencesPerSample, sequenceLength, self.lstmSize])
+
+            return reshapedOutput
 
     def debug(self, tensor):
         return tf.Print(tensor, [tensor.name, tf.shape(tensor)], summarize=1000)
@@ -558,14 +562,14 @@ class DocumentExtractorNetwork:
         with tf.name_scope("lineSorted"), tf.variable_scope("lineSorted"):
             transformedIndexes = tf.reshape(self.lineSortedWordIndexesInput, shape=[batchSize, 1, length])
 
-            lineSortedOutput = self.createRecurrentAttentionLayer(inputs, transformedIndexes)
+            lineSortedOutput = self.createRecurrentAttentionLayer(inputs, transformedIndexes, "recurrent")
 
             lineSortedOutput = tf.reshape(lineSortedOutput, shape=[batchSize, length, self.lstmSize])
 
             lineSortedOutput = tf.batch_gather(lineSortedOutput, self.lineSortedReverseIndexesInput)
 
         with tf.name_scope("column"), tf.variable_scope("column"):
-            rawColumnOutput = self.createRecurrentAttentionLayer(inputs, self.columnWordIndexesInput)
+            rawColumnOutput = self.createRecurrentAttentionLayer(inputs, self.columnWordIndexesInput, "attention")
 
             # rawColumnOutput = self.debug(rawColumnOutput)
 
