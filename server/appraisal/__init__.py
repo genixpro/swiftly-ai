@@ -5,6 +5,7 @@ from pyramid.authorization import ACLAuthorizationPolicy
 import collections
 from mongoengine import connect
 import os
+import json
 import pkg_resources
 from google.cloud import storage
 
@@ -61,6 +62,7 @@ def main(global_config, **settings):
         registry.apiUrl = settings.get('api.url')
 
         registry.vectorServerURL = settings.get('vectorServerURL')
+        registry.modelConfig = json.load(pkg_resources.resource_stream("appraisal", f"model_configuration/{settings.get('modelConfig')}"))
 
         connect(settings.get('db.name'), host=settings.get('db.uri'))
 

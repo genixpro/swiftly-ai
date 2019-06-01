@@ -82,7 +82,12 @@ def main():
 
     vectorServerURL = settings.get('vectorServerURL')
 
-    classifier = DocumentExtractor(db, vectorServerURL)
+    modelConfig = json.load(pkg_resources.resource_stream("appraisal", f"model_configuration/{settings.get('modelConfig')}"))
+
+    print("Training with configuration:")
+    pprint(modelConfig)
+
+    classifier = DocumentExtractor(db, modelConfig, vectorServerURL)
     classifier.trainAlgorithm()
 
     triggerRebuild("sandbox", "4b7493de-9a42-4665-802f-e83014644276")

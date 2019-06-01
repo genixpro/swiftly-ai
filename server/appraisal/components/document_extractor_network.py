@@ -567,7 +567,7 @@ class DocumentExtractorNetwork:
         with tf.name_scope("column"), tf.variable_scope("column"):
             rawColumnOutput = self.createRecurrentAttentionLayer(inputs, self.columnWordIndexesInput)
 
-            rawColumnOutput = self.debug(rawColumnOutput)
+            # rawColumnOutput = self.debug(rawColumnOutput)
 
             sequencesPerSample = tf.shape(self.columnWordIndexesInput)[1]
             sequenceLength = tf.shape(self.columnWordIndexesInput)[2]
