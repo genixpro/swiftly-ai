@@ -1076,7 +1076,7 @@ class AnnotationEditor extends React.Component
                 <Row>
                     <Col xs={1}>
                         {
-                            _.range(this.state.file.pages).map((page) =>
+                            _.range(this.state.file.pages).map((page, pageIndex) =>
                             {
                                 return <Card outline color="primary" className="annotation-editor-thumbnail-container" key={page}>
                                     <CardBody>
@@ -1087,6 +1087,7 @@ class AnnotationEditor extends React.Component
                                             onClick={() => this.changePage(page)}
                                             className="annotationEditorImageThumbnail"
                                         />
+                                        <p>Page {pageIndex + 1}</p>
                                     </CardBody>
                                 </Card>;
                             })
@@ -1094,6 +1095,12 @@ class AnnotationEditor extends React.Component
                     </Col>
                     <Col xs={9}>
                         <div className={"extractions-toolbar"}>
+                            <div>
+                                <Button color={"secondary"} onClick={() => this.changePage(this.state.currentPage === 0 ? this.state.file.pages - 1 : this.state.currentPage - 1)}>Next</Button>
+                            </div>
+                            <div>
+                                <Button color={"secondary"} onClick={() => this.changePage(this.state.currentPage === this.state.file.pages - 1 ? 0 : this.state.currentPage + 1)}>Next</Button>
+                            </div>
                             <div>
                                 <span>View:</span>
                             </div>
