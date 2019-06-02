@@ -14,7 +14,7 @@ spec:
             command: ["/usr/local/bin/appraisal_train_extractor", "production_readonly.ini"]
             resources:
               requests:
-                cpu: 4
+                cpu: 7
                 memory: 5Gi
               limits:
                 cpu: 7
