@@ -12,9 +12,9 @@ from google.cloud import storage
 
 class DocumentExtractor:
     def __init__(self, db, configuration, vectorServerURL=None):
-        manager = multiprocessing.Manager()
+        self.manager = multiprocessing.Manager()
 
-        self.dataset = DocumentExtractorDataset(configuration, vectorServerURL, manager)
+        self.dataset = DocumentExtractorDataset(configuration, vectorServerURL, self.manager)
 
         self.parser = DocumentParser()
 
@@ -40,7 +40,7 @@ class DocumentExtractor:
             shutil.rmtree(directory)
         os.mkdir(directory)
 
-        self.dataset.loadDataset(self.db)
+        self.dataset.loadDataset(self.db, self.manager)
 
         self.dataset.saveLabels("models/labels.json")
 

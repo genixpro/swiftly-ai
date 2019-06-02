@@ -132,6 +132,9 @@ class DocumentExtractorNetwork:
 
                             batch = batchFuture.result()
 
+                            # for array in batch:
+                            #     print(array.shape)
+
                             wordVectors = batch[0]
                             lineWordIndexes = batch[5]
                             lineReverseWordIndexes = batch[6]

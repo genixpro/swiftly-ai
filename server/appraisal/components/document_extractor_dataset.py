@@ -1,4 +1,5 @@
 import subprocess
+import math
 import copy
 import tensorflow as tf
 import numpy
@@ -76,6 +77,7 @@ class FastFile:
             self.words = [FastWord(word) for word in file.words]
             self.tokens = file.breakIntoTokens()
             self.pages = file.pages
+            self.groupKey = '-'.join(sorted(set(word.groups.get("DATA_TYPE", "null") for word in file.words)))
         else:
             self.words = words
             self.tokens = None
@@ -97,7 +99,11 @@ class DocumentExtractorDataset:
         self.wordVectorSize = configuration['wordVectorSize']
         self.wordOmissionRate = configuration['wordOmissionRate']
 
-        self.dataset = manager.list()
+        self.dataset = manager.dict()
+        self.trainingDataset = manager.dict()
+        self.testingDataset = manager.dict()
+        self.trainingCount = {}
+        self.testingCount = {}
 
     def getFasttextProcess(self):
         global globalVectorProcess
@@ -327,7 +333,7 @@ class DocumentExtractorDataset:
             groupOutputs,
             textTypeOutputs)
 
-    def loadDataset(self, db):
+    def loadDataset(self, db, manager):
         files = File.objects(**self.configuration['query'])
 
         labels = {'null'}
@@ -371,17 +377,26 @@ class DocumentExtractorDataset:
                 else:
                     self.augmentationValues[augmentationKey] = [token['text']]
 
-            self.dataset.append(FastFile(file))
+            fast = FastFile(file)
 
-        random.shuffle(self.dataset)
+            if fast.groupKey not in  self.dataset:
+                self.dataset[fast.groupKey] = manager.list()
 
-        self.trainingCount = int(len(self.dataset) * 0.8)
-        self.testingCount = len(self.dataset) - self.trainingCount
+            self.dataset[fast.groupKey].append(fast)
 
-        self.trainingDataset = self.dataset[:self.trainingCount]
-        self.testingDataset = self.dataset[self.trainingCount:]
+        total = 0
+        for key in self.dataset.keys():
+            random.shuffle(self.dataset[key])
 
-        print(f"Loaded {len(self.dataset)} files.")
+            self.trainingCount[key] = int(math.ceil(len(self.dataset[key]) * 0.8))
+            self.testingCount[key] = len(self.dataset[key]) - self.trainingCount[key]
+
+            self.trainingDataset[key] = self.dataset[key][:self.trainingCount[key]]
+            self.testingDataset[key] = self.dataset[key][self.trainingCount[key]:]
+
+            total += len(self.dataset[key])
+
+        print(f"Loaded {total} files.")
 
         self.labels = sorted(list(labels))
         self.modifiers = sorted(list(modifiers))
@@ -610,18 +625,30 @@ class DocumentExtractorDataset:
 
         results = []
         for n in range(batchSize):
-            if testing:
-                randomIndex = random.randint(0, len(self.testingDataset) - 1)
-                result = self.prepareDocument(self.augmentDocument(self.testingDataset[randomIndex]), allowColumnProcessing)
+            key = random.choice(list(self.dataset.keys()))
+            print(key)
+
+            if testing and len(self.testingDataset[key]):
+                if len(self.testingDataset[key]) == 1:
+                    randomIndex = 0
+                else:
+                    randomIndex = random.randint(0, len(self.testingDataset[key]) - 1)
+                result = self.prepareDocument(self.augmentDocument(self.testingDataset[key][randomIndex]), allowColumnProcessing)
             else:
-                randomIndex = random.randint(0, len(self.trainingDataset)-1)
-                result = self.prepareDocument(self.augmentDocument(self.trainingDataset[randomIndex]), allowColumnProcessing)
+                if len(self.trainingDataset[key]) == 1:
+                    randomIndex = 0
+                else:
+                    randomIndex = random.randint(0, len(self.trainingDataset[key])-1)
+                result = self.prepareDocument(self.augmentDocument(self.trainingDataset[key][randomIndex]), allowColumnProcessing)
             results.append(result)
 
         maxLength = min(random.randint(self.lengthMin, self.lengthMax), max([len(result[0]) for result in results]))
 
         maxLines = 0
         maxColumns = 0
+
+        origLongestLine = max(len(line) for result in results for line in result[7])
+        origLongestColumn = max(len(column) for result in results for column in result[10])
 
         longestLine = 0
         longestColumn = 0
@@ -668,8 +695,14 @@ class DocumentExtractorDataset:
                 lineWordIndexes[-1].append(index)
                 lineReverseWordIndexes.append((len(lineWordIndexes) - 1, 0))
 
+                if len(lineWordIndexes[-1]) >= origLongestLine:
+                    lineWordIndexes.append([])
+
                 columnWordIndexes[-1].append(index)
                 columnReverseWordIndexes.append((len(columnWordIndexes) - 1, 0))
+
+                if len(columnWordIndexes[-1]) >= origLongestColumn:
+                    columnWordIndexes.append([])
 
                 wordVectors.append([0] * self.wordVectorSize)
 
@@ -766,6 +799,8 @@ class DocumentExtractorDataset:
 
         # print(batchWordVectors[0][0])
         # print(batchLineSortedWordIndexes)
+
+        # print("longestLine", longestLine)
 
         for sample in batchLineWordIndexes:
             for line in sample:
