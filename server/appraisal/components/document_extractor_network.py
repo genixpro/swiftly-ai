@@ -568,7 +568,7 @@ class DocumentExtractorNetwork:
         vectorSize = self.wordVectorSize
 
         with tf.name_scope("lineSorted"), tf.variable_scope("lineSorted"):
-            rawLineOutput = self.createRecurrentAttentionLayer(inputs, self.lineWordIndexesInput, "recurrent")
+            rawLineOutput = self.createRecurrentAttentionLayer(inputs, self.lineWordIndexesInput, "attention")
 
             # rawLineOutput = self.debug(rawLineOutput)
 
@@ -584,7 +584,7 @@ class DocumentExtractorNetwork:
             lineOutput = tf.reshape(lineOutput, shape=[batchSize, length, self.lstmSize])
 
         with tf.name_scope("column"), tf.variable_scope("column"):
-            rawColumnOutput = self.createRecurrentAttentionLayer(inputs, self.columnWordIndexesInput, "recurrent")
+            rawColumnOutput = self.createRecurrentAttentionLayer(inputs, self.columnWordIndexesInput, "attention")
 
             # rawColumnOutput = self.debug(rawColumnOutput)
 
