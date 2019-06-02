@@ -551,6 +551,25 @@ export default [
                 "textType": "block"
             },
             {
+                "name": "Tenancy - Single Tenant",
+                "placeholder": "Tenancy - Single Tenant",
+                "value": "SINGLE_TENANT",
+                "anyOfGroups": ["COMPARABLE_SALE"],
+                "textType": "block"
+            },
+            {
+                "name": "Tenancy - Multi Tenant",
+                "placeholder": "Tenancy - Multi Tenant",
+                "value": "MULTI_TENANT",
+                "anyOfGroups": ["COMPARABLE_SALE"],
+                "textType": "block"
+            }
+        ]
+    },
+    {
+        "name": "Comp Land Information",
+        "fields": [
+            {
                 "name": "Site Area",
                 "placeholder": "Site Area",
                 "value": "SITE_AREA",
@@ -565,6 +584,13 @@ export default [
                 "textType": "block"
             },
             {
+                "name": "Site Frontage",
+                "placeholder": "Site Frontage",
+                "value": "SITE_FRONTAGE",
+                "anyOfGroups": ["COMPARABLE_SALE"],
+                "textType": "block"
+            },
+            {
                 "name": "Size of Land (sqft)",
                 "placeholder": "Size of Land (sqft)",
                 "value": "SIZE_OF_LAND_SQFT",
@@ -575,20 +601,6 @@ export default [
                 "name": "Size of Land (acres)",
                 "placeholder": "Size of Land (acres)",
                 "value": "SIZE_OF_LAND_ACRES",
-                "anyOfGroups": ["COMPARABLE_SALE"],
-                "textType": "block"
-            },
-            {
-                "name": "Tenancy - Single Tenant",
-                "placeholder": "Tenancy - Single Tenant",
-                "value": "SINGLE_TENANT",
-                "anyOfGroups": ["COMPARABLE_SALE"],
-                "textType": "block"
-            },
-            {
-                "name": "Tenancy - Multi Tenant",
-                "placeholder": "Tenancy - Multi Tenant",
-                "value": "MULTI_TENANT",
                 "anyOfGroups": ["COMPARABLE_SALE"],
                 "textType": "block"
             }
@@ -827,7 +839,7 @@ export default [
         ]
     },
     {
-        "name": "Comp Land Information",
+        "name": "Comp Land Financial Information",
         "fields": [
             {
                 "name": "Floor Space Index",
