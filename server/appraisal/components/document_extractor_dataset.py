@@ -77,7 +77,7 @@ class FastFile:
             self.words = [FastWord(word) for word in file.words]
             self.tokens = file.breakIntoTokens()
             self.pages = file.pages
-            self.groupKey = '-'.join(sorted(set(word.groups.get("DATA_TYPE", "null") for word in file.words)))
+            self.groupKey = '-'.join(sorted([type for type in set(word.groups.get("DATA_TYPE", "null") for word in file.words) if type != "null"]))
         else:
             self.words = words
             self.tokens = None
@@ -388,7 +388,7 @@ class DocumentExtractorDataset:
         for key in self.dataset.keys():
             random.shuffle(self.dataset[key])
 
-            self.trainingCount[key] = int(math.ceil(len(self.dataset[key]) * 0.8))
+            self.trainingCount[key] = int(math.ceil(len(self.dataset[key]) * 0.5))
             self.testingCount[key] = len(self.dataset[key]) - self.trainingCount[key]
 
             self.trainingDataset[key] = self.dataset[key][:self.trainingCount[key]]
