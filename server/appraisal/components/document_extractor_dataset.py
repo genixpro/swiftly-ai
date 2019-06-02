@@ -626,7 +626,7 @@ class DocumentExtractorDataset:
         results = []
         for n in range(batchSize):
             key = random.choice(list(self.dataset.keys()))
-            print(key)
+            # print(key)
 
             if testing and len(self.testingDataset[key]):
                 if len(self.testingDataset[key]) == 1:
