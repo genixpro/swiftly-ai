@@ -1,5 +1,5 @@
 {
-  "batchSize": 4,
+  "batchSize": 8,
   "lstmSize": 150,
   "lstmDropout": 0.5,
   "denseSize": 150,
@@ -20,7 +20,7 @@
   "lengthMax": 1000,
   "wordVectorSize": 309,
   "wordOmissionRate": 0.05,
-  "numGPUs": -1,
+  "numGPUs": 1,
   "query": {
     "reviewStatus__in": ["verifed", "verified"]
   }
