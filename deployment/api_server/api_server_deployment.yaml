@@ -25,27 +25,17 @@ spec:
           value: __SWIFTLY_ENV__
         image: gcr.io/appraisalai/swiftly:__REVISION_ID__-__SWIFTLY_ENV__-api
         imagePullPolicy: IfNotPresent
-        livenessProbe:
-          failureThreshold: 3
-          httpGet:
-            path: /home
-            port: 80
-            scheme: HTTP
-          initialDelaySeconds: 15
-          periodSeconds: 3
-          successThreshold: 1
-          timeoutSeconds: 1
         name: eb-appraisal-sha256
         readinessProbe:
-          failureThreshold: 3
+          failureThreshold: 1
           httpGet:
             path: /home
             port: 80
             scheme: HTTP
-          initialDelaySeconds: 15
+          initialDelaySeconds: 5
           periodSeconds: 3
           successThreshold: 1
-          timeoutSeconds: 1
+          timeoutSeconds: 3
         resources:
           limits:
             cpu: "3"
