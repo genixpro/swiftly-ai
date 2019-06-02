@@ -1078,14 +1078,14 @@ class AnnotationEditor extends React.Component
                         {
                             _.range(this.state.file.pages).map((page, pageIndex) =>
                             {
-                                return <Card outline color="primary" className="annotation-editor-thumbnail-container" key={page}>
+                                return <Card outline color="primary" className={`annotation-editor-thumbnail-container ${pageIndex === this.state.currentPage ? "selected" : ""}`} key={page}>
                                     <CardBody>
                                         <img
                                             alt="Document Preview"
                                             id={`annotation-editor-image-${page}-thumbnail`}
                                             src={`${process.env.VALUATE_ENVIRONMENT.REACT_APP_SERVER_URL}appraisal/${this.props.appraisalId}/files/${this.props.fileId}/rendered/${page}?access_token=${Auth.getAccessToken()}`}
                                             onClick={() => this.changePage(page)}
-                                            className="annotationEditorImageThumbnail"
+                                            className={`annotationEditorImageThumbnail`}
                                         />
                                         <p>Page {pageIndex + 1}</p>
                                     </CardBody>
@@ -1096,7 +1096,7 @@ class AnnotationEditor extends React.Component
                     <Col xs={9}>
                         <div className={"extractions-toolbar"}>
                             <div>
-                                <Button color={"secondary"} onClick={() => this.changePage(this.state.currentPage === 0 ? this.state.file.pages - 1 : this.state.currentPage - 1)}>Next</Button>
+                                <Button color={"secondary"} onClick={() => this.changePage(this.state.currentPage === 0 ? this.state.file.pages - 1 : this.state.currentPage - 1)}>Previous</Button>
                             </div>
                             <div>
                                 <Button color={"secondary"} onClick={() => this.changePage(this.state.currentPage === this.state.file.pages - 1 ? 0 : this.state.currentPage + 1)}>Next</Button>
@@ -1327,6 +1327,12 @@ class AnnotationEditor extends React.Component
                                 </Row> : null
                             }
                         </div>
+                    </Col>
+                </Row>
+                <Row>
+                    <Col xs={12}>
+                        <Button color={"secondary"} onClick={() => this.changePage(this.state.currentPage === 0 ? this.state.file.pages - 1 : this.state.currentPage - 1)}>Previous</Button>
+                        <Button color={"secondary"} onClick={() => this.changePage(this.state.currentPage === this.state.file.pages - 1 ? 0 : this.state.currentPage + 1)}>Next</Button>
                     </Col>
                 </Row>
                 <ContextMenu id="annotation-editor-word-menu">
