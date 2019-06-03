@@ -118,7 +118,7 @@ RUN rm -rf /swiftly/client
 
 # Install dependencies for server
 WORKDIR /swiftly/server
-RUN sed -i "s/tensorflow===1.12.2/tensorflow-gpu===1.13.1/g" setup.py
+RUN sed -i "s/tensorflow===[0-9]\+\.[0-9]\+\.[0-9]\+/tensorflow-gpu===1.13.1/g" setup.py
 RUN python3 setup.py install > "/dev/null" 2>&1
 
 # Setup and configure systemd
