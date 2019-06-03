@@ -763,7 +763,8 @@ class DocumentExtractorDataset:
                 newColumnWordIndexes = []
                 for columnIndex, column in enumerate(columnWordIndexes):
                     newColumn = [index-start for index in column if index >= start and index < (start + maxLength)]
-                    if len(newColumn) > 0:
+                    isColumnBlank = all(index == -1 for index in column)
+                    if len(newColumn) > 0 or (startColumn is not None and isColumnBlank):
                         if startColumn is None:
                             startColumn = columnIndex
                         newColumnWordIndexes.append(newColumn)
