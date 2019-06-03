@@ -26,6 +26,8 @@ class WordModel extends BaseModel
     static documentLineNumber = new IntField();
 
     static column = new IntField();
+    static documentColumn = new IntField();
+
     static index = new IntField();
     static left = new FloatField();
     static right = new FloatField();
