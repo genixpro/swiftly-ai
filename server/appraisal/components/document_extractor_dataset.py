@@ -75,16 +75,20 @@ class FastFile:
     def __init__(self, file=None, words=None, pages=None):
         if file is not None:
             self.words = [FastWord(word) for word in file.words]
-            self.tokens = file.breakIntoTokens()
             self.pages = file.pages
-            self.groupKey = '-'.join(sorted([type for type in set(word.groups.get("DATA_TYPE", "null") for word in file.words) if type != "null"]))
         else:
-            self.words = words
-            self.tokens = None
+            self.words = [FastWord(word) for word in words]
             self.pages = pages
+
+        for wordIndex, word in enumerate(self.words):
+            word.index = wordIndex
+        self.groupKey = '-'.join(sorted([type for type in set(word.groups.get("DATA_TYPE", "null") for word in self.words) if type != "null"]))
 
     def updateDescriptiveWordFeatures(self):
         File.updateDescriptiveWordFeatures(self)
+
+    def breakIntoTokens(self):
+        return File.breakIntoTokens(self)
 
 class DocumentExtractorDataset:
     def __init__(self, configuration, vectorServerURL=None, manager=None):
@@ -344,6 +348,7 @@ class DocumentExtractorDataset:
 
         self.augmentationValues = {}
 
+        fileCount = 0
         for file in files:
             if len(file.words) == 0:
                 # skip this file
@@ -377,12 +382,16 @@ class DocumentExtractorDataset:
                 else:
                     self.augmentationValues[augmentationKey] = [token['text']]
 
-            fast = FastFile(file)
+            # Generate a separate "file" object for each page within the file.
+            for page in range(file.pages):
+                fast = FastFile(words=[word for word in file.words if word.page == page], pages=file.pages)
 
-            if fast.groupKey not in  self.dataset:
-                self.dataset[fast.groupKey] = manager.list()
+                if fast.groupKey not in  self.dataset:
+                    self.dataset[fast.groupKey] = manager.list()
 
-            self.dataset[fast.groupKey].append(fast)
+                self.dataset[fast.groupKey].append(fast)
+
+            fileCount += 1
 
         total = 0
         for key in self.dataset.keys():
@@ -396,7 +405,7 @@ class DocumentExtractorDataset:
 
             total += len(self.dataset[key])
 
-        print(f"Loaded {total} files.")
+        print(f"Loaded {total} pages from {fileCount} files.")
 
         self.labels = sorted(list(labels))
         self.modifiers = sorted(list(modifiers))
@@ -490,7 +499,7 @@ class DocumentExtractorDataset:
             newWord.word = word
             newWord.classification = token['classification']
             newWord.modifiers = token['modifiers']
-            newWord.page = token['words'][0]['page']
+            newWord.page = token['words'][0].page
             newWord.groups = token['groups']
             newWord.groupNumbers = token['groupNumbers']
             newWord.textType = token['textType']
@@ -546,12 +555,9 @@ class DocumentExtractorDataset:
 
 
     def augmentDocument(self, file):
-        # Select a random page within the document
-        pages = set(word.page for word in file.words)
-        chosenPage = random.choice(list(pages))
-        words = [copy.copy(word) for word in file.words if word.page == chosenPage]
-
-        tokens = file.tokens
+        # Copy file prior to augmenting
+        newFile = FastFile(file)
+        tokens = newFile.breakIntoTokens()
 
         indexAdjustment = 0
         for token in tokens:
@@ -559,7 +565,7 @@ class DocumentExtractorDataset:
                 start = token['startIndex'] + indexAdjustment
                 end = token['endIndex'] + indexAdjustment
 
-                words[start:end] = []
+                newFile.words[start:end] = []
 
                 indexAdjustment -= len(token['words'])
             else:
@@ -568,11 +574,10 @@ class DocumentExtractorDataset:
                 start = token['startIndex'] + indexAdjustment
                 end = token['endIndex'] + indexAdjustment
 
-                words[start:end] = newToken['words']
+                newFile.words[start:end] = newToken['words']
 
                 indexAdjustment += (len(newToken['words']) - len(token['words']))
 
-        newFile = FastFile(words=words, pages=file.pages)
         for wordIndex, word in enumerate(newFile.words):
             word.index = wordIndex
 
@@ -633,7 +638,7 @@ class DocumentExtractorDataset:
                     randomIndex = 0
                 else:
                     randomIndex = random.randint(0, len(self.testingDataset[key]) - 1)
-                result = self.prepareDocument(self.augmentDocument(self.testingDataset[key][randomIndex]), allowColumnProcessing)
+                result = self.prepareDocument(self.testingDataset[key][randomIndex], allowColumnProcessing)
             else:
                 if len(self.trainingDataset[key]) == 1:
                     randomIndex = 0
@@ -740,7 +745,8 @@ class DocumentExtractorDataset:
                 newLineWordIndexes = []
                 for lineIndex, line in enumerate(lineWordIndexes):
                     newLine = [index-start for index in line if index >= start and index < (start + maxLength)]
-                    if len(newLine) > 0:
+                    isLineBlank = all(index == -1 for index in line)
+                    if len(newLine) > 0 or (startLine is not None and isLineBlank):
                         if startLine is None:
                             startLine = lineIndex
                         newLineWordIndexes.append(newLine)

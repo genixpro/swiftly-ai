@@ -98,7 +98,7 @@ class File(Document):
         tokens = []
         currentToken = None
         for word in self.words:
-            if word['classification'] != "null":
+            if word.classification != "null":
                 if currentToken is None:
                     currentToken = {
                         "classification": word.classification,
@@ -132,7 +132,7 @@ class File(Document):
         for token in tokens:
             text = ""
             for word in token['words']:
-                text += word['word'] + " "
+                text += word.word + " "
             text = text.strip()
             token['text'] = text
 

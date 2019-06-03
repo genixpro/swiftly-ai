@@ -531,9 +531,9 @@ class DocumentExtractorNetwork:
         # inputs = tf.reshape(inputs, shape=[batchSize, length, vectorSize])
 
         if mode == 'attention':
-            # positionEncoding = model_utils.get_position_encoding(sequenceLength, vectorSize)
+            # positionEncoding = model_utils.get_position_encoding(sequenceLength, vectorSize + 1)
             attention_bias = model_utils.get_padding_bias(tf.reduce_sum(inputs, axis=2))
-            # attention = SelfAttention(self.attentionSize, self.attentionHeads, self.attentionDropout, True)(inputs + positionEncoding, attention_bias)
+            # attention = SelfAttention(self.attentionSize, self.attentionHeads, self.attentionDropout, True)(inputs + positionEncoding[:, :vectorSize], attention_bias)
             attention = SelfAttention(self.attentionSize, self.attentionHeads, self.attentionDropout, True)(inputs, attention_bias)
             #
             denseInput = tf.reshape(attention, shape=[batchSize * sequencesPerSample * sequenceLength, self.attentionSize])
@@ -559,8 +559,12 @@ class DocumentExtractorNetwork:
 
             return reshapedOutput
 
-    def debug(self, tensor):
-        return tf.Print(tensor, [tensor.name, tf.shape(tensor)], summarize=1000)
+    def debug(self, tensor, showValue=False):
+        if showValue:
+            return tf.Print(tensor, [tensor.name, tf.shape(tensor), tensor], summarize=10000)
+        else:
+            return tf.Print(tensor, [tensor.name, tf.shape(tensor)], summarize=1000)
+
 
     def createComboLineColumnLayer(self, inputs):
         batchSize = tf.shape(inputs)[0]
@@ -568,6 +572,8 @@ class DocumentExtractorNetwork:
         vectorSize = self.wordVectorSize
 
         with tf.name_scope("lineSorted"), tf.variable_scope("lineSorted"):
+            # inputs = self.debug(inputs)
+            # lineWordIndexesInput = self.debug(self.lineWordIndexesInput)
             rawLineOutput = self.createRecurrentAttentionLayer(inputs, self.lineWordIndexesInput, "attention")
 
             # rawLineOutput = self.debug(rawLineOutput)
@@ -576,6 +582,10 @@ class DocumentExtractorNetwork:
             sequenceLength = tf.shape(self.lineWordIndexesInput)[2]
 
             rawLineOutput = tf.reshape(rawLineOutput, shape=[batchSize, sequencesPerSample * sequenceLength, self.lstmSize])
+
+            # rawLineOutput = self.debug(rawLineOutput)
+
+            # lineReverseIndexesInput = self.debug(self.lineReverseIndexesInput, True)
 
             newIndexes = self.lineReverseIndexesInput[:, :, 0] * sequenceLength + self.lineReverseIndexesInput[:, :, 1]
 
