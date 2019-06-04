@@ -19,6 +19,13 @@
     padding-left: 15px;
   }
 
+  .download-dropdown-button, .action-button
+  {
+    float: none;
+    margin-left: 10px;
+    height: 35px;
+  }
+
   .use-market-rent-selector
   {
     display: flex;
@@ -51,6 +58,13 @@
 
     }
 
+  }
+
+  .button-bar
+  {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
   }
 
   a {

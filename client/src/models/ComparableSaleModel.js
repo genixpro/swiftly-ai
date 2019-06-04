@@ -21,7 +21,10 @@ class ComparableSaleModel extends EquationMdoel
 
     static owner = new StringField();
 
-    static imageUrl = new StringField();
+    static imageUrl = new StringField(); // DEPRECATED
+
+    static imageUrls = new ListField(new StringField());
+
     static address = new StringField();
     static location = new GenericField();
     static propertyType = new StringField();
@@ -54,6 +57,11 @@ class ComparableSaleModel extends EquationMdoel
 
     static clearCeilingHeight = new FloatField();
     static shippingDoors = new StringField();
+
+    static shippingDoorsTruckLevel = new FloatField();
+    static shippingDoorsDoubleMan = new FloatField();
+    static shippingDoorsDriveIn = new FloatField();
+
     static siteCoverage = new FloatField();
 
     static buildableUnits = new FloatField();
@@ -84,6 +92,8 @@ class ComparableSaleModel extends EquationMdoel
     static numberOfTwoBedrooms = new FloatField("numberOfTwoBedrooms", 0);
     static numberOfThreePlusBedrooms = new FloatField("numberOfThreePlusBedrooms", 0);
     static totalBedrooms = new FloatField("totalBedrooms");
+
+    static tenancyType = new StringField();
 
     static equations = {
         "netOperatingIncome": [

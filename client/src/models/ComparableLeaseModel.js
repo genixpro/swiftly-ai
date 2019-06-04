@@ -6,6 +6,7 @@ import BaseModel from "../orm/BaseModel";
 import _ from "underscore";
 import StringField from "../orm/StringField";
 import FloatField from "../orm/FloatField";
+import IntField from "../orm/IntField";
 import ModelField from "../orm/ModelField";
 
 class RentEscalation extends BaseModel
@@ -21,7 +22,8 @@ class ComparableLeaseModel extends BaseModel
     static owner = new StringField();
     static address = new StringField();
     static location = new GenericField();
-    static imageUrl = new StringField();
+    static imageUrl = new StringField(); // DEPRECATED.
+    static imageUrls = new ListField(new StringField());
     static propertyType = new StringField();
     static sizeOfUnit = new FloatField();
     static rentEscalations = new ListField(new ModelField(RentEscalation));
@@ -36,13 +38,20 @@ class ComparableLeaseModel extends BaseModel
 
     static tenantInducements = new StringField();
     static freeRent = new StringField();
+    static freeRentMonths = new IntField();
+    static freeRentType = new StringField();
 
     static floorNumber = new FloatField();
     static retailLocationType = new StringField();
     static clearCeilingHeight = new StringField();
     static shippingDoors = new StringField();
 
+    static shippingDoorsTruckLevel = new FloatField();
+    static shippingDoorsDoubleMan = new FloatField();
+    static shippingDoorsDriveIn = new FloatField();
+
     static remarks = new StringField();
+    static tenancyType = new StringField();
 
     get startingYearlyRent()
     {

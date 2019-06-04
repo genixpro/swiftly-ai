@@ -1,0 +1,18 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: swiftly-migration-__SWIFTLY_ENV__
+spec:
+  ttlSecondsAfterFinished: 3600
+  template:
+    spec:
+      containers:
+      - name: eb-appraisal-sha256
+        image: gcr.io/appraisalai/swiftly:__REVISION_ID__-__SWIFTLY_ENV__-api
+        command: ["appraisal_run_migrations",  "__SWIFTLY_ENV__.ini"]
+        resources:
+          requests:
+            cpu: 1
+            memory: 512Mi
+      restartPolicy: Never
+  backoffLimit: 4

@@ -12,9 +12,6 @@ class AppraisalList extends React.Component
                 <tr>
                     <th>Name</th>
                     <th>Address</th>
-                    <th>City</th>
-                    <th>Region</th>
-                    <th>Country</th>
                     <th>Action</th>
                 </tr>
                 </thead>

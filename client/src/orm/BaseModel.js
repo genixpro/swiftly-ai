@@ -1,5 +1,6 @@
 import BaseField from "./BaseField";
 import _ from "underscore";
+import IntField from "./IntField";
 
 /**
  * This class is encapsulates data that is sent down from the server.
@@ -11,6 +12,8 @@ class BaseModel extends Object
     static parentSymbol = Symbol("parent");
     static fieldNameSymbol = Symbol("fieldName");
     static dirtyFieldsSymbol = Symbol("dirtyFields");
+    
+    static version = new IntField();
 
     static create(data, parent, fieldName)
     {

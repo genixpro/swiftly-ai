@@ -26,6 +26,8 @@ class WordModel extends BaseModel
     static documentLineNumber = new IntField();
 
     static column = new IntField();
+    static documentColumn = new IntField();
+
     static index = new IntField();
     static left = new FloatField();
     static right = new FloatField();
@@ -52,6 +54,11 @@ class WordModel extends BaseModel
     static classificationProbabilities = new DictField(new FloatField());
     static modifiers = new ListField(new StringField());
     static modifierProbabilities = new DictField(new FloatField());
+
+    static textTypeProbabilities = new DictField(new FloatField());
+
+    static lineNumberWithinGroup = new DictField(new IntField());
+    static reverseLineNumberWithinGroup = new DictField(new IntField());
 }
 
 

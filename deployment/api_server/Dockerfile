@@ -30,7 +30,7 @@ RUN apt-get update && apt-get install \
     nodejs \
     libreoffice \
     poppler-utils \
-    gfortran -y && \
+    gfortran -y > "/dev/null" 2>&1 && \
     rm -rf /var/lib/apt/lists/*
 
 # Install some dependencies which can take a long time to install. We do this ahead of running "ADD . /swiftly" so the builds run faster when your
@@ -64,6 +64,8 @@ RUN gcloud auth activate-service-account --key-file appraisalai-be8f24d217e0.jso
 
 # Download models from gs cloud
 WORKDIR /swiftly/server
+RUN mkdir models
+WORKDIR /swiftly/server/models
 RUN gsutil cp gs://swiftly-deployment/models.zip . && \
     unzip models.zip && \
     rm -rf models.zip
@@ -78,13 +80,12 @@ RUN rm -rf /swiftly/client
 
 # Install dependencies for server
 WORKDIR /swiftly/server/appraisal/word_documents
-RUN npm install
+RUN npm install > "/dev/null" 2>&1
 
 WORKDIR /swiftly/server
-RUN python3 setup.py install
+RUN python3 setup.py install > "/dev/null" 2>&1
 
 # Setup and configure systemd
 ENTRYPOINT ["bash", "-c", "gunicorn -t 600 -w 4 -b 0.0.0.0:80 --paste $SWIFTLY_ENV.ini"]
 
 EXPOSE 80
-HEALTHCHECK CMD curl --fail http://localhost:80/home || exit 1

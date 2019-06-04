@@ -2,10 +2,13 @@ from mongoengine import *
 import datetime
 from appraisal.models.extraction_reference import ExtractionReference
 import google.api_core.exceptions
-import azure.common
+import dateparser
 
 class Word(EmbeddedDocument):
     meta = {'strict': False}
+
+    def __init__(self, *args, **kwargs):
+        super(Word, self).__init__(*args, **kwargs)
 
     # This is the raw text of the word
     word = StringField()
@@ -20,6 +23,8 @@ class Word(EmbeddedDocument):
 
     # The column number for this word
     column = IntField()
+
+    documentColumn = IntField()
 
     # The index of the word within the larger array of words
     index = IntField()
@@ -50,10 +55,14 @@ class Word(EmbeddedDocument):
 
 
     textType = StringField(default='block')
+    textTypeProbabilities = DictField(default={})
 
     groups = DictField(StringField(), default={})
     groupProbabilities = DictField(DictField(default={}))
     groupNumbers = DictField(IntField())
+
+    lineNumberWithinGroup = DictField(IntField())
+    reverseLineNumberWithinGroup = DictField(IntField())
 
 
 class File(Document):
@@ -89,11 +98,14 @@ class File(Document):
         tokens = []
         currentToken = None
         for word in self.words:
-            if word['classification'] != "null":
+            if word.classification != "null":
                 if currentToken is None:
                     currentToken = {
                         "classification": word.classification,
                         "modifiers": word.modifiers,
+                        "groups": word.groups,
+                        "groupNumbers": word.groupNumbers,
+                        "textType": word.textType,
                         "words": [word],
                         "startIndex": word.index
                     }
@@ -105,6 +117,9 @@ class File(Document):
                     currentToken = {
                         "classification": word.classification,
                         "modifiers": word.modifiers,
+                        "groups": word.groups,
+                        "groupNumbers": word.groupNumbers,
+                        "textType": word.textType,
                         "words": [word],
                         "startIndex": word.index
                     }
@@ -117,10 +132,9 @@ class File(Document):
         for token in tokens:
             text = ""
             for word in token['words']:
-                text += word['word'] + " "
+                text += word.word + " "
             text = text.strip()
             token['text'] = text
-            token['pageType'] = self.pageTypes[token['words'][0]['page']]
 
 
         return tokens
@@ -142,63 +156,61 @@ class File(Document):
 
         return int(parsed.year)
 
-    def getLineItems(self, pageType):
-        tokens = self.breakIntoTokens()
+    def updateDescriptiveWordFeatures(self):
+        """ This function updates fields like lineNumberWithinGroup and reverseLineNumberWithinGroup on the Word object."""
 
-        tokens = [token for token in tokens if token['pageType'] == pageType]
+        currentGroupTypes = {}
+        currentGroupNumbers = {}
+        currentGroupStartLineNumber = {}
+        currentGroupWords = {}
 
-        year = int(self.getDocumentYear())
+        def finishGroup(groupSet):
+            nonlocal currentGroupWords
+            if len(currentGroupWords[groupSet]):
+                maxLineNumber = max([groupWord.documentLineNumber for groupWord in currentGroupWords[groupSet]])
+                for groupWord in currentGroupWords[groupSet]:
+                    groupWord.reverseLineNumberWithinGroup[groupSet] = maxLineNumber - groupWord.lineNumberWithinGroup[groupSet]
 
-        tokensByLineNumberAndPage = {}
-        for token in tokens:
-            if token['classification'] != "null":
-                lineNumberPage = (token['words'][0]['page'], token['words'][0]['lineNumber'])
-                if lineNumberPage in tokensByLineNumberAndPage:
-                    tokensByLineNumberAndPage[lineNumberPage].append(token)
-                else:
-                    tokensByLineNumberAndPage[lineNumberPage] = [token]
 
-        lineItems = []
+        for word in self.words:
+            # print(word.index, word.lineNumber, word.documentLineNumber)
+            word.lineNumberWithinGroup = {}
 
-        for lineNumberPage in tokensByLineNumberAndPage:
-            groupedByClassification = {}
-            for token in tokensByLineNumberAndPage[lineNumberPage]:
-                if token['classification'] in groupedByClassification:
-                    groupedByClassification[token['classification']].append(token)
-                else:
-                    groupedByClassification[token['classification']] = [token]
+            for groupSet, group in word.groups.items():
+                if group != 'null' and group is not None:
+                    if groupSet not in currentGroupTypes:
+                        word.lineNumberWithinGroup[groupSet] = 0
 
-            maxSize = max([len(groupedByClassification[classification]) for classification in groupedByClassification])
-
-            items = [{
-                'modifiers': set()
-            } for n in range(maxSize)]
-            for classification in groupedByClassification:
-                for tokenIndex, token in enumerate(groupedByClassification[classification]):
-                    if len(groupedByClassification[classification]) == 1:
-                        itemsForGroup = items
+                        currentGroupWords[groupSet] = [word]
+                        currentGroupNumbers[groupSet] = word.groupNumbers[groupSet]
+                        currentGroupTypes[groupSet] = word.groups[groupSet]
+                        currentGroupStartLineNumber[groupSet] = word.documentLineNumber
+                    elif group == currentGroupTypes[groupSet] and word.groupNumbers[groupSet] == currentGroupNumbers[groupSet]:
+                        word.lineNumberWithinGroup[groupSet] = word.documentLineNumber - currentGroupStartLineNumber[groupSet]
+                        currentGroupWords[groupSet].append(word)
                     else:
-                        itemsForGroup = [items[tokenIndex]]
+                        finishGroup(groupSet)
 
-                    for item in itemsForGroup:
-                        item[token['classification']] = token['text']
-                        item[token['classification'] + "_reference"] = ExtractionReference(fileId=str(self.id), appraisalId=str(self.appraisalId), wordIndexes=[word['index'] for word in token['words']])
-                        for modifier in token['modifiers']:
-                            item['modifiers'].add(modifier)
+                        word.lineNumberWithinGroup[groupSet] = 0
 
-            for item in items:
-                if 'NEXT_YEAR' in item['modifiers']:
-                    item['year'] = year + 1
-                elif 'PREVIOUS_YEAR' in item['modifiers']:
-                    item['year'] = year - 1
-                else:
-                    item['year'] = year
+                        currentGroupWords[groupSet] = [word]
+                        currentGroupNumbers[groupSet] = word.groupNumbers[groupSet]
+                        currentGroupTypes[groupSet] = word.groups[groupSet]
+                        currentGroupStartLineNumber[groupSet] = word.documentLineNumber
 
-            lineItems.extend(items)
+            for groupSet in currentGroupWords.keys():
+                if word.groups.get(groupSet, 'null') == 'null':
+                    finishGroup(groupSet)
 
-        return lineItems
+                    currentGroupWords[groupSet] = []
+                    currentGroupNumbers[groupSet] = None
+                    currentGroupTypes[groupSet] = 'null'
+                    currentGroupStartLineNumber[groupSet] = None
 
-    def downloadFileData(self, bucket, azureBlobStorage=None):
+        for groupSet in currentGroupWords.keys():
+            finishGroup(groupSet)
+
+    def downloadFileData(self, bucket):
         fileId = str(self.id)
 
         data = None
@@ -206,15 +218,11 @@ class File(Document):
             blob = bucket.blob(fileId)
             data = blob.download_as_string()
         except google.api_core.exceptions.NotFound:
-            if azureBlobStorage:
-                try:
-                    data = azureBlobStorage.get_blob_to_bytes('files', fileId).content
-                except azure.common.AzureMissingResourceHttpError:
-                    pass
+            return None
 
         return data
 
-    def downloadRenderedImage(self, page, bucket, azureBlobStorage=None):
+    def downloadRenderedImage(self, page, bucket):
         fileId = str(self.id)
         imageFilename = fileId + "-image-" + str(page) + ".png"
 
@@ -223,11 +231,7 @@ class File(Document):
             blob = bucket.blob(imageFilename)
             data = blob.download_as_string()
         except google.api_core.exceptions.NotFound:
-            if azureBlobStorage:
-                try:
-                    data = azureBlobStorage.get_blob_to_bytes('files', imageFilename).content
-                except azure.common.AzureMissingResourceHttpError:
-                    pass
+            return None
 
         return data
 

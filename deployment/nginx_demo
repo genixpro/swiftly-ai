@@ -59,7 +59,7 @@ server {
         rewrite ^/callback(/)? / last;
 
         location /api/ {
-            proxy_pass http://10.11.252.114/;
+            proxy_pass http://swiftly-demo-api.default/;
         }
 
 	location / {

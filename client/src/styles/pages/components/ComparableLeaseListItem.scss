@@ -154,6 +154,36 @@
     align-items: center;
 
   }
+
+  .free-rent
+  {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+  }
+
+  .shipping-doors
+  {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    .shipping-doors-line
+    {
+      width: 100%;
+      display: flex;
+      flex-direction: row;
+      align-items: stretch;
+
+      span {
+        position: relative;
+        padding-left: 18px;
+        white-space: nowrap;
+        flex-grow: 0;
+        top: 7px;
+      }
+    }
+  }
 }
 
 

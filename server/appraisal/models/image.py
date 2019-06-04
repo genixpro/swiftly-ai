@@ -2,7 +2,6 @@ from mongoengine import *
 import datetime
 from appraisal.models.extraction_reference import ExtractionReference
 import google.api_core.exceptions
-import azure.common
 
 
 class Image(Document):
@@ -13,7 +12,7 @@ class Image(Document):
 
     fileName = StringField()
 
-    def downloadImageData(self, bucket, azureBlobStorage=None, cropped=True):
+    def downloadImageData(self, bucket, cropped=True):
         fileName = self.fileName
 
         if cropped:
@@ -24,11 +23,7 @@ class Image(Document):
             blob = bucket.blob(fileName)
             data = blob.download_as_string()
         except google.api_core.exceptions.NotFound:
-            if azureBlobStorage:
-                try:
-                    data = azureBlobStorage.get_blob_to_bytes('files', fileName).content
-                except azure.common.AzureMissingResourceHttpError:
-                    pass
+            return None
 
         return data
 

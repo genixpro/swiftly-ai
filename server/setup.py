@@ -17,7 +17,6 @@ requires = [
     'cornice',
     'pymongo',
     'pillow',
-    'azure-storage',
     'filetype',
     'python-docx',
     'matplotlib',
@@ -67,7 +66,8 @@ setup(
     package_data={
         'appraisal': [
             'tests/data/*.json',
-            "gcloud-storage-key.json"
+            "gcloud-storage-key.json",
+            "model_configuration/*.json"
         ]
     },
     install_requires=requires,
@@ -85,6 +85,9 @@ setup(
             'appraisal_load_test_cases = appraisal.bin.load_test_cases:main',
             'appraisal_load_sample_data = appraisal.bin.load_sample_data:main',
             'appraisal_save_sample_data = appraisal.bin.save_sample_data:main',
+            'appraisal_dump_files = appraisal.bin.dump_files:main',
+            'appraisal_import_files = appraisal.bin.import_files:main',
+            'appraisal_run_migrations = appraisal.bin.run_migrations:main',
         ]
     },
 )

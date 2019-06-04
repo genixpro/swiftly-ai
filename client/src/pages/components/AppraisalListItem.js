@@ -20,9 +20,6 @@ class AppraisalListItem extends React.Component
             <tr onClick={(evt) => this.props.history.push("/appraisal/" + this.props.appraisal._id + "/upload")} className={"appraisal-list-item"}>
                 <td>{appraisal.name}</td>
                 <td>{appraisal.address}</td>
-                <td>{appraisal.city}</td>
-                <td>{appraisal.region}</td>
-                <td>{appraisal.country}</td>
 
                 <td className={"action-column"}>
                     <Button

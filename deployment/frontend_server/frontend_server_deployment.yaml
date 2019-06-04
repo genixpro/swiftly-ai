@@ -1,0 +1,33 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  labels:
+    app: swiftly-__SWIFTLY_ENV__-frontend
+  name: swiftly-__SWIFTLY_ENV__-frontend
+  namespace: default
+spec:
+  selector:
+    matchLabels:
+      app: swiftly-__SWIFTLY_ENV__-frontend
+  strategy:
+    rollingUpdate:
+      maxSurge: 2
+      maxUnavailable: 0
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: swiftly-__SWIFTLY_ENV__-frontend
+    spec:
+      containers:
+      - image: gcr.io/appraisalai/swiftly:__REVISION_ID__-__SWIFTLY_ENV__-frontend
+        imagePullPolicy: IfNotPresent
+        name: eb-appraisal-sha256
+        resources:
+          requests:
+            cpu: 100m
+            memory: 250Mi
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      terminationGracePeriodSeconds: 30

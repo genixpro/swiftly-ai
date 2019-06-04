@@ -23,6 +23,9 @@ import ManagementExpenseModeSelector from "./ManagementExpenseModeSelector";
 import LeasingComissionModeSelector from "./LeasingCommissionModeSelector";
 import ManagementRecoveryModeSelector from "./ManagementRecoveryModeSelector";
 import DirectComparisonMetricSelector from "./DirectComparisonMetricSelector";
+import TenancyTypeSelector from "./TenancyTypeSelector";
+import TenantNameSelector from "./TenantNameSelector";
+import {DropTarget} from "react-dnd/lib/index";
 
 class FieldDisplayEdit extends React.Component
 {
@@ -186,20 +189,28 @@ class FieldDisplayEdit extends React.Component
     }
 
 
-    cleanValue(value)
+    static cleanValue(type, value)
     {
-        if (this.props.type === 'currency' ||
-            this.props.type === 'number' ||
-            this.props.type === 'percent' ||
-            this.props.type === 'length' ||
-            this.props.type === 'area' ||
-            this.props.type === 'acres' ||
-            this.props.type === 'months'
+        if (type === 'currency' ||
+            type === 'number' ||
+            type === 'percent' ||
+            type === 'length' ||
+            type === 'area' ||
+            type === 'acres' ||
+            type === 'months'
         )
         {
             const isNegative = value.toString().indexOf("-") !== -1 || value.toString().indexOf("(") !== -1 || value.toString().indexOf(")") !== -1;
 
-            const cleanText = value.toString().replace(/[^0-9.]/g, "");
+            let cleanText = value.toString().replace(/[^0-9.]/g, "");
+
+            if (type === 'number' ||
+                type === 'length' ||
+                type === 'area' ||
+                type === 'months')
+            {
+                cleanText = cleanText.replace(/\.[0-9]*/g, "");
+            }
 
             if (cleanText === "")
             {
@@ -207,6 +218,7 @@ class FieldDisplayEdit extends React.Component
             }
 
             try {
+
                 if (isNegative)
                 {
                     return -Number(cleanText);
@@ -220,7 +232,7 @@ class FieldDisplayEdit extends React.Component
                 return null;
             }
         }
-        else if(this.props.type === 'tags')
+        else if(type === 'tags')
         {
             if (!value)
             {
@@ -275,7 +287,22 @@ class FieldDisplayEdit extends React.Component
         // if (newValue)
         // {
         this.setState({value: newValue});
-        this.props.onChange(this.cleanValue(newValue));
+        this.props.onChange(FieldDisplayEdit.cleanValue(this.props.type, newValue));
+        // }
+    }
+
+    tenantNameInputUpdated(newValue)
+    {
+        this.setState({value: newValue});
+        this.props.onChange(newValue);
+    }
+
+    zoneInputUpdated(newValue)
+    {
+        // if (newValue)
+        // {
+        this.setState({value: newValue});
+        this.props.onChange(newValue);
         // }
     }
 
@@ -288,8 +315,8 @@ class FieldDisplayEdit extends React.Component
 
             if (this.props.onChange)
             {
-                this.setState({value: this.formatValue(this.cleanValue(this.state.value)) });
-                this.props.onChange(this.cleanValue(this.state.value));
+                this.setState({value: this.formatValue(FieldDisplayEdit.cleanValue(this.props.type, this.state.value)) });
+                this.props.onChange(FieldDisplayEdit.cleanValue(this.props.type, this.state.value));
             }
 
             if (this.inputElem)
@@ -519,7 +546,7 @@ class FieldDisplayEdit extends React.Component
                             title={this.props.title || this.props.placeholder}
                             disabled={!this.props.edit}
                             value={this.state.isEditing ? this.state.value : this.props.value}
-                            onChange={(newValue) => this.selectInputUpdated(newValue) }
+                            onChange={(newValue) => this.zoneInputUpdated(newValue) }
                             onBlur={() => this.finishEditing()}
                         /> : null
                 }
@@ -530,6 +557,28 @@ class FieldDisplayEdit extends React.Component
                             disabled={!this.props.edit}
                             value={this.state.isEditing ? this.state.value : this.props.value}
                             onChange={(newValue) => this.selectInputUpdated(newValue) }
+                            onBlur={() => this.finishEditing()}
+                            innerRef={(inputElem) => this.inputElem = inputElem}
+                        /> : null
+                }
+                {
+                    this.props.type === "tenancyType" ?
+                        <TenancyTypeSelector
+                            value={this.state.isEditing ? this.state.value : this.props.value}
+                            title={this.props.title || this.props.placeholder}
+                            disabled={!this.props.edit}
+                            onChange={(newValue) => this.selectInputUpdated(newValue) }
+                            onBlur={() => this.finishEditing()}
+                            innerRef={(inputElem) => this.inputElem = inputElem}
+                        /> : null
+                }
+                {
+                    this.props.type === "tenantName" ?
+                        <TenantNameSelector
+                            value={this.state.isEditing ? this.state.value : this.props.value}
+                            title={this.props.title || this.props.placeholder}
+                            disabled={!this.props.edit}
+                            onChange={(newValue) => this.tenantNameInputUpdated(newValue) }
                             onBlur={() => this.finishEditing()}
                             innerRef={(inputElem) => this.inputElem = inputElem}
                         /> : null
@@ -579,5 +628,43 @@ class FieldDisplayEdit extends React.Component
     }
 }
 
+/**
+ * Your Component
+ */
+function FieldDisplayEditWrapper({ isDragging, connectDropTarget, ...props}) {
+    return connectDropTarget(<div><FieldDisplayEdit {...props} /></div>);
+}
 
-export default FieldDisplayEdit;
+/**
+ * Implement the drag source contract.
+ */
+const dragTarget = {
+    drop: (props, monitor) => {
+        if (props.type === 'currency' ||
+            props.type === 'number' ||
+            props.type === 'percent' ||
+            props.type === 'length' ||
+            props.type === 'area' ||
+            props.type === 'acres' ||
+            props.type === 'months' ||
+            props.type === 'text'
+        )
+        {
+            props.onChange(FieldDisplayEdit.cleanValue(props.type, monitor.getItem().word.word), [monitor.getItem().word.index])
+        }
+    }
+};
+
+
+function collect(connect, monitor) {
+    return {
+        connectDropTarget: connect.dropTarget(),
+        isOver: monitor.isOver(),
+    }
+}
+
+// Export the wrapped component:
+const DroppableFieldDisplayEdit = DropTarget("Word", dragTarget, collect)(FieldDisplayEditWrapper);
+
+
+export default DroppableFieldDisplayEdit;

@@ -1,19 +1,28 @@
 steps:
 - name: 'gcr.io/cloud-builders/docker'
+  id: Build Frontend Docker Image
   args: ["build", "-t", "gcr.io/appraisalai/swiftly:$REVISION_ID-$_SWIFTLY_ENV-frontend", ".", "--build-arg", "SWIFTLY_ENV=$_SWIFTLY_ENV", "-f", "deployment/frontend_server/Dockerfile"]
   timeout: 7200s
 - name: 'gcr.io/cloud-builders/docker'
+  id: Upload Docker Image
   args: ["push", "gcr.io/appraisalai/swiftly:$REVISION_ID-$_SWIFTLY_ENV-frontend"]
   timeout: 3600s
 - name: 'gcr.io/cloud-builders/kubectl'
   args:
-  - 'set'
-  - 'image'
-  - 'deployment'
-  - 'swiftly-$_SWIFTLY_ENV-frontend'
-  - 'eb-appraisal-sha256=gcr.io/appraisalai/swiftly:$REVISION_ID-$_SWIFTLY_ENV-frontend'
+  - 'cluster-info'
   env:
   - 'CLOUDSDK_COMPUTE_ZONE=us-central1-a'
   - 'CLOUDSDK_CONTAINER_CLUSTER=swiftly-cluster-api'
+  timeout: 30s
+- name: 'gcr.io/cloud-builders/gcloud'
+  id: Update Frontend Server Deployment
+  entrypoint: /bin/bash
+  args:
+  - "./deployment/frontend_server/update_frontend_server.sh"
+  env:
+  - 'CLOUDSDK_COMPUTE_ZONE=us-central1-a'
+  - 'CLOUDSDK_CONTAINER_CLUSTER=swiftly-cluster-api'
+  - 'SWIFTLY_ENV=$_SWIFTLY_ENV'
+  - 'REVISION_ID=$REVISION_ID'
   timeout: 600s
 timeout: 15000s

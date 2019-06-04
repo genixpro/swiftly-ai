@@ -34,7 +34,9 @@ class AppraisalModel extends BaseModel
 
     static client = new StringField();
     static location = new GenericField();
-    static imageUrl = new StringField();
+    static imageUrl = new StringField(); // Deprecated. DO NOT USE.
+
+    static imageUrls = new ListField(new StringField());
     static effectiveDate = new DateField();
     static propertyType = new StringField();
     static industrialSubType = new StringField();
@@ -45,6 +47,8 @@ class AppraisalModel extends BaseModel
     static legalDescription = new StringField();
     static zoning = new StringField();
     static propertyTags = new ListField(new StringField());
+    static tenancyType = new StringField();
+
     static units = new ListField(new ModelField(UnitModel));
     static incomeStatement = new ModelField(IncomeStatementModel);
     static discountedCashFlowInputs = new ModelField(DiscountedCashFlowInputsModel);

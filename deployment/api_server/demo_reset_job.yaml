@@ -1,0 +1,23 @@
+apiVersion: batch/v1beta1
+kind: CronJob
+metadata:
+  name: swiftly-demo-reset-__SWIFTLY_ENV__
+spec:
+  schedule: "0 0 * * *"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: eb-appraisal-sha256
+            image: gcr.io/appraisalai/swiftly:__REVISION_ID__-__SWIFTLY_ENV__-api
+            command: ["appraisal_load_sample_data",  "__SWIFTLY_ENV__.ini", "google-oauth2|117335766228984134502"]
+            resources:
+              requests:
+                cpu: 250m
+                memory: 512Mi
+          restartPolicy: OnFailure
+      backoffLimit: 4
+
+
+

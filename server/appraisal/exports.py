@@ -257,13 +257,19 @@ class ComparableSalesDetailedWordFile(ExportAPI):
         accessToken = getAccessTokenForRequest(self.request)
 
         for comp in comparables:
-            if comp.imageUrl == "" or comp.imageUrl is None:
+            newUrls = []
+            if len(comp.imageUrls) == 0:
                 image = requests.get(f"https://maps.googleapis.com/maps/api/streetview?key=AIzaSyBRmZ2N4EhJjXmC29t3VeiLUQssNG-MY1I&size=640x480&source=outdoor&location={comp.address}").content
+                data64 = u''.join(str(base64.encodebytes(image), 'utf8'))
+                newUrls.append(u'data:%s;base64,%s' % ("image/jpeg", data64))
             else:
-                image = requests.get(comp.imageUrl + f"?access_token=" + accessToken).content
+                for imageUrl in comp.imageUrls:
+                    image = requests.get(imageUrl + f"?access_token=" + accessToken).content
 
-            data64 = u''.join(str(base64.encodebytes(image), 'utf8'))
-            comp.imageUrl = u'data:%s;base64,%s' % ("image/jpeg", data64)
+                    data64 = u''.join(str(base64.encodebytes(image), 'utf8'))
+                    newUrls.append(u'data:%s;base64,%s' % ("image/jpeg", data64))
+                    break
+            comp.imageUrls = newUrls
 
         data = {
             "appraisal": json.loads(appraisal.to_json()),

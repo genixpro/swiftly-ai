@@ -1,5 +1,5 @@
 import React from 'react';
-import {Table, Button } from 'reactstrap';
+import {Table, Button, Collapse} from 'reactstrap';
 import _ from 'underscore';
 import 'react-datetime/css/react-datetime.css'
 import UnitModel from "../../models/UnitModel";
@@ -8,23 +8,80 @@ import AreaFormat from "./AreaFormat";
 import PropTypes from "prop-types";
 import AppraisalModel from "../../models/AppraisalModel";
 import IntegerFormat from "./IntegerFormat";
+import UnitDetailsEditor from "./UnitDetailsEditor";
+import {
+    sortableContainer,
+    sortableElement,
+    sortableHandle,
+} from 'react-sortable-hoc';
+import arrayMove from 'array-move';
+
+const DragHandle = sortableHandle(() => <i className={"fa fa-bars units-table-drag-handle"}/>);
 
 class UnitRow extends React.Component
 {
     static instance = 0;
 
-    state = {};
+    state = {
+        collapse: false,
+        collapseAnimating: false
+    };
 
     static propTypes = {
         unit: PropTypes.instanceOf(UnitModel).isRequired,
         unitIndex: PropTypes.number.isRequired,
         onUnitClicked: PropTypes.func.isRequired,
+        onChangeUnit: PropTypes.func.isRequired,
         removeUnit: PropTypes.func.isRequired,
         allowSelection: PropTypes.bool.isRequired,
         fields: PropTypes.arrayOf(PropTypes.string),
         fieldConfiguration: PropTypes.object,
-        selectedUnit: PropTypes.instanceOf(UnitModel)
+        history: PropTypes.object
     };
+
+    componentDidMount()
+    {
+        if (this.props.history && this.props.allowSelection && this.getQueryVariable("unit").toString() === this.props.unitIndex.toString())
+        {
+            this.setState({collapse: true});
+        }
+    }
+
+    getQueryVariable(variable)
+    {
+        let query = this.props.history.location.search.substring(1);
+        let vars = query.split('&');
+        for (let i = 0; i < vars.length; i++) {
+            let pair = vars[i].split('=');
+            if (decodeURIComponent(pair[0]) === variable) {
+                return decodeURIComponent(pair[1]);
+            }
+        }
+        console.log('Query variable %s not found', variable);
+        return "";
+    }
+
+    toggleDetails()
+    {
+        this.setState({collapse: !this.state.collapse, collapseAnimating: true});
+
+        setTimeout(() =>
+        {
+            this.setState({collapseAnimating: false});
+        }, 750)
+    }
+
+    onUnitClicked()
+    {
+        if (this.props.allowSelection)
+        {
+            this.toggleDetails();
+        }
+        else
+        {
+            this.props.onUnitClicked(this.props.unit.unitNumber);
+        }
+    }
 
     render()
     {
@@ -32,12 +89,18 @@ class UnitRow extends React.Component
         const unitIndex = this.props.unitIndex;
 
         let selectedClass = "";
-        if (this.props.selectedUnit && unitInfo.unitNumber === this.props.selectedUnit.unitNumber)
+        if (this.state.collapse)
         {
             selectedClass = " selected-unit-row";
         }
 
-        return <tr onClick={(evt) => this.props.onUnitClicked(unitInfo.unitNumber)} className={"unit-row " + selectedClass}>
+        return [<tr onClick={(evt) => this.onUnitClicked()} className={"unit-row " + selectedClass} key={0}>
+            {
+                this.props.allowSelection ?
+                    <td>
+                        <DragHandle />
+                    </td> : null
+            }
             {
                 this.props.fields.map((field, fieldIndex) =>
                 {
@@ -53,9 +116,52 @@ class UnitRow extends React.Component
                     <i className="fa fa-trash-alt"></i>
                 </Button>
             </td> : null}
-        </tr>;
+        </tr>,
+            (this.props.allowSelection) ? <tr key={1} className={"unit-details-row"}>
+                <td colSpan={this.props.fields.length + 2}>
+                    <Collapse isOpen={this.state.collapse}>
+                        {
+                            this.state.collapse || this.state.collapseAnimating ?
+                                <UnitDetailsEditor
+                                    unit={this.props.unit}
+                                    appraisal={this.props.appraisal}
+                                    onChange={(newUnit) => this.props.onChangeUnit(newUnit)}
+                                /> : null
+                        }
+                    </Collapse>
+                </td>
+            </tr> : null
+        ];
     }
 }
+
+const SortableItem = sortableElement(({value, index, fields, fieldConfiguration, appraisal, onChangeUnit, onUnitClicked, removeUnit, allowSelection, history}) =>
+{
+    const unit = value;
+    const unitIndex = index;
+
+    return <UnitRow
+        key={unitIndex}
+        unit={unit}
+        unitIndex={unitIndex}
+        onChangeUnit={onChangeUnit}
+        fields={fields}
+        appraisal={appraisal}
+        fieldConfiguration={fieldConfiguration}
+        onUnitClicked={onUnitClicked}
+        removeUnit={removeUnit}
+        allowSelection={allowSelection}
+        history={history}
+    />
+    // <li>
+    //     <DragHandle />
+    //     {value}
+    // </li>
+});
+
+const SortableContainer = sortableContainer(({children}) => {
+    return <tbody>{children}</tbody>;
+});
 
 
 
@@ -74,13 +180,14 @@ class UnitsTable extends React.Component
         allowSelection: PropTypes.bool.isRequired,
         onCreateUnit: PropTypes.func,
         onUnitClicked: PropTypes.func,
+        onChangeUnits: PropTypes.func,
+        onChangeUnitOrder: PropTypes.func,
         onRemoveUnit: PropTypes.func,
         fields: PropTypes.arrayOf(PropTypes.string),
         showStabilizedStats: PropTypes.bool
     };
 
     state = {
-        selectedUnit: null
     };
 
     onUnitClicked(unitNum)
@@ -134,10 +241,22 @@ class UnitsTable extends React.Component
         }
     }
 
+    onChangeUnit(unitIndex, newUnit)
+    {
+        this.props.onUnitChanged(unitIndex, newUnit);
+    }
+
+    onSortEnd = ({oldIndex, newIndex}) => {
+        const units = this.props.appraisal.units;
+        this.props.appraisal.units = arrayMove(units, oldIndex, newIndex);
+        this.props.onChangeUnitOrder(this.props.appraisal.units);
+    };
+
+
     renderNewUnitRow()
     {
         return <tr className={"new-unit-row"}>
-            <td colSpan={5}>
+            <td colSpan={6}>
                 <Button
                     className={"new-unit-button"}
                     color="secondary"
@@ -296,9 +415,13 @@ class UnitsTable extends React.Component
 
         return (
             (this.props.appraisal) ?
+                <div>
                 <Table hover={!!this.props.onUnitClicked} responsive className={"units-table " + (this.props.onUnitClicked ? "allow-selection" : "")}>
                     <thead>
                     <tr className={"header-row"}>
+                        {
+                            this.props.allowSelection ? <td /> : null
+                        }
                         {
                             fields.map((field, fieldIndex) =>
                             {
@@ -309,25 +432,32 @@ class UnitsTable extends React.Component
                     </tr>
 
                     </thead>
-                    <tbody>
-                    {
-                        this.props.appraisal && this.props.appraisal.units && Object.values(this.props.appraisal.units).map((unit, unitIndex) => {
-                            return <UnitRow
-                                key={unitIndex}
-                                unit={unit}
-                                unitIndex={unitIndex}
-                                selectedUnit={this.props.selectedUnit}
+
+                    <SortableContainer onSortEnd={this.onSortEnd} useDragHandle>
+                        {this.props.appraisal.units.map((unit, unitIndex) => (
+                            <SortableItem
+                                key={`unit-${unitIndex}`}
+                                index={unitIndex}
+                                value={unit}
                                 fields={fields}
+                                appraisal={this.props.appraisal}
+                                onChangeUnit={(newUnit) => this.onChangeUnit(unitIndex, newUnit)}
                                 fieldConfiguration={fieldConfiguration}
                                 onUnitClicked={this.onUnitClicked.bind(this)}
                                 removeUnit={this.removeUnit.bind(this)}
                                 allowSelection={this.props.allowSelection}
-                            />;
-                        })
-                    }
+                                history={this.props.history}
+
+                            />
+                        ))}
+                    </SortableContainer>
+                    <tfoot>
                     {
                         this.props.statsMode === 'total' || this.props.statsMode === 'all' ?
                             <tr className={"first-total-row " + (this.props.statsMode === 'total' ? "last-total-row" : "")}>
+                                {
+                                    this.props.allowSelection ? <td /> : null
+                                }
                                 <td className={"unit-number-column"}></td>
                                 <td className={"tenant-name-column"}><strong>Total</strong></td>
                                 <td className={"square-footage-column"}>
@@ -354,8 +484,9 @@ class UnitsTable extends React.Component
                             this.renderNewUnitRow()
                             : null
                     }
-                    </tbody>
+                    </tfoot>
                 </Table>
+                </div>
                 : null
         );
     }

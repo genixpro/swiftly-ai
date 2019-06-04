@@ -5,7 +5,7 @@ import AppraisalContentHeader from "./components/AppraisalContentHeader";
 import IndustrialSubtypeSelector from "./components/IndustrialSubtypeSelector";
 import LandSubtypeSelector from "./components/LandSubtypeSelector";
 import ZoneDescriptionEditor from "./components/ZoneDescriptionEditor";
-import UploadableImage from "./components/UploadableImage";
+import UploadableImageSet from "./components/UploadableImageSet";
 import AreaFormat from "./components/AreaFormat";
 import CurrencyFormat from "./components/CurrencyFormat";
 import PercentFormat from "./components/PercentFormat";
@@ -60,19 +60,13 @@ class ViewBuildingInformation extends React.Component
                                                         <strong>Picture</strong>
                                                     </td>
                                                     <td>
-                                                        {
-                                                            (this.props.appraisal.imageUrl) ?
-                                                                <UploadableImage
-                                                                    editable={this.props.edit}
-                                                                    value={this.props.appraisal.imageUrl + `?access_token=${Auth.getAccessToken()}`}
-                                                                    onChange={(newUrl) => this.changeAppraisalField('imageUrl', newUrl)} />
-                                                                :
-                                                                    (this.props.appraisal.address && this.props.appraisal.address !== "") ?
-                                                                        <UploadableImage value={`https://maps.googleapis.com/maps/api/streetview?key=AIzaSyBRmZ2N4EhJjXmC29t3VeiLUQssNG-MY1I&size=640x480&source=outdoor&location=${this.props.appraisal.address}`}
-                                                                                         onChange={(newUrl) => this.changeAppraisalField('imageUrl', newUrl)}
-                                                                        />
-                                                                        : <UploadableImage onChange={(newUrl) => this.changeAppraisalField('imageUrl', newUrl)} />
-                                                        }
+                                                        <UploadableImageSet
+                                                            editable={this.props.edit}
+                                                            address={this.props.appraisal.address}
+                                                            accessToken={Auth.getAccessToken()}
+                                                            value={this.props.appraisal.imageUrls}
+                                                            onChange={(newUrls) => this.changeAppraisalField('imageUrls', newUrls)}
+                                                        />
                                                     </td>
                                                 </tr>
                                                 {this.renderFieldRow("Name", "name")}
@@ -87,6 +81,7 @@ class ViewBuildingInformation extends React.Component
 
                                                 {this.renderFieldRow("Property Type", "propertyType", "propertyType")}
                                                 {this.renderFieldRow("Sub Type", "propertyTags", "tags")}
+                                                {this.renderFieldRow("Tenancy Is", "tenancyType", "tenancyType")}
                                                 {this.renderFieldRow("Lot Size", "sizeOfLand", "acres")}
                                                 <tr>
                                                     <td>

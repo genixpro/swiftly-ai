@@ -2,32 +2,53 @@ from pyramid.config import Configurator
 import pymongo
 from appraisal.authorization import CustomAuthenticationPolicy
 from pyramid.authorization import ACLAuthorizationPolicy
+import collections
 from mongoengine import connect
-from azure.storage.blob import BlockBlobService, PublicAccess
 import os
+import json
 import pkg_resources
 from google.cloud import storage
 
-# You can connect to a real mongo server instance by your own.
+
+def conditional_http_tween_factory(handler, registry):
+    def conditional_http_tween(request):
+        response = handler(request)
+
+        if request.method == 'GET':
+            # If the Last-Modified header has been set, we want to enable the
+            # conditional response processing.
+            if response.last_modified is not None:
+                response.conditional_response = True
+
+            # We want to only enable the conditional machinery if either we
+            # were given an explicit ETag header by the view or we have a
+            # buffered response and can generate the ETag header ourself.
+            if response.etag is not None:
+                response.conditional_response = True
+            elif (isinstance(response.app_iter, collections.abc.Sequence) and
+                    len(response.app_iter) == 1):
+                response.conditional_response = True
+                response.md5_etag()
+
+        return response
+    return conditional_http_tween
 
 
 def main(global_config, **settings):
     """ This function returns a Pyramid WSGI application.
     """
     with Configurator(settings=settings) as config:
-        config.scan()
+        config.scan(ignore="appraisal.libs")
 
         config.add_renderer('bson', 'appraisal.bson_renderer.BSONRenderer')
+
+        config.add_tween("appraisal.conditional_http_tween_factory")
 
         auth_policy = CustomAuthenticationPolicy(settings)
         config.set_authentication_policy(auth_policy)
 
         acl_policy = ACLAuthorizationPolicy()
         config.set_authorization_policy(acl_policy)
-
-        # Create the BlockBlockService that is used to call the Blob service for the storage account
-        # config.registry.azureBlobStorage =BlockBlobService(account_name=settings['storage.azureBucket'], account_key=settings['storage.azureAccountKey'])
-        config.registry.azureBlobStorage = None
 
         os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = pkg_resources.resource_filename("appraisal", "gcloud-storage-key.json")
 
@@ -41,6 +62,7 @@ def main(global_config, **settings):
         registry.apiUrl = settings.get('api.url')
 
         registry.vectorServerURL = settings.get('vectorServerURL')
+        registry.modelConfig = json.load(pkg_resources.resource_stream("appraisal", f"model_configuration/{settings.get('modelConfig')}"))
 
         connect(settings.get('db.name'), host=settings.get('db.uri'))
 

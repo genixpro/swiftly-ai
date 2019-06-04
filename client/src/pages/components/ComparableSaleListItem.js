@@ -2,7 +2,7 @@ import React from 'react';
 import { Button, Collapse, CardHeader, CardTitle, Row, Col} from 'reactstrap';
 import FieldDisplayEdit from "./FieldDisplayEdit";
 import axios from "axios/index";
-import UploadableImage from "./UploadableImage";
+import UploadableImageSet from "./UploadableImageSet";
 import NumberFormat from 'react-number-format';
 import PropTypes from "prop-types";
 import ComparableSaleModel from "../../models/ComparableSaleModel";
@@ -68,7 +68,8 @@ class ComparableSaleListItemHeaderColumn extends React.Component
         renders: PropTypes.arrayOf(PropTypes.func).isRequired,
         noValueTexts: PropTypes.arrayOf(PropTypes.string).isRequired,
         fields: PropTypes.arrayOf(PropTypes.string).isRequired,
-        comparableSale: PropTypes.instanceOf(ComparableSaleModel).isRequired
+        comparableSale: PropTypes.instanceOf(ComparableSaleModel).isRequired,
+        spacers: PropTypes.arrayOf(PropTypes.object)
     };
 
     render()
@@ -95,11 +96,13 @@ class ComparableSaleListItemHeaderColumn extends React.Component
                             {
                                 this.props.renders[fieldIndex](this.props.comparableSale[field])
                             }
-                            {fieldIndex !== this.props.fields.length - 1 ? <br /> : null}
+                            {fieldIndex !== this.props.fields.length - 1 ?
+                                (!_.isUndefined(this.props.spacers[fieldIndex]) ? this.props.spacers[fieldIndex] : <br />)
+                                    : null}
                             </span>
                         : <span className={"no-data"}>
-                            <span>n/a</span>
-                            {fieldIndex !== this.props.fields.length - 1 ? <br /> : null}
+                            <span>{!_.isUndefined(this.props.noValueTexts[fieldIndex]) ? this.props.noValueTexts[fieldIndex] : "n/a"}</span>
+                            {fieldIndex !== this.props.fields.length - 1 ? (!_.isUndefined(this.props.spacers[fieldIndex]) ? "" : <br />) : null}
                         </span>
                 })
             }
@@ -367,6 +370,24 @@ class ComparableSaleListItem extends React.Component
             pricePerBedroom: {
                 render: (value) => <CurrencyFormat value={value} cents={false}/>,
                 size: "middle"
+            },
+            shippingDoorsTruckLevel: {
+                render: (value) => <span><IntegerFormat value={value}/> T/L</span>,
+                noValueText: "",
+                spacer: <span>, </span>,
+                size: "middle"
+            },
+            shippingDoorsDoubleMan: {
+                render: (value) => <span><IntegerFormat value={value}/> D/M</span>,
+                noValueText: "",
+                spacer: <span>, </span>,
+                size: "middle"
+            },
+            shippingDoorsDriveIn: {
+                render: (value) => <span><IntegerFormat value={value}/> D/I</span>,
+                noValueText: "",
+                spacer: <span>, </span>,
+                size: "middle"
             }
         };
 
@@ -428,6 +449,7 @@ class ComparableSaleListItem extends React.Component
                                                 renders={headerFieldList.map((field) => headerConfigurations[field].render)}
                                                 noValueTexts={headerFieldList.map((field) => headerConfigurations[field].noValueText)}
                                                 fields={headerFieldList}
+                                                spacers={headerFieldList.map((field) => headerConfigurations[field].spacer)}
                                                 comparableSale={this.props.comparableSale}/>
                                         })
                                     }
@@ -438,24 +460,14 @@ class ComparableSaleListItem extends React.Component
                     <Collapse isOpen={_.isUndefined(this.state.detailsOpen) ? this.state.openByDefault : this.state.detailsOpen}>
                         <div className={`card-body comparable-sale-list-item-body ${editableClass}`}>
                                 <div className={"comparable-sale-list-item-left-column"}>
-                                    {
-                                    (comparableSale.imageUrl) ?
-                                    <UploadableImage
+                                    <UploadableImageSet
                                         editable={this.props.edit}
-                                        value={comparableSale.imageUrl + `?access_token=${Auth.getAccessToken()}`}
-                                        onChange={(newUrl) => this.changeComparableField('imageUrl', newUrl)} />
-                                    :
-                                    (comparableSale.address && comparableSale.address !== "") ?
-                                    <UploadableImage
-                                        editable={this.props.edit}
-                                        value={`https://maps.googleapis.com/maps/api/streetview?key=AIzaSyBRmZ2N4EhJjXmC29t3VeiLUQssNG-MY1I&size=640x480&source=outdoor&location=${comparableSale.address}`}
-                                        onChange={(newUrl) => this.changeComparableField('imageUrl', newUrl)}
+                                        address={this.props.comparableSale.address}
+                                        accessToken={Auth.getAccessToken()}
+                                        value={this.props.comparableSale.imageUrls}
+                                        onChange={(newUrls) => this.changeComparableField('imageUrls', newUrls)}
                                     />
-                                    : <UploadableImage
-                                            editable={this.props.edit}
-                                            onChange={(newUrl) => this.changeAppraisalField('imageUrl', newUrl)}
-                                        />
-                                    }
+
                                     {
                                         this.props.onRemoveDCAClicked ? <div className={"comparable-list-boxes"}>
                                             <span>Include in Direct Comparison&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
@@ -505,6 +517,15 @@ class ComparableSaleListItem extends React.Component
                                         title="Sub Type"
                                         field="propertyTags"
                                         fieldType="tags"
+                                        edit={this.props.edit}
+                                        comparableSale={comparableSale}
+                                        onChange={this.changeComparableField.bind(this)}
+                                    />
+
+                                    <ComparableSaleListItemField
+                                        title="Tenancy Type"
+                                        field="tenancyType"
+                                        fieldType="tenancyType"
                                         edit={this.props.edit}
                                         comparableSale={comparableSale}
                                         onChange={this.changeComparableField.bind(this)}
@@ -782,15 +803,44 @@ class ComparableSaleListItem extends React.Component
                                         onChange={this.changeComparableField.bind(this)}
                                     />
 
-                                    <ComparableSaleListItemField
-                                        title="Shipping Doors"
-                                        field="shippingDoors"
-                                        fieldType="text"
-                                        propertyType={"industrial"}
-                                        edit={this.props.edit}
-                                        comparableSale={comparableSale}
-                                        onChange={this.changeComparableField.bind(this)}
-                                    />
+                                    {
+                                        this.state.comparableSale.propertyType === 'industrial' ?
+                                            [
+                                                <span className={"comparable-field-label"} key={0} >Shipping Doors:</span>,
+                                                <div className={"shipping-doors"} key={1}>
+                                                    <div className={"shipping-doors-line"}>
+                                                        <span>Double Man:</span>
+                                                        <FieldDisplayEdit
+                                                            type={"number"}
+                                                            edit={this.props.edit}
+                                                            placeholder={"Shipping Doors Double Man"}
+                                                            value={comparableSale.shippingDoorsDoubleMan}
+                                                            onChange={(newValue) => this.changeComparableField('shippingDoorsDoubleMan', newValue)}
+                                                        />
+                                                    </div>
+                                                    <div className={"shipping-doors-line"}>
+                                                        <span>Drive In:</span>
+                                                        <FieldDisplayEdit
+                                                            type={"number"}
+                                                            edit={this.props.edit}
+                                                            placeholder={"Shipping Doors Drive In"}
+                                                            value={comparableSale.shippingDoorsDriveIn}
+                                                            onChange={(newValue) => this.changeComparableField('shippingDoorsDriveIn', newValue)}
+                                                        />
+                                                    </div>
+                                                    <div className={"shipping-doors-line"}>
+                                                        <span>Truck Level:</span>
+                                                        <FieldDisplayEdit
+                                                            type={"number"}
+                                                            edit={this.props.edit}
+                                                            placeholder={"Shipping Doors Truck Level"}
+                                                            value={comparableSale.shippingDoorsTruckLevel}
+                                                            onChange={(newValue) => this.changeComparableField('shippingDoorsTruckLevel', newValue)}
+                                                        />
+                                                    </div>
+                                                </div>
+                                            ] : null
+                                    }
 
                                     <ComparableSaleListItemField
                                         title="Zoning"

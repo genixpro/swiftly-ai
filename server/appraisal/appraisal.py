@@ -10,6 +10,7 @@ from pyramid.security import Authenticated
 from pyramid.authorization import Allow, Deny, Everyone
 from appraisal.authorization import checkUserOwnsObject
 from pyramid.httpexceptions import HTTPForbidden
+from .models.comparable_lease import ComparableLease
 import jsondiff
 
 @resource(collection_path='/appraisal/', path='/appraisal/{id}', renderer='bson', cors_enabled=True, cors_origins="*", permission="everything")
@@ -126,3 +127,42 @@ class AppraisalAPI(object):
                 v = self.cleanDiffKeys(v)
             new[str(k)] = v
         return new
+
+
+@resource(path='/appraisal/{id}/convert_tenants', renderer='bson', cors_enabled=True, cors_origins="*", permission="everything")
+class ConvertTenantsToComparables(object):
+
+    def __init__(self, request, context=None):
+        self.request = request
+
+
+    def __acl__(self):
+        return [
+            (Allow, Authenticated, 'everything'),
+            (Deny, Everyone, 'everything')
+        ]
+
+    def post(self):
+        appraisalId = self.request.matchdict['id']
+
+        appraisal = Appraisal.objects(id=appraisalId).first()
+
+        auth = checkUserOwnsObject(self.request.authenticated_userid, self.request.effective_principals, appraisal)
+        if not auth:
+            raise HTTPForbidden("You do not have access to this appraisal.")
+
+        leases = []
+        for unit in appraisal.units:
+            if not unit.isVacantForStabilizedStatement and not unit.isVacantInFirstYear:
+                lease = ComparableLease()
+
+                lease.fillDataFromAppraisal(appraisal, unit)
+
+                lease.owner = self.request.authenticated_userid
+
+                leases.append(lease)
+
+        for lease in leases:
+            lease.save()
+
+        return {}

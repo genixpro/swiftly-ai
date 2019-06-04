@@ -13,7 +13,6 @@ import bz2
 import sys
 import os
 import json
-from azure.storage.blob import BlockBlobService, PublicAccess
 import os
 from google.cloud import storage
 
@@ -88,16 +87,16 @@ def updateImageUrl(jointIdMap, oldUrl, oldEnv, newEnv):
     return newUrl
 
 
-def downloadData(storageBucket, azureBlobStorage):
+def downloadData(storageBucket):
     appraisals = loadObjects(Appraisal)
     files = loadObjects(File)
     fileContents = {}
     fileImages = {}
     for file in files:
         print(f"Downloading file data for {str(file.id)}")
-        fileContents[str(file.id)] = file.downloadFileData(storageBucket, azureBlobStorage)
+        fileContents[str(file.id)] = file.downloadFileData(storageBucket)
         if file.pages:
-            fileImages[str(file.id)] = [file.downloadRenderedImage(page, storageBucket, azureBlobStorage) for page in range(file.pages)]
+            fileImages[str(file.id)] = [file.downloadRenderedImage(page, storageBucket) for page in range(file.pages)]
 
     tags = loadObjects(PropertyTag)
     zones = loadObjects(Zone)
@@ -108,8 +107,8 @@ def downloadData(storageBucket, azureBlobStorage):
     imageDatasCropped = {}
     for image in images:
         print(f"Downloading image data for {str(image.id)}")
-        imageDatas[str(image.id)] = image.downloadImageData(storageBucket, azureBlobStorage, cropped=False)
-        imageDatasCropped[str(image.id)] = image.downloadImageData(storageBucket, azureBlobStorage, cropped=True)
+        imageDatas[str(image.id)] = image.downloadImageData(storageBucket, cropped=False)
+        imageDatasCropped[str(image.id)] = image.downloadImageData(storageBucket, cropped=True)
 
     return {
         "appraisals": appraisals,

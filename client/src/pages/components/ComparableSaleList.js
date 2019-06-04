@@ -41,7 +41,7 @@ class ComparableSaleListHeaderColumn extends React.Component
                     return <span key={fieldIndex}>
                             {this.props.texts[fieldIndex]}
                             {fieldIndex === 0 ? <SortDirection field={this.props.fields[0]} sort={this.props.sort} /> : null}
-                            {fieldIndex !== this.props.fields.length - 1 ? <br /> : null}
+                            {fieldIndex !== this.props.fields.length - 1 && this.props.texts[fieldIndex] ? <br /> : null}
                     </span>
                 })
             }
@@ -401,6 +401,18 @@ class ComparableSaleList extends React.Component
             },
             pricePerBedroom: {
                 title: "Price / Bedroom",
+                size: "middle"
+            },
+            shippingDoorsTruckLevel: {
+                title: "",
+                size: "middle"
+            },
+            shippingDoorsDoubleMan: {
+                title: "Shipping Doors",
+                size: "middle"
+            },
+            shippingDoorsDriveIn: {
+                title: "",
                 size: "middle"
             }
         };

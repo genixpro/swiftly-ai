@@ -11,7 +11,6 @@ import bz2
 import sys
 import os
 import json
-from azure.storage.blob import BlockBlobService, PublicAccess
 import os
 from google.cloud import storage
 
@@ -53,7 +52,6 @@ def main():
 
     os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = pkg_resources.resource_filename("appraisal", "gcloud-storage-key.json")
 
-    azureBlobStorage = BlockBlobService(account_name=settings['storage.azureBucket'], account_key=settings['storage.azureAccountKey'])
     storage_client = storage.Client()
 
     storageBucket = storage_client.get_bucket(settings['storage.bucket'])
@@ -61,7 +59,7 @@ def main():
 
     print("Connected to environment db, loading objects")
 
-    data = appraisal.components.sample_data.downloadData(storageBucket, azureBlobStorage)
+    data = appraisal.components.sample_data.downloadData(storageBucket)
 
     sampleStorageBucket = storage_client.get_bucket(sampleDataBucket)
     register_connection("target", db=sampleDataDBName, host=sampleDataURI)
@@ -73,3 +71,6 @@ def main():
 
 
 
+
+if __name__ == '__main__':
+    main()

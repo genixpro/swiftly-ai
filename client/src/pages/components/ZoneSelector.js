@@ -47,8 +47,16 @@ class ZoneSelector extends React.Component {
     {
         if (this.props.onChange)
         {
-            this.props.onChange(newZone.value);
-            this.setState({zone: newZone});
+            if (newZone)
+            {
+                this.props.onChange(newZone.value);
+                this.setState({zone: newZone});
+            }
+            else
+            {
+                this.props.onChange(null);
+                this.setState({zone: null});
+            }
         }
     }
 
@@ -62,6 +70,7 @@ class ZoneSelector extends React.Component {
                 classNamePrefix={"zone-selector"}
                 value={this.state.zone}
                 cacheOptions
+                isClearable={true}
                 title={this.props.title || this.props.placeholder}
                 loadOptions={this.loadOptions}
                 onCreateOption={(data) => this.onCreateZone(data)}

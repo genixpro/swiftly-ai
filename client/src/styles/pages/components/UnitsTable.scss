@@ -124,4 +124,23 @@
       background-color: white;
     }
   }
+
+  .unit-details-row
+  {
+    background: white;
+    border: 0 white !important;
+    td {
+      border: 0 white !important;
+    }
+  }
+
+  .units-table-drag-handle
+  {
+    padding: 5px;
+  }
+
+  .table
+  {
+    background: white;
+  }
 }

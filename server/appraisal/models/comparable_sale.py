@@ -2,6 +2,7 @@ from mongoengine import *
 import datetime
 from appraisal.models.unit import Unit
 from appraisal.models.date_field import ConvertingDateField
+from ..migrations import registerMigration
 
 class ComparableSale(Document):
     meta = {'collection': 'comparables', 'strict': False}
@@ -15,8 +16,10 @@ class ComparableSale(Document):
     # This provides the GPS coordinates of the comparable
     location = PointField()
 
-    # This provides the url for the image of this comp
-    imageUrl = StringField()
+    imageUrl = StringField() # Deprecated
+
+    # This provides the urls for images of this comp
+    imageUrls = ListField(StringField())
 
     # The description of the comparable
     description = StringField()
@@ -56,7 +59,17 @@ class ComparableSale(Document):
 
     clearCeilingHeight = FloatField()
 
+    # Old shipping doors. DEPRECATED.
     shippingDoors = StringField()
+
+    # Shipping Doors - Truck Level
+    shippingDoorsTruckLevel = FloatField()
+
+    # Shipping Doors - Double Man
+    shippingDoorsDoubleMan = FloatField()
+
+    # Shipping Doors - Drive In
+    shippingDoorsDriveIn = FloatField()
 
     siteCoverage = FloatField()
 
@@ -126,3 +139,15 @@ class ComparableSale(Document):
     numberOfTwoBedrooms = FloatField()
     numberOfThreePlusBedrooms = FloatField()
     totalBedrooms = FloatField()
+
+    tenancyType = StringField(choices=['single_tenant', 'multi_tenant', 'vacant', ""], null=True)
+
+    version = IntField(default=1)
+
+
+
+@registerMigration(ComparableSale, 1)
+def migration_001_update_image_urls(comparable):
+    if comparable.imageUrl:
+        if comparable.imageUrl not in comparable.imageUrls:
+            comparable.imageUrls.append(comparable.imageUrl)

@@ -92,7 +92,7 @@ class ComparableLeaseList extends React.Component
             ["address"],
             ["sizeOfUnit"],
             ["rentEscalations"],
-            ["taxesMaintenanceInsurance", "tenantInducements", "freeRent"],
+            ["taxesMaintenanceInsurance", "tenantInducements", "freeRentMonths"],
         ];
 
         return headerFields;
@@ -283,7 +283,7 @@ class ComparableLeaseList extends React.Component
                 title: "Inducements",
                 size: 3
             },
-            freeRent: {
+            freeRentMonths: {
                 title: "Free Rent",
                 size: 3
             }

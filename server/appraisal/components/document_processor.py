@@ -1,7 +1,5 @@
-from appraisal.components.document_classifier import DocumentClassifier
 from appraisal.components.document_parser import DocumentParser
 from appraisal.components.document_extractor import DocumentExtractor
-from appraisal.components.page_classifier import PageClassifier
 from appraisal.models.file import File, Word
 import filetype
 import re
@@ -18,12 +16,11 @@ class DocumentProcessor:
         This system manages the end-to-end process of parsing and interpreting a document that is uploaded to this system.
     """
 
-    def __init__(self, db, storageBucket, vectorServerURL=None):
-        self.classifier = DocumentClassifier()
+    def __init__(self, db, storageBucket, modelConfig, vectorServerURL=None):
         self.parser = DocumentParser()
-        self.pageClassifier = PageClassifier()
         self.storageBucket = storageBucket
         self.db = db
+        self.modelConfig = modelConfig
         self.vectorServerURL = vectorServerURL
         self.tenancyDataExtractor = TenancyDataExtractor()
         self.incomeStatementExtractor = IncomeStatementDataExtractor()
@@ -94,16 +91,14 @@ class DocumentProcessor:
 
 
     def classifyAndProcessDocument(self, file):
-        file.fileType = self.classifier.classifyFile(file)
-        file.pageTypes = self.pageClassifier.classifyFile(file)
-
-        # extractor = DocumentExtractor(self.db, self.vectorServerURL)
-        # extractor.predictDocument(file)
-        for word in file.words:
-            word.classification = "null"
-            word.modifiers = []
-            word.textType = "block"
-            word.groups = {}
+        extractor = DocumentExtractor(self.db, self.modelConfig, self.vectorServerURL)
+        extractor.loadAlgorithm()
+        extractor.predictDocument(file)
+        # for word in file.words:
+        #     word.classification = "null"
+        #     word.modifiers = []
+        #     word.textType = "block"
+        #     word.groups = {}
 
 
     def extractAndMergeAppraisalData(self, file, appraisal):

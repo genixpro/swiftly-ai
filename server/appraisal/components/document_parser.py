@@ -166,7 +166,7 @@ class DocumentParser:
                 bestIoU = None
                 bestLine = None
                 for line in lines:
-                    iou = self.verticalIntersectionOverUnion(word, line)
+                    iou = self.verticalIntersectionOverUnion({"top": word.top, "bottom": word.bottom}, line)
                     if bestIoU is None or iou > bestIoU:
                         bestIoU = iou
                         bestLine = line
@@ -207,11 +207,14 @@ class DocumentParser:
                 wordsByPage[word.page] = []
             wordsByPage[word.page].append(word)
 
+        globalColumnNumber = 0
+
         for page in wordsByPage:
             pageWords = wordsByPage[page]
 
             tables = []
 
+            hasBlock=False
             currentTable = None
             for word in pageWords:
                 if word.textType == 'table':
@@ -225,10 +228,14 @@ class DocumentParser:
                         currentTable = None
 
                     word.column = 0
-
+                    word.documentColumn = globalColumnNumber
+                    hasBlock = True
 
             if currentTable is not None:
                 tables.append(currentTable)
+
+            if hasBlock:
+                globalColumnNumber += 1
 
             for tableWords in tables:
                 averageWordWidth = numpy.mean([word.right - word.left for word in tableWords])
@@ -244,14 +251,21 @@ class DocumentParser:
                 columnProbs = columnKDE.score_samples(grid)
                 columnPeaks = scipy.signal.find_peaks(columnProbs)[0] / 1000
 
+                highestDocumentColumnNumber = 0
                 for word in tableWords:
                     # Find the column closest to this word
                     bestDist = None
                     for column, peak in enumerate(columnPeaks):
                         dist = abs((word.left/2 + word.right/2) - peak)
                         if bestDist is None or (dist < bestDist):
-                            word.column = column + 1
+                            word.column = column + (1 if hasBlock else 0)
+                            word.documentColumn = globalColumnNumber + column
+                            highestDocumentColumnNumber = max(highestDocumentColumnNumber, word.documentColumn)
                             bestDist = dist
+
+                globalColumnNumber = highestDocumentColumnNumber
+
+
 
         return words
 

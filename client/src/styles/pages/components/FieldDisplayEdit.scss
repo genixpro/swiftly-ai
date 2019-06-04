@@ -8,14 +8,14 @@
     //transition: opacity 0.2s ease-in-out;
   }
 
-  input, textarea, select, .zone-selector .zone-selector__control, .tag-editor .tag-editor__control {
+  input, textarea, select, .zone-selector .zone-selector__control, .tag-editor .tag-editor__control, .tenant-name-selector .tenant-name-selector__control {
     transition: border-color 0.2s ease-in-out;
   }
 
 
   &.editable
   {
-    input, textarea, select, select:focus, .zone-selector .zone-selector__control, .tag-editor .tag-editor__control  {
+    input, textarea, select, select:focus, .zone-selector .zone-selector__control, .tag-editor .tag-editor__control, .tenant-name-selector .tenant-name-selector__control  {
       border: 1px solid lightgray;
       box-shadow: 0 0;
       background: transparent;
@@ -27,7 +27,7 @@
       {
         opacity: 0.5;
       }
-      input, textarea, select, .zone-selector .zone-selector__control, .tag-editor .tag-editor__control  {
+      input, textarea, select, .zone-selector .zone-selector__control, .tag-editor .tag-editor__control, .tenant-name-selector .tenant-name-selector__control  {
         cursor: pointer;
       }
     }
@@ -35,7 +35,7 @@
 
     &.static:hover, &.editing
     {
-      input, textarea, select, .zone-selector .zone-selector__control, .tag-editor .tag-editor__control  {
+      input, textarea, select, .zone-selector .zone-selector__control, .tag-editor .tag-editor__control, .tenant-name-selector .tenant-name-selector__control  {
         background: white;
       }
     }
@@ -43,7 +43,7 @@
 
   &.non-editable
   {
-    input:disabled, textarea:disabled, select:disabled, .zone-selector .zone-selector__control, .tag-editor .tag-editor__control
+    input:disabled, textarea:disabled, select:disabled, .zone-selector .zone-selector__control, .tag-editor .tag-editor__control, .tenant-name-selector .tenant-name-selector__control
     {
       background-color: white;
       color: #656565;
@@ -58,7 +58,7 @@
       opacity: 0;
     }
 
-    input, textarea, select, .zone-selector .zone-selector__control, .tag-editor .tag-editor__control
+    input, textarea, select, .zone-selector .zone-selector__control, .tag-editor .tag-editor__control, .tenant-name-selector .tenant-name-selector__control
     {
       border: 1px white;
       border-radius: 0;
@@ -78,12 +78,12 @@
     flex-grow: 1;
   }
 
-  .zone-selector, .tag-editor
+  .zone-selector, .tag-editor, .tenant-name-selector
   {
     flex-grow: 1;
   }
 
-  .zone-selector__indicators, .tag-editor__indicators
+ .zone-selector__dropdown-indicator, .zone-selector__indicator-separator, .zone-selector__loading-indicator, .tag-editor__indicators, .tenant-name-selector__dropdown-indicator, .tenant-name-selector__indicator-separator, .tenant-name-selector__loading-indicator
   {
     display: none;
   }
