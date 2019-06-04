@@ -10,20 +10,23 @@ class DataExtractor:
 
 
     def cleanAmount(self, amount):
-        amount = str(amount)
+        try:
+            amount = str(amount)
 
-        negative = False
-        if "-" in amount or "(" in amount or ")" in amount:
-            negative = True
+            negative = False
+            if "-" in amount or "(" in amount or ")" in amount:
+                negative = True
 
-        amount = re.sub("[^0-9\\.]", "", amount)
+            amount = re.sub("[^0-9\\.]", "", amount)
 
-        if amount == '':
+            if amount == '':
+                return 0
+
+            number = float(amount)
+
+            if negative:
+                return -number
+            else:
+                return number
+        except ValueError:
             return 0
-
-        number = float(amount)
-
-        if negative:
-            return -number
-        else:
-            return number

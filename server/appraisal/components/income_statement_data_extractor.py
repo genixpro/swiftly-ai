@@ -198,7 +198,7 @@ class IncomeStatementDataExtractor(DataExtractor):
         for token in tokens:
             documentLineNumber = token['words'][0].documentLineNumber
 
-            if token['words'][0].groups['DATA_TYPE'] in dataTypes:
+            if token['words'][0].groups.get('DATA_TYPE', None) in dataTypes:
                 if documentLineNumber in lines:
                     lines[documentLineNumber].append(token)
                 else:
@@ -297,7 +297,7 @@ class IncomeStatementDataExtractor(DataExtractor):
                 chosenKey = self.chooseItemAmountKeyForYear(itemAmountKeys, documentYear, lineYear)
 
                 if chosenKey is not None and chosenKey in lineItem:
-                    incomeStatementItem.yearlyAmounts[str(lineYear)] = lineItem[chosenKey]
+                    incomeStatementItem.yearlyAmounts[str(lineYear)] = self.cleanAmount(lineItem[chosenKey])
                     incomeStatementItem.extractionReferences[str(lineYear)] = ExtractionReference(fileId=str(document.id), appraisalId=str(document.appraisalId), wordIndexes=[word['index'] for word in lineItem[(chosenKey, 'token')]['words']])
                     incomeStatementItem.yearlySourceTypes[str(lineYear)] = self.yearlySourceTypeFromClassification(chosenKey[0])
                 else:

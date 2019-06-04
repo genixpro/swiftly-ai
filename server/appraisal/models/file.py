@@ -145,16 +145,19 @@ class File(Document):
         date = ""
         for token in tokens:
             if token['classification'] == 'STATEMENT_YEAR':
-                return int(token['text'])
+                return int(float(token['text']))
             elif token['classification'] == 'STATEMENT_DATE':
                 date = token['text']
 
         if date == '':
-            return int(datetime.datetime.now().year)
+            try:
+                return int(datetime.datetime.now().year)
+            except ValueError:
+                pass
 
         parsed = dateparser.parse(date)
 
-        return int(parsed.year)
+        return int(float(parsed.year))
 
     def updateDescriptiveWordFeatures(self):
         """ This function updates fields like lineNumberWithinGroup and reverseLineNumberWithinGroup on the Word object."""

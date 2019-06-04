@@ -136,6 +136,9 @@ class DocumentExtractorNetwork:
                             #     print(array.shape)
 
                             wordVectors = batch[0]
+                            lineSortedWordIndexes = batch[1]
+                            lineSortedReverseWordIndexes = batch[2]
+
                             lineWordIndexes = batch[5]
                             lineReverseWordIndexes = batch[6]
 
@@ -152,6 +155,8 @@ class DocumentExtractorNetwork:
                             # Train
                             feed_dict = {
                                 self.inputWordVectors: wordVectors,
+                                self.lineSortedWordIndexesInput: lineSortedWordIndexes,
+                                self.lineSortedReverseWordIndexesInput: lineSortedReverseWordIndexes,
                                 self.lineWordIndexesInput: lineWordIndexes,
                                 self.lineReverseIndexesInput: lineReverseWordIndexes,
                                 self.columnWordIndexesInput: columnWordIndexes,
@@ -239,6 +244,8 @@ class DocumentExtractorNetwork:
                                 batch = batchFuture.result()
 
                                 wordVectors = batch[0]
+                                lineSortedWordIndexes = batch[1]
+                                lineSortedReverseWordIndexes = batch[2]
                                 lineWordIndexes = batch[5]
                                 lineReverseWordIndexes = batch[6]
 
@@ -254,6 +261,8 @@ class DocumentExtractorNetwork:
                                 # Train
                                 feed_dict = {
                                     self.inputWordVectors: wordVectors,
+                                    self.lineSortedWordIndexesInput: lineSortedWordIndexes,
+                                    self.lineSortedReverseWordIndexesInput: lineSortedReverseWordIndexes,
                                     self.lineWordIndexesInput: lineWordIndexes,
                                     self.lineReverseIndexesInput: lineReverseWordIndexes,
                                     self.columnWordIndexesInput: columnWordIndexes,
@@ -394,6 +403,8 @@ class DocumentExtractorNetwork:
         data = self.dataset.prepareDocument(file, self.allowColumnProcessing)
 
         wordVectors = [data[0]]
+        lineSortedWordIndexes = [data[1]]
+        lineSortedReverseWordIndexes = [data[2]]
         lineWordIndexes = [data[7]]
         lineReverseWordIndexes = [data[8]]
         columnWordIndexes = [data[10]]
@@ -402,6 +413,8 @@ class DocumentExtractorNetwork:
         # Train
         feed_dict = {
             self.inputWordVectors: wordVectors,
+            self.lineSortedWordIndexesInput: lineSortedWordIndexes,
+            self.lineSortedReverseWordIndexesInput: lineSortedReverseWordIndexes,
             self.lineWordIndexesInput: lineWordIndexes,
             self.lineReverseIndexesInput: lineReverseWordIndexes,
             self.columnWordIndexesInput: columnWordIndexes,
@@ -581,6 +594,15 @@ class DocumentExtractorNetwork:
         vectorSize = self.wordVectorSize
 
         with tf.name_scope("lineSorted"), tf.variable_scope("lineSorted"):
+            transformedIndexes = tf.reshape(self.lineSortedWordIndexesInput, shape=[batchSize, 1, length])
+
+            lineSortedOutput = self.createRecurrentAttentionLayer(inputs, transformedIndexes, "recurrent")
+
+            lineSortedOutput = tf.reshape(lineSortedOutput, shape=[batchSize, length, self.lstmSize])
+
+            lineSortedOutput = tf.batch_gather(lineSortedOutput, self.lineSortedReverseWordIndexesInput)
+
+        with tf.name_scope("lineSorted"), tf.variable_scope("lineSorted"):
             # inputs = self.debug(inputs)
             # lineWordIndexesInput = self.debug(self.lineWordIndexesInput)
             rawLineOutput = self.createRecurrentAttentionLayer(inputs, self.lineWordIndexesInput, "attention")
@@ -618,7 +640,7 @@ class DocumentExtractorNetwork:
 
             columnOutput = tf.reshape(columnOutput, shape=[batchSize, length, self.lstmSize])
 
-        layerOutputs = tf.concat(values=[lineOutput, columnOutput], axis=2)
+        layerOutputs = tf.concat(values=[lineSortedOutput, lineOutput, columnOutput], axis=2)
 
         # layerOutputs = tf.layers.BatchNormalization(layerOutputs)
 
@@ -643,8 +665,8 @@ class DocumentExtractorNetwork:
             self.inputTextType = tf.placeholder(tf.float32, shape=[None, None, numTextType], name='input_text_types')
             self.inputGlobalGroupId = tf.placeholder(tf.float32, shape=[None, None, numGlobalGroupIds], name='input_global_group_id')
 
-            self.lineSortedWordIndexesInput = tf.placeholder(tf.int32, shape=[None, None, None], name='line_sorted_indexes')
-            self.lineSortedReverseWordIndexesInput = tf.placeholder(tf.int32, shape=[None, None, None], name='line_sorted_reverse_indexes')
+            self.lineSortedWordIndexesInput = tf.placeholder(tf.int32, shape=[None, None], name='line_sorted_indexes')
+            self.lineSortedReverseWordIndexesInput = tf.placeholder(tf.int32, shape=[None, None], name='line_sorted_reverse_indexes')
             self.lineWordIndexesInput = tf.placeholder(tf.int32, shape=[None, None, None], name='line_indexes')
             self.lineReverseIndexesInput = tf.placeholder(tf.int32, shape=[None, None, None], name='line_reverse_indexes')
 
