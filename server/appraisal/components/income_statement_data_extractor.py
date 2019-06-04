@@ -190,13 +190,19 @@ class IncomeStatementDataExtractor(DataExtractor):
         lines = {}
         tokens = document.breakIntoTokens()
 
+        dataTypes = [
+            'INCOME_STATEMENT',
+            'EXPENSE_STATEMENT'
+        ]
+
         for token in tokens:
             documentLineNumber = token['words'][0].documentLineNumber
 
-            if documentLineNumber in lines:
-                lines[documentLineNumber].append(token)
-            else:
-                lines[documentLineNumber] = [token]
+            if token['words'][0].groups['DATA_TYPE'] in dataTypes:
+                if documentLineNumber in lines:
+                    lines[documentLineNumber].append(token)
+                else:
+                    lines[documentLineNumber] = [token]
 
         # We also go through and build up a complete list of the various sorts of amounts that exist on this income statement. They are identified
         # by their item-amount-key. This allows us to smoothly handle cases where there was no value in a given column & row, which implies a 0 for
@@ -226,7 +232,6 @@ class IncomeStatementDataExtractor(DataExtractor):
                     lineInfo['name'] = token['text']
                 elif token['classification'] in ['FORECAST', 'ACTUALS', 'YEAR_TO_DATE', 'VARIANCE']:
                     lineInfo[self.itemAmountKey(token['classification'], token['modifiers'])] = token['text']
-
                     lineInfo[(self.itemAmountKey(token['classification'], token['modifiers']), 'token')] = token
 
                 for modifier in token['modifiers']:
@@ -291,7 +296,7 @@ class IncomeStatementDataExtractor(DataExtractor):
                 # For each year, we take the highest priority item
                 chosenKey = self.chooseItemAmountKeyForYear(itemAmountKeys, documentYear, lineYear)
 
-                if chosenKey is not None:
+                if chosenKey is not None and chosenKey in lineItem:
                     incomeStatementItem.yearlyAmounts[str(lineYear)] = lineItem[chosenKey]
                     incomeStatementItem.extractionReferences[str(lineYear)] = ExtractionReference(fileId=str(document.id), appraisalId=str(document.appraisalId), wordIndexes=[word['index'] for word in lineItem[(chosenKey, 'token')]['words']])
                     incomeStatementItem.yearlySourceTypes[str(lineYear)] = self.yearlySourceTypeFromClassification(chosenKey[0])

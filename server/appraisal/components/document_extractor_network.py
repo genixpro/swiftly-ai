@@ -147,6 +147,7 @@ class DocumentExtractorNetwork:
                             modifierOutputs = batch[10]
                             groupOutputs = batch[11]
                             textTypeOutputs = batch[12]
+                            # globalGroupIdOutputs = batch[13]
 
                             # Train
                             feed_dict = {
@@ -180,6 +181,9 @@ class DocumentExtractorNetwork:
                             if 'textType' in self.networkOutputs:
                                 feed_dict[self.inputTextType] = textTypeOutputs
                                 operations.append(self.textTypeAccuracy)
+
+                            # This is fed in to be used as a regularizer
+                            # feed_dict[self.inputGlobalGroupId] = globalGroupIdOutputs
 
                             results = self.session.run(operations, feed_dict)
 
@@ -245,6 +249,7 @@ class DocumentExtractorNetwork:
                                 modifierOutputs = batch[10]
                                 groupOutputs = batch[11]
                                 textTypeOutputs = batch[12]
+                                globalGroupIdOutputs = batch[13]
 
                                 # Train
                                 feed_dict = {
@@ -278,6 +283,9 @@ class DocumentExtractorNetwork:
                                 if 'textType' in self.networkOutputs:
                                     feed_dict[self.inputTextType] = textTypeOutputs
                                     operations.append(self.textTypeAccuracy)
+
+                                # This is fed in to be used as a regularizer
+                                feed_dict[self.inputGlobalGroupId] = globalGroupIdOutputs
 
                                 results = self.session.run(operations, feed_dict)
 
@@ -531,10 +539,11 @@ class DocumentExtractorNetwork:
         # inputs = tf.reshape(inputs, shape=[batchSize, length, vectorSize])
 
         if mode == 'attention':
-            # positionEncoding = model_utils.get_position_encoding(sequenceLength, vectorSize + 1)
+            positionEncoding = model_utils.get_position_encoding(sequenceLength, 300)
             attention_bias = model_utils.get_padding_bias(tf.reduce_sum(inputs, axis=2))
-            # attention = SelfAttention(self.attentionSize, self.attentionHeads, self.attentionDropout, True)(inputs + positionEncoding[:, :vectorSize], attention_bias)
-            attention = SelfAttention(self.attentionSize, self.attentionHeads, self.attentionDropout, True)(inputs, attention_bias)
+            new_inputs = tf.concat((inputs[:, :, :300] + positionEncoding, inputs[:, :, 300:]), axis=2)
+            attention = SelfAttention(self.attentionSize, self.attentionHeads, self.attentionDropout, True)(new_inputs, attention_bias)
+            # attention = SelfAttention(self.attentionSize, self.attentionHeads, self.attentionDropout, True)(inputs, attention_bias)
             #
             denseInput = tf.reshape(attention, shape=[batchSize * sequencesPerSample * sequenceLength, self.attentionSize])
             dense = tf.layers.dense(denseInput, self.lstmSize, activation=tf.nn.relu)
@@ -622,6 +631,7 @@ class DocumentExtractorNetwork:
 
             numGroups = self.dataset.totalGroupLabels * 3
             numTextType = len(self.dataset.textTypes)
+            numGlobalGroupIds = len(self.dataset.globalGroupIds)
 
             # Placeholders for input, output and dropout
             self.inputWordVectors = tf.placeholder(tf.float32, shape=[None, None, self.wordVectorSize], name='input_word_vectors')
@@ -631,7 +641,10 @@ class DocumentExtractorNetwork:
             self.inputModifiers = tf.placeholder(tf.float32, shape=[None, None, numModifiers], name='input_modifiers')
             self.inputGroups = tf.placeholder(tf.float32, shape=[None, None, numGroups], name='input_groups')
             self.inputTextType = tf.placeholder(tf.float32, shape=[None, None, numTextType], name='input_text_types')
+            self.inputGlobalGroupId = tf.placeholder(tf.float32, shape=[None, None, numGlobalGroupIds], name='input_global_group_id')
 
+            self.lineSortedWordIndexesInput = tf.placeholder(tf.int32, shape=[None, None, None], name='line_sorted_indexes')
+            self.lineSortedReverseWordIndexesInput = tf.placeholder(tf.int32, shape=[None, None, None], name='line_sorted_reverse_indexes')
             self.lineWordIndexesInput = tf.placeholder(tf.int32, shape=[None, None, None], name='line_indexes')
             self.lineReverseIndexesInput = tf.placeholder(tf.int32, shape=[None, None, None], name='line_reverse_indexes')
 
@@ -642,12 +655,24 @@ class DocumentExtractorNetwork:
 
             self.lstmDropoutAdjusted = tf.where(self.trainingInput, self.lstmDropout, 1.0)
 
+            losses = []
+
             # Recurrent Neural Network
             with tf.name_scope("rnn"), tf.variable_scope("rnn", reuse=tf.AUTO_REUSE):
                 currentOutput = self.inputWordVectors
                 for layer in range(self.layers):
                     with tf.name_scope(f"layer{layer}"), tf.variable_scope(f"layer{layer}"):
                         currentOutput = self.createComboLineColumnLayer(currentOutput)
+
+                        # with tf.name_scope(f"antiloss"), tf.variable_scope(f"antiloss"):
+                        #     batchSize = tf.shape(currentOutput)[0]
+                        #     length = tf.shape(currentOutput)[1]
+                        #     vectorSize = currentOutput.shape[2]
+                        #     reshaped = tf.reshape(currentOutput, shape=(batchSize * length, vectorSize))
+                        #     projection = tf.layers.dense(reshaped, numGlobalGroupIds, use_bias=False)
+                        #     loss = tf.nn.softmax_cross_entropy_with_logits_v2(logits=projection, labels=tf.reshape(self.inputGlobalGroupId, shape=[batchSize * length, numGlobalGroupIds]))
+                            # We add in global group id as an ANTI loss, E.G. teach NN to evolve in such a way that it can not predict which group its a part of
+                            # losses.append(tf.reduce_mean(loss) * -0.2)
 
                 batchSize = tf.shape(currentOutput)[0]
                 length = tf.shape(currentOutput)[1]
@@ -691,8 +716,6 @@ class DocumentExtractorNetwork:
 
             # Calculate mean cross-entropy loss
             with tf.name_scope("loss"):
-                losses = []
-
                 if 'classification' in self.networkOutputs:
                     classificationLosses = tf.nn.softmax_cross_entropy_with_logits_v2(logits=self.classificationLogits,
                                                                                       labels=tf.reshape(self.inputClassification, shape=[batchSize * length, numClasses]))

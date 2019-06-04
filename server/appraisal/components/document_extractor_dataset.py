@@ -50,6 +50,10 @@ class FastWord:
             self.index = word.index
             self.lineNumberWithinGroup = word.lineNumberWithinGroup
             self.reverseLineNumberWithinGroup = word.reverseLineNumberWithinGroup
+            if hasattr(word, "globalGroupIds"):
+                self.globalGroupIds = word.globalGroupIds
+            else:
+                self.globalGroupIds = {}
         else:
             self.word = ""
             self.classification = "null"
@@ -67,6 +71,7 @@ class FastWord:
             self.top = None
             self.bottom = None
             self.index = None
+            self.globalGroupIds = {}
             self.lineNumberWithinGroup = {}
             self.reverseLineNumberWithinGroup = {}
 
@@ -263,6 +268,7 @@ class DocumentExtractorDataset:
         classificationOutputs = []
         modifierOutputs = []
         groupOutputs = []
+        globalGroupIdOutputs = []
         textTypeOutputs = []
 
         for word in file.words:
@@ -278,6 +284,13 @@ class DocumentExtractorDataset:
             for modifier in word.modifiers:
                 modifiersVector[self.modifiers.index(modifier)] = 1
             modifierOutputs.append(modifiersVector)
+
+            globalGroupIdVector = [0] * len(self.globalGroupIds)
+            if hasattr(word, 'globalGroupIds'):
+                for groupSet in word.globalGroupIds:
+                    if word.globalGroupIds[groupSet] in self.globalGroupIds:
+                        globalGroupIdVector[self.globalGroupIds.index(word.globalGroupIds[groupSet])] = 1
+            globalGroupIdOutputs.append(globalGroupIdVector)
 
             groupsVector = []
             for groupSet in self.groupSets:
@@ -335,7 +348,9 @@ class DocumentExtractorDataset:
             classificationOutputs,
             modifierOutputs,
             groupOutputs,
-            textTypeOutputs)
+            textTypeOutputs,
+            globalGroupIdOutputs
+        )
 
     def loadDataset(self, db, manager):
         files = File.objects(**self.configuration['query'])
@@ -345,11 +360,12 @@ class DocumentExtractorDataset:
         groups = {}
         groupSets = set()
         textTypes = set()
+        globalGroupIds = set()
 
         self.augmentationValues = {}
 
         fileCount = 0
-        for file in files:
+        for fileIndex, file in enumerate(files):
             if len(file.words) == 0:
                 # skip this file
                 continue
@@ -386,6 +402,12 @@ class DocumentExtractorDataset:
             for page in range(file.pages):
                 fast = FastFile(words=[word for word in file.words if word.page == page], pages=file.pages)
 
+                for word in fast.words:
+                    for groupSet in word.groups:
+                        if word.groups[groupSet] != "null" and word.groups[groupSet] is not None:
+                            word.globalGroupIds[groupSet] = f"{fileIndex}-{word.groupNumbers[groupSet]}"
+                            globalGroupIds.add(word.globalGroupIds[groupSet])
+
                 if fast.groupKey not in  self.dataset:
                     self.dataset[fast.groupKey] = manager.list()
 
@@ -411,6 +433,7 @@ class DocumentExtractorDataset:
         self.modifiers = sorted(list(modifiers))
         self.groups = {groupSet: sorted(list(groups)) for groupSet, groups in groups.items()}
         self.groupSets = sorted(list(groupSets))
+        self.globalGroupIds = sorted(list(globalGroupIds))
 
         self.totalGroupLabels = 0
         for groupSet in self.groupSets:
@@ -426,6 +449,7 @@ class DocumentExtractorDataset:
         self.groups = data['groups']
         self.groupSets = sorted(list(self.groups.keys()))
         self.textTypes = data['textTypes']
+        self.globalGroupIds = data.get('globalGroupIds', {})
 
         self.totalGroupLabels = 0
         for groupSet in self.groupSets:
@@ -440,7 +464,8 @@ class DocumentExtractorDataset:
             "labels": self.labels,
             "modifiers": self.modifiers,
             "groups": self.groups,
-            "textTypes": self.textTypes
+            "textTypes": self.textTypes,
+            "globalGroupIds": self.globalGroupIds
         }
 
         # Also restore the labels
@@ -502,6 +527,7 @@ class DocumentExtractorDataset:
             newWord.page = token['words'][0].page
             newWord.groups = token['groups']
             newWord.groupNumbers = token['groupNumbers']
+            newWord.globalGroupIds = token['words'][0].globalGroupIds
             newWord.textType = token['textType']
             newWord.lineNumber = startLine + int(round((wordIndex / len(newTextSplit)) * lineDelta))
             newWord.documentLineNumber = startDocumentLineNumber + int(round((wordIndex / len(newTextSplit)) * lineDelta))
@@ -625,6 +651,7 @@ class DocumentExtractorDataset:
         batchModifierOutputs = []
         batchGroupOutputs = []
         batchTextTypeOutputs = []
+        batchGlobalGroupIdOutputs = []
 
         batchLengths = []
 
@@ -682,6 +709,7 @@ class DocumentExtractorDataset:
             modifierOutputs = result[14]
             groupOutputs = result[15]
             textTypeOutputs = result[16]
+            globalGroupIdOutputs = result[17]
 
             # print(numpy.array(lineWordIndexes).shape)
             # print(numpy.array(columnWordIndexes).shape)
@@ -717,6 +745,8 @@ class DocumentExtractorDataset:
 
                 classificationOutputs.append(oneHotCodeClassification)
                 modifierOutputs.append(oneHotCodeModifiers)
+
+                globalGroupIdOutputs.append([0] * len(self.globalGroupIds))
 
                 groupsVector = []
                 for groupSet in self.groupSets:
@@ -778,6 +808,7 @@ class DocumentExtractorDataset:
                 modifierOutputs = modifierOutputs[start:start + maxLength]
                 groupOutputs = groupOutputs[start:start + maxLength]
                 textTypeOutputs = textTypeOutputs[start:start + maxLength]
+                globalGroupIdOutputs = globalGroupIdOutputs[start:start + maxLength]
 
             maxLines = max(len(lineWordIndexes), maxLines)
             maxColumns = max(len(columnWordIndexes), maxColumns)
@@ -803,6 +834,7 @@ class DocumentExtractorDataset:
             batchModifierOutputs.append(modifierOutputs)
             batchGroupOutputs.append(groupOutputs)
             batchTextTypeOutputs.append(textTypeOutputs)
+            batchGlobalGroupIdOutputs.append(globalGroupIdOutputs)
 
         # print(batchWordVectors[0][0])
         # print(batchLineSortedWordIndexes)
@@ -839,5 +871,6 @@ class DocumentExtractorDataset:
             numpy.array(batchClassificationOutputs),
             numpy.array(batchModifierOutputs),
             numpy.array(batchGroupOutputs),
-            numpy.array(batchTextTypeOutputs)
+            numpy.array(batchTextTypeOutputs),
+            numpy.array(batchGlobalGroupIdOutputs)
         )
