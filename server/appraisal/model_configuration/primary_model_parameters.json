@@ -1,10 +1,10 @@
 {
   "batchSize": 16,
-  "lstmSize": 150,
+  "lstmSize": 250,
   "lstmDropout": 0.5,
   "denseSize": 150,
   "attentionDropout": 0.5,
-  "attentionSize": 128,
+  "attentionSize": 256,
   "attentionHeads": 4,
   "denseDropout": 0.5,
   "learningRate": 1e-3,
