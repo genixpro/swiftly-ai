@@ -9,7 +9,7 @@
   "denseDropout": 0.5,
   "learningRate": 1e-3,
   "layers": 2,
-  "epochs": 5,
+  "epochs": 20,
   "stepsPerEpoch": 1000,
   "maxWorkers": 8,
   "batchPreload": 50,
