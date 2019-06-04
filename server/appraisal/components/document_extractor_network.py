@@ -602,7 +602,7 @@ class DocumentExtractorNetwork:
 
             lineSortedOutput = tf.batch_gather(lineSortedOutput, self.lineSortedReverseWordIndexesInput)
 
-        with tf.name_scope("lineSorted"), tf.variable_scope("lineSorted"):
+        with tf.name_scope("line"), tf.variable_scope("line"):
             # inputs = self.debug(inputs)
             # lineWordIndexesInput = self.debug(self.lineWordIndexesInput)
             rawLineOutput = self.createRecurrentAttentionLayer(inputs, self.lineWordIndexesInput, "attention")
