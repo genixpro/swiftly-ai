@@ -112,6 +112,14 @@
   white-space: normal;
 }
 
+.annotation-editor-thumbnail-container
+{
+  &.selected
+  {
+    border-width: 3px;
+  }
+}
+
 .annotationEditorImageThumbnail
 {
   cursor: pointer;

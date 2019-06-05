@@ -148,6 +148,12 @@ class ComparableSale(Document):
 
 @registerMigration(ComparableSale, 1)
 def migration_001_update_image_urls(comparable):
+    # We have to fix bad data in the db prior to running this migration
+    try:
+        comparable.siteArea = float(comparable.siteArea)
+    except ValueError:
+        comparable.siteArea = None
+
     if comparable.imageUrl:
         if comparable.imageUrl not in comparable.imageUrls:
             comparable.imageUrls.append(comparable.imageUrl)

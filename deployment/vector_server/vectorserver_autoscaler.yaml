@@ -5,8 +5,8 @@ metadata:
     app: swiftly-vectorserver
   name: swiftly-vectorserver-hpa
 spec:
-  maxReplicas: 10
-  minReplicas: 2
+  maxReplicas: 2
+  minReplicas: 1
   scaleTargetRef:
     apiVersion: apps/v1beta1
     kind: Deployment
