@@ -101,7 +101,12 @@ class UploadableImageSet extends React.Component
     {
         const streetViewUrl = `https://maps.googleapis.com/maps/api/streetview?key=AIzaSyBRmZ2N4EhJjXmC29t3VeiLUQssNG-MY1I&size=640x480&source=outdoor&location=${this.props.address}`;
 
-        let urls = this.props.value.map((url) => url + "?access_token=" + this.props.accessToken);
+        let urls = [];
+
+        if (this.props.value)
+        {
+            urls = this.props.value.map((url) => url + "?access_token=" + this.props.accessToken);
+        }
 
         if (urls.length === 0 && this.props.address)
         {
