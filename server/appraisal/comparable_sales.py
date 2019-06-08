@@ -178,3 +178,19 @@ class ComparableSaleAPI(object):
             raise HTTPForbidden("You do not have access to this comparable sale.")
 
         comparable.delete()
+
+@resource(path='/comparable_sale_upload/', renderer='bson', cors_enabled=True, cors_origins="*", permission="everything")
+class ComparableSaleFileUploadAPI(object):
+
+    def __init__(self, request, context=None):
+        self.request = request
+
+
+    def __acl__(self):
+        return [
+            (Allow, Authenticated, 'everything'),
+            (Deny, Everyone, 'everything')
+        ]
+
+    def post(self):
+        data = self.request.json_body
