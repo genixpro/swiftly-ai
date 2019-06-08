@@ -242,7 +242,8 @@ class DocumentExtractorNetwork:
 
                             if batchIndex % 10 == 0:
                                 batchFuture = testBatchFutures.pop(0)
-                                testBatchFutures.append(executor.submit(self.dataset.createBatch, self.batchSize, True, self.allowColumnProcessing))
+                                typeProbs = {dataType: 1.0 - numpy.average(self.rollingAverageAccuracies.get(f"classificationNonNull-{dataType}", [0])) for dataType in self.dataset.dataset.keys()}
+                                testBatchFutures.append(executor.submit(self.dataset.createBatch, self.batchSize, True, self.allowColumnProcessing, typeProbs))
 
                                 batch = batchFuture.result()
 
@@ -840,7 +841,7 @@ class DocumentExtractorNetwork:
                     class_acc_tensor = tf.cast(tf.equal(classificationActualFlat, classificationPredictionsFlat), tf.int32) * classificationAccuracyMask
                     class_acc = tf.reduce_sum(class_acc_tensor) / tf.maximum(tf.reduce_sum(classificationAccuracyMask), 1)
 
-                    self.classificationNonNullAccuracy = tf.where(class_acc == 0, tf.constant(1.0, dtype=tf.float64), class_acc)
+                    self.classificationNonNullAccuracy = tf.where(class_acc == tf.constant(0.0, dtype=tf.float64), tf.constant(1.0, dtype=tf.float64), class_acc)
 
                 with tf.device('/cpu:0'):
                     with tf.name_scope("confusion_matrix"):
@@ -864,7 +865,7 @@ class DocumentExtractorNetwork:
                     modifier_class_acc_tensor = tf.cast(tf.equal(modifierActualFlat, modifierPredictionsFlat), tf.int32) * modifierAccuracyMask
                     modifier_class_acc = tf.reduce_sum(modifier_class_acc_tensor) / tf.maximum(tf.reduce_sum(modifierAccuracyMask), 1)
 
-                    self.modifierNonNullAccuracy = tf.where(modifier_class_acc == 0, tf.constant(1.0, dtype=tf.float64), modifier_class_acc)
+                    self.modifierNonNullAccuracy = tf.where(modifier_class_acc == tf.constant(0.0, dtype=tf.float64), tf.constant(1.0, dtype=tf.float64), modifier_class_acc)
 
             if 'groups' in self.networkOutputs:
                 self.groupSetAccuracy = {}
@@ -893,7 +894,7 @@ class DocumentExtractorNetwork:
                         group_class_acc_tensor = tf.cast(tf.equal(groupSetActualFlat, groupSetPredictionsFlat), tf.int32) * groupAccuracyMask
                         group_class_acc = tf.reduce_sum(group_class_acc_tensor) / tf.maximum(tf.reduce_sum(groupAccuracyMask), 1)
 
-                        self.groupNonNullAccuracy[groupSet] = tf.where(group_class_acc == 0, tf.constant(1.0, dtype=tf.float64), group_class_acc)
+                        self.groupNonNullAccuracy[groupSet] = tf.where(group_class_acc == tf.constant(0.0, dtype=tf.float64), tf.constant(1.0, dtype=tf.float64), group_class_acc)
 
                     groupInputIndex += numGroupSetItems
 
