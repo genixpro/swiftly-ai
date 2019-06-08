@@ -13,7 +13,7 @@
   "stepsPerEpoch": 10,
   "maxWorkers": 1,
   "batchPreload": 5,
-  "rollingAverageHorizon": 100,
+  "rollingAverageHorizon": 50,
   "testingRollingAverageHorizon": 10,
   "printTime": 5,
   "lengthMin": 500,
