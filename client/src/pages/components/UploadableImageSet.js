@@ -181,7 +181,7 @@ class UploadableImageSet extends React.Component
                         {/*<AliceCarousel ref={(el) => this.Carousel = el} buttonsDisabled={true} dotsDisabled={true} items={urls.map((url) => <img src={url}/>)} />*/}
                         <nav className={"uploadable-icons-nav"}>
                             {
-                                this.props.value.map((item, itemIndex) =>
+                                (this.props.value || []).map((item, itemIndex) =>
                                 {
                                     return <div className={"image-wrapper"} key={item} onClick={() => this.setState({activeIndex: itemIndex})} >
                                             <img src={item + "?access_token=" + this.props.accessToken} className={"uploadable-image-carousel-image"} />
@@ -207,7 +207,7 @@ class UploadableImageSet extends React.Component
                                     </div> : null
                             }
                             {
-                                _.range(3 - this.props.value.length % 4 - (this.state.loading ? 1 : 0)).map(() =>
+                                _.range(3 - (this.props.value || []).length % 4 - (this.state.loading ? 1 : 0)).map(() =>
                                 {
                                     return <div className={"uploadable-image-carousel-spacer"} />
                                 })
