@@ -15,7 +15,7 @@ import csv
 import datetime
 import multiprocessing
 import traceback
-from appraisal.components.document_extractor_dataset import DocumentExtractorDataset
+from appraisal.components.document_extractor_dataset import DocumentExtractorDataset, FastFile
 
 
 from appraisal.libs.transformer.model.attention_layer import SelfAttention
@@ -127,8 +127,10 @@ class DocumentExtractorNetwork:
                     # Training loop. For each batch...
                     for batchIndex in range(self.stepsPerEpoch):
                         try:
+                            typeProbs = {dataType: 1.0 - numpy.average(self.rollingAverageAccuracies.get(f"classificationNonNull-{dataType}", [0])) for dataType in self.dataset.dataset.keys()}
+
                             batchFuture = trainBatchFutures.pop(0)
-                            trainBatchFutures.append(executor.submit(self.dataset.createBatch, self.batchSize, False, self.allowColumnProcessing))
+                            trainBatchFutures.append(executor.submit(self.dataset.createBatch, self.batchSize, False, self.allowColumnProcessing, typeProbs))
 
                             batch = batchFuture.result()
 
@@ -226,7 +228,7 @@ class DocumentExtractorNetwork:
                                     nonNullAccuracy = self.applyRollingAverage(f"groupNonNull-{groupSet}-{dataType}", results[resultIndex + 1])
                                     resultIndex += 2
 
-                                    message += f" {groupSet}-{dataType}: {nonNullAccuracy:.3f}"
+                                    message += f" {groupSet}: {nonNullAccuracy:.3f}"
 
                             if 'textType' in self.networkOutputs:
                                 accuracy = self.applyRollingAverage("textType", results[resultIndex])
@@ -402,181 +404,188 @@ class DocumentExtractorNetwork:
     def predictDocument(self, file):
         self.loadAlgorithm()
 
-        data = self.dataset.prepareDocument(file, self.allowColumnProcessing)
+        for page in range(file.pages):
+            pageWords = [word for word in file.words if word.page == page]
 
-        wordVectors = [data[0]]
-        lineSortedWordIndexes = [data[1]]
-        lineSortedReverseWordIndexes = [data[2]]
-        lineWordIndexes = [data[7]]
-        lineReverseWordIndexes = [data[8]]
-        columnWordIndexes = [data[10]]
-        columnReverseWordIndexes = [data[11]]
+            pageFile = FastFile(words=pageWords, pages=file.pages)
+            data = self.dataset.prepareDocument(pageFile, self.allowColumnProcessing)
 
-        # Train
-        feed_dict = {
-            self.inputWordVectors: wordVectors,
-            self.lineSortedWordIndexesInput: lineSortedWordIndexes,
-            self.lineSortedReverseWordIndexesInput: lineSortedReverseWordIndexes,
-            self.lineWordIndexesInput: lineWordIndexes,
-            self.lineReverseIndexesInput: lineReverseWordIndexes,
-            self.columnWordIndexesInput: columnWordIndexes,
-            self.columnReverseIndexesInput: columnReverseWordIndexes,
-            self.trainingInput: False
-        }
-        
-        outputDesired = []
-        
-        if 'classification' in self.networkOutputs:
-            outputDesired.append(self.classificationPredictions)
-            outputDesired.append(self.classificationProbabilities)
-        
-        if 'modifiers' in self.networkOutputs:
-            outputDesired.append(self.modifierPredictions)
-            outputDesired.append(self.modifierProbabilities)
-        
-        if 'groups' in self.networkOutputs:
-            for groupSet in self.dataset.groupSets:
-                outputDesired.append(self.groupPredictions[groupSet])
-                outputDesired.append(self.groupProbabilities[groupSet])
-        
-        if 'textType' in self.networkOutputs:
-            outputDesired.append(self.textTypePredictions)
-            outputDesired.append(self.textTypeProbabilities)
+            wordVectors = [data[0]]
+            lineSortedWordIndexes = [data[1]]
+            lineSortedReverseWordIndexes = [data[2]]
+            lineWordIndexes = [data[7]]
+            lineReverseWordIndexes = [data[8]]
+            columnWordIndexes = [data[10]]
+            columnReverseWordIndexes = [data[11]]
 
-        outputs = self.session.run(outputDesired, feed_dict)
+            # Train
+            feed_dict = {
+                self.inputWordVectors: wordVectors,
+                self.lineSortedWordIndexesInput: lineSortedWordIndexes,
+                self.lineSortedReverseWordIndexesInput: lineSortedReverseWordIndexes,
+                self.lineWordIndexesInput: lineWordIndexes,
+                self.lineReverseIndexesInput: lineReverseWordIndexes,
+                self.columnWordIndexesInput: columnWordIndexes,
+                self.columnReverseIndexesInput: columnReverseWordIndexes,
+                self.trainingInput: False
+            }
 
-        wordsByLine = {}
-        finalOutputIndex = 0
+            outputDesired = []
 
-        for wordIndex in range(len(wordVectors[0])):
-            word = file.words[wordIndex]
-
-            outputIndex = 0
             if 'classification' in self.networkOutputs:
-                predictions = outputs[outputIndex]
-                probabilities = outputs[outputIndex + 1]
-                outputIndex += 2
-            
-            
-                wordPrediction = predictions[0][wordIndex]
-
-                word['classification'] = self.dataset.labels[wordPrediction]
-                word['classificationProbabilities'] = {
-                    label: float(probabilities[0][wordIndex][labelIndex])
-                    for labelIndex, label in enumerate(self.dataset.labels)
-                }
+                outputDesired.append(self.classificationPredictions)
+                outputDesired.append(self.classificationProbabilities)
 
             if 'modifiers' in self.networkOutputs:
-                predictions = outputs[outputIndex]
-                probabilities = outputs[outputIndex + 1]
-                outputIndex += 2
-                    
-                word['modifiers'] = [modifier for index, modifier in enumerate(self.dataset.modifiers) if predictions[0][wordIndex][index]]
-                word['modifierProbabilities'] = {
-                    label: float(probabilities[0][wordIndex][labelIndex])
-                    for labelIndex, label in enumerate(self.dataset.modifiers)
-                }
+                outputDesired.append(self.modifierPredictions)
+                outputDesired.append(self.modifierProbabilities)
+
+            if 'groups' in self.networkOutputs:
+                for groupSet in self.dataset.groupSets:
+                    outputDesired.append(self.groupPredictions[groupSet])
+                    outputDesired.append(self.groupProbabilities[groupSet])
+
+            if 'textType' in self.networkOutputs:
+                outputDesired.append(self.textTypePredictions)
+                outputDesired.append(self.textTypeProbabilities)
+
+            outputs = self.session.run(outputDesired, feed_dict)
+
+            wordsByLine = {}
+            wordIndexesByLine = {}
+            finalOutputIndex = 0
+
+            for wordIndex in range(len(wordVectors[0])):
+                word = pageWords[wordIndex]
+
+                outputIndex = 0
+                if 'classification' in self.networkOutputs:
+                    predictions = outputs[outputIndex]
+                    probabilities = outputs[outputIndex + 1]
+                    outputIndex += 2
 
 
-            if word.documentLineNumber in wordsByLine:
-                wordsByLine[word.documentLineNumber].append(word)
-            else:
-                wordsByLine[word.documentLineNumber] = [word]
+                    wordPrediction = predictions[0][wordIndex]
 
-            finalOutputIndex = outputIndex
+                    word['classification'] = self.dataset.labels[wordPrediction]
+                    word['classificationProbabilities'] = {
+                        label: float(probabilities[0][wordIndex][labelIndex])
+                        for labelIndex, label in enumerate(self.dataset.labels)
+                    }
 
-        if 'groups' in self.networkOutputs:
-            outputIndex = finalOutputIndex
+                if 'modifiers' in self.networkOutputs:
+                    predictions = outputs[outputIndex]
+                    probabilities = outputs[outputIndex + 1]
+                    outputIndex += 2
 
-            currentGroup = {}
-            currentGroupNumbers = {}
-            currentGroupStartLineNumbers = {}
+                    word['modifiers'] = [modifier for index, modifier in enumerate(self.dataset.modifiers) if predictions[0][wordIndex][index]]
+                    word['modifierProbabilities'] = {
+                        label: float(probabilities[0][wordIndex][labelIndex])
+                        for labelIndex, label in enumerate(self.dataset.modifiers)
+                    }
 
-            for word in file.words:
-                word.startEnd = {}
 
-            for groupSet in self.dataset.groupSets:
+                if word.documentLineNumber in wordsByLine:
+                    wordsByLine[word.documentLineNumber].append(word)
+                    wordIndexesByLine[word.documentLineNumber].append(wordIndex)
+                else:
+                    wordsByLine[word.documentLineNumber] = [word]
+                    wordIndexesByLine[word.documentLineNumber] = [wordIndex]
+
+                finalOutputIndex = outputIndex
+
+            if 'groups' in self.networkOutputs:
+                outputIndex = finalOutputIndex
+
+                currentGroup = {}
+                currentGroupNumbers = {}
+                currentGroupStartLineNumbers = {}
+
+                for word in pageWords:
+                    word.startEnd = {}
+
+                for groupSet in self.dataset.groupSets:
+                    for lineNumber in wordsByLine:
+                        predictions = outputs[outputIndex]
+                        probabilities = outputs[outputIndex + 1]
+
+                        lineProbs = numpy.array([0] * len(probabilities[0][0]), dtype=numpy.float)
+
+                        for word, wordIndex in zip(wordsByLine[lineNumber], wordIndexesByLine[lineNumber]):
+                            lineProbs += probabilities[0][wordIndex]
+
+                        groupPrediction = numpy.argmax(lineProbs)
+
+                        groupIndex = math.floor(groupPrediction/3)
+                        startEndIndex = groupPrediction % 3
+
+                        group = self.dataset.groups[groupSet][groupIndex]
+
+                        if group != "null":
+                            # if groupSet == 'DATA_TYPE':
+                                # print(lineNumber, group, startEndIndex)
+                                # print(lineProbs)
+
+                            for word, wordIndex in zip(wordsByLine[lineNumber], wordIndexesByLine[lineNumber]):
+                                word['groups'][groupSet] = group
+                                word['groupProbabilities'][groupSet] = {}
+                                word.startEnd[groupSet] = startEndIndex
+                                for labelIndex, label in enumerate(self.dataset.groups[groupSet]):
+                                    word['groupProbabilities'][groupSet][label+"-start"] = float(probabilities[0][wordIndex][labelIndex * 3])
+                                    word['groupProbabilities'][groupSet][label+"-middle"] = float(probabilities[0][wordIndex][labelIndex * 3 + 1])
+                                    word['groupProbabilities'][groupSet][label+"-end"] = float(probabilities[0][wordIndex][labelIndex * 3 + 2])
+                    outputIndex += 2
+                    finalOutputIndex = outputIndex
+
+                for wordIndex in range(len(pageWords)):
+                    word = pageWords[wordIndex]
+                    for groupSet in self.dataset.groupSets:
+                        group = word.groups.get(groupSet)
+                        if group != "null" and group is not None:
+                            startEndIndex = word.startEnd[groupSet]
+                            if group == currentGroup.get(groupSet, None):
+                                if startEndIndex == 0:
+                                    if currentGroupStartLineNumbers[groupSet] == word.documentLineNumber:
+                                        word['groupNumbers'][groupSet] = currentGroupNumbers[groupSet]
+                                    else:
+                                        currentGroupNumbers[groupSet] += 1
+                                        currentGroupStartLineNumbers[groupSet] = word.documentLineNumber
+                                        word['groupNumbers'][groupSet] = currentGroupNumbers[groupSet]
+                                elif startEndIndex == 1 or startEndIndex == 2:
+                                    word['groupNumbers'][groupSet] = currentGroupNumbers[groupSet]
+                            else:
+                                currentGroup[groupSet] = group
+                                if groupSet not in currentGroupNumbers:
+                                    currentGroupNumbers[groupSet] = 0
+                                else:
+                                    currentGroupNumbers[groupSet] += 1
+
+                                currentGroupStartLineNumbers[groupSet] = word.documentLineNumber
+                                word['groupNumbers'][groupSet] = currentGroupNumbers[groupSet]
+                        else:
+                            currentGroup[groupSet] = None
+                            currentGroupStartLineNumbers[groupSet] = None
+
+            if 'textType' in self.networkOutputs:
+                outputIndex = finalOutputIndex
                 for lineNumber in wordsByLine:
                     predictions = outputs[outputIndex]
                     probabilities = outputs[outputIndex + 1]
 
                     lineProbs = numpy.array([0] * len(probabilities[0][0]), dtype=numpy.float)
 
-                    for word in wordsByLine[lineNumber]:
-                        lineProbs += probabilities[0][word.index]
+                    for word, wordIndex in zip(wordsByLine[lineNumber], wordIndexesByLine[lineNumber]):
+                        lineProbs += probabilities[0][wordIndex]
 
-                    groupPrediction = numpy.argmax(lineProbs)
+                    textTypePrediction = numpy.argmax(lineProbs)
 
-                    groupIndex = math.floor(groupPrediction/3)
-                    startEndIndex = groupPrediction % 3
-
-                    group = self.dataset.groups[groupSet][groupIndex]
-
-                    if group != "null":
-                        # if groupSet == 'DATA_TYPE':
-                            # print(lineNumber, group, startEndIndex)
-                            # print(lineProbs)
-
-                        for word in wordsByLine[lineNumber]:
-                            word['groups'][groupSet] = group
-                            word['groupProbabilities'][groupSet] = {}
-                            word.startEnd[groupSet] = startEndIndex
-                            for labelIndex, label in enumerate(self.dataset.groups[groupSet]):
-                                word['groupProbabilities'][groupSet][label+"-start"] = float(probabilities[0][word.index][labelIndex * 3])
-                                word['groupProbabilities'][groupSet][label+"-middle"] = float(probabilities[0][word.index][labelIndex * 3 + 1])
-                                word['groupProbabilities'][groupSet][label+"-end"] = float(probabilities[0][word.index][labelIndex * 3 + 2])
+                    for word, wordIndex in zip(wordsByLine[lineNumber], wordIndexesByLine[lineNumber]):
+                        word['textType'] = self.dataset.textTypes[textTypePrediction]
+                        word['textTypeProbabilities'] = {
+                            label: float(probabilities[0][wordIndex][labelIndex])
+                            for labelIndex, label in enumerate(self.dataset.textTypes)
+                        }
                 outputIndex += 2
-                finalOutputIndex = outputIndex
-
-            for wordIndex in range(len(file.words)):
-                word = file.words[wordIndex]
-                for groupSet in self.dataset.groupSets:
-                    group = word.groups.get(groupSet)
-                    if group != "null" and group is not None:
-                        startEndIndex = word.startEnd[groupSet]
-                        if group == currentGroup.get(groupSet, None):
-                            if startEndIndex == 0:
-                                if currentGroupStartLineNumbers[groupSet] == word.documentLineNumber:
-                                    word['groupNumbers'][groupSet] = currentGroupNumbers[groupSet]
-                                else:
-                                    currentGroupNumbers[groupSet] += 1
-                                    currentGroupStartLineNumbers[groupSet] = word.documentLineNumber
-                                    word['groupNumbers'][groupSet] = currentGroupNumbers[groupSet]
-                            elif startEndIndex == 1 or startEndIndex == 2:
-                                word['groupNumbers'][groupSet] = currentGroupNumbers[groupSet]
-                        else:
-                            currentGroup[groupSet] = group
-                            if groupSet not in currentGroupNumbers:
-                                currentGroupNumbers[groupSet] = 0
-                            else:
-                                currentGroupNumbers[groupSet] += 1
-
-                            currentGroupStartLineNumbers[groupSet] = word.documentLineNumber
-                            word['groupNumbers'][groupSet] = currentGroupNumbers[groupSet]
-                    else:
-                        currentGroup[groupSet] = None
-                        currentGroupStartLineNumbers[groupSet] = None
-
-        if 'textType' in self.networkOutputs:
-            outputIndex = finalOutputIndex
-            for lineNumber in wordsByLine:
-                predictions = outputs[outputIndex]
-                probabilities = outputs[outputIndex + 1]
-
-                lineProbs = numpy.array([0] * len(probabilities[0][0]), dtype=numpy.float)
-
-                for word in wordsByLine[lineNumber]:
-                    lineProbs += probabilities[0][word.index]
-
-                textTypePrediction = numpy.argmax(lineProbs)
-
-                for word in wordsByLine[lineNumber]:
-                    word['textType'] = self.dataset.textTypes[textTypePrediction]
-                    word['textTypeProbabilities'] = {
-                        label: float(probabilities[0][word.index][labelIndex])
-                        for labelIndex, label in enumerate(self.dataset.textTypes)
-                    }
-            outputIndex += 2
 
     def createRecurrentAttentionLayer(self, inputs, wordIndexes, mode):
         batchSize = tf.shape(inputs)[0]
@@ -627,11 +636,12 @@ class DocumentExtractorNetwork:
 
             return reshapedOutput
 
-    def debug(self, tensor, showValue=False):
+    def debug(self, tensor, showValue=False, name=None):
+        tensorName = str(name) if name is not None else tensor.name
         if showValue:
-            return tf.Print(tensor, [tensor.name, tf.shape(tensor), tensor], summarize=10000)
+            return tf.Print(tensor, [tensorName, tf.shape(tensor), tensor], summarize=10000)
         else:
-            return tf.Print(tensor, [tensor.name, tf.shape(tensor)], summarize=1000)
+            return tf.Print(tensor, [tensorName, tf.shape(tensor)], summarize=1000)
 
 
     def createComboLineColumnLayer(self, inputs):
@@ -830,7 +840,7 @@ class DocumentExtractorNetwork:
                     class_acc_tensor = tf.cast(tf.equal(classificationActualFlat, classificationPredictionsFlat), tf.int32) * classificationAccuracyMask
                     class_acc = tf.reduce_sum(class_acc_tensor) / tf.maximum(tf.reduce_sum(classificationAccuracyMask), 1)
 
-                    self.classificationNonNullAccuracy = class_acc
+                    self.classificationNonNullAccuracy = tf.where(class_acc == 0, tf.constant(1.0, dtype=tf.float64), class_acc)
 
                 with tf.device('/cpu:0'):
                     with tf.name_scope("confusion_matrix"):
@@ -854,7 +864,7 @@ class DocumentExtractorNetwork:
                     modifier_class_acc_tensor = tf.cast(tf.equal(modifierActualFlat, modifierPredictionsFlat), tf.int32) * modifierAccuracyMask
                     modifier_class_acc = tf.reduce_sum(modifier_class_acc_tensor) / tf.maximum(tf.reduce_sum(modifierAccuracyMask), 1)
 
-                    self.modifierNonNullAccuracy = modifier_class_acc
+                    self.modifierNonNullAccuracy = tf.where(modifier_class_acc == 0, tf.constant(1.0, dtype=tf.float64), modifier_class_acc)
 
             if 'groups' in self.networkOutputs:
                 self.groupSetAccuracy = {}
@@ -883,7 +893,7 @@ class DocumentExtractorNetwork:
                         group_class_acc_tensor = tf.cast(tf.equal(groupSetActualFlat, groupSetPredictionsFlat), tf.int32) * groupAccuracyMask
                         group_class_acc = tf.reduce_sum(group_class_acc_tensor) / tf.maximum(tf.reduce_sum(groupAccuracyMask), 1)
 
-                        self.groupNonNullAccuracy[groupSet] = group_class_acc
+                        self.groupNonNullAccuracy[groupSet] = tf.where(group_class_acc == 0, tf.constant(1.0, dtype=tf.float64), group_class_acc)
 
                     groupInputIndex += numGroupSetItems
 

@@ -1,5 +1,5 @@
 {
-  "batchSize": 4,
+  "batchSize": 2,
   "lstmSize": 150,
   "lstmDropout": 0.5,
   "denseSize": 150,
@@ -10,7 +10,7 @@
   "learningRate": 1e-3,
   "layers": 2,
   "epochs": 2,
-  "stepsPerEpoch": 10,
+  "stepsPerEpoch": 1000,
   "maxWorkers": 1,
   "batchPreload": 5,
   "rollingAverageHorizon": 50,
@@ -18,7 +18,7 @@
   "printTime": 5,
   "lengthMin": 500,
   "lengthMax": 1000,
-  "wordVectorSize": 309,
+  "wordVectorSize": 313,
   "wordOmissionRate": 0.05,
   "numGPUs": 1,
   "query": {}
