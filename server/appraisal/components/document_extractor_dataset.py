@@ -730,7 +730,7 @@ class DocumentExtractorDataset:
         total = numpy.sum([typeProbs.get(dataType, 1) for dataType in self.dataset.keys()])
         # print([int(round(typeProbs.get(dataType, 1) / total * 100)) for dataType in self.dataset.keys()])
 
-        choices = [dataType for dataType in self.dataset.keys() for n in range(int(round(typeProbs.get(dataType, 1) / total * 100)))]
+        choices = [dataType for dataType in self.dataset.keys() for n in range(max(1, int(round(typeProbs.get(dataType, 1) / total * 100))))]
 
         key = random.choice(choices)
 

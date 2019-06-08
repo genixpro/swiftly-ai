@@ -213,14 +213,14 @@ class DocumentExtractorNetwork:
                                         file.write(self.formatConfusionMatrix(confusionMatrix))
 
 
-                                message += f" Classification: {nonNullAccuracy:.3f}"
+                                message += f" Classification: {nonNullAccuracy:.4f}"
 
                             if 'modifiers' in self.networkOutputs:
                                 accuracy = self.applyRollingAverage(f"modifiers-{dataType}", results[resultIndex])
                                 nonNullAccuracy = self.applyRollingAverage(f"modifiersNonNull-{dataType}", results[resultIndex + 1])
                                 resultIndex += 2
 
-                                message += f" Modifiers: {nonNullAccuracy:.3f}"
+                                message += f" Modifiers: {nonNullAccuracy:.4f}"
 
                             if 'groups' in self.networkOutputs:
                                 for groupSet in self.dataset.groupSets:
@@ -228,13 +228,13 @@ class DocumentExtractorNetwork:
                                     nonNullAccuracy = self.applyRollingAverage(f"groupNonNull-{groupSet}-{dataType}", results[resultIndex + 1])
                                     resultIndex += 2
 
-                                    message += f" {groupSet}: {nonNullAccuracy:.3f}"
+                                    message += f" {groupSet}: {nonNullAccuracy:.4f}"
 
                             if 'textType' in self.networkOutputs:
                                 accuracy = self.applyRollingAverage("textType", results[resultIndex])
                                 resultIndex += 1
 
-                                message += f" Text-Type: {accuracy:.3f}"
+                                message += f" Text-Type: {accuracy:.4f}"
 
                             if batchIndex % self.printTime == 0:
                                 print(f"{(datetime.datetime.now() - lastTime).total_seconds() / self.printTime:.2f}s", message, flush=True)
@@ -320,14 +320,14 @@ class DocumentExtractorNetwork:
                                             file.write(self.formatConfusionMatrix(confusionMatrix))
 
 
-                                    message += f" Classification: {nonNullAccuracy:.3f}"
+                                    message += f" Classification: {nonNullAccuracy:.4f}"
 
                                 if 'modifiers' in self.networkOutputs:
                                     accuracy = self.applyRollingAverage(f"testing-modifiers-{dataType}", results[resultIndex], self.testingRollingAverageHorizon)
                                     nonNullAccuracy = self.applyRollingAverage(f"testing-modifiersNonNull-{dataType}", results[resultIndex + 1], self.testingRollingAverageHorizon)
                                     resultIndex += 2
 
-                                    message += f" Modifiers: {nonNullAccuracy:.3f}"
+                                    message += f" Modifiers: {nonNullAccuracy:.4f}"
 
                                 if 'groups' in self.networkOutputs:
                                     for groupSet in self.dataset.groupSets:
@@ -335,13 +335,13 @@ class DocumentExtractorNetwork:
                                         nonNullAccuracy = self.applyRollingAverage(f"testing-groupNonNull-{groupSet}-{dataType}", results[resultIndex + 1], self.testingRollingAverageHorizon)
                                         resultIndex += 2
 
-                                        message += f" {groupSet}: {nonNullAccuracy:.3f}"
+                                        message += f" {groupSet}: {nonNullAccuracy:.4f}"
 
                                 if 'textType' in self.networkOutputs:
                                     accuracy = self.applyRollingAverage("testing-textType", results[resultIndex], self.testingRollingAverageHorizon)
                                     resultIndex += 1
 
-                                    message += f" Text-Type: {accuracy:.3f}"
+                                    message += f" Text-Type: {accuracy:.4f}"
                                     
                                 print(message, flush=True)
 
@@ -841,7 +841,7 @@ class DocumentExtractorNetwork:
                     class_acc_tensor = tf.cast(tf.equal(classificationActualFlat, classificationPredictionsFlat), tf.int32) * classificationAccuracyMask
                     class_acc = tf.reduce_sum(class_acc_tensor) / tf.maximum(tf.reduce_sum(classificationAccuracyMask), 1)
 
-                    self.classificationNonNullAccuracy = tf.where(tf.reduce_sum(classificationAccuracyMask) == tf.constant(0.0, dtype=tf.float64), tf.constant(1.0, dtype=tf.float64), class_acc)
+                    self.classificationNonNullAccuracy = tf.where(tf.equal(tf.reduce_sum(classificationAccuracyMask), tf.constant(0, dtype=tf.int32)), tf.constant(1.0, dtype=tf.float64), class_acc)
 
                 with tf.device('/cpu:0'):
                     with tf.name_scope("confusion_matrix"):
@@ -865,7 +865,7 @@ class DocumentExtractorNetwork:
                     modifier_class_acc_tensor = tf.cast(tf.equal(modifierActualFlat, modifierPredictionsFlat), tf.int32) * modifierAccuracyMask
                     modifier_class_acc = tf.reduce_sum(modifier_class_acc_tensor) / tf.maximum(tf.reduce_sum(modifierAccuracyMask), 1)
 
-                    self.modifierNonNullAccuracy = tf.where(tf.reduce_sum(modifierAccuracyMask) == tf.constant(0.0, dtype=tf.float64), tf.constant(1.0, dtype=tf.float64), modifier_class_acc)
+                    self.modifierNonNullAccuracy = tf.where(tf.equal(tf.reduce_sum(modifierAccuracyMask), tf.constant(0, dtype=tf.int32)), tf.constant(1.0, dtype=tf.float64), modifier_class_acc)
 
             if 'groups' in self.networkOutputs:
                 self.groupSetAccuracy = {}
@@ -894,7 +894,7 @@ class DocumentExtractorNetwork:
                         group_class_acc_tensor = tf.cast(tf.equal(groupSetActualFlat, groupSetPredictionsFlat), tf.int32) * groupAccuracyMask
                         group_class_acc = tf.reduce_sum(group_class_acc_tensor) / tf.maximum(tf.reduce_sum(groupAccuracyMask), 1)
 
-                        self.groupNonNullAccuracy[groupSet] = tf.where(tf.reduce_sum(groupAccuracyMask) == tf.constant(0.0, dtype=tf.float64), tf.constant(1.0, dtype=tf.float64), group_class_acc)
+                        self.groupNonNullAccuracy[groupSet] = tf.where(tf.equal(tf.reduce_sum(groupAccuracyMask), tf.constant(0, dtype=tf.int32)), tf.constant(1.0, dtype=tf.float64), group_class_acc)
 
                     groupInputIndex += numGroupSetItems
 
