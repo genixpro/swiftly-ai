@@ -10,10 +10,8 @@ class TenancyDataExtractor (DataExtractor):
     def __init__(self):
         pass
 
-    def extractUnits(self, file):
-
-        return []
-        rentRolls = self.extractRentRoll(file)
+    def extractUnits(self, words):
+        rentRolls = self.extractRentRoll(words)
 
         # Group the rent rolls by their unit number
         rentRollsByUnitNumber = {}
@@ -85,11 +83,34 @@ class TenancyDataExtractor (DataExtractor):
                 return False
         return True
 
-    def extractRentRoll(self, file):
-        rentRolls = []
-        lineItems = file.getLineItems('rent_roll')
+    def createLineItems(self, words):
+        wordsByLine = {}
+        for word in words:
+            if word.documentLineNumber not in wordsByLine:
+                wordsByLine[word.documentLineNumber] = [word]
+            else:
+                wordsByLine[word.documentLineNumber].append(word)
 
-        # pprint(lineItems)
+        lineItems = []
+        for lineNumber in sorted(wordsByLine.keys()):
+            line = wordsByLine[lineNumber]
+            lineItem = {}
+            for word in line:
+                if word.classification != "null" and word.classification is not None:
+                    if word.classification in lineItem:
+                        lineItem[word.classification] += str(word.word)
+                    else:
+                        lineItem[word.classification] = str(word.word)
+
+            lineItems.append(lineItem)
+
+        return lineItems
+
+
+    def extractRentRoll(self, words):
+        rentRolls = []
+
+        lineItems = self.createLineItems(words)
 
         lastValidItem = None
         for item in lineItems:

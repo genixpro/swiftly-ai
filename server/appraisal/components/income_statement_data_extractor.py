@@ -175,7 +175,7 @@ class IncomeStatementDataExtractor(DataExtractor):
     def yearlySourceTypeFromClassification(self, classification):
         """ Provides the yearly source type based on the modifiers"""
         if classification == 'ACTUALS':
-            return 'actuals'
+            return 'actual'
         elif classification == 'FORECAST':
             return 'budget'
         elif classification == 'YEAR_TO_DATE':
@@ -298,13 +298,15 @@ class IncomeStatementDataExtractor(DataExtractor):
 
                 if chosenKey is not None and chosenKey in lineItem:
                     incomeStatementItem.yearlyAmounts[str(lineYear)] = self.cleanAmount(lineItem[chosenKey])
-                    incomeStatementItem.extractionReferences[str(lineYear)] = ExtractionReference(fileId=str(document.id), appraisalId=str(document.appraisalId), wordIndexes=[word['index'] for word in lineItem[(chosenKey, 'token')]['words']])
+                    if (chosenKey, 'token') in lineItem:
+                        incomeStatementItem.extractionReferences[str(lineYear)] = ExtractionReference(fileId=str(document.id), appraisalId=str(document.appraisalId), wordIndexes=[word['index'] for word in lineItem[(chosenKey, 'token')]['words']])
                     incomeStatementItem.yearlySourceTypes[str(lineYear)] = self.yearlySourceTypeFromClassification(chosenKey[0])
                 else:
                     incomeStatementItem.yearlyAmounts[str(lineYear)] = 0
                     incomeStatementItem.extractionReferences[str(lineYear)] = None
                     incomeStatementItem.yearlySourceTypes[str(lineYear)] = None
 
+            # print(incomeStatementItem.yearlySourceTypes)
             incomeStatementItems.append(incomeStatementItem)
 
         return incomeStatementItems
