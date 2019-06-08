@@ -872,5 +872,6 @@ class DocumentExtractorDataset:
             numpy.array(batchModifierOutputs),
             numpy.array(batchGroupOutputs),
             numpy.array(batchTextTypeOutputs),
-            numpy.array(batchGlobalGroupIdOutputs)
+            numpy.array(batchGlobalGroupIdOutputs),
+            key
         )

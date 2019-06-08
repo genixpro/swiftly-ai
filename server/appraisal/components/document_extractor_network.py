@@ -151,6 +151,7 @@ class DocumentExtractorNetwork:
                             groupOutputs = batch[11]
                             textTypeOutputs = batch[12]
                             # globalGroupIdOutputs = batch[13]
+                            dataType = batch[14]
 
                             # Train
                             feed_dict = {
@@ -195,13 +196,13 @@ class DocumentExtractorNetwork:
                             step = results[1]
                             loss = results[2]
 
-                            message = f"Epoch: {epoch} Batch: {batchIndex} Loss: {loss}"
+                            message = f"Epoch: {epoch} {dataType} Batch: {batchIndex} Loss: {loss}"
 
 
                             resultIndex = 3
                             if 'classification' in self.networkOutputs:
-                                accuracy = self.applyRollingAverage("classification", results[resultIndex])
-                                nonNullAccuracy = self.applyRollingAverage("classificationNonNull", results[resultIndex + 1])
+                                accuracy = self.applyRollingAverage(f"classification-{dataType}", results[resultIndex])
+                                nonNullAccuracy = self.applyRollingAverage(f"classificationNonNull-{dataType}", results[resultIndex + 1])
                                 confusionMatrix = results[resultIndex + 2]
                                 resultIndex += 3
 
@@ -213,19 +214,19 @@ class DocumentExtractorNetwork:
                                 message += f" Classification: {nonNullAccuracy:.3f}"
 
                             if 'modifiers' in self.networkOutputs:
-                                accuracy = self.applyRollingAverage("modifiers", results[resultIndex])
-                                nonNullAccuracy = self.applyRollingAverage("modifiersNonNull", results[resultIndex + 1])
+                                accuracy = self.applyRollingAverage(f"modifiers-{dataType}", results[resultIndex])
+                                nonNullAccuracy = self.applyRollingAverage(f"modifiersNonNull-{dataType}", results[resultIndex + 1])
                                 resultIndex += 2
 
                                 message += f" Modifiers: {nonNullAccuracy:.3f}"
 
                             if 'groups' in self.networkOutputs:
                                 for groupSet in self.dataset.groupSets:
-                                    accuracy = self.applyRollingAverage(f"group-{groupSet}", results[resultIndex])
-                                    nonNullAccuracy = self.applyRollingAverage(f"groupNonNull-{groupSet}", results[resultIndex + 1])
+                                    accuracy = self.applyRollingAverage(f"group-{groupSet}-{dataType}", results[resultIndex])
+                                    nonNullAccuracy = self.applyRollingAverage(f"groupNonNull-{groupSet}-{dataType}", results[resultIndex + 1])
                                     resultIndex += 2
 
-                                    message += f" {groupSet}: {nonNullAccuracy:.3f}"
+                                    message += f" {groupSet}-{dataType}: {nonNullAccuracy:.3f}"
 
                             if 'textType' in self.networkOutputs:
                                 accuracy = self.applyRollingAverage("textType", results[resultIndex])
@@ -257,6 +258,7 @@ class DocumentExtractorNetwork:
                                 groupOutputs = batch[11]
                                 textTypeOutputs = batch[12]
                                 globalGroupIdOutputs = batch[13]
+                                dataType = batch[14]
 
                                 # Train
                                 feed_dict = {
@@ -300,13 +302,13 @@ class DocumentExtractorNetwork:
 
                                 loss = results[0]
 
-                                message = f"Testing Loss: {loss}"
+                                message = f"Testing Loss: {loss} {dataType}"
 
 
                                 resultIndex = 1
                                 if 'classification' in self.networkOutputs:
-                                    accuracy = self.applyRollingAverage("testing-classification", results[resultIndex], self.testingRollingAverageHorizon)
-                                    nonNullAccuracy = self.applyRollingAverage("testing-classificationNonNull", results[resultIndex + 1], self.testingRollingAverageHorizon)
+                                    accuracy = self.applyRollingAverage(f"testing-classification-{dataType}", results[resultIndex], self.testingRollingAverageHorizon)
+                                    nonNullAccuracy = self.applyRollingAverage(f"testing-classificationNonNull-{dataType}", results[resultIndex + 1], self.testingRollingAverageHorizon)
                                     confusionMatrix = results[resultIndex + 2]
                                     resultIndex += 3
 
@@ -318,16 +320,16 @@ class DocumentExtractorNetwork:
                                     message += f" Classification: {nonNullAccuracy:.3f}"
 
                                 if 'modifiers' in self.networkOutputs:
-                                    accuracy = self.applyRollingAverage("testing-modifiers", results[resultIndex], self.testingRollingAverageHorizon)
-                                    nonNullAccuracy = self.applyRollingAverage("testing-modifiersNonNull", results[resultIndex + 1], self.testingRollingAverageHorizon)
+                                    accuracy = self.applyRollingAverage(f"testing-modifiers-{dataType}", results[resultIndex], self.testingRollingAverageHorizon)
+                                    nonNullAccuracy = self.applyRollingAverage(f"testing-modifiersNonNull-{dataType}", results[resultIndex + 1], self.testingRollingAverageHorizon)
                                     resultIndex += 2
 
                                     message += f" Modifiers: {nonNullAccuracy:.3f}"
 
                                 if 'groups' in self.networkOutputs:
                                     for groupSet in self.dataset.groupSets:
-                                        accuracy = self.applyRollingAverage(f"testing-group-{groupSet}", results[resultIndex], self.testingRollingAverageHorizon)
-                                        nonNullAccuracy = self.applyRollingAverage(f"testing-groupNonNull-{groupSet}", results[resultIndex + 1], self.testingRollingAverageHorizon)
+                                        accuracy = self.applyRollingAverage(f"testing-group-{groupSet}-{dataType}", results[resultIndex], self.testingRollingAverageHorizon)
+                                        nonNullAccuracy = self.applyRollingAverage(f"testing-groupNonNull-{groupSet}-{dataType}", results[resultIndex + 1], self.testingRollingAverageHorizon)
                                         resultIndex += 2
 
                                         message += f" {groupSet}: {nonNullAccuracy:.3f}"
@@ -649,7 +651,7 @@ class DocumentExtractorNetwork:
         with tf.name_scope("line"), tf.variable_scope("line"):
             # inputs = self.debug(inputs)
             # lineWordIndexesInput = self.debug(self.lineWordIndexesInput)
-            rawLineOutput = self.createRecurrentAttentionLayer(inputs, self.lineWordIndexesInput, "attention")
+            rawLineOutput = self.createRecurrentAttentionLayer(inputs, self.lineWordIndexesInput, "recurrent")
 
             # rawLineOutput = self.debug(rawLineOutput)
 
@@ -669,7 +671,7 @@ class DocumentExtractorNetwork:
             lineOutput = tf.reshape(lineOutput, shape=[batchSize, length, self.lstmSize])
 
         with tf.name_scope("column"), tf.variable_scope("column"):
-            rawColumnOutput = self.createRecurrentAttentionLayer(inputs, self.columnWordIndexesInput, "attention")
+            rawColumnOutput = self.createRecurrentAttentionLayer(inputs, self.columnWordIndexesInput, "recurrent")
 
             # rawColumnOutput = self.debug(rawColumnOutput)
 
