@@ -14,22 +14,26 @@ class DocumentExtractor:
     def __init__(self, db, configuration, vectorServerURL=None):
         self.manager = multiprocessing.Manager()
 
-        self.textTypeDataset = DocumentExtractorDataset(configuration['textType'], vectorServerURL, self.manager)
-        self.classificationDataset = DocumentExtractorDataset(configuration['classification'], vectorServerURL, self.manager)
-
         self.parser = DocumentParser()
+
+        self.vectorServerURL = vectorServerURL
 
         self.db = db
 
         self.configuration = configuration
 
+    def createDatasets(self):
+        self.textTypeDataset = DocumentExtractorDataset(self.configuration['textType'], self.vectorServerURL, self.manager)
+        self.classificationDataset = DocumentExtractorDataset(self.configuration['classification'], self.vectorServerURL, self.manager)
 
     def loadAlgorithm(self):
-        self.textTypeDataset.loadLabels("models/labels.json")
-        self.classificationDataset.loadLabels("models/labels.json")
-
         if os.path.exists("models/configuration.json"):
             self.configuration = json.load(open("models/configuration.json", "rt"))
+
+        self.createDatasets()
+
+        self.textTypeDataset.loadLabels("models/labels.json")
+        self.classificationDataset.loadLabels("models/labels.json")
 
         self.textTypeNetwork = DocumentExtractorNetwork(['textType'], self.textTypeDataset, self.configuration['textType'], allowColumnProcessing=False)
 
@@ -41,6 +45,8 @@ class DocumentExtractor:
         if os.path.exists(directory):
             shutil.rmtree(directory)
         os.mkdir(directory)
+
+        self.createDatasets()
 
         self.textTypeDataset.loadDataset(self.db, self.manager)
 

@@ -6,7 +6,7 @@ import _ from 'underscore';
 import ComparableSaleSearch from "./components/ComparableSaleSearch";
 import ComparableSalesMap from "./components/ComparableSalesMap"
 import ComparableSalesModel from "../models/ComparableSaleModel"
-import Toolbar from "./components/Toolbar";
+// import Toolbar from "./components/Toolbar";
 import Promise from "bluebird";
 
 class ViewComparableSalesDatabase extends React.Component {
@@ -236,11 +236,11 @@ class ViewComparableSalesDatabase extends React.Component {
                     <Col xs={10}>
                         <h3>Search for Comparables</h3>
                     </Col>
-                    <Col xs={2}>
-                        <Toolbar>
-                            <Button color={"primary"} onClick={() => this.uploadClicked()}>Upload</Button>
-                        </Toolbar>
-                    </Col>
+                    {/*<Col xs={2}>*/}
+                        {/*<Toolbar>*/}
+                            {/*<Button color={"primary"} onClick={() => this.uploadClicked()}>Upload</Button>*/}
+                        {/*</Toolbar>*/}
+                    {/*</Col>*/}
                 </Row>
                 <ComparableSaleSearch
                     appraisal={this.props.appraisal}
