@@ -698,7 +698,7 @@ class DocumentExtractorNetwork:
 
             columnOutput = tf.reshape(columnOutput, shape=[batchSize, length, self.lstmSize])
 
-        layerOutputs = tf.concat(values=[lineSortedOutput], axis=2)
+        layerOutputs = tf.concat(values=[lineSortedOutput, lineOutput, columnOutput], axis=2)
 
         # layerOutputs = tf.layers.BatchNormalization(layerOutputs)
 

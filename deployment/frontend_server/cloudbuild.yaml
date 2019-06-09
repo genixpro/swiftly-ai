@@ -25,4 +25,4 @@ steps:
   - 'SWIFTLY_ENV=$_SWIFTLY_ENV'
   - 'REVISION_ID=$REVISION_ID'
   timeout: 600s
-timeout: 15000s
+timeout: 3600s

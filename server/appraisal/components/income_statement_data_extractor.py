@@ -2,6 +2,7 @@ from appraisal.components.data_extractor import  DataExtractor
 from appraisal.models.unit import Unit, Tenancy
 import dateparser
 import re
+import datetime
 from appraisal.models.income_statement import IncomeStatement, IncomeStatementItem
 from appraisal.models.extraction_reference import ExtractionReference
 from pprint import pprint
@@ -183,8 +184,28 @@ class IncomeStatementDataExtractor(DataExtractor):
 
         return ''
 
+    def getDocumentYear(self, document):
+        tokens = document.breakIntoTokens()
+
+        date = ""
+        for token in tokens:
+            if token['classification'] == 'STATEMENT_YEAR':
+                return self.cleanAmount(token['text'])
+            elif token['classification'] == 'STATEMENT_DATE':
+                date = token['text']
+
+        if date == '':
+            try:
+                return int(datetime.datetime.now().year)
+            except ValueError:
+                pass
+
+        parsed = dateparser.parse(date)
+
+        return int(float(parsed.year))
+
     def extractIncomeStatementItems(self, document):
-        documentYear = int(document.getDocumentYear())
+        documentYear = int(self.getDocumentYear(document))
 
         # First, we will sort all the extracted data into lines.
         lines = {}
@@ -304,7 +325,7 @@ class IncomeStatementDataExtractor(DataExtractor):
                 else:
                     incomeStatementItem.yearlyAmounts[str(lineYear)] = 0
                     incomeStatementItem.extractionReferences[str(lineYear)] = None
-                    incomeStatementItem.yearlySourceTypes[str(lineYear)] = None
+                    incomeStatementItem.yearlySourceTypes[str(lineYear)] = ''
 
             # print(incomeStatementItem.yearlySourceTypes)
             incomeStatementItems.append(incomeStatementItem)

@@ -82,7 +82,7 @@ class ComparableSaleDataExtractor(DataExtractor):
             elif classification == 'CONSTRUCTION_DATE':
                 comp.constructionDate = text
             elif classification == 'FLOORS':
-                comp.floors = self.cleanAmount(text)
+                comp.floors = text
             elif classification == 'NUMBER_OF_UNITS':
                 comp.floors = self.cleanAmount(text)
             elif classification == 'ADDITIONAL_INFO':
