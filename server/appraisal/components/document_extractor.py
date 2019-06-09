@@ -46,15 +46,17 @@ class DocumentExtractor:
 
         json.dump(self.configuration, open("models/configuration.json", "wt"))
 
+        self.textTypeNetwork = DocumentExtractorNetwork(['textType'], self.dataset, self.configuration, allowColumnProcessing=False)
+
+        self.textTypeNetwork.trainAlgorithm()
+
+        del self.textTypeNetwork
+
         self.classificationNetwork = DocumentExtractorNetwork(['groups', 'classification', 'modifiers'], self.dataset, self.configuration, allowColumnProcessing=True)
 
         self.classificationNetwork.trainAlgorithm()
 
         del self.classificationNetwork
-
-        self.textTypeNetwork = DocumentExtractorNetwork(['textType'], self.dataset, self.configuration, allowColumnProcessing=False)
-
-        self.textTypeNetwork.trainAlgorithm()
 
     def uploadAlgorithm(self):
         directory = "models"

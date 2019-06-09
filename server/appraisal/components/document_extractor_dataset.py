@@ -327,6 +327,7 @@ class DocumentExtractorDataset:
                 while len(column) < longestColumn:
                     column.append(-1)
         else:
+            print("Using LINE processing instead of column")
             columnSortedWordIndexes = copy.copy(lineSortedWordIndexes)
             columnWordIndexes = copy.copy(lineWordIndexes)
             columnReverseWordIndexes = copy.copy(lineReverseWordIndexes)

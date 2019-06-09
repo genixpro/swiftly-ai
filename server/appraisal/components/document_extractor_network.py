@@ -582,6 +582,7 @@ class DocumentExtractorNetwork:
 
                     for word, wordIndex in zip(wordsByLine[lineNumber], wordIndexesByLine[lineNumber]):
                         word['textType'] = self.dataset.textTypes[textTypePrediction]
+                        # word['textType'] = "block"
                         word['textTypeProbabilities'] = {
                             label: float(probabilities[0][wordIndex][labelIndex])
                             for labelIndex, label in enumerate(self.dataset.textTypes)
@@ -697,7 +698,7 @@ class DocumentExtractorNetwork:
 
             columnOutput = tf.reshape(columnOutput, shape=[batchSize, length, self.lstmSize])
 
-        layerOutputs = tf.concat(values=[lineSortedOutput, lineOutput, columnOutput], axis=2)
+        layerOutputs = tf.concat(values=[lineSortedOutput], axis=2)
 
         # layerOutputs = tf.layers.BatchNormalization(layerOutputs)
 
