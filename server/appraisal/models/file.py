@@ -139,22 +139,6 @@ class File(Document):
 
         return tokens
 
-    def getDocumentYear(self):
-        tokens = self.breakIntoTokens()
-
-        date = ""
-        for token in tokens:
-            if token['classification'] == 'STATEMENT_YEAR':
-                return int(token['text'])
-            elif token['classification'] == 'STATEMENT_DATE':
-                date = token['text']
-
-        if date == '':
-            return int(datetime.datetime.now().year)
-
-        parsed = dateparser.parse(date)
-
-        return int(parsed.year)
 
     def updateDescriptiveWordFeatures(self):
         """ This function updates fields like lineNumberWithinGroup and reverseLineNumberWithinGroup on the Word object."""
@@ -247,3 +231,20 @@ class File(Document):
         blob.upload_from_string(data)
 
         return fileName
+
+    def extractGroups(self, type=None):
+        groupWords = {}
+
+        for word in self.words:
+            if word.groups.get('DATA_TYPE') and (type is None or word.groups.get['DATA_TYPE'] == type):
+                group = word.groups['DATA_TYPE']
+                groupId = (group, word.groupNumbers['DATA_TYPE'])
+
+                if groupId in groupWords:
+                    groupWords[groupId].append(word)
+                else:
+                    groupWords[groupId] = [word]
+
+        return [
+            words for groupId,words in groupWords.items()
+        ]

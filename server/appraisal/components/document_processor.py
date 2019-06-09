@@ -3,13 +3,16 @@ from appraisal.components.document_extractor import DocumentExtractor
 from appraisal.models.file import File, Word
 import filetype
 import re
+import json
 from pprint import pprint
 from appraisal.components.tenancy_data_extractor import TenancyDataExtractor
 from appraisal.components.income_statement_data_extractor import IncomeStatementDataExtractor
+from appraisal.components.comparable_sale_data_extractor import ComparableSaleDataExtractor
 from appraisal.components.discounted_cash_flow_model import DiscountedCashFlowModel
 from appraisal.components.appraisal_validator import AppraisalValidator
 from appraisal.components.stabilized_statement_model import StabilizedStatementModel
 from appraisal.components.direct_comparison_valuation_model import DirectComparisonValuationModel
+from pprint import pprint
 
 class DocumentProcessor:
     """
@@ -28,6 +31,7 @@ class DocumentProcessor:
         self.appraisalValidator = AppraisalValidator()
         self.stabilizedStatement = StabilizedStatementModel()
         self.dcaModel = DirectComparisonValuationModel()
+        self.comparableSaleDataExtractor = ComparableSaleDataExtractor()
 
 
     def processFileUpload(self, fileName, fileData, appraisal):
@@ -102,26 +106,39 @@ class DocumentProcessor:
 
 
     def extractAndMergeAppraisalData(self, file, appraisal):
-        extractedUnits = self.tenancyDataExtractor.extractUnits(file)
+        groups = file.extractGroups()
 
-        # Now we merge together the existing units from the appraisal
-        # with unit info pulled out from the document
-        for extractedUnit in extractedUnits:
-            foundExisting = False
-            for existingUnit in appraisal.units:
-                if extractedUnit.unitNumber == existingUnit.unitNumber:
-                    existingUnit.mergeOtherUnitInfo(extractedUnit)
-                    foundExisting = True
-                    break
-            if not foundExisting:
-                appraisal.units.append(extractedUnit)
+        for group in groups:
+            dataType = group[0].groups.get("DATA_TYPE")
 
-        incomeStatement = self.incomeStatementExtractor.extractIncomeStatement(file)
+            if dataType == 'RENT_ROLL':
+                extractedUnits = self.tenancyDataExtractor.extractUnits(group)
 
-        if appraisal.incomeStatement is None:
-            appraisal.incomeStatement = incomeStatement
-        else:
-            appraisal.incomeStatement.mergeWithIncomeStatement(incomeStatement)
+                # Now we merge together the existing units from the appraisal
+                # with unit info pulled out from the document
+                for extractedUnit in extractedUnits:
+                    foundExisting = False
+                    for existingUnit in appraisal.units:
+                        if extractedUnit.unitNumber == existingUnit.unitNumber:
+                            existingUnit.mergeOtherUnitInfo(extractedUnit)
+                            foundExisting = True
+                            break
+                    if not foundExisting:
+                        appraisal.units.append(extractedUnit)
+            elif dataType == 'INCOME_STATEMENT' or dataType == 'EXPENSE_STATEMENT':
+                # TODO: Change to only extract data within a comp.
+                incomeStatement = self.incomeStatementExtractor.extractIncomeStatement(file)
+
+                if appraisal.incomeStatement is None:
+                    appraisal.incomeStatement = incomeStatement
+                else:
+                    appraisal.incomeStatement.mergeWithIncomeStatement(incomeStatement)
+            elif dataType == 'COMPARABLE_SALE':
+                comparableSale = self.comparableSaleDataExtractor.extractComparable(group)
+                comparableSale.save()
+
+                appraisal.comparableSalesDCA.append(str(comparableSale.id))
+                appraisal.comparableSalesCapRate.append(str(comparableSale.id))
 
 
 

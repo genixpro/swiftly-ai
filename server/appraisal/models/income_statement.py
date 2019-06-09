@@ -13,7 +13,7 @@ class IncomeStatementItem(EmbeddedDocument):
     yearlyAmounts = DictField(FloatField())
 
     # This is the source type for each of the yearly amounts
-    yearlySourceTypes = DictField(StringField(choices=['actual', 'budget', 'user'], null=True))
+    yearlySourceTypes = DictField(StringField(choices=['actual', 'budget', 'user', 'year_to_date', ''], null=True))
 
     # The references to the original files that this data point was pulled from, by year.
     extractionReferences = DictField()

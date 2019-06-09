@@ -1,11 +1,13 @@
 import React from 'react';
-import {Row, Col} from 'reactstrap';
+import {Row, Col, Button} from 'reactstrap';
 import axios from 'axios';
 import ComparableSaleList from "./components/ComparableSaleList";
 import _ from 'underscore';
 import ComparableSaleSearch from "./components/ComparableSaleSearch";
 import ComparableSalesMap from "./components/ComparableSalesMap"
 import ComparableSalesModel from "../models/ComparableSaleModel"
+// import Toolbar from "./components/Toolbar";
+import Promise from "bluebird";
 
 class ViewComparableSalesDatabase extends React.Component {
     state = {
@@ -170,6 +172,52 @@ class ViewComparableSalesDatabase extends React.Component {
         this.setState({sort: newSort}, () => this.loadData());
     }
 
+
+    uploadClicked()
+    {
+        const elem = document.createElement("INPUT");
+        elem.setAttribute("type", "file");
+        function handleFiles() {
+            const fileList = this.files; /* now you can work with the file list */
+            Promise.mapSeries(fileList, (file) => {
+                return new Promise((resolve, reject) => {
+                    const data = new FormData();
+                    data.set("fileName", file.name);
+                    data.set("file", file);
+                    const options = {
+                        method: 'post',
+                        url: "/comparable_sale_upload/",
+                        data: data
+                    };
+
+                    const uploadPromise = axios(options);
+
+                    uploadPromise.then((response) => {
+                        resolve(null);
+                        // setTimeout(() => {
+                        // const upProg = this.state.upProg;
+                        // upProg[file.name] = 100;
+                        // this.setState({upProg});
+                        // }, 50);
+                    }, (error) => {
+                        console.log(error);
+                        console.log(JSON.stringify(error, null, 2));
+                        resolve(null);
+                    });
+                    uploadPromise.catch(() => resolve(null));
+                })
+            }).then(() => {
+                this.setState({uploading: false});
+            }, (err) => {
+                this.setState({uploading: false});
+            });
+
+        }
+
+        elem.addEventListener("change", handleFiles, false);
+        elem.click();
+    }
+
     render()
     {
         if (!this.props.appraisal)
@@ -185,9 +233,14 @@ class ViewComparableSalesDatabase extends React.Component {
         return [
             <div className={"view-comparables-database"}>
                 <Row>
-                    <Col xs={12}>
+                    <Col xs={10}>
                         <h3>Search for Comparables</h3>
                     </Col>
+                    {/*<Col xs={2}>*/}
+                        {/*<Toolbar>*/}
+                            {/*<Button color={"primary"} onClick={() => this.uploadClicked()}>Upload</Button>*/}
+                        {/*</Toolbar>*/}
+                    {/*</Col>*/}
                 </Row>
                 <ComparableSaleSearch
                     appraisal={this.props.appraisal}

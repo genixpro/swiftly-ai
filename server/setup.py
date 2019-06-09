@@ -24,7 +24,7 @@ requires = [
     'python-dateutil',
     'mongoengine',
     'pycollada',
-    'tensorflow===1.13.1',
+    'tensorflow-gpu===1.12.2',
     'gunicorn',
     'scipy',
     'scikit-learn',

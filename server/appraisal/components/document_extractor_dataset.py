@@ -50,6 +50,10 @@ class FastWord:
             self.index = word.index
             self.lineNumberWithinGroup = word.lineNumberWithinGroup
             self.reverseLineNumberWithinGroup = word.reverseLineNumberWithinGroup
+            if hasattr(word, "globalGroupIds"):
+                self.globalGroupIds = word.globalGroupIds
+            else:
+                self.globalGroupIds = {}
         else:
             self.word = ""
             self.classification = "null"
@@ -67,6 +71,7 @@ class FastWord:
             self.top = None
             self.bottom = None
             self.index = None
+            self.globalGroupIds = {}
             self.lineNumberWithinGroup = {}
             self.reverseLineNumberWithinGroup = {}
 
@@ -82,7 +87,19 @@ class FastFile:
 
         for wordIndex, word in enumerate(self.words):
             word.index = wordIndex
-        self.groupKey = '-'.join(sorted([type for type in set(word.groups.get("DATA_TYPE", "null") for word in self.words) if type != "null"]))
+
+        remappedGroups = {
+            "EXPENSE_STATEMENT": "INCOME_STATEMENT"
+        }
+
+        self.groupKey = '-'.join(sorted([
+            type for type in
+                set(remappedGroups.get(word.groups.get("DATA_TYPE", "null"), word.groups.get("DATA_TYPE", "null"))
+                    for word in self.words)
+             if type != "null"
+        ]))
+        if self.groupKey == "":
+            self.groupKey = "null"
 
     def updateDescriptiveWordFeatures(self):
         File.updateDescriptiveWordFeatures(self)
@@ -101,6 +118,10 @@ class DocumentExtractorDataset:
         self.lengthMin = configuration['lengthMin']
         self.lengthMax = configuration['lengthMax']
         self.wordVectorSize = configuration['wordVectorSize']
+        self.positionVectorSize = configuration['positionVectorSize']
+
+        self.totalVectorSize = (self.wordVectorSize if configuration.get("useWordVectors", True) else 0) + (self.positionVectorSize if configuration.get("usePositionVectors", True) else 0)
+
         self.wordOmissionRate = configuration['wordOmissionRate']
 
         self.dataset = manager.dict()
@@ -152,6 +173,66 @@ class DocumentExtractorDataset:
         session.mount('https://', adapter)
         return session
 
+    def computeWordPositionFeatures(self, word, wordsByLine, file):
+        features = [
+            word.left,
+            word.right,
+            word.top,
+            word.bottom,
+            word.right - word.left,
+            word.bottom - word.top,
+            (word.right - word.left) / len(word.word),
+            float(word.page) / float(file.pages),
+            float(file.pages) / 20
+        ]
+
+        lineIndex = wordsByLine[word.documentLineNumber].index(word)
+
+        if lineIndex > 0:
+            features.append(word.left - wordsByLine[word.documentLineNumber][lineIndex - 1].right)
+        else:
+            features.append(-1)
+
+        if lineIndex < (len(wordsByLine[word.documentLineNumber]) - 1):
+            features.append(wordsByLine[word.documentLineNumber][lineIndex + 1].right - word.right)
+        else:
+            features.append(-1)
+
+        if wordsByLine.get(word.documentLineNumber - 1) is not None:
+            bestTopWord = None
+            bestIou = None
+            for topWord in wordsByLine[word.documentLineNumber - 1]:
+                if topWord.left < word.right and topWord.right > word.left:
+                    iou = (min(topWord.right, word.right) - max(topWord.left, word.left)) / (max(topWord.right, word.right) - min(topWord.left, word.left))
+                    if bestIou is None or iou > bestIou:
+                        bestTopWord = topWord
+                        bestIou = iou
+            if bestTopWord is not None:
+                features.append(word.top - bestTopWord.bottom)
+            else:
+                features.append(-1)
+        else:
+            features.append(-1)
+
+        if wordsByLine.get(word.documentLineNumber + 1) is not None:
+            bestBottomWord = None
+            bestIou = None
+            for bottomWord in wordsByLine[word.documentLineNumber + 1]:
+                if bottomWord.left < word.right and bottomWord.right > word.left:
+                    iou = (min(bottomWord.right, word.right) - max(bottomWord.left, word.left)) / (max(bottomWord.right, word.right) - min(bottomWord.left, word.left))
+                    if bestIou is None or iou > bestIou:
+                        bestBottomWord = bottomWord
+                        bestIou = iou
+            if bestBottomWord is not None:
+                features.append(bestBottomWord.top - word.bottom)
+            else:
+                features.append(-1)
+        else:
+            features.append(-1)
+
+        return features
+
+
     def prepareDocument(self, file, allowColumnProcessing=True):
         # Just do this as a precaution
         # file.words = self.parser.assignLineNumbersToWords(file.words)
@@ -161,32 +242,36 @@ class DocumentExtractorDataset:
 
         neededWordVectors = list(set(word.word for word in file.words))
         wordVectorMap = {}
-        if self.vectorServerURL is None:
-            for word in neededWordVectors:
-                wordVectorMap[word] = numpy.array(self.getWordVector(word))
-        else:
-            response = self.requests_retry_session().post(self.vectorServerURL, json={"words": neededWordVectors, "key": vectorServerSymmetricKey})
-            vectors = response.json()
-            for wordIndex, word in enumerate(neededWordVectors):
-                wordVectorMap[word] = numpy.array(vectors[wordIndex])
+        if self.configuration.get("useWordVectors", True):
+            if self.vectorServerURL is None:
+                for word in neededWordVectors:
+                    wordVectorMap[word] = numpy.array(self.getWordVector(word))
+            else:
+                response = self.requests_retry_session().post(self.vectorServerURL, json={"words": neededWordVectors, "key": vectorServerSymmetricKey})
+                vectors = response.json()
+                for wordIndex, word in enumerate(neededWordVectors):
+                    wordVectorMap[word] = numpy.array(vectors[wordIndex])
+
+        wordsByLine = {}
+        for word in file.words:
+            if word.documentLineNumber in wordsByLine:
+                wordsByLine[word.documentLineNumber].append(word)
+            else:
+                wordsByLine[word.documentLineNumber] = [word]
 
         wordVectors = []
         for word in file.words:
-            baseVector = wordVectorMap[word.word]
+            vectorParts = []
 
-            positionVector = [
-                word.left,
-                word.right,
-                word.top,
-                word.bottom,
-                word.right-word.left,
-                word.bottom-word.top,
-                (word.right - word.left) / len(word.word),
-                float(word.page) / float(file.pages),
-                float(file.pages) / 20
-            ]
+            if self.configuration.get("usePositionVectors", True):
+                positionVector = self.computeWordPositionFeatures(word, wordsByLine, file)
+                vectorParts.append(positionVector)
 
-            wordVectors.append(numpy.concatenate([numpy.array(positionVector), baseVector]))
+            if self.configuration.get("useWordVectors", True):
+                baseVector = wordVectorMap[word.word]
+                vectorParts.append(baseVector)
+
+            wordVectors.append(numpy.concatenate(vectorParts))
 
         lineSortedWordIndexes = [word.index for word in sorted(file.words, key=lambda word: (word.page, word.lineNumber, word.left))]
         lineSortedReverseWordIndexes = [lineSortedWordIndexes.index(word.index) for word in file.words]
@@ -253,6 +338,7 @@ class DocumentExtractorDataset:
                 while len(column) < longestColumn:
                     column.append(-1)
         else:
+            # print("Using LINE processing instead of column")
             columnSortedWordIndexes = copy.copy(lineSortedWordIndexes)
             columnWordIndexes = copy.copy(lineWordIndexes)
             columnReverseWordIndexes = copy.copy(lineReverseWordIndexes)
@@ -263,6 +349,7 @@ class DocumentExtractorDataset:
         classificationOutputs = []
         modifierOutputs = []
         groupOutputs = []
+        globalGroupIdOutputs = []
         textTypeOutputs = []
 
         for word in file.words:
@@ -278,6 +365,13 @@ class DocumentExtractorDataset:
             for modifier in word.modifiers:
                 modifiersVector[self.modifiers.index(modifier)] = 1
             modifierOutputs.append(modifiersVector)
+
+            globalGroupIdVector = [0] * len(self.globalGroupIds)
+            if hasattr(word, 'globalGroupIds'):
+                for groupSet in word.globalGroupIds:
+                    if word.globalGroupIds[groupSet] in self.globalGroupIds:
+                        globalGroupIdVector[self.globalGroupIds.index(word.globalGroupIds[groupSet])] = 1
+            globalGroupIdOutputs.append(globalGroupIdVector)
 
             groupsVector = []
             for groupSet in self.groupSets:
@@ -335,7 +429,9 @@ class DocumentExtractorDataset:
             classificationOutputs,
             modifierOutputs,
             groupOutputs,
-            textTypeOutputs)
+            textTypeOutputs,
+            globalGroupIdOutputs
+        )
 
     def loadDataset(self, db, manager):
         files = File.objects(**self.configuration['query'])
@@ -345,11 +441,12 @@ class DocumentExtractorDataset:
         groups = {}
         groupSets = set()
         textTypes = set()
+        globalGroupIds = set()
 
         self.augmentationValues = {}
 
         fileCount = 0
-        for file in files:
+        for fileIndex, file in enumerate(files):
             if len(file.words) == 0:
                 # skip this file
                 continue
@@ -386,6 +483,12 @@ class DocumentExtractorDataset:
             for page in range(file.pages):
                 fast = FastFile(words=[word for word in file.words if word.page == page], pages=file.pages)
 
+                for word in fast.words:
+                    for groupSet in word.groups:
+                        if word.groups[groupSet] != "null" and word.groups[groupSet] is not None:
+                            word.globalGroupIds[groupSet] = f"{fileIndex}-{word.groupNumbers[groupSet]}"
+                            globalGroupIds.add(word.globalGroupIds[groupSet])
+
                 if fast.groupKey not in  self.dataset:
                     self.dataset[fast.groupKey] = manager.list()
 
@@ -406,11 +509,17 @@ class DocumentExtractorDataset:
             total += len(self.dataset[key])
 
         print(f"Loaded {total} pages from {fileCount} files.")
+        pprint({key: len(self.dataset[key]) for key in self.dataset})
+        print("Training:")
+        pprint(self.trainingCount)
+        print("Testing:")
+        pprint(self.testingCount)
 
         self.labels = sorted(list(labels))
         self.modifiers = sorted(list(modifiers))
         self.groups = {groupSet: sorted(list(groups)) for groupSet, groups in groups.items()}
         self.groupSets = sorted(list(groupSets))
+        self.globalGroupIds = sorted(list(globalGroupIds))
 
         self.totalGroupLabels = 0
         for groupSet in self.groupSets:
@@ -426,6 +535,7 @@ class DocumentExtractorDataset:
         self.groups = data['groups']
         self.groupSets = sorted(list(self.groups.keys()))
         self.textTypes = data['textTypes']
+        self.globalGroupIds = data.get('globalGroupIds', {})
 
         self.totalGroupLabels = 0
         for groupSet in self.groupSets:
@@ -440,7 +550,8 @@ class DocumentExtractorDataset:
             "labels": self.labels,
             "modifiers": self.modifiers,
             "groups": self.groups,
-            "textTypes": self.textTypes
+            "textTypes": self.textTypes,
+            "globalGroupIds": self.globalGroupIds
         }
 
         # Also restore the labels
@@ -502,6 +613,7 @@ class DocumentExtractorDataset:
             newWord.page = token['words'][0].page
             newWord.groups = token['groups']
             newWord.groupNumbers = token['groupNumbers']
+            newWord.globalGroupIds = token['words'][0].globalGroupIds
             newWord.textType = token['textType']
             newWord.lineNumber = startLine + int(round((wordIndex / len(newTextSplit)) * lineDelta))
             newWord.documentLineNumber = startDocumentLineNumber + int(round((wordIndex / len(newTextSplit)) * lineDelta))
@@ -605,7 +717,10 @@ class DocumentExtractorDataset:
     #             dataset.append(result)
     #     return dataset
 
-    def createBatch(self, batchSize, testing=False, allowColumnProcessing=False):
+    def createBatch(self, batchSize, testing=False, allowColumnProcessing=False, typeProbs=None):
+        if typeProbs is None:
+            typeProbs = {}
+
         batchWordVectors = []
         batchLineSortedWordIndexes = []
         batchLineSortedLengths = []
@@ -625,10 +740,16 @@ class DocumentExtractorDataset:
         batchModifierOutputs = []
         batchGroupOutputs = []
         batchTextTypeOutputs = []
+        batchGlobalGroupIdOutputs = []
 
         batchLengths = []
 
-        key = random.choice(list(self.dataset.keys()))
+        total = numpy.sum([typeProbs.get(dataType, 1) for dataType in self.dataset.keys()])
+        # print([int(round(typeProbs.get(dataType, 1) / total * 100)) for dataType in self.dataset.keys()])
+
+        choices = [dataType for dataType in self.dataset.keys() for n in range(max(1, int(round(typeProbs.get(dataType, 1) / total * 100))))]
+
+        key = random.choice(choices)
 
         results = []
         for n in range(batchSize):
@@ -682,6 +803,7 @@ class DocumentExtractorDataset:
             modifierOutputs = result[14]
             groupOutputs = result[15]
             textTypeOutputs = result[16]
+            globalGroupIdOutputs = result[17]
 
             # print(numpy.array(lineWordIndexes).shape)
             # print(numpy.array(columnWordIndexes).shape)
@@ -709,7 +831,7 @@ class DocumentExtractorDataset:
                 if len(columnWordIndexes[-1]) >= origLongestColumn:
                     columnWordIndexes.append([])
 
-                wordVectors.append([0] * self.wordVectorSize)
+                wordVectors.append([0] * self.totalVectorSize)
 
                 oneHotCodeClassification = [0] * len(self.labels)
                 oneHotCodeModifiers = [0] * len(self.modifiers)
@@ -717,6 +839,8 @@ class DocumentExtractorDataset:
 
                 classificationOutputs.append(oneHotCodeClassification)
                 modifierOutputs.append(oneHotCodeModifiers)
+
+                globalGroupIdOutputs.append([0] * len(self.globalGroupIds))
 
                 groupsVector = []
                 for groupSet in self.groupSets:
@@ -778,6 +902,7 @@ class DocumentExtractorDataset:
                 modifierOutputs = modifierOutputs[start:start + maxLength]
                 groupOutputs = groupOutputs[start:start + maxLength]
                 textTypeOutputs = textTypeOutputs[start:start + maxLength]
+                globalGroupIdOutputs = globalGroupIdOutputs[start:start + maxLength]
 
             maxLines = max(len(lineWordIndexes), maxLines)
             maxColumns = max(len(columnWordIndexes), maxColumns)
@@ -803,6 +928,7 @@ class DocumentExtractorDataset:
             batchModifierOutputs.append(modifierOutputs)
             batchGroupOutputs.append(groupOutputs)
             batchTextTypeOutputs.append(textTypeOutputs)
+            batchGlobalGroupIdOutputs.append(globalGroupIdOutputs)
 
         # print(batchWordVectors[0][0])
         # print(batchLineSortedWordIndexes)
@@ -839,5 +965,7 @@ class DocumentExtractorDataset:
             numpy.array(batchClassificationOutputs),
             numpy.array(batchModifierOutputs),
             numpy.array(batchGroupOutputs),
-            numpy.array(batchTextTypeOutputs)
+            numpy.array(batchTextTypeOutputs),
+            numpy.array(batchGlobalGroupIdOutputs),
+            key
         )
