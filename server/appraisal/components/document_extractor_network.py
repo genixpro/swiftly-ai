@@ -31,7 +31,7 @@ class DocumentExtractorNetwork:
 
         self.name = "-".join(networkOutputs)
 
-        self.wordVectorSize = self.dataset.wordVectorSize
+        self.totalVectorSize = self.dataset.totalVectorSize
         self.batchSize = configuration['batchSize']
 
         session_conf = tf.ConfigProto(
@@ -68,6 +68,8 @@ class DocumentExtractorNetwork:
             self.numGPUs = len(self.getAvailableGpus())
         else:
             self.numGPUs = min(configuration['numGPUs'], len(self.getAvailableGpus()))
+
+        self.configuration = configuration
 
 
     def getAvailableGpus(self):
@@ -649,56 +651,67 @@ class DocumentExtractorNetwork:
     def createComboLineColumnLayer(self, inputs):
         batchSize = tf.shape(inputs)[0]
         length = tf.shape(inputs)[1]
-        vectorSize = self.wordVectorSize
+        vectorSize = self.totalVectorSize
 
-        with tf.name_scope("lineSorted"), tf.variable_scope("lineSorted"):
-            transformedIndexes = tf.reshape(self.lineSortedWordIndexesInput, shape=[batchSize, 1, length])
+        outputs = []
 
-            lineSortedOutput = self.createRecurrentAttentionLayer(inputs, transformedIndexes, "recurrent")
+        if self.configuration.get('useLineSortedProcessing', True):
+            with tf.name_scope("lineSorted"), tf.variable_scope("lineSorted"):
+                transformedIndexes = tf.reshape(self.lineSortedWordIndexesInput, shape=[batchSize, 1, length])
 
-            lineSortedOutput = tf.reshape(lineSortedOutput, shape=[batchSize, length, self.lstmSize])
+                lineSortedOutput = self.createRecurrentAttentionLayer(inputs, transformedIndexes, self.configuration.get("lineSortedLayerType", "recurrent"))
 
-            lineSortedOutput = tf.batch_gather(lineSortedOutput, self.lineSortedReverseWordIndexesInput)
+                lineSortedOutput = tf.reshape(lineSortedOutput, shape=[batchSize, length, self.lstmSize])
 
-        with tf.name_scope("line"), tf.variable_scope("line"):
-            # inputs = self.debug(inputs)
-            # lineWordIndexesInput = self.debug(self.lineWordIndexesInput)
-            rawLineOutput = self.createRecurrentAttentionLayer(inputs, self.lineWordIndexesInput, "recurrent")
+                lineSortedOutput = tf.batch_gather(lineSortedOutput, self.lineSortedReverseWordIndexesInput)
 
-            # rawLineOutput = self.debug(rawLineOutput)
+                outputs.append(lineSortedOutput)
 
-            sequencesPerSample = tf.shape(self.lineWordIndexesInput)[1]
-            sequenceLength = tf.shape(self.lineWordIndexesInput)[2]
+        if self.configuration.get('useLineProcessing', True):
+            with tf.name_scope("line"), tf.variable_scope("line"):
+                # inputs = self.debug(inputs)
+                # lineWordIndexesInput = self.debug(self.lineWordIndexesInput)
+                rawLineOutput = self.createRecurrentAttentionLayer(inputs, self.lineWordIndexesInput, self.configuration.get("lineLayerType", "recurrent"))
 
-            rawLineOutput = tf.reshape(rawLineOutput, shape=[batchSize, sequencesPerSample * sequenceLength, self.lstmSize])
+                # rawLineOutput = self.debug(rawLineOutput)
 
-            # rawLineOutput = self.debug(rawLineOutput)
+                sequencesPerSample = tf.shape(self.lineWordIndexesInput)[1]
+                sequenceLength = tf.shape(self.lineWordIndexesInput)[2]
 
-            # lineReverseIndexesInput = self.debug(self.lineReverseIndexesInput, True)
+                rawLineOutput = tf.reshape(rawLineOutput, shape=[batchSize, sequencesPerSample * sequenceLength, self.lstmSize])
 
-            newIndexes = self.lineReverseIndexesInput[:, :, 0] * sequenceLength + self.lineReverseIndexesInput[:, :, 1]
+                # rawLineOutput = self.debug(rawLineOutput)
 
-            lineOutput = tf.batch_gather(rawLineOutput, newIndexes)
+                # lineReverseIndexesInput = self.debug(self.lineReverseIndexesInput, True)
 
-            lineOutput = tf.reshape(lineOutput, shape=[batchSize, length, self.lstmSize])
+                newIndexes = self.lineReverseIndexesInput[:, :, 0] * sequenceLength + self.lineReverseIndexesInput[:, :, 1]
 
-        with tf.name_scope("column"), tf.variable_scope("column"):
-            rawColumnOutput = self.createRecurrentAttentionLayer(inputs, self.columnWordIndexesInput, "recurrent")
+                lineOutput = tf.batch_gather(rawLineOutput, newIndexes)
 
-            # rawColumnOutput = self.debug(rawColumnOutput)
+                lineOutput = tf.reshape(lineOutput, shape=[batchSize, length, self.lstmSize])
 
-            sequencesPerSample = tf.shape(self.columnWordIndexesInput)[1]
-            sequenceLength = tf.shape(self.columnWordIndexesInput)[2]
+                outputs.append(lineOutput)
 
-            rawColumnOutput = tf.reshape(rawColumnOutput, shape=[batchSize, sequencesPerSample * sequenceLength, self.lstmSize])
+        if self.configuration.get('useColumnProcessing', True):
+            with tf.name_scope("column"), tf.variable_scope("column"):
+                rawColumnOutput = self.createRecurrentAttentionLayer(inputs, self.columnWordIndexesInput, self.configuration.get("columnLayerType", "recurrent"))
 
-            newIndexes = self.columnReverseIndexesInput[:, :, 0] * sequenceLength + self.columnReverseIndexesInput[:, :, 1]
+                # rawColumnOutput = self.debug(rawColumnOutput)
 
-            columnOutput = tf.batch_gather(rawColumnOutput, newIndexes)
+                sequencesPerSample = tf.shape(self.columnWordIndexesInput)[1]
+                sequenceLength = tf.shape(self.columnWordIndexesInput)[2]
 
-            columnOutput = tf.reshape(columnOutput, shape=[batchSize, length, self.lstmSize])
+                rawColumnOutput = tf.reshape(rawColumnOutput, shape=[batchSize, sequencesPerSample * sequenceLength, self.lstmSize])
 
-        layerOutputs = tf.concat(values=[lineSortedOutput], axis=2)
+                newIndexes = self.columnReverseIndexesInput[:, :, 0] * sequenceLength + self.columnReverseIndexesInput[:, :, 1]
+
+                columnOutput = tf.batch_gather(rawColumnOutput, newIndexes)
+
+                columnOutput = tf.reshape(columnOutput, shape=[batchSize, length, self.lstmSize])
+
+                outputs.append(columnOutput)
+
+        layerOutputs = tf.concat(values=outputs, axis=2)
 
         # layerOutputs = tf.layers.BatchNormalization(layerOutputs)
 
@@ -714,7 +727,7 @@ class DocumentExtractorNetwork:
             numGlobalGroupIds = len(self.dataset.globalGroupIds)
 
             # Placeholders for input, output and dropout
-            self.inputWordVectors = tf.placeholder(tf.float32, shape=[None, None, self.wordVectorSize], name='input_word_vectors')
+            self.inputWordVectors = tf.placeholder(tf.float32, shape=[None, None, self.totalVectorSize], name='input_word_vectors')
             # self.inputLength = tf.placeholder(tf.int32, shape=[None], name='input_length')
 
             self.inputClassification = tf.placeholder(tf.float32, shape=[None, None, numClasses], name='input_classification')

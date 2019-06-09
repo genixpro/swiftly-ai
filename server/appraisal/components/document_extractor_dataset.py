@@ -118,6 +118,10 @@ class DocumentExtractorDataset:
         self.lengthMin = configuration['lengthMin']
         self.lengthMax = configuration['lengthMax']
         self.wordVectorSize = configuration['wordVectorSize']
+        self.positionVectorSize = configuration['positionVectorSize']
+
+        self.totalVectorSize = (self.wordVectorSize if configuration.get("useWordVectors", True) else 0) + (self.positionVectorSize if configuration.get("usePositionVectors", True) else 0)
+
         self.wordOmissionRate = configuration['wordOmissionRate']
 
         self.dataset = manager.dict()
@@ -238,14 +242,15 @@ class DocumentExtractorDataset:
 
         neededWordVectors = list(set(word.word for word in file.words))
         wordVectorMap = {}
-        if self.vectorServerURL is None:
-            for word in neededWordVectors:
-                wordVectorMap[word] = numpy.array(self.getWordVector(word))
-        else:
-            response = self.requests_retry_session().post(self.vectorServerURL, json={"words": neededWordVectors, "key": vectorServerSymmetricKey})
-            vectors = response.json()
-            for wordIndex, word in enumerate(neededWordVectors):
-                wordVectorMap[word] = numpy.array(vectors[wordIndex])
+        if self.configuration.get("useWordVectors", True):
+            if self.vectorServerURL is None:
+                for word in neededWordVectors:
+                    wordVectorMap[word] = numpy.array(self.getWordVector(word))
+            else:
+                response = self.requests_retry_session().post(self.vectorServerURL, json={"words": neededWordVectors, "key": vectorServerSymmetricKey})
+                vectors = response.json()
+                for wordIndex, word in enumerate(neededWordVectors):
+                    wordVectorMap[word] = numpy.array(vectors[wordIndex])
 
         wordsByLine = {}
         for word in file.words:
@@ -256,11 +261,17 @@ class DocumentExtractorDataset:
 
         wordVectors = []
         for word in file.words:
-            baseVector = wordVectorMap[word.word]
+            vectorParts = []
 
-            positionVector = self.computeWordPositionFeatures(word, wordsByLine, file)
+            if self.configuration.get("usePositionVectors", True):
+                positionVector = self.computeWordPositionFeatures(word, wordsByLine, file)
+                vectorParts.append(positionVector)
 
-            wordVectors.append(numpy.concatenate([numpy.array(positionVector), baseVector]))
+            if self.configuration.get("useWordVectors", True):
+                baseVector = wordVectorMap[word.word]
+                vectorParts.append(baseVector)
+
+            wordVectors.append(numpy.concatenate(vectorParts))
 
         lineSortedWordIndexes = [word.index for word in sorted(file.words, key=lambda word: (word.page, word.lineNumber, word.left))]
         lineSortedReverseWordIndexes = [lineSortedWordIndexes.index(word.index) for word in file.words]
@@ -327,7 +338,7 @@ class DocumentExtractorDataset:
                 while len(column) < longestColumn:
                     column.append(-1)
         else:
-            print("Using LINE processing instead of column")
+            # print("Using LINE processing instead of column")
             columnSortedWordIndexes = copy.copy(lineSortedWordIndexes)
             columnWordIndexes = copy.copy(lineWordIndexes)
             columnReverseWordIndexes = copy.copy(lineReverseWordIndexes)
@@ -498,6 +509,11 @@ class DocumentExtractorDataset:
             total += len(self.dataset[key])
 
         print(f"Loaded {total} pages from {fileCount} files.")
+        pprint({key: len(self.dataset[key]) for key in self.dataset})
+        print("Training:")
+        pprint(self.trainingCount)
+        print("Testing:")
+        pprint(self.testingCount)
 
         self.labels = sorted(list(labels))
         self.modifiers = sorted(list(modifiers))
@@ -815,7 +831,7 @@ class DocumentExtractorDataset:
                 if len(columnWordIndexes[-1]) >= origLongestColumn:
                     columnWordIndexes.append([])
 
-                wordVectors.append([0] * self.wordVectorSize)
+                wordVectors.append([0] * self.totalVectorSize)
 
                 oneHotCodeClassification = [0] * len(self.labels)
                 oneHotCodeModifiers = [0] * len(self.modifiers)

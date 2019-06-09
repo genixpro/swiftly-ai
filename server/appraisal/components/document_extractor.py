@@ -14,7 +14,8 @@ class DocumentExtractor:
     def __init__(self, db, configuration, vectorServerURL=None):
         self.manager = multiprocessing.Manager()
 
-        self.dataset = DocumentExtractorDataset(configuration, vectorServerURL, self.manager)
+        self.textTypeDataset = DocumentExtractorDataset(configuration['textType'], vectorServerURL, self.manager)
+        self.classificationDataset = DocumentExtractorDataset(configuration['classification'], vectorServerURL, self.manager)
 
         self.parser = DocumentParser()
 
@@ -24,14 +25,15 @@ class DocumentExtractor:
 
 
     def loadAlgorithm(self):
-        self.dataset.loadLabels("models/labels.json")
+        self.textTypeDataset.loadLabels("models/labels.json")
+        self.classificationDataset.loadLabels("models/labels.json")
 
         if os.path.exists("models/configuration.json"):
             self.configuration = json.load(open("models/configuration.json", "rt"))
 
-        self.textTypeNetwork = DocumentExtractorNetwork(['textType'], self.dataset, self.configuration, allowColumnProcessing=False)
+        self.textTypeNetwork = DocumentExtractorNetwork(['textType'], self.textTypeDataset, self.configuration['textType'], allowColumnProcessing=False)
 
-        self.classificationNetwork = DocumentExtractorNetwork(['groups', 'classification', 'modifiers'], self.dataset, self.configuration, allowColumnProcessing=True)
+        self.classificationNetwork = DocumentExtractorNetwork(['groups', 'classification', 'modifiers'], self.classificationDataset, self.configuration['classification'], allowColumnProcessing=True)
 
     def trainAlgorithm(self):
         directory = "models"
@@ -40,23 +42,29 @@ class DocumentExtractor:
             shutil.rmtree(directory)
         os.mkdir(directory)
 
-        self.dataset.loadDataset(self.db, self.manager)
+        self.textTypeDataset.loadDataset(self.db, self.manager)
 
-        self.dataset.saveLabels("models/labels.json")
+        self.textTypeDataset.saveLabels("models/labels.json")
 
         json.dump(self.configuration, open("models/configuration.json", "wt"))
 
-        self.textTypeNetwork = DocumentExtractorNetwork(['textType'], self.dataset, self.configuration, allowColumnProcessing=False)
+        self.textTypeNetwork = DocumentExtractorNetwork(['textType'], self.textTypeDataset, self.configuration['textType'], allowColumnProcessing=False)
 
         self.textTypeNetwork.trainAlgorithm()
 
         del self.textTypeNetwork
+        del self.textTypeDataset
 
-        self.classificationNetwork = DocumentExtractorNetwork(['groups', 'classification', 'modifiers'], self.dataset, self.configuration, allowColumnProcessing=True)
+        self.classificationDataset.loadDataset(self.db, self.manager)
+
+        self.classificationDataset.saveLabels("models/labels.json")
+
+        self.classificationNetwork = DocumentExtractorNetwork(['groups', 'classification', 'modifiers'], self.classificationDataset, self.configuration['classification'], allowColumnProcessing=True)
 
         self.classificationNetwork.trainAlgorithm()
 
         del self.classificationNetwork
+        del self.classificationDataset
 
     def uploadAlgorithm(self):
         directory = "models"
