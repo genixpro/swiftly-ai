@@ -2,8 +2,8 @@ apiVersion: autoscaling/v1
 kind: HorizontalPodAutoscaler
 metadata:
   labels:
-    app: swiftly-SWIFTLY_ENV-frontend
-  name: swiftly-SWIFTLY_ENV-frontend-hpa
+    app: swiftly-__SWIFTLY_ENV__-frontend
+  name: swiftly-__SWIFTLY_ENV__-frontend-hpa
 spec:
   maxReplicas: 10
   minReplicas: 2
