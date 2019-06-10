@@ -47,6 +47,16 @@ class DocumentExtractor:
         os.mkdir(directory)
 
         self.createDatasets()
+        self.classificationDataset.loadDataset(self.db, self.manager)
+
+        self.classificationDataset.saveLabels("models/labels.json")
+
+        self.classificationNetwork = DocumentExtractorNetwork(['groups', 'classification', 'modifiers'], self.classificationDataset, self.configuration['classification'], allowColumnProcessing=True)
+
+        self.classificationNetwork.trainAlgorithm()
+
+        del self.classificationNetwork
+        del self.classificationDataset
 
         self.textTypeDataset.loadDataset(self.db, self.manager)
 
@@ -61,16 +71,6 @@ class DocumentExtractor:
         del self.textTypeNetwork
         del self.textTypeDataset
 
-        self.classificationDataset.loadDataset(self.db, self.manager)
-
-        self.classificationDataset.saveLabels("models/labels.json")
-
-        self.classificationNetwork = DocumentExtractorNetwork(['groups', 'classification', 'modifiers'], self.classificationDataset, self.configuration['classification'], allowColumnProcessing=True)
-
-        self.classificationNetwork.trainAlgorithm()
-
-        del self.classificationNetwork
-        del self.classificationDataset
 
     def uploadAlgorithm(self):
         directory = "models"
