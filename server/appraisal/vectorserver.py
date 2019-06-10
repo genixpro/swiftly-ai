@@ -36,18 +36,27 @@ def vectors(request):
     return vectors
 
 
+def health(request):
+    """ Add blog entry code goes here """
+    vector = getWordVector("testing", request.registry.vectorProcess)
+    return vector
+
+
 
 def main(global_config, **settings):
     """ This function returns a Pyramid WSGI application.
     """
     with Configurator(settings=settings) as config:
         config.add_route("vectors", "/vectors")
+        config.add_route("health", "/health")
         config.add_view(vectors, route_name='vectors', request_method="POST", renderer="json")
+        config.add_view(health, route_name='health', request_method="GET", renderer="json")
 
         vectorProcess = subprocess.Popen(["fasttext", "print-word-vectors", "crawl-300d-2M-subword.bin"], stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         config.registry.vectorProcess = vectorProcess
 
 
     return config.make_wsgi_app()
+
 
 
