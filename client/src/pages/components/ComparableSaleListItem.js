@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button, Collapse, CardHeader, CardTitle, Row, Col} from 'reactstrap';
+import { Button, Collapse, CardHeader, CardTitle, Row, Col, Popover, PopoverBody, PopoverHeader} from 'reactstrap';
 import FieldDisplayEdit from "./FieldDisplayEdit";
 import axios from "axios/index";
 import UploadableImageSet from "./UploadableImageSet";
@@ -8,6 +8,7 @@ import PropTypes from "prop-types";
 import ComparableSaleModel from "../../models/ComparableSaleModel";
 import AppraisalModel from "../../models/AppraisalModel";
 import _ from 'underscore';
+import GoogleMapReact from 'google-map-react';
 import CurrencyFormat from "./CurrencyFormat";
 import PercentFormat from "./PercentFormat";
 import FloatFormat from "./FloatFormat";
@@ -142,7 +143,10 @@ class ComparableSaleListItem extends React.Component
     };
 
     state = {
-        comparableSale: {}
+        comparableSale: {},
+        isDraggingPin: true,
+        droppingPinX: 0,
+        droppingPinY: 0
     };
 
     static getDerivedStateFromProps(props)
@@ -170,6 +174,26 @@ class ComparableSaleListItem extends React.Component
             // console.log(response.data.comparableSales);
             // this.setState({comparableSales: response.data.comparableSales})
         });
+    }
+
+    getDefaultMapParams()
+    {
+        const mapParams = {
+            defaultCenter: {
+                lat: 41.3625202,
+                lng: -100.5995477
+            },
+            defaultZoom: 5
+        };
+
+        if (this.state.comparableSale.location)
+        {
+            mapParams.defaultCenter.lng = this.state.comparableSale.location.coordinates[0];
+            mapParams.defaultCenter.lat = this.state.comparableSale.location.coordinates[1];
+            mapParams.defaultZoom = 12;
+        }
+
+        return mapParams;
     }
 
 
@@ -212,6 +236,34 @@ class ComparableSaleListItem extends React.Component
     {
         this.setState({detailsOpen: !this.state.detailsOpen});
     }
+
+    placePinButtonClicked()
+    {
+        this.setState({placePinOnMapPopoverOpen: true})
+    }
+
+
+    onPinMapMouseMove(evt)
+    {
+        const mapElem = document.getElementById("place-pin-body-wrapper");
+        const position = mapElem.getBoundingClientRect();
+        const scroll = window.scrollX;
+        const mouseX = evt.pageX + 12.5;
+        const mouseY = evt.pageY - 3;
+        const state = {droppingPinX: mouseX - position.left - window.scrollX, droppingPinY: mouseY - position.top - window.scrollY};
+        this.setState(state);
+    }
+
+    onPinMapMouseClicked(evt)
+    {
+        this.changeComparableField("location", {"type": "Point", "coordinates": [evt.lng, evt.lat]})
+    }
+
+    togglePlacePinView()
+    {
+        this.setState({placePinOnMapPopoverOpen: !this.state.placePinOnMapPopoverOpen})
+    }
+
 
 
     render()
@@ -503,6 +555,50 @@ class ComparableSaleListItem extends React.Component
                                         comparableSale={comparableSale}
                                         onChange={this.changeComparableField.bind(this)}
                                     />
+
+                                    <span>
+                                    </span>
+                                    <div className={"place-pin-on-map-button-container"}>
+                                        <Button onClick={() => this.placePinButtonClicked()} id={`place-pin-on-map-button`}>
+                                            Place Pin on Map
+                                        </Button>
+
+                                        <Popover placement="bottom" isOpen={this.state.placePinOnMapPopoverOpen} target={"place-pin-on-map-button"} toggle={() => this.togglePlacePinView()} className={"place-pin-on-map-popover"}>
+                                            <PopoverBody>
+                                                <div id="place-pin-body-wrapper" className={"place-pin-body-wrapper"} onMouseMove={(evt) => this.onPinMapMouseMove(evt)}>
+                                                    <GoogleMapReact
+                                                        bootstrapURLKeys={{ key: "AIzaSyBRmZ2N4EhJjXmC29t3VeiLUQssNG-MY1I" }}
+                                                        defaultCenter={this.getDefaultMapParams().defaultCenter}
+                                                        defaultZoom={this.getDefaultMapParams().defaultZoom}
+                                                        onClick={(evt) => this.onPinMapMouseClicked(evt)}
+                                                    >
+                                                        {
+                                                            this.props.comparableSale.location ?
+                                                                <div
+                                                                    lat={this.props.comparableSale.location.coordinates[1]}
+                                                                    lng={this.props.comparableSale.location.coordinates[0]}>
+                                                                    <img
+                                                                        alt={"Droppable Map Pin"}
+                                                                        className={"current-building-map-icon"}
+                                                                        src={"/img/building-icon.png"}
+                                                                    />
+                                                                </div> : null
+                                                        }
+                                                    </GoogleMapReact>
+                                                    {
+                                                        this.state.isDraggingPin ?
+                                                            <div style={{"left": `${this.state.droppingPinX}px`, "top": `${this.state.droppingPinY}px`, "position": "absolute"}}>
+                                                                <img
+                                                                    alt={"Droppable Map Pin"}
+                                                                    className={"pin-map-icon"}
+                                                                    src={"/img/building-icon.png"}
+                                                                />
+                                                            </div> : null
+                                                    }
+                                                </div>
+                                            </PopoverBody>
+                                        </Popover>
+                                    </div>
 
                                     <ComparableSaleListItemField
                                         title="Property Type"
