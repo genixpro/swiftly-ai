@@ -76,7 +76,8 @@ class ComparableSaleDataExtractor(DataExtractor):
                 if comp.address is None:
                     comp.address = ""
 
-                comp.address += text + " "
+                if text not in comp.address:
+                    comp.address += text + " "
             elif classification == 'BUILDING_SIZE':
                 comp.sizeSquareFootage = self.cleanAmount(text)
             elif classification == 'CONSTRUCTION_DATE':

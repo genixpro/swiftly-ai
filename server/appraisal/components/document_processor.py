@@ -34,7 +34,7 @@ class DocumentProcessor:
         self.comparableSaleDataExtractor = ComparableSaleDataExtractor()
 
 
-    def processFileUpload(self, fileName, fileData, appraisal):
+    def processFileUpload(self, fileName, fileData, appraisal, owner=None, extract=True):
         """
         This method is used to process a file upload to a given appraisal.
 
@@ -47,8 +47,12 @@ class DocumentProcessor:
         # Create an initial file object
         file = File()
         file.fileName = fileName
-        file.owner = appraisal.owner
-        file.appraisalId = str(appraisal.id)
+        if appraisal is not None:
+            file.owner = appraisal.owner
+            file.appraisalId = str(appraisal.id)
+        else:
+            file.owner = owner
+            file.appraisalId = None
         file.save()
         fileId = str(file.id)
 
@@ -59,10 +63,12 @@ class DocumentProcessor:
         # Save
         file.save()
 
-        self.extractAndMergeAppraisalData(file, appraisal)
-        self.processAppraisalResults(appraisal)
+        if extract:
+            self.extractAndMergeAppraisalData(file, appraisal)
+            self.processAppraisalResults(appraisal)
 
-        appraisal.save()
+        if appraisal is not None:
+            appraisal.save()
 
         return file
 

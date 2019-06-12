@@ -263,6 +263,7 @@ class DocumentExtractorDataset:
         for word in file.words:
             vectorParts = []
 
+            # TODO: The order of position vector and base word vector should be switched
             if self.configuration.get("usePositionVectors", True):
                 positionVector = self.computeWordPositionFeatures(word, wordsByLine, file)
                 vectorParts.append(positionVector)

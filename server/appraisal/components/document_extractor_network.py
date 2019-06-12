@@ -584,7 +584,7 @@ class DocumentExtractorNetwork:
 
                     for word, wordIndex in zip(wordsByLine[lineNumber], wordIndexesByLine[lineNumber]):
                         word['textType'] = self.dataset.textTypes[textTypePrediction]
-                        # word['textType'] = "block"
+                        word['textType'] = "block"
                         word['textTypeProbabilities'] = {
                             label: float(probabilities[0][wordIndex][labelIndex])
                             for labelIndex, label in enumerate(self.dataset.textTypes)
