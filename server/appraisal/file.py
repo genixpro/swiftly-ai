@@ -124,6 +124,19 @@ class FileAPI(object):
         if not auth:
             raise HTTPForbidden("You do not have access to this file.")
 
+        appraisal = Appraisal.objects(id=appraisalId).first()
+
+        for dataType in appraisal.dataTypeReferences:
+            toRemove = []
+            for reference in appraisal.dataTypeReferences[dataType]:
+                if reference.fileId == fileId:
+                    toRemove.append(reference)
+
+            for reference in toRemove:
+                appraisal.dataTypeReferences[dataType].remove(reference)
+
+        appraisal.save()
+
         file.delete()
 
     def convertOldWord(self, word):

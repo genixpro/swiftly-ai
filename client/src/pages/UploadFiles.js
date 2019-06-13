@@ -8,6 +8,7 @@ import 'loaders.css/loaders.css';
 import 'spinkit/css/spinkit.css';
 import AppraisalContentHeader from "./components/AppraisalContentHeader";
 import Checklist from "./components/Checklist";
+import FileModel from "../models/FileModel";
 
 
 class UploadFiles extends React.Component {
@@ -19,6 +20,21 @@ class UploadFiles extends React.Component {
     componentDidMount()
     {
         this.appraisalId = this.props.match.params['id'];
+        this.refreshFileList();
+    }
+
+    refreshFileList()
+    {
+        axios.get(`/appraisal/${this.appraisalId}/files`).then((response) =>
+        {
+            this.setState({files: response.data.files.map((file) => FileModel.create(file))})
+        });
+    }
+
+    onFileDeleted()
+    {
+        this.props.reloadAppraisal();
+        this.refreshFileList();
     }
 
     onDrop(files)
@@ -53,8 +69,8 @@ class UploadFiles extends React.Component {
             })
         }).then(() => {
             this.setState({uploading: false});
+            this.refreshFileList();
             this.props.reloadAppraisal();
-            this.fileList.refresh();
         }, (err) => {
             this.setState({uploading: false});
         });
@@ -126,7 +142,10 @@ class UploadFiles extends React.Component {
                                     </Row>
                                     <Row>
                                         <Col xs={12} className={"checklist-column"}>
-                                            <Checklist appraisal={this.props.appraisal}/>
+                                            <Checklist
+                                                appraisal={this.props.appraisal}
+                                                files={this.state.files}
+                                            />
                                         </Col>
                                     </Row>
                                     <Row>
@@ -135,8 +154,10 @@ class UploadFiles extends React.Component {
                                         {/*</Col>*/}
                                         <Col xs={12}>
                                             <UploadedFileList appraisalId={this.props.match.params['id']}
-                                                              ref={(obj) => this.fileList = obj}
-                                                              history={this.props.history}/>
+                                                              files={this.state.files}
+                                                              history={this.props.history}
+                                                              onDeleteFile={() => this.onFileDeleted()}
+                                            />
                                         </Col>
                                     </Row>
                                 </div>

@@ -19,7 +19,24 @@ class FileSelector extends React.Component
         axios.get(`/appraisal/${this.props.appraisalId}/files`).then((response) =>
         {
             this.setState({files: response.data.files.map((file) => FileModel.create(file)) });
-            this.onChangeValue(response.data.files[0]._id['$oid'])
+
+            let defaultSet = false;
+            if (this.props.defaultFile)
+            {
+                response.data.files.forEach((file) =>
+                {
+                    if (file._id['$oid'] === this.props.defaultFile)
+                    {
+                        this.onChangeValue(file._id['$oid']);
+                        defaultSet = true;
+                    }
+                });
+            }
+
+            if (!defaultSet && response.data.files.length > 0)
+            {
+                this.onChangeValue(response.data.files[0]._id['$oid'])
+            }
         });
     }
 
@@ -52,6 +69,7 @@ class FileSelector extends React.Component
 
     render()
     {
+        console.log(this.props.value)
         return (
             <select
                 defaultValue=""

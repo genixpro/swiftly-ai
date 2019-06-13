@@ -3,6 +3,7 @@ import GenericField from "../orm/GenericField";
 import ModelField from "../orm/ModelField";
 import ListField from "../orm/ListField";
 import UnitModel from "./UnitModel";
+import DictField from "../orm/DictField";
 import IncomeStatementModel from "./IncomeStatementModel";
 import DiscountedCashFlowInputsModel from "./DiscountedCashFlowInputsModel";
 import DiscountedCashFlowModel from "./DiscountedCashFlowModel";
@@ -15,6 +16,7 @@ import MarketRentModel from "./MarketRentModel";
 import RecoveryStructureModel from "./RecoveryStructureModel";
 import BaseModel from "../orm/BaseModel";
 import AmortizationScheduleModel from "./AmortizationScheduleModel";
+import ExtractionReferenceModel from "./ExtractionReferenceModel";
 import StringField from "../orm/StringField";
 import FloatField from "../orm/FloatField";
 import DateField from "../orm/DateField";
@@ -67,6 +69,8 @@ class AppraisalModel extends BaseModel
     static recoveryStructures = new ListField(new ModelField(RecoveryStructureModel));
     static amortizationSchedule = new ModelField(AmortizationScheduleModel);
     static leasingCosts = new ListField(new ModelField(LeasingCostStructureModel));
+
+    static dataTypeReferences = new DictField(new ListField(new ModelField(ExtractionReferenceModel)));
 
 
     getEffectiveDate()

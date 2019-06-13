@@ -15,6 +15,7 @@ from appraisal.models.amortization_schedule import AmortizationSchedule
 from appraisal.models.recovery_structure import RecoveryStructure, CalculationRule
 from appraisal.models.leasing_cost_structure import LeasingCostStructure
 from appraisal.models.date_field import ConvertingDateField
+from appraisal.models.extraction_reference import ExtractionReference
 from appraisal.components.document_processor import DocumentProcessor
 import numpy
 from mongoengine import signals
@@ -127,6 +128,9 @@ class Appraisal(Document):
 
     # A list of recovery structures for this building
     leasingCosts = ListField(EmbeddedDocumentField(LeasingCostStructure), default=[LeasingCostStructure(name="Standard")])
+
+    # This field provides which files contain each data-type
+    dataTypeReferences = DictField(EmbeddedDocumentListField(ExtractionReference))
 
     @property
     def sizeOfBuilding(self):

@@ -107,6 +107,24 @@ class ViewTenantsRentRoll extends React.Component
         return promise;
     }
 
+    getDefaultFile()
+    {
+        let defaultFile = null;
+
+        Object.keys(this.props.appraisal.dataTypeReferences).forEach((dataType) =>
+        {
+            if (dataType === 'RENT_ROLL')
+            {
+                if (this.props.appraisal.dataTypeReferences['RENT_ROLL'].length > 0)
+                {
+                    defaultFile = this.props.appraisal.dataTypeReferences['RENT_ROLL'][0].fileId;
+                }
+            }
+        });
+
+        return defaultFile;
+    }
+
 
     render()
     {
@@ -159,6 +177,8 @@ class ViewTenantsRentRoll extends React.Component
                                     <FileSelector
                                         appraisalId={this.props.appraisal._id}
                                         onChange={(fileId) => this.onFileChanged(fileId)}
+                                        defaultFile={this.getDefaultFile()}
+                                        value={this.state.file ? this.state.file._id : null}
                                     />
                                 </Col>
                             </Row>

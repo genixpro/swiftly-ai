@@ -1,6 +1,7 @@
 from appraisal.components.document_parser import DocumentParser
 from appraisal.components.document_extractor import DocumentExtractor
 from appraisal.models.file import File, Word
+from appraisal.models.extraction_reference import ExtractionReference
 import filetype
 import re
 import json
@@ -145,6 +146,17 @@ class DocumentProcessor:
 
                 appraisal.comparableSalesDCA.append(str(comparableSale.id))
                 appraisal.comparableSalesCapRate.append(str(comparableSale.id))
+
+            reference = ExtractionReference()
+            reference.appraisalId = str(appraisal.id)
+            reference.fileId = str(file.id)
+            reference.wordIndexes = [word.index for word in group]
+            reference.pageNumbers = list(set([word.page for word in group]))
+
+            if dataType in appraisal.dataTypeReferences:
+                appraisal.dataTypeReferences[dataType].append(reference)
+            else:
+                appraisal.dataTypeReferences[dataType] = [reference]
 
 
 
