@@ -19,6 +19,7 @@
   {
     margin-left: 50px;
     min-width: calc(80vw - 600px);
+    animation: appraisalFieldsAppearance 0.5s ease-in-out;
   }
 
   .appraisal-type-button
@@ -75,4 +76,12 @@
   }
 
 
+}
+@keyframes appraisalFieldsAppearance {
+  from {
+    opacity:0;
+  }
+  to {
+    opacity:1;
+  }
 }
