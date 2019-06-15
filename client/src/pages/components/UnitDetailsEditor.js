@@ -281,7 +281,7 @@ class UnitDetailsEditor extends React.Component
 
         const differentialMonths = this.calculateDifferentialMonths();
 
-        return <Col>
+        return <Col className={"unit-details-editor"}>
 
             {
                 this.props.appraisal.appraisalType === "detailed" ?
@@ -519,16 +519,24 @@ class UnitDetailsEditor extends React.Component
                         this.props.unit.calculatedManagementRecovery ?
                             <tr className={"stats-row"}>
                                 <td>
-                                    <Link to={`/appraisal/${this.props.appraisal._id}/tenants/recovery_structures`}>
-                                        <strong>Calculated Management Recovery</strong>
-                                    </Link>
+                                    {
+                                        this.props.appraisal.appraisalType === 'detailed' ?
+                                            <Link to={`/appraisal/${this.props.appraisal._id}/tenants/recovery_structures`}>
+                                                <strong>Calculated Management Recovery</strong>
+                                            </Link> :
+                                            <strong>Calculated Management Recovery</strong>
+                                    }
                                 </td>
                                 <td>
-                                                        <span style={{"marginLeft": "10px"}}>
-                                                        <Link to={`/appraisal/${this.props.appraisal._id}/tenants/recovery_structures`}>
-                                                            <CurrencyFormat value={this.props.unit.calculatedManagementRecovery}/>
-                                                        </Link>
-                                                        </span>
+                                    <span style={{"marginLeft": "10px"}}>
+                                    {
+                                        this.props.appraisal.appraisalType === 'detailed' ?
+                                            <Link to={`/appraisal/${this.props.appraisal._id}/tenants/recovery_structures`}>
+                                                <CurrencyFormat value={this.props.unit.calculatedManagementRecovery}/>
+                                            </Link> :
+                                            <CurrencyFormat value={this.props.unit.calculatedManagementRecovery}/>
+                                    }
+                                    </span>
                                 </td>
                             </tr> : null
                     }
@@ -537,16 +545,24 @@ class UnitDetailsEditor extends React.Component
                         this.props.unit.calculatedExpenseRecovery ?
                             <tr className={"stats-row"}>
                                 <td>
-                                    <Link to={`/appraisal/${this.props.appraisal._id}/tenants/recovery_structures`}>
+                                    {
+                                        this.props.appraisal.appraisalType === 'detailed' ?
+                                        <Link to={`/appraisal/${this.props.appraisal._id}/tenants/recovery_structures`}>
+                                            <strong>Calculated Operating Expense Recovery</strong>
+                                        </Link> :
                                         <strong>Calculated Operating Expense Recovery</strong>
-                                    </Link>
-                                </td>
+                                    }
+                                    </td>
                                 <td>
                                                         <span style={{"marginLeft": "10px"}}>
-                                                        <Link to={`/appraisal/${this.props.appraisal._id}/tenants/recovery_structures`}>
+                                                        {this.props.appraisal.appraisalType === 'detailed' ?
+                                                            <Link to={`/appraisal/${this.props.appraisal._id}/tenants/recovery_structures`}>
+                                                                <CurrencyFormat
+                                                                    value={this.props.unit.calculatedExpenseRecovery}/>
+                                                            </Link> :
                                                             <CurrencyFormat
                                                                 value={this.props.unit.calculatedExpenseRecovery}/>
-                                                        </Link>
+                                                        }
                                                         </span>
                                 </td>
                             </tr> : null
@@ -555,17 +571,28 @@ class UnitDetailsEditor extends React.Component
                         this.props.unit.calculatedTaxRecovery ?
                             <tr className={"stats-row"}>
                                 <td>
-                                    <Link to={`/appraisal/${this.props.appraisal._id}/tenants/recovery_structures`}>
+                                    {
+                                        this.props.appraisal.appraisalType === 'detailed' ?
+                                        <Link to={`/appraisal/${this.props.appraisal._id}/tenants/recovery_structures`}>
+                                            <strong>Calculated Tax Recovery</strong>
+                                        </Link> :
                                         <strong>Calculated Tax Recovery</strong>
-                                    </Link>
+                                    }
                                 </td>
                                 <td>
-                                    <Link to={`/appraisal/${this.props.appraisal._id}/tenants/recovery_structures`}>
+                                    {
+                                        this.props.appraisal.appraisalType === 'detailed' ?
+                                        <Link to={`/appraisal/${this.props.appraisal._id}/tenants/recovery_structures`}>
                                                         <span style={{"marginLeft": "10px"}}>
                                                             <CurrencyFormat
                                                                 value={this.props.unit.calculatedTaxRecovery}/>
                                                         </span>
-                                    </Link>
+                                        </Link> :
+                                        <span style={{"marginLeft": "10px"}}>
+                                                            <CurrencyFormat
+                                                                value={this.props.unit.calculatedTaxRecovery}/>
+                                                        </span>
+                                    }
                                 </td>
                             </tr> : null
                     }
@@ -733,34 +760,34 @@ class UnitDetailsEditor extends React.Component
                                     </a>
                                 </td>
                                 <td>
-                                                        <span style={{"marginLeft": "10px"}}>
-                                                            <a id={"free-rent-loss-popover"} onClick={() => this.setState({freeRentLossPopoverOpen: !this.state.freeRentLossPopoverOpen})}>
-                                                                {
-                                                                    this.props.unit.calculatedFreeRentLoss ?
-                                                                        <CurrencyFormat value={this.props.unit.calculatedFreeRentLoss}/>
-                                                                        : null
-                                                                }
-                                                            </a>
-                                                            <Popover placement="bottom" isOpen={this.state.freeRentLossPopoverOpen} target={"free-rent-loss-popover"} toggle={() => this.setState({freeRentLossPopoverOpen: !this.state.freeRentLossPopoverOpen})}>
-                                                                <PopoverHeader>Free Rent Loss</PopoverHeader>
-                                                                <PopoverBody>
-                                                                    <table className={"explanation-popover-table"}>
-                                                                        <tbody>
-                                                                        <tr className={"total-row"}>
-                                                                            <td>Free Rent Loss</td>
-                                                                            <td><IntegerFormat value={this.props.unit.calculatedFreeRentMonths}/> months remaining</td>
-                                                                            <td>/</td>
-                                                                            <td>12</td>
-                                                                            <td>*</td>
-                                                                            <td><CurrencyFormat value={this.props.unit.calculatedFreeRentNetAmount}/></td>
-                                                                            <td>=</td>
-                                                                            <td><CurrencyFormat value={this.props.unit.calculatedFreeRentLoss} cents={false}/></td>
-                                                                        </tr>
-                                                                        </tbody>
-                                                                    </table>
-                                                                </PopoverBody>
-                                                            </Popover>
-                                                        </span>
+                                    <span style={{"marginLeft": "10px"}}>
+                                        <a id={"free-rent-loss-popover"} onClick={() => this.setState({freeRentLossPopoverOpen: !this.state.freeRentLossPopoverOpen})}>
+                                            {
+                                                this.props.unit.calculatedFreeRentLoss ?
+                                                    <CurrencyFormat value={this.props.unit.calculatedFreeRentLoss}/>
+                                                    : null
+                                            }
+                                        </a>
+                                        <Popover placement="bottom" isOpen={this.state.freeRentLossPopoverOpen} target={"free-rent-loss-popover"} toggle={() => this.setState({freeRentLossPopoverOpen: !this.state.freeRentLossPopoverOpen})}>
+                                            <PopoverHeader>Free Rent Loss</PopoverHeader>
+                                            <PopoverBody>
+                                                <table className={"explanation-popover-table"}>
+                                                    <tbody>
+                                                    <tr className={"total-row"}>
+                                                        <td>Free Rent Loss</td>
+                                                        <td><IntegerFormat value={this.props.unit.calculatedFreeRentMonths}/> months remaining</td>
+                                                        <td>/</td>
+                                                        <td>12</td>
+                                                        <td>*</td>
+                                                        <td><CurrencyFormat value={this.props.unit.calculatedFreeRentNetAmount}/></td>
+                                                        <td>=</td>
+                                                        <td><CurrencyFormat value={this.props.unit.calculatedFreeRentLoss} cents={false}/></td>
+                                                    </tr>
+                                                    </tbody>
+                                                </table>
+                                            </PopoverBody>
+                                        </Popover>
+                                    </span>
                                 </td>
                             </tr> : null
                     }
@@ -768,9 +795,13 @@ class UnitDetailsEditor extends React.Component
                         this.props.unit.calculatedVacantUnitRentLoss ?
                             <tr className={"stats-row"}>
                                 <td>
-                                    <Link to={`/appraisal/${this.props.appraisal._id}/tenants/leasing_costs`}>
-                                        <strong>Calculated Vacant Unit Rent Loss</strong>
-                                    </Link>
+                                    {
+                                        this.props.appraisal.appraisalType === 'detailed' ?
+                                            <Link to={`/appraisal/${this.props.appraisal._id}/tenants/leasing_costs`}>
+                                                <strong>Calculated Vacant Unit Rent Loss</strong>
+                                            </Link> :
+                                            <strong>Calculated Vacant Unit Rent Loss</strong>
+                                    }
                                 </td>
                                 <td>
                                     <Link to={`/appraisal/${this.props.appraisal._id}/tenants/leasing_costs`}>
@@ -786,18 +817,30 @@ class UnitDetailsEditor extends React.Component
                         this.props.unit.calculatedVacantUnitLeasupCosts ?
                             <tr className={"stats-row"}>
                                 <td>
-                                    <Link to={`/appraisal/${this.props.appraisal._id}/tenants/leasing_costs`}>
-                                        <strong>Calculated Vacant Unit Leaseup Costs</strong>
-                                    </Link>
+                                    {
+                                        this.props.appraisal.appraisalType === 'detailed' ?
+                                            <Link to={`/appraisal/${this.props.appraisal._id}/tenants/leasing_costs`}>
+                                                <strong>Calculated Vacant Unit Leaseup Costs</strong>
+                                            </Link> :
+                                            <strong>Calculated Vacant Unit Leaseup Costs</strong>
+                                    }
                                 </td>
                                 <td>
-                                    <Link to={`/appraisal/${this.props.appraisal._id}/tenants/leasing_costs`}>
+                                    {
+                                        this.props.appraisal.appraisalType === 'detailed' ?
+                                            <Link to={`/appraisal/${this.props.appraisal._id}/tenants/leasing_costs`}>
                                                         <span style={{"marginLeft": "10px"}}>
                                                             <CurrencyFormat
                                                                 value={this.props.unit.calculatedVacantUnitLeasupCosts}/>
                                                         </span>
-                                    </Link>
-                                </td>
+                                            </Link> :
+                                            <span style={{"marginLeft": "10px"}}>
+                                                            <CurrencyFormat
+                                                                value={this.props.unit.calculatedVacantUnitLeasupCosts}/>
+                                                        </span>
+                                    }
+
+                                            </td>
                             </tr> : null
                     }
                     </tbody>

@@ -6,18 +6,7 @@
     padding: 0;
   }
 
-  .stabilized-rent-column
-  {
-    display: flex;
-    flex-direction: row;
-  }
 
-  .use-market-rent-selector-container
-  {
-    display: flex;
-    flex-direction: column;
-    padding-left: 15px;
-  }
 
   .download-dropdown-button, .action-button
   {
@@ -26,39 +15,6 @@
     height: 35px;
   }
 
-  .use-market-rent-selector
-  {
-    display: flex;
-    flex-direction: row;
-    white-space: nowrap;
-    padding-left: 10px;
-
-    strong {
-      padding-right: 10px;
-    }
-
-    padding-right: 10px;
-  }
-
-  .management-expense-field
-  {
-    display: flex;
-    flex-direction: row;
-    justify-items: center;
-    align-items: center;
-
-    span.seperator
-    {
-      padding-left: 10px;
-      padding-right: 10px;
-    }
-
-    .field-display-edit
-    {
-
-    }
-
-  }
 
   .button-bar
   {
@@ -67,60 +23,4 @@
     justify-content: flex-end;
   }
 
-  a {
-    color: #656565;
-  }
-
-  a:hover
-  {
-    text-decoration: underline !important;
-    cursor: pointer;
-  }
-
-  .stats-row
-  {
-    height: 30px;
-  }
-
-  .tenant-information-table
-  {
-    td:first-child
-    {
-      width: 40%;
-    }
-  }
-
-  .tenancies-table {
-    .action-column {
-      opacity: 0;
-      max-width: 70px;
-    }
-
-    .tenant-row.selected-tenant-row {
-      background-color: #eee;
-    }
-
-    .tenant-row:hover {
-      .action-column {
-        opacity: 1;
-      }
-    }
-
-    .rdt:not(.rdtOpen) {
-      cursor: pointer;
-      input {
-        cursor: pointer;
-      }
-    }
-
-    .rdt:not(:hover) {
-      input {
-        border: 1px #fff;
-      }
-    }
-
-    .rdtPicker {
-      width: auto;
-    }
-  }
 }
