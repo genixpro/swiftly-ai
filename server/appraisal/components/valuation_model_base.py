@@ -117,8 +117,12 @@ class ValuationModelBase:
         for unit in appraisal.units:
             unit.calculatedVacantUnitRentLoss = 0
 
-            if unit.isVacantForStabilizedStatement and unit.squareFootage and unit.marketRent and self.getMarketRent(appraisal, unit.marketRent):
+            if unit.isVacantForStabilizedStatement and unit.squareFootage:
                 leasingCosts = self.getLeasingCostStructure(appraisal, unit.leasingCostStructure)
+
+                rentPSF = unit.currentTenancy.yearlyRent / unit.squareFootage
+                if unit.marketRent and self.getMarketRent(appraisal, unit.marketRent):
+                    rentPSF = self.getMarketRent(appraisal, unit.marketRent)
 
                 if unit.currentTenancy.rentType == 'net':
                     currentRecoveryLoss = self.computeOperatingExpenseRecoveriesForUnit(appraisal, unit) / 12.0 * leasingCosts.renewalPeriod \
@@ -127,7 +131,7 @@ class ValuationModelBase:
                 else:
                     currentRecoveryLoss = 0
 
-                currentRentLoss = (self.getMarketRent(appraisal, unit.marketRent) * unit.squareFootage) / 12.0 * leasingCosts.renewalPeriod
+                currentRentLoss = (rentPSF * unit.squareFootage) / 12.0 * leasingCosts.renewalPeriod
 
                 currentTotalLoss = currentRecoveryLoss + currentRentLoss
 
