@@ -51,11 +51,29 @@ class Sidebar extends Component
 {
 
     state = {
-        collapse: {}
+        collapse: {},
+        appraisalType: "detailed"
     };
+
+    static globalSidebar = null;
+
+    static getGlobalSidebar()
+    {
+        return Sidebar.globalSidebar;
+    }
+
+    changeAppraisalType(appraisalType)
+    {
+        if (appraisalType !== this.state.appraisalType)
+        {
+            this.setState({appraisalType: appraisalType})
+        }
+    }
 
     componentDidMount()
     {
+        Sidebar.globalSidebar = this;
+
         // pass navigator to access router api
         SidebarRun(this.navigator.bind(this));
         // prepare the flags to handle menu collapsed states
@@ -133,10 +151,19 @@ class Sidebar extends Component
         return newItem;
     }
 
-    shouldShowRoute(route)
+    shouldShowRoute(item)
     {
+        const route = this.matchRouteForItem(item);
         if (route.indexOf(":appraisalId") !== -1)
         {
+            if(item.appraisalType)
+            {
+                if (this.state.appraisalType !== item.appraisalType)
+                {
+                    return false;
+                }
+            }
+
             const appraisalRoute = "/appraisal/";
             const newAppraisalRoute = "/appraisal/new";
             const path = this.props.history.location.pathname;
@@ -199,7 +226,7 @@ class Sidebar extends Component
                             {
                                 Menu.map((item, i) =>
                                 {
-                                    if (this.matchRouteForItem(item) && !this.shouldShowRoute(this.matchRouteForItem(item)))
+                                    if (this.matchRouteForItem(item) && !this.shouldShowRoute(item))
                                     {
                                         return null;
                                     }
@@ -227,9 +254,16 @@ class Sidebar extends Component
                                                     <SidebarSubHeader item={item} key={i}/>
                                                     {
                                                         item.submenu.map((subitem, i) =>
-                                                            <SidebarItem key={i}
-                                                                         item={this.getItemWithIds(subitem)}
-                                                                         isActive={this.routeActive(this.matchRouteForItem(subitem))}/>
+                                                            {
+                                                                if (!this.shouldShowRoute(subitem))
+                                                                {
+                                                                    return null;
+                                                                }
+
+                                                                return <SidebarItem key={i}
+                                                                             item={this.getItemWithIds(subitem)}
+                                                                             isActive={this.routeActive(this.matchRouteForItem(subitem))}/>
+                                                            }
                                                         )
                                                     }
                                                 </SidebarSubItem>

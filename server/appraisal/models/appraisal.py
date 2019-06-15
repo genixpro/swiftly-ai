@@ -27,6 +27,9 @@ class Appraisal(Document):
     # The owner of the appraisal
     owner = StringField()
 
+    # The type of the appraisal. This changes features on the user interface.
+    appraisalType = StringField(default="detailed")
+
     # The name of this appraisal. Arbitrary and chosen by the user
     name = StringField()
 

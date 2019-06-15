@@ -24,6 +24,7 @@ import ViewExpensesTMI from "./ViewExpensesTMI";
 import Logout from "./Logout";
 import axios from "axios/index";
 import AppraisalModel from "../models/AppraisalModel";
+import Sidebar from "../components/Layout/Sidebar";
 
 class ViewAppraisal extends React.Component
 {
@@ -41,7 +42,9 @@ class ViewAppraisal extends React.Component
         {
             try
             {
-                this.setState({appraisal: AppraisalModel.create(response.data.appraisal)})
+                this.setState({appraisal: AppraisalModel.create(response.data.appraisal)});
+
+                Sidebar.getGlobalSidebar().changeAppraisalType(response.data.appraisal.appraisalType);
             }
             catch(err)
             {

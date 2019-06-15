@@ -34,6 +34,8 @@ class AppraisalModel extends BaseModel
     static address = new StringField();
     static owner = new StringField();
 
+    static appraisalType = new StringField("appraisalType", "detailed");
+
     static client = new StringField();
     static location = new GenericField();
     static imageUrl = new StringField(); // Deprecated. DO NOT USE.
