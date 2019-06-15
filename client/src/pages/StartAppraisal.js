@@ -53,10 +53,24 @@ class StartAppraisal extends React.Component
 
     appraisalTypeSelected(type)
     {
-        this.setState({
-            newAppraisal: {appraisalType: type},
-            mode: "fields"
-        })
+        if (this.state.newAppraisal.appraisalType === type)
+        {
+            const newAppraisal = this.state.newAppraisal;
+            newAppraisal.appraisalType = null;
+            this.setState({
+                newAppraisal: newAppraisal,
+                mode: "type"
+            })
+        }
+        else
+        {
+            const newAppraisal = this.state.newAppraisal;
+            newAppraisal.appraisalType = type;
+            this.setState({
+                newAppraisal: newAppraisal,
+                mode: "fields"
+            })
+        }
 
     }
 
