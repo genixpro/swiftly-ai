@@ -46,13 +46,7 @@ class VacantRentLossForUnitCalculationPopoverWrapper extends React.Component
         return (
             [<a id={this.popoverId} onClick={() => this.setState({rentLossPopoverOpen: !this.state.rentLossPopoverOpen})}>
                 {
-                    this.props.unit.leasingCostStructure === leasingCostStructure.name && this.props.unit.isVacantForStabilizedStatement ?
-                        this.props.unit.marketRent ?
-                            this.props.unit.calculatedVacantUnitRentLoss ?
-                                <CurrencyFormat value={this.props.unit.calculatedVacantUnitRentLoss}/>
-                                : null
-                            : <span className={"none-found"}>no market rent</span>
-                        : null
+                    this.props.children
                 }
             </a>,
                 <Popover placement="bottom" isOpen={this.state.rentLossPopoverOpen} target={this.popoverId}
