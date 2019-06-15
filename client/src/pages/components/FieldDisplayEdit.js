@@ -667,5 +667,8 @@ function collect(connect, monitor) {
 // Export the wrapped component:
 const DroppableFieldDisplayEdit = DropTarget("Word", dragTarget, collect)(FieldDisplayEditWrapper);
 
+const NonDroppableFieldDisplayEdit = FieldDisplayEdit;
 
 export default DroppableFieldDisplayEdit;
+export {NonDroppableFieldDisplayEdit, DroppableFieldDisplayEdit};
+

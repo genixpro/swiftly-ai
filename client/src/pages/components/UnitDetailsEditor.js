@@ -4,6 +4,7 @@ import NumberFormat from 'react-number-format';
 import {Link} from "react-router-dom";
 import _ from 'underscore';
 import FieldDisplayEdit from './FieldDisplayEdit';
+import {NonDroppableFieldDisplayEdit} from "./FieldDisplayEdit";
 import Datetime from 'react-datetime';
 import 'react-datetime/css/react-datetime.css'
 import UnitsTable from "./UnitsTable";
@@ -17,6 +18,7 @@ import AreaFormat from "./AreaFormat";
 import Moment from "react-moment";
 import PropTypes from "prop-types";
 import LeasingCostStructureModel from "../../models/LeasingCostStructureModel";
+import MarketRentModel from "../../models/MarketRentModel";
 
 class UnitDetailsEditor extends React.Component
 {
@@ -210,6 +212,66 @@ class UnitDetailsEditor extends React.Component
         }
     }
 
+
+    getUnitMarketRent()
+    {
+        for (let marketRent of this.props.appraisal.marketRents)
+        {
+            if (marketRent.name === this.props.unit.marketRent)
+            {
+                return marketRent;
+            }
+        }
+
+        return null;
+    }
+
+    ensureUniqueMarketRent()
+    {
+        const currentMarketRent = this.getUnitMarketRent();
+        if (currentMarketRent === null)
+        {
+            // alert("ensuring unique");
+            const marketRent = MarketRentModel.create({
+                name: "New Leasing Structure " + (this.props.appraisal.leasingCosts.length + 1).toString(),
+                amountPSF: this.props.unit.currentTenancy.yearlyRent / this.props.unit.squareFootage
+            }, this.props.appraisal.stabilizedStatement, 'marketRents');
+
+            this.props.appraisal.marketRents.push(marketRent);
+            this.props.unit.marketRent = marketRent.name;
+            this.props.onChange(this.props.unit);
+        }
+    }
+
+
+    changeMarketRentField(field, newValue)
+    {
+        this.ensureUniqueMarketRent();
+
+        if (field === 'amountPSF' && newValue === null)
+        {
+            for (let marketRent of this.props.appraisal.marketRents)
+            {
+                if (marketRent.name === this.props.unit.marketRent)
+                {
+                    this.props.appraisal.marketRents.splice(this.props.appraisal.marketRents.indexOf(marketRent), 1);
+                }
+            }
+            this.props.unit.marketRent = null;
+
+            this.props.onChange(this.props.unit);
+        }
+        else
+        {
+            const marketRent = this.getUnitMarketRent();
+
+            marketRent[field] = newValue;
+
+            this.props.onChange(this.props.unit);
+        }
+    }
+
+
     ensureUniqueLeasingCosts()
     {
         const currentLeasingCosts = this.getUnitLeasingCosts();
@@ -222,7 +284,7 @@ class UnitDetailsEditor extends React.Component
                 tenantInducementsPSF: currentLeasingCosts.tenantInducementsPSF,
                 renewalPeriod: currentLeasingCosts.renewalPeriod,
                 leasingPeriod: currentLeasingCosts.leasingPeriod
-            }, this.props.appraisal.stabilizedStatement, 'leasingCosts');
+            }, this.props.appraisal, 'leasingCosts');
 
             this.props.appraisal.leasingCosts.push(newLeasingCosts);
             this.props.unit.leasingCostStructure = newLeasingCosts.name;
@@ -237,14 +299,12 @@ class UnitDetailsEditor extends React.Component
 
         const leasingCostStructure = this.getUnitLeasingCosts();
 
-        console.log(leasingCostStructure);
-
         leasingCostStructure[field] = newValue;
 
         this.props.onChange(this.props.unit);
     }
 
-    changeAllTenantField(tenantInfo, field, newValue)
+    changeAllTenantField(field, newValue)
     {
         this.props.appraisal.units.forEach((unit) =>
         {
@@ -326,6 +386,13 @@ class UnitDetailsEditor extends React.Component
 
         return differentialMonths;
     }
+
+    changeStabilizedInput(field, newValue)
+    {
+        this.props.appraisal.stabilizedStatementInputs[field] = newValue;
+        this.props.onChange(this.props.unit);
+    }
+
 
     render()
     {
@@ -411,7 +478,7 @@ class UnitDetailsEditor extends React.Component
                     </td>
                     <td>
                         <FieldDisplayEdit placeholder={"Tenant Name"} value={this.props.unit.currentTenancy.name}
-                                          onChange={(newValue) => this.changeAllTenantField(this.props.unit.currentTenancy, 'name', newValue)}/>
+                                          onChange={(newValue) => this.changeAllTenantField('name', newValue)}/>
                     </td>
                 </tr>
                 {
@@ -424,7 +491,35 @@ class UnitDetailsEditor extends React.Component
                                 <FieldDisplayEdit placeholder={"Yearly Rent"}
                                                   value={this.props.unit.currentTenancy.yearlyRent}
                                                   type={"currency"}
-                                                  onChange={(newValue) => this.changeAllTenantField(this.props.unit.currentTenancy, 'yearlyRent', newValue)}/>
+                                                  onChange={(newValue) => this.changeTenancyField(this.props.unit.currentTenancy, 'yearlyRent', newValue)}/>
+                            </td>
+                        </tr> : null
+                }
+                {
+                    this.props.appraisal.appraisalType === "simple" ?
+                        <tr>
+                            <td>
+                                <strong>Tenancy End Date</strong>
+                            </td>
+                            <td>
+                                <FieldDisplayEdit placeholder={"Tenancy End Date"}
+                                                  value={this.props.unit.currentTenancy.endDate}
+                                                  type={"date"}
+                                                  onChange={(newValue) => this.changeTenancyField(this.props.unit.currentTenancy, 'endDate', newValue)}/>
+                            </td>
+                        </tr> : null
+                }
+                {
+                    this.props.appraisal.appraisalType === "simple" ?
+                        <tr>
+                            <td>
+                                <strong>Market Rent (PSF)</strong>
+                            </td>
+                            <td>
+                                <FieldDisplayEdit placeholder={"Market Rent (PSF)"}
+                                                  value={this.getUnitMarketRent() ? this.getUnitMarketRent().amountPSF : null}
+                                                  type={"currency"}
+                                                  onChange={(newValue) => this.changeMarketRentField('amountPSF', newValue)}/>
                             </td>
                         </tr> : null
                 }
@@ -434,7 +529,7 @@ class UnitDetailsEditor extends React.Component
                     </td>
                     <td>
                         <FieldDisplayEdit type="rentType" value={this.props.unit.currentTenancy.rentType}
-                                          onChange={(newValue) => this.changeAllTenantField(this.props.unit.currentTenancy, 'rentType', newValue)}/>
+                                          onChange={(newValue) => this.changeAllTenantField('rentType', newValue)}/>
                     </td>
                 </tr>
                 {
@@ -472,7 +567,7 @@ class UnitDetailsEditor extends React.Component
                             <td>
                                 <FieldDisplayEdit type="rentType"
                                                   value={this.props.unit.currentTenancy.freeRentType}
-                                                  onChange={(newValue) => this.changeAllTenantField(this.props.unit.currentTenancy, 'freeRentType', newValue)}/>
+                                                  onChange={(newValue) => this.changeAllTenantField('freeRentType', newValue)}/>
                             </td>
                         </tr> : null
                 }
@@ -486,7 +581,7 @@ class UnitDetailsEditor extends React.Component
                                 <FieldDisplayEdit type="recoveryStructure" placeholder={"Recovery Structure"}
                                                   recoveryStructures={this.props.appraisal.recoveryStructures}
                                                   value={this.props.unit.currentTenancy.recoveryStructure}
-                                                  onChange={(newValue) => this.changeAllTenantField(this.props.unit.currentTenancy, 'recoveryStructure', newValue)}/>
+                                                  onChange={(newValue) => this.changeAllTenantField('recoveryStructure', newValue)}/>
                             </td>
                         </tr> : null
                 }
@@ -768,17 +863,13 @@ class UnitDetailsEditor extends React.Component
                                             <tr className={"total-row"}>
                                                 <td colSpan={2}>Discount Rate</td>
                                                 <td colSpan={3}>
-                                                    <FieldDisplayEdit
+                                                    <NonDroppableFieldDisplayEdit
                                                         type={"percent"}
                                                         placeholder={"Market Rent Differential Discount Rate"}
                                                         value={this.props.appraisal.stabilizedStatementInputs ? this.props.appraisal.stabilizedStatementInputs.marketRentDifferentialDiscountRate : 5.0}
                                                         onChange={(newValue) => this.changeStabilizedInput("marketRentDifferentialDiscountRate", newValue)}
                                                     />
                                                 </td>
-                                                <td></td>
-                                                <td></td>
-                                                <td></td>
-                                                <td></td>
                                             </tr>
                                             <tr>
                                                 <td>
