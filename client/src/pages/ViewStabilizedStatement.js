@@ -341,7 +341,9 @@ class ViewStabilizedStatement extends React.Component
                                                 this.props.appraisal.appraisalType === 'simple' ? this.props.appraisal.stabilizedStatement.recoverableIncome ?
                                                     <tr className={"statement-sum-after-row data-row"}>
                                                         <td className={"label-column"}>
-                                                            Recoverable Income
+                                                            <TotalRecoverableIncomePopoverWrapper appraisal={this.props.appraisal} recovery={this.props.appraisal.recoveryStructures[0]}>
+                                                                <span>Recoverable Income</span>
+                                                            </TotalRecoverableIncomePopoverWrapper>
                                                         </td>
                                                         <td className={"amount-column"}>
                                                             <TotalRecoverableIncomePopoverWrapper appraisal={this.props.appraisal} recovery={this.props.appraisal.recoveryStructures[0]}>
