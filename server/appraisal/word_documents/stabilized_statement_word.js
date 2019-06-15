@@ -13,6 +13,20 @@ import renderDocument from "./render_doc";
 
 class App extends React.Component
 {
+    getAppraisalYear()
+    {
+        let appraisalYear;
+        if  (this.props.appraisal.effectiveDate)
+        {
+            appraisalYear = new Date(this.props.appraisal.effectiveDate).getFullYear();
+        }
+        else
+        {
+            appraisalYear = new Date().getFullYear();
+        }
+        return appraisalYear;
+    }
+
     render()
     {
         const headerStyle = {
@@ -23,7 +37,7 @@ class App extends React.Component
             "textAlign": "center"
         };
 
-        const rows = [
+        let rows = [
             {
                 "label": "Revenue",
                 "amount": null,
@@ -38,7 +52,7 @@ class App extends React.Component
             }
         ];
 
-        if (this.props.appraisal.stabilizedStatement.additionalIncome)
+        if (this.props.appraisal.appraisalType === 'detailed' && this.props.appraisal.stabilizedStatement.additionalIncome)
         {
             rows.push(
                 {
@@ -49,8 +63,23 @@ class App extends React.Component
                 }
             )
         }
+        const appraisalYear = this.getAppraisalYear();
+        if (this.props.appraisal.appraisalType === 'simple')
+        {
+            this.props.appraisal.incomeStatement.incomes.forEach((incomeStatementItem) =>
+            {
+                rows.push(
+                    {
+                        "label": incomeStatementItem.name,
+                        "amount": <CurrencyValue cents={false}>{incomeStatementItem.yearlyAmounts[appraisalYear]}</CurrencyValue>,
+                        "amountTotal": null,
+                        "mode": "data"
+                    }
+                )
+            });
+        }
 
-        rows.concat([
+        rows = rows.concat([
             {
                 "label": "Recoverable Income",
                 "amount": <CurrencyValue cents={false}>{this.props.appraisal.stabilizedStatement.recoverableIncome}</CurrencyValue>,
@@ -86,7 +115,8 @@ class App extends React.Component
             },
         ]);
 
-        if (this.props.appraisal.stabilizedStatement.operatingExpenses)
+
+        if (this.props.appraisal.appraisalType === 'detailed' && this.props.appraisal.stabilizedStatement.operatingExpenses)
         {
             rows.push(
                 {
@@ -96,6 +126,21 @@ class App extends React.Component
                     "mode": "data"
                 }
             )
+        }
+
+        if (this.props.appraisal.appraisalType === 'simple')
+        {
+            this.props.appraisal.incomeStatement.expenses.forEach((incomeStatementItem) =>
+            {
+                rows.push(
+                    {
+                        "label": incomeStatementItem.name,
+                        "amount": <CurrencyValue cents={false}>{incomeStatementItem.yearlyAmounts[appraisalYear]}</CurrencyValue>,
+                        "amountTotal": null,
+                        "mode": "data"
+                    }
+                )
+            });
         }
 
         if (this.props.appraisal.stabilizedStatement.taxes)

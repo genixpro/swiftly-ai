@@ -42,9 +42,13 @@ class ViewAppraisal extends React.Component
         {
             try
             {
-                this.setState({appraisal: AppraisalModel.create(response.data.appraisal)});
+                const appraisal = AppraisalModel.create(response.data.appraisal);
+                this.setState({appraisal: appraisal});
 
-                Sidebar.getGlobalSidebar().changeAppraisalType(response.data.appraisal.appraisalType);
+                setTimeout(() =>
+                {
+                    Sidebar.getGlobalSidebar().changeAppraisalType(appraisal.appraisalType);
+                });
             }
             catch(err)
             {

@@ -160,6 +160,26 @@
       }
     }
 
+    tr.income-row
+    {
+      td.label-column {
+        padding-left: 10px;
+      }
+
+      .amount-column {
+        position: relative;
+        left: 15px;
+        input {
+          text-align: right;
+        }
+        input::placeholder
+        {
+          text-align: right;
+        }
+      }
+    }
+
+
     td {
       padding: 2px;
       border: 0;

@@ -187,7 +187,7 @@ class UnitDetailsEditor extends React.Component
 
     changeUnitField(field, newValue)
     {
-        this.props.props[field] = newValue;
+        this.props.unit[field] = newValue;
 
         this.props.onChange(this.props.unit);
     }
@@ -282,7 +282,39 @@ class UnitDetailsEditor extends React.Component
         const differentialMonths = this.calculateDifferentialMonths();
 
         return <Col>
-                {/*<Card outline color="primary" className="mb-3">*/}
+
+            {
+                this.props.appraisal.appraisalType === "detailed" ?
+                    <div>
+                        {/*<Card outline color="primary" className="mb-3">*/}
+                        <h3>Tenancy & Escalation Schedule</h3>
+                        {/*<CardHeader className="text-white bg-primary">Tenancy & Escalation Schedule</CardHeader>*/}
+                        {/*<CardBody>*/}
+                        <table className="table tenancies-table">
+                            <thead>
+                            <tr>
+                                <td>Tenant Name</td>
+                                <td>Term Start</td>
+                                <td>Term End</td>
+                                <td>Net / Gross</td>
+                                <td>Annual Rent (psf)</td>
+                                <td>Annual Rent</td>
+                                <td className="action-column"/>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {
+                                this.props.unit.tenancies.map((tenancy, tenancyIndex) =>
+                                {
+                                    return this.renderTenancy(tenancy, tenancyIndex);
+                                }).concat([this.renderNewTenancyRow()])
+                            }
+                            </tbody>
+
+                        </table>
+                    </div> : null
+            }
+                <br/>
                 <h3>Tenant Information</h3>
                 {/*<CardHeader className="text-white bg-primary">Tenant Information</CardHeader>*/}
                 {/*<CardBody>*/}
@@ -330,6 +362,20 @@ class UnitDetailsEditor extends React.Component
                                               onChange={(newValue) => this.changeAllTenantField(this.props.unit.currentTenancy, 'name', newValue)}/>
                         </td>
                     </tr>
+                    {
+                        this.props.appraisal.appraisalType === "simple" ?
+                            <tr>
+                                <td>
+                                    <strong>Yearly Rent</strong>
+                                </td>
+                                <td>
+                                    <FieldDisplayEdit placeholder={"Yearly Rent"}
+                                                      value={this.props.unit.currentTenancy.yearlyRent}
+                                                      type={"currency"}
+                                                      onChange={(newValue) => this.changeAllTenantField(this.props.unit.currentTenancy, 'yearlyRent', newValue)}/>
+                                </td>
+                            </tr> : null
+                    }
                     <tr>
                         <td>
                             <strong>Net / Gross</strong>
@@ -339,58 +385,73 @@ class UnitDetailsEditor extends React.Component
                                               onChange={(newValue) => this.changeAllTenantField(this.props.unit.currentTenancy, 'rentType', newValue)}/>
                         </td>
                     </tr>
-                    <tr>
-                        <td>
-                            <strong>Market Rent</strong>
-                        </td>
-                        <td>
-                            <FieldDisplayEdit type="marketRent" placeholder={"Market Rent"} marketRents={this.props.appraisal.marketRents}
-                                              value={this.props.unit.marketRent}
-                                              onChange={(newValue) => this.changeUnitField('marketRent', newValue)}/>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <strong>Free Rent Period (months)</strong>
-                        </td>
-                        <td>
-                            <FieldDisplayEdit type="months" placeholder={"Free Rent Period (months)"}
-                                              value={this.props.unit.currentTenancy.freeRentMonths}
-                                              onChange={(newValue) => this.changeTenancyField(this.props.unit.currentTenancy, 'freeRentMonths', newValue)}/>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <strong>Free Rent Type</strong>
-                        </td>
-                        <td>
-                            <FieldDisplayEdit type="rentType"
-                                              value={this.props.unit.currentTenancy.freeRentType}
-                                              onChange={(newValue) => this.changeAllTenantField(this.props.unit.currentTenancy, 'freeRentType', newValue)}/>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <strong>Recovery Structure</strong>
-                        </td>
-                        <td>
-                            <FieldDisplayEdit type="recoveryStructure" placeholder={"Recovery Structure"}
-                                              recoveryStructures={this.props.appraisal.recoveryStructures}
-                                              value={this.props.unit.currentTenancy.recoveryStructure}
-                                              onChange={(newValue) => this.changeAllTenantField(this.props.unit.currentTenancy, 'recoveryStructure', newValue)}/>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <strong>Leasing Cost Structure</strong>
-                        </td>
-                        <td>
-                            <FieldDisplayEdit type="leasingCostStructure" placeholder={"Leasing Cost Structure"}
-                                              leasingCostStructures={this.props.appraisal.leasingCosts}
-                                              value={this.props.unit.leasingCostStructure}
-                                              onChange={(newValue) => this.changeUnitField('leasingCostStructure', newValue)}/>
-                        </td>
-                    </tr>
+                    {
+                        this.props.appraisal.appraisalType === "detailed" ?
+                            <tr>
+                                <td>
+                                    <strong>Market Rent</strong>
+                                </td>
+                                <td>
+                                    <FieldDisplayEdit type="marketRent" placeholder={"Market Rent"} marketRents={this.props.appraisal.marketRents}
+                                                      value={this.props.unit.marketRent}
+                                                      onChange={(newValue) => this.changeUnitField('marketRent', newValue)}/>
+                                </td>
+                            </tr> : null
+                    }
+                    {
+                        this.props.appraisal.appraisalType === "detailed" ?
+                            <tr>
+                                <td>
+                                    <strong>Free Rent Period (months)</strong>
+                                </td>
+                                <td>
+                                    <FieldDisplayEdit type="months" placeholder={"Free Rent Period (months)"}
+                                                      value={this.props.unit.currentTenancy.freeRentMonths}
+                                                      onChange={(newValue) => this.changeTenancyField(this.props.unit.currentTenancy, 'freeRentMonths', newValue)}/>
+                                </td>
+                            </tr> : null
+                    }
+                    {
+                        this.props.appraisal.appraisalType === "detailed" ?
+                            <tr>
+                                <td>
+                                    <strong>Free Rent Type</strong>
+                                </td>
+                                <td>
+                                    <FieldDisplayEdit type="rentType"
+                                                      value={this.props.unit.currentTenancy.freeRentType}
+                                                      onChange={(newValue) => this.changeAllTenantField(this.props.unit.currentTenancy, 'freeRentType', newValue)}/>
+                                </td>
+                            </tr> : null
+                    }
+                    {
+                        this.props.appraisal.appraisalType === "detailed" ?
+                            <tr>
+                                <td>
+                                    <strong>Recovery Structure</strong>
+                                </td>
+                                <td>
+                                    <FieldDisplayEdit type="recoveryStructure" placeholder={"Recovery Structure"}
+                                                      recoveryStructures={this.props.appraisal.recoveryStructures}
+                                                      value={this.props.unit.currentTenancy.recoveryStructure}
+                                                      onChange={(newValue) => this.changeAllTenantField(this.props.unit.currentTenancy, 'recoveryStructure', newValue)}/>
+                                </td>
+                            </tr> : null
+                    }
+                    {
+                        this.props.appraisal.appraisalType === "detailed" ?
+                            <tr>
+                                <td>
+                                    <strong>Leasing Cost Structure</strong>
+                                </td>
+                                <td>
+                                    <FieldDisplayEdit type="leasingCostStructure" placeholder={"Leasing Cost Structure"}
+                                                      leasingCostStructures={this.props.appraisal.leasingCosts}
+                                                      value={this.props.unit.leasingCostStructure}
+                                                      onChange={(newValue) => this.changeUnitField('leasingCostStructure', newValue)}/>
+                                </td>
+                            </tr> : null
+                    }
                     <tr>
                         <td>
                             <strong>Remarks</strong>
@@ -744,32 +805,6 @@ class UnitDetailsEditor extends React.Component
                 {/*</CardBody>*/}
                 {/*</Card>*/}
                 {/*<Card outline color="primary" className="mb-3">*/}
-                <br/>
-                <h3>Tenancy & Esclation Schedule</h3>
-                {/*<CardHeader className="text-white bg-primary">Tenancy & Escalation Schedule</CardHeader>*/}
-                {/*<CardBody>*/}
-                <table className="table tenancies-table">
-                    <thead>
-                    <tr>
-                        <td>Tenant Name</td>
-                        <td>Term Start</td>
-                        <td>Term End</td>
-                        <td>Net / Gross</td>
-                        <td>Annual Rent (psf)</td>
-                        <td>Annual Rent</td>
-                        <td className="action-column"/>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    {
-                        this.props.unit.tenancies.map((tenancy, tenancyIndex) =>
-                        {
-                            return this.renderTenancy(tenancy, tenancyIndex);
-                        }).concat([this.renderNewTenancyRow()])
-                    }
-                    </tbody>
-
-                </table>
                 {/*</CardBody>*/}
                 {/*</Card>*/}
             </Col>

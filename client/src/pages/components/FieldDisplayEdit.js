@@ -512,6 +512,7 @@ class FieldDisplayEdit extends React.Component
                         <ManagementExpenseModeSelector
                             value={this.state.isEditing ? this.state.value : this.props.value}
                             disabled={!this.props.edit}
+                            exclude={this.props.exclude}
                             title={this.props.title || this.props.placeholder}
                             onChange={(newValue) => this.selectInputUpdated(newValue) }
                             onBlur={() => this.finishEditing()}

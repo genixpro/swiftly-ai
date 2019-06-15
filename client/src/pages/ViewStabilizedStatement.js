@@ -10,6 +10,8 @@ import Auth from "../Auth";
 import PercentFormat from "./components/PercentFormat";
 import CurrencyFormat from "./components/CurrencyFormat";
 import StructuralAllowanceCalculationPopoverWrapper from "./components/StructuralAllowanceCalculationPopoverWrapper";
+import {IncomeStatementItemModel} from "../models/IncomeStatementModel";
+import _ from "underscore";
 
 class ViewStabilizedStatement extends React.Component
 {
@@ -56,12 +58,134 @@ class ViewStabilizedStatement extends React.Component
 
     onUnitClicked(unit, unitIndex)
     {
-        this.props.history.push(`/appraisal/${this.props.appraisal._id}/tenants/rent_roll?unit=${unitIndex}`)
+        if (this.props.appraisal.appraisalType === 'detailed')
+        {
+            this.props.history.push(`/appraisal/${this.props.appraisal._id}/tenants/rent_roll?unit=${unitIndex}`)
+        }
+        else
+        {
+            // do nothing
+        }
+    }
+
+    onRemoveUnit(unitIndex)
+    {
+        this.props.appraisal.units.splice(unitIndex, 1);
+
+        this.props.saveAppraisal(this.props.appraisal);
+    }
+
+    onCreateUnit(newUnit)
+    {
+        this.props.appraisal.units.push(newUnit);
+        this.props.saveAppraisal(this.props.appraisal);
+
+    }
+
+    onUnitChanged(unitIndex, newUnit)
+    {
+        this.props.appraisal.units[unitIndex] = newUnit;
+        this.props.saveAppraisal(this.props.appraisal);
     }
 
 
+    onChangeUnitOrder(newUnits)
+    {
+        this.props.appraisal.units = newUnits;
+        this.props.saveAppraisal(this.props.appraisal);
+    }
+
+
+    createNewIncomeStatementItem(field, value, incomeField)
+    {
+        if (value !== null && value !== "")
+        {
+            let appraisalYear = this.getAppraisalYear();
+            if (field === 'yearlyAmounts')
+            {
+                value = {[appraisalYear]: value};
+            }
+
+
+            let cashFlowType = null;
+            let incomeStatementItemType = null;
+
+            if (incomeField === 'expenses')
+            {
+                cashFlowType = 'expense';
+                incomeStatementItemType = 'operating_expense';
+            }
+            else
+            {
+                cashFlowType = 'income';
+                incomeStatementItemType = 'additional_income';
+            }
+
+            const newItem = IncomeStatementItemModel.create({
+                cashFlowType: cashFlowType,
+                incomeStatementItemType: incomeStatementItemType
+            }, this.props.appraisal.incomeStatement, "incomes");
+
+            if (field)
+            {
+                newItem[field] = value;
+            }
+
+            if (_.isUndefined(newItem['yearlyAmounts']))
+            {
+                newItem['yearlyAmounts'] = {};
+            }
+
+            if (_.isUndefined(newItem['name']))
+            {
+                newItem['name'] = 'New Item';
+            }
+
+            this.props.appraisal.incomeStatement[incomeField].push(newItem);
+            this.props.saveAppraisal(this.props.appraisal);
+        }
+    }
+
+    changeIncomeStatementItem(index, field, value, incomeField)
+    {
+        let appraisalYear = this.getAppraisalYear();
+        if (field === 'yearlyAmounts' && value === null)
+        {
+            this.props.appraisal.incomeStatement[incomeField].splice(index, 1);
+            this.props.saveAppraisal(this.props.appraisal);
+        }
+        else
+        {
+            if (field === 'yearlyAmounts')
+            {
+                value = {[appraisalYear]: value};
+            }
+            const incomeItem = this.props.appraisal.incomeStatement[incomeField][index];
+            incomeItem[field] = value;
+            this.props.appraisal.incomeStatement[incomeField][index] = incomeItem;
+            this.props.saveAppraisal(this.props.appraisal);
+        }
+    }
+
+
+    getAppraisalYear()
+    {
+        let appraisalYear;
+        if  (this.props.appraisal.effectiveDate)
+        {
+            appraisalYear = this.props.appraisal.effectiveDate.getFullYear();
+        }
+        else
+        {
+            appraisalYear = new Date().getFullYear();
+        }
+        return appraisalYear;
+    }
+
     render()
     {
+        let appraisalYear = this.getAppraisalYear();
+
         return [
             <AppraisalContentHeader appraisal={this.props.appraisal} title="Stabilized Statement Valuation"/>,
             <Row className={"view-stabilized-statement"}>
@@ -86,10 +210,14 @@ class ViewStabilizedStatement extends React.Component
                                         <UnitsTable
                                             appraisal={this.props.appraisal}
                                             showStabilizedStats={true}
-                                            allowSelection={false}
-                                            allowNewUnit={false}
+                                            allowSelection={this.props.appraisal.appraisalType === 'simple'}
+                                            allowNewUnit={this.props.appraisal.appraisalType === 'simple'}
                                             statsMode={"total"}
                                             onUnitClicked={(unit, unitIndex) => this.onUnitClicked(unit, unitIndex)}
+                                            onRemoveUnit={(unitIndex) => this.onRemoveUnit(unitIndex)}
+                                            onCreateUnit={(newUnit) => this.onCreateUnit(newUnit)}
+                                            onUnitChanged={(unitIndex, newUnit) => this.onUnitChanged(unitIndex, newUnit)}
+                                            onChangeUnitOrder={(newUnits) => this.onChangeUnitOrder(newUnits)}
                                         />
                                     </div>
                                 </Col>
@@ -113,24 +241,87 @@ class ViewStabilizedStatement extends React.Component
                                                 <td/>
                                             </tr>
                                             {
-                                                this.props.appraisal.stabilizedStatement.additionalIncome ?
+                                                this.props.appraisal.appraisalType === 'detailed' && this.props.appraisal.stabilizedStatement.additionalIncome ?
                                                     <tr className={"data-row"}>
-                                                        <td className={"label-column"}><Link to={`/appraisal/${this.props.appraisal._id}/additional_income`}>Additional Income</Link></td>
+                                                        <td className={"label-column"}>
+                                                            <Link to={`/appraisal/${this.props.appraisal._id}/additional_income`}>Additional Income</Link>
+                                                        </td>
                                                         <td className={"amount-column"}>
-                                                            <Link to={`/appraisal/${this.props.appraisal._id}/additional_income`}><CurrencyFormat value={this.props.appraisal.stabilizedStatement.additionalIncome} /></Link>
+                                                            <Link to={`/appraisal/${this.props.appraisal._id}/additional_income`}>
+                                                                <CurrencyFormat value={this.props.appraisal.stabilizedStatement.additionalIncome} />
+                                                            </Link>
                                                         </td>
                                                         <td className={"amount-total-column"}/>
                                                     </tr> : null
                                             }
-                                            <tr className={"statement-sum-after-row data-row"}>
-                                                <td className={"label-column"}>
-                                                    <Link to={`/appraisal/${this.props.appraisal._id}/tenants/recovery_structures`}>Recoverable Income</Link>
-                                                </td>
-                                                <td className={"amount-column"}>
-                                                    <Link to={`/appraisal/${this.props.appraisal._id}/tenants/recovery_structures`}><CurrencyFormat value={this.props.appraisal.stabilizedStatement.recoverableIncome}/></Link>
-                                                </td>
-                                                <td className={"amount-total-column"}/>
-                                            </tr>
+
+                                            {
+                                                this.props.appraisal.appraisalType === 'simple' ? (this.props.appraisal.incomeStatement.incomes || []).map((incomeItem, index) =>
+                                                {
+                                                    return <tr className={"data-row income-row"} key={index}>
+                                                        <td className={"label-column"}>
+                                                            <span><FieldDisplayEdit
+                                                                type={"text"}
+                                                                placeholder={"Add/Remove Income ($)"}
+                                                                value={incomeItem.name}
+                                                                hideIcon={true}
+                                                                onChange={(newValue) => this.changeIncomeStatementItem(index, "name", newValue, "incomes")}
+                                                            /></span>
+                                                        </td>
+                                                        <td className={"amount-column"}>
+                                                            <FieldDisplayEdit
+                                                                hideIcon={true}
+                                                                type={"currency"}
+                                                                placeholder={"Amount"}
+                                                                value={incomeItem.yearlyAmounts[appraisalYear]}
+                                                                onChange={(newValue) => this.changeIncomeStatementItem(index, "yearlyAmounts", newValue, "incomes")}
+                                                            />
+                                                        </td>
+                                                        <td className={"amount-total-column"}>
+                                                        </td>
+                                                    </tr>
+                                                }).concat([
+                                                    <tr className={"data-row income-row"} key={(this.props.appraisal.incomeStatement.incomes || []).length}>
+                                                        <td className={"label-column"}>
+                                                    <span><FieldDisplayEdit
+                                                        type={"text"}
+                                                        placeholder={"Add/Remove Income ($)"}
+                                                        hideIcon={true}
+                                                        onChange={(newValue) => this.createNewIncomeStatementItem("name", newValue, "incomes")}
+                                                    /></span>
+                                                        </td>
+                                                        <td className={"amount-column"}>
+                                                            <FieldDisplayEdit
+                                                                type={"currency"}
+                                                                placeholder={"Amount"}
+                                                                hideIcon={true}
+                                                                onChange={(newValue) => this.createNewIncomeStatementItem("yearlyAmounts", newValue, "incomes")}
+                                                            />
+                                                        </td>
+                                                        <td className={"amount-total-column"}>
+                                                        </td>
+                                                    </tr>
+                                                ]) : null
+                                            }
+                                            {
+                                                this.props.appraisal.stabilizedStatement.recoverableIncome ?
+                                                    <tr className={"statement-sum-after-row data-row"}>
+                                                        <td className={"label-column"}>
+                                                            <Link to={`/appraisal/${this.props.appraisal._id}/tenants/recovery_structures`}>Recoverable Income</Link>
+                                                        </td>
+                                                        <td className={"amount-column"}>
+                                                            <Link to={`/appraisal/${this.props.appraisal._id}/tenants/recovery_structures`}><CurrencyFormat value={this.props.appraisal.stabilizedStatement.recoverableIncome}/></Link>
+                                                        </td>
+                                                        <td className={"amount-total-column"}/>
+                                                    </tr> :
+                                                    <tr className={"statement-sum-after-row data-row"}>
+                                                        <td className={"label-column"}>
+                                                        </td>
+                                                        <td className={"amount-column"}>
+                                                        </td>
+                                                        <td className={"amount-total-column"}/>
+                                                    </tr>
+                                            }
                                             <tr className={"statement-sum-row data-row"}>
                                                 <td className={"label-column"}>Potential Gross Income</td>
                                                 <td className={"amount-column"}>
@@ -160,7 +351,55 @@ class ViewStabilizedStatement extends React.Component
                                                 <td className={"amount-total-column"}></td>
                                             </tr>
                                             {
-                                                this.props.appraisal.stabilizedStatement.operatingExpenses ?
+                                                this.props.appraisal.appraisalType === 'simple' ? (this.props.appraisal.incomeStatement.expenses || []).map((incomeItem, index) =>
+                                                {
+                                                    return <tr className={"data-row income-row"} key={index}>
+                                                        <td className={"label-column"}>
+                                                            <span><FieldDisplayEdit
+                                                                type={"text"}
+                                                                placeholder={"Add/Remove Expense ($)"}
+                                                                value={incomeItem.name}
+                                                                hideIcon={true}
+                                                                onChange={(newValue) => this.changeIncomeStatementItem(index, "name", newValue, "expenses")}
+                                                            /></span>
+                                                        </td>
+                                                        <td className={"amount-column"}>
+                                                            <FieldDisplayEdit
+                                                                hideIcon={true}
+                                                                type={"currency"}
+                                                                placeholder={"Amount"}
+                                                                value={incomeItem.yearlyAmounts[appraisalYear]}
+                                                                onChange={(newValue) => this.changeIncomeStatementItem(index, "yearlyAmounts", newValue, "expenses")}
+                                                            />
+                                                        </td>
+                                                        <td className={"amount-total-column"}>
+                                                        </td>
+                                                    </tr>
+                                                }).concat([
+                                                    <tr className={"data-row income-row"} key={(this.props.appraisal.incomeStatement.expenses || []).length}>
+                                                        <td className={"label-column"}>
+                                                    <span><FieldDisplayEdit
+                                                        type={"text"}
+                                                        placeholder={"Add/Remove Expense ($)"}
+                                                        hideIcon={true}
+                                                        onChange={(newValue) => this.createNewIncomeStatementItem("name", newValue, "expenses")}
+                                                    /></span>
+                                                        </td>
+                                                        <td className={"amount-column"}>
+                                                            <FieldDisplayEdit
+                                                                type={"currency"}
+                                                                placeholder={"Amount"}
+                                                                hideIcon={true}
+                                                                onChange={(newValue) => this.createNewIncomeStatementItem("yearlyAmounts", newValue, "expenses")}
+                                                            />
+                                                        </td>
+                                                        <td className={"amount-total-column"}>
+                                                        </td>
+                                                    </tr>
+                                                ]) : null
+                                            }
+                                            {
+                                                this.props.appraisal.appraisalType === 'detailed' && this.props.appraisal.stabilizedStatement.operatingExpenses ?
                                                     <tr className={"data-row"}>
                                                         <td className={"label-column"}><Link to={`/appraisal/${this.props.appraisal._id}/expenses`}>Operating Costs</Link></td>
                                                         <td className={"amount-column"}>
@@ -270,6 +509,7 @@ class ViewStabilizedStatement extends React.Component
                                                             type={"managementExpenseMode"}
                                                             placeholder={"Management Expense Mode"}
                                                             value={this.props.appraisal.stabilizedStatementInputs ? this.props.appraisal.stabilizedStatementInputs.managementExpenseMode : null}
+                                                            exclude={this.props.appraisal.appraisalType === 'simple' ? ["income_statement"] : []}
                                                             onChange={(newValue) => this.changeStabilizedInput("managementExpenseMode", newValue)}
                                                         />
                                                     </td>
@@ -302,7 +542,7 @@ class ViewStabilizedStatement extends React.Component
                                                         : null
                                                 }
                                                 {
-                                                    this.props.appraisal.stabilizedStatementInputs.managementExpenseMode === 'rule' ?
+                                                    this.props.appraisal.stabilizedStatementInputs.managementExpenseMode === 'rule' || this.props.appraisal.stabilizedStatementInputs.managementExpenseMode === 'income_statement' ?
                                                         <tr>
                                                             <td>Structural Allowance</td>
                                                             <td>
