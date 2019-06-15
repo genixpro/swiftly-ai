@@ -7,6 +7,8 @@ import CurrencyFormat from "./components/CurrencyFormat";
 import AreaFormat from "./components/AreaFormat";
 import PercentFormat from "./components/PercentFormat";
 import IntegerFormat from "./components/IntegerFormat";
+import LeasingCostsForUnitCalculationPopoverWrapper from "./components/LeasingCostsForUnitCalculationPopoverWrapper";
+import VacantRentLossForUnitCalculationPopoverWrapper from "./components/VacantRentLossForUnitCalculationPopoverWrapper";
 
 
 
@@ -16,10 +18,6 @@ class TenantApplicableEditor extends React.Component
 
     render()
     {
-        const vacantUnitLeasupCostPopoverId = `tenant-leasing-cost-popover-${this.props.unit.unitNumber.replace(/\W/g, "")}-${this.props.leasingCostStructure.name.replace(/\W/g, "")}`;
-
-        const vacantUnitRentLossPopoverId = `tenant-rent-loss-popover-${this.props.unit.unitNumber.replace(/\W/g, "")}-${this.props.leasingCostStructure.name.replace(/\W/g, "")}`;
-
         return [<td className={"value-column"} key={1}>
                 <div>Unit {this.props.unit.unitNumber} - {this.props.unit.currentTenancy.name}</div>
                 <div>
@@ -37,140 +35,16 @@ class TenantApplicableEditor extends React.Component
                 <AreaFormat value={this.props.unit.squareFootage} />
             </td>,
             <td className={"calculated-vacant-unit-leasup-costs-column"} key={3}>
-                <a id={vacantUnitLeasupCostPopoverId} onClick={() => this.setState({leasupCostPopoverOpen: !this.state.leasupCostPopoverOpen})}>
+                <LeasingCostsForUnitCalculationPopoverWrapper appraisal={this.props.appraisal} unit={this.props.unit}>
                     {
                         this.props.unit.leasingCostStructure === this.props.leasingCostStructure.name && this.props.unit.isVacantForStabilizedStatement
                         && this.props.unit.calculatedVacantUnitLeasupCosts ?
                             <CurrencyFormat value={this.props.unit.calculatedVacantUnitLeasupCosts}/> : null
                     }
-                </a>
-                <Popover placement="bottom" isOpen={this.state.leasupCostPopoverOpen} target={vacantUnitLeasupCostPopoverId} toggle={() => this.setState({leasupCostPopoverOpen: !this.state.leasupCostPopoverOpen})}>
-                    <PopoverHeader>Unit {this.props.unit.unitNumber} - Leasing Costs</PopoverHeader>
-                    <PopoverBody>
-                        <table className={"explanation-popover-table"}>
-                            <tbody>
-                            <tr>
-                                <td>Tenant Inducements</td>
-                                <td />
-                                <td />
-                                <td>
-                                </td>
-                                <td />
-                                <td><AreaFormat value={this.props.unit.squareFootage}/></td>
-                                <td>*</td>
-                                <td><CurrencyFormat value={this.props.leasingCostStructure.tenantInducementsPSF}/></td>
-                                <td>=</td>
-                                <td><CurrencyFormat value={this.props.unit.squareFootage * this.props.leasingCostStructure.tenantInducementsPSF} cents={false}/></td>
-                            </tr>
-                            {
-                                this.props.leasingCostStructure.leasingCommissionMode === 'psf' ?
-                                    <tr>
-                                        <td>Leasing Costs</td>
-                                        <td />
-                                        <td />
-                                        <td>
-                                        </td>
-                                        <td>
-                                        </td>
-                                        <td>
-                                            <AreaFormat value={this.props.unit.squareFootage}/>
-                                        </td>
-                                        <td>*</td>
-                                        <td>
-                                            <CurrencyFormat value={this.props.leasingCostStructure.leasingCommissionPSF}/>
-                                        </td>
-                                        <td>=</td>
-                                        <td className={"underline"}>
-                                            <CurrencyFormat value={this.props.leasingCostStructure.leasingCommissionPSF * this.props.unit.squareFootage} cents={false}/>
-                                        </td>
-                                    </tr> : null
-                               }
-                            {
-                                this.props.leasingCostStructure.leasingCommissionMode === 'percent_of_rent' ?
-                                    <tr>
-                                        <td>Leasing Costs - Year One</td>
-                                        <td />
-                                        <td />
-                                        <td>
-                                            {
-                                                this.props.unit.marketRent ?
-                                                    <CurrencyFormat value={this.props.unit.marketRentAmount} cents={true}/>
-                                                    : <span className={"none-found"}>no market rent</span>
-                                            }
-                                        </td>
-                                        <td>
-                                            <span>*</span>
-                                        </td>
-                                        <td>
-                                            <AreaFormat value={this.props.unit.squareFootage}/>
-                                        </td>
-                                        <td>*</td>
-                                        <td>
-                                            <PercentFormat value={this.props.leasingCostStructure.leasingCommissionPercentYearOne}/>
-                                        </td>
-                                        <td>=</td>
-                                        <td>
-                                            <CurrencyFormat
-                                                value={this.props.leasingCostStructure.leasingCommissionPercentYearOne / 100.0 * (this.props.unit.marketRentAmount * this.props.unit.squareFootage)}
-                                                cents={false}/>
-                                        </td>
-                                    </tr> : null
-                            }
-                            {
-                                this.props.leasingCostStructure.leasingCommissionMode === 'percent_of_rent' && (this.props.leasingCostStructure.leasingPeriod > 12) ?
-                                    <tr>
-                                        <td>Leasing Costs - Remaining Term</td>
-                                        <td>
-                                            {
-                                                <IntegerFormat value={Math.max(0, this.props.leasingCostStructure.leasingPeriod - 12) / 12.0}/>
-                                            }
-                                        </td>
-                                        <td>
-                                            *
-                                        </td>
-                                        <td>
-                                            {
-                                                this.props.unit.marketRent ?
-                                                    <CurrencyFormat value={this.props.unit.marketRentAmount} cents={true}/>
-                                                    : <span className={"none-found"}>no market rent</span>
-                                            }
-                                        </td>
-                                        <td>
-                                            <span>*</span>
-                                        </td>
-                                        <td>
-                                            <AreaFormat value={this.props.unit.squareFootage}/>
-                                        </td>
-                                        <td>*</td>
-                                        <td>
-                                            <PercentFormat value={this.props.leasingCostStructure.leasingCommissionPercentRemainingYears}/>
-                                        </td>
-                                        <td>=</td>
-                                        <td className={"underline"}>
-                                            <CurrencyFormat
-                                                value={this.props.leasingCostStructure.leasingCommissionPercentRemainingYears / 100.0 * (this.props.unit.marketRentAmount * this.props.unit.squareFootage)}
-                                                cents={false}/>
-                                        </td>
-                                    </tr> : null
-                            }
-                            <tr className={"total-row"}>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td colSpan={2}>Total Leasing Costs</td>
-                                <td><CurrencyFormat value={this.props.unit.calculatedVacantUnitLeasupCosts} cents={false} /></td>
-                            </tr>
-                            </tbody>
-                        </table>
-                    </PopoverBody>
-                </Popover>
+                </LeasingCostsForUnitCalculationPopoverWrapper>
             </td>,
             <td className={"calculated-vacant-unit-rent-loss"} key={4}>
-                <a id={vacantUnitRentLossPopoverId} onClick={() => this.setState({rentLossPopoverOpen: !this.state.rentLossPopoverOpen})}>
+                <VacantRentLossForUnitCalculationPopoverWrapper appraisal={this.props.appraisal} unit={this.props.unit}>
                     {
                         this.props.unit.leasingCostStructure === this.props.leasingCostStructure.name && this.props.unit.isVacantForStabilizedStatement ?
                             this.props.unit.marketRent ?
@@ -180,58 +54,7 @@ class TenantApplicableEditor extends React.Component
                                 : <span className={"none-found"}>no market rent</span>
                             : null
                     }
-                </a>
-                <Popover placement="bottom" isOpen={this.state.rentLossPopoverOpen} target={vacantUnitRentLossPopoverId} toggle={() => this.setState({rentLossPopoverOpen: !this.state.rentLossPopoverOpen})}>
-                    <PopoverHeader>Unit {this.props.unit.unitNumber} - Vacant Rent Loss</PopoverHeader>
-                    <PopoverBody>
-                        <table className={"explanation-popover-table"}>
-                            <tbody>
-                            <tr className={"total-row"}>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td><strong>Annual Amount</strong></td>
-                                <td></td>
-                                <td></td>
-                            </tr>
-                            <tr className={"total-row"}>
-                                <td>Rent Loss</td>
-                                <td><IntegerFormat value={this.props.leasingCostStructure.renewalPeriod}/></td>
-                                <td>/</td>
-                                <td>12</td>
-                                <td>*</td>
-                                <td><CurrencyFormat value={this.props.unit.marketRentAmount * this.props.unit.squareFootage}/></td>
-                                <td>=</td>
-                                <td><CurrencyFormat value={this.props.leasingCostStructure.renewalPeriod / 12.0 * this.props.unit.marketRentAmount * this.props.unit.squareFootage} cents={false}/></td>
-                            </tr>
-                            {
-                                this.props.unit.currentTenancy.rentType === 'net' ?
-                                    <tr className={"total-row"}>
-                                        <td>Recovery Loss</td>
-                                        <td><IntegerFormat value={this.props.leasingCostStructure.renewalPeriod}/></td>
-                                        <td>/</td>
-                                        <td>12</td>
-                                        <td>*</td>
-                                        <td><CurrencyFormat value={this.props.unit.calculatedTaxRecovery + this.props.unit.calculatedManagementRecovery + this.props.unit.calculatedExpenseRecovery}/></td>
-                                        <td>=</td>
-                                        <td><CurrencyFormat value={(this.props.unit.calculatedTaxRecovery + this.props.unit.calculatedManagementRecovery + this.props.unit.calculatedExpenseRecovery) / 12.0 * this.props.leasingCostStructure.renewalPeriod} cents={false}/></td>
-                                    </tr> : null
-                            }
-                            <tr className={"total-row"}>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td colSpan={2}><strong>Gross Rent Loss</strong></td>
-                                <td><CurrencyFormat value={this.props.unit.calculatedVacantUnitRentLoss} cents={false} /></td>
-                            </tr>
-                            </tbody>
-                        </table>
-                    </PopoverBody>
-                </Popover>
+                </VacantRentLossForUnitCalculationPopoverWrapper>
             </td>,
             <td className={"should-treat-unit-as-vacant-column"} key={5}>
                 {this.props.unit.leasingCostStructure === this.props.leasingCostStructure.name ?
@@ -521,7 +344,8 @@ class LeasingCostStructureEditor extends React.Component
                         </td>
                         {
                             this.props.appraisal.units.length > 0 ?
-                                <TenantApplicableEditor unit={this.props.appraisal.units[0]} leasingCostStructure={leasingCostStructure}
+                                <TenantApplicableEditor appraisal={this.props.appraisal}
+                                                        unit={this.props.appraisal.units[0]} leasingCostStructure={leasingCostStructure}
                                                         onChange={() => this.changeUnitLeasingCostStructure(this.props.appraisal.units[0])}
                                                         onChangeTreatAsVacant={() => this.onChangeTreatAsVacant(this.props.appraisal.units[0])}
 
@@ -539,7 +363,9 @@ class LeasingCostStructureEditor extends React.Component
 
                             return <tr className={"leasing-cost-row"} key={unitIndex}>
                                 <td className={"label-column"}/>
-                                <TenantApplicableEditor unit={unit} leasingCostStructure={leasingCostStructure}
+                                <TenantApplicableEditor appraisal={this.props.appraisal}
+                                                        unit={unit}
+                                                        leasingCostStructure={leasingCostStructure}
                                                         onChange={() => this.changeUnitLeasingCostStructure(unit)}
                                                         onChangeTreatAsVacant={() => this.onChangeTreatAsVacant(unit)}
                                 />

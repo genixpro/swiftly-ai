@@ -136,7 +136,7 @@ class ValuationModelBase:
                 currentTotalLoss = currentRecoveryLoss + currentRentLoss
 
                 unit.calculatedVacantUnitRentLoss += currentTotalLoss
-                total += currentRentLoss + currentTotalLoss
+                total += currentTotalLoss
 
         return -total
 

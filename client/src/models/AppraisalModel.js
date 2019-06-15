@@ -75,6 +75,25 @@ class AppraisalModel extends BaseModel
     static dataTypeReferences = new DictField(new ListField(new ModelField(ExtractionReferenceModel)));
 
 
+    leasingCostsForUnit(unit)
+    {
+        for(let leasingCost of this.leasingCosts)
+        {
+            if (leasingCost.name === unit.leasingCostStructure)
+            {
+                return leasingCost;
+            }
+        }
+
+        for(let leasingCost of this.leasingCosts)
+        {
+            if (leasingCost.name === LeasingCostStructureModel.defaultLeasingCostName)
+            {
+                return leasingCost;
+            }
+        }
+    }
+
     getEffectiveDate()
     {
         if (this.effectiveDate)

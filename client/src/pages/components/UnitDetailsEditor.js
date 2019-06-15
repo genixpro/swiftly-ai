@@ -19,6 +19,8 @@ import Moment from "react-moment";
 import PropTypes from "prop-types";
 import LeasingCostStructureModel from "../../models/LeasingCostStructureModel";
 import MarketRentModel from "../../models/MarketRentModel";
+import LeasingCostsForUnitCalculationPopoverWrapper from "./LeasingCostsForUnitCalculationPopoverWrapper";
+import VacantRentLossForUnitCalculationPopoverWrapper from "./VacantRentLossForUnitCalculationPopoverWrapper";
 
 class UnitDetailsEditor extends React.Component
 {
@@ -1000,9 +1002,12 @@ class UnitDetailsEditor extends React.Component
                                                 <CurrencyFormat value={this.props.unit.calculatedVacantUnitRentLoss}/>
                                             </span>
                                         </Link> :
-                                        <span style={{"marginLeft": "10px"}}>
-                                            <CurrencyFormat value={this.props.unit.calculatedVacantUnitRentLoss}/>
-                                        </span>
+                                        <VacantRentLossForUnitCalculationPopoverWrapper appraisal={this.props.appraisal} unit={this.props.unit}>
+                                            <span style={{"marginLeft": "10px"}}>
+                                                <CurrencyFormat value={this.props.unit.calculatedVacantUnitRentLoss}/>
+                                            </span>
+                                        </VacantRentLossForUnitCalculationPopoverWrapper>
+
                                 }
                             </td>
                         </tr> : null
@@ -1016,22 +1021,24 @@ class UnitDetailsEditor extends React.Component
                                         <Link to={`/appraisal/${this.props.appraisal._id}/tenants/leasing_costs`}>
                                             <strong>Calculated Vacant Unit Leaseup Costs</strong>
                                         </Link> :
-                                        <strong>Calculated Vacant Unit Leaseup Costs</strong>
+                                        <LeasingCostsForUnitCalculationPopoverWrapper appraisal={this.props.appraisal} unit={this.props.unit}>
+                                            <strong>Calculated Vacant Unit Leaseup Costs</strong>
+                                        </LeasingCostsForUnitCalculationPopoverWrapper>
                                 }
                             </td>
                             <td>
                                 {
                                     this.props.appraisal.appraisalType === 'detailed' ?
                                         <Link to={`/appraisal/${this.props.appraisal._id}/tenants/leasing_costs`}>
-                                                        <span style={{"marginLeft": "10px"}}>
-                                                            <CurrencyFormat
-                                                                value={this.props.unit.calculatedVacantUnitLeasupCosts}/>
-                                                        </span>
+                                            <span style={{"marginLeft": "10px"}}>
+                                                <CurrencyFormat value={this.props.unit.calculatedVacantUnitLeasupCosts}/>
+                                            </span>
                                         </Link> :
-                                        <span style={{"marginLeft": "10px"}}>
-                                                            <CurrencyFormat
-                                                                value={this.props.unit.calculatedVacantUnitLeasupCosts}/>
-                                                        </span>
+                                        <LeasingCostsForUnitCalculationPopoverWrapper appraisal={this.props.appraisal} unit={this.props.unit}>
+                                            <span style={{"marginLeft": "10px"}}>
+                                                <CurrencyFormat value={this.props.unit.calculatedVacantUnitLeasupCosts}/>
+                                            </span>
+                                        </LeasingCostsForUnitCalculationPopoverWrapper>
                                 }
 
                             </td>
