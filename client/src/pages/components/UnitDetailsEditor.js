@@ -357,44 +357,104 @@ class UnitDetailsEditor extends React.Component
         const popoverId = `market-rent-differential-popover`;
 
         return <Col className={"unit-details-editor"}>
+                <div>
+                    {/*<Card outline color="primary" className="mb-3">*/}
+                    <h4 className={"unit-section-title"}>Tenancy & Escalation Schedule</h4>
+                </div>
+                <table>
+                    <tbody>
+                    <tr className={"stats-row"}>
+                        <td>
+                            <strong>Current Annual Rent (psf)</strong>
+                        </td>
+                        <td className={"stabilized-rent-column"}>
+                                                            <span style={{"marginLeft": "10px"}}>
+                                                                <CurrencyFormat value={this.props.unit.squareFootage ? this.props.unit.stabilizedRent / this.props.unit.squareFootage : null} cents={true}/>
+                                                            </span>
 
-            {
-                this.props.appraisal.appraisalType === "detailed" ?
-                    <div>
-                        {/*<Card outline color="primary" className="mb-3">*/}
-                        <h3>Tenancy & Escalation Schedule</h3>
-                        {/*<CardHeader className="text-white bg-primary">Tenancy & Escalation Schedule</CardHeader>*/}
-                        {/*<CardBody>*/}
-                        <table className="table tenancies-table">
-                            <thead>
-                            <tr>
-                                <td>Tenant Name</td>
-                                <td>Term Start</td>
-                                <td>Term End</td>
-                                <td>Net / Gross</td>
-                                <td>Annual Rent (psf)</td>
-                                <td>Annual Rent</td>
-                                <td className="action-column"/>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            {
-                                this.props.unit.tenancies.map((tenancy, tenancyIndex) =>
+                            <div className={"use-market-rent-selector-container"}>
                                 {
-                                    return this.renderTenancy(tenancy, tenancyIndex);
-                                }).concat([this.renderNewTenancyRow()])
-                            }
-                            </tbody>
+                                    this.props.unit.marketRent ?
+                                        <div className={"use-market-rent-selector"}>
+                                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                            <strong>Apply Market Rent</strong>
+                                            <FieldDisplayEdit hideIcon={true} type="boolean"
+                                                              placeholder={"Use Market Rent for Stabilized Statement?"}
+                                                              value={this.props.unit.shouldUseMarketRent}
+                                                              onChange={(newValue) => this.changeUnitField('shouldUseMarketRent', newValue)}/>
+                                            <br/>
+                                        </div> : null
+                                }
+                            </div>
+                        </td>
+                    </tr>
+                    <tr className={"stats-row"}>
+                        <td>
+                            <strong>Current Annual Rent</strong>
+                        </td>
+                        <td className={"stabilized-rent-column"}>
+                                                            <span style={{"marginLeft": "10px"}}>
+                                                                <CurrencyFormat value={this.props.unit.stabilizedRent} cents={false}/>
+                                                            </span>
 
-                        </table>
-                    </div> : null
-            }
+                            <div className={"use-market-rent-selector-container"}>
+                                {
+                                    this.props.unit.marketRent ?
+                                        <div className={"use-market-rent-selector"}>
+                                            <strong>Apply Market Rent Differential</strong>
+                                            <FieldDisplayEdit hideIcon={true} type="boolean" placeholder={"Apply Market Rent Differential?"}
+                                                              value={this.props.unit.shouldApplyMarketRentDifferential}
+                                                              onChange={(newValue) => this.changeUnitField('shouldApplyMarketRentDifferential', newValue)}/>
+                                        </div> : null
+                                }
+                            </div>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+                <br/>
+                <div>
+                    {/*<Card outline color="primary" className="mb-3">*/}
+                    {/*<CardHeader className="text-white bg-primary">Tenancy & Escalation Schedule</CardHeader>*/}
+                    {/*<CardBody>*/}
+                    <table className="table tenancies-table">
+                        <thead>
+                        <tr>
+                            <td>Tenant Name</td>
+                            <td>Term Start</td>
+                            <td>Term End</td>
+                            <td>Net / Gross</td>
+                            <td>Annual Rent (psf)</td>
+                            <td>Annual Rent</td>
+                            <td className="action-column"/>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {
+                            this.props.unit.tenancies.map((tenancy, tenancyIndex) =>
+                            {
+                                return this.renderTenancy(tenancy, tenancyIndex);
+                            }).concat([this.renderNewTenancyRow()])
+                        }
+                        </tbody>
+
+                    </table>
+                </div>
             <br/>
-            <h3>Tenant Information</h3>
+            <h4 className={"unit-section-title"}>Tenant Information</h4>
             {/*<CardHeader className="text-white bg-primary">Tenant Information</CardHeader>*/}
             {/*<CardBody>*/}
             <table className="table tenant-information-table">
                 <tbody>
+                <tr>
+                    <td>
+                        <strong>Tenant Name</strong>
+                    </td>
+                    <td>
+                        <FieldDisplayEdit placeholder={"Tenant Name"} value={this.props.unit.currentTenancy.name}
+                                          onChange={(newValue) => this.changeAllTenantField('name', newValue)}/>
+                    </td>
+                </tr>
                 <tr>
                     <td>
                         <strong>Unit Number</strong>
@@ -428,15 +488,6 @@ class UnitDetailsEditor extends React.Component
                                           onChange={(newValue) => this.changeUnitField('squareFootage', newValue)}/>
                     </td>
                 </tr>
-                <tr>
-                    <td>
-                        <strong>Tenant Name</strong>
-                    </td>
-                    <td>
-                        <FieldDisplayEdit placeholder={"Tenant Name"} value={this.props.unit.currentTenancy.name}
-                                          onChange={(newValue) => this.changeAllTenantField('name', newValue)}/>
-                    </td>
-                </tr>
                 {
                     this.props.appraisal.appraisalType === "simple" ?
                         <tr>
@@ -465,20 +516,6 @@ class UnitDetailsEditor extends React.Component
                             </td>
                         </tr> : null
                 }
-                {
-                    this.props.appraisal.appraisalType === "simple" ?
-                        <tr>
-                            <td>
-                                <strong>Market Rent (psf)</strong>
-                            </td>
-                            <td>
-                                <FieldDisplayEdit placeholder={"Market Rent (psf)"}
-                                                  value={this.getUnitMarketRent() ? this.getUnitMarketRent().amountPSF : null}
-                                                  type={"currency"}
-                                                  onChange={(newValue) => this.changeMarketRentField('amountPSF', newValue)}/>
-                            </td>
-                        </tr> : null
-                }
                 <tr>
                     <td>
                         <strong>Net / Gross</strong>
@@ -488,19 +525,6 @@ class UnitDetailsEditor extends React.Component
                                           onChange={(newValue) => this.changeAllTenantField('rentType', newValue)}/>
                     </td>
                 </tr>
-                {
-                    this.props.appraisal.appraisalType === "detailed" ?
-                        <tr>
-                            <td>
-                                <strong>Market Rent</strong>
-                            </td>
-                            <td>
-                                <FieldDisplayEdit type="marketRent" placeholder={"Market Rent"} marketRents={this.props.appraisal.marketRents}
-                                                  value={this.props.unit.marketRent}
-                                                  onChange={(newValue) => this.changeUnitField('marketRent', newValue)}/>
-                            </td>
-                        </tr> : null
-                }
                 {
                     this.props.appraisal.appraisalType === "detailed" ?
                         <tr>
@@ -623,43 +647,36 @@ class UnitDetailsEditor extends React.Component
                 <tr>
                     <td colSpan={2}>
                         <br/>
-                        <h3>Financials</h3>
+                        <h4 className={"unit-section-title"}>Financials</h4>
                     </td>
                 </tr>
-                <tr className={"stats-row"}>
-                    <td>
-                        <strong>Stabilized Annual Rent</strong>
-                    </td>
-                    <td className={"stabilized-rent-column"}>
-                                                        <span style={{"marginLeft": "10px"}}>
-                                                            <CurrencyFormat value={this.props.unit.stabilizedRent} cents={false}/>
-                                                        </span>
-
-                        <div className={"use-market-rent-selector-container"}>
-                            {
-                                this.props.unit.marketRent ?
-                                    <div className={"use-market-rent-selector"}>
-                                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                        <strong>Apply Market Rent</strong>
-                                        <FieldDisplayEdit hideIcon={true} type="boolean"
-                                                          placeholder={"Use Market Rent for Stabilized Statement?"}
-                                                          value={this.props.unit.shouldUseMarketRent}
-                                                          onChange={(newValue) => this.changeUnitField('shouldUseMarketRent', newValue)}/>
-                                        <br/>
-                                    </div> : null
-                            }
-                            {
-                                this.props.unit.marketRent ?
-                                    <div className={"use-market-rent-selector"}>
-                                        <strong>Apply Market Rent Differential</strong>
-                                        <FieldDisplayEdit hideIcon={true} type="boolean" placeholder={"Apply Market Rent Differential?"}
-                                                          value={this.props.unit.shouldApplyMarketRentDifferential}
-                                                          onChange={(newValue) => this.changeUnitField('shouldApplyMarketRentDifferential', newValue)}/>
-                                    </div> : null
-                            }
-                        </div>
-                    </td>
-                </tr>
+                {
+                    this.props.appraisal.appraisalType === "simple" ?
+                        <tr>
+                            <td>
+                                <strong>Market Rent (psf)</strong>
+                            </td>
+                            <td>
+                                <FieldDisplayEdit placeholder={"Market Rent (psf)"}
+                                                  value={this.getUnitMarketRent() ? this.getUnitMarketRent().amountPSF : null}
+                                                  type={"currency"}
+                                                  onChange={(newValue) => this.changeMarketRentField('amountPSF', newValue)}/>
+                            </td>
+                        </tr> : null
+                }
+                {
+                    this.props.appraisal.appraisalType === "detailed" ?
+                        <tr>
+                            <td>
+                                <strong>Market Rent</strong>
+                            </td>
+                            <td>
+                                <FieldDisplayEdit type="marketRent" placeholder={"Market Rent"} marketRents={this.props.appraisal.marketRents}
+                                                  value={this.props.unit.marketRent}
+                                                  onChange={(newValue) => this.changeUnitField('marketRent', newValue)}/>
+                            </td>
+                        </tr> : null
+                }
                 {
                     this.props.unit.calculatedManagementRecovery ?
                         <tr className={"stats-row"}>

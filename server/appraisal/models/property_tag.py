@@ -13,3 +13,6 @@ class PropertyTag(Document):
 
     # The property type associated with this tag
     propertyType = StringField()
+
+    # A stats object which contains property
+    propertyTypeStats = DictField(IntField())

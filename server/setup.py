@@ -88,6 +88,7 @@ setup(
             'appraisal_dump_files = appraisal.bin.dump_files:main',
             'appraisal_import_files = appraisal.bin.import_files:main',
             'appraisal_run_migrations = appraisal.bin.run_migrations:main',
+            'appraisal_update_property_tag_stats = appraisal.bin.update_property_tag_stats:main',
         ]
     },
 )
