@@ -60,7 +60,7 @@ class TotalVacantUnitRentLossCalculationPopoverWrapper extends React.Component
                     {this.props.children}
                 </a>,
                 <Popover placement="bottom" isOpen={this.state.popoverOpen} target={this.popoverId} toggle={() => this.setState({popoverOpen: !this.state.popoverOpen})} key={1}>
-                    <PopoverHeader>Total Leasing Costs</PopoverHeader>
+                    <PopoverHeader>Total Vacant Unit Rent Loss</PopoverHeader>
                     <PopoverBody>
                         <table className={"explanation-popover-table"}>
                             <tr className={"total-row"}>
