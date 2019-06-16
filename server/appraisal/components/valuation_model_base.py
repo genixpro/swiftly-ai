@@ -3,8 +3,9 @@ import datetime
 import math
 import copy
 import dateutil
+import traceback
 from appraisal.models.leasing_cost_structure import LeasingCostStructure
-
+from .valuation_errors import CalculationError
 
 class ValuationModelBase:
     """ Base class for valuation models, with some common functionality. """
@@ -277,7 +278,16 @@ class ValuationModelBase:
 
         return total
 
-    def getCalculationField(self, appraisal, name):
+    def getCalculationField(self, appraisal, name, recursionLimit=10):
+        # Check stack to prevent infinite recursion
+        stack = traceback.extract_stack()
+        count = 0
+        for frame in stack:
+            if frame.name == 'getCalculationField':
+                count += 1
+                if count >= recursionLimit:
+                    raise CalculationError(f"Unable to calculate due to a recursive loop in calculation, E.g. {name} is being calculated based on itself somehow.")
+
         if name == "operatingExpenses":
             return self.computeTotalOperatingExpenses(appraisal)
         if name == "managementExpenses":

@@ -183,6 +183,18 @@ class ViewStabilizedStatement extends React.Component
         return appraisalYear;
     }
 
+
+    changeRecoveryStructureField(field, newValue)
+    {
+        const recoveryStructure = this.props.appraisal.recoveryStructures[0];
+
+        if (newValue !== recoveryStructure[field])
+        {
+            recoveryStructure[field] = newValue;
+            this.props.saveAppraisal(this.props.appraisal);
+        }
+    }
+
     render()
     {
         let appraisalYear = this.getAppraisalYear();
@@ -277,7 +289,7 @@ class ViewStabilizedStatement extends React.Component
                                                         <td className={"label-column"}>
                                                             <span><FieldDisplayEdit
                                                                 type={"text"}
-                                                                placeholder={"Add/Remove Income ($)"}
+                                                                placeholder={"Add/Remove Income"}
                                                                 value={incomeItem.name}
                                                                 hideIcon={true}
                                                                 onChange={(newValue) => this.changeIncomeStatementItem(index, "name", newValue, "incomes")}
@@ -300,7 +312,7 @@ class ViewStabilizedStatement extends React.Component
                                                         <td className={"label-column"}>
                                                     <span><FieldDisplayEdit
                                                         type={"text"}
-                                                        placeholder={"Add/Remove Income ($)"}
+                                                        placeholder={"Add/Remove Income"}
                                                         hideIcon={true}
                                                         onChange={(newValue) => this.createNewIncomeStatementItem("name", newValue, "incomes")}
                                                     /></span>
@@ -395,7 +407,7 @@ class ViewStabilizedStatement extends React.Component
                                                         <td className={"label-column"}>
                                                             <span><FieldDisplayEdit
                                                                 type={"text"}
-                                                                placeholder={"Add/Remove Expense ($)"}
+                                                                placeholder={"Add/Remove Expense"}
                                                                 value={incomeItem.name}
                                                                 hideIcon={true}
                                                                 onChange={(newValue) => this.changeIncomeStatementItem(index, "name", newValue, "expenses")}
@@ -418,7 +430,7 @@ class ViewStabilizedStatement extends React.Component
                                                         <td className={"label-column"}>
                                                     <span><FieldDisplayEdit
                                                         type={"text"}
-                                                        placeholder={"Add/Remove Expense ($)"}
+                                                        placeholder={"Add/Remove Expense"}
                                                         hideIcon={true}
                                                         onChange={(newValue) => this.createNewIncomeStatementItem("name", newValue, "expenses")}
                                                     /></span>
@@ -504,7 +516,7 @@ class ViewStabilizedStatement extends React.Component
                                             }
                                             {
                                                 this.props.appraisal.stabilizedStatement.structuralAllowance ?
-                                                    <tr className={"statement-sum-after-row data-row vacancy-row"}>
+                                                    <tr className={"data-row vacancy-row"}>
                                                         <td className={"label-column"}>
                                                             <StructuralAllowanceCalculationPopoverWrapper appraisal={this.props.appraisal}>
                                                                 <span>Structural Allowance @ <PercentFormat value={this.props.appraisal.stabilizedStatementInputs ? this.props.appraisal.stabilizedStatementInputs.structuralAllowancePercent : 2.0}/></span>
@@ -518,6 +530,13 @@ class ViewStabilizedStatement extends React.Component
                                                         <td className={"amount-total-column"}/>
                                                     </tr> : null
                                             }
+                                            <tr className={"statement-sum-after-row data-row"}>
+                                                <td className={"label-column"}>
+                                                </td>
+                                                <td className={"amount-column"}>
+                                                </td>
+                                                <td className={"amount-total-column"}/>
+                                            </tr>
                                             <tr className={"data-row statement-total-sum-row"}>
                                                 <td className={"label-column"}>Total Expenses</td>
                                                 <td className={"amount-column"}></td>
@@ -573,6 +592,11 @@ class ViewStabilizedStatement extends React.Component
                                                                 <span>Management Expense Calculation</span>
                                                             </td>
                                                             <td className={"management-expense-rule"}>
+                                                                {
+                                                                    this.props.appraisal.stabilizedStatement.calculationErrorFields.indexOf("managementExpenses") !== -1 ?
+                                                                        <i className={"fa fa-exclamation-circle"} title={this.props.appraisal.stabilizedStatement.calculationErrors['managementExpenses']} />
+                                                                        : null
+                                                                }
                                                                 <FieldDisplayEdit
                                                                     type={"percent"}
                                                                     placeholder={"Percent Of"}
@@ -583,11 +607,58 @@ class ViewStabilizedStatement extends React.Component
                                                                 <span className={"spacer"}>of</span>
                                                                 <FieldDisplayEdit
                                                                     type="calculationField"
+                                                                    className={"management-expense-mode"}
                                                                     expenses={this.props.appraisal.incomeStatement.expenses}
                                                                     placeholder={"Expense Calculation Field"}
                                                                     value={this.props.appraisal.stabilizedStatementInputs ? this.props.appraisal.stabilizedStatementInputs.managementExpenseCalculationRule.field : null}
                                                                     hideIcon={true}
                                                                     onChange={(newValue) => this.changeManagementExpenseCalculationRuleField('field', newValue)}
+                                                                />
+                                                            </td>
+                                                        </tr>
+                                                        : null
+                                                }
+                                                {
+                                                    this.props.appraisal.appraisalType === 'simple' ?
+                                                        <tr>
+                                                            <td>
+                                                                <span>Management Recovery Mode</span>
+                                                            </td>
+                                                            <td className={"management-expense-rule"}>
+                                                                {
+                                                                    this.props.appraisal.stabilizedStatement.calculationErrorFields.indexOf("managementRecovery") !== -1 ?
+                                                                        <i className={"fa fa-exclamation-circle"} title={this.props.appraisal.stabilizedStatement.calculationErrors['managementRecovery']} />
+                                                                        : null
+                                                                }
+                                                                {
+                                                                    this.props.appraisal.recoveryStructures[0].managementRecoveryMode !== "custom" && this.props.appraisal.recoveryStructures[0].managementRecoveryMode !== "none" ?
+                                                                            <FieldDisplayEdit
+                                                                                key={1}
+                                                                                type="percent"
+                                                                                placeholder={"Management Recovery %"}
+                                                                                value={this.props.appraisal.recoveryStructures[0].managementRecoveryOperatingPercentage}
+                                                                                hideInput={true}
+                                                                                hideIcon={true}
+                                                                                onChange={(newValue) => this.changeRecoveryStructureField('managementRecoveryOperatingPercentage', newValue)}
+                                                                            />
+                                                                        : <span />
+                                                                }
+                                                                {
+                                                                    this.props.appraisal.recoveryStructures[0].managementRecoveryMode !== "custom" && this.props.appraisal.recoveryStructures[0].managementRecoveryMode !== "none" ?
+                                                                        <span className={"spacer"}>
+                                                                            of
+                                                                        </span>
+                                                                        : null
+                                                                }
+                                                                <FieldDisplayEdit
+                                                                    type="managementRecoveryMode"
+                                                                    className={"management-recovery-mode"}
+                                                                    expenses={this.props.expenses}
+                                                                    placeholder={"Management Recovery Mode"}
+                                                                    value={this.props.appraisal.recoveryStructures[0].managementRecoveryMode}
+                                                                    hideInput={true}
+                                                                    hideIcon={true}
+                                                                    onChange={(newValue) => this.changeRecoveryStructureField('managementRecoveryMode', newValue)}
                                                                 />
                                                             </td>
                                                         </tr>

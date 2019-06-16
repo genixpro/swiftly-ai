@@ -54,3 +54,9 @@ class StabilizedStatement(EmbeddedDocument):
 
     valuationRounded = FloatField()
 
+    # Indicates whether there was a recursive calculation error when doing this appraisal, and if so, what field was it on.
+    calculationErrorFields = ListField(StringField())
+
+    # A Dict mapping field name to the calculation error message
+    calculationErrors = DictField(StringField())
+

@@ -350,290 +350,294 @@ class FieldDisplayEdit extends React.Component
         const editableClass = (this.props.edit === false ? "non-editable" : "editable");
         const hideInput = (this.props.hideInput === false ? "show-input" : "hide-input");
 
-        return (
-            <InputGroup className={`field-display-edit ${editStateClass} ${customClass} ${editableClass} ${hideInput}`}
-                        onFocus={(evt) => this.startEditing()}
-                        title={this.props.title || this.props.placeholder}
-                        style={this.props.style}
-            >
-                {
-                    this.props.type === "textbox" ?
-                        <textarea
-                            placeholder={this.props.placeholder}
+        const rendered = (
+            <div className={`field-display-edit ${editStateClass} ${customClass} ${editableClass} ${hideInput}`}>
+                <InputGroup
+                            onFocus={(evt) => this.startEditing()}
                             title={this.props.title || this.props.placeholder}
-                            disabled={!this.props.edit}
-                            value={this.state.isEditing ? this.state.value : this.formatValue(this.props.value)}
-                            onChange={(evt) => this.inputUpdated(evt.target.value)}
-                            ref={(inputElem) => this.inputElem = inputElem}
-                            onKeyPress={(evt) => this.handleKeyPress(evt)}
-                            onBlur={(evt) => this.finishEditing()}
-                            rows={1}
-                        /> : null
-                }
-                {
-                    this.props.type === "currency" || this.props.type === "number" ||
-                    this.props.type === "float" ||
-                    this.props.type === "percent" || this.props.type === "text" ||
-                    this.props.type === "length" || this.props.type === "area" ||
-                    this.props.type === "acres" || this.props.type === "months" ||
-                    !this.props.type ?
-                        <Input placeholder={this.props.placeholder}
-                               disabled={!this.props.edit}
-                               title={this.props.title || this.props.placeholder}
-                               value={this.state.isEditing ? this.state.value : this.formatValue(this.props.value)}
-                               onChange={(evt) => this.inputUpdated(evt.target.value)}
-                               innerRef={(inputElem) => this.inputElem = inputElem}
-                               onKeyPress={(evt) => this.handleKeyPress(evt)}
-                               onBlur={(evt) => this.finishEditing()}
-                        /> : null
-                }
-                {
-                    this.props.type === "date" ?
-                        <Datetime
-                            inputProps={{className: 'form-control', disabled: !this.props.edit, placeholder: this.props.placeholder}}
-                            dateFormat={"YYYY/MM/DD"}
-                            title={this.props.title || this.props.placeholder}
-                            timeFormat={false}
-                            input={true}
-                            closeOnSelect={true}
-                            value={this.state.isEditing ? this.state.value : this.formatValue(this.props.value)}
-                            onChange={(newValue) => newValue.toDate ? this.dateInputUpdated(newValue.toDate()) : newValue === "" ? this.dateInputUpdated(null) : null}
-                            onBlur={() => setTimeout(() => this.finishEditing(), 100)}
-                        /> : null
-                }
-                {
-                    this.props.type === "propertyType" ?
-                        <PropertyTypeSelector
-                            value={this.state.isEditing ? this.state.value : this.props.value}
-                            title={this.props.title || this.props.placeholder}
-                            disabled={!this.props.edit}
-                            onChange={(newValue) => this.selectInputUpdated(newValue) }
-                            onBlur={() => this.finishEditing()}
-                            isSearch={this.props.isSearch}
-                            innerRef={(inputElem) => this.inputElem = inputElem}
-                        /> : null
-                }
-                {
-                    this.props.type === "rentType" ?
-                        <RentTypeSelector
-                            value={this.state.isEditing ? this.state.value : this.props.value}
-                            title={this.props.title || this.props.placeholder}
-                            disabled={!this.props.edit}
-                            onChange={(newValue) => this.selectInputUpdated(newValue) }
-                            onBlur={() => this.finishEditing()}
-                            innerRef={(inputElem) => this.inputElem = inputElem}
-                        /> : null
-                }
-                {
-                    this.props.type === "incomeItemType" ?
-                        <IncomeItemTypeSelector
-                            value={this.state.isEditing ? this.state.value : this.props.value}
-                            title={this.props.title || this.props.placeholder}
-                            disabled={!this.props.edit}
-                            cashFlowType={this.props.cashFlowType}
-                            onChange={(newValue) => this.selectInputUpdated(newValue) }
-                            onBlur={() => this.finishEditing()}
-                            innerRef={(inputElem) => this.inputElem = inputElem}
-                        /> : null
-                }
-                {
-                    this.props.type === "retailLocationType" ?
-                        <RetailLocationTypeSelector
-                            value={this.state.isEditing ? this.state.value : this.props.value}
-                            title={this.props.title || this.props.placeholder}
-                            disabled={!this.props.edit}
-                            onChange={(newValue) => this.selectInputUpdated(newValue) }
-                            onBlur={() => this.finishEditing()}
-                            innerRef={(inputElem) => this.inputElem = inputElem}
-                        /> : null
-                }
-                {
-                    this.props.type === "marketRent" ?
-                        <MarketRentSelector
-                            value={this.props.value}
-                            title={this.props.title || this.props.placeholder}
-                            disabled={!this.props.edit}
-                            marketRents={this.props.marketRents}
-                            onChange={(newValue) => this.selectInputUpdated(newValue) }
-                            onBlur={() => this.finishEditing()}
-                            innerRef={(inputElem) => this.inputElem = inputElem}
-                        /> : null
-                }
-                {
-                    this.props.type === "recoveryStructure" ?
-                        <RecoveryStructureSelector
-                            value={this.props.value}
-                            disabled={!this.props.edit}
-                            title={this.props.title || this.props.placeholder}
-                            recoveryStructures={this.props.recoveryStructures}
-                            onChange={(newValue) => this.selectInputUpdated(newValue) }
-                            onBlur={() => this.finishEditing()}
-                            innerRef={(inputElem) => this.inputElem = inputElem}
-                        /> : null
-                }
-                {
-                    this.props.type === "leasingCostStructure" ?
-                        <LeasingCostsSelector
-                            value={this.props.value}
-                            disabled={!this.props.edit}
-                            title={this.props.title || this.props.placeholder}
-                            leasingCostStructures={this.props.leasingCostStructures}
-                            onChange={(newValue) => this.selectInputUpdated(newValue) }
-                            onBlur={() => this.finishEditing()}
-                            innerRef={(inputElem) => this.inputElem = inputElem}
-                        /> : null
-                }
-                {
-                    this.props.type === "boolean" ?
-                        <input
-                            type={"checkbox"}
-                            checked={this.props.value}
-                            disabled={!this.props.edit}
-                            title={this.props.title || this.props.placeholder}
-                            onChange={(evt) => this.selectInputUpdated(!this.props.value) }
-                            onBlur={() => this.finishEditing()}
-                            ref={(inputElem) => this.inputElem = inputElem}
-                        /> : null
-                }
-                {
-                    this.props.type === "calculationField" ?
-                        <CalculationFieldSelector
-                            expenses={this.props.expenses}
-                            value={this.state.isEditing ? this.state.value : this.props.value}
-                            disabled={!this.props.edit}
-                            title={this.props.title || this.props.placeholder}
-                            onChange={(newValue) => this.selectInputUpdated(newValue) }
-                            onBlur={() => this.finishEditing()}
-                            innerRef={(inputElem) => this.inputElem = inputElem}
-                        /> : null
-                }
-                {
-                    this.props.type === "managementExpenseMode" ?
-                        <ManagementExpenseModeSelector
-                            value={this.state.isEditing ? this.state.value : this.props.value}
-                            disabled={!this.props.edit}
-                            exclude={this.props.exclude}
-                            title={this.props.title || this.props.placeholder}
-                            onChange={(newValue) => this.selectInputUpdated(newValue) }
-                            onBlur={() => this.finishEditing()}
-                            innerRef={(inputElem) => this.inputElem = inputElem}
-                        /> : null
-                }
-                {
-                    this.props.type === "managementRecoveryMode" ?
-                        <ManagementRecoveryModeSelector
-                            value={this.state.isEditing ? this.state.value : this.props.value}
-                            disabled={!this.props.edit}
-                            title={this.props.title || this.props.placeholder}
-                            onChange={(newValue) => this.selectInputUpdated(newValue) }
-                            onBlur={() => this.finishEditing()}
-                            innerRef={(inputElem) => this.inputElem = inputElem}
-                        /> : null
-                }
-                {
-                    this.props.type === "directComparisonMetric" ?
-                        <DirectComparisonMetricSelector
-                            value={this.state.isEditing ? this.state.value : this.props.value}
-                            disabled={!this.props.edit}
-                            title={this.props.title || this.props.placeholder}
-                            onChange={(newValue) => this.selectInputUpdated(newValue) }
-                            onBlur={() => this.finishEditing()}
-                            innerRef={(inputElem) => this.inputElem = inputElem}
-                        /> : null
-                }
-                {
-                    this.props.type === "zone" ?
-                        <ZoneSelector
-                            title={this.props.title || this.props.placeholder}
-                            disabled={!this.props.edit}
-                            value={this.state.isEditing ? this.state.value : this.props.value}
-                            onChange={(newValue) => this.zoneInputUpdated(newValue) }
-                            onBlur={() => this.finishEditing()}
-                        /> : null
-                }
-                {
-                    this.props.type === "leasingCommissionMode" ?
-                        <LeasingComissionModeSelector
-                            title={this.props.title || this.props.placeholder}
-                            disabled={!this.props.edit}
-                            value={this.state.isEditing ? this.state.value : this.props.value}
-                            onChange={(newValue) => this.selectInputUpdated(newValue) }
-                            onBlur={() => this.finishEditing()}
-                            innerRef={(inputElem) => this.inputElem = inputElem}
-                        /> : null
-                }
-                {
-                    this.props.type === "tenancyType" ?
-                        <TenancyTypeSelector
-                            value={this.state.isEditing ? this.state.value : this.props.value}
-                            title={this.props.title || this.props.placeholder}
-                            disabled={!this.props.edit}
-                            onChange={(newValue) => this.selectInputUpdated(newValue) }
-                            onBlur={() => this.finishEditing()}
-                            innerRef={(inputElem) => this.inputElem = inputElem}
-                        /> : null
-                }
-                {
-                    this.props.type === "tenantName" ?
-                        <TenantNameSelector
-                            value={this.state.isEditing ? this.state.value : this.props.value}
-                            title={this.props.title || this.props.placeholder}
-                            disabled={!this.props.edit}
-                            onChange={(newValue) => this.tenantNameInputUpdated(newValue) }
-                            onBlur={() => this.finishEditing()}
-                            innerRef={(inputElem) => this.inputElem = inputElem}
-                        /> : null
-                }
-                {
-                    this.props.type === "tags" ?
-                        <TagEditor
-                            disabled={!this.props.edit}
-                            propertyType={this.props.propertyType}
-                            title={this.props.title || this.props.placeholder}
-                            value={this.state.isEditing ? this.state.value : this.props.value}
-                            onChange={(newValue) => this.tagInputUpdated(newValue) }
-                            onBlur={() => this.finishEditing()}
-                        /> : null
-                }
-                {
-                    this.props.type === "address" ?
-                        <Geosuggest
-                            title={this.props.title || this.props.placeholder}
-                            types={["geocode"]}
-                            placeholder={this.props.placeholder}
-                            disabled={!this.props.edit}
-                            initialValue={this.state.isEditing ? this.state.value : this.formatValue(this.props.value)}
-                            onSuggestSelect={(newValue) => this.addressInputUpdated(newValue)}
-                            inputClassName={"form-control"}
-                            onBlur={(evt) => this.finishEditing()}
-                        /> : null
-                }
-                {
-                    !this.state.hideIcon && !this.props.extractionReference ?
-                        <InputGroupAddon addonType="append">
-                            <span className={"input-group-text"}>
-                                <i className={"fa fa-wrench"} />
-                            </span>
-                        </InputGroupAddon> : null
-                }
-                {
-                    !this.state.hideIcon && this.props.extractionReference ?
-                        <InputGroupAddon addonType="append">
-                            <Button className={"input-group-text"} onClick={(evt) => {this.viewExtractionInputs();}}>
-                                <i className={"fa fa-search"} />
-                            </Button>
-                        </InputGroupAddon> : null
-                }
-            </InputGroup>
+                            style={this.props.style}
+                >
+                    {
+                        this.props.type === "textbox" ?
+                            <textarea
+                                placeholder={this.props.placeholder}
+                                title={this.props.title || this.props.placeholder}
+                                disabled={!this.props.edit}
+                                value={this.state.isEditing ? this.state.value : this.formatValue(this.props.value)}
+                                onChange={(evt) => this.inputUpdated(evt.target.value)}
+                                ref={(inputElem) => this.inputElem = inputElem}
+                                onKeyPress={(evt) => this.handleKeyPress(evt)}
+                                onBlur={(evt) => this.finishEditing()}
+                                rows={1}
+                            /> : null
+                    }
+                    {
+                        this.props.type === "currency" || this.props.type === "number" ||
+                        this.props.type === "float" ||
+                        this.props.type === "percent" || this.props.type === "text" ||
+                        this.props.type === "length" || this.props.type === "area" ||
+                        this.props.type === "acres" || this.props.type === "months" ||
+                        !this.props.type ?
+                            <Input placeholder={this.props.placeholder}
+                                   disabled={!this.props.edit}
+                                   title={this.props.title || this.props.placeholder}
+                                   value={this.state.isEditing ? this.state.value : this.formatValue(this.props.value)}
+                                   onChange={(evt) => this.inputUpdated(evt.target.value)}
+                                   innerRef={(inputElem) => this.inputElem = inputElem}
+                                   onKeyPress={(evt) => this.handleKeyPress(evt)}
+                                   onBlur={(evt) => this.finishEditing()}
+                            /> : null
+                    }
+                    {
+                        this.props.type === "date" ?
+                            <Datetime
+                                inputProps={{className: 'form-control', disabled: !this.props.edit, placeholder: this.props.placeholder}}
+                                dateFormat={"YYYY/MM/DD"}
+                                title={this.props.title || this.props.placeholder}
+                                timeFormat={false}
+                                input={true}
+                                closeOnSelect={true}
+                                value={this.state.isEditing ? this.state.value : this.formatValue(this.props.value)}
+                                onChange={(newValue) => newValue.toDate ? this.dateInputUpdated(newValue.toDate()) : newValue === "" ? this.dateInputUpdated(null) : null}
+                                onBlur={() => setTimeout(() => this.finishEditing(), 100)}
+                            /> : null
+                    }
+                    {
+                        this.props.type === "propertyType" ?
+                            <PropertyTypeSelector
+                                value={this.state.isEditing ? this.state.value : this.props.value}
+                                title={this.props.title || this.props.placeholder}
+                                disabled={!this.props.edit}
+                                onChange={(newValue) => this.selectInputUpdated(newValue) }
+                                onBlur={() => this.finishEditing()}
+                                isSearch={this.props.isSearch}
+                                innerRef={(inputElem) => this.inputElem = inputElem}
+                            /> : null
+                    }
+                    {
+                        this.props.type === "rentType" ?
+                            <RentTypeSelector
+                                value={this.state.isEditing ? this.state.value : this.props.value}
+                                title={this.props.title || this.props.placeholder}
+                                disabled={!this.props.edit}
+                                onChange={(newValue) => this.selectInputUpdated(newValue) }
+                                onBlur={() => this.finishEditing()}
+                                innerRef={(inputElem) => this.inputElem = inputElem}
+                            /> : null
+                    }
+                    {
+                        this.props.type === "incomeItemType" ?
+                            <IncomeItemTypeSelector
+                                value={this.state.isEditing ? this.state.value : this.props.value}
+                                title={this.props.title || this.props.placeholder}
+                                disabled={!this.props.edit}
+                                cashFlowType={this.props.cashFlowType}
+                                onChange={(newValue) => this.selectInputUpdated(newValue) }
+                                onBlur={() => this.finishEditing()}
+                                innerRef={(inputElem) => this.inputElem = inputElem}
+                            /> : null
+                    }
+                    {
+                        this.props.type === "retailLocationType" ?
+                            <RetailLocationTypeSelector
+                                value={this.state.isEditing ? this.state.value : this.props.value}
+                                title={this.props.title || this.props.placeholder}
+                                disabled={!this.props.edit}
+                                onChange={(newValue) => this.selectInputUpdated(newValue) }
+                                onBlur={() => this.finishEditing()}
+                                innerRef={(inputElem) => this.inputElem = inputElem}
+                            /> : null
+                    }
+                    {
+                        this.props.type === "marketRent" ?
+                            <MarketRentSelector
+                                value={this.props.value}
+                                title={this.props.title || this.props.placeholder}
+                                disabled={!this.props.edit}
+                                marketRents={this.props.marketRents}
+                                onChange={(newValue) => this.selectInputUpdated(newValue) }
+                                onBlur={() => this.finishEditing()}
+                                innerRef={(inputElem) => this.inputElem = inputElem}
+                            /> : null
+                    }
+                    {
+                        this.props.type === "recoveryStructure" ?
+                            <RecoveryStructureSelector
+                                value={this.props.value}
+                                disabled={!this.props.edit}
+                                title={this.props.title || this.props.placeholder}
+                                recoveryStructures={this.props.recoveryStructures}
+                                onChange={(newValue) => this.selectInputUpdated(newValue) }
+                                onBlur={() => this.finishEditing()}
+                                innerRef={(inputElem) => this.inputElem = inputElem}
+                            /> : null
+                    }
+                    {
+                        this.props.type === "leasingCostStructure" ?
+                            <LeasingCostsSelector
+                                value={this.props.value}
+                                disabled={!this.props.edit}
+                                title={this.props.title || this.props.placeholder}
+                                leasingCostStructures={this.props.leasingCostStructures}
+                                onChange={(newValue) => this.selectInputUpdated(newValue) }
+                                onBlur={() => this.finishEditing()}
+                                innerRef={(inputElem) => this.inputElem = inputElem}
+                            /> : null
+                    }
+                    {
+                        this.props.type === "boolean" ?
+                            <input
+                                type={"checkbox"}
+                                checked={this.props.value}
+                                disabled={!this.props.edit}
+                                title={this.props.title || this.props.placeholder}
+                                onChange={(evt) => this.selectInputUpdated(!this.props.value) }
+                                onBlur={() => this.finishEditing()}
+                                ref={(inputElem) => this.inputElem = inputElem}
+                            /> : null
+                    }
+                    {
+                        this.props.type === "calculationField" ?
+                            <CalculationFieldSelector
+                                expenses={this.props.expenses}
+                                value={this.state.isEditing ? this.state.value : this.props.value}
+                                disabled={!this.props.edit}
+                                title={this.props.title || this.props.placeholder}
+                                onChange={(newValue) => this.selectInputUpdated(newValue) }
+                                onBlur={() => this.finishEditing()}
+                                innerRef={(inputElem) => this.inputElem = inputElem}
+                            /> : null
+                    }
+                    {
+                        this.props.type === "managementExpenseMode" ?
+                            <ManagementExpenseModeSelector
+                                value={this.state.isEditing ? this.state.value : this.props.value}
+                                disabled={!this.props.edit}
+                                exclude={this.props.exclude}
+                                title={this.props.title || this.props.placeholder}
+                                onChange={(newValue) => this.selectInputUpdated(newValue) }
+                                onBlur={() => this.finishEditing()}
+                                innerRef={(inputElem) => this.inputElem = inputElem}
+                            /> : null
+                    }
+                    {
+                        this.props.type === "managementRecoveryMode" ?
+                            <ManagementRecoveryModeSelector
+                                value={this.state.isEditing ? this.state.value : this.props.value}
+                                disabled={!this.props.edit}
+                                title={this.props.title || this.props.placeholder}
+                                onChange={(newValue) => this.selectInputUpdated(newValue) }
+                                onBlur={() => this.finishEditing()}
+                                innerRef={(inputElem) => this.inputElem = inputElem}
+                            /> : null
+                    }
+                    {
+                        this.props.type === "directComparisonMetric" ?
+                            <DirectComparisonMetricSelector
+                                value={this.state.isEditing ? this.state.value : this.props.value}
+                                disabled={!this.props.edit}
+                                title={this.props.title || this.props.placeholder}
+                                onChange={(newValue) => this.selectInputUpdated(newValue) }
+                                onBlur={() => this.finishEditing()}
+                                innerRef={(inputElem) => this.inputElem = inputElem}
+                            /> : null
+                    }
+                    {
+                        this.props.type === "zone" ?
+                            <ZoneSelector
+                                title={this.props.title || this.props.placeholder}
+                                disabled={!this.props.edit}
+                                value={this.state.isEditing ? this.state.value : this.props.value}
+                                onChange={(newValue) => this.zoneInputUpdated(newValue) }
+                                onBlur={() => this.finishEditing()}
+                            /> : null
+                    }
+                    {
+                        this.props.type === "leasingCommissionMode" ?
+                            <LeasingComissionModeSelector
+                                title={this.props.title || this.props.placeholder}
+                                disabled={!this.props.edit}
+                                value={this.state.isEditing ? this.state.value : this.props.value}
+                                onChange={(newValue) => this.selectInputUpdated(newValue) }
+                                onBlur={() => this.finishEditing()}
+                                innerRef={(inputElem) => this.inputElem = inputElem}
+                            /> : null
+                    }
+                    {
+                        this.props.type === "tenancyType" ?
+                            <TenancyTypeSelector
+                                value={this.state.isEditing ? this.state.value : this.props.value}
+                                title={this.props.title || this.props.placeholder}
+                                disabled={!this.props.edit}
+                                onChange={(newValue) => this.selectInputUpdated(newValue) }
+                                onBlur={() => this.finishEditing()}
+                                innerRef={(inputElem) => this.inputElem = inputElem}
+                            /> : null
+                    }
+                    {
+                        this.props.type === "tenantName" ?
+                            <TenantNameSelector
+                                value={this.state.isEditing ? this.state.value : this.props.value}
+                                title={this.props.title || this.props.placeholder}
+                                disabled={!this.props.edit}
+                                onChange={(newValue) => this.tenantNameInputUpdated(newValue) }
+                                onBlur={() => this.finishEditing()}
+                                innerRef={(inputElem) => this.inputElem = inputElem}
+                            /> : null
+                    }
+                    {
+                        this.props.type === "tags" ?
+                            <TagEditor
+                                disabled={!this.props.edit}
+                                propertyType={this.props.propertyType}
+                                title={this.props.title || this.props.placeholder}
+                                value={this.state.isEditing ? this.state.value : this.props.value}
+                                onChange={(newValue) => this.tagInputUpdated(newValue) }
+                                onBlur={() => this.finishEditing()}
+                            /> : null
+                    }
+                    {
+                        this.props.type === "address" ?
+                            <Geosuggest
+                                title={this.props.title || this.props.placeholder}
+                                types={["geocode"]}
+                                placeholder={this.props.placeholder}
+                                disabled={!this.props.edit}
+                                initialValue={this.state.isEditing ? this.state.value : this.formatValue(this.props.value)}
+                                onSuggestSelect={(newValue) => this.addressInputUpdated(newValue)}
+                                inputClassName={"form-control"}
+                                onBlur={(evt) => this.finishEditing()}
+                            /> : null
+                    }
+                    {
+                        !this.state.hideIcon && !this.props.extractionReference ?
+                            <InputGroupAddon addonType="append">
+                                <span className={"input-group-text"}>
+                                    <i className={"fa fa-wrench"} />
+                                </span>
+                            </InputGroupAddon> : null
+                    }
+                    {
+                        !this.state.hideIcon && this.props.extractionReference ?
+                            <InputGroupAddon addonType="append">
+                                <Button className={"input-group-text"} onClick={(evt) => {this.viewExtractionInputs();}}>
+                                    <i className={"fa fa-search"} />
+                                </Button>
+                            </InputGroupAddon> : null
+                    }
+                </InputGroup>
+            </div>
         );
-    }
-}
 
-/**
- * Your Component
- */
-function FieldDisplayEditWrapper({ isDragging, connectDropTarget, ...props}) {
-    return connectDropTarget(<div><FieldDisplayEdit {...props} /></div>);
+        if (this.props.connectDropTarget)
+        {
+            return this.props.connectDropTarget(rendered);
+        }
+        else
+        {
+            return rendered;
+        }
+    }
 }
 
 /**
@@ -665,7 +669,7 @@ function collect(connect, monitor) {
 }
 
 // Export the wrapped component:
-const DroppableFieldDisplayEdit = DropTarget("Word", dragTarget, collect)(FieldDisplayEditWrapper);
+const DroppableFieldDisplayEdit = DropTarget("Word", dragTarget, collect)(FieldDisplayEdit);
 
 const NonDroppableFieldDisplayEdit = FieldDisplayEdit;
 

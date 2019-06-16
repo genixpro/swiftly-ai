@@ -488,34 +488,6 @@ class UnitDetailsEditor extends React.Component
                                           onChange={(newValue) => this.changeUnitField('squareFootage', newValue)}/>
                     </td>
                 </tr>
-                {
-                    this.props.appraisal.appraisalType === "simple" ?
-                        <tr>
-                            <td>
-                                <strong>Yearly Rent</strong>
-                            </td>
-                            <td>
-                                <FieldDisplayEdit placeholder={"Yearly Rent"}
-                                                  value={this.props.unit.currentTenancy.yearlyRent}
-                                                  type={"currency"}
-                                                  onChange={(newValue) => this.changeTenancyField(this.props.unit.currentTenancy, 'yearlyRent', newValue)}/>
-                            </td>
-                        </tr> : null
-                }
-                {
-                    this.props.appraisal.appraisalType === "simple" ?
-                        <tr>
-                            <td>
-                                <strong>Tenancy End Date</strong>
-                            </td>
-                            <td>
-                                <FieldDisplayEdit placeholder={"Tenancy End Date"}
-                                                  value={this.props.unit.currentTenancy.endDate}
-                                                  type={"date"}
-                                                  onChange={(newValue) => this.changeTenancyField(this.props.unit.currentTenancy, 'endDate', newValue)}/>
-                            </td>
-                        </tr> : null
-                }
                 <tr>
                     <td>
                         <strong>Net / Gross</strong>

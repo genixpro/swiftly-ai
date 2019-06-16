@@ -1,5 +1,8 @@
 import BaseModel from "../orm/BaseModel";
 import FloatField from "../orm/FloatField";
+import StringField from "../orm/StringField";
+import DictField from "../orm/DictField";
+import ListField from "../orm/ListField";
 
 
 class StabilizedStatementModel extends BaseModel
@@ -53,6 +56,10 @@ class StabilizedStatementModel extends BaseModel
     static vacantUnitLeasupCosts = new FloatField();
 
     static amortizedCapitalInvestment = new FloatField();
+
+    static calculationErrorFields = new ListField(new StringField());
+
+    static calculationErrors = new DictField(new StringField());
 }
 
 export default StabilizedStatementModel;
