@@ -60,6 +60,17 @@
     }
 
   }
+
+  .leasing-commission-line
+  {
+    display: flex;
+    flex-direction: row;
+    .field-display-edit {
+      flex-grow: 0;
+      flex-shrink: 0;
+    }
+  }
+
   .stats-row
   {
     height: 30px;

@@ -155,7 +155,7 @@ class LeasingCostsForUnitCalculationPopoverWrapper extends React.Component
                                         <td>=</td>
                                         <td className={"underline"}>
                                             <CurrencyFormat
-                                                value={leasingCostStructure.leasingCommissionPercentRemainingYears / 100.0 * (this.props.unit.marketRentAmount * this.props.unit.squareFootage)}
+                                                value={leasingCostStructure.leasingCommissionPercentRemainingYears / 100.0 * (this.props.unit.marketRentAmount * this.props.unit.squareFootage) * Math.max(0, leasingCostStructure.leasingPeriod - 12) / 12.0}
                                                 cents={false}/>
                                         </td>
                                     </tr> : null

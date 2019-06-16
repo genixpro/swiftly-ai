@@ -578,13 +578,60 @@ class UnitDetailsEditor extends React.Component
                     this.props.appraisal.appraisalType === 'simple' && this.props.unit.isVacantForStabilizedStatement ?
                         <tr>
                             <td>
-                                <strong>Leasing Costs (psf)</strong>
+                                <strong>Leasing Commission</strong>
+                            </td>
+                            <td className={"leasing-commission-line"}>
+                                {
+                                    this.getUnitLeasingCosts().leasingCommissionMode === 'psf' ?
+                                        <FieldDisplayEdit
+                                            type="currency"
+                                            value={this.getUnitLeasingCosts().leasingCommissionPSF}
+                                            hideInput={true}
+                                            hideIcon={true}
+                                            onChange={(newValue) => this.changeLeasingCostField('leasingCommissionPSF', newValue)}
+                                        /> : null
+                                }
+                                <FieldDisplayEdit
+                                    type="leasingCommissionMode"
+                                    value={this.getUnitLeasingCosts().leasingCommissionMode}
+                                    hideInput={true}
+                                    hideIcon={true}
+                                    onChange={(newValue) => this.changeLeasingCostField('leasingCommissionMode', newValue)}
+                                />
+                            </td>
+                        </tr> : null
+                }
+                {
+                    this.props.appraisal.appraisalType === 'simple' && this.props.unit.isVacantForStabilizedStatement && this.getUnitLeasingCosts().leasingCommissionMode === 'percent_of_rent' ?
+                        <tr>
+                            <td>
+                                <strong>Leasing Commission - Year 1</strong>
                             </td>
                             <td>
-                                <FieldDisplayEdit placeholder={"Leasing Costs (psf)"}
-                                                  value={this.getUnitLeasingCosts().leasingCommissionPSF}
-                                                  type={"currency"}
-                                                  onChange={(newValue) => this.changeLeasingCostField('leasingCommissionPSF', newValue)}/>
+                                <FieldDisplayEdit
+                                    type="percent"
+                                    value={this.getUnitLeasingCosts().leasingCommissionPercentYearOne}
+                                    hideInput={true}
+                                    hideIcon={true}
+                                    onChange={(newValue) => this.changeLeasingCostField('leasingCommissionPercentYearOne', newValue)}
+                                />
+                            </td>
+                        </tr> : null
+                }
+                {
+                    this.props.appraisal.appraisalType === 'simple' && this.props.unit.isVacantForStabilizedStatement && this.getUnitLeasingCosts().leasingCommissionMode === 'percent_of_rent' ?
+                        <tr>
+                            <td>
+                                <strong>Leasing Commission - Remaining Years</strong>
+                            </td>
+                            <td>
+                                <FieldDisplayEdit
+                                    type="percent"
+                                    value={this.getUnitLeasingCosts().leasingCommissionPercentRemainingYears}
+                                    hideInput={true}
+                                    hideIcon={true}
+                                    onChange={(newValue) => this.changeLeasingCostField('leasingCommissionPercentRemainingYears', newValue)}
+                                />
                             </td>
                         </tr> : null
                 }
