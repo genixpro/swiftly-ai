@@ -5,6 +5,7 @@ import ComparableSaleList from "./components/ComparableSaleList";
 import _ from 'underscore';
 import ComparableSaleSearch from "./components/ComparableSaleSearch";
 import ComparableSalesMap from "./components/ComparableSalesMap"
+import FileModel from "../models/FileModel"
 import ComparableSalesModel from "../models/ComparableSaleModel"
 import Toolbar from "./components/Toolbar";
 import ComparableConfirmationDialog from "./components/ComparableConfirmationDialog";
@@ -203,18 +204,21 @@ class ViewComparableSalesDatabase extends React.Component {
                     const uploadPromise = axios(options);
 
                     uploadPromise.then((response) => {
-                        resolve(response.data.comparableSales);
+                        resolve({comps: response.data.comparableSales, file: FileModel.create(response.data.file)});
                     }, (error) => {
 
                         resolve(null);
                     });
                     uploadPromise.catch(() => resolve(null));
                 })
-            }).then((compLists) => {
-                const comps = _.flatten(compLists, true);
+            }).then((datas) => {
+                const comps = _.flatten(_.map(datas, (data) => data.comps), true);
+
+                console.log(datas);
 
                 self.setState({
                     uploading: false,
+                    uploadedFile: datas[0].file,
                     uploadedComparables: comps.map((comp) => ComparableSalesModel.create(comp)),
                     showUploadedComparablesDialog: true
                 });
@@ -300,6 +304,7 @@ class ViewComparableSalesDatabase extends React.Component {
                         <ComparableConfirmationDialog
                             appraisal={this.props.appraisal}
                             comparableSales={this.state.uploadedComparables}
+                            file={this.state.uploadedFile}
                             visible={this.state.showUploadedComparablesDialog}
                             uploading={this.state.uploading}
                             toggle={() => this.toggleUploadComparablesDialog()}

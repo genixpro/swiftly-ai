@@ -220,5 +220,6 @@ class ComparableSaleFileUploadAPI(object):
 
 
         return {
+            "file": json.loads(file.to_json()),
             "comparableSales": [json.loads(comp.to_json()) for comp in comps]
         }

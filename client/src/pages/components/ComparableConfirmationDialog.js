@@ -3,6 +3,7 @@ import {Row, Col, Modal, ModalHeader, ModalBody, Table, Button} from "reactstrap
 import ComparableSaleListItem from "./ComparableSaleListItem"
 import axios from "axios/index";
 import ActionButton from "./ActionButton"
+import FileViewer from "./FileViewer"
 
 class ComparableConfirmationDialog extends React.Component
 {
@@ -69,7 +70,7 @@ class ComparableConfirmationDialog extends React.Component
                         }
                         {
                             this.props.comparableSales && this.props.comparableSales.length > 0 ?
-                                <Col xs={3}>
+                                <Col xs={2}>
                                     <Table hover>
                                         <thead>
                                         <tr>
@@ -104,7 +105,7 @@ class ComparableConfirmationDialog extends React.Component
                                     return null;
                                 }
 
-                                return <Col xs={9}>
+                                return <Col xs={6}>
                                     <Row>
                                         <Col xs={12}>
                                             <ComparableSaleListItem
@@ -125,6 +126,16 @@ class ComparableConfirmationDialog extends React.Component
                                     </Row>
                                 </Col>
                             })
+                        }
+                        {
+                            this.props.comparableSales && this.props.file ?
+                            <Col xs={4}>
+                                <FileViewer
+                                    document={this.props.file}
+                                    // hilightWords={this.state.hoverReference ? this.state.hoverReference.wordIndexes : []}
+                                />
+                            </Col>
+                            : null
                         }
                     </Row>
 
