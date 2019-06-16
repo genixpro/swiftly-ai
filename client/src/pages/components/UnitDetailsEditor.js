@@ -21,6 +21,8 @@ import LeasingCostsForUnitCalculationPopoverWrapper from "./LeasingCostsForUnitC
 import VacantRentLossForUnitCalculationPopoverWrapper from "./VacantRentLossForUnitCalculationPopoverWrapper";
 import MarketRentDifferentialForUnitCalculationPopoverWrapper from "./MarketRentDifferentialForUnitCalculationPopoverWrapper";
 import FreeRentLossForUnitCalculationPopoverWrapper from "./FreeRentLossForUnitCalculationPopoverWrapper";
+import ExpenseRecoveryForUnitCalculationPopoverWrapper from "./ExpenseRecoveryForUnitCalculationPopoverWrapper";
+import ManagementRecoveriesForUnitCalculationPopoverWrapper from "./ManagementRecoveriesForUnitCalculationPopoverWrapper";
 
 class UnitDetailsEditor extends React.Component
 {
@@ -667,7 +669,9 @@ class UnitDetailsEditor extends React.Component
                                         <Link to={`/appraisal/${this.props.appraisal._id}/tenants/recovery_structures`}>
                                             <strong>Calculated Management Recovery</strong>
                                         </Link> :
-                                        <strong>Calculated Management Recovery</strong>
+                                        <ManagementRecoveriesForUnitCalculationPopoverWrapper appraisal={this.props.appraisal} unit={this.props.unit}>
+                                            <strong>Calculated Management Recovery</strong>
+                                        </ManagementRecoveriesForUnitCalculationPopoverWrapper>
                                 }
                             </td>
                             <td>
@@ -677,7 +681,9 @@ class UnitDetailsEditor extends React.Component
                                             <Link to={`/appraisal/${this.props.appraisal._id}/tenants/recovery_structures`}>
                                                 <CurrencyFormat value={this.props.unit.calculatedManagementRecovery}/>
                                             </Link> :
-                                            <CurrencyFormat value={this.props.unit.calculatedManagementRecovery}/>
+                                            <ManagementRecoveriesForUnitCalculationPopoverWrapper appraisal={this.props.appraisal} unit={this.props.unit}>
+                                                <CurrencyFormat value={this.props.unit.calculatedManagementRecovery}/>
+                                            </ManagementRecoveriesForUnitCalculationPopoverWrapper>
                                     }
                                     </span>
                             </td>
@@ -693,7 +699,9 @@ class UnitDetailsEditor extends React.Component
                                         <Link to={`/appraisal/${this.props.appraisal._id}/tenants/recovery_structures`}>
                                             <strong>Calculated Operating Expense Recovery</strong>
                                         </Link> :
-                                        <strong>Calculated Operating Expense Recovery</strong>
+                                        <ExpenseRecoveryForUnitCalculationPopoverWrapper appraisal={this.props.appraisal} unit={this.props.unit} incomeStatementItemType={"operating_expense"}>
+                                            <strong>Calculated Operating Expense Recovery</strong>
+                                        </ExpenseRecoveryForUnitCalculationPopoverWrapper>
                                 }
                             </td>
                             <td>
@@ -703,8 +711,10 @@ class UnitDetailsEditor extends React.Component
                                                                 <CurrencyFormat
                                                                     value={this.props.unit.calculatedExpenseRecovery}/>
                                                             </Link> :
-                                                            <CurrencyFormat
-                                                                value={this.props.unit.calculatedExpenseRecovery}/>
+                                                            <ExpenseRecoveryForUnitCalculationPopoverWrapper appraisal={this.props.appraisal} unit={this.props.unit} incomeStatementItemType={"operating_expense"}>
+                                                                <CurrencyFormat
+                                                                    value={this.props.unit.calculatedExpenseRecovery}/>
+                                                            </ExpenseRecoveryForUnitCalculationPopoverWrapper>
                                                         }
                                                         </span>
                             </td>
@@ -719,7 +729,9 @@ class UnitDetailsEditor extends React.Component
                                         <Link to={`/appraisal/${this.props.appraisal._id}/tenants/recovery_structures`}>
                                             <strong>Calculated Tax Recovery</strong>
                                         </Link> :
-                                        <strong>Calculated Tax Recovery</strong>
+                                        <ExpenseRecoveryForUnitCalculationPopoverWrapper appraisal={this.props.appraisal} unit={this.props.unit} incomeStatementItemType={"taxes"}>
+                                            <strong>Calculated Tax Recovery</strong>
+                                        </ExpenseRecoveryForUnitCalculationPopoverWrapper>
                                 }
                             </td>
                             <td>
@@ -731,10 +743,13 @@ class UnitDetailsEditor extends React.Component
                                                                 value={this.props.unit.calculatedTaxRecovery}/>
                                                         </span>
                                         </Link> :
-                                        <span style={{"marginLeft": "10px"}}>
-                                                            <CurrencyFormat
-                                                                value={this.props.unit.calculatedTaxRecovery}/>
-                                                        </span>
+                                        <ExpenseRecoveryForUnitCalculationPopoverWrapper appraisal={this.props.appraisal} unit={this.props.unit} incomeStatementItemType={"taxes"}>
+                                            <span style={{"marginLeft": "10px"}}>
+                                                                <CurrencyFormat
+                                                                    value={this.props.unit.calculatedTaxRecovery}/>
+                                                            </span>
+                                        </ExpenseRecoveryForUnitCalculationPopoverWrapper>
+
                                 }
                             </td>
                         </tr> : null

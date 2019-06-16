@@ -94,6 +94,25 @@ class AppraisalModel extends BaseModel
         }
     }
 
+    recoveryStructureForUnit(unit)
+    {
+        for(let recoveryStructure of this.recoveryStructures)
+        {
+            if (recoveryStructure.name === unit.recoveryStructure)
+            {
+                return recoveryStructure;
+            }
+        }
+
+        for(let recoveryStructure of this.recoveryStructures)
+        {
+            if (recoveryStructure.isDefault)
+            {
+                return recoveryStructure;
+            }
+        }
+    }
+
     getEffectiveDate()
     {
         if (this.effectiveDate)
