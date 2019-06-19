@@ -28,6 +28,7 @@ class ComparableSaleListItemField extends React.Component
         propertyType: PropTypes.string,
         excludedPropertyType: PropTypes.string,
         onChange: PropTypes.func.isRequired,
+        location: PropTypes.object,
         comparableSale: PropTypes.instanceOf(ComparableSaleModel).isRequired
     };
 
@@ -53,6 +54,7 @@ class ComparableSaleListItemField extends React.Component
                 cents={this.props.cents}
                 placeholder={this.props.placeholder || this.props.title}
                 value={this.props.comparableSale[this.props.field]}
+                location={this.props.location ? {lat: () => this.props.location.coordinates[1], lng: () => this.props.location.coordinates[0]} : null}
                 propertyType={this.props.comparableSale.propertyType}
                 onChange={(newValue) => this.props.onChange(this.props.field, newValue)}
                 onGeoChange={(newValue) => this.props.onChange('location', {"type": "Point", "coordinates": [newValue.lng, newValue.lat]})}
@@ -235,11 +237,6 @@ class ComparableSaleListItem extends React.Component
     toggleDetails()
     {
         this.setState({detailsOpen: !this.state.detailsOpen});
-    }
-
-    placePinButtonClicked()
-    {
-        this.setState({placePinOnMapPopoverOpen: true})
     }
 
 
@@ -553,13 +550,14 @@ class ComparableSaleListItem extends React.Component
                                         fieldType="address"
                                         edit={this.props.edit}
                                         comparableSale={comparableSale}
+                                        location={this.props.comparableSale.location || this.props.appraisal.location}
                                         onChange={this.changeComparableField.bind(this)}
                                     />
 
                                     <span>
                                     </span>
                                     <div className={"place-pin-on-map-button-container"}>
-                                        <Button onClick={() => this.placePinButtonClicked()} id={`place-pin-on-map-button`}>
+                                        <Button onClick={() => this.togglePlacePinView()} id={`place-pin-on-map-button`}>
                                             Place Pin on Map
                                         </Button>
 
@@ -596,6 +594,9 @@ class ComparableSaleListItem extends React.Component
                                                             </div> : null
                                                     }
                                                 </div>
+                                                <Button color={'primary'} onClick={() => this.togglePlacePinView()} className={"close-button"}>
+                                                    Close
+                                                </Button>
                                             </PopoverBody>
                                         </Popover>
                                     </div>

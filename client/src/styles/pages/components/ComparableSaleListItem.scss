@@ -21,6 +21,8 @@
   {
     display: flex;
     justify-content: flex-end;
+
+
   }
 
   .comparable-sale-item-content
@@ -246,7 +248,7 @@
 
   .current-building-map-icon
   {
-    cursor: pointer;
+    cursor: grab;
     position: relative;
     width: 25px;
     left: -12.5px;
@@ -257,7 +259,7 @@
 
   .pin-map-icon
   {
-    cursor: pointer;
+    cursor: grab;
     position: relative;
     width: 25px;
     left: -12.5px;
@@ -265,5 +267,12 @@
     top: -28px;
     user-select: none;
     pointer-events: none;
+    opacity: 0.7;
+  }
+
+  .close-button
+  {
+    float: right;
+
   }
 }

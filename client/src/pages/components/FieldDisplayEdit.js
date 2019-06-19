@@ -603,6 +603,8 @@ class FieldDisplayEdit extends React.Component
                                 types={["geocode"]}
                                 placeholder={this.props.placeholder}
                                 disabled={!this.props.edit}
+                                location={this.props.location}
+                                radius={this.props.location ? 20 : 0}
                                 initialValue={this.state.isEditing ? this.state.value : this.formatValue(this.props.value)}
                                 onSuggestSelect={(newValue) => this.addressInputUpdated(newValue)}
                                 inputClassName={"form-control"}

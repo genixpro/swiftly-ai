@@ -154,6 +154,7 @@ class ViewComparableLeasesDatabase extends React.Component {
                                              sort={this.state.sort}
                                              onSortChanged={(field) => this.onSortChanged(field)}
                                              history={this.props.history}
+                                             appraisal={this.props.appraisal}
                                              appraisalId={this.props.match.params._id}
                                              appraisalComparables={this.props.appraisal.comparableLeases}
                                              onAddComparableClicked={(comp) => this.addComparableToAppraisal(comp)}

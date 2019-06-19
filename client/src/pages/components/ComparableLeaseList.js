@@ -353,6 +353,7 @@ class ComparableLeaseList extends React.Component
                                                 headers={headerFields}
                                                 comparableLease={this.state.newComparableLease}
                                                 openByDefault={true}
+                                                appraisal={this.props.appraisal}
                                                 onChange={(comp) => this.setState({newComparableLease: comp})}/>
                                         </ModalBody>
                                         <ModalFooter>
@@ -378,6 +379,7 @@ class ComparableLeaseList extends React.Component
                                 onRemoveComparableClicked={this.props.onRemoveComparableClicked}
                                 onDeleteComparable={(comp) => this.onRemoveComparableClicked(comp)}
                                 appraisalId={this.props.appraisalId}
+                                appraisal={this.props.appraisal}
                                 last={index===this.state.comparableLeases.length-1}
                             />;
                         }

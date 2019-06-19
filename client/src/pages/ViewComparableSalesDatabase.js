@@ -187,7 +187,8 @@ class ViewComparableSalesDatabase extends React.Component {
             self.setState({
                 uploading: true,
                 showUploadedComparablesDialog: true,
-                uploadedComparables: []
+                uploadedComparables: [],
+                uploadedFile: null
             });
             const fileList = this.files; /* now you can work with the file list */
             Promise.mapSeries(fileList, (file) => {
