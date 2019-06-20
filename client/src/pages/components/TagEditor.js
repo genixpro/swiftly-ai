@@ -29,6 +29,33 @@ class TagEditor extends React.Component {
 
     componentDidMount()
     {
+        this.reloadDefaults();
+    }
+
+    componentDidUpdate()
+    {
+        if (this.props.propertyType !== this.propertyType)
+        {
+            this.propertyType = this.props.propertyType;
+            this.reloadDefaults();
+        }
+    }
+
+    reloadDefaults()
+    {
+        const search = {};
+
+        if (this.props.propertyType)
+        {
+            search['propertyType'] = this.props.propertyType;
+        }
+
+        axios.get(`/property_tags`, {params: search}).then((response) =>
+        {
+            this.setState({
+                defaultOptions: response.data.tags.map((tag) => ({value: tag._id['$oid'], label: tag.name}) )
+            });
+        });
     }
 
     onCreateTag(data)
@@ -110,6 +137,7 @@ class TagEditor extends React.Component {
                 // cacheOptions
                 isClearable
                 isMulti
+                defaultOptions={this.state.defaultOptions}
                 loadOptions={(inputValue, callback) => this.loadOptions(inputValue, callback)}
                 onCreateOption={(data) => this.onCreateTag(data)}
                 noOptionsMessage={() => <span>Search for or Type in a Tag</span>}
