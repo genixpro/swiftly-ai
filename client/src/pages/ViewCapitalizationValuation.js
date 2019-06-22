@@ -135,7 +135,7 @@ class ViewCapitalizationValuation extends React.Component
                 ["propertyType", "propertyTags"],
                 ["averageMonthlyRentPerUnit", 'numberOfUnits'],
                 ["noiPerUnit","noiPerBedroom"],
-                ["capitalizationRate"]
+                ["displayCapitalizationRate"]
             ];
         }
         else
@@ -147,14 +147,14 @@ class ViewCapitalizationValuation extends React.Component
                 ["propertyType", "propertyTags"],
                 ["sizeSquareFootage"],
                 ["netOperatingIncomePSF"],
-                ["capitalizationRate"]
+                ["displayCapitalizationRate"]
             ];
         }
 
         const compStats = [];
         compStats.push("netOperatingIncomePSF");
         compStats.push("pricePerSquareFoot");
-        compStats.push("capitalizationRate");
+        compStats.push("displayCapitalizationRate");
 
         return [
             <AppraisalContentHeader appraisal={this.props.appraisal} title="Capitalization Approach" key={"header"}/>,

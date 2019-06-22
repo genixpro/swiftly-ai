@@ -7,6 +7,7 @@ import _ from "underscore";
 import StringField from "../orm/StringField";
 import FloatField from "../orm/FloatField";
 import moment from "moment";
+import BoolField from "../orm/BoolField";
 
 class ComparableSaleModel extends EquationMdoel
 {
@@ -95,6 +96,129 @@ class ComparableSaleModel extends EquationMdoel
 
     static tenancyType = new StringField();
 
+    static useStabilizedNoi = new BoolField();
+    static stabilizedNoiVacancyRate = new FloatField();
+    static stabilizedNoiStructuralAllowance = new FloatField();
+
+    get displayNetOperatingIncome()
+    {
+        if (this.useStabilizedNoi)
+        {
+            return this.stabilizedNOI;
+        }
+        else
+        {
+            return this.netOperatingIncome;
+        }
+    }
+
+    get displayCapitalizationRate()
+    {
+        if (this.useStabilizedNoi)
+        {
+            return this.stabilizedCapitalizationRate;
+        }
+        else
+        {
+            return this.capitalizationRate;
+        }
+    }
+
+    get stabilizedNOI()
+    {
+        let noi = this.netOperatingIncome;
+        if (noi === null)
+        {
+            return null;
+        }
+
+        if (this.stabilizedNOIVacancyDeduction)
+        {
+            noi -= this.stabilizedNOIVacancyDeduction;
+        }
+
+        if (this.stabilizedNOIStructuralAllowance)
+        {
+            noi -= this.stabilizedNOIStructuralAllowance;
+        }
+
+        return noi;
+    }
+
+    set stabilizedNOI(newValue)
+    {
+        let rate = this.overallStabilizationRate;
+
+        if (newValue === null)
+        {
+            this.netOperatingIncome = null;
+        }
+        else
+        {
+            this.netOperatingIncome = newValue / rate;
+        }
+    }
+
+    get stabilizedCapitalizationRate()
+    {
+        return this.capitalizationRate / this.overallStabilizationRate;
+    }
+
+    set stabilizedCapitalizationRate(newValue)
+    {
+        this.capitalizationRate = newValue * this.overallStabilizationRate;
+    }
+
+    get overallStabilizationRate()
+    {
+        let noi = this.netOperatingIncome;
+        if (noi === null)
+        {
+            return null;
+        }
+
+        let stabilizedNOI = this.stabilizedNOI;
+        if (stabilizedNOI === null)
+        {
+            return null;
+        }
+
+        return stabilizedNOI / noi;
+    }
+
+    get stabilizedNOIVacancyDeduction()
+    {
+        let noi = this.netOperatingIncome;
+        if (noi === null)
+        {
+            return null;
+        }
+
+        if (this.stabilizedNoiVacancyRate)
+        {
+            return noi * this.stabilizedNoiVacancyRate / 100;
+        }
+
+        return null;
+    }
+
+
+    get stabilizedNOIStructuralAllowance()
+    {
+        let noi = this.netOperatingIncome;
+        if (noi === null)
+        {
+            return null;
+        }
+
+        if (this.stabilizedNoiStructuralAllowance)
+        {
+            return noi * this.stabilizedNoiStructuralAllowance / 100;
+        }
+
+        return null;
+    }
+
     static equations = {
         "netOperatingIncome": [
             {
@@ -115,7 +239,7 @@ class ComparableSaleModel extends EquationMdoel
         "capitalizationRate": [
             {
                 inputs: ['salePrice', 'netOperatingIncome'],
-                equation: (salePrice, netOperatingIncome) => (salePrice / netOperatingIncome) * 100
+                equation: (salePrice, netOperatingIncome) => (netOperatingIncome / salePrice) * 100
             }
         ],
         "sizeSquareFootage": [

@@ -1,6 +1,7 @@
 import React from 'react';
 import { Button, Collapse, CardHeader, CardTitle, Row, Col, Popover, PopoverBody, PopoverHeader} from 'reactstrap';
 import FieldDisplayEdit from "./FieldDisplayEdit";
+import {NonDroppableFieldDisplayEdit} from "./FieldDisplayEdit";
 import axios from "axios/index";
 import UploadableImageSet from "./UploadableImageSet";
 import NumberFormat from 'react-number-format';
@@ -15,6 +16,7 @@ import FloatFormat from "./FloatFormat";
 import IntegerFormat from "./IntegerFormat";
 import ComparableLeaseListItem from "./ComparableLeaseListItem";
 import Auth from "../../Auth";
+import FreeRentLossForUnitCalculationPopoverWrapper from "./FreeRentLossForUnitCalculationPopoverWrapper";
 
 
 class ComparableSaleListItemField extends React.Component
@@ -125,6 +127,8 @@ class ComparableSaleListItem extends React.Component
         last: false
     };
 
+    static instance = 0;
+
     static propTypes = {
         edit: PropTypes.bool,
         openByDefault: PropTypes.bool,
@@ -148,7 +152,8 @@ class ComparableSaleListItem extends React.Component
         comparableSale: {},
         isDraggingPin: true,
         droppingPinX: 0,
-        droppingPinY: 0
+        droppingPinY: 0,
+        stabilizePopoverOpen: false
     };
 
     static getDerivedStateFromProps(props)
@@ -161,6 +166,13 @@ class ComparableSaleListItem extends React.Component
         {
             return {openByDefault: false}
         }
+    }
+
+    constructor()
+    {
+        super();
+        this.popoverId = `comparable-sale-list-item-${ComparableSaleListItem.instance}`;
+        ComparableSaleListItem.instance += 1;
     }
 
     componentDidMount()
@@ -261,6 +273,11 @@ class ComparableSaleListItem extends React.Component
         this.setState({placePinOnMapPopoverOpen: !this.state.placePinOnMapPopoverOpen})
     }
 
+    toggleStabilizeNOIPopover()
+    {
+        this.setState({stabilizePopoverOpen: !this.state.stabilizePopoverOpen})
+    }
+
 
 
     render()
@@ -332,6 +349,10 @@ class ComparableSaleListItem extends React.Component
                 render: (value) => <PercentFormat value={value} />,
                 size: "middle"
             },
+            displayCapitalizationRate: {
+                render: (value) => <PercentFormat value={value} />,
+                size: "middle"
+            },
             propertyType: {
                 render: (value) => <span>{value}</span>,
                 size: "middle"
@@ -361,6 +382,10 @@ class ComparableSaleListItem extends React.Component
                 size: "middle"
             },
             netOperatingIncome: {
+                render: (value) => <CurrencyFormat value={value} cents={false} />,
+                size: "middle"
+            },
+            displayNetOperatingIncome: {
                 render: (value) => <CurrencyFormat value={value} cents={false} />,
                 size: "middle"
             },
@@ -650,16 +675,33 @@ class ComparableSaleListItem extends React.Component
                                         comparableSale={comparableSale}
                                         onChange={this.changeComparableField.bind(this)}
                                     />
+                                    {
+                                        !this.props.comparableSale.useStabilizedNoi ?
 
-                                    <ComparableSaleListItemField
-                                        title="Cap Rate"
-                                        field="capitalizationRate"
-                                        fieldType="percent"
-                                        edit={this.props.edit}
-                                        comparableSale={comparableSale}
-                                        excludedPropertyType={"land"}
-                                        onChange={this.changeComparableField.bind(this)}
-                                    />
+                                            <ComparableSaleListItemField
+                                                title="Cap Rate"
+                                                field="capitalizationRate"
+                                                fieldType="percent"
+                                                edit={this.props.edit}
+                                                comparableSale={comparableSale}
+                                                excludedPropertyType={"land"}
+                                                onChange={this.changeComparableField.bind(this)}
+                                            /> : null
+                                    }
+                                    {
+                                        this.props.comparableSale.useStabilizedNoi ?
+
+                                            <ComparableSaleListItemField
+                                                title="Stabilized Cap Rate"
+                                                field="stabilizedCapitalizationRate"
+                                                fieldType="percent"
+                                                edit={this.props.edit}
+                                                comparableSale={comparableSale}
+                                                excludedPropertyType={"land"}
+                                                onChange={this.changeComparableField.bind(this)}
+                                            /> : null
+                                    }
+
 
                                     <ComparableSaleListItemField
                                         title="Sale Date"
@@ -688,16 +730,115 @@ class ComparableSaleListItem extends React.Component
                                         onChange={this.changeComparableField.bind(this)}
                                     />
 
-                                    <ComparableSaleListItemField
-                                        title="NOI"
-                                        placeholder={"Net Operating Income"}
-                                        field="netOperatingIncome"
-                                        fieldType="currency"
-                                        excludedPropertyType={"land"}
-                                        edit={this.props.edit}
-                                        comparableSale={comparableSale}
-                                        onChange={this.changeComparableField.bind(this)}
-                                    />
+                                    {
+                                        !this.props.comparableSale.useStabilizedNoi ?
+                                            <ComparableSaleListItemField
+                                                title="NOI"
+                                                placeholder={"Net Operating Income"}
+                                                field="netOperatingIncome"
+                                                fieldType="currency"
+                                                excludedPropertyType={"land"}
+                                                edit={this.props.edit}
+                                                comparableSale={comparableSale}
+                                                onChange={this.changeComparableField.bind(this)}
+                                            /> : null
+                                    }
+                                    {
+                                        this.props.comparableSale.useStabilizedNoi ?
+                                            <ComparableSaleListItemField
+                                                title="Stabilized NOI"
+                                                placeholder={"Stabilized Net Operating Income"}
+                                                field="stabilizedNOI"
+                                                fieldType="currency"
+                                                excludedPropertyType={"land"}
+                                                edit={this.props.edit}
+                                                comparableSale={comparableSale}
+                                                onChange={this.changeComparableField.bind(this)}
+                                            /> : null
+                                    }
+
+                                    <span>
+                                    </span>
+                                    <div className={"stabilize-noi-button-container"}>
+                                        <Button color={'secondary'} id={`stabilize-noi-button-${this.popoverId}`} onClick={() => this.toggleStabilizeNOIPopover()}>Stabilize NOI</Button>
+                                        <Popover
+                                            placement="bottom"
+                                            isOpen={this.state.stabilizePopoverOpen}
+                                            target={`stabilize-noi-button-${this.popoverId}`}
+                                            toggle={() => this.toggleStabilizeNOIPopover()}
+                                            className={"stabilized-noi-popover"}
+                                        >
+                                            <PopoverHeader>Stabilize NOI</PopoverHeader>
+                                            <PopoverBody>
+                                                <table>
+                                                    <tbody>
+                                                    <tr>
+                                                        <td>Net Operating Income</td>
+                                                        <td>
+                                                        </td>
+                                                        <td className={"result-column"}>
+                                                            <CurrencyFormat value={this.props.comparableSale.netOperatingIncome}/>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Vacancy Rate</td>
+                                                        <td>
+                                                            <NonDroppableFieldDisplayEdit
+                                                                type={"percent"}
+                                                                edit={this.props.edit}
+                                                                placeholder={"Vacancy Rate"}
+                                                                value={this.props.comparableSale.stabilizedNoiVacancyRate}
+                                                                onChange={(newValue) => this.changeComparableField('stabilizedNoiVacancyRate', newValue)}
+                                                            />
+                                                        </td>
+                                                        <td className={"result-column"}>
+                                                            <CurrencyFormat value={-this.props.comparableSale.stabilizedNOIVacancyDeduction}/>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>Structural Allowance</td>
+                                                        <td>
+                                                            <NonDroppableFieldDisplayEdit
+                                                                type={"percent"}
+                                                                edit={this.props.edit}
+                                                                placeholder={"Structural Allowance"}
+                                                                value={this.props.comparableSale.stabilizedNoiStructuralAllowance}
+                                                                onChange={(newValue) => this.changeComparableField('stabilizedNoiStructuralAllowance', newValue)}
+                                                            />
+                                                        </td>
+                                                        <td className={"result-column"}>
+                                                            <CurrencyFormat value={-this.props.comparableSale.stabilizedNOIStructuralAllowance}/>
+                                                        </td>
+                                                    </tr>
+                                                    <tr className={"stabilized-noi-result-line"}>
+                                                        <td>Stabilized NOI</td>
+                                                        <td>
+                                                        </td>
+                                                        <td className={"result-column"}>
+                                                            <CurrencyFormat value={this.props.comparableSale.stabilizedNOI}/>
+                                                        </td>
+                                                    </tr>
+                                                    <tr className={"stabilized-noi-result-line"}>
+                                                        <td>Use Stabilized NOI?</td>
+                                                        <td>
+                                                            <NonDroppableFieldDisplayEdit
+                                                                type={"boolean"}
+                                                                edit={this.props.edit}
+                                                                hideIcon={true}
+                                                                placeholder={"Use Stabilized NOI"}
+                                                                value={this.props.comparableSale.useStabilizedNoi}
+                                                                onChange={(newValue) => this.changeComparableField('useStabilizedNoi', newValue)}
+                                                            />
+                                                        </td>
+                                                        <td className={"result-column"}>
+                                                        </td>
+                                                    </tr>
+                                                    </tbody>
+                                                </table>
+
+                                            </PopoverBody>
+                                        </Popover>
+                                    </div>
 
                                     <ComparableSaleListItemField
                                         title="NOI PSF"

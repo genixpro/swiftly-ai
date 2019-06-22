@@ -68,6 +68,11 @@ class ComparableSalesStatistics extends React.Component
                 averageTitle: "Cap Rate Average (%)",
                 render: (value) => <PercentFormat value={value}/>
             },
+            displayCapitalizationRate: {
+                rangeTitle: "Cap Rate Range (%)",
+                averageTitle: "Cap Rate Average (%)",
+                render: (value) => <PercentFormat value={value}/>
+            },
             clearCeilingHeight: {
                 rangeTitle: "Clear Ceiling Height Range (%)",
                 averageTitle: "Clear Ceiling Height Average (%)",
@@ -134,6 +139,11 @@ class ComparableSalesStatistics extends React.Component
                 render: (value) => <CurrencyFormat value={value} cents={false}/>
             },
             netOperatingIncome: {
+                rangeTitle: "NOI Range ($)",
+                averageTitle: "NOI Average ($)",
+                render: (value) => <CurrencyFormat value={value} cents={false}/>
+            },
+            displayNetOperatingIncome: {
                 rangeTitle: "NOI Range ($)",
                 averageTitle: "NOI Average ($)",
                 render: (value) => <CurrencyFormat value={value} cents={false}/>

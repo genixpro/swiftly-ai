@@ -190,6 +190,14 @@
       }
     }
   }
+
+  .stabilize-noi-button-container
+  {
+    .btn
+    {
+      float: right;
+    }
+  }
 }
 
 .comparable-sale-list-header
@@ -275,4 +283,16 @@
     float: right;
 
   }
+}
+
+
+.stabilized-noi-popover
+{
+    .stabilized-noi-result-line
+    {
+      .result-column
+      {
+        border-top: 1px solid black;
+      }
+    }
 }
