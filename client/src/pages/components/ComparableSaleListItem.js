@@ -810,6 +810,29 @@ class ComparableSaleListItem extends React.Component
                                                             <CurrencyFormat value={-this.props.comparableSale.stabilizedNOIStructuralAllowance}/>
                                                         </td>
                                                     </tr>
+                                                    <tr className={"stabilized-noi-custom-line"}>
+                                                        <td>
+                                                            <NonDroppableFieldDisplayEdit
+                                                                type={"text"}
+                                                                edit={this.props.edit}
+                                                                placeholder={"Custom Deduction"}
+                                                                value={this.props.comparableSale.stabilizedNoiCustomName}
+                                                                onChange={(newValue) => this.changeComparableField('stabilizedNoiCustomName', newValue)}
+                                                            />
+                                                        </td>
+                                                        <td>
+                                                            <NonDroppableFieldDisplayEdit
+                                                                type={"percent"}
+                                                                edit={this.props.edit}
+                                                                placeholder={"Custom Deduction %"}
+                                                                value={this.props.comparableSale.stabilizedNoiCustomDeduction}
+                                                                onChange={(newValue) => this.changeComparableField('stabilizedNoiCustomDeduction', newValue)}
+                                                            />
+                                                        </td>
+                                                        <td className={"result-column"}>
+                                                            <CurrencyFormat value={-this.props.comparableSale.stabilizedNOICustomDeduction}/>
+                                                        </td>
+                                                    </tr>
                                                     <tr className={"stabilized-noi-result-line"}>
                                                         <td>Stabilized NOI</td>
                                                         <td>
@@ -818,7 +841,7 @@ class ComparableSaleListItem extends React.Component
                                                             <CurrencyFormat value={this.props.comparableSale.stabilizedNOI}/>
                                                         </td>
                                                     </tr>
-                                                    <tr className={"stabilized-noi-result-line"}>
+                                                    <tr>
                                                         <td>Use Stabilized NOI?</td>
                                                         <td>
                                                             <NonDroppableFieldDisplayEdit

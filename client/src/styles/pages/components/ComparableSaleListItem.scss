@@ -295,4 +295,22 @@
         border-top: 1px solid black;
       }
     }
+
+  tr:not(.stabilized-noi-custom-line)
+  {
+    td:first-child
+    {
+      position: relative;
+      left: 10px
+    }
+  }
+
+  tr.stabilized-noi-custom-line
+  {
+    td:first-child
+    {
+      position: relative;
+      left: -5px
+    }
+  }
 }

@@ -145,6 +145,8 @@ class ComparableSale(Document):
     useStabilizedNoi = BooleanField(default=False)
     stabilizedNoiVacancyRate = FloatField()
     stabilizedNoiStructuralAllowance = FloatField()
+    stabilizedNoiCustomDeduction = FloatField()
+    stabilizedNoiCustomName = StringField(default="Custom")
 
     version = IntField(default=1)
 

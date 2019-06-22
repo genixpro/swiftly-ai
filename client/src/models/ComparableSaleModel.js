@@ -99,6 +99,8 @@ class ComparableSaleModel extends EquationMdoel
     static useStabilizedNoi = new BoolField();
     static stabilizedNoiVacancyRate = new FloatField();
     static stabilizedNoiStructuralAllowance = new FloatField();
+    static stabilizedNoiCustomDeduction = new FloatField();
+    static stabilizedNoiCustomName = new StringField();
 
     get displayNetOperatingIncome()
     {
@@ -140,6 +142,11 @@ class ComparableSaleModel extends EquationMdoel
         if (this.stabilizedNOIStructuralAllowance)
         {
             noi -= this.stabilizedNOIStructuralAllowance;
+        }
+
+        if (this.stabilizedNOICustomDeduction)
+        {
+            noi -= this.stabilizedNOICustomDeduction;
         }
 
         return noi;
@@ -214,6 +221,23 @@ class ComparableSaleModel extends EquationMdoel
         if (this.stabilizedNoiStructuralAllowance)
         {
             return noi * this.stabilizedNoiStructuralAllowance / 100;
+        }
+
+        return null;
+    }
+
+
+    get stabilizedNOICustomDeduction()
+    {
+        let noi = this.netOperatingIncome;
+        if (noi === null)
+        {
+            return null;
+        }
+
+        if (this.stabilizedNoiCustomDeduction)
+        {
+            return noi * this.stabilizedNoiCustomDeduction / 100;
         }
 
         return null;
