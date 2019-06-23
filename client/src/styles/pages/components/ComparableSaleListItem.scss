@@ -17,6 +17,14 @@
     flex-basis: 0.125%;
   }
 
+  .place-pin-on-map-button-container
+  {
+    display: flex;
+    justify-content: flex-end;
+
+
+  }
+
   .comparable-sale-item-content
   {
     display: flex;
@@ -182,6 +190,14 @@
       }
     }
   }
+
+  .stabilize-noi-button-container
+  {
+    .btn
+    {
+      float: right;
+    }
+  }
 }
 
 .comparable-sale-list-header
@@ -229,4 +245,72 @@
 .popover
 {
   z-index: 100100;
+}
+
+.place-pin-on-map-popover
+{
+  .place-pin-body-wrapper {
+    width: 25vw;
+    height: 50vh;
+  }
+
+  .current-building-map-icon
+  {
+    cursor: grab;
+    position: relative;
+    width: 25px;
+    left: -12.5px;
+    top: -37px;
+    user-select: none;
+    pointer-events: none;
+  }
+
+  .pin-map-icon
+  {
+    cursor: grab;
+    position: relative;
+    width: 25px;
+    left: -12.5px;
+    //top: 8px;
+    top: -28px;
+    user-select: none;
+    pointer-events: none;
+    opacity: 0.7;
+  }
+
+  .close-button
+  {
+    float: right;
+
+  }
+}
+
+
+.stabilized-noi-popover
+{
+    .stabilized-noi-result-line
+    {
+      .result-column
+      {
+        border-top: 1px solid black;
+      }
+    }
+
+  tr:not(.stabilized-noi-custom-line)
+  {
+    td:first-child
+    {
+      position: relative;
+      left: 10px
+    }
+  }
+
+  tr.stabilized-noi-custom-line
+  {
+    td:first-child
+    {
+      position: relative;
+      left: -5px
+    }
+  }
 }

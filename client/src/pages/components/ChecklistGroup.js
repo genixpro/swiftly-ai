@@ -45,6 +45,17 @@ class ChecklistGroup extends React.Component {
                         &nbsp;
                         &nbsp;
                         <span>{this.props.title}</span>
+                        {
+                            (this.props.fileNames ? this.props.fileNames : []).length > 0 ?
+                                <span>&nbsp;-&nbsp;</span>
+                                : null
+                        }
+                        {
+                            (this.props.fileNames ? this.props.fileNames : []).map((name) =>
+                            {
+                                return <span>{name}&nbsp;</span>
+                            })
+                        }
                         {/*</a>*/}
                     </CardTitle>
                 </CardHeader>

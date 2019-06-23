@@ -1,0 +1,1054 @@
+[
+  {
+    "name": "Document Number",
+    "placeholder": "Document Number",
+    "value": "DOCUMENT_NUMBER",
+    "anyOfGroups": [
+      "INCOME_STATEMENT",
+      "EXPENSE_STATEMENT",
+      "RENT_ROLL"
+    ],
+    "textType": "block"
+  },
+  {
+    "name": "Document Date",
+    "placeholder": "Document Date",
+    "value": "DOCUMENT_DATE",
+    "anyOfGroups": [
+      "INCOME_STATEMENT",
+      "EXPENSE_STATEMENT",
+      "RENT_ROLL"
+    ],
+    "textType": "block"
+  },
+  {
+    "name": "Document Time",
+    "placeholder": "Document Time",
+    "value": "DOCUMENT_TIME",
+    "anyOfGroups": [
+      "INCOME_STATEMENT",
+      "EXPENSE_STATEMENT",
+      "RENT_ROLL"
+    ],
+    "textType": "block"
+  },
+  {
+    "name": "Statement Date",
+    "placeholder": "Statement Date",
+    "value": "STATEMENT_DATE",
+    "anyOfGroups": [
+      "INCOME_STATEMENT",
+      "EXPENSE_STATEMENT",
+      "RENT_ROLL"
+    ],
+    "textType": "block"
+  },
+  {
+    "name": "Building Address",
+    "placeholder": "Building Address",
+    "value": "BUILDING_ADDRESS",
+    "anyOfGroups": [
+      "INCOME_STATEMENT",
+      "EXPENSE_STATEMENT",
+      "RENT_ROLL"
+    ],
+    "textType": "block"
+  },
+  {
+    "name": "User ID",
+    "placeholder": "User ID",
+    "value": "USER_ID",
+    "anyOfGroups": [
+      "INCOME_STATEMENT",
+      "EXPENSE_STATEMENT",
+      "RENT_ROLL"
+    ],
+    "textType": "block"
+  },
+  {
+    "name": "Statement Year",
+    "placeholder": "Statement Year",
+    "value": "STATEMENT_YEAR",
+    "anyOfGroups": [
+      "INCOME_STATEMENT",
+      "EXPENSE_STATEMENT",
+      "RENT_ROLL"
+    ],
+    "textType": "block"
+  },
+  {
+    "name": "Statement Next Year",
+    "placeholder": "Statement Next Year",
+    "value": "STATEMENT_NEXT_YEAR",
+    "anyOfGroups": [
+      "INCOME_STATEMENT",
+      "EXPENSE_STATEMENT",
+      "RENT_ROLL"
+    ],
+    "textType": "block"
+  },
+  {
+    "name": "Statement Previous Year",
+    "placeholder": "Statement Previous Year",
+    "value": "STATEMENT_PREVIOUS_YEAR",
+    "anyOfGroups": [
+      "INCOME_STATEMENT",
+      "EXPENSE_STATEMENT",
+      "RENT_ROLL"
+    ],
+    "textType": "block"
+  },
+  {
+    "name": "Account Number",
+    "placeholder": "Account Number",
+    "value": "ACC_NUM",
+    "anyOfGroups": [
+      "INCOME_STATEMENT",
+      "EXPENSE_STATEMENT"
+    ],
+    "textType": "table"
+  },
+  {
+    "name": "Account Name",
+    "placeholder": "Account Name",
+    "value": "ACC_NAME",
+    "anyOfGroups": [
+      "INCOME_STATEMENT",
+      "EXPENSE_STATEMENT"
+    ],
+    "textType": "table"
+  },
+  {
+    "name": "Forecast / Budget",
+    "placeholder": "Forecast / Budget",
+    "value": "FORECAST",
+    "anyOfGroups": [
+      "INCOME_STATEMENT",
+      "EXPENSE_STATEMENT"
+    ],
+    "textType": "table",
+    "fieldSpec": "incomeStatement.items[documentLineNumber].forecast"
+  },
+  {
+    "name": "Actuals",
+    "placeholder": "Actuals",
+    "value": "ACTUALS",
+    "anyOfGroups": [
+      "INCOME_STATEMENT",
+      "EXPENSE_STATEMENT"
+    ],
+    "textType": "table"
+  },
+  {
+    "name": "Year To Date",
+    "placeholder": "Year To Date",
+    "value": "YEAR_TO_DATE",
+    "anyOfGroups": [
+      "INCOME_STATEMENT",
+      "EXPENSE_STATEMENT"
+    ],
+    "textType": "table"
+  },
+  {
+    "name": "Variance",
+    "placeholder": "Variance",
+    "value": "VARIANCE",
+    "anyOfGroups": [
+      "INCOME_STATEMENT",
+      "EXPENSE_STATEMENT"
+    ],
+    "textType": "table"
+  },
+  {
+    "name": "Unit Number",
+    "placeholder": "Unit Number",
+    "value": "UNIT_NUM",
+    "anyOfGroups": [
+      "RENT_ROLL"
+    ],
+    "textType": "table"
+  },
+  {
+    "name": "Floor Number",
+    "placeholder": "Floor Number",
+    "value": "FLOOR_NUM",
+    "anyOfGroups": [
+      "RENT_ROLL"
+    ],
+    "textType": "table"
+  },
+  {
+    "name": "Tenant Name",
+    "placeholder": "Tenant Name",
+    "value": "TENANT_NAME",
+    "anyOfGroups": [
+      "RENT_ROLL"
+    ],
+    "textType": "table"
+  },
+  {
+    "name": "Rentable Area",
+    "placeholder": "Rentable Area",
+    "value": "RENTABLE_AREA",
+    "anyOfGroups": [
+      "RENT_ROLL"
+    ],
+    "textType": "table"
+  },
+  {
+    "name": "Lease Term Start",
+    "placeholder": "Lease Term Start",
+    "value": "TERM_START",
+    "anyOfGroups": [
+      "RENT_ROLL"
+    ],
+    "textType": "table"
+  },
+  {
+    "name": "Lease Term End",
+    "placeholder": "Lease Term End",
+    "value": "TERM_END",
+    "anyOfGroups": [
+      "RENT_ROLL"
+    ],
+    "textType": "table"
+  },
+  {
+    "name": "Monthly Rent (Gross)",
+    "placeholder": "Monthly Rent (Gross)",
+    "value": "MONTHLY_RENT",
+    "anyOfGroups": [
+      "RENT_ROLL"
+    ],
+    "textType": "table"
+  },
+  {
+    "name": "Yearly Rent (Gross)",
+    "placeholder": "Yearly Rent (Gross)",
+    "value": "YEARLY_RENT",
+    "anyOfGroups": [
+      "RENT_ROLL"
+    ],
+    "textType": "table"
+  },
+  {
+    "name": "Monthly Rent (Net)",
+    "placeholder": "Monthly Rent (Net)",
+    "value": "MONTHLY_RENT",
+    "anyOfGroups": [
+      "RENT_ROLL"
+    ],
+    "textType": "table"
+  },
+  {
+    "name": "Yearly Rent (Net)",
+    "placeholder": "Yearly Rent (Net)",
+    "value": "YEARLY_RENT",
+    "anyOfGroups": [
+      "RENT_ROLL"
+    ],
+    "textType": "table"
+  },
+  {
+    "name": "Rent is Net",
+    "placeholder": "Rent is Net",
+    "value": "NET_RENT",
+    "anyOfGroups": [
+      "RENT_ROLL"
+    ],
+    "textType": "table"
+  },
+  {
+    "name": "Rent is Gross",
+    "placeholder": "Rent is Gross",
+    "value": "GROSS_RENT",
+    "anyOfGroups": [
+      "RENT_ROLL"
+    ],
+    "textType": "table"
+  },
+  {
+    "name": "Free Rent is Net",
+    "placeholder": "Free Rent is Net",
+    "value": "NET_FREE_RENT",
+    "anyOfGroups": [
+      "RENT_ROLL"
+    ],
+    "textType": "table"
+  },
+  {
+    "name": "Free Rent is Gross",
+    "placeholder": "Free Rent is Gross",
+    "value": "GROSS_FREE_RENT",
+    "anyOfGroups": [
+      "RENT_ROLL"
+    ],
+    "textType": "table"
+  },
+  {
+    "name": "Free Rent Months",
+    "placeholder": "Free Rent Months",
+    "value": "FREE_RENT_MONTHS",
+    "anyOfGroups": [
+      "RENT_ROLL"
+    ],
+    "textType": "table"
+  },
+  {
+    "name": "Free Rent Area",
+    "placeholder": "Free Rent Area",
+    "value": "FREE_RENT_AREA",
+    "anyOfGroups": [
+      "RENT_ROLL"
+    ],
+    "textType": "table"
+  },
+  {
+    "name": "Property Type",
+    "placeholder": "Property Type",
+    "value": "PROPERTY_TYPE",
+    "anyOfGroups": [
+      "COMPARABLE_SALE"
+    ],
+    "textType": "block"
+  },
+  {
+    "name": "Sub Type",
+    "placeholder": "Sub Type",
+    "value": "SUB_TYPE",
+    "anyOfGroups": [
+      "COMPARABLE_SALE"
+    ],
+    "textType": "block"
+  },
+  {
+    "name": "Tenants",
+    "placeholder": "Tenants",
+    "value": "TENANTS",
+    "anyOfGroups": [
+      "COMPARABLE_SALE"
+    ],
+    "textType": "block"
+  },
+  {
+    "name": "Parking",
+    "placeholder": "Parking",
+    "value": "PARKING",
+    "anyOfGroups": [
+      "COMPARABLE_SALE"
+    ],
+    "textType": "block"
+  },
+  {
+    "name": "Zoning",
+    "placeholder": "Zoning",
+    "value": "ZONING",
+    "anyOfGroups": [
+      "COMPARABLE_SALE"
+    ],
+    "textType": "block"
+  },
+  {
+    "name": "Occupancy Rate",
+    "placeholder": "Occupancy Rate",
+    "value": "OCCUPANCY_RATE",
+    "anyOfGroups": [
+      "COMPARABLE_SALE"
+    ],
+    "textType": "block"
+  },
+  {
+    "name": "Vacancy Rate",
+    "placeholder": "Vacancy Rate",
+    "value": "VACANCY_RATE",
+    "anyOfGroups": [
+      "COMPARABLE_SALE"
+    ],
+    "textType": "block"
+  },
+  {
+    "name": "Tenancy - Single Tenant",
+    "placeholder": "Tenancy - Single Tenant",
+    "value": "SINGLE_TENANT",
+    "anyOfGroups": [
+      "COMPARABLE_SALE"
+    ],
+    "textType": "block"
+  },
+  {
+    "name": "Tenancy - Multi Tenant",
+    "placeholder": "Tenancy - Multi Tenant",
+    "value": "MULTI_TENANT",
+    "anyOfGroups": [
+      "COMPARABLE_SALE"
+    ],
+    "textType": "block"
+  },
+  {
+    "name": "Site Area",
+    "placeholder": "Site Area",
+    "value": "SITE_AREA",
+    "anyOfGroups": [
+      "COMPARABLE_SALE"
+    ],
+    "textType": "block"
+  },
+  {
+    "name": "Site Coverage",
+    "placeholder": "Site Coverage",
+    "value": "SITE_COVERAGE",
+    "anyOfGroups": [
+      "COMPARABLE_SALE"
+    ],
+    "textType": "block"
+  },
+  {
+    "name": "Site Frontage",
+    "placeholder": "Site Frontage",
+    "value": "SITE_FRONTAGE",
+    "anyOfGroups": [
+      "COMPARABLE_SALE"
+    ],
+    "textType": "block"
+  },
+  {
+    "name": "Size of Land (sqft)",
+    "placeholder": "Size of Land (sqft)",
+    "value": "SIZE_OF_LAND_SQFT",
+    "anyOfGroups": [
+      "COMPARABLE_SALE"
+    ],
+    "textType": "block"
+  },
+  {
+    "name": "Size of Land (acres)",
+    "placeholder": "Size of Land (acres)",
+    "value": "SIZE_OF_LAND_ACRES",
+    "anyOfGroups": [
+      "COMPARABLE_SALE"
+    ],
+    "textType": "block"
+  },
+  {
+    "name": "Building Location",
+    "placeholder": "Name",
+    "value": "BUILDING_NAME",
+    "anyOfGroups": [
+      "COMPARABLE_SALE"
+    ],
+    "textType": "block"
+  },
+  {
+    "name": "Building Address",
+    "placeholder": "Address",
+    "value": "BUILDING_ADDRESS",
+    "anyOfGroups": [
+      "COMPARABLE_SALE"
+    ],
+    "textType": "block"
+  },
+  {
+    "name": "Building Size (sqft)",
+    "placeholder": "Building Size (sqft)",
+    "value": "BUILDING_SIZE",
+    "anyOfGroups": [
+      "COMPARABLE_SALE"
+    ],
+    "textType": "block"
+  },
+  {
+    "name": "Construction Date",
+    "placeholder": "Construction Date",
+    "value": "CONSTRUCTION_DATE",
+    "anyOfGroups": [
+      "COMPARABLE_SALE"
+    ],
+    "textType": "block"
+  },
+  {
+    "name": "Floors",
+    "placeholder": "Floors",
+    "value": "FLOORS",
+    "anyOfGroups": [
+      "COMPARABLE_SALE"
+    ],
+    "textType": "block"
+  },
+  {
+    "name": "Number of Units",
+    "placeholder": "Number of Units",
+    "value": "NUMBER_OF_UNITS",
+    "anyOfGroups": [
+      "COMPARABLE_SALE"
+    ],
+    "textType": "block"
+  },
+  {
+    "name": "Additional Info",
+    "placeholder": "Additional Info",
+    "value": "ADDITIONAL_INFO",
+    "anyOfGroups": [
+      "COMPARABLE_SALE"
+    ],
+    "textType": "block"
+  },
+  {
+    "name": "Capitalization Rate",
+    "placeholder": "Capitalization Rate",
+    "value": "CAPITALIZATION_RATE",
+    "anyOfGroups": [
+      "COMPARABLE_SALE"
+    ],
+    "textType": "block"
+  },
+  {
+    "name": "Net Operating Income",
+    "placeholder": "Net Operating Income",
+    "value": "NET_OPERATING_INCOME",
+    "anyOfGroups": [
+      "COMPARABLE_SALE"
+    ],
+    "textType": "block"
+  },
+  {
+    "name": "Purchaser",
+    "placeholder": "Purchaser",
+    "value": "PURCHASER",
+    "anyOfGroups": [
+      "COMPARABLE_SALE"
+    ],
+    "textType": "block"
+  },
+  {
+    "name": "Vendor",
+    "placeholder": "Vendor",
+    "value": "VENDOR",
+    "anyOfGroups": [
+      "COMPARABLE_SALE"
+    ],
+    "textType": "block"
+  },
+  {
+    "name": "Sale Date",
+    "placeholder": "Sale Date",
+    "value": "SALE_DATE",
+    "anyOfGroups": [
+      "COMPARABLE_SALE"
+    ],
+    "textType": "block"
+  },
+  {
+    "name": "Sale Price",
+    "placeholder": "Sale Price",
+    "value": "SALE_PRICE",
+    "anyOfGroups": [
+      "COMPARABLE_SALE"
+    ],
+    "textType": "block"
+  },
+  {
+    "name": "Purchase Interest Percentage",
+    "placeholder": "Purchase Interest Percentage",
+    "value": "PURCHASE_INTEREST_PERCENTAGE",
+    "anyOfGroups": [
+      "COMPARABLE_SALE"
+    ],
+    "textType": "block"
+  },
+  {
+    "name": "Portfolio Other Building Address",
+    "placeholder": "Portfolio Other Building Address",
+    "value": "PORTFOLIO_OTHER_BUILDING_ADDRESS",
+    "anyOfGroups": [
+      "COMPARABLE_SALE"
+    ]
+  },
+  {
+    "name": "Portfolio Other Building Name",
+    "placeholder": "Portfolio Other Building Name",
+    "value": "PORTFOLIO_OTHER_BUILDING_NAME",
+    "anyOfGroups": [
+      "COMPARABLE_SALE"
+    ]
+  },
+  {
+    "name": "Portfolio Other Building Price",
+    "placeholder": "Portfolio Other Building Price",
+    "value": "PORTFOLIO_OTHER_BUILDING_PRICE",
+    "anyOfGroups": [
+      "COMPARABLE_SALE"
+    ]
+  },
+  {
+    "name": "Portfolio Other Building Square Footage",
+    "placeholder": "Portfolio Other Building Square Footage",
+    "value": "PORTFOLIO_OTHER_BUILDING_SQUARE_FOOTAGE",
+    "anyOfGroups": [
+      "COMPARABLE_SALE"
+    ]
+  },
+  {
+    "name": "Complex Building Address",
+    "placeholder": "Complex Building Address",
+    "value": "COMPLEX_BUILDING_ADDRESS",
+    "anyOfGroups": [
+      "COMPARABLE_SALE"
+    ]
+  },
+  {
+    "name": "Complex Building Floors",
+    "placeholder": "Complex Building Floors",
+    "value": "COMPLEX_BUILDING_FLOORS",
+    "anyOfGroups": [
+      "COMPARABLE_SALE"
+    ]
+  },
+  {
+    "name": "Complex Building Square Footage",
+    "placeholder": "Complex Building Square Footage",
+    "value": "COMPLEX_BUILDING_SQUARE_FOOTAGE",
+    "anyOfGroups": [
+      "COMPARABLE_SALE"
+    ]
+  },
+  {
+    "name": "Complex Building Construction Date",
+    "placeholder": "Complex Building Construction Date",
+    "value": "COMPLEX_BUILDING_CONSTRUCTION_DATE",
+    "anyOfGroups": [
+      "COMPARABLE_SALE"
+    ]
+  },
+  {
+    "name": "Price Per Square Foot",
+    "placeholder": "Price Per Square Foot",
+    "value": "PRICE_PER_SQUARE_FOOT",
+    "anyOfGroups": [
+      "COMPARABLE_SALE"
+    ],
+    "textType": "block"
+  },
+  {
+    "name": "Price Per Square Foot (Land)",
+    "placeholder": "Price Per Square Foot (Land)",
+    "value": "PRICE_PER_SQUARE_FOOT_LAND",
+    "anyOfGroups": [
+      "COMPARABLE_SALE"
+    ],
+    "textType": "block"
+  },
+  {
+    "name": "Price Per Acre (Land)",
+    "placeholder": "Price Per Acre (Land)",
+    "value": "PRICE_PER_ACRE_LAND",
+    "anyOfGroups": [
+      "COMPARABLE_SALE"
+    ],
+    "textType": "block"
+  },
+  {
+    "name": "Price Per Square Foot Buildable Area",
+    "placeholder": "Price Per Square Foot Buildable Area",
+    "value": "PRICE_PER_SQUARE_FOOT_BUILDABLE_AREA",
+    "anyOfGroups": [
+      "COMPARABLE_SALE"
+    ],
+    "textType": "block"
+  },
+  {
+    "name": "Price Per Buildable Unit",
+    "placeholder": "Price Per Buildable Unit",
+    "value": "PRICE_PER_BUILDABLE_UNIT",
+    "anyOfGroups": [
+      "COMPARABLE_SALE"
+    ],
+    "textType": "block"
+  },
+  {
+    "name": "Net Operating Income (PSF)",
+    "placeholder": "Net Operating Income (PSF)",
+    "value": "NET_OPERATING_INCOME_PSF",
+    "anyOfGroups": [
+      "COMPARABLE_SALE"
+    ],
+    "textType": "block"
+  },
+  {
+    "name": "Average Monthly Rent Per Unit",
+    "placeholder": "Average Monthly Rent Per Unit",
+    "value": "AVERAGE_MONTHLY_RENT_PER_UNIT",
+    "anyOfGroups": [
+      "COMPARABLE_SALE"
+    ],
+    "textType": "block"
+  },
+  {
+    "name": "Price Per Unit",
+    "placeholder": "Price Per Unit",
+    "value": "PRICE_PER_UNIT",
+    "anyOfGroups": [
+      "COMPARABLE_SALE"
+    ],
+    "textType": "block"
+  },
+  {
+    "name": "Floor Space Index",
+    "placeholder": "Floor Space Index",
+    "value": "FLOOR_SPACE_INDEX",
+    "anyOfGroups": [
+      "COMPARABLE_SALE"
+    ],
+    "textType": "block"
+  },
+  {
+    "name": "Development Proposals",
+    "placeholder": "Development Proposals",
+    "value": "DEVELOPMENT_PROPOSALS",
+    "anyOfGroups": [
+      "COMPARABLE_SALE"
+    ],
+    "textType": "block"
+  },
+  {
+    "name": "Size of Buildable Area Total (sqft)",
+    "placeholder": "Size of Buildable Area Total (sqft)",
+    "value": "SIZE_OF_BUILDABLE_AREA_SQFT",
+    "anyOfGroups": [
+      "COMPARABLE_SALE"
+    ],
+    "textType": "block"
+  },
+  {
+    "name": "Size of Buildable Area Office (sqft)",
+    "placeholder": "Size of Buildable Area Office (sqft)",
+    "value": "SIZE_OF_BUILDABLE_AREA_OFFICE_SQFT",
+    "anyOfGroups": [
+      "COMPARABLE_SALE"
+    ],
+    "textType": "block"
+  },
+  {
+    "name": "Size of Buildable Area Residential (sqft)",
+    "placeholder": "Size of Buildable Area Residential (sqft)",
+    "value": "SIZE_OF_BUILDABLE_AREA_RESIDENTIAL_SQFT",
+    "anyOfGroups": [
+      "COMPARABLE_SALE"
+    ],
+    "textType": "block"
+  },
+  {
+    "name": "Size of Buildable Area Institutional (sqft)",
+    "placeholder": "Size of Buildable Area Institutional (sqft)",
+    "value": "SIZE_OF_BUILDABLE_AREA_INSTITUTIONAL_SQFT",
+    "anyOfGroups": [
+      "COMPARABLE_SALE"
+    ],
+    "textType": "block"
+  },
+  {
+    "name": "Size of Buildable Area Retail (sqft)",
+    "placeholder": "Size of Buildable Area Retail (sqft)",
+    "value": "SIZE_OF_BUILDABLE_AREA_RETAIL_SQFT",
+    "anyOfGroups": [
+      "COMPARABLE_SALE"
+    ],
+    "textType": "block"
+  },
+  {
+    "name": "Buildable Units",
+    "placeholder": "Buildable Units",
+    "value": "BUILDABLE_UNITS",
+    "anyOfGroups": [
+      "COMPARABLE_SALE"
+    ],
+    "textType": "block"
+  },
+  {
+    "name": "Assembly Sub-Property Address",
+    "placeholder": "Assembly Sub-Property Address",
+    "value": "ASSEMBLY_SUB_PROPERTY_ADDRESS",
+    "anyOfGroups": [
+      "COMPARABLE_SALE"
+    ],
+    "textType": "block"
+  },
+  {
+    "name": "Assembly Sub-Property Land Acreage",
+    "placeholder": "Assembly Sub-Property Land Acreage",
+    "value": "ASSEMBLY_SUB_PROPERTY_LAND_ACREAGE",
+    "anyOfGroups": [
+      "COMPARABLE_SALE"
+    ],
+    "textType": "block"
+  },
+  {
+    "name": "Assembly Sub-Property Land Square Footage",
+    "placeholder": "Assembly Sub-Property Square Footage",
+    "value": "ASSEMBLY_SUB_PROPERTY_SQUARE_FOOTAGE",
+    "anyOfGroups": [
+      "COMPARABLE_SALE"
+    ],
+    "textType": "block"
+  },
+  {
+    "name": "Assembly Sub-Property Purchase Price",
+    "placeholder": "Assembly Sub-Property Purchase Price",
+    "value": "ASSEMBLY_SUB_PROPERTY_PURCHASE_PRICE",
+    "anyOfGroups": [
+      "COMPARABLE_SALE"
+    ],
+    "textType": "block"
+  },
+  {
+    "name": "Assembly Sub-Property Purchase Date",
+    "placeholder": "Assembly Sub-Property Purchase Date",
+    "value": "ASSEMBLY_SUB_PROPERTY_PURCHASE_DATE",
+    "anyOfGroups": [
+      "COMPARABLE_SALE"
+    ],
+    "textType": "block"
+  },
+  {
+    "name": "Assembly Aggregate Price",
+    "placeholder": "Assembly Aggregate Price",
+    "value": "ASSEMBLY_AGGREGATE_PRICE",
+    "anyOfGroups": [
+      "COMPARABLE_SALE"
+    ],
+    "textType": "block"
+  },
+  {
+    "name": "Assembly Aggregate Price Per Acre Land",
+    "placeholder": "Assembly Aggregate Price Per Acre Land",
+    "value": "ASSEMBLY_AGGREGATE_PRICE_PER_ACRE_LAND",
+    "anyOfGroups": [
+      "COMPARABLE_SALE"
+    ],
+    "textType": "block"
+  },
+  {
+    "name": "Assembly Aggregate Price Per Square Foot Land",
+    "placeholder": "Assembly Aggregate Price Per Square Foot Land",
+    "value": "ASSEMBLY_AGGREGATE_PRICE_PER_SQUARE_FOOT_LAND",
+    "anyOfGroups": [
+      "COMPARABLE_SALE"
+    ],
+    "textType": "block"
+  },
+  {
+    "name": "Assembly Aggregate Price Per Square Foot Buildable Area",
+    "placeholder": "Assembly Aggregate Price Per Square Foot Buildable Area",
+    "value": "ASSEMBLY_AGGREGATE_PRICE_PER_SQUARE_FOOT_BUILDABLE_AREA",
+    "anyOfGroups": [
+      "COMPARABLE_SALE"
+    ],
+    "textType": "block"
+  },
+  {
+    "name": "Clear Ceiling Height (ft.)",
+    "placeholder": "Clear Ceiling Height (ft.)",
+    "value": "CLEAR_CEILING_HEIGHT",
+    "anyOfGroups": [
+      "COMPARABLE_SALE"
+    ],
+    "textType": "block"
+  },
+  {
+    "name": "Shipping Doors (total)",
+    "placeholder": "Shipping Doors (total)",
+    "value": "SHIPPING_DOORS",
+    "anyOfGroups": [
+      "COMPARABLE_SALE"
+    ],
+    "textType": "block"
+  },
+  {
+    "name": "Shipping Doors (drive-in)",
+    "placeholder": "Shipping Doors (drive-in)",
+    "value": "SHIPPING_DOORS_DRIVE_IN",
+    "anyOfGroups": [
+      "COMPARABLE_SALE"
+    ],
+    "textType": "block"
+  },
+  {
+    "name": "Shipping Doors (double-man)",
+    "placeholder": "Shipping Doors (double-man)",
+    "value": "SHIPPING_DOORS_DOUBLE_MAN",
+    "anyOfGroups": [
+      "COMPARABLE_SALE"
+    ],
+    "textType": "block"
+  },
+  {
+    "name": "Shipping Doors (truck-level)",
+    "placeholder": "Shipping Doors (truck-level)",
+    "value": "SHIPPING_DOORS_TRUCK_LEVEL",
+    "anyOfGroups": [
+      "COMPARABLE_SALE"
+    ],
+    "textType": "block"
+  },
+  {
+    "name": "Finished Office Percentage",
+    "placeholder": "Finished Office Percentage",
+    "value": "FINISHED_OFFICE_PERCENTAGE",
+    "anyOfGroups": [
+      "COMPARABLE_SALE"
+    ],
+    "textType": "block"
+  },
+  {
+    "name": "Finished Office Square Footage",
+    "placeholder": "Finished Office Square Footage",
+    "value": "FINISHED_OFFICE_SQUARE_FOOTAGE",
+    "anyOfGroups": [
+      "COMPARABLE_SALE"
+    ],
+    "textType": "block"
+  },
+  {
+    "name": "Price Per Bedroom",
+    "placeholder": "Price Per Bedroom",
+    "value": "PRICE_PER_BEDROOM",
+    "anyOfGroups": [
+      "COMPARABLE_SALE"
+    ],
+    "textType": "block"
+  },
+  {
+    "name": "Bachelor Units",
+    "placeholder": "Bachelor Units",
+    "value": "BACHELOR_UNITS",
+    "anyOfGroups": [
+      "COMPARABLE_SALE"
+    ],
+    "textType": "block"
+  },
+  {
+    "name": "One Bedroom Units",
+    "placeholder": "One Bedroom Units",
+    "value": "ONE_BEDROOM_UNITS",
+    "anyOfGroups": [
+      "COMPARABLE_SALE"
+    ],
+    "textType": "block"
+  },
+  {
+    "name": "Two Bedroom Units",
+    "placeholder": "Two Bedroom Units",
+    "value": "TWO_BEDROOM_UNITS",
+    "anyOfGroups": [
+      "COMPARABLE_SALE"
+    ],
+    "textType": "block"
+  },
+  {
+    "name": "Three+ Bedroom Units",
+    "placeholder": "Three+ Bedroom Units",
+    "value": "THREE_PLUS_BEDROOM_UNITS",
+    "anyOfGroups": [
+      "COMPARABLE_SALE"
+    ],
+    "textType": "block"
+  },
+  {
+    "name": "Total Bedrooms",
+    "placeholder": "Total Bedrooms",
+    "value": "TOTAL_BEDROOMS",
+    "anyOfGroups": [
+      "COMPARABLE_SALE"
+    ],
+    "textType": "block"
+  },
+  {
+    "name": "Amenity Square-Footage",
+    "placeholder": "Amenity Square-Footage",
+    "value": "AMENITY_SQUARE_FOOTAGE",
+    "anyOfGroups": [
+      "COMPARABLE_SALE"
+    ],
+    "textType": "block"
+  },
+  {
+    "name": "Amenity Description",
+    "placeholder": "Amenity Description",
+    "value": "AMENITY_DESCRIPTION",
+    "anyOfGroups": [
+      "COMPARABLE_SALE"
+    ],
+    "textType": "block"
+  },
+  {
+    "name": "Counterparty Name",
+    "placeholder": "Counterparty",
+    "value": "counterparty_name",
+    "anyOfGroups": [
+      "LEASE"
+    ],
+    "textType": "block"
+  },
+  {
+    "name": "Counterparty Address",
+    "placeholder": "Address",
+    "value": "counterparty_address",
+    "anyOfGroups": [
+      "LEASE"
+    ],
+    "textType": "block"
+  },
+  {
+    "name": "Tenancy Address",
+    "placeholder": "Tenancy Address",
+    "value": "tenancy_address",
+    "anyOfGroups": [
+      "LEASE"
+    ],
+    "textType": "block"
+  },
+  {
+    "name": "Tenancy Size",
+    "placeholder": "Tenancy Size",
+    "value": "size_square_feet",
+    "anyOfGroups": [
+      "LEASE"
+    ],
+    "textType": "block"
+  },
+  {
+    "name": "Tenancy Term",
+    "placeholder": "Tenancy Term",
+    "value": "term",
+    "anyOfGroups": [
+      "LEASE"
+    ],
+    "textType": "block"
+  },
+  {
+    "name": "Rent",
+    "placeholder": "Rent (PSF $)",
+    "value": "rent_per_square_foot",
+    "anyOfGroups": [
+      "LEASE"
+    ],
+    "textType": "block"
+  },
+  {
+    "name": "Additional Rent Terms",
+    "placeholder": "Additional Rent Terms",
+    "value": "additional_rent_terms",
+    "anyOfGroups": [
+      "LEASE"
+    ],
+    "textType": "block"
+  },
+  {
+    "name": "Free Rent",
+    "placeholder": "Free Rent",
+    "value": "free_rent",
+    "anyOfGroups": [
+      "LEASE"
+    ],
+    "textType": "block"
+  }
+]

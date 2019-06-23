@@ -39,6 +39,13 @@
       }
 
       .field-display-edit {
+        flex-grow: 1;
+        flex-shrink: 2;
+      }
+
+      .field-display-edit.management-expense-mode, .field-display-edit.management-recovery-mode
+      {
+        flex-grow: 2;
         flex-shrink: 1;
       }
     }
@@ -159,6 +166,26 @@
         }
       }
     }
+
+    tr.income-row
+    {
+      td.label-column {
+        padding-left: 10px;
+      }
+
+      .amount-column {
+        position: relative;
+        left: 15px;
+        input {
+          text-align: right;
+        }
+        input::placeholder
+        {
+          text-align: right;
+        }
+      }
+    }
+
 
     td {
       padding: 2px;

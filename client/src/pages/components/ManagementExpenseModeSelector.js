@@ -30,6 +30,15 @@ class ManagementExpenseModeSelector extends React.Component
         }
     }
 
+    allowOption(option)
+    {
+        if (this.props.exclude && this.props.exclude.indexOf(option) !== -1)
+        {
+            return false;
+        }
+        return true;
+    }
+
     render()
     {
         return (
@@ -43,9 +52,21 @@ class ManagementExpenseModeSelector extends React.Component
                 title={this.props.title || this.props.placeholder}
                 style={{"color": !this.props.value ? "lightgrey" : ""}}
             >
-                <option value={"income_statement"}>Base on Expense Statement</option>
-                <option value={"rule"}>Base on Industry Rate</option>
-                <option value={"combined_structural_rule"}>Combine with Structural Allowance</option>
+                {
+                    this.allowOption("income_statement") ?
+                        <option value={"income_statement"}>Base on Expense Statement</option>
+                        : null
+                }
+                {
+                    this.allowOption("rule") ?
+                        <option value={"rule"}>Base on Industry Rate</option>
+                        : null
+                }
+                {
+                    this.allowOption("combined_structural_rule") ?
+                        <option value={"combined_structural_rule"}>Combine with Structural Allowance</option>
+                        : null
+                }
             </select>
         );
     }

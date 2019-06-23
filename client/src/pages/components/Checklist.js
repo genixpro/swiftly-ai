@@ -3,6 +3,30 @@ import ChecklistItem from "./ChecklistItem";
 import ChecklistGroup from "./ChecklistGroup";
 
 class Checklist extends React.Component {
+
+    getFileNames(dataTypes)
+    {
+        const fileNames = [];
+        dataTypes.forEach((dataType) =>
+        {
+            if (this.props.appraisal.dataTypeReferences[dataType] && this.props.files)
+            {
+                this.props.appraisal.dataTypeReferences[dataType].forEach((reference) =>
+                {
+                    this.props.files.forEach((file) =>
+                    {
+                        if (file._id === reference.fileId && fileNames.indexOf(file.fileName) === -1)
+                        {
+                            fileNames.push(file.fileName);
+                        }
+                    })
+                });
+            }
+        });
+        return fileNames;
+    }
+
+
     render() {
         return (
             (this.props.appraisal) ?
@@ -35,6 +59,7 @@ class Checklist extends React.Component {
                     <ChecklistGroup title={"Rent Roll"}
                                    description={""}
                                    completed={this.props.appraisal.validationResult.hasRentRoll}
+                                   fileNames={this.getFileNames(["RENT_ROLL"])}
                     >
                         <ChecklistItem title={"Tenant Name"}
                                        description={"The names of tenants for all occupied units."}
@@ -60,6 +85,7 @@ class Checklist extends React.Component {
                     <ChecklistGroup title={"Financial Information"}
                                    description={""}
                                    completed={this.props.appraisal.validationResult.hasFinancialInfo}
+                                   fileNames={this.getFileNames(["INCOME_STATEMENT", "EXPENSE_STATEMENT"])}
                      >
 
                         <ChecklistItem title={"Expenses"}

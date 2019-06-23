@@ -11,6 +11,8 @@ from pyramid.security import Authenticated
 from pyramid.authorization import Allow, Deny, Everyone
 from appraisal.authorization import checkUserOwnsObject
 from pyramid.httpexceptions import HTTPForbidden
+from appraisal.components.document_processor import DocumentProcessor
+from appraisal.components.comparable_sale_data_extractor import ComparableSaleDataExtractor
 
 @resource(collection_path='/comparable_sales', path='/comparable_sales/{id}', renderer='bson', cors_enabled=True, cors_origins="*", permission="everything")
 class ComparableSaleAPI(object):
@@ -193,4 +195,31 @@ class ComparableSaleFileUploadAPI(object):
         ]
 
     def post(self):
-        data = self.request.json_body
+        # data = self.request.json_body
+
+        request = self.request
+
+        processor = DocumentProcessor(request.registry.db, request.registry.storageBucket, request.registry.modelConfig, request.registry.vectorServerURL)
+        compDataExtractor = ComparableSaleDataExtractor()
+
+        input_file = request.POST['file'].value
+        input_file_name = request.POST['fileName']
+
+        # Send through processing
+        file = processor.processFileUpload(input_file_name, input_file, None, owner=self.request.authenticated_userid, extract=False)
+
+        groups = file.extractGroups()
+
+        comps = []
+        for group in groups:
+            dataType = group[0].groups.get("DATA_TYPE")
+            if dataType == 'COMPARABLE_SALE':
+                comparableSale = processor.comparableSaleDataExtractor.extractComparable(group)
+
+                comps.append(comparableSale)
+
+
+        return {
+            "file": json.loads(file.to_json()),
+            "comparableSales": [json.loads(comp.to_json()) for comp in comps]
+        }

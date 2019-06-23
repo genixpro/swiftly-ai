@@ -18,7 +18,7 @@ class TenancyModel extends BaseModel
     static startDate = new DateField("startDate", () => new Date());
     static endDate = new DateField("endDate", () => new Date());
     static freeRentMonths = new FloatField("freeRentMonths", 0);
-    static recoveryStructure = new StringField("recoveryStructure", "Default");
+    static recoveryStructure = new StringField("recoveryStructure", "Standard");
 
     get yearlyRentPSF()
     {

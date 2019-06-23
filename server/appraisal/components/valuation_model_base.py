@@ -3,8 +3,9 @@ import datetime
 import math
 import copy
 import dateutil
+import traceback
 from appraisal.models.leasing_cost_structure import LeasingCostStructure
-
+from .valuation_errors import CalculationError
 
 class ValuationModelBase:
     """ Base class for valuation models, with some common functionality. """
@@ -117,8 +118,12 @@ class ValuationModelBase:
         for unit in appraisal.units:
             unit.calculatedVacantUnitRentLoss = 0
 
-            if unit.isVacantForStabilizedStatement and unit.squareFootage and unit.marketRent and self.getMarketRent(appraisal, unit.marketRent):
+            if unit.isVacantForStabilizedStatement and unit.squareFootage:
                 leasingCosts = self.getLeasingCostStructure(appraisal, unit.leasingCostStructure)
+
+                rentPSF = unit.currentTenancy.yearlyRent / unit.squareFootage
+                if unit.marketRent and self.getMarketRent(appraisal, unit.marketRent):
+                    rentPSF = self.getMarketRent(appraisal, unit.marketRent)
 
                 if unit.currentTenancy.rentType == 'net':
                     currentRecoveryLoss = self.computeOperatingExpenseRecoveriesForUnit(appraisal, unit) / 12.0 * leasingCosts.renewalPeriod \
@@ -127,12 +132,12 @@ class ValuationModelBase:
                 else:
                     currentRecoveryLoss = 0
 
-                currentRentLoss = (self.getMarketRent(appraisal, unit.marketRent) * unit.squareFootage) / 12.0 * leasingCosts.renewalPeriod
+                currentRentLoss = (rentPSF * unit.squareFootage) / 12.0 * leasingCosts.renewalPeriod
 
                 currentTotalLoss = currentRecoveryLoss + currentRentLoss
 
                 unit.calculatedVacantUnitRentLoss += currentTotalLoss
-                total += currentRentLoss + currentTotalLoss
+                total += currentTotalLoss
 
         return -total
 
@@ -273,7 +278,16 @@ class ValuationModelBase:
 
         return total
 
-    def getCalculationField(self, appraisal, name):
+    def getCalculationField(self, appraisal, name, recursionLimit=10):
+        # Check stack to prevent infinite recursion
+        stack = traceback.extract_stack()
+        count = 0
+        for frame in stack:
+            if frame.name == 'getCalculationField':
+                count += 1
+                if count >= recursionLimit:
+                    raise CalculationError(f"Unable to calculate due to a recursive loop in calculation, E.g. {name} is being calculated based on itself somehow.")
+
         if name == "operatingExpenses":
             return self.computeTotalOperatingExpenses(appraisal)
         if name == "managementExpenses":

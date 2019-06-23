@@ -10,7 +10,7 @@ from pprint import pprint
 from appraisal.models.discounted_cash_flow import MonthlyCashFlowItem, YearlyCashFlowItem, DiscountedCashFlow, DiscountedCashFlowSummary, DiscountedCashFlowSummaryItem
 from appraisal.models.stabilized_statement import StabilizedStatement
 from appraisal.components.valuation_model_base import ValuationModelBase
-
+from .valuation_errors import CalculationError
 
 class StabilizedStatementModel(ValuationModelBase):
     """ This class encapsulates the code required for producing a stabilized statement"""
@@ -19,37 +19,40 @@ class StabilizedStatementModel(ValuationModelBase):
     def createStabilizedStatement(self, appraisal):
         statement = StabilizedStatement()
 
-        statement.rentalIncome = self.computeRentalIncome(appraisal)
-        statement.additionalIncome = self.computeAdditionalIncome(appraisal)
+        statement.calculationErrorFields = []
+        statement.calculationErrors = {}
 
-        statement.managementExpenses = self.computeManagementFees(appraisal)
+        self.calculateValueWithErrorChecking(statement, 'rentalIncome', lambda: self.computeRentalIncome(appraisal))
+        self.calculateValueWithErrorChecking(statement, 'additionalIncome', lambda: self.computeAdditionalIncome(appraisal))
+
+        self.calculateValueWithErrorChecking(statement, 'managementExpenses', lambda: self.computeManagementFees(appraisal))
 
         if appraisal.stabilizedStatementInputs.expensesMode == 'income_statement':
-            statement.operatingExpenses = self.computeTotalOperatingExpenses(appraisal)
-            statement.taxes = self.computeTaxes(appraisal)
+            self.calculateValueWithErrorChecking(statement, 'operatingExpenses', lambda: self.computeTotalOperatingExpenses(appraisal))
+            self.calculateValueWithErrorChecking(statement, 'taxes', lambda: self.computeTaxes(appraisal))
         elif appraisal.stabilizedStatementInputs.expensesMode == 'tmi':
             if appraisal.sizeOfBuilding and appraisal.stabilizedStatementInputs.tmiRatePSF:
-                statement.tmiTotal = appraisal.stabilizedStatementInputs.tmiRatePSF * appraisal.sizeOfBuilding
+                self.calculateValueWithErrorChecking(statement, 'tmiTotal', lambda: appraisal.stabilizedStatementInputs.tmiRatePSF * appraisal.sizeOfBuilding)
             else:
                 statement.tmiTotal = 0
 
-        statement.marketRentDifferential = self.computeMarketRentDifferentials(appraisal)
-        statement.freeRentRentLoss = self.computeFreeRentRentLoss(appraisal)
+        self.calculateValueWithErrorChecking(statement, 'marketRentDifferential', lambda: self.computeMarketRentDifferentials(appraisal))
+        self.calculateValueWithErrorChecking(statement, 'freeRentRentLoss', lambda: self.computeFreeRentRentLoss(appraisal))
 
-        statement.vacantUnitRentLoss = self.computeVacantUnitRentLoss(appraisal)
-        statement.vacantUnitLeasupCosts = self.computeVacantUnitLeasupCosts(appraisal)
+        self.calculateValueWithErrorChecking(statement, 'vacantUnitRentLoss', lambda: self.computeVacantUnitRentLoss(appraisal))
+        self.calculateValueWithErrorChecking(statement, 'vacantUnitLeasupCosts', lambda: self.computeVacantUnitLeasupCosts(appraisal))
 
-        statement.amortizedCapitalInvestment = self.computeAmortizedCapitalInvestment(appraisal)
-        statement.managementRecovery = self.computeManagementRecoveries(appraisal)
-        statement.operatingExpenseRecovery = self.computeOperatingExpenseRecoveries(appraisal)
-        statement.taxRecovery = self.computeTaxRecoveries(appraisal)
-        statement.recoverableIncome = self.computeTotalRecoverableIncome(appraisal)
+        self.calculateValueWithErrorChecking(statement, 'amortizedCapitalInvestment', lambda: self.computeAmortizedCapitalInvestment(appraisal))
+        self.calculateValueWithErrorChecking(statement, 'managementRecovery', lambda: self.computeManagementRecoveries(appraisal))
+        self.calculateValueWithErrorChecking(statement, 'operatingExpenseRecovery', lambda: self.computeOperatingExpenseRecoveries(appraisal))
+        self.calculateValueWithErrorChecking(statement, 'taxRecovery', lambda: self.computeTaxRecoveries(appraisal))
+        self.calculateValueWithErrorChecking(statement, 'recoverableIncome', lambda: self.computeTotalRecoverableIncome(appraisal))
         
-        statement.potentialGrossIncome = self.computePotentialGrossIncome(appraisal)
+        self.calculateValueWithErrorChecking(statement, 'potentialGrossIncome', lambda: self.computePotentialGrossIncome(appraisal))
 
-        statement.vacancyDeduction = self.computeVacancyDeduction(appraisal)
+        self.calculateValueWithErrorChecking(statement, 'vacancyDeduction', lambda: self.computeVacancyDeduction(appraisal))
 
-        statement.effectiveGrossIncome = self.computeEffectiveGrossIncome(appraisal)
+        self.calculateValueWithErrorChecking(statement, 'effectiveGrossIncome', lambda: self.computeEffectiveGrossIncome(appraisal))
 
         if appraisal.stabilizedStatementInputs.managementExpenseMode != 'combined_structural_rule':
             statement.structuralAllowance = statement.potentialGrossIncome * (appraisal.stabilizedStatementInputs.structuralAllowancePercent / 100.0)
@@ -94,3 +97,11 @@ class StabilizedStatementModel(ValuationModelBase):
             statement.valuationRounded = round(statement.valuation, -int(math.floor(math.log10(abs(statement.valuation)))) + 2) # Round to 3 significant figures
 
         return statement
+
+    def calculateValueWithErrorChecking(self, statement, valueName, valueFunc):
+        try:
+            setattr(statement, valueName, valueFunc())
+        except CalculationError as error:
+            setattr(statement, valueName, 0)
+            statement.calculationErrorFields.append(valueName)
+            statement.calculationErrors[valueName] = str(error)

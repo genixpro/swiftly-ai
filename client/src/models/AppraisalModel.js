@@ -3,6 +3,7 @@ import GenericField from "../orm/GenericField";
 import ModelField from "../orm/ModelField";
 import ListField from "../orm/ListField";
 import UnitModel from "./UnitModel";
+import DictField from "../orm/DictField";
 import IncomeStatementModel from "./IncomeStatementModel";
 import DiscountedCashFlowInputsModel from "./DiscountedCashFlowInputsModel";
 import DiscountedCashFlowModel from "./DiscountedCashFlowModel";
@@ -15,6 +16,7 @@ import MarketRentModel from "./MarketRentModel";
 import RecoveryStructureModel from "./RecoveryStructureModel";
 import BaseModel from "../orm/BaseModel";
 import AmortizationScheduleModel from "./AmortizationScheduleModel";
+import ExtractionReferenceModel from "./ExtractionReferenceModel";
 import StringField from "../orm/StringField";
 import FloatField from "../orm/FloatField";
 import DateField from "../orm/DateField";
@@ -31,6 +33,8 @@ class AppraisalModel extends BaseModel
     static appraisalName = new StringField("name");
     static address = new StringField();
     static owner = new StringField();
+
+    static appraisalType = new StringField("appraisalType", "detailed");
 
     static client = new StringField();
     static location = new GenericField();
@@ -68,6 +72,46 @@ class AppraisalModel extends BaseModel
     static amortizationSchedule = new ModelField(AmortizationScheduleModel);
     static leasingCosts = new ListField(new ModelField(LeasingCostStructureModel));
 
+    static dataTypeReferences = new DictField(new ListField(new ModelField(ExtractionReferenceModel)));
+
+
+    leasingCostsForUnit(unit)
+    {
+        for(let leasingCost of this.leasingCosts)
+        {
+            if (leasingCost.name === unit.leasingCostStructure)
+            {
+                return leasingCost;
+            }
+        }
+
+        for(let leasingCost of this.leasingCosts)
+        {
+            if (leasingCost.name === LeasingCostStructureModel.defaultLeasingCostName)
+            {
+                return leasingCost;
+            }
+        }
+    }
+
+    recoveryStructureForUnit(unit)
+    {
+        for(let recoveryStructure of this.recoveryStructures)
+        {
+            if (recoveryStructure.name === unit.recoveryStructure)
+            {
+                return recoveryStructure;
+            }
+        }
+
+        for(let recoveryStructure of this.recoveryStructures)
+        {
+            if (recoveryStructure.isDefault)
+            {
+                return recoveryStructure;
+            }
+        }
+    }
 
     getEffectiveDate()
     {

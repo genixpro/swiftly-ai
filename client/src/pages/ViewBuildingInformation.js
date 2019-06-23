@@ -36,6 +36,7 @@ class ViewBuildingInformation extends React.Component
                     type={fieldType}
                     value={this.props.appraisal[fieldName]}
                     onChange={(newValue) => this.changeAppraisalField(fieldName, newValue)}
+                    location={this.props.appraisal.location ? {lat: () => this.props.appraisal.location.coordinates[1], lng: () => this.props.appraisal.location.coordinates[0]} : null}
                     onGeoChange={(newValue) => this.changeAppraisalField("location", {"type": "Point", "coordinates": [newValue.lng, newValue.lat]} )}
                 />
             </td>

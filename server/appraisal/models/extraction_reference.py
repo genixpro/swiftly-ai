@@ -16,4 +16,7 @@ class ExtractionReference(EmbeddedDocument):
     # A list of word-indexes from which the data was pulled in
     wordIndexes = ListField(IntField())
 
+    # A list of page-numbers from which the data was pulled in
+    pageNumbers = ListField(IntField())
+
 

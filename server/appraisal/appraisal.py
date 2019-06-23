@@ -33,7 +33,7 @@ class AppraisalAPI(object):
         if "view_all" not in self.request.effective_principals:
             query["owner"] = self.request.authenticated_userid
 
-        appraisals = Appraisal.objects(**query).only('name', 'address')
+        appraisals = Appraisal.objects(**query).only('name', 'address', 'appraisalType')
 
         return {"appraisals": [json.loads(appraisal.to_json()) for appraisal in appraisals]}
 

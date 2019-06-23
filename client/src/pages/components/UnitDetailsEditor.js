@@ -14,16 +14,21 @@ import IntegerFormat from "./IntegerFormat";
 import moment from "moment/moment";
 import PercentFormat from "./PercentFormat";
 import AreaFormat from "./AreaFormat";
-import Moment from "react-moment";
 import PropTypes from "prop-types";
+import LeasingCostStructureModel from "../../models/LeasingCostStructureModel";
+import MarketRentModel from "../../models/MarketRentModel";
+import LeasingCostsForUnitCalculationPopoverWrapper from "./LeasingCostsForUnitCalculationPopoverWrapper";
+import VacantRentLossForUnitCalculationPopoverWrapper from "./VacantRentLossForUnitCalculationPopoverWrapper";
+import MarketRentDifferentialForUnitCalculationPopoverWrapper from "./MarketRentDifferentialForUnitCalculationPopoverWrapper";
+import FreeRentLossForUnitCalculationPopoverWrapper from "./FreeRentLossForUnitCalculationPopoverWrapper";
+import ExpenseRecoveryForUnitCalculationPopoverWrapper from "./ExpenseRecoveryForUnitCalculationPopoverWrapper";
+import ManagementRecoveriesForUnitCalculationPopoverWrapper from "./ManagementRecoveriesForUnitCalculationPopoverWrapper";
 
 class UnitDetailsEditor extends React.Component
 {
     static instance = 0;
 
-    state = {
-
-    };
+    state = {};
 
     static propTypes = {
         unit: PropTypes.instanceOf(UnitModel).isRequired
@@ -187,12 +192,123 @@ class UnitDetailsEditor extends React.Component
 
     changeUnitField(field, newValue)
     {
-        this.props.props[field] = newValue;
+        this.props.unit[field] = newValue;
 
         this.props.onChange(this.props.unit);
     }
 
-    changeAllTenantField(tenantInfo, field, newValue)
+    getUnitLeasingCosts()
+    {
+        for (let leasingCosts of this.props.appraisal.leasingCosts)
+        {
+            if (leasingCosts.name === this.props.unit.leasingCostStructure)
+            {
+                return leasingCosts;
+            }
+        }
+
+        for (let leasingCosts of this.props.appraisal.leasingCosts)
+        {
+            if (leasingCosts.name === LeasingCostStructureModel.defaultLeasingCostName)
+            {
+                return leasingCosts;
+            }
+        }
+    }
+
+
+    getUnitMarketRent()
+    {
+        for (let marketRent of this.props.appraisal.marketRents)
+        {
+            if (marketRent.name === this.props.unit.marketRent)
+            {
+                return marketRent;
+            }
+        }
+
+        return null;
+    }
+
+    ensureUniqueMarketRent()
+    {
+        const currentMarketRent = this.getUnitMarketRent();
+        if (currentMarketRent === null)
+        {
+            // alert("ensuring unique");
+            const marketRent = MarketRentModel.create({
+                name: "New Leasing Structure " + (this.props.appraisal.leasingCosts.length + 1).toString(),
+                amountPSF: this.props.unit.currentTenancy.yearlyRent / this.props.unit.squareFootage
+            }, this.props.appraisal.stabilizedStatement, 'marketRents');
+
+            this.props.appraisal.marketRents.push(marketRent);
+            this.props.unit.marketRent = marketRent.name;
+            this.props.onChange(this.props.unit);
+        }
+    }
+
+
+    changeMarketRentField(field, newValue)
+    {
+        this.ensureUniqueMarketRent();
+
+        if (field === 'amountPSF' && newValue === null)
+        {
+            for (let marketRent of this.props.appraisal.marketRents)
+            {
+                if (marketRent.name === this.props.unit.marketRent)
+                {
+                    this.props.appraisal.marketRents.splice(this.props.appraisal.marketRents.indexOf(marketRent), 1);
+                }
+            }
+            this.props.unit.marketRent = null;
+
+            this.props.onChange(this.props.unit);
+        }
+        else
+        {
+            const marketRent = this.getUnitMarketRent();
+
+            marketRent[field] = newValue;
+
+            this.props.onChange(this.props.unit);
+        }
+    }
+
+
+    ensureUniqueLeasingCosts()
+    {
+        const currentLeasingCosts = this.getUnitLeasingCosts();
+        if (currentLeasingCosts.isDefault)
+        {
+            // alert("ensuring unique");
+            const newLeasingCosts = LeasingCostStructureModel.create({
+                name: "New Leasing Structure " + (this.props.appraisal.leasingCosts.length + 1).toString(),
+                leasingCommissionPSF: currentLeasingCosts.leasingCommissionPSF,
+                tenantInducementsPSF: currentLeasingCosts.tenantInducementsPSF,
+                renewalPeriod: currentLeasingCosts.renewalPeriod,
+                leasingPeriod: currentLeasingCosts.leasingPeriod
+            }, this.props.appraisal, 'leasingCosts');
+
+            this.props.appraisal.leasingCosts.push(newLeasingCosts);
+            this.props.unit.leasingCostStructure = newLeasingCosts.name;
+            this.props.onChange(this.props.unit);
+        }
+    }
+
+
+    changeLeasingCostField(field, newValue)
+    {
+        this.ensureUniqueLeasingCosts();
+
+        const leasingCostStructure = this.getUnitLeasingCosts();
+
+        leasingCostStructure[field] = newValue;
+
+        this.props.onChange(this.props.unit);
+    }
+
+    changeAllTenantField(field, newValue)
     {
         this.props.appraisal.units.forEach((unit) =>
         {
@@ -229,205 +345,32 @@ class UnitDetailsEditor extends React.Component
         this.props.onChange(this.props.unit);
     }
 
-    calculateDifferentialMonths()
+    changeStabilizedInput(field, newValue)
     {
-        if (!this.props.unit || this.state.selectedUnitIndex === null)
-        {
-            return null;
-        }
-
-        const marketRentDifferentialStateDate = moment(this.props.appraisal.getEffectiveDate());
-        const marketRentDifferentialEndDate = moment(this.props.unit.currentTenancy.endDate);
-
-        const differentialMonths = [];
-
-        const currentDate = marketRentDifferentialStateDate;
-
-        const presentDifferentialPSF = (this.props.unit.currentTenancy.yearlyRent / this.props.unit.squareFootage) - this.props.unit.marketRentAmount;
-
-        const monthlyDifferentialCashflow = (presentDifferentialPSF * this.props.unit.squareFootage) / 12.0;
-
-        const monthlyDiscount = Math.pow(1.0 + (this.props.appraisal.stabilizedStatementInputs.marketRentDifferentialDiscountRate / 100), 1 / 12.0);
-
-        let month = 0;
-
-        while(currentDate.toDate().getTime() <= marketRentDifferentialEndDate.toDate().getTime())
-        {
-            const totalDiscount = monthlyDiscount ** month;
-
-            const presentValue = monthlyDifferentialCashflow / totalDiscount;
-
-            differentialMonths.push({
-                date: currentDate.clone().toDate(),
-                month: month,
-                currentRent: this.props.unit.currentTenancy.yearlyRent / 12,
-                marketRent: this.props.unit.marketRentAmount * this.props.unit.squareFootage / 12,
-                presentMonthlyCashFlow: monthlyDifferentialCashflow,
-                discount: totalDiscount,
-                presentValue: presentValue,
-
-            });
-
-            currentDate.add(1, "months");
-            month += 1;
-        }
-
-        return differentialMonths;
+        this.props.appraisal.stabilizedStatementInputs[field] = newValue;
+        this.props.onChange(this.props.unit);
     }
+
 
     render()
     {
         const popoverId = `market-rent-differential-popover`;
 
-        const differentialMonths = this.calculateDifferentialMonths();
-
-        return <Col>
-                {/*<Card outline color="primary" className="mb-3">*/}
-                <h3>Tenant Information</h3>
-                {/*<CardHeader className="text-white bg-primary">Tenant Information</CardHeader>*/}
-                {/*<CardBody>*/}
-                <table className="table tenant-information-table">
+        return <Col className={"unit-details-editor"}>
+                <div>
+                    {/*<Card outline color="primary" className="mb-3">*/}
+                    <h4 className={"unit-section-title"}>Tenancy & Escalation Schedule</h4>
+                </div>
+                <table>
                     <tbody>
-                    <tr>
-                        <td>
-                            <strong>Unit Number</strong>
-                        </td>
-                        <td>
-                            <FieldDisplayEdit placeholder={"Unit Number"}
-                                              value={this.props.unit.unitNumber}
-                                              type={"text"}
-                                              onChange={(newValue) => this.changeUnitField('unitNumber', newValue)}/>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <strong>Floor Number</strong>
-                        </td>
-                        <td>
-                            <FieldDisplayEdit
-                                placeholder={"Floor Number"}
-                                value={this.props.unit.floorNumber}
-                                onChange={(newValue) => this.changeUnitField('floorNumber', newValue)}
-                                type={"number"}
-                            />
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <strong>Unit Size</strong>
-                        </td>
-                        <td>
-                            <FieldDisplayEdit type="area" placeholder={"Unit Size"} value={this.props.unit.squareFootage}
-                                              onChange={(newValue) => this.changeUnitField('squareFootage', newValue)}/>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <strong>Tenant Name</strong>
-                        </td>
-                        <td>
-                            <FieldDisplayEdit placeholder={"Tenant Name"} value={this.props.unit.currentTenancy.name}
-                                              onChange={(newValue) => this.changeAllTenantField(this.props.unit.currentTenancy, 'name', newValue)}/>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <strong>Net / Gross</strong>
-                        </td>
-                        <td>
-                            <FieldDisplayEdit type="rentType" value={this.props.unit.currentTenancy.rentType}
-                                              onChange={(newValue) => this.changeAllTenantField(this.props.unit.currentTenancy, 'rentType', newValue)}/>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <strong>Market Rent</strong>
-                        </td>
-                        <td>
-                            <FieldDisplayEdit type="marketRent" placeholder={"Market Rent"} marketRents={this.props.appraisal.marketRents}
-                                              value={this.props.unit.marketRent}
-                                              onChange={(newValue) => this.changeUnitField('marketRent', newValue)}/>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <strong>Free Rent Period (months)</strong>
-                        </td>
-                        <td>
-                            <FieldDisplayEdit type="months" placeholder={"Free Rent Period (months)"}
-                                              value={this.props.unit.currentTenancy.freeRentMonths}
-                                              onChange={(newValue) => this.changeTenancyField(this.props.unit.currentTenancy, 'freeRentMonths', newValue)}/>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <strong>Free Rent Type</strong>
-                        </td>
-                        <td>
-                            <FieldDisplayEdit type="rentType"
-                                              value={this.props.unit.currentTenancy.freeRentType}
-                                              onChange={(newValue) => this.changeAllTenantField(this.props.unit.currentTenancy, 'freeRentType', newValue)}/>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <strong>Recovery Structure</strong>
-                        </td>
-                        <td>
-                            <FieldDisplayEdit type="recoveryStructure" placeholder={"Recovery Structure"}
-                                              recoveryStructures={this.props.appraisal.recoveryStructures}
-                                              value={this.props.unit.currentTenancy.recoveryStructure}
-                                              onChange={(newValue) => this.changeAllTenantField(this.props.unit.currentTenancy, 'recoveryStructure', newValue)}/>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <strong>Leasing Cost Structure</strong>
-                        </td>
-                        <td>
-                            <FieldDisplayEdit type="leasingCostStructure" placeholder={"Leasing Cost Structure"}
-                                              leasingCostStructures={this.props.appraisal.leasingCosts}
-                                              value={this.props.unit.leasingCostStructure}
-                                              onChange={(newValue) => this.changeUnitField('leasingCostStructure', newValue)}/>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <strong>Remarks</strong>
-                        </td>
-                        <td>
-                            <FieldDisplayEdit value={this.props.unit.remarks} placeholder={"Remarks"}
-                                              onChange={(newValue) => this.changeUnitField('remarks', newValue)}/>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <strong>Consider as Vacant Unit</strong>
-                        </td>
-                        <td style={{"paddingTop": "10px", "paddingLeft": "15px", "paddingBottom": "10px"}}>
-                            <FieldDisplayEdit
-                                value={this.props.unit.isVacantForStabilizedStatement}
-                                type={"boolean"}
-                                hideIcon={true}
-                                placeholder={"Treat Unit as Vacant?"}
-                                onChange={(newValue) => this.changeUnitField('shouldTreatAsVacant', newValue)}
-                            />
-                        </td>
-                    </tr>
-                    <tr>
-                        <td colSpan={2}>
-                            <br/>
-                            <h3>Financials</h3>
-                        </td>
-                    </tr>
                     <tr className={"stats-row"}>
                         <td>
-                            <strong>Stabilized Annual Rent</strong>
+                            <strong>Current Annual Rent (psf)</strong>
                         </td>
                         <td className={"stabilized-rent-column"}>
-                                                        <span style={{"marginLeft": "10px"}}>
-                                                            <CurrencyFormat value={this.props.unit.stabilizedRent} cents={false}/>
-                                                        </span>
+                                                            <span style={{"marginLeft": "10px"}}>
+                                                                <CurrencyFormat value={this.props.unit.squareFootage ? this.props.unit.stabilizedRent / this.props.unit.squareFootage : null} cents={true}/>
+                                                            </span>
 
                             <div className={"use-market-rent-selector-container"}>
                                 {
@@ -442,6 +385,19 @@ class UnitDetailsEditor extends React.Component
                                             <br/>
                                         </div> : null
                                 }
+                            </div>
+                        </td>
+                    </tr>
+                    <tr className={"stats-row"}>
+                        <td>
+                            <strong>Current Annual Rent</strong>
+                        </td>
+                        <td className={"stabilized-rent-column"}>
+                                                            <span style={{"marginLeft": "10px"}}>
+                                                                <CurrencyFormat value={this.props.unit.stabilizedRent} cents={false}/>
+                                                            </span>
+
+                            <div className={"use-market-rent-selector-container"}>
                                 {
                                     this.props.unit.marketRent ?
                                         <div className={"use-market-rent-selector"}>
@@ -454,325 +410,494 @@ class UnitDetailsEditor extends React.Component
                             </div>
                         </td>
                     </tr>
-                    {
-                        this.props.unit.calculatedManagementRecovery ?
-                            <tr className={"stats-row"}>
-                                <td>
-                                    <Link to={`/appraisal/${this.props.appraisal._id}/tenants/recovery_structures`}>
-                                        <strong>Calculated Management Recovery</strong>
-                                    </Link>
-                                </td>
-                                <td>
-                                                        <span style={{"marginLeft": "10px"}}>
-                                                        <Link to={`/appraisal/${this.props.appraisal._id}/tenants/recovery_structures`}>
-                                                            <CurrencyFormat value={this.props.unit.calculatedManagementRecovery}/>
-                                                        </Link>
-                                                        </span>
-                                </td>
-                            </tr> : null
-                    }
+                    </tbody>
+                </table>
+                <br/>
+                <div>
+                    {/*<Card outline color="primary" className="mb-3">*/}
+                    {/*<CardHeader className="text-white bg-primary">Tenancy & Escalation Schedule</CardHeader>*/}
+                    {/*<CardBody>*/}
+                    <table className="table tenancies-table">
+                        <thead>
+                        <tr>
+                            <td>Tenant Name</td>
+                            <td>Term Start</td>
+                            <td>Term End</td>
+                            <td>Net / Gross</td>
+                            <td>Annual Rent (psf)</td>
+                            <td>Annual Rent</td>
+                            <td className="action-column"/>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {
+                            this.props.unit.tenancies.map((tenancy, tenancyIndex) =>
+                            {
+                                return this.renderTenancy(tenancy, tenancyIndex);
+                            }).concat([this.renderNewTenancyRow()])
+                        }
+                        </tbody>
 
-                    {
-                        this.props.unit.calculatedExpenseRecovery ?
-                            <tr className={"stats-row"}>
-                                <td>
-                                    <Link to={`/appraisal/${this.props.appraisal._id}/tenants/recovery_structures`}>
-                                        <strong>Calculated Operating Expense Recovery</strong>
-                                    </Link>
-                                </td>
-                                <td>
+                    </table>
+                </div>
+            <br/>
+            <h4 className={"unit-section-title"}>Tenant Information</h4>
+            {/*<CardHeader className="text-white bg-primary">Tenant Information</CardHeader>*/}
+            {/*<CardBody>*/}
+            <table className="table tenant-information-table">
+                <tbody>
+                <tr>
+                    <td>
+                        <strong>Tenant Name</strong>
+                    </td>
+                    <td>
+                        <FieldDisplayEdit placeholder={"Tenant Name"} value={this.props.unit.currentTenancy.name}
+                                          onChange={(newValue) => this.changeAllTenantField('name', newValue)}/>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <strong>Unit Number</strong>
+                    </td>
+                    <td>
+                        <FieldDisplayEdit placeholder={"Unit Number"}
+                                          value={this.props.unit.unitNumber}
+                                          type={"text"}
+                                          onChange={(newValue) => this.changeUnitField('unitNumber', newValue)}/>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <strong>Floor Number</strong>
+                    </td>
+                    <td>
+                        <FieldDisplayEdit
+                            placeholder={"Floor Number"}
+                            value={this.props.unit.floorNumber}
+                            onChange={(newValue) => this.changeUnitField('floorNumber', newValue)}
+                            type={"number"}
+                        />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <strong>Unit Size</strong>
+                    </td>
+                    <td>
+                        <FieldDisplayEdit type="area" placeholder={"Unit Size"} value={this.props.unit.squareFootage}
+                                          onChange={(newValue) => this.changeUnitField('squareFootage', newValue)}/>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <strong>Net / Gross</strong>
+                    </td>
+                    <td>
+                        <FieldDisplayEdit type="rentType" value={this.props.unit.currentTenancy.rentType}
+                                          onChange={(newValue) => this.changeAllTenantField('rentType', newValue)}/>
+                    </td>
+                </tr>
+                {
+                    this.props.appraisal.appraisalType === "detailed" ?
+                        <tr>
+                            <td>
+                                <strong>Free Rent Period (months)</strong>
+                            </td>
+                            <td>
+                                <FieldDisplayEdit type="months" placeholder={"Free Rent Period (months)"}
+                                                  value={this.props.unit.currentTenancy.freeRentMonths}
+                                                  onChange={(newValue) => this.changeTenancyField(this.props.unit.currentTenancy, 'freeRentMonths', newValue)}/>
+                            </td>
+                        </tr> : null
+                }
+                {
+                    this.props.appraisal.appraisalType === "detailed" ?
+                        <tr>
+                            <td>
+                                <strong>Free Rent Type</strong>
+                            </td>
+                            <td>
+                                <FieldDisplayEdit type="rentType"
+                                                  value={this.props.unit.currentTenancy.freeRentType}
+                                                  onChange={(newValue) => this.changeAllTenantField('freeRentType', newValue)}/>
+                            </td>
+                        </tr> : null
+                }
+                {
+                    this.props.appraisal.appraisalType === "detailed" ?
+                        <tr>
+                            <td>
+                                <strong>Recovery Structure</strong>
+                            </td>
+                            <td>
+                                <FieldDisplayEdit type="recoveryStructure" placeholder={"Recovery Structure"}
+                                                  recoveryStructures={this.props.appraisal.recoveryStructures}
+                                                  value={this.props.unit.currentTenancy.recoveryStructure}
+                                                  onChange={(newValue) => this.changeAllTenantField('recoveryStructure', newValue)}/>
+                            </td>
+                        </tr> : null
+                }
+                {
+                    this.props.appraisal.appraisalType === "detailed" ?
+                        <tr>
+                            <td>
+                                <strong>Leasing Cost Structure</strong>
+                            </td>
+                            <td>
+                                <FieldDisplayEdit type="leasingCostStructure" placeholder={"Leasing Cost Structure"}
+                                                  leasingCostStructures={this.props.appraisal.leasingCosts}
+                                                  value={this.props.unit.leasingCostStructure}
+                                                  onChange={(newValue) => this.changeUnitField('leasingCostStructure', newValue)}/>
+                            </td>
+                        </tr> : null
+                }
+                <tr>
+                    <td>
+                        <strong>Remarks</strong>
+                    </td>
+                    <td>
+                        <FieldDisplayEdit value={this.props.unit.remarks} placeholder={"Remarks"}
+                                          onChange={(newValue) => this.changeUnitField('remarks', newValue)}/>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <strong>Consider as Vacant Unit</strong>
+                    </td>
+                    <td style={{"paddingTop": "10px", "paddingLeft": "15px", "paddingBottom": "10px"}}>
+                        <FieldDisplayEdit
+                            value={this.props.unit.isVacantForStabilizedStatement}
+                            type={"boolean"}
+                            hideIcon={true}
+                            placeholder={"Treat Unit as Vacant?"}
+                            onChange={(newValue) => this.changeUnitField('shouldTreatAsVacant', newValue)}
+                        />
+                    </td>
+                </tr>
+                {
+                    this.props.appraisal.appraisalType === 'simple' && this.props.unit.isVacantForStabilizedStatement ?
+                        <tr>
+                            <td>
+                                <strong>Leasing Commission</strong>
+                            </td>
+                            <td className={"leasing-commission-line"}>
+                                {
+                                    this.getUnitLeasingCosts().leasingCommissionMode === 'psf' ?
+                                        <FieldDisplayEdit
+                                            type="currency"
+                                            value={this.getUnitLeasingCosts().leasingCommissionPSF}
+                                            hideInput={true}
+                                            hideIcon={true}
+                                            onChange={(newValue) => this.changeLeasingCostField('leasingCommissionPSF', newValue)}
+                                        /> : null
+                                }
+                                <FieldDisplayEdit
+                                    type="leasingCommissionMode"
+                                    value={this.getUnitLeasingCosts().leasingCommissionMode}
+                                    hideInput={true}
+                                    hideIcon={true}
+                                    onChange={(newValue) => this.changeLeasingCostField('leasingCommissionMode', newValue)}
+                                />
+                            </td>
+                        </tr> : null
+                }
+                {
+                    this.props.appraisal.appraisalType === 'simple' && this.props.unit.isVacantForStabilizedStatement && this.getUnitLeasingCosts().leasingCommissionMode === 'percent_of_rent' ?
+                        <tr>
+                            <td>
+                                <strong>Leasing Commission - Year 1</strong>
+                            </td>
+                            <td>
+                                <FieldDisplayEdit
+                                    type="percent"
+                                    value={this.getUnitLeasingCosts().leasingCommissionPercentYearOne}
+                                    hideInput={true}
+                                    hideIcon={true}
+                                    onChange={(newValue) => this.changeLeasingCostField('leasingCommissionPercentYearOne', newValue)}
+                                />
+                            </td>
+                        </tr> : null
+                }
+                {
+                    this.props.appraisal.appraisalType === 'simple' && this.props.unit.isVacantForStabilizedStatement && this.getUnitLeasingCosts().leasingCommissionMode === 'percent_of_rent' ?
+                        <tr>
+                            <td>
+                                <strong>Leasing Commission - Remaining Years</strong>
+                            </td>
+                            <td>
+                                <FieldDisplayEdit
+                                    type="percent"
+                                    value={this.getUnitLeasingCosts().leasingCommissionPercentRemainingYears}
+                                    hideInput={true}
+                                    hideIcon={true}
+                                    onChange={(newValue) => this.changeLeasingCostField('leasingCommissionPercentRemainingYears', newValue)}
+                                />
+                            </td>
+                        </tr> : null
+                }
+                {
+                    this.props.appraisal.appraisalType === 'simple' && this.props.unit.isVacantForStabilizedStatement ?
+                        <tr>
+                            <td>
+                                <strong>Tenant Inducements (psf)</strong>
+                            </td>
+                            <td>
+                                <FieldDisplayEdit placeholder={"Leasing Costs (psf)"}
+                                                  value={this.getUnitLeasingCosts().tenantInducementsPSF}
+                                                  type={"currency"}
+                                                  onChange={(newValue) => this.changeLeasingCostField('tenantInducementsPSF', newValue)}/>
+                            </td>
+                        </tr> : null
+                }
+                {
+                    this.props.appraisal.appraisalType === 'simple' && this.props.unit.isVacantForStabilizedStatement ?
+                        <tr>
+                            <td>
+                                <strong>Renewal Period</strong>
+                            </td>
+                            <td>
+                                <FieldDisplayEdit placeholder={"Leasing Renewal Period"}
+                                                  value={this.getUnitLeasingCosts().renewalPeriod}
+                                                  type={"months"}
+                                                  onChange={(newValue) => this.changeLeasingCostField('renewalPeriod', newValue)}/>
+                            </td>
+                        </tr> : null
+                }
+                <tr>
+                    <td colSpan={2}>
+                        <br/>
+                        <h4 className={"unit-section-title"}>Financials</h4>
+                    </td>
+                </tr>
+                {
+                    this.props.appraisal.appraisalType === "simple" ?
+                        <tr>
+                            <td>
+                                <strong>Market Rent (psf)</strong>
+                            </td>
+                            <td>
+                                <FieldDisplayEdit placeholder={"Market Rent (psf)"}
+                                                  value={this.getUnitMarketRent() ? this.getUnitMarketRent().amountPSF : null}
+                                                  type={"currency"}
+                                                  onChange={(newValue) => this.changeMarketRentField('amountPSF', newValue)}/>
+                            </td>
+                        </tr> : null
+                }
+                {
+                    this.props.appraisal.appraisalType === "detailed" ?
+                        <tr>
+                            <td>
+                                <strong>Market Rent</strong>
+                            </td>
+                            <td>
+                                <FieldDisplayEdit type="marketRent" placeholder={"Market Rent"} marketRents={this.props.appraisal.marketRents}
+                                                  value={this.props.unit.marketRent}
+                                                  onChange={(newValue) => this.changeUnitField('marketRent', newValue)}/>
+                            </td>
+                        </tr> : null
+                }
+                {
+                    this.props.unit.calculatedManagementRecovery ?
+                        <tr className={"stats-row"}>
+                            <td>
+                                {
+                                    this.props.appraisal.appraisalType === 'detailed' ?
+                                        <Link to={`/appraisal/${this.props.appraisal._id}/tenants/recovery_structures`}>
+                                            <strong>Calculated Management Recovery</strong>
+                                        </Link> :
+                                        <ManagementRecoveriesForUnitCalculationPopoverWrapper appraisal={this.props.appraisal} unit={this.props.unit}>
+                                            <strong>Calculated Management Recovery</strong>
+                                        </ManagementRecoveriesForUnitCalculationPopoverWrapper>
+                                }
+                            </td>
+                            <td>
+                                    <span style={{"marginLeft": "10px"}}>
+                                    {
+                                        this.props.appraisal.appraisalType === 'detailed' ?
+                                            <Link to={`/appraisal/${this.props.appraisal._id}/tenants/recovery_structures`}>
+                                                <CurrencyFormat value={this.props.unit.calculatedManagementRecovery}/>
+                                            </Link> :
+                                            <ManagementRecoveriesForUnitCalculationPopoverWrapper appraisal={this.props.appraisal} unit={this.props.unit}>
+                                                <CurrencyFormat value={this.props.unit.calculatedManagementRecovery}/>
+                                            </ManagementRecoveriesForUnitCalculationPopoverWrapper>
+                                    }
+                                    </span>
+                            </td>
+                        </tr> : null
+                }
+
+                {
+                    this.props.unit.calculatedExpenseRecovery ?
+                        <tr className={"stats-row"}>
+                            <td>
+                                {
+                                    this.props.appraisal.appraisalType === 'detailed' ?
+                                        <Link to={`/appraisal/${this.props.appraisal._id}/tenants/recovery_structures`}>
+                                            <strong>Calculated Operating Expense Recovery</strong>
+                                        </Link> :
+                                        <ExpenseRecoveryForUnitCalculationPopoverWrapper appraisal={this.props.appraisal} unit={this.props.unit} incomeStatementItemType={"operating_expense"}>
+                                            <strong>Calculated Operating Expense Recovery</strong>
+                                        </ExpenseRecoveryForUnitCalculationPopoverWrapper>
+                                }
+                            </td>
+                            <td>
                                                         <span style={{"marginLeft": "10px"}}>
-                                                        <Link to={`/appraisal/${this.props.appraisal._id}/tenants/recovery_structures`}>
-                                                            <CurrencyFormat
-                                                                value={this.props.unit.calculatedExpenseRecovery}/>
-                                                        </Link>
+                                                        {this.props.appraisal.appraisalType === 'detailed' ?
+                                                            <Link to={`/appraisal/${this.props.appraisal._id}/tenants/recovery_structures`}>
+                                                                <CurrencyFormat
+                                                                    value={this.props.unit.calculatedExpenseRecovery}/>
+                                                            </Link> :
+                                                            <ExpenseRecoveryForUnitCalculationPopoverWrapper appraisal={this.props.appraisal} unit={this.props.unit} incomeStatementItemType={"operating_expense"}>
+                                                                <CurrencyFormat
+                                                                    value={this.props.unit.calculatedExpenseRecovery}/>
+                                                            </ExpenseRecoveryForUnitCalculationPopoverWrapper>
+                                                        }
                                                         </span>
-                                </td>
-                            </tr> : null
-                    }
-                    {
-                        this.props.unit.calculatedTaxRecovery ?
-                            <tr className={"stats-row"}>
-                                <td>
-                                    <Link to={`/appraisal/${this.props.appraisal._id}/tenants/recovery_structures`}>
-                                        <strong>Calculated Tax Recovery</strong>
-                                    </Link>
-                                </td>
-                                <td>
-                                    <Link to={`/appraisal/${this.props.appraisal._id}/tenants/recovery_structures`}>
+                            </td>
+                        </tr> : null
+                }
+                {
+                    this.props.unit.calculatedTaxRecovery ?
+                        <tr className={"stats-row"}>
+                            <td>
+                                {
+                                    this.props.appraisal.appraisalType === 'detailed' ?
+                                        <Link to={`/appraisal/${this.props.appraisal._id}/tenants/recovery_structures`}>
+                                            <strong>Calculated Tax Recovery</strong>
+                                        </Link> :
+                                        <ExpenseRecoveryForUnitCalculationPopoverWrapper appraisal={this.props.appraisal} unit={this.props.unit} incomeStatementItemType={"taxes"}>
+                                            <strong>Calculated Tax Recovery</strong>
+                                        </ExpenseRecoveryForUnitCalculationPopoverWrapper>
+                                }
+                            </td>
+                            <td>
+                                {
+                                    this.props.appraisal.appraisalType === 'detailed' ?
+                                        <Link to={`/appraisal/${this.props.appraisal._id}/tenants/recovery_structures`}>
                                                         <span style={{"marginLeft": "10px"}}>
                                                             <CurrencyFormat
                                                                 value={this.props.unit.calculatedTaxRecovery}/>
                                                         </span>
-                                    </Link>
-                                </td>
-                            </tr> : null
-                    }
-                    {
-                        this.props.unit.calculatedMarketRentDifferential ?
-                            <tr className={"stats-row"}>
-                                <td>
-                                    <a onClick={() => this.setState({marketRentDifferentialPopoverOpen: !this.state.marketRentDifferentialPopoverOpen})}>
-                                        <strong>Calculated Market Rent Differential</strong>
-                                    </a>
-                                </td>
-                                <td>
+                                        </Link> :
+                                        <ExpenseRecoveryForUnitCalculationPopoverWrapper appraisal={this.props.appraisal} unit={this.props.unit} incomeStatementItemType={"taxes"}>
+                                            <span style={{"marginLeft": "10px"}}>
+                                                                <CurrencyFormat
+                                                                    value={this.props.unit.calculatedTaxRecovery}/>
+                                                            </span>
+                                        </ExpenseRecoveryForUnitCalculationPopoverWrapper>
 
-                                    <a id={popoverId} onClick={() => this.setState({marketRentDifferentialPopoverOpen: !this.state.marketRentDifferentialPopoverOpen})}>
-                                                        <span style={{"marginLeft": "10px"}}>
-                                                            <CurrencyFormat
-                                                                value={this.props.unit.calculatedMarketRentDifferential}/>
-                                                        </span>
-                                    </a>
-                                    <Popover placement="bottom" isOpen={this.state.marketRentDifferentialPopoverOpen} target={popoverId} toggle={() => this.setState({marketRentDifferentialPopoverOpen: !this.state.marketRentDifferentialPopoverOpen})}>
-                                        <PopoverHeader>Unit {this.props.unit.unitNumber} - Market Rent Differential</PopoverHeader>
-                                        <PopoverBody>
-                                            <table className={"explanation-popover-table"}>
-                                                <thead>
-                                                <tr className={"total-row"}>
-                                                    <td colSpan={2}></td>
-                                                    <td colSpan={2}>
-                                                        PSF
-                                                    </td>
-                                                    <td>Annual</td>
-                                                    <td></td>
-                                                    <td></td>
-                                                    <td></td>
-                                                </tr>
-                                                <tr className={"total-row"}>
-                                                    <td colSpan={2}>Contract Rent</td>
-                                                    <td colSpan={2}>
-                                                        <CurrencyFormat value={differentialMonths[0].currentRent * 12 / this.props.unit.squareFootage}/>
-                                                    </td>
-                                                    <td>
-                                                        <CurrencyFormat value={differentialMonths[0].currentRent * 12}/>
-                                                    </td>
-                                                    <td></td>
-                                                    <td></td>
-                                                    <td></td>
-                                                </tr>
-                                                <tr className={"total-row"}>
-                                                    <td colSpan={2}>Market Rent</td>
-                                                    <td colSpan={2}>
-                                                        <CurrencyFormat value={differentialMonths[0].marketRent * 12 / this.props.unit.squareFootage}/>
-                                                    </td>
-                                                    <td>
-                                                        <CurrencyFormat value={differentialMonths[0].marketRent * 12}/>
-                                                    </td>
-                                                    <td></td>
-                                                    <td></td>
-                                                    <td></td>
-                                                </tr>
-                                                <tr className={"total-row"}>
-                                                    <td colSpan={2}>Differential</td>
-                                                    <td colSpan={2}>
-                                                        <CurrencyFormat value={differentialMonths[0].presentMonthlyCashFlow * 12 / this.props.unit.squareFootage}/>
-                                                    </td>
-                                                    <td>
-                                                        <CurrencyFormat value={differentialMonths[0].presentMonthlyCashFlow * 12}/>
-                                                    </td>
-                                                    <td></td>
-                                                    <td></td>
-                                                    <td></td>
-                                                </tr>
-                                                <tr className={"total-row"}>
-                                                    <td colSpan={2}><strong>Present Value</strong></td>
-                                                    <td colSpan={3}><CurrencyFormat value={this.props.unit.calculatedMarketRentDifferential} /></td>
-                                                    <td></td>
-                                                    <td></td>
-                                                </tr>
-                                                <tr className={"total-row"}>
-                                                    <td colSpan={2}>Discount Rate</td>
-                                                    <td colSpan={3}>
-                                                        <FieldDisplayEdit
-                                                            type={"percent"}
-                                                            placeholder={"Market Rent Differential Discount Rate"}
-                                                            value={this.props.appraisal.stabilizedStatementInputs ? this.props.appraisal.stabilizedStatementInputs.marketRentDifferentialDiscountRate : 5.0}
-                                                            onChange={(newValue) => this.changeStabilizedInput("marketRentDifferentialDiscountRate", newValue)}
-                                                        />
-                                                    </td>
-                                                    <td></td>
-                                                    <td></td>
-                                                    <td></td>
-                                                    <td></td>
-                                                </tr>
-                                                <tr>
-                                                    <td>
-                                                        Date
-                                                    </td>
-                                                    <td>
-                                                        Month
-                                                    </td>
-                                                    <td>
-                                                        Actual Rent
-                                                    </td>
-                                                    <td>
-                                                        Market Rent
-                                                    </td>
-                                                    <td>
-                                                        Differential
-                                                    </td>
-                                                    <td>
-                                                        Present Value
-                                                    </td>
-                                                </tr>
-                                                </thead>
-                                                <tbody>
-                                                {
-                                                    differentialMonths.map((differential, index) =>
-                                                    {
-                                                        let className = "";
-
-                                                        if (index === differentialMonths.length - 1)
-                                                        {
-                                                            className = "underline";
-                                                        }
-
-                                                        return <tr key={index}>
-                                                            <td>
-                                                                <Moment date={differential.date} format="MMM YYYY" />
-                                                            </td>
-                                                            <td>
-                                                                <IntegerFormat value={differential.month} />
-                                                            </td>
-                                                            <td>
-                                                                <CurrencyFormat value={differential.currentRent}/>
-                                                            </td>
-                                                            <td>
-                                                                <CurrencyFormat value={differential.marketRent}/>
-                                                            </td>
-                                                            <td>
-                                                                <CurrencyFormat value={differential.presentMonthlyCashFlow}/>
-                                                            </td>
-                                                            <td className={className}>
-                                                                <CurrencyFormat value={differential.presentValue}/>
-                                                            </td>
-                                                        </tr>
-                                                    })
-                                                }
-                                                <tr className={"total-row"}>
-                                                    <td></td>
-                                                    <td></td>
-                                                    <td colSpan={3}><strong>Present Value</strong></td>
-                                                    <td><CurrencyFormat value={this.props.unit.calculatedMarketRentDifferential} /></td>
-                                                </tr>
-                                                </tbody>
-                                            </table>
-                                        </PopoverBody>
-                                    </Popover>
-                                </td>
-                            </tr> : null
-                    }
-                    {
-                        this.props.unit.calculatedFreeRentLoss ?
-                            <tr className={"stats-row"}>
-                                <td>
-                                    <a onClick={() => this.setState({freeRentLossPopoverOpen: !this.state.freeRentLossPopoverOpen})}>
-                                        <strong>Calculated Free Rent Loss</strong>
-                                    </a>
-                                </td>
-                                <td>
-                                                        <span style={{"marginLeft": "10px"}}>
-                                                            <a id={"free-rent-loss-popover"} onClick={() => this.setState({freeRentLossPopoverOpen: !this.state.freeRentLossPopoverOpen})}>
-                                                                {
-                                                                    this.props.unit.calculatedFreeRentLoss ?
-                                                                        <CurrencyFormat value={this.props.unit.calculatedFreeRentLoss}/>
-                                                                        : null
-                                                                }
-                                                            </a>
-                                                            <Popover placement="bottom" isOpen={this.state.freeRentLossPopoverOpen} target={"free-rent-loss-popover"} toggle={() => this.setState({freeRentLossPopoverOpen: !this.state.freeRentLossPopoverOpen})}>
-                                                                <PopoverHeader>Free Rent Loss</PopoverHeader>
-                                                                <PopoverBody>
-                                                                    <table className={"explanation-popover-table"}>
-                                                                        <tbody>
-                                                                        <tr className={"total-row"}>
-                                                                            <td>Free Rent Loss</td>
-                                                                            <td><IntegerFormat value={this.props.unit.calculatedFreeRentMonths}/> months remaining</td>
-                                                                            <td>/</td>
-                                                                            <td>12</td>
-                                                                            <td>*</td>
-                                                                            <td><CurrencyFormat value={this.props.unit.calculatedFreeRentNetAmount}/></td>
-                                                                            <td>=</td>
-                                                                            <td><CurrencyFormat value={this.props.unit.calculatedFreeRentLoss} cents={false}/></td>
-                                                                        </tr>
-                                                                        </tbody>
-                                                                    </table>
-                                                                </PopoverBody>
-                                                            </Popover>
-                                                        </span>
-                                </td>
-                            </tr> : null
-                    }
-                    {
-                        this.props.unit.calculatedVacantUnitRentLoss ?
-                            <tr className={"stats-row"}>
-                                <td>
-                                    <Link to={`/appraisal/${this.props.appraisal._id}/tenants/leasing_costs`}>
+                                }
+                            </td>
+                        </tr> : null
+                }
+                {
+                    this.props.unit.calculatedMarketRentDifferential ?
+                        <tr className={"stats-row"}>
+                            <td>
+                                <MarketRentDifferentialForUnitCalculationPopoverWrapper appraisal={this.props.appraisal} unit={this.props.unit}>
+                                    <strong>Calculated Market Rent Differential</strong>
+                                </MarketRentDifferentialForUnitCalculationPopoverWrapper>
+                            </td>
+                            <td>
+                                <MarketRentDifferentialForUnitCalculationPopoverWrapper appraisal={this.props.appraisal} unit={this.props.unit}>
+                                    <span style={{"marginLeft": "10px"}}>
+                                        <CurrencyFormat value={this.props.unit.calculatedMarketRentDifferential}/>
+                                    </span>
+                                </MarketRentDifferentialForUnitCalculationPopoverWrapper>
+                            </td>
+                        </tr> : null
+                }
+                {
+                    this.props.unit.calculatedFreeRentLoss ?
+                        <tr className={"stats-row"}>
+                            <td>
+                                <FreeRentLossForUnitCalculationPopoverWrapper appraisal={this.props.appraisal} unit={this.props.unit}>
+                                    <strong>Calculated Free Rent Loss</strong>
+                                </FreeRentLossForUnitCalculationPopoverWrapper>
+                            </td>
+                            <td>
+                                    <span style={{"marginLeft": "10px"}}>
+                                        <FreeRentLossForUnitCalculationPopoverWrapper appraisal={this.props.appraisal} unit={this.props.unit}>
+                                            {
+                                                this.props.unit.calculatedFreeRentLoss ?
+                                                    <CurrencyFormat value={this.props.unit.calculatedFreeRentLoss}/>
+                                                    : null
+                                            }
+                                        </FreeRentLossForUnitCalculationPopoverWrapper>
+                                    </span>
+                            </td>
+                        </tr> : null
+                }
+                {
+                    this.props.unit.calculatedVacantUnitRentLoss ?
+                        <tr className={"stats-row"}>
+                            <td>
+                                {
+                                    this.props.appraisal.appraisalType === 'detailed' ?
+                                        <Link to={`/appraisal/${this.props.appraisal._id}/tenants/leasing_costs`}>
+                                            <strong>Calculated Vacant Unit Rent Loss</strong>
+                                        </Link> :
                                         <strong>Calculated Vacant Unit Rent Loss</strong>
-                                    </Link>
-                                </td>
-                                <td>
-                                    <Link to={`/appraisal/${this.props.appraisal._id}/tenants/leasing_costs`}>
-                                                        <span style={{"marginLeft": "10px"}}>
-                                                            <CurrencyFormat
-                                                                value={this.props.unit.calculatedVacantUnitRentLoss}/>
-                                                        </span>
-                                    </Link>
-                                </td>
-                            </tr> : null
-                    }
-                    {
-                        this.props.unit.calculatedVacantUnitLeasupCosts ?
-                            <tr className={"stats-row"}>
-                                <td>
-                                    <Link to={`/appraisal/${this.props.appraisal._id}/tenants/leasing_costs`}>
-                                        <strong>Calculated Vacant Unit Leaseup Costs</strong>
-                                    </Link>
-                                </td>
-                                <td>
-                                    <Link to={`/appraisal/${this.props.appraisal._id}/tenants/leasing_costs`}>
-                                                        <span style={{"marginLeft": "10px"}}>
-                                                            <CurrencyFormat
-                                                                value={this.props.unit.calculatedVacantUnitLeasupCosts}/>
-                                                        </span>
-                                    </Link>
-                                </td>
-                            </tr> : null
-                    }
-                    </tbody>
-                </table>
-                {/*</CardBody>*/}
-                {/*</Card>*/}
-                {/*<Card outline color="primary" className="mb-3">*/}
-                <br/>
-                <h3>Tenancy & Esclation Schedule</h3>
-                {/*<CardHeader className="text-white bg-primary">Tenancy & Escalation Schedule</CardHeader>*/}
-                {/*<CardBody>*/}
-                <table className="table tenancies-table">
-                    <thead>
-                    <tr>
-                        <td>Tenant Name</td>
-                        <td>Term Start</td>
-                        <td>Term End</td>
-                        <td>Net / Gross</td>
-                        <td>Annual Rent (psf)</td>
-                        <td>Annual Rent</td>
-                        <td className="action-column"/>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    {
-                        this.props.unit.tenancies.map((tenancy, tenancyIndex) =>
-                        {
-                            return this.renderTenancy(tenancy, tenancyIndex);
-                        }).concat([this.renderNewTenancyRow()])
-                    }
-                    </tbody>
+                                }
+                            </td>
+                            <td>
+                                {
+                                    this.props.appraisal.appraisalType === 'detailed' ?
+                                        <Link to={`/appraisal/${this.props.appraisal._id}/tenants/leasing_costs`}>
+                                            <span style={{"marginLeft": "10px"}}>
+                                                <CurrencyFormat value={this.props.unit.calculatedVacantUnitRentLoss}/>
+                                            </span>
+                                        </Link> :
+                                        <VacantRentLossForUnitCalculationPopoverWrapper appraisal={this.props.appraisal} unit={this.props.unit}>
+                                            <span style={{"marginLeft": "10px"}}>
+                                                <CurrencyFormat value={this.props.unit.calculatedVacantUnitRentLoss}/>
+                                            </span>
+                                        </VacantRentLossForUnitCalculationPopoverWrapper>
 
-                </table>
-                {/*</CardBody>*/}
-                {/*</Card>*/}
-            </Col>
+                                }
+                            </td>
+                        </tr> : null
+                }
+                {
+                    this.props.unit.calculatedVacantUnitLeasupCosts ?
+                        <tr className={"stats-row"}>
+                            <td>
+                                {
+                                    this.props.appraisal.appraisalType === 'detailed' ?
+                                        <Link to={`/appraisal/${this.props.appraisal._id}/tenants/leasing_costs`}>
+                                            <strong>Calculated Vacant Unit Leaseup Costs</strong>
+                                        </Link> :
+                                        <LeasingCostsForUnitCalculationPopoverWrapper appraisal={this.props.appraisal} unit={this.props.unit}>
+                                            <strong>Calculated Vacant Unit Leaseup Costs</strong>
+                                        </LeasingCostsForUnitCalculationPopoverWrapper>
+                                }
+                            </td>
+                            <td>
+                                {
+                                    this.props.appraisal.appraisalType === 'detailed' ?
+                                        <Link to={`/appraisal/${this.props.appraisal._id}/tenants/leasing_costs`}>
+                                            <span style={{"marginLeft": "10px"}}>
+                                                <CurrencyFormat value={this.props.unit.calculatedVacantUnitLeasupCosts}/>
+                                            </span>
+                                        </Link> :
+                                        <LeasingCostsForUnitCalculationPopoverWrapper appraisal={this.props.appraisal} unit={this.props.unit}>
+                                            <span style={{"marginLeft": "10px"}}>
+                                                <CurrencyFormat value={this.props.unit.calculatedVacantUnitLeasupCosts}/>
+                                            </span>
+                                        </LeasingCostsForUnitCalculationPopoverWrapper>
+                                }
+
+                            </td>
+                        </tr> : null
+                }
+                </tbody>
+            </table>
+            {/*</CardBody>*/}
+            {/*</Card>*/}
+            {/*<Card outline color="primary" className="mb-3">*/}
+            {/*</CardBody>*/}
+            {/*</Card>*/}
+        </Col>
     }
 }
 

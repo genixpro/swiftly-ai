@@ -104,7 +104,7 @@ class ComparableSaleList extends React.Component
 
         if (this.props.search.propertyType !== 'land')
         {
-            headerFields.push(["capitalizationRate", "pricePerSquareFoot"])
+            headerFields.push(["displayCapitalizationRate", "pricePerSquareFoot"])
         }
 
         if (this.props.search.propertyType === 'land')
@@ -121,7 +121,7 @@ class ComparableSaleList extends React.Component
 
         if (this.props.search.propertyType !== 'land' && this.props.search.propertyType !== 'residential')
         {
-            statFields.push("capitalizationRate");
+            statFields.push("displayCapitalizationRate");
             statFields.push("pricePerSquareFoot");
             statFields.push("sizeSquareFootage")
         }
@@ -133,7 +133,7 @@ class ComparableSaleList extends React.Component
 
         if (this.props.search.propertyType === 'residential')
         {
-            statFields.push("capitalizationRate");
+            statFields.push("displayCapitalizationRate");
             statFields.push("pricePerSquareFoot");
             statFields.push("pricePerUnit");
             statFields.push("noiPerUnit");
@@ -315,6 +315,10 @@ class ComparableSaleList extends React.Component
                 title: "Cap Rate (%)",
                 size: "middle"
             },
+            displayCapitalizationRate: {
+                title: "Cap Rate (%)",
+                size: "middle"
+            },
             propertyType: {
                 title: "Property Type",
                 size: "middle"
@@ -344,6 +348,10 @@ class ComparableSaleList extends React.Component
                 size: "middle"
             },
             netOperatingIncome: {
+                title: "NOI ($)",
+                size: "middle"
+            },
+            displayNetOperatingIncome: {
                 title: "NOI ($)",
                 size: "middle"
             },

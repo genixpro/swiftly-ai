@@ -82,6 +82,11 @@ class ListField extends BaseField
 
     applyDiff(oldValue, diffValue, parent)
     {
+        if (_.isArray(diffValue) && diffValue.length === 0)
+        {
+            return this.toObject([], parent);
+        }
+
         Object.keys(diffValue).forEach((key) =>
         {
             if (key === '$delete')

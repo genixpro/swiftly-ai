@@ -10,7 +10,7 @@ class RecoveryStructure(EmbeddedDocument):
 
     name = StringField()
 
-    managementRecoveryMode = StringField(default="operatingExpenses", choices=["operatingExpenses", "operatingExpensesAndTaxes", "custom", "managementExpenses", "none"])
+    managementRecoveryMode = StringField(default="managementExpenses", choices=["operatingExpenses", "operatingExpensesAndTaxes", "custom", "managementExpenses", "none"])
 
     managementRecoveryOperatingPercentage = FloatField(default=100)
 

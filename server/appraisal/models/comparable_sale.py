@@ -142,6 +142,12 @@ class ComparableSale(Document):
 
     tenancyType = StringField(choices=['single_tenant', 'multi_tenant', 'vacant', ""], null=True)
 
+    useStabilizedNoi = BooleanField(default=False)
+    stabilizedNoiVacancyRate = FloatField()
+    stabilizedNoiStructuralAllowance = FloatField()
+    stabilizedNoiCustomDeduction = FloatField()
+    stabilizedNoiCustomName = StringField(default="Custom")
+
     version = IntField(default=1)
 
 

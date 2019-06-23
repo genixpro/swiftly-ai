@@ -890,6 +890,31 @@ class IncomeStatementEditor extends React.Component
         }
     }
 
+    getDefaultFile()
+    {
+        let defaultFile = null;
+
+        Object.keys(this.props.appraisal.dataTypeReferences).forEach((dataType) =>
+        {
+            if (dataType === 'INCOME_STATEMENT')
+            {
+                if (this.props.appraisal.dataTypeReferences['INCOME_STATEMENT'].length > 0)
+                {
+                    defaultFile = this.props.appraisal.dataTypeReferences['INCOME_STATEMENT'][0].fileId;
+                }
+            }
+            else if (dataType === 'EXPENSE_STATEMENT' && defaultFile === null && this.props.field === 'expense')
+            {
+                if (this.props.appraisal.dataTypeReferences['EXPENSE_STATEMENT'].length > 0)
+                {
+                    defaultFile = this.props.appraisal.dataTypeReferences['EXPENSE_STATEMENT'][0].fileId;
+                }
+            }
+        });
+
+        return defaultFile;
+    }
+
 
     render()
     {
@@ -913,6 +938,8 @@ class IncomeStatementEditor extends React.Component
                                     <FileSelector
                                         appraisalId={this.props.appraisal._id}
                                         onChange={(fileId) => this.onFileChanged(fileId)}
+                                        defaultFile={this.getDefaultFile()}
+                                        value={this.state.file ? this.state.file._id : null}
                                     />
                                 </Col>
                             </Row>

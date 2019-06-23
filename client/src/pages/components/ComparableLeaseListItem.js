@@ -339,6 +339,7 @@ class ComparableLeaseListItem extends React.Component
                                         edit={this.props.edit}
                                         placeholder={"Address"}
                                         value={comparableLease.address}
+                                        location={this.props.appraisal.location ? {lat: () => this.props.appraisal.location.coordinates[1], lng: () => this.props.appraisal.location.coordinates[0]} : null}
                                         onChange={(newValue) => this.changeComparableField('address', newValue)}
                                         onGeoChange={(newValue) => this.changeComparableField('location', {"type": "Point", "coordinates": [newValue.lng, newValue.lat]})}
                                     />

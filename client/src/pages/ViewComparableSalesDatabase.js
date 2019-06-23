@@ -5,14 +5,18 @@ import ComparableSaleList from "./components/ComparableSaleList";
 import _ from 'underscore';
 import ComparableSaleSearch from "./components/ComparableSaleSearch";
 import ComparableSalesMap from "./components/ComparableSalesMap"
+import FileModel from "../models/FileModel"
 import ComparableSalesModel from "../models/ComparableSaleModel"
-// import Toolbar from "./components/Toolbar";
+import Toolbar from "./components/Toolbar";
+import ComparableConfirmationDialog from "./components/ComparableConfirmationDialog";
 import Promise from "bluebird";
+import ComparableSaleListItem from "./components/ComparableSaleListItem";
 
 class ViewComparableSalesDatabase extends React.Component {
     state = {
         comparableSales: [],
-        sort: "-saleDate"
+        sort: "-saleDate",
+        showUploadedComparablesDialog: false
     };
 
     search = {};
@@ -177,7 +181,15 @@ class ViewComparableSalesDatabase extends React.Component {
     {
         const elem = document.createElement("INPUT");
         elem.setAttribute("type", "file");
+        const self = this;
+
         function handleFiles() {
+            self.setState({
+                uploading: true,
+                showUploadedComparablesDialog: true,
+                uploadedComparables: [],
+                uploadedFile: null
+            });
             const fileList = this.files; /* now you can work with the file list */
             Promise.mapSeries(fileList, (file) => {
                 return new Promise((resolve, reject) => {
@@ -193,23 +205,26 @@ class ViewComparableSalesDatabase extends React.Component {
                     const uploadPromise = axios(options);
 
                     uploadPromise.then((response) => {
-                        resolve(null);
-                        // setTimeout(() => {
-                        // const upProg = this.state.upProg;
-                        // upProg[file.name] = 100;
-                        // this.setState({upProg});
-                        // }, 50);
+                        resolve({comps: response.data.comparableSales, file: FileModel.create(response.data.file)});
                     }, (error) => {
-                        console.log(error);
-                        console.log(JSON.stringify(error, null, 2));
+
                         resolve(null);
                     });
                     uploadPromise.catch(() => resolve(null));
                 })
-            }).then(() => {
-                this.setState({uploading: false});
+            }).then((datas) => {
+                const comps = _.flatten(_.map(datas, (data) => data.comps), true);
+
+                console.log(datas);
+
+                self.setState({
+                    uploading: false,
+                    uploadedFile: datas[0].file,
+                    uploadedComparables: comps.map((comp) => ComparableSalesModel.create(comp)),
+                    showUploadedComparablesDialog: true
+                });
             }, (err) => {
-                this.setState({uploading: false});
+                self.setState({uploading: false});
             });
 
         }
@@ -217,6 +232,12 @@ class ViewComparableSalesDatabase extends React.Component {
         elem.addEventListener("change", handleFiles, false);
         elem.click();
     }
+
+    toggleUploadComparablesDialog()
+    {
+        this.setState({showUploadedComparablesDialog: !this.state.showUploadedComparablesDialog});
+    }
+
 
     render()
     {
@@ -236,11 +257,11 @@ class ViewComparableSalesDatabase extends React.Component {
                     <Col xs={10}>
                         <h3>Search for Comparables</h3>
                     </Col>
-                    {/*<Col xs={2}>*/}
-                        {/*<Toolbar>*/}
-                            {/*<Button color={"primary"} onClick={() => this.uploadClicked()}>Upload</Button>*/}
-                        {/*</Toolbar>*/}
-                    {/*</Col>*/}
+                    <Col xs={2}>
+                        <Toolbar>
+                            <Button color={"primary"} onClick={() => this.uploadClicked()}>Upload</Button>
+                        </Toolbar>
+                    </Col>
                 </Row>
                 <ComparableSaleSearch
                     appraisal={this.props.appraisal}
@@ -276,6 +297,19 @@ class ViewComparableSalesDatabase extends React.Component {
                             onMapSearchChanged={(mapSearch) => this.onMapSearchChanged(mapSearch)}
                             onAddComparableToAppraisal={(comp) => this.addComparableToAppraisal(comp)}
                             onRemoveComparableFromAppraisal={(comp) => this.removeComparableFromAppraisal(comp)}
+                        />
+                    </Col>
+                </Row>
+                <Row>
+                    <Col>
+                        <ComparableConfirmationDialog
+                            appraisal={this.props.appraisal}
+                            comparableSales={this.state.uploadedComparables}
+                            file={this.state.uploadedFile}
+                            visible={this.state.showUploadedComparablesDialog}
+                            uploading={this.state.uploading}
+                            toggle={() => this.toggleUploadComparablesDialog()}
+                            onChange={(newComps) => this.setState({uploadedComparables: newComps})}
                         />
                     </Col>
                 </Row>

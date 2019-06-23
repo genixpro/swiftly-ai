@@ -1,6 +1,7 @@
 from appraisal.components.document_parser import DocumentParser
 from appraisal.components.document_extractor import DocumentExtractor
 from appraisal.models.file import File, Word
+from appraisal.models.extraction_reference import ExtractionReference
 import filetype
 import re
 import json
@@ -34,7 +35,7 @@ class DocumentProcessor:
         self.comparableSaleDataExtractor = ComparableSaleDataExtractor()
 
 
-    def processFileUpload(self, fileName, fileData, appraisal):
+    def processFileUpload(self, fileName, fileData, appraisal, owner=None, extract=True):
         """
         This method is used to process a file upload to a given appraisal.
 
@@ -47,8 +48,12 @@ class DocumentProcessor:
         # Create an initial file object
         file = File()
         file.fileName = fileName
-        file.owner = appraisal.owner
-        file.appraisalId = str(appraisal.id)
+        if appraisal is not None:
+            file.owner = appraisal.owner
+            file.appraisalId = str(appraisal.id)
+        else:
+            file.owner = owner
+            file.appraisalId = None
         file.save()
         fileId = str(file.id)
 
@@ -59,10 +64,12 @@ class DocumentProcessor:
         # Save
         file.save()
 
-        self.extractAndMergeAppraisalData(file, appraisal)
-        self.processAppraisalResults(appraisal)
+        if extract:
+            self.extractAndMergeAppraisalData(file, appraisal)
+            self.processAppraisalResults(appraisal)
 
-        appraisal.save()
+        if appraisal is not None:
+            appraisal.save()
 
         return file
 
@@ -139,6 +146,17 @@ class DocumentProcessor:
 
                 appraisal.comparableSalesDCA.append(str(comparableSale.id))
                 appraisal.comparableSalesCapRate.append(str(comparableSale.id))
+
+            reference = ExtractionReference()
+            reference.appraisalId = str(appraisal.id)
+            reference.fileId = str(file.id)
+            reference.wordIndexes = [word.index for word in group]
+            reference.pageNumbers = list(set([word.page for word in group]))
+
+            if dataType in appraisal.dataTypeReferences:
+                appraisal.dataTypeReferences[dataType].append(reference)
+            else:
+                appraisal.dataTypeReferences[dataType] = [reference]
 
 
 

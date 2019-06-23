@@ -16,6 +16,8 @@ import {StabilizedStatementModifier} from "../models/StabilizedStatementInputsMo
 import _ from "underscore";
 import TotalMarketRentDifferentialCalculationPopoverWrapper from "./components/TotalMarketRentDifferentialCalculationPopoverWrapper";
 import TotalRemainingFreeRentPopoverWrapper from "./components/TotalRemainingFreeRentPopoverWrapper";
+import TotalLeasingCostsCalculationPopoverWrapper from "./components/TotalLeasingCostsCalculationPopoverWrapper";
+import TotalVacantUnitRentLossCalculationPopoverWrapper from "./components/TotalVacantUnitRentLossCalculationPopoverWrapper";
 
 class ViewCapitalizationValuation extends React.Component
 {
@@ -133,7 +135,7 @@ class ViewCapitalizationValuation extends React.Component
                 ["propertyType", "propertyTags"],
                 ["averageMonthlyRentPerUnit", 'numberOfUnits'],
                 ["noiPerUnit","noiPerBedroom"],
-                ["capitalizationRate"]
+                ["displayCapitalizationRate"]
             ];
         }
         else
@@ -145,14 +147,14 @@ class ViewCapitalizationValuation extends React.Component
                 ["propertyType", "propertyTags"],
                 ["sizeSquareFootage"],
                 ["netOperatingIncomePSF"],
-                ["capitalizationRate"]
+                ["displayCapitalizationRate"]
             ];
         }
 
         const compStats = [];
         compStats.push("netOperatingIncomePSF");
         compStats.push("pricePerSquareFoot");
-        compStats.push("capitalizationRate");
+        compStats.push("displayCapitalizationRate");
 
         return [
             <AppraisalContentHeader appraisal={this.props.appraisal} title="Capitalization Approach" key={"header"}/>,
@@ -256,15 +258,34 @@ class ViewCapitalizationValuation extends React.Component
                                                 this.props.appraisal.stabilizedStatement.vacantUnitLeasupCosts && this.props.appraisal.stabilizedStatementInputs.applyVacantUnitLeasingCosts ?
                                                     <tr className={"data-row capitalization-row"}>
                                                         <td className={"label-column"}>
-                                                            <Link to={`/appraisal/${this.props.appraisal._id}/tenants/leasing_costs`}>
-                                                                <span>Vacant Unit Leasing Costs</span>
-                                                            </Link>
+                                                            {
+                                                                this.props.appraisal.appraisalType === 'detailed' ?
+                                                                    <Link to={`/appraisal/${this.props.appraisal._id}/tenants/leasing_costs`}>
+                                                                        <span>Vacant Unit Leasing Costs</span>
+                                                                    </Link> : null
+                                                            }
+                                                            {
+                                                                this.props.appraisal.appraisalType === 'simple' ?
+                                                                    <TotalLeasingCostsCalculationPopoverWrapper appraisal={this.props.appraisal}>
+                                                                        <span>Vacant Unit Leasing Costs</span>
+                                                                    </TotalLeasingCostsCalculationPopoverWrapper> : null
+                                                            }
                                                         </td>
                                                         <td className={"amount-column"}></td>
                                                         <td className={"amount-total-column"}>
-                                                            <Link to={`/appraisal/${this.props.appraisal._id}/tenants/leasing_costs`}>
-                                                                <CurrencyFormat value={this.props.appraisal.stabilizedStatement.vacantUnitLeasupCosts}/>
-                                                            </Link>
+                                                            {
+                                                                this.props.appraisal.appraisalType === 'detailed' ?
+                                                                    <Link to={`/appraisal/${this.props.appraisal._id}/tenants/leasing_costs`}>
+                                                                        <CurrencyFormat value={this.props.appraisal.stabilizedStatement.vacantUnitLeasupCosts}/>
+                                                                    </Link>
+                                                                    : null
+                                                            }
+                                                            {
+                                                                this.props.appraisal.appraisalType === 'simple' ?
+                                                                    <TotalLeasingCostsCalculationPopoverWrapper appraisal={this.props.appraisal}>
+                                                                        <CurrencyFormat value={this.props.appraisal.stabilizedStatement.vacantUnitLeasupCosts}/>
+                                                                    </TotalLeasingCostsCalculationPopoverWrapper> : null
+                                                            }
                                                         </td>
                                                     </tr> : null
                                             }
@@ -272,15 +293,34 @@ class ViewCapitalizationValuation extends React.Component
                                                 this.props.appraisal.stabilizedStatement.vacantUnitRentLoss && this.props.appraisal.stabilizedStatementInputs.applyVacantUnitRentLoss ?
                                                     <tr className={"data-row capitalization-row"}>
                                                         <td className={"label-column"}>
-                                                            <Link to={`/appraisal/${this.props.appraisal._id}/tenants/leasing_costs`}>
-                                                                <span>Vacant Unit Rent Loss</span>
-                                                            </Link>
+                                                            {
+                                                                this.props.appraisal.appraisalType === 'detailed' ?
+                                                                    <Link to={`/appraisal/${this.props.appraisal._id}/tenants/leasing_costs`}>
+                                                                        <span>Vacant Unit Rent Loss</span>
+                                                                    </Link> : null
+                                                            }
+                                                            {
+                                                                this.props.appraisal.appraisalType === 'simple' ?
+                                                                    <TotalVacantUnitRentLossCalculationPopoverWrapper appraisal={this.props.appraisal}>
+                                                                        <span>Vacant Unit Rent Loss</span>
+                                                                    </TotalVacantUnitRentLossCalculationPopoverWrapper> : null
+                                                            }
                                                         </td>
                                                         <td className={"amount-column"}></td>
                                                         <td className={"amount-total-column"}>
-                                                            <Link to={`/appraisal/${this.props.appraisal._id}/tenants/leasing_costs`}>
-                                                                <CurrencyFormat value={this.props.appraisal.stabilizedStatement.vacantUnitRentLoss}/>
-                                                            </Link>
+                                                            {
+                                                                this.props.appraisal.appraisalType === 'detailed' ?
+                                                                    <Link to={`/appraisal/${this.props.appraisal._id}/tenants/leasing_costs`}>
+                                                                        <CurrencyFormat value={this.props.appraisal.stabilizedStatement.vacantUnitRentLoss}/>
+                                                                    </Link>
+                                                                    : null
+                                                            }
+                                                            {
+                                                                this.props.appraisal.appraisalType === 'simple' ?
+                                                                    <TotalVacantUnitRentLossCalculationPopoverWrapper appraisal={this.props.appraisal}>
+                                                                        <CurrencyFormat value={this.props.appraisal.stabilizedStatement.vacantUnitRentLoss}/>
+                                                                    </TotalVacantUnitRentLossCalculationPopoverWrapper> : null
+                                                            }
                                                         </td>
                                                     </tr> : null
                                             }
