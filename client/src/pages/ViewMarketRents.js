@@ -300,6 +300,7 @@ class ViewMarketRents extends React.Component
                                                  onSortChanged={(newSort) => this.onSortChanged(newSort)}
                                                  noCompMessage={"There are no comparables attached to this appraisal. Please go to the comparable leases database and select comparables from there."}
                                                  history={this.props.history}
+                                                 appraisal={this.props.appraisal}
                                                  appraisalId={this.props.match.params._id}
                                                  appraisalComparables={this.props.appraisal.comparableLeases}
                                                  onChange={(comps) => this.onComparablesChanged(comps)}
