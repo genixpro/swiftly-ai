@@ -1,6 +1,7 @@
 from appraisal.components.document_parser import DocumentParser
 from appraisal.components.document_extractor import DocumentExtractor
 from appraisal.models.file import File, Word
+from appraisal.models.custom_id_field import generateNewUUID
 from appraisal.models.extraction_reference import ExtractionReference
 import filetype
 import re
@@ -54,6 +55,7 @@ class DocumentProcessor:
         else:
             file.owner = owner
             file.appraisalId = None
+        file.id = generateNewUUID(File)
         file.save()
         fileId = str(file.id)
 

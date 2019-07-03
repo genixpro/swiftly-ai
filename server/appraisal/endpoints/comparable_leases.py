@@ -11,6 +11,7 @@ from pyramid.security import Authenticated
 from pyramid.authorization import Allow, Deny, Everyone
 from appraisal.authorization import checkUserOwnsObject
 from pyramid.httpexceptions import HTTPForbidden
+from ..models.custom_id_field import generateNewUUID, regularizeID
 
 @resource(collection_path='/comparable_leases', path='/comparable_leases/{id}', renderer='bson', cors_enabled=True, cors_origins="*", permission="everything")
 class ComparableLeaseAPI(object):
@@ -75,7 +76,7 @@ class ComparableLeaseAPI(object):
     def get(self):
         comparableId = self.request.matchdict['id']
 
-        comparableLease = ComparableLease.objects(id=comparableId).first()
+        comparableLease = ComparableLease.objects(id=regularizeID(comparableId)).first()
 
         auth = checkUserOwnsObject(self.request.authenticated_userid, self.request.effective_principals, comparableLease)
         if not auth:
@@ -87,6 +88,7 @@ class ComparableLeaseAPI(object):
         data = self.request.json_body
 
         data['owner'] = self.request.authenticated_userid
+        data['id'] = generateNewUUID(ComparableLease)
 
         comparable = ComparableLease(**data)
         comparable.save()
@@ -102,7 +104,7 @@ class ComparableLeaseAPI(object):
         if '_id' in data:
             del data['_id']
 
-        comparable = ComparableLease.objects(id=comparableId).first()
+        comparable = ComparableLease.objects(id=regularizeID(comparableId)).first()
 
         auth = checkUserOwnsObject(self.request.authenticated_userid, self.request.effective_principals, comparable)
         if not auth:
@@ -117,7 +119,7 @@ class ComparableLeaseAPI(object):
     def delete(self):
         fileId = self.request.matchdict['id']
 
-        comparable = ComparableLease.objects(id=fileId).first()
+        comparable = ComparableLease.objects(id=regularizeID(fileId)).first()
 
         auth = checkUserOwnsObject(self.request.authenticated_userid, self.request.effective_principals, comparable)
         if not auth:

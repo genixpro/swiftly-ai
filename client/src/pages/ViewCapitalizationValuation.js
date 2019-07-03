@@ -134,7 +134,7 @@ class ViewCapitalizationValuation extends React.Component
                 ["salePrice"],
                 ["propertyType", "propertyTags"],
                 ["averageMonthlyRentPerUnit", 'numberOfUnits'],
-                ["noiPerUnit","noiPerBedroom"],
+                ["displayNOIPerUnit","displayNOIPerBedroom"],
                 ["displayCapitalizationRate"]
             ];
         }
@@ -146,13 +146,13 @@ class ViewCapitalizationValuation extends React.Component
                 ["salePrice"],
                 ["propertyType", "propertyTags"],
                 ["sizeSquareFootage"],
-                ["netOperatingIncomePSF"],
+                ["displayNetOperatingIncomePSF"],
                 ["displayCapitalizationRate"]
             ];
         }
 
         const compStats = [];
-        compStats.push("netOperatingIncomePSF");
+        compStats.push("displayNetOperatingIncomePSF");
         compStats.push("pricePerSquareFoot");
         compStats.push("displayCapitalizationRate");
 

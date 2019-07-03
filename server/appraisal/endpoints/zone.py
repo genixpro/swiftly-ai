@@ -11,6 +11,7 @@ from pyramid.security import Authenticated
 from pyramid.authorization import Allow, Deny, Everyone
 from appraisal.authorization import checkUserOwnsObject
 from pyramid.httpexceptions import HTTPForbidden
+from ..models.custom_id_field import generateNewUUID, regularizeID
 
 
 @resource(collection_path='/zones', path='/zone/{id}', renderer='bson', cors_enabled=True, cors_origins="*", permission="everything")
@@ -42,7 +43,7 @@ class ZoneAPI(object):
     def get(self):
         zoneId = self.request.matchdict['id']
 
-        zone = Zone.objects(id=zoneId).first()
+        zone = Zone.objects(id=regularizeID(zoneId)).first()
 
         auth = checkUserOwnsObject(self.request.authenticated_userid, self.request.effective_principals, zone)
         if not auth:
@@ -53,6 +54,7 @@ class ZoneAPI(object):
     def collection_post(self):
         data = self.request.json_body
         data['owner'] = self.request.authenticated_userid
+        data['id'] = generateNewUUID(Zone)
 
         zone = Zone(**data)
         zone.save()
@@ -68,7 +70,7 @@ class ZoneAPI(object):
         if '_id' in data:
             del data['_id']
 
-        zone = Zone.objects(id=zoneId).first()
+        zone = Zone.objects(id=regularizeID(zoneId)).first()
 
         auth = checkUserOwnsObject(self.request.authenticated_userid, self.request.effective_principals, zone)
         if not auth:
@@ -83,7 +85,7 @@ class ZoneAPI(object):
     def delete(self):
         zoneId = self.request.matchdict['id']
 
-        zone = Zone.objects(id=zoneId).first()
+        zone = Zone.objects(id=regularizeID(zoneId)).first()
 
         auth = checkUserOwnsObject(self.request.authenticated_userid, self.request.effective_principals, zone)
         if not auth:

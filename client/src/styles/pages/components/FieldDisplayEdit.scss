@@ -3,9 +3,20 @@
 
 .field-display-edit
 {
+  display: flex;
+  align-items: flex-end;
+
   .input-group-append
   {
     //transition: opacity 0.2s ease-in-out;
+  }
+
+  &.edit-type-boolean
+  {
+    input
+    {
+      margin-left: 15px;
+    }
   }
 
   input, textarea, select, .zone-selector .zone-selector__control, .tag-editor .tag-editor__control, .tenant-name-selector .tenant-name-selector__control {
@@ -45,7 +56,7 @@
   {
     input:disabled, textarea:disabled, select:disabled, .zone-selector .zone-selector__control, .tag-editor .tag-editor__control, .tenant-name-selector .tenant-name-selector__control
     {
-      background-color: white;
+      background: transparent;
       color: #656565;
     }
   }

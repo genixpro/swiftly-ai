@@ -1,8 +1,13 @@
 from mongoengine import *
 import datetime
+from appraisal.models.custom_id_field import CustomIDField
 from appraisal.models.extraction_reference import ExtractionReference
 import google.api_core.exceptions
 import dateparser
+from .custom_id_field import CustomIDField
+from ..migrations import registerMigration
+import json, bson
+from .custom_id_field import generateNewUUID
 
 class Word(EmbeddedDocument):
     meta = {'strict': False}
@@ -68,6 +73,8 @@ class Word(EmbeddedDocument):
 class File(Document):
     meta = {'collection': 'files', 'strict': False}
 
+    id = CustomIDField()
+
     owner = StringField()
 
     # The review status for this document
@@ -93,6 +100,8 @@ class File(Document):
 
     # A list containing the page-type classifications for each page in the file
     pageTypes = ListField(StringField())
+
+    version = IntField(default=1)
 
     def breakIntoTokens(self):
         tokens = []
@@ -248,3 +257,17 @@ class File(Document):
         return [
             words for groupId,words in groupWords.items()
         ]
+
+
+@registerMigration(File, 1)
+def migration_001_update_file_object_id(object):
+    data = json.loads(object.to_json())
+    if len(str(object.id)) == 24:
+        del data['_id']
+        data['id'] = str(object.id)
+
+        File.objects(id=bson.ObjectId(object.id)).delete()
+
+        newObject = File(**data)
+        print(data['id'])
+        return newObject

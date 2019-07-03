@@ -102,6 +102,13 @@ class ComparableSaleModel extends EquationMdoel
     static stabilizedNoiCustomDeduction = new FloatField();
     static stabilizedNoiCustomName = new StringField();
 
+    static isPortfolioCompilation = new BoolField();
+    static isPartOfPortfolio = new BoolField();
+    static allowSubCompSearch = new BoolField();
+
+    static portfolioCompilationLinkId = new StringField();
+    static portfolioLinkedComps = new ListField(new StringField());
+
     get displayNetOperatingIncome()
     {
         if (this.useStabilizedNoi)
@@ -123,6 +130,54 @@ class ComparableSaleModel extends EquationMdoel
         else
         {
             return this.capitalizationRate;
+        }
+    }
+
+    get displayNOIPSFMultiple()
+    {
+        if (this.useStabilizedNoi)
+        {
+            return this.stabilizedNOIPSFMultiple;
+        }
+        else
+        {
+            return this.noiPSFMultiple;
+        }
+    }
+
+    get displayNetOperatingIncomePSF()
+    {
+        if (this.useStabilizedNoi)
+        {
+            return this.stabilizedNetOperatingIncomePSF;
+        }
+        else
+        {
+            return this.netOperatingIncomePSF;
+        }
+    }
+
+    get displayNOIPerUnit()
+    {
+        if (this.useStabilizedNoi)
+        {
+            return this.stabilizedNOIPerUnit;
+        }
+        else
+        {
+            return this.noiPerUnit;
+        }
+    }
+
+    get displayNOIPerBedroom()
+    {
+        if (this.useStabilizedNoi)
+        {
+            return this.stabilizedNOIPerBedroom;
+        }
+        else
+        {
+            return this.noiPerBedroom;
         }
     }
 
@@ -168,12 +223,107 @@ class ComparableSaleModel extends EquationMdoel
 
     get stabilizedCapitalizationRate()
     {
+        if (this.capitalizationRate === null)
+        {
+            return null;
+        }
         return this.capitalizationRate / this.overallStabilizationRate;
     }
 
     set stabilizedCapitalizationRate(newValue)
     {
-        this.capitalizationRate = newValue * this.overallStabilizationRate;
+        if (newValue === null)
+        {
+            this.capitalizationRate = null;
+        }
+        else
+        {
+            this.capitalizationRate = newValue * this.overallStabilizationRate;
+        }
+    }
+
+    get stabilizedNOIPSFMultiple()
+    {
+        if (this.noiPSFMultiple === null)
+        {
+            return null;
+        }
+        return this.noiPSFMultiple * this.overallStabilizationRate;
+    }
+
+    set stabilizedNOIPSFMultiple(newValue)
+    {
+        if (newValue === null)
+        {
+            this.noiPSFMultiple = null;
+        }
+        else
+        {
+            this.noiPSFMultiple = newValue / this.overallStabilizationRate;
+        }
+    }
+
+    get stabilizedNetOperatingIncomePSF()
+    {
+        if (this.netOperatingIncomePSF === null)
+        {
+            return null;
+        }
+        return this.netOperatingIncomePSF * this.overallStabilizationRate;
+    }
+
+    set stabilizedNetOperatingIncomePSF(newValue)
+    {
+        if (newValue === null)
+        {
+            this.netOperatingIncomePSF = null;
+        }
+        else
+        {
+            this.netOperatingIncomePSF = newValue / this.overallStabilizationRate;
+        }
+    }
+
+    get stabilizedNOIPerUnit()
+    {
+        if (this.noiPerUnit === null)
+        {
+            return null;
+        }
+        return this.noiPerUnit * this.overallStabilizationRate;
+    }
+
+    set stabilizedNOIPerUnit(newValue)
+    {
+        if (newValue === null)
+        {
+            this.noiPerUnit = null;
+        }
+        else
+        {
+            this.noiPerUnit = newValue / this.overallStabilizationRate;
+        }
+    }
+
+    get stabilizedNOIPerBedroom()
+    {
+        if (this.noiPerBedroom === null)
+        {
+            return null;
+        }
+        return this.noiPerBedroom * this.overallStabilizationRate;
+    }
+
+    set stabilizedNOIPerBedroom(newValue)
+    {
+        if (newValue === null)
+        {
+            this.noiPerBedroom = null;
+        }
+        else
+        {
+            this.noiPerBedroom = newValue / this.overallStabilizationRate;
+        }
     }
 
     get overallStabilizationRate()

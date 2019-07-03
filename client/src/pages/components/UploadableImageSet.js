@@ -185,14 +185,17 @@ class UploadableImageSet extends React.Component
                                 {
                                     return <div className={"image-wrapper"} key={item} onClick={() => this.setState({activeIndex: itemIndex})} >
                                             <img src={item + "?access_token=" + this.props.accessToken} className={"uploadable-image-carousel-image"} />
-                                            <Button
-                                                color="secondary"
-                                                className={"delete-image-button"}
-                                                onClick={(evt) => this.deleteImage(itemIndex)}
-                                                title={"Delete Expense"}
-                                            >
-                                                <i className="fa fa-times"></i>
-                                            </Button>
+                                            {
+                                                this.props.editable ?
+                                                    <Button
+                                                        color="secondary"
+                                                        className={"delete-image-button"}
+                                                        onClick={(evt) => this.deleteImage(itemIndex)}
+                                                        title={"Delete Expense"}
+                                                    >
+                                                        <i className="fa fa-times"></i>
+                                                    </Button> : null
+                                            }
                                         </div>
                                 })
                             }
@@ -207,17 +210,18 @@ class UploadableImageSet extends React.Component
                                     </div> : null
                             }
                             {
-                                _.range(3 - (this.props.value || []).length % 4 - (this.state.loading ? 1 : 0)).map(() =>
+                                _.range(3 - (this.props.value || []).length % 4 - (this.state.loading ? 1 : 0)).map((spacer, spacerIndex) =>
                                 {
-                                    return <div className={"uploadable-image-carousel-spacer"} />
+                                    return <div key={spacerIndex} className={"uploadable-image-carousel-spacer"} />
                                 })
                             }
                             {
+                                this.props.editable ?
                                 <Dropzone onDrop={acceptedFiles => this.onFileUpload(acceptedFiles)} className={"file-upload-box"}>
                                     <Button className={"uploadable-image-new-image-button"}>
                                         <i className={"fa fa-plus"} />
                                     </Button>
-                                </Dropzone>
+                                </Dropzone> : null
                             }
                         </nav>
                     </div>

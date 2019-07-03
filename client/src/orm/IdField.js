@@ -1,5 +1,5 @@
 import BaseField from "./BaseField";
-
+import _ from 'underscore';
 
 class IdField extends BaseField
 {
@@ -7,7 +7,14 @@ class IdField extends BaseField
     {
         if (value)
         {
-            return value['$oid'];
+            if (_.isString(value))
+            {
+                return value;
+            }
+            else if (_.isObject(value))
+            {
+                return value['$oid'];
+            }
         }
     }
 }

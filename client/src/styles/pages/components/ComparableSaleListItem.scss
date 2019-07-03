@@ -25,6 +25,21 @@
 
   }
 
+  .no-comps-in-portfolio
+  {
+    margin-left: auto;
+    margin-right: auto;
+
+    .no-comps-in-portfolio-button
+    {
+      margin-top: 100px;
+      width: 200px;
+      height: 200px;
+      white-space: normal;
+
+    }
+  }
+
   .comparable-sale-item-content
   {
     display: flex;
@@ -107,6 +122,53 @@
     .field-display-edit
     {
       padding-left: 10px;
+    }
+  }
+
+  .portfolio-table
+  {
+    tr.comp-selection-row:hover
+    {
+      cursor: pointer;
+      background-color: #f0f0f0;
+    }
+
+    td.arrow-column
+    {
+      width: 16px;
+    }
+
+    td.portfolio-number-column
+    {
+      width: 16px;
+    }
+
+    tr.comp-selection-row.selected
+    {
+      background-color: #e6e6e6;
+    }
+
+    td.portfolio-action-column
+    {
+      .action-button-wrapper
+      {
+        width: 45px;
+      }
+    }
+
+    td.portfolio-action-column:not(:hover)
+    {
+      .btn
+      {
+        width: 100%;
+
+        display: none;
+      }
+    }
+
+    span.no-data
+    {
+      font-style: italic;
     }
   }
 

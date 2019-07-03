@@ -98,7 +98,7 @@ class ComparableSalesMap extends React.Component {
                                 lat={this.props.appraisal.location.coordinates[1]}
                                 lng={this.props.appraisal.location.coordinates[0]}>
                                 <div
-                                    style={{"position": "absolute", "top": "-25px", "background-color": "lightgrey", "width": "55px", "height": "25px", "margin-left": "15px", "padding": "5px", "color": "black", "border": "2px black solid"}}
+                                    style={{"position": "absolute", "top": "-25px", "backgroundColor": "lightgrey", "width": "55px", "height": "25px", "marginLeft": "15px", "padding": "5px", "color": "black", "border": "2px black solid"}}
                                 >
                                     <span>Subject</span>
                                 </div>

@@ -61,8 +61,11 @@ def main():
             completed = 0
 
             for object in objects:
-                func(object)
-                object.version = None
+                returnObject = func(object)
+                if returnObject is not None:
+                    object = returnObject
+
+                object.version = versionNumber
                 object.save()
 
                 completed += 1

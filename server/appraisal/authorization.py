@@ -6,7 +6,7 @@ from jwcrypto.jwt import JWT
 from jwcrypto.common import base64url_encode, base64url_decode, \
                             json_encode, json_decode
 import json
-
+from .models.custom_id_field import regularizeID
 
 class CustomAuthenticationPolicy(CallbackAuthenticationPolicy):
 
@@ -98,7 +98,7 @@ def checkUserOwnsAppraisalId(userId, principalIds, appraisalId):
         return True
 
     query = {
-        "_id": appraisalId,
+        "_id": regularizeID(appraisalId),
         "owner": userId
     }
 

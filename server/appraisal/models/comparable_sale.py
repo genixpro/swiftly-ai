@@ -3,9 +3,17 @@ import datetime
 from appraisal.models.unit import Unit
 from appraisal.models.date_field import ConvertingDateField
 from ..migrations import registerMigration
+import scipy.stats
+import numpy
+import bson
+from .custom_id_field import CustomIDField
+import json, bson
+from .custom_id_field import generateNewUUID
 
 class ComparableSale(Document):
     meta = {'collection': 'comparables', 'strict': False}
+
+    id = CustomIDField()
 
     # The owner of this comparable sale
     owner = StringField()
@@ -148,7 +156,186 @@ class ComparableSale(Document):
     stabilizedNoiCustomDeduction = FloatField()
     stabilizedNoiCustomName = StringField(default="Custom")
 
-    version = IntField(default=1)
+    isPortfolioCompilation = BooleanField(default=False)
+    isPartOfPortfolio = BooleanField(default=False)
+    allowSubCompSearch = BooleanField(default=True)
+
+    portfolioCompilationLinkId = StringField()
+    portfolioLinkedComps = ListField(StringField())
+
+    version = IntField(default=3)
+
+
+    def updatePortfolioComparable(self, subComps):
+        # subComps = list(ComparableSale.objects(id__in=self.portfolioLinkedComps))
+
+        addresses = [comp.address for comp in subComps if comp.address]
+        self.address = ", ".join(set(addresses)) if len(addresses) else None
+
+        locations = [comp.location for comp in subComps if comp.location]
+        self.location = locations[0] if len(locations) else None
+
+        self.imageUrls = [image for comp in subComps for image in comp.imageUrls]
+
+        propertyTypes = [comp.propertyType for comp in subComps if comp.propertyType]
+        self.propertyType = str(scipy.stats.mode(propertyTypes)[0][0]) if len(propertyTypes) else None
+
+        netOperatingIncomes = [comp.netOperatingIncome for comp in subComps if comp.netOperatingIncome]
+        self.netOperatingIncome = float(numpy.sum(netOperatingIncomes)) if len(netOperatingIncomes) else None
+
+        salePrices = [comp.salePrice for comp in subComps if comp.salePrice]
+        self.salePrice = float(numpy.sum(salePrices)) if len(salePrices) else None
+
+        if self.netOperatingIncome and self.salePrice:
+            self.capitalizationRate = self.netOperatingIncome / self.salePrice
+
+        sizeSquareFootages = [comp.sizeSquareFootage for comp in subComps if comp.sizeSquareFootage]
+        self.sizeSquareFootage = float(numpy.sum(sizeSquareFootages)) if len(sizeSquareFootages) else None
+
+        occupancyRates = [comp.occupancyRate for comp in subComps if comp.occupancyRate]
+        self.occupancyRate = float(numpy.mean(occupancyRates)) if len(occupancyRates) else None
+
+        purchasers = [comp.purchaser for comp in subComps if comp.purchaser]
+        self.purchaser = ", ".join(set(purchasers)) if len(purchasers) else None
+
+        vendors = [comp.vendor for comp in subComps if comp.vendor]
+        self.vendor = ", ".join(set(vendors)) if len(vendors) else None
+
+        tenants = [comp.tenants for comp in subComps if comp.tenants]
+        self.tenants = ", ".join(set(tenants)) if len(tenants) else None
+
+        siteAreas = [comp.siteArea for comp in subComps if comp.siteArea]
+        self.siteArea = float(numpy.sum(siteAreas)) if len(siteAreas) else None
+
+        clearCeilingHeights = [comp.clearCeilingHeight for comp in subComps if comp.clearCeilingHeight]
+        self.clearCeilingHeight = float(numpy.max(clearCeilingHeights)) if len(clearCeilingHeights) else None
+
+        shippingDoorsTruckLevels = [comp.shippingDoorsTruckLevel for comp in subComps if comp.shippingDoorsTruckLevel]
+        self.shippingDoorsTruckLevel = float(numpy.sum(shippingDoorsTruckLevels)) if len(shippingDoorsTruckLevels) else None
+
+        shippingDoorsDoubleMans = [comp.shippingDoorsDoubleMan for comp in subComps if comp.shippingDoorsDoubleMan]
+        self.shippingDoorsDoubleMan = float(numpy.sum(shippingDoorsDoubleMans)) if len(shippingDoorsDoubleMans) else None
+
+        shippingDoorsDriveIns = [comp.shippingDoorsDriveIn for comp in subComps if comp.shippingDoorsDriveIn]
+        self.shippingDoorsDriveIn = float(numpy.sum(shippingDoorsDriveIns)) if len(shippingDoorsDriveIns) else None
+
+        coveredAreas = [comp.siteCoverage * comp.sizeOfLandSqft / 100 for comp in subComps if comp.siteCoverage and comp.sizeOfLandSqft]
+        totalCovered = float(numpy.sum(coveredAreas)) if len(coveredAreas) else None
+
+        landSizesWithCoverage = [comp.sizeOfLandSqft for comp in subComps if comp.siteCoverage and comp.sizeOfLandSqft]
+        totalCoverable = float(numpy.sum(landSizesWithCoverage)) if len(landSizesWithCoverage) else None
+        if totalCovered is not None and totalCoverable is not None:
+            self.siteCoverage = float(totalCovered * 100 / totalCoverable)
+        else:
+            self.siteCoverage = None
+
+        if self.salePrice and self.sizeSquareFootage:
+            self.pricePerSquareFoot = self.salePrice / self.sizeSquareFootage
+
+        saleDates = [comp.saleDate for comp in subComps if comp.saleDate]
+        self.saleDate = scipy.stats.mode(saleDates) if len(saleDates) else None
+
+        self.propertyTags = [tag for comp in subComps for tag in comp.propertyTags]
+
+        sizeOfLandSqfts = [comp.sizeOfLandSqft for comp in subComps if comp.sizeOfLandSqft]
+        self.sizeOfLandSqft = float(numpy.sum(sizeOfLandSqfts)) if len(sizeOfLandSqfts) else None
+
+        sizeOfLandAcres = [comp.sizeOfLandAcres for comp in subComps if comp.sizeOfLandAcres]
+        self.sizeOfLandAcres = float(numpy.sum(sizeOfLandAcres)) if len(sizeOfLandAcres) else None
+
+        sizeOfBuildableAreaSqfts = [comp.sizeOfBuildableAreaSqft for comp in subComps if comp.sizeOfBuildableAreaSqft]
+        self.sizeOfBuildableAreaSqft = float(numpy.sum(sizeOfBuildableAreaSqfts)) if len(sizeOfBuildableAreaSqfts) else None
+
+        sizeOfBuildableAreaAcres = [comp.sizeOfBuildableAreaAcres for comp in subComps if comp.sizeOfBuildableAreaAcres]
+        self.sizeOfBuildableAreaAcres = float(numpy.sum(sizeOfBuildableAreaAcres)) if len(sizeOfBuildableAreaAcres) else None
+
+        if self.salePrice and self.sizeOfLandSqft:
+            self.pricePerSquareFootLand = self.salePrice / self.sizeOfLandSqft
+        else:
+            self.pricePerSquareFootLand = None
+
+        if self.salePrice and self.sizeOfLandAcres:
+            self.pricePerAcreLand = self.salePrice / self.sizeOfLandAcres
+        else:
+            self.pricePerAcreLand = None
+
+        if self.salePrice and self.sizeOfBuildableAreaSqft:
+            self.pricePerSquareFootBuildableArea = self.salePrice / self.sizeOfBuildableAreaSqft
+        else:
+            self.pricePerSquareFootBuildableArea = None
+
+        if self.salePrice and self.sizeOfBuildableAreaAcres:
+            self.pricePerAcreBuildableArea = self.salePrice / self.sizeOfBuildableAreaAcres
+        else:
+            self.pricePerAcreBuildableArea = None
+
+        buildableUnits = [comp.buildableUnits for comp in subComps if comp.buildableUnits]
+        self.buildableUnits = float(numpy.sum(buildableUnits)) if len(buildableUnits) else None
+
+        if self.salePrice and self.buildableUnits:
+            self.pricePerBuildableUnit = self.salePrice / self.buildableUnits
+        else:
+            self.pricePerBuildableUnit = None
+
+        if self.sizeOfBuildableAreaSqft and self.sizeOfLandSqft:
+            self.floorSpaceIndex = self.sizeOfBuildableAreaSqft / self.sizeOfLandSqft
+        else:
+            self.floorSpaceIndex = None
+
+        finishedOfficePercent = [comp.finishedOfficePercent for comp in subComps if comp.finishedOfficePercent]
+        self.finishedOfficePercent = float(numpy.mean(finishedOfficePercent)) if len(finishedOfficePercent) else None
+
+        if self.netOperatingIncome and self.sizeSquareFootage:
+            self.netOperatingIncomePSF = self.netOperatingIncome / self.sizeSquareFootage
+        else:
+            self.netOperatingIncomePSF = None
+
+        if self.netOperatingIncomePSF and self.pricePerSquareFoot:
+            self.noiPSFMultiple = self.netOperatingIncomePSF / self.pricePerSquareFoot
+        else:
+            self.noiPSFMultiple = None
+
+        numberOfUnits = [comp.numberOfUnits for comp in subComps if comp.numberOfUnits]
+        self.numberOfUnits = float(numpy.sum(numberOfUnits)) if len(numberOfUnits) else None
+
+        totalRents = [comp.numberOfUnits * comp.averageMonthlyRentPerUnit for comp in subComps if comp.numberOfUnits and comp.averageMonthlyRentPerUnit]
+
+        totalAverageRent = float(numpy.sum(totalRents)) if len(totalRents) else None
+        if totalAverageRent is not None:
+            unitCountsWithRent = [comp.numberOfUnits for comp in subComps if comp.numberOfUnits and comp.averageMonthlyRentPerUnit]
+            self.averageMonthlyRentPerUnit = totalAverageRent / float(numpy.sum(unitCountsWithRent))
+        else:
+            self.averageMonthlyRentPerUnit = None
+
+        if self.numberOfUnits and self.netOperatingIncome:
+            self.noiPerUnit = self.netOperatingIncome / self.numberOfUnits
+        else:
+            self.averageMonthlyRentPerUnit = None
+
+        numberOfBachelors = [comp.numberOfBachelors for comp in subComps if comp.numberOfBachelors]
+        self.numberOfBachelors = float(numpy.sum(numberOfBachelors)) if len(numberOfBachelors) else None
+
+        numberOfOneBedrooms = [comp.numberOfOneBedrooms for comp in subComps if comp.numberOfOneBedrooms]
+        self.numberOfOneBedrooms = float(numpy.sum(numberOfOneBedrooms)) if len(numberOfOneBedrooms) else None
+
+        numberOfTwoBedrooms = [comp.numberOfTwoBedrooms for comp in subComps if comp.numberOfTwoBedrooms]
+        self.numberOfTwoBedrooms = float(numpy.sum(numberOfTwoBedrooms)) if len(numberOfTwoBedrooms) else None
+
+        numberOfThreePlusBedrooms = [comp.numberOfThreePlusBedrooms for comp in subComps if comp.numberOfThreePlusBedrooms]
+        self.numberOfThreePlusBedrooms = float(numpy.sum(numberOfThreePlusBedrooms)) if len(numberOfThreePlusBedrooms) else None
+
+        totalBedrooms = [comp.totalBedrooms for comp in subComps if comp.totalBedrooms]
+        self.totalBedrooms = float(numpy.sum(totalBedrooms)) if len(totalBedrooms) else None
+
+        if self.totalBedrooms and self.netOperatingIncome:
+            self.noiPerBedroom = self.netOperatingIncome / self.totalBedrooms
+        else:
+            self.noiPerBedroom = None
+
+        self.tenancyType = "multi_tenant"
+
+        self.isPortfolioCompilation = True
+        self.isPartOfPortfolio = False
 
 
 
@@ -156,10 +343,30 @@ class ComparableSale(Document):
 def migration_001_update_image_urls(comparable):
     # We have to fix bad data in the db prior to running this migration
     try:
-        comparable.siteArea = float(comparable.siteArea)
+        if comparable.siteArea is not None:
+            comparable.siteArea = float(comparable.siteArea)
     except ValueError:
         comparable.siteArea = None
 
     if comparable.imageUrl:
         if comparable.imageUrl not in comparable.imageUrls:
             comparable.imageUrls.append(comparable.imageUrl)
+
+
+
+@registerMigration(ComparableSale, 2)
+def migration_002_allow_sub_comp_search(comparable):
+   comparable.allowSubCompSearch = True
+
+
+@registerMigration(ComparableSale, 3)
+def migration_003_update_comp_sale_object_id(object):
+    data = json.loads(object.to_json())
+    if len(str(object.id)) == 24:
+        del data['_id']
+        data['id'] = str(object.id)
+
+        ComparableSale.objects(id=bson.ObjectId(object.id)).delete()
+
+        newObject = ComparableSale(**data)
+        return newObject

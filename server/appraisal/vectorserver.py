@@ -5,6 +5,7 @@ import os
 import pkg_resources
 import subprocess
 import functools
+from .models.custom_id_field import generateNewUUID, regularizeID
 
 vectorServerSymmetricKey = "WW7av8oEg1zk6hn1v0KJH710KhT46d"
 

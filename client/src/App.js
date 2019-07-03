@@ -21,7 +21,6 @@ import "./Vendor";
 import './styles/bootstrap.scss';
 import './styles/app.scss'
 import axios from 'axios';
-import { DragDropContextProvider } from 'react-dnd'
 import HTML5Backend from 'react-dnd-html5-backend'
 import Auth from './Auth';
 
@@ -58,9 +57,7 @@ class App extends Component {
 
     return (
         <BrowserRouter basename={basename}>
-            <DragDropContextProvider backend={HTML5Backend}>
-                <Routes />
-            </DragDropContextProvider>
+            <Routes />
         </BrowserRouter>
     );
 

@@ -128,7 +128,17 @@ class ComparableSalesStatistics extends React.Component
                 averageTitle: "Multiple Average ($)",
                 render: (value) => <FloatFormat value={value} cents={false}/>
             },
+            displayNOIPSFMultiple: {
+                rangeTitle: "Multiple Range ($)",
+                averageTitle: "Multiple Average ($)",
+                render: (value) => <FloatFormat value={value} cents={false}/>
+            },
             netOperatingIncomePSF: {
+                rangeTitle: "NOI PSF Range ($)",
+                averageTitle: "NOI PSF Average ($)",
+                render: (value) => <CurrencyFormat value={value} cents={false}/>
+            },
+            displayNetOperatingIncomePSF: {
                 rangeTitle: "NOI PSF Range ($)",
                 averageTitle: "NOI PSF Average ($)",
                 render: (value) => <CurrencyFormat value={value} cents={false}/>
@@ -159,6 +169,11 @@ class ComparableSalesStatistics extends React.Component
                 render: (value) => <PercentFormat value={value}/>
             },
             noiPerUnit: {
+                rangeTitle: "NOI / Unit Range ($)",
+                averageTitle: "NOI / Unit Average ($)",
+                render: (value) => <CurrencyFormat value={value} cents={false}/>
+            },
+            displayNOIPerUnit: {
                 rangeTitle: "NOI / Unit Range ($)",
                 averageTitle: "NOI / Unit Average ($)",
                 render: (value) => <CurrencyFormat value={value} cents={false}/>
