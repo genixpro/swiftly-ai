@@ -14,7 +14,16 @@
     "build-modernizr": "modernizr -c modernizr-config.json -d src/modernizr.js -u",
     "build-themes": "node-sass-chokidar src/styles/themes -o public/themes -w",
     "lint": "react-scripts lint",
-    "postinstall-heroku": "npm run build"
+    "postinstall-heroku": "npm run build",
+    "comparable_sales_summary_word": "node_modules/.bin/babel-node ./src/word_documents/comparable_sales_summary_word.js",
+    "comparable_sales_detailed_word": "node_modules/.bin/babel-node ./src/word_documents/comparable_sales_detailed_word.js",
+    "rent_roll_summary_word": "node_modules/.bin/babel-node ./src/word_documents/rent_roll_summary_word.js",
+    "expenses_summary_word": "node_modules/.bin/babel-node ./src/word_documents/expenses_summary_word.js",
+    "stabilized_statement_word": "node_modules/.bin/babel-node ./src/word_documents/stabilized_statement_word.js",
+    "capitalization_valuation_word": "node_modules/.bin/babel-node ./src/word_documents/capitalization_valuation_word.js",
+    "direct_comparison_valuation_word": "node_modules/.bin/babel-node ./src/word_documents/direct_comparison_valuation_word.js",
+    "additional_income_word": "node_modules/.bin/babel-node ./src/word_documents/additional_income_summary_word.js",
+    "amortization_schedule_word": "node_modules/.bin/babel-node ./src/word_documents/amortization_schedule_word.js"
   },
   "eslintConfig": {
     "extends": "react-app"
@@ -26,6 +35,9 @@
     "not op_mini all"
   ],
   "dependencies": {
+    "@babel/cli": "^7.4.3",
+    "@babel/core": "^7.4.3",
+    "@babel/node": "^7.2.2",
     "@fortawesome/fontawesome-free": "5.5.0",
     "animate.css": "3.7.0",
     "array-move": "^2.1.0",
@@ -36,6 +48,8 @@
     "bootbox": "^5.1.0",
     "bootstrap": ">=4.3.1",
     "bootstrap-filestyle": "github:markusslima/bootstrap-filestyle#v2.1.0",
+    "browserslist": "^4.6.3",
+    "caniuse-lite": "^1.0.30000980",
     "chart.js": "2.7.3",
     "chartist": "0.11.0",
     "client": "0.0.1",
@@ -145,5 +159,16 @@
     "sass-loader": "7.1.0",
     "style-loader": "0.23.1",
     "webpack-bundle-analyzer": "3.3.2"
+  },
+  "babel": {
+    "plugins": [
+      "transform-es2015-modules-commonjs",
+      "@babel/syntax-dynamic-import",
+      "@babel/plugin-proposal-class-properties"
+    ],
+    "presets": [
+      "@babel/env",
+      "@babel/react"
+    ]
   }
 }

@@ -54,7 +54,9 @@ class ExportAPI(object):
 
 
     def renderTemplate(self, templateName, data):
-        wordDocFolder = os.path.join(os.getcwd(), "appraisal", "word_documents")
+        wordDocFolder = os.path.join(os.path.split(os.getcwd())[0], "client")
+
+        print(wordDocFolder)
 
         with tempfile.TemporaryDirectory() as tempDir:
             with tempfile.NamedTemporaryFile(suffix=".html", dir=tempDir) as temp:
