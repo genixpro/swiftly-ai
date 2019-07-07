@@ -12,6 +12,7 @@ from pyramid.authorization import Allow, Deny, Everyone
 from appraisal.authorization import checkUserOwnsObject
 from pyramid.httpexceptions import HTTPForbidden
 
+from ..models.custom_id_field import generateNewUUID, regularizeID
 
 @resource(collection_path='/property_tags', path='/property_tags/{id}', renderer='bson', cors_enabled=True, cors_origins="*", permission="everything")
 class PropertyTagAPI(object):
@@ -45,7 +46,7 @@ class PropertyTagAPI(object):
     def get(self):
         propertyTagId = self.request.matchdict['id']
 
-        propertyTag = PropertyTag.objects(id=propertyTagId).first()
+        propertyTag = PropertyTag.objects(id=regularizeID(propertyTagId)).first()
 
         auth = checkUserOwnsObject(self.request.authenticated_userid, self.request.effective_principals, propertyTag)
         if not auth:
@@ -57,6 +58,7 @@ class PropertyTagAPI(object):
         data = self.request.json_body
 
         data["owner"] = self.request.authenticated_userid
+        data['id'] = generateNewUUID(PropertyTag)
 
         propertyTag = PropertyTag(**data)
         propertyTag.save()
@@ -72,7 +74,7 @@ class PropertyTagAPI(object):
         if '_id' in data:
             del data['_id']
 
-        propertyTag = PropertyTag.objects(id=propertyTagId).first()
+        propertyTag = PropertyTag.objects(id=regularizeID(propertyTagId)).first()
 
         auth = checkUserOwnsObject(self.request.authenticated_userid, self.request.effective_principals, propertyTag)
         if not auth:
@@ -87,7 +89,7 @@ class PropertyTagAPI(object):
     def delete(self):
         propertyTagId = self.request.matchdict['id']
 
-        propertyTag = PropertyTag.objects(id=propertyTagId).first()
+        propertyTag = PropertyTag.objects(id=regularizeID(propertyTagId)).first()
 
         auth = checkUserOwnsObject(self.request.authenticated_userid, self.request.effective_principals, propertyTag)
         if not auth:

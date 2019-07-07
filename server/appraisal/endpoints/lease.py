@@ -9,6 +9,7 @@ from pyramid.security import Authenticated
 from pyramid.authorization import Allow, Deny, Everyone
 from appraisal.authorization import checkUserOwnsObject
 from pyramid.httpexceptions import HTTPForbidden
+from ..models.custom_id_field import generateNewUUID, regularizeID
 
 
 @resource(collection_path='/appraisal/{appraisalId}/leases', path='/appraisal/{appraisalId}/leases/{id}', renderer='bson', cors_enabled=True, cors_origins="*", permission="everything")

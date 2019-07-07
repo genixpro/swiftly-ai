@@ -213,10 +213,10 @@ class ViewDirectComparisonValuation extends React.Component
         }
         else if (this.props.appraisal.directComparisonInputs.directComparisonMetric === "noi_multiple")
         {
-            compHeaders.push(["netOperatingIncomePSF"]);
-            compHeaders.push(["noiPSFMultiple"]);
-            compStats.push(["netOperatingIncomePSF"]);
-            compStats.push(["noiPSFMultiple"]);
+            compHeaders.push(["displayNetOperatingIncomePSF"]);
+            compHeaders.push(["displayNOIPSFMultiple"]);
+            compStats.push(["displayNetOperatingIncomePSF"]);
+            compStats.push(["displayNOIPSFMultiple"]);
         }
         else if (this.props.appraisal.directComparisonInputs.directComparisonMetric === "psf_land")
         {
@@ -240,7 +240,7 @@ class ViewDirectComparisonValuation extends React.Component
         }
         else if (this.props.appraisal.directComparisonInputs.directComparisonMetric === "per_unit")
         {
-            compHeaders.push(["noiPerUnit", "noiPerBedroom"]);
+            compHeaders.push(["displayNOIPerUnit", "displayNOIPerBedroom"]);
             compHeaders.push(["pricePerUnit", "pricePerBedroom"]);
             compStats.push(["pricePerUnit"]);
         }

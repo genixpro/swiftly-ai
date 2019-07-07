@@ -38,7 +38,7 @@ def main(global_config, **settings):
     """ This function returns a Pyramid WSGI application.
     """
     with Configurator(settings=settings) as config:
-        config.scan(ignore="appraisal.libs")
+        config.scan(package="appraisal.endpoints", ignore="appraisal.libs")
 
         config.add_renderer('bson', 'appraisal.bson_renderer.BSONRenderer')
 

@@ -18,11 +18,16 @@ from appraisal.models.date_field import ConvertingDateField
 from appraisal.models.extraction_reference import ExtractionReference
 from appraisal.components.document_processor import DocumentProcessor
 import numpy
+import json
+import bson
 from mongoengine import signals
 from ..migrations import registerMigration
+from .custom_id_field import CustomIDField, generateNewUUID
 
 class Appraisal(Document):
     meta = {'collection': 'appraisals', 'strict': False}
+
+    id = CustomIDField()
 
     # The owner of the appraisal
     owner = StringField()
@@ -139,7 +144,7 @@ class Appraisal(Document):
     def sizeOfBuilding(self):
         return float(numpy.sum([unit.squareFootage for unit in self.units]))
 
-    version = IntField(default=1)
+    version = IntField(default=2)
 
 
     def getLeasingCostStructureWithName(self, name):
@@ -154,4 +159,17 @@ def migration_001_image_urls(appraisal):
     if appraisal.imageUrl:
         if appraisal.imageUrl not in appraisal.imageUrls:
             appraisal.imageUrls.append(appraisal.imageUrl)
+
+
+@registerMigration(Appraisal, 2)
+def migration_002_appraisal_id(appraisal):
+    data = json.loads(appraisal.to_json())
+    if len(str(appraisal.id)) == 24:
+        del data['_id']
+        data['id'] = str(appraisal.id)
+
+        Appraisal.objects(id=bson.ObjectId(appraisal.id)).delete()
+
+        newAppraisal = Appraisal(**data)
+        return newAppraisal
 

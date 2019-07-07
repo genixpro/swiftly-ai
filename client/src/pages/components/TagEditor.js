@@ -137,6 +137,7 @@ class TagEditor extends React.Component {
                 // cacheOptions
                 isClearable
                 isMulti
+                isDisabled={this.props.disabled}
                 defaultOptions={this.state.defaultOptions}
                 loadOptions={(inputValue, callback) => this.loadOptions(inputValue, callback)}
                 onCreateOption={(data) => this.onCreateTag(data)}

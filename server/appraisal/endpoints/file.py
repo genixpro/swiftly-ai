@@ -24,6 +24,7 @@ from appraisal.authorization import checkUserOwnsObject, checkUserOwnsAppraisalI
 from pyramid.httpexceptions import HTTPForbidden
 from pyramid.response import Response
 import google.api_core.exceptions
+from ..models.custom_id_field import generateNewUUID, regularizeID
 
 @resource(collection_path='/appraisal/{appraisalId}/files', path='/appraisal/{appraisalId}/files/{id}', renderer='bson', cors_enabled=True, cors_origins="*", permission="everything")
 class FileAPI(object):
@@ -65,7 +66,7 @@ class FileAPI(object):
 
         fileId = self.request.matchdict['id']
 
-        file = File.objects(id=fileId).first()
+        file = File.objects(id=regularizeID(fileId)).first()
 
         auth = checkUserOwnsObject(self.request.authenticated_userid, self.request.effective_principals, file)
         if not auth:
@@ -86,7 +87,7 @@ class FileAPI(object):
         if '_id' in data:
             del data['_id']
 
-        file = File.objects(id=fileId).first()
+        file = File.objects(id=regularizeID(fileId)).first()
 
         auth = checkUserOwnsObject(self.request.authenticated_userid, self.request.effective_principals, file)
         if not auth:
@@ -118,13 +119,13 @@ class FileAPI(object):
 
         fileId = self.request.matchdict['id']
 
-        file = File.objects(id=fileId).first()
+        file = File.objects(id=regularizeID(fileId)).first()
 
         auth = checkUserOwnsObject(self.request.authenticated_userid, self.request.effective_principals, file)
         if not auth:
             raise HTTPForbidden("You do not have access to this file.")
 
-        appraisal = Appraisal.objects(id=appraisalId).first()
+        appraisal = Appraisal.objects(id=regularizeID(appraisalId)).first()
 
         for dataType in appraisal.dataTypeReferences:
             toRemove = []
@@ -165,7 +166,7 @@ class FileAPI(object):
         if not auth:
             raise HTTPForbidden("You do not have access to upload, modify or delete files on this appraisal")
 
-        appraisal = Appraisal.objects(id=appraisalId).first()
+        appraisal = Appraisal.objects(id=regularizeID(appraisalId)).first()
 
         # Send through processing
         file = self.processor.processFileUpload(input_file_name, input_file, appraisal)
@@ -206,8 +207,8 @@ class ReprocessFileAPI(object):
         if not auth:
             raise HTTPForbidden("You do not have access to reprocess this appraisal")
 
-        appraisal = Appraisal.objects(id=appraisalId).first()
-        file = File.objects(id=fileId).first()
+        appraisal = Appraisal.objects(id=regularizeID(appraisalId)).first()
+        file = File.objects(id=regularizeID(fileId)).first()
 
         self.processor.extractAndMergeAppraisalData(file, appraisal)
         self.processor.processAppraisalResults(appraisal)
@@ -241,7 +242,7 @@ class FileContentsAPI(object):
 
         fileId = self.request.matchdict['id']
 
-        file = File.objects(id=fileId).first()
+        file = File.objects(id=regularizeID(fileId)).first()
 
         auth = checkUserOwnsObject(self.request.authenticated_userid, self.request.effective_principals, file)
         if not auth:
@@ -281,7 +282,7 @@ class FileRenderedImagesAPI(object):
 
         fileId = self.request.matchdict['id']
 
-        file = File.objects(id=fileId).first()
+        file = File.objects(id=regularizeID(fileId)).first()
 
         auth = checkUserOwnsObject(self.request.authenticated_userid, self.request.effective_principals, file)
         if not auth:

@@ -6,6 +6,9 @@ from ..migrations import registerMigration
 import re
 from ..migrations import registerMigration
 from dateutil import relativedelta
+from .custom_id_field import CustomIDField
+import json, bson
+from .custom_id_field import generateNewUUID
 
 class RentEscalation(EmbeddedDocument):
     meta = {'strict': False}
@@ -19,6 +22,8 @@ class RentEscalation(EmbeddedDocument):
 
 class ComparableLease(Document):
     meta = {'collection': 'comparable_leases', 'strict': False}
+
+    id = CustomIDField()
 
     # The owner of this comparable lease
     owner = StringField()
@@ -98,7 +103,7 @@ class ComparableLease(Document):
 
     tenancyType = StringField(choices=['single_tenant', 'multi_tenant', 'vacant', ""], null=True)
 
-    version = IntField(default=2)
+    version = IntField(default=3)
 
 
     def fillDataFromAppraisal(self, appraisal, unit):
@@ -164,3 +169,15 @@ def migration_002_update_image_urls(comparable):
         if comparable.imageUrl not in comparable.imageUrls:
             comparable.imageUrls.append(comparable.imageUrl)
 
+
+@registerMigration(ComparableLease, 3)
+def migration_003_update_comp_lease_object_id(object):
+    data = json.loads(object.to_json())
+    if len(str(object.id)) == 24:
+        del data['_id']
+        data['id'] = str(object.id)
+
+        ComparableLease.objects(id=bson.ObjectId(object.id)).delete()
+
+        newObject = ComparableLease(**data)
+        return newObject

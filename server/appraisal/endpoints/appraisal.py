@@ -10,7 +10,8 @@ from pyramid.security import Authenticated
 from pyramid.authorization import Allow, Deny, Everyone
 from appraisal.authorization import checkUserOwnsObject
 from pyramid.httpexceptions import HTTPForbidden
-from .models.comparable_lease import ComparableLease
+from ..models.comparable_lease import ComparableLease
+from ..models.custom_id_field import generateNewUUID, regularizeID
 import jsondiff
 
 @resource(collection_path='/appraisal/', path='/appraisal/{id}', renderer='bson', cors_enabled=True, cors_origins="*", permission="everything")
@@ -41,6 +42,7 @@ class AppraisalAPI(object):
         data = self.request.json_body
 
         data['owner'] = self.request.authenticated_userid
+        data['id'] = generateNewUUID(Appraisal)
 
         appraisal = Appraisal(**data)
         appraisal.save()
@@ -51,7 +53,7 @@ class AppraisalAPI(object):
     def get(self):
         appraisalId = self.request.matchdict['id']
 
-        appraisal = Appraisal.objects(id=appraisalId).first()
+        appraisal = Appraisal.objects(id=regularizeID(appraisalId)).first()
 
         auth = checkUserOwnsObject(self.request.authenticated_userid, self.request.effective_principals, appraisal)
         if not auth:
@@ -79,7 +81,7 @@ class AppraisalAPI(object):
     def delete(self):
         appraisalId = self.request.matchdict['id']
 
-        appraisal = Appraisal.objects(id=appraisalId).first()
+        appraisal = Appraisal.objects(id=regularizeID(appraisalId)).first()
 
         auth = checkUserOwnsObject(self.request.authenticated_userid, self.request.effective_principals, appraisal)
         if not auth:
@@ -98,7 +100,7 @@ class AppraisalAPI(object):
         if '_id' in data:
             del data['_id']
 
-        appraisal = Appraisal.objects(id=appraisalId).first()
+        appraisal = Appraisal.objects(id=regularizeID(appraisalId)).first()
 
         auth = checkUserOwnsObject(self.request.authenticated_userid, self.request.effective_principals, appraisal)
         if not auth:
@@ -145,7 +147,7 @@ class ConvertTenantsToComparables(object):
     def post(self):
         appraisalId = self.request.matchdict['id']
 
-        appraisal = Appraisal.objects(id=appraisalId).first()
+        appraisal = Appraisal.objects(id=regularizeID(appraisalId)).first()
 
         auth = checkUserOwnsObject(self.request.authenticated_userid, self.request.effective_principals, appraisal)
         if not auth:

@@ -2,6 +2,7 @@ from cornice.resource import resource
 from pyramid.authorization import Allow, Everyone
 import pymongo
 import bson
+from mongoengine.queryset.visitor import Q
 import tempfile
 import subprocess
 import json
@@ -13,6 +14,7 @@ from appraisal.authorization import checkUserOwnsObject
 from pyramid.httpexceptions import HTTPForbidden
 from appraisal.components.document_processor import DocumentProcessor
 from appraisal.components.comparable_sale_data_extractor import ComparableSaleDataExtractor
+from ..models.custom_id_field import generateNewUUID, regularizeID
 
 @resource(collection_path='/comparable_sales', path='/comparable_sales/{id}', renderer='bson', cors_enabled=True, cors_origins="*", permission="everything")
 class ComparableSaleAPI(object):
@@ -118,7 +120,7 @@ class ComparableSaleAPI(object):
         if "view_all" not in self.request.effective_principals:
             query["owner"] = self.request.authenticated_userid
 
-        comparableSales = ComparableSale.objects(**query)
+        comparableSales = ComparableSale.objects(Q(**query) & (Q(allowSubCompSearch=True) | Q(allowSubCompSearch__exists=False) ) )
 
         if 'sort' in self.request.GET:
             comparableSales = comparableSales.order_by(self.request.GET['sort'])
@@ -128,7 +130,7 @@ class ComparableSaleAPI(object):
     def get(self):
         comparableId = self.request.matchdict['id']
 
-        comparableSale = ComparableSale.objects(id=comparableId).first()
+        comparableSale = ComparableSale.objects(id=regularizeID(comparableId)).first()
 
         auth = checkUserOwnsObject(self.request.authenticated_userid, self.request.effective_principals, comparableSale)
         if not auth:
@@ -143,6 +145,7 @@ class ComparableSaleAPI(object):
         data = self.request.json_body
 
         data['owner'] = self.request.authenticated_userid
+        data['id'] = generateNewUUID(ComparableSale)
 
         comparable = ComparableSale(**data)
         comparable.save()
@@ -158,7 +161,7 @@ class ComparableSaleAPI(object):
         if '_id' in data:
             del data['_id']
 
-        comparable = ComparableSale.objects(id=comparableId).first()
+        comparable = ComparableSale.objects(id=regularizeID(comparableId)).first()
 
         auth = checkUserOwnsObject(self.request.authenticated_userid, self.request.effective_principals, comparable)
         if not auth:
@@ -173,7 +176,7 @@ class ComparableSaleAPI(object):
     def delete(self):
         fileId = self.request.matchdict['id']
 
-        comparable = ComparableSale.objects(id=fileId).first()
+        comparable = ComparableSale.objects(id=regularizeID(fileId)).first()
 
         auth = checkUserOwnsObject(self.request.authenticated_userid, self.request.effective_principals, comparable)
         if not auth:
@@ -223,3 +226,40 @@ class ComparableSaleFileUploadAPI(object):
             "file": json.loads(file.to_json()),
             "comparableSales": [json.loads(comp.to_json()) for comp in comps]
         }
+
+@resource(path='/comparable_sales_portfolio/', renderer='bson', cors_enabled=True, cors_origins="*", permission="everything")
+class ComparableSalePortfolio(object):
+
+    def __init__(self, request, context=None):
+        self.request = request
+
+
+    def __acl__(self):
+        return [
+            (Allow, Authenticated, 'everything'),
+            (Deny, Everyone, 'everything')
+        ]
+
+    def post(self):
+        # data = self.request.json_body
+
+        data = self.request.json_body
+
+        portfolioComp = data['portfolio']
+        if '_id' in portfolioComp:
+            del portfolioComp['_id']
+        for comp in data['subComps']:
+            if '_id' in comp:
+                del comp['_id']
+
+        subComps = [ComparableSale(**subComp) for subComp in data['subComps']]
+
+        portfolioComp['owner'] = self.request.authenticated_userid
+
+
+        comparable = ComparableSale(**portfolioComp)
+        comparable.updatePortfolioComparable(subComps=subComps)
+        # comparable.save()
+
+
+        return {"comparableSale": json.loads(comparable.to_json())}

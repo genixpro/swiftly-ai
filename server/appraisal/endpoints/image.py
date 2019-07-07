@@ -15,6 +15,7 @@ from appraisal.authorization import checkUserOwnsObject
 from pyramid.httpexceptions import HTTPForbidden
 from pyramid.response import Response
 import google.api_core.exceptions
+from ..models.custom_id_field import generateNewUUID, regularizeID
 
 @resource(collection_path='/images', path='/images/{id}', renderer='bson', cors_enabled=True, cors_origins="*", permission="everything")
 class ImageAPI(object):
@@ -82,7 +83,7 @@ class ImageAPI(object):
 
         imageId = self.request.matchdict['id']
 
-        image = Image.objects(id=imageId).first()
+        image = Image.objects(id=regularizeID(imageId)).first()
 
         auth = checkUserOwnsObject(self.request.authenticated_userid, self.request.effective_principals, image)
         if not auth:

@@ -6,6 +6,7 @@ import { Button, Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
 import SortDirection from "./SortDirection";
 import ComparableSaleModel from "../../models/ComparableSaleModel";
 import axios from "axios/index";
+import Promise from "bluebird";
 import PropTypes from "prop-types";
 import _ from "underscore";
 
@@ -136,7 +137,7 @@ class ComparableSaleList extends React.Component
             statFields.push("displayCapitalizationRate");
             statFields.push("pricePerSquareFoot");
             statFields.push("pricePerUnit");
-            statFields.push("noiPerUnit");
+            statFields.push("displayNOIPerUnit");
             statFields.push("pricePerBedroom");
         }
 
@@ -175,19 +176,31 @@ class ComparableSaleList extends React.Component
         }
         this.lastNewComp = newComparable;
 
-        axios.post(`/comparable_sales`, newComparable).then((response) =>
+        Promise.map(this.state.portfolioComps, (newPortfolioComp) =>
         {
-            newComparable["_id"] = response.data._id;
-            newComparable[ComparableSaleListItem._newSale] = true;
+            return axios.post(`/comparable_sales`, newPortfolioComp);
 
-            this.lastNewComp = null;
+        }).then((portfolioResponses) =>
+        {
+            newComparable.portfolioLinkedComps = _.map(portfolioResponses, (response) => (response.data._id));
+            axios.post(`/comparable_sales`, newComparable).then((response) =>
+            {
+                newComparable["_id"] = response.data._id;
+                newComparable[ComparableSaleListItem._newSale] = true;
 
-            this.props.onNewComparable(newComparable);
-            this.setState({isCreatingNewItem: false, newComparableSale: ComparableSaleModel.create({})})
+                    this.lastNewComp = null;
+
+                    this.props.onNewComparable(newComparable);
+                    this.setState({isCreatingNewItem: false, newComparableSale: ComparableSaleModel.create({})});
+            }, (err) =>
+            {
+                this.lastNewComp = null;
+            });
         }, (err) =>
         {
             this.lastNewComp = null;
         });
+
     }
 
     updateComparable(changedComp, index)
@@ -223,7 +236,9 @@ class ComparableSaleList extends React.Component
 
     toggleNewItem()
     {
-        this.setState({isCreatingNewItem: false});
+        const newComp = this.state.newComparableSale;
+        newComp.isPortfolioCompilation = null;
+        this.setState({isCreatingNewItem: false, newComparableSale: newComp});
     }
 
 
@@ -264,6 +279,20 @@ class ComparableSaleList extends React.Component
         }
 
         this.setState({sort: newSort});
+    }
+
+    setNewCompType(type)
+    {
+        const newComp = this.state.newComparableSale;
+        if (type === 'portfolio')
+        {
+            newComp.isPortfolioCompilation = true;
+        }
+        else
+        {
+            newComp.isPortfolioCompilation = false;
+        }
+        this.setState({newComparableSale: newComp})
     }
 
 
@@ -359,7 +388,15 @@ class ComparableSaleList extends React.Component
                 title: "NOI PSF",
                 size: "middle"
             },
+            displayNetOperatingIncomePSF: {
+                title: "NOI PSF",
+                size: "middle"
+            },
             noiPSFMultiple: {
+                title: "Multiple",
+                size: "middle"
+            },
+            displayNOIPSFMultiple: {
                 title: "Multiple",
                 size: "middle"
             },
@@ -387,7 +424,15 @@ class ComparableSaleList extends React.Component
                 title: "NOI / Bedroom",
                 size: "middle"
             },
+            displayNOIPerBedroom: {
+                title: "NOI / Bedroom",
+                size: "middle"
+            },
             noiPerUnit: {
+                title: "NOI / Unit",
+                size: "middle"
+            },
+            displayNOIPerUnit: {
                 title: "NOI / Unit",
                 size: "middle"
             },
@@ -459,22 +504,51 @@ class ComparableSaleList extends React.Component
                 <div>
                     {
                         this.props.allowNew ?
-                            <div>
+                            <div className={"new-comparable-sale-popup"}>
                                 {this.renderNewItemRow()}
                                 <Modal isOpen={this.state.isCreatingNewItem} toggle={this.toggleNewItem.bind(this)} className={"new-comp-dialog"}>
                                     <ModalHeader toggle={this.toggleNewItem.bind(this)}>New Comparable Sale</ModalHeader>
                                     <ModalBody>
-                                        <ComparableSaleListItem
-                                            appraisal={this.props.appraisal}
-                                            headers={headerFields}
-                                            comparableSale={this.state.newComparableSale}
-                                            openByDefault={true}
-                                            onChange={(comp) => this.setState({newComparableSale: comp})} />
+                                        {
+                                            this.state.newComparableSale.isPortfolioCompilation === null ?
+                                                <div className={"comparable-type-buttons"}>
+                                                    <Button outline={'primary'} className={"comp-type-button"} onClick={() => this.setNewCompType("regular")}>
+                                                        <em className="type-icon fa-2x icon-doc"></em>
+                                                        {/*<div className={"description-block"}>*/}
+                                                        <br />
+                                                            Create Regular Comp
+                                                        {/*</div>*/}
+                                                    </Button>
+                                                    <Button outline={'primary'} className={"comp-type-button"} onClick={() => this.setNewCompType("portfolio")}>
+                                                        <em className="type-icon fa-2x icon-docs"></em>
+                                                        {/*<div className={"description-block"}>*/}
+                                                        <br />
+                                                            Create Portfolio Comp
+                                                        {/*</div>*/}
+                                                    </Button>
+                                                </div> : null
+                                        }
+                                        {
+                                            this.state.newComparableSale.isPortfolioCompilation !== null ?
+                                                <div>
+                                                    <ComparableSaleListItem
+                                                        appraisal={this.props.appraisal}
+                                                        headers={headerFields}
+                                                        comparableSale={this.state.newComparableSale}
+                                                        openByDefault={true}
+                                                        onChange={(comp) => this.setState({newComparableSale: comp})}
+                                                        onChangePortfolio={(portfolioComps) => this.setState({portfolioComps: portfolioComps})}
+                                                    />
+                                                </div> : null
+                                        }
                                     </ModalBody>
-                                    <ModalFooter>
-                                        <Button color="primary" onClick={() => this.addNewComparable(this.state.newComparableSale)}>Add</Button>{' '}
-                                        <Button color="primary" onClick={() => this.toggleNewItem()}>Cancel</Button>{' '}
-                                    </ModalFooter>
+                                    {
+                                        this.state.newComparableSale.isPortfolioCompilation !== null ?
+                                            <ModalFooter>
+                                                <Button color="primary" onClick={() => this.addNewComparable(this.state.newComparableSale)}>Add</Button>{' '}
+                                                <Button color="primary" onClick={() => this.toggleNewItem()}>Cancel</Button>{' '}
+                                            </ModalFooter> : null
+                                    }
                                 </Modal>
                             </div> : null
                     }

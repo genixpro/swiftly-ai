@@ -26,13 +26,13 @@ import DirectComparisonMetricSelector from "./DirectComparisonMetricSelector";
 import TenancyTypeSelector from "./TenancyTypeSelector";
 import TenantNameSelector from "./TenantNameSelector";
 import {DropTarget} from "react-dnd/lib/index";
+import ReactDOM from 'react-dom';
 
 class FieldDisplayEdit extends React.Component
 {
     static defaultProps = {
         edit: true,
         hideInput: true,
-        hideIcon: false,
         cents: true
     };
 
@@ -49,15 +49,6 @@ class FieldDisplayEdit extends React.Component
 
     componentDidMount()
     {
-        if (this.props.hideIcon)
-        {
-            this.setState({hideIcon: true});
-        }
-        else
-        {
-            this.setState({hideIcon: false});
-        }
-
         this.setState({value: this.formatValue(this.props.value)})
     }
 
@@ -168,6 +159,7 @@ class FieldDisplayEdit extends React.Component
         }
         else if (this.props.type === 'acres')
         {
+
             try {
                 return this.numberWithCommas(Number(value).toFixed(2).toString()) + " ac";
             }
@@ -349,9 +341,10 @@ class FieldDisplayEdit extends React.Component
         const customClass = (this.props.className ? this.props.className : "");
         const editableClass = (this.props.edit === false ? "non-editable" : "editable");
         const hideInput = (this.props.hideInput === false ? "show-input" : "hide-input");
+        const typeClass = `edit-type-${this.props.type}`;
 
         const rendered = (
-            <div className={`field-display-edit ${editStateClass} ${customClass} ${editableClass} ${hideInput}`}>
+            <div className={`field-display-edit ${editStateClass} ${customClass} ${editableClass} ${hideInput} ${typeClass}`}>
                 <InputGroup
                             onFocus={(evt) => this.startEditing()}
                             title={this.props.title || this.props.placeholder}
@@ -611,22 +604,6 @@ class FieldDisplayEdit extends React.Component
                                 onBlur={(evt) => this.finishEditing()}
                             /> : null
                     }
-                    {
-                        !this.state.hideIcon && !this.props.extractionReference ?
-                            <InputGroupAddon addonType="append">
-                                <span className={"input-group-text"}>
-                                    <i className={"fa fa-wrench"} />
-                                </span>
-                            </InputGroupAddon> : null
-                    }
-                    {
-                        !this.state.hideIcon && this.props.extractionReference ?
-                            <InputGroupAddon addonType="append">
-                                <Button className={"input-group-text"} onClick={(evt) => {this.viewExtractionInputs();}}>
-                                    <i className={"fa fa-search"} />
-                                </Button>
-                            </InputGroupAddon> : null
-                    }
                 </InputGroup>
             </div>
         );
@@ -675,6 +652,17 @@ const DroppableFieldDisplayEdit = DropTarget("Word", dragTarget, collect)(FieldD
 
 const NonDroppableFieldDisplayEdit = FieldDisplayEdit;
 
-export default DroppableFieldDisplayEdit;
+const SwitchingFieldDisplayEdit = (props) =>
+{
+    const result = <DroppableFieldDisplayEdit {...props}/>;
+    const elem = document.createElement("div");
+    if (!ReactDOM.render(result, elem))
+    {
+        return <FieldDisplayEdit {...props}/>
+    }
+    return result;
+}
+
+export default SwitchingFieldDisplayEdit;
 export {NonDroppableFieldDisplayEdit, DroppableFieldDisplayEdit};
 

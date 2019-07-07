@@ -33,6 +33,7 @@ from pyramid.security import Authenticated
 from pyramid.authorization import Allow, Deny, Everyone
 from appraisal.authorization import checkUserOwnsObject, getAccessTokenForRequest
 from pyramid.httpexceptions import HTTPForbidden
+from ..models.custom_id_field import generateNewUUID, regularizeID
 
 
 class ExportAPI(object):
@@ -118,7 +119,7 @@ class ComparableSalesExcelFile(ExportAPI):
     def get(self):
         appraisalId = self.request.matchdict['appraisalId']
 
-        appraisal = Appraisal.objects(id=appraisalId).first()
+        appraisal = Appraisal.objects(id=regularizeID(appraisalId)).first()
 
         auth = checkUserOwnsObject(self.request.authenticated_userid, self.request.effective_principals, appraisal)
         if not auth:
@@ -191,7 +192,7 @@ class ComparableSalesWordFile(ExportAPI):
     def get(self):
         appraisalId = self.request.matchdict['appraisalId']
 
-        appraisal = Appraisal.objects(id=appraisalId).first()
+        appraisal = Appraisal.objects(id=regularizeID(appraisalId)).first()
 
         auth = checkUserOwnsObject(self.request.authenticated_userid, self.request.effective_principals, appraisal)
         if not auth:
@@ -239,7 +240,7 @@ class ComparableSalesDetailedWordFile(ExportAPI):
     def get(self):
         appraisalId = self.request.matchdict['appraisalId']
 
-        appraisal = Appraisal.objects(id=appraisalId).first()
+        appraisal = Appraisal.objects(id=regularizeID(appraisalId)).first()
 
         auth = checkUserOwnsObject(self.request.authenticated_userid, self.request.effective_principals, appraisal)
         if not auth:
@@ -302,7 +303,7 @@ class ComparableLeasesExcelFile(ExportAPI):
     def get(self):
         appraisalId = self.request.matchdict['appraisalId']
 
-        appraisal = Appraisal.objects(id=appraisalId).first()
+        appraisal = Appraisal.objects(id=regularizeID(appraisalId)).first()
 
         auth = checkUserOwnsObject(self.request.authenticated_userid, self.request.effective_principals, appraisal)
         if not auth:
@@ -375,7 +376,7 @@ class ComparableLeasesWordFile(ExportAPI):
     def get(self):
         appraisalId = self.request.matchdict['appraisalId']
 
-        appraisal = Appraisal.objects(id=appraisalId).first()
+        appraisal = Appraisal.objects(id=regularizeID(appraisalId)).first()
 
         auth = checkUserOwnsObject(self.request.authenticated_userid, self.request.effective_principals, appraisal)
         if not auth:
@@ -462,7 +463,7 @@ class RentRollWordFile(ExportAPI):
     def get(self):
         appraisalId = self.request.matchdict['appraisalId']
 
-        appraisal = Appraisal.objects(id=appraisalId).first()
+        appraisal = Appraisal.objects(id=regularizeID(appraisalId)).first()
 
         auth = checkUserOwnsObject(self.request.authenticated_userid, self.request.effective_principals, appraisal)
         if not auth:
@@ -500,7 +501,7 @@ class RentRollExcelFile(ExportAPI):
     def get(self):
         appraisalId = self.request.matchdict['appraisalId']
 
-        appraisal = Appraisal.objects(id=appraisalId).first()
+        appraisal = Appraisal.objects(id=regularizeID(appraisalId)).first()
 
         auth = checkUserOwnsObject(self.request.authenticated_userid, self.request.effective_principals, appraisal)
         if not auth:
@@ -563,7 +564,7 @@ class ExpensesWordFile(ExportAPI):
     def get(self):
         appraisalId = self.request.matchdict['appraisalId']
 
-        appraisal = Appraisal.objects(id=appraisalId).first()
+        appraisal = Appraisal.objects(id=regularizeID(appraisalId)).first()
 
         auth = checkUserOwnsObject(self.request.authenticated_userid, self.request.effective_principals, appraisal)
         if not auth:
@@ -596,7 +597,7 @@ class ExpensesExcelFile(ExportAPI):
     def get(self):
         appraisalId = self.request.matchdict['appraisalId']
 
-        appraisal = Appraisal.objects(id=appraisalId).first()
+        appraisal = Appraisal.objects(id=regularizeID(appraisalId)).first()
 
         auth = checkUserOwnsObject(self.request.authenticated_userid, self.request.effective_principals, appraisal)
         if not auth:
@@ -679,7 +680,7 @@ class StabilizedStatementWordFile(ExportAPI):
     def get(self):
         appraisalId = self.request.matchdict['appraisalId']
 
-        appraisal = Appraisal.objects(id=appraisalId).first()
+        appraisal = Appraisal.objects(id=regularizeID(appraisalId)).first()
 
         auth = checkUserOwnsObject(self.request.authenticated_userid, self.request.effective_principals, appraisal)
         if not auth:
@@ -713,7 +714,7 @@ class StabilizedStatementExcelFile(ExportAPI):
     def get(self):
         appraisalId = self.request.matchdict['appraisalId']
 
-        appraisal = Appraisal.objects(id=appraisalId).first()
+        appraisal = Appraisal.objects(id=regularizeID(appraisalId)).first()
 
         auth = checkUserOwnsObject(self.request.authenticated_userid, self.request.effective_principals, appraisal)
         if not auth:
@@ -799,7 +800,7 @@ class CapitalizationValuationWordFile(ExportAPI):
     def get(self):
         appraisalId = self.request.matchdict['appraisalId']
 
-        appraisal = Appraisal.objects(id=appraisalId).first()
+        appraisal = Appraisal.objects(id=regularizeID(appraisalId)).first()
 
         auth = checkUserOwnsObject(self.request.authenticated_userid, self.request.effective_principals, appraisal)
         if not auth:
@@ -833,7 +834,7 @@ class CapitalizationValuationExcelFile(ExportAPI):
     def get(self):
         appraisalId = self.request.matchdict['appraisalId']
 
-        appraisal = Appraisal.objects(id=appraisalId).first()
+        appraisal = Appraisal.objects(id=regularizeID(appraisalId)).first()
 
         auth = checkUserOwnsObject(self.request.authenticated_userid, self.request.effective_principals, appraisal)
         if not auth:
@@ -903,7 +904,7 @@ class DirectComparisonValuationWordFile(ExportAPI):
     def get(self):
         appraisalId = self.request.matchdict['appraisalId']
 
-        appraisal = Appraisal.objects(id=appraisalId).first()
+        appraisal = Appraisal.objects(id=regularizeID(appraisalId)).first()
 
         auth = checkUserOwnsObject(self.request.authenticated_userid, self.request.effective_principals, appraisal)
         if not auth:
@@ -938,7 +939,7 @@ class DirectComparisonValuationExcelFile(ExportAPI):
     def get(self):
         appraisalId = self.request.matchdict['appraisalId']
 
-        appraisal = Appraisal.objects(id=appraisalId).first()
+        appraisal = Appraisal.objects(id=regularizeID(appraisalId)).first()
 
         auth = checkUserOwnsObject(self.request.authenticated_userid, self.request.effective_principals, appraisal)
         if not auth:
@@ -1016,7 +1017,7 @@ class AdditionalIncomeWordFile(ExportAPI):
     def get(self):
         appraisalId = self.request.matchdict['appraisalId']
 
-        appraisal = Appraisal.objects(id=appraisalId).first()
+        appraisal = Appraisal.objects(id=regularizeID(appraisalId)).first()
 
         auth = checkUserOwnsObject(self.request.authenticated_userid, self.request.effective_principals, appraisal)
         if not auth:
@@ -1050,7 +1051,7 @@ class AdditionalIncomeExcelFile(ExportAPI):
     def get(self):
         appraisalId = self.request.matchdict['appraisalId']
 
-        appraisal = Appraisal.objects(id=appraisalId).first()
+        appraisal = Appraisal.objects(id=regularizeID(appraisalId)).first()
 
         auth = checkUserOwnsObject(self.request.authenticated_userid, self.request.effective_principals, appraisal)
         if not auth:
@@ -1106,7 +1107,7 @@ class AmortizationScheduleWordFile(ExportAPI):
     def get(self):
         appraisalId = self.request.matchdict['appraisalId']
 
-        appraisal = Appraisal.objects(id=appraisalId).first()
+        appraisal = Appraisal.objects(id=regularizeID(appraisalId)).first()
 
         auth = checkUserOwnsObject(self.request.authenticated_userid, self.request.effective_principals, appraisal)
         if not auth:
@@ -1140,7 +1141,7 @@ class AmortizationScheduleExcelFile(ExportAPI):
     def get(self):
         appraisalId = self.request.matchdict['appraisalId']
 
-        appraisal = Appraisal.objects(id=appraisalId).first()
+        appraisal = Appraisal.objects(id=regularizeID(appraisalId)).first()
 
         auth = checkUserOwnsObject(self.request.authenticated_userid, self.request.effective_principals, appraisal)
         if not auth:
