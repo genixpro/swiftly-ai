@@ -11,25 +11,10 @@ import Spacer from "./spacer";
 import FinancialTable from "./financial_table";
 import renderDocument from "./render_doc";
 
-class App extends React.Component
+class DirectComparisonTable extends React.Component
 {
     render()
     {
-        const headerStyle = {
-            "textAlign": "center"
-        };
-
-        const subHeaderStyle = {
-            "textAlign": "center"
-        };
-
-        const resultStyle = {
-            "textAlign": "center",
-            "fontStyle": "italic",
-            "fontFamily": "monospace, serif",
-            "fontSize": "14px",
-            "letterSpacing": "-1px"
-        };
 
         const rows = [];
 
@@ -168,8 +153,11 @@ class App extends React.Component
             });
         });
 
-        // Set the very last modifier to a sumAfter
-        rows[rows.length - 1]['mode'] = 'sumAfter';
+        if (rows.length > 0)
+        {
+            // Set the very last modifier to a sumAfter
+            rows[rows.length - 1]['mode'] = 'sumAfter';
+        }
 
         rows.push({
             "label": "Estimated Value",
@@ -186,26 +174,9 @@ class App extends React.Component
         });
 
         return (
-            <html>
-            <body style={{"width": "7in"}}>
-            <br/>
-            <h1 style={headerStyle}>Direct Comparison Valuation</h1>
-            <h2 style={subHeaderStyle}>{this.props.appraisal.address}</h2>
-            <br/>
-            <br/>
             <FinancialTable rows={rows} />
-            <br/>
-            <h3 style={resultStyle}>Value by the Direct Comparison Approach... <CurrencyValue cents={false} center>{this.props.appraisal.stabilizedStatement.valuationRounded}</CurrencyValue></h3>
-            </body>
-            </html>
         )
     }
 }
 
-
-renderDocument((data) =>
-{
-    return <App
-        appraisal={data.appraisal}
-    />;
-});
+export default DirectComparisonTable;

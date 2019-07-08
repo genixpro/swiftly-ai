@@ -54,7 +54,7 @@ class ExportAPI(object):
 
 
     def renderTemplate(self, templateName, data):
-        wordDocFolder = os.path.join(os.getcwd(), "appraisal", "word_documents")
+        wordDocFolder = os.path.join(os.path.split(os.getcwd())[0], "client")
 
         with tempfile.TemporaryDirectory() as tempDir:
             with tempfile.NamedTemporaryFile(suffix=".html", dir=tempDir) as temp:
@@ -904,14 +904,23 @@ class DirectComparisonValuationWordFile(ExportAPI):
     def get(self):
         appraisalId = self.request.matchdict['appraisalId']
 
-        appraisal = Appraisal.objects(id=regularizeID(appraisalId)).first()
+        appraisal = Appraisal.objects(id=appraisalId).first()
 
         auth = checkUserOwnsObject(self.request.authenticated_userid, self.request.effective_principals, appraisal)
         if not auth:
             raise HTTPForbidden("You do not have access to this appraisal.")
 
+        query = {"id__in": appraisal.comparableSalesDCA + appraisal.comparableSalesCapRate}
+
+        if "view_all" not in self.request.effective_principals:
+            query["owner"] = self.request.authenticated_userid
+
+        comparables = ComparableSale.objects(**query)
+
         data = {
-            "appraisal": json.loads(appraisal.to_json())
+            "appraisal": json.loads(appraisal.to_json()),
+            "comparableSales": [json.loads(comp.to_json()) for comp in comparables],
+            "accessToken": getAccessTokenForRequest(self.request)
         }
 
         buffer = self.renderTemplate("direct_comparison_valuation_word", data)
@@ -1176,5 +1185,86 @@ class AmortizationScheduleExcelFile(ExportAPI):
         response.body_file = buffer
         response.content_type = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
         response.content_disposition = "attachment; filename=\"AmortizationSchedule.xlsx\""
+        return response
+
+
+
+@resource(path='/appraisal/{appraisalId}/tenants/word', cors_enabled=True, cors_origins="*", permission="everything")
+class TenantsWordFile(ExportAPI):
+
+    def __init__(self, request, context=None):
+        self.request = request
+
+    def __acl__(self):
+        return [
+            (Allow, Authenticated, 'everything'),
+            (Deny, Everyone, 'everything')
+        ]
+
+    def get(self):
+        appraisalId = self.request.matchdict['appraisalId']
+
+        appraisal = Appraisal.objects(id=regularizeID(appraisalId)).first()
+
+        auth = checkUserOwnsObject(self.request.authenticated_userid, self.request.effective_principals, appraisal)
+        if not auth:
+            raise HTTPForbidden("You do not have access to this appraisal.")
+
+        data = {
+            "appraisal": json.loads(appraisal.to_json())
+        }
+
+        buffer = self.renderTemplate("tenants_word", data)
+
+        response = Response()
+        response.body_file = buffer
+        response.content_type = "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+        response.content_disposition = "attachment; filename=\"Tenants.docx\""
+        return response
+
+
+
+@resource(path='/appraisal/{appraisalId}/market_rents/word', cors_enabled=True, cors_origins="*", permission="everything")
+class MarketRentsWordFile(ExportAPI):
+    def __init__(self, request, context=None):
+        self.request = request
+
+    def __acl__(self):
+        return [
+            (Allow, Authenticated, 'everything'),
+            (Deny, Everyone, 'everything')
+        ]
+
+    def get(self):
+        appraisalId = self.request.matchdict['appraisalId']
+
+        appraisal = Appraisal.objects(id=regularizeID(appraisalId)).first()
+
+        auth = checkUserOwnsObject(self.request.authenticated_userid, self.request.effective_principals, appraisal)
+        if not auth:
+            raise HTTPForbidden("You do not have access to this appraisal.")
+
+        query = {"id__in": appraisal.comparableLeases}
+
+        if "view_all" not in self.request.effective_principals:
+            query["owner"] = self.request.authenticated_userid
+
+        comparables = ComparableLease.objects(**query)
+
+        comparables = [comp for comp in comparables]
+
+        # accessToken = getAccessTokenForRequest(self.request)
+
+        data = {
+            "appraisal": json.loads(appraisal.to_json()),
+            "comparableLeases": [json.loads(comp.to_json()) for comp in comparables]
+        }
+
+        buffer = self.renderTemplate("market_rents_word", data)
+
+        response = Response()
+        response.body_file = buffer
+        response.content_type = "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+        response.content_disposition = "attachment; filename=\"MarketRents.docx\""
         return response
 

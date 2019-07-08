@@ -25,9 +25,9 @@ class FileSelector extends React.Component
             {
                 response.data.files.forEach((file) =>
                 {
-                    if (file._id['$oid'] === this.props.defaultFile)
+                    if (file._id === this.props.defaultFile)
                     {
-                        this.onChangeValue(file._id['$oid']);
+                        this.onChangeValue(file._id);
                         defaultSet = true;
                     }
                 });
@@ -35,7 +35,7 @@ class FileSelector extends React.Component
 
             if (!defaultSet && response.data.files.length > 0)
             {
-                this.onChangeValue(response.data.files[0]._id['$oid'])
+                this.onChangeValue(response.data.files[0]._id)
             }
         });
     }

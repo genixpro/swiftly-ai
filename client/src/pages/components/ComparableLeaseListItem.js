@@ -534,6 +534,15 @@ class ComparableLeaseListItem extends React.Component
                                     {
                                         comparableLease.propertyType === 'industrial' ?
                                             [
+                                                <span className={"comparable-field-label"} key={1} >Finished Office Percentage:</span>,
+                                                <FieldDisplayEdit
+                                                    key={2}
+                                                    type={"length"}
+                                                    edit={this.props.edit}
+                                                    placeholder={"Finished Office Percentage"}
+                                                    value={comparableLease.finishedOfficePercentage}
+                                                    onChange={(newValue) => this.changeComparableField('finishedOfficePercentage', newValue)}
+                                                />,
                                                 <span className={"comparable-field-label"} key={1} >Clear Ceiling Height:</span>,
                                                 <FieldDisplayEdit
                                                     key={2}

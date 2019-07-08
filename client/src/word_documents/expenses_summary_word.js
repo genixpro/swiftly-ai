@@ -9,6 +9,7 @@ import CustomTable from "./styled_table";
 import {Value, CurrencyValue, PercentValue} from "./value";
 import Spacer from "./spacer";
 import renderDocument from "./render_doc";
+import AppraisalModel from "../models/AppraisalModel";
 
 class App extends React.Component {
 
@@ -61,7 +62,16 @@ class App extends React.Component {
             <html>
             <body style={{"width": "7in"}}>
             <br/>
-            <h1>Expenses Summary</h1>
+            <h1>Realty Taxes and Operating Costs</h1>
+            <br/>
+            <h2>Recoverable Costs</h2>
+            <p>
+                According to the final 2017 Realty Tax Bill, realty taxes are $170,000. According to the 2018 Budget, realty taxes were estimated to be $173,400. We have increased the 2018 Budget figures by 2.25% to estimate 2019 taxes.
+            </p>
+            <br/>
+            <p>
+                Operating costs cover the management of the building including items such as: insurance and property maintenance. A budget for 2018 has been provided. We have increased the 2018 Budget figures by 2.25% to estimate operating costs in 2019. Expenses are detailed below:
+            </p>
             <br/>
             <h2>Operating Expenses</h2>
             <br/>
@@ -71,24 +81,24 @@ class App extends React.Component {
                 fields={operatingExpenseFields}
                 totals={operatingTotals}
             />
-            <br/>
-            <h2>Management Expenses</h2>
-            <br/>
-            <CustomTable
-                headers={managementHeaders}
-                rows={managementExpenses}
-                fields={managementFields}
-                totals={managementTotals}
-            />
-            <br/>
-            <h2>Taxes</h2>
-            <br/>
-            <CustomTable
-                headers={taxesHeaders}
-                rows={taxExpenses}
-                fields={taxFields}
-                totals={taxTotals}
-            />
+            {/*<br/>*/}
+            {/*<h2>Management Expenses</h2>*/}
+            {/*<br/>*/}
+            {/*<CustomTable*/}
+            {/*    headers={managementHeaders}*/}
+            {/*    rows={managementExpenses}*/}
+            {/*    fields={managementFields}*/}
+            {/*    totals={managementTotals}*/}
+            {/*/>*/}
+            {/*<br/>*/}
+            {/*<h2>Taxes</h2>*/}
+            {/*<br/>*/}
+            {/*<CustomTable*/}
+            {/*    headers={taxesHeaders}*/}
+            {/*    rows={taxExpenses}*/}
+            {/*    fields={taxFields}*/}
+            {/*    totals={taxTotals}*/}
+            {/*/>*/}
             </body>
             </html>
         )
@@ -97,8 +107,10 @@ class App extends React.Component {
 
 renderDocument((data) =>
 {
+    const appraisal = AppraisalModel.create(data.appraisal);
+
     return <App
-        appraisal={data.appraisal}
+        appraisal={appraisal}
     />;
 });
 

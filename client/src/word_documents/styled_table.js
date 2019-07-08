@@ -77,19 +77,19 @@ class Row extends React.Component
                     if (keyIndex === 0)
                     {
                         return <td key={keyIndex} style={styleLeft} width="10%">
-                            {this.props.fields[key](row[key])}
+                            {this.props.fields[key](row[key], row, this.props.rowIndex)}
                         </td>
                     }
                     else if (keyIndex === (Object.keys(this.props.fields).length - 1))
                     {
                         return <td key={keyIndex} style={styleRight} width="10%">
-                            {this.props.fields[key](row[key])}
+                            {this.props.fields[key](row[key], row, this.props.rowIndex)}
                         </td>
                     }
                     else
                     {
                         return <td key={keyIndex} style={style} width="10%">
-                            {this.props.fields[key](row[key])}
+                            {this.props.fields[key](row[key], row, this.props.rowIndex)}
                         </td>
                     }
                 })
@@ -109,8 +109,8 @@ class StyledTable extends React.Component {
         const tableHeaderStyle = {
             "border": "1px solid lightgrey",
             "borderTop": "2px solid lightgrey",
-            "backgroundColor": "#33339A",
-            "color": "white",
+            "backgroundColor": "#bcbcbc",
+            "color": "black",
             "textAlign": "center",
             "fontWeight": "bold",
             "verticalAlign": "bottom"
@@ -123,6 +123,7 @@ class StyledTable extends React.Component {
         const leftAlign = (style) => _.extend({}, style, {"textAlign": "left"});
         const rightAlign = (style) => _.extend({}, style, {"textAlign": "right"});
 
+        const rows = this.props.rows || [];
 
         return (
             <table style={tableStyle} cellSpacing={0}>
@@ -156,9 +157,9 @@ class StyledTable extends React.Component {
                 </thead>
                 <tbody>
                 {
-                    this.props.rows.map((baseRow, rowIndex) =>
+                    rows.map((baseRow, rowIndex) =>
                     {
-                        return <Row key={rowIndex} row={baseRow} fields={this.props.fields} index={rowIndex} isLast={rowIndex === (this.props.rows.length-1)}/>
+                        return <Row key={rowIndex} rowIndex={rowIndex} row={baseRow} fields={this.props.fields} index={rowIndex} isLast={rowIndex === (this.props.rows.length-1)}/>
                     })
                 }
                 {

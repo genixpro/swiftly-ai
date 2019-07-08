@@ -53,7 +53,7 @@ class TagEditor extends React.Component {
         axios.get(`/property_tags`, {params: search}).then((response) =>
         {
             this.setState({
-                defaultOptions: response.data.tags.map((tag) => ({value: tag._id['$oid'], label: tag.name}) )
+                defaultOptions: response.data.tags.map((tag) => ({value: tag._id, label: tag.name}) )
             });
         });
     }
@@ -85,7 +85,7 @@ class TagEditor extends React.Component {
 
         axios.get(`/property_tags`, {params: search}).then((response) =>
         {
-            callback(response.data.tags.map((tag) => ({value: tag._id['$oid'], label: tag.name}) ));
+            callback(response.data.tags.map((tag) => ({value: tag._id, label: tag.name}) ));
         });
     }
 

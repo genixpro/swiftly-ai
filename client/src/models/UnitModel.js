@@ -6,7 +6,7 @@ import DateField from "../orm/DateField";
 import _ from "underscore";
 import FloatField from "../orm/FloatField";
 import BoolField from "../orm/BoolField";
-
+import moment from "moment";
 
 class TenancyModel extends BaseModel
 {
@@ -190,6 +190,57 @@ class UnitModel extends BaseModel
         }
 
         return total;
+    }
+
+
+    static numberWithCommas(x) {
+        return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    }
+
+    get computedDescription()
+    {
+        const dateFormat = "DD MMMM, YYYY";
+
+        let message = `Occupies ${UnitModel.numberWithCommas(this.squareFootage)} square feet`;
+
+        let currentTenantName = this.currentTenancy.tenantName;
+
+        let allRelevantTenancies = this.tenancies.filter((tenancy) =>
+        {
+            return tenancy.tenantName === currentTenantName;
+        });
+
+        allRelevantTenancies.sort((itemA, itemB) =>
+        {
+            if (itemA.startDate < itemB.startDate)
+            {
+                return -1;
+            }
+            if (itemA.startDate > itemB.startDate)
+            {
+                return 1;
+            }
+            return 0;
+        });
+
+        const startTenancy = allRelevantTenancies[0];
+        const endTenancy = allRelevantTenancies[allRelevantTenancies.length - 1];
+
+        let leaseYears = endTenancy.endDate.getFullYear() - startTenancy.startDate.getFullYear();
+
+        message += `pursuant to a ${leaseYears}-year lease commencing ${moment(startTenancy.startDate).format(dateFormat)} and expiring ${moment(endTenancy.endDate).format(dateFormat)}. `;
+
+        if (allRelevantTenancies.length > 1)
+        {
+            const escalationYear = allRelevantTenancies[1].startDate.getFullYear() - allRelevantTenancies[0].startDate.getFullYear();
+            message += `Annual net rent in year 1 was $${UnitModel.numberWithCommas(startTenancy.yearlyRent / this.squareFootage)} which escalates in year ${escalationYear} to $${UnitModel.numberWithCommas(allRelevantTenancies[1].yearlyRent / this.squareFootage)}`;
+        }
+        else
+        {
+            message += `Annual net rent for the duration of the lease term is $${UnitModel.numberWithCommas(startTenancy.yearlyRent / this.squareFootage)}`;
+        }
+
+        return message;
     }
 }
 

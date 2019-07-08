@@ -881,6 +881,8 @@ class IncomeStatementEditor extends React.Component
 
     onFileChanged(fileId)
     {
+        // alert(fileId);
+        console.log(fileId);
         if (!this.state.file || this.state.file._id !== fileId)
         {
             axios.get(`/appraisal/${this.props.appraisal._id}/files/${fileId}`).then((response) =>
