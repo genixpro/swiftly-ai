@@ -14,7 +14,7 @@ class ZoneSelector extends React.Component {
         {
             axios.get(`/zone/${this.props.value}`).then((response) =>
             {
-                this.setState({zone: {value: response.data.zone._id['$oid'], label: response.data.zone.zoneName}})
+                this.setState({zone: {value: response.data.zone._id, label: response.data.zone.zoneName}})
             });
         }
     }
@@ -34,7 +34,7 @@ class ZoneSelector extends React.Component {
         {
             axios.get(`/zones`, {params: {zoneName: inputValue}}).then((response) =>
             {
-                callback(response.data.zones.map((zone) => ({value: zone._id['$oid'], label: zone.zoneName}) ));
+                callback(response.data.zones.map((zone) => ({value: zone._id, label: zone.zoneName}) ));
             });
         }
         else

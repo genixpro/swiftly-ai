@@ -6,67 +6,38 @@ import Moment from 'react-moment';
 import _ from "underscore";
 import NumberFormat from 'react-number-format';
 import CustomTable from "./styled_table";
-import {Value, CurrencyValue, PercentValue} from "./value";
+import {Value, CurrencyValue, PercentValue, IntegerValue} from "./value";
 import Spacer from "./spacer";
 import renderDocument from "./render_doc";
 import AppraisalModel from "../models/AppraisalModel";
+import IntegerFormat from "../pages/components/IntegerFormat";
 
-class App extends React.Component {
-
-    computeGroup(itemType)
+class App extends React.Component
+{
+    numberOfOccupiedUnits()
     {
-        const headers = [""];
-
-        const fields = {
-            "name": (name) => <Value>{name}</Value>,
-        };
-
-        const expenses = _.filter(this.props.appraisal.incomeStatement.expenses, (expense) => expense.incomeStatementItemType === itemType);
-
-        const yearTotals = {};
-
-        this.props.appraisal.incomeStatement.years.forEach((year) =>
+        let count = 0;
+        for(let unit of this.props.appraisal.units)
         {
-            headers.push(year.toString());
-            fields["yearlyAmounts." + year.toString()] = (amount) => <CurrencyValue>{amount}</CurrencyValue>;
-
-            yearTotals[year] = 0;
-
-            this.props.appraisal.incomeStatement.expenses.forEach((expense) =>
+            if (!unit.isVacantForStabilizedStatement)
             {
-                if (_.isNumber(expense.yearlyAmounts[year]))
-                {
-                    yearTotals[year] += expense.yearlyAmounts[year]
-                }
-            });
-        });
-
-        const totals = [
-            {
-                "name": "Total Operating Expenses",
-                "yearlyAmounts": yearTotals
+                count += 1;
             }
-        ];
-
-        return {headers, fields, expenses, totals}
+        }
+        return count;
     }
-
 
     render()
     {
-        const {headers: operatingHeaders, fields: operatingExpenseFields, expenses: operatingExpenses, totals: operatingTotals} = this.computeGroup("operating_expense");
-        const {headers: managementHeaders, fields: managementFields, expenses: managementExpenses, totals: managementTotals} = this.computeGroup("management_expense");
-        const {headers: taxesHeaders, fields: taxFields, expenses: taxExpenses, totals: taxTotals} = this.computeGroup("management_expense");
 
         return (
             <html>
             <body style={{"width": "7in"}}>
             <br/>
-            <h1>Realty Taxes and Operating Costs</h1>
-            <br/>
-            <h2>Recoverable Costs</h2>
+            <h1>Tenancy</h1>
             <p>
-                According to the final 2017 Realty Tax Bill, realty taxes are $170,000. According to the 2018 Budget, realty taxes were estimated to be $173,400. We have increased the 2018 Budget figures by 2.25% to estimate 2019 taxes.
+                The subject has a total of <IntegerValue>{this.props.appraisal.sizeOfBuilding}</IntegerValue> square feet. As of the effective date, the build was
+                100% leased and occupied by <IntegerValue>{this.numberOfOccupiedUnits()}</IntegerValue> units
             </p>
             <br/>
             <p>

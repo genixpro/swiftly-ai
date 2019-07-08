@@ -74,6 +74,9 @@ class ComparableLease(Document):
     # Clear Ceiling Height
     clearCeilingHeight = FloatField()
 
+    # Finished Office Percentage
+    finishedOfficePercentage = FloatField()
+
     # Shipping Doors. DEPRECATED
     shippingDoors = FloatField()
 

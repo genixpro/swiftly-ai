@@ -4,7 +4,8 @@ import DirectComparisonTable from "./direct_comparison_table";
 import renderDocument from "./render_doc";
 import ComparableSalesTable from "./comparable_sales_table";
 import _ from 'underscore';
-import ComparableSaleModel from "../../../client/src/models/ComparableSaleModel";
+import ComparableSaleModel from "../models/ComparableSaleModel";
+import AppraisalModel from "../models/AppraisalModel";
 
 class App extends React.Component
 {
@@ -68,8 +69,9 @@ class App extends React.Component
 
 renderDocument((data) =>
 {
+    const appraisal = AppraisalModel.create(data.appraisal);
     return <App
-        appraisal={data.appraisal}
-        comparableSales={data.comparableSales}
+        appraisal={appraisal}
+        comparableSales={data.comparableSales.map((comp) => ComparableSaleModel.create(comp))}
     />;
 });

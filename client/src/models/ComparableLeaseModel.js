@@ -43,7 +43,8 @@ class ComparableLeaseModel extends BaseModel
 
     static floorNumber = new FloatField();
     static retailLocationType = new StringField();
-    static clearCeilingHeight = new StringField();
+    static clearCeilingHeight = new FloatField();
+    static finishedOfficePercentage = new FloatField();
     static shippingDoors = new StringField();
 
     static shippingDoorsTruckLevel = new FloatField();

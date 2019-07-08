@@ -1,5 +1,17 @@
 import React from 'react';
-import {Card, CardHeader, CardBody, Row, Col, Button, Popover, PopoverBody, PopoverHeader} from 'reactstrap';
+import {
+    Card,
+    CardHeader,
+    CardBody,
+    Row,
+    Col,
+    Button,
+    Popover,
+    PopoverBody,
+    PopoverHeader,
+    Dropdown,
+    DropdownToggle, DropdownMenu, DropdownItem
+} from 'reactstrap';
 import axios from "axios/index";
 import FieldDisplayEdit from './components/FieldDisplayEdit';
 import 'react-datetime/css/react-datetime.css'
@@ -8,6 +20,8 @@ import ComparableLeaseList from "./components/ComparableLeaseList";
 import Promise from "bluebird";
 import MarketRentModel from "../models/MarketRentModel";
 import CurrencyFormat from "./components/CurrencyFormat";
+import ActionButton from "./components/ActionButton";
+import Auth from "../Auth";
 
 
 class TenantApplicableEditor extends React.Component
@@ -285,12 +299,37 @@ class ViewMarketRents extends React.Component
         })
     }
 
+    downloadMarketRents()
+    {
+        window.location = `${process.env.VALUATE_ENVIRONMENT.REACT_APP_SERVER_URL}appraisal/${this.props.appraisal._id}/market_rents/word?access_token=${Auth.getAccessToken()}`;
+    }
+
+    toggleDownload()
+    {
+        this.setState({downloadDropdownOpen: !this.state.downloadDropdownOpen})
+    }
+
+
     render()
     {
         return (
             (this.props.appraisal) ?
                 <div id={"view-market-rents"} className={"view-market-rents"}>
-                    <h2>Market Rents</h2>
+                    <Row>
+                        <Col xs={6}>
+                            <h2>Market Rents</h2>
+                        </Col>
+                        <Col xs={6} className={"button-bar"}>
+                            <Dropdown isOpen={this.state.downloadDropdownOpen} toggle={this.toggleDownload.bind(this)}>
+                                <DropdownToggle caret color={"primary"} className={"download-dropdown-button"}>
+                                    Download
+                                </DropdownToggle>
+                                <DropdownMenu>
+                                    <DropdownItem onClick={() => this.downloadMarketRents()}>Market Rents Summary (docx)</DropdownItem>
+                                </DropdownMenu>
+                            </Dropdown>
+                        </Col>
+                    </Row>
                     <Row>
                         <Col xs={12}>
                             <ComparableLeaseList comparableLeases={this.state.comparableLeases}
