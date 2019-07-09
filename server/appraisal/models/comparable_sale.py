@@ -370,3 +370,16 @@ def migration_003_update_comp_sale_object_id(object):
 
         newObject = ComparableSale(**data)
         return newObject
+
+@registerMigration(ComparableSale, 4)
+def migration_004_update_comp_sale_object_id(object):
+    data = json.loads(object.to_json())
+    if len(str(object.id)) == 24:
+        del data['_id']
+        data['id'] = str(object.id)
+
+        ComparableSale.objects(id=bson.ObjectId(object.id)).delete()
+
+        newObject = ComparableSale(**data)
+        return newObject
+

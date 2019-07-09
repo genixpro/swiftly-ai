@@ -213,9 +213,9 @@ class App extends React.Component
                     "saleDate": (saleDate, obj, objIndex) => <Value><span>{objIndex + 1}</span><br/><Moment format="YYYY">{saleDate}</Moment></Value>,
                     "address": (address) => <Value>{address}</Value>,
                     "salePrice": (salePrice) => <CurrencyValue>{salePrice}</CurrencyValue>,
-                    "sizeSquareFootage": (sizeSquareFootage, obj) => <span><AreaFormat value={sizeSquareFootage} /><br /><PercentFormat value={obj.occupancyRate} /></span>,
-                    "netOperatingIncome": (netOperatingIncome, obj) => <span><CurrencyValue>{netOperatingIncome}</CurrencyValue><br /><CurrencyValue>{obj.netOperatingIncomePSF}</CurrencyValue></span>,
-                    "displayCapitalizationRate": (displayCapitalizationRate, obj) => <span><PercentValue value={displayCapitalizationRate} /></span>,
+                    "sizeSquareFootage": (sizeSquareFootage, obj) => <span style={{"textAlign": "right"}}><AreaFormat value={sizeSquareFootage} /><br /><PercentFormat value={obj.occupancyRate} /></span>,
+                    "netOperatingIncome": (netOperatingIncome, obj) => <span style={{"textAlign": "right"}}><CurrencyValue>{netOperatingIncome}</CurrencyValue><br /><CurrencyValue>{obj.netOperatingIncomePSF}</CurrencyValue></span>,
+                    "displayCapitalizationRate": (displayCapitalizationRate, obj) => <span style={{"textAlign": "right"}}><PercentValue value={displayCapitalizationRate} /></span>,
                 }} />
 
             <br/>
