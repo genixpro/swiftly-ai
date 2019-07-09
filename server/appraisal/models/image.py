@@ -45,8 +45,8 @@ class Image(Document):
         blob.upload_from_string(imageData)
 
 
-@registerMigration(Image, 3)
-def migration_001_update_image_object_id(object):
+@registerMigration(Image, 4)
+def migration_004_update_image_object_id(object):
     data = json.loads(object.to_json())
     if len(str(object.id)) == 24:
         del data['_id']
