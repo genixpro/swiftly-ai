@@ -89,6 +89,8 @@ class ViewTenantsRentRoll extends React.Component
 
     onFileChanged(fileId)
     {
+        this.setState({selectedFileId: fileId});
+
         if (!this.state.file || this.state.file._id !== fileId)
         {
             axios.get(`/appraisal/${this.props.appraisal._id}/files/${fileId}`).then((response) =>
@@ -178,7 +180,7 @@ class ViewTenantsRentRoll extends React.Component
                                         appraisalId={this.props.appraisal._id}
                                         onChange={(fileId) => this.onFileChanged(fileId)}
                                         defaultFile={this.getDefaultFile()}
-                                        value={this.state.file ? this.state.file._id : null}
+                                        value={this.state.selectedFileId ? this.state.selectedFileId : ""}
                                     />
                                 </Col>
                             </Row>

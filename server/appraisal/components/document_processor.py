@@ -5,7 +5,7 @@ from appraisal.models.custom_id_field import generateNewUUID
 from appraisal.models.extraction_reference import ExtractionReference
 import filetype
 import re
-import json
+import rapidjson as json
 from pprint import pprint
 from appraisal.components.tenancy_data_extractor import TenancyDataExtractor
 from appraisal.components.income_statement_data_extractor import IncomeStatementDataExtractor

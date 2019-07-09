@@ -1,7 +1,7 @@
 import os.path
 import zipfile
 import shutil
-import json
+import rapidjson as json
 import multiprocessing
 from appraisal.components.document_extractor_network import DocumentExtractorNetwork
 from appraisal.components.document_extractor_dataset import DocumentExtractorDataset

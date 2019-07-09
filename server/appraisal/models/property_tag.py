@@ -2,7 +2,7 @@ from mongoengine import *
 import datetime
 from .custom_id_field import CustomIDField
 from ..migrations import registerMigration
-import json, bson
+import rapidjson as json, bson
 from .custom_id_field import generateNewUUID
 
 

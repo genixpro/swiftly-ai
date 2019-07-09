@@ -7,7 +7,7 @@ import pickle
 import random
 import concurrent.futures
 from pprint import pprint
-import json
+import rapidjson as json
 import copy
 import multiprocessing
 from .document_parser import DocumentParser

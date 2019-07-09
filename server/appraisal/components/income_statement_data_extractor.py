@@ -6,7 +6,7 @@ import datetime
 from appraisal.models.income_statement import IncomeStatement, IncomeStatementItem
 from appraisal.models.extraction_reference import ExtractionReference
 from pprint import pprint
-import json
+import rapidjson as json
 
 class IncomeStatementDataExtractor(DataExtractor):
     """ This class is for extracting income statement information from documents. """

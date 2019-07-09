@@ -9,7 +9,7 @@ from appraisal.models.image import Image
 import bz2
 import sys
 import os
-import json
+import rapidjson as json
 import os
 from google.cloud import storage
 

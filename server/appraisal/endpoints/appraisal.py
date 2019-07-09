@@ -1,7 +1,7 @@
 from cornice.resource import resource
 from pyramid.authorization import Allow, Everyone
 import bson
-import json
+import rapidjson as json
 from appraisal.components.document_processor import DocumentProcessor
 from pprint import pprint
 from appraisal.models.appraisal import Appraisal
@@ -12,7 +12,7 @@ from appraisal.authorization import checkUserOwnsObject
 from pyramid.httpexceptions import HTTPForbidden
 from ..models.comparable_lease import ComparableLease
 from ..models.custom_id_field import generateNewUUID, regularizeID
-import jsondiff
+import rapidjson as jsondiff
 
 @resource(collection_path='/appraisal/', path='/appraisal/{id}', renderer='bson', cors_enabled=True, cors_origins="*", permission="everything")
 class AppraisalAPI(object):

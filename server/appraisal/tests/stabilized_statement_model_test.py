@@ -1,5 +1,5 @@
 import unittest
-import json
+import rapidjson as json
 import pkg_resources
 from appraisal.models.appraisal import Appraisal
 

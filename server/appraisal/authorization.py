@@ -5,7 +5,7 @@ from jwcrypto.jws import JWS, JWSHeaderRegistry, JWK, InvalidJWSSignature, Inval
 from jwcrypto.jwt import JWT
 from jwcrypto.common import base64url_encode, base64url_decode, \
                             json_encode, json_decode
-import json
+import rapidjson as json
 from .models.custom_id_field import regularizeID
 
 class CustomAuthenticationPolicy(CallbackAuthenticationPolicy):

@@ -18,7 +18,7 @@ from appraisal.models.date_field import ConvertingDateField
 from appraisal.models.extraction_reference import ExtractionReference
 from appraisal.components.document_processor import DocumentProcessor
 import numpy
-import json
+import rapidjson as json
 import bson
 from mongoengine import signals
 from ..migrations import registerMigration

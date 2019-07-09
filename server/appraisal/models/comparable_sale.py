@@ -7,7 +7,7 @@ import scipy.stats
 import numpy
 import bson
 from .custom_id_field import CustomIDField
-import json, bson
+import rapidjson as json, bson
 from .custom_id_field import generateNewUUID
 
 class ComparableSale(Document):

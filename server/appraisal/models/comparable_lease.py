@@ -7,7 +7,7 @@ import re
 from ..migrations import registerMigration
 from dateutil import relativedelta
 from .custom_id_field import CustomIDField
-import json, bson
+import rapidjson as json, bson
 from .custom_id_field import generateNewUUID
 
 class RentEscalation(EmbeddedDocument):

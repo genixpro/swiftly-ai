@@ -882,7 +882,7 @@ class IncomeStatementEditor extends React.Component
     onFileChanged(fileId)
     {
         // alert(fileId);
-        console.log(fileId);
+        this.setState({selectedFileId: fileId});
         if (!this.state.file || this.state.file._id !== fileId)
         {
             axios.get(`/appraisal/${this.props.appraisal._id}/files/${fileId}`).then((response) =>
@@ -941,7 +941,7 @@ class IncomeStatementEditor extends React.Component
                                         appraisalId={this.props.appraisal._id}
                                         onChange={(fileId) => this.onFileChanged(fileId)}
                                         defaultFile={this.getDefaultFile()}
-                                        value={this.state.file ? this.state.file._id : null}
+                                        value={this.state.selectedFileId ? this.state.selectedFileId : null}
                                     />
                                 </Col>
                             </Row>

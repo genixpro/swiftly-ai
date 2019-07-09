@@ -69,12 +69,10 @@ class FileSelector extends React.Component
 
     render()
     {
-        console.log(this.props.value)
         return (
             <select
-                defaultValue=""
                 className="custom-select"
-                onClick={(evt) => this.onChangeValue(evt.target.value)}
+                onChange={(evt) => this.onChangeValue(evt.target.value)}
                 onBlur={(evt) => this.onBlur()}
                 ref={(ref) => this.onRef(ref)}
                 value={this.props.value}

@@ -6,7 +6,7 @@ from appraisal.models.comparable_lease import ComparableLease
 import tempfile
 import subprocess
 import os
-import json
+import rapidjson as json
 from pyramid.security import Authenticated
 from pyramid.authorization import Allow, Deny, Everyone
 from appraisal.authorization import checkUserOwnsObject
