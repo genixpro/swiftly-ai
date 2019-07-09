@@ -12,7 +12,9 @@ const renderDocument = (componentFunction) =>
         {
             // Render the HTML
             const data = await readJSONInput();
-            const html = renderToString(componentFunction(data));
+            let html = renderToString(componentFunction(data));
+
+            html = html.replace(/<!-+\s+-+>/g, "");
 
             fs.writeFileSync(data.fileName, html);
             clearTimeout(timeout);
