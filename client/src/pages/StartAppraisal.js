@@ -34,7 +34,7 @@ class StartAppraisal extends React.Component
         axios.post("/appraisal/", this.state.newAppraisal).then((response) =>
         {
             const newId = response.data._id;
-
+            
             Sidebar.getGlobalSidebar().changeAppraisalType(this.state.newAppraisal.appraisalType);
 
             this.props.history.push('/appraisal/' + newId + "/upload");
