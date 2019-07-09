@@ -215,7 +215,7 @@ class App extends React.Component
                     "salePrice": (salePrice) => <CurrencyValue>{salePrice}</CurrencyValue>,
                     "sizeSquareFootage": (sizeSquareFootage, obj) => <span style={{"textAlign": "right"}}><AreaFormat value={sizeSquareFootage} /><br /><PercentFormat value={obj.occupancyRate} /></span>,
                     "netOperatingIncome": (netOperatingIncome, obj) => <span style={{"textAlign": "right"}}><CurrencyValue>{netOperatingIncome}</CurrencyValue><br /><CurrencyValue>{obj.netOperatingIncomePSF}</CurrencyValue></span>,
-                    "displayCapitalizationRate": (displayCapitalizationRate, obj) => <span style={{"textAlign": "right"}}><PercentValue value={displayCapitalizationRate} /></span>,
+                    "displayCapitalizationRate": (displayCapitalizationRate, obj) => <span style={{"textAlign": "right"}}><PercentValue value={obj.displayCapitalizationRate} /></span>,
                 }} />
 
             <br/>
@@ -229,10 +229,10 @@ class App extends React.Component
             <h3>Summary</h3>
             <p>
                 The comparable sales detailed above indicate a range in stabilized overall capitalization rates from <PercentFormat value={minCapRate}/> to
-                <PercentFormat value={maxCapRate} />. Adjustments have been made based on the subject’s properties location, construction date/condition,
+                &nbsp;<PercentFormat value={maxCapRate} />. Adjustments have been made based on the subject’s properties location, construction date/condition,
                 and tenancy. After adjustments, it is our opinion that an overall capitalization rate of <PercentFormat value={this.props.appraisal.capitalizationRate} /> is appropriate
                 for the subject property. A capitalization rate of <PercentFormat value={this.props.appraisal.capitalizationRate} />, applied to the subjects stabilized net income of
-                <CurrencyFormat value={this.props.appraisal.stabilizedStatement.netOperatingIncome} /> is detailed below:
+                &nbsp;<CurrencyFormat value={this.props.appraisal.stabilizedStatement.netOperatingIncome} /> is detailed below:
             </p>
             <br />
             <FinancialTable rows={rows} />
