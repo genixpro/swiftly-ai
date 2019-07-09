@@ -5,7 +5,7 @@ import fs from "fs";
 import Moment from 'react-moment';
 import _ from "underscore";
 import NumberFormat from 'react-number-format';
-import CustomTable from "./styled_table";
+import StyledTable from "./styled_table";
 import {Value, CurrencyValue, PercentValue, IntegerValue} from "./value";
 import Spacer from "./spacer";
 import renderDocument from "./render_doc";
@@ -20,7 +20,7 @@ class App extends React.Component {
                 <h1>Rent Roll</h1>
                 <br/>
                 <br/>
-                <CustomTable
+                <StyledTable
                     headers={["Unit", "Size (sqft)", "Tenant", "Rent", "Remarks"]}
                     rows={this.props.appraisal.units}
                     fields={{

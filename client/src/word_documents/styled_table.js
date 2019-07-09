@@ -138,68 +138,70 @@ class StyledTable extends React.Component {
         const rows = this.props.rows || [];
 
         return (
-            <table style={tableStyle} cellSpacing={0}>
-                <thead>
-                <tr>
-                    {
-                        this.props.headers.map((header, index) =>
+            <center>
+                <table style={tableStyle} cellSpacing={0}>
+                    <thead>
+                    <tr>
                         {
-                            if (index === 0)
+                            this.props.headers.map((header, index) =>
                             {
-                                return <td key={index} style={tableHeaderLeftStyle} width={columnSizes[index]}>
-                                    {header}
-                                </td>
-                            }
-                            else if (index === this.props.headers.length -1)
-                            {
-                                return <td key={index} style={tableHeaderRightStyle} width={columnSizes[index]}>
-                                    {header}
-                                </td>
-                            }
-                            else
-                            {
-                                return <td key={index} style={tableHeaderStyle} width={columnSizes[index]}>
-                                    {header}
-                                </td>
-                            }
+                                if (index === 0)
+                                {
+                                    return <td key={index} style={tableHeaderLeftStyle} width={columnSizes[index]}>
+                                        {header}
+                                    </td>
+                                }
+                                else if (index === this.props.headers.length -1)
+                                {
+                                    return <td key={index} style={tableHeaderRightStyle} width={columnSizes[index]}>
+                                        {header}
+                                    </td>
+                                }
+                                else
+                                {
+                                    return <td key={index} style={tableHeaderStyle} width={columnSizes[index]}>
+                                        {header}
+                                    </td>
+                                }
 
+                            })
+                        }
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {
+                        rows.map((baseRow, rowIndex) =>
+                        {
+                            return <Row
+                                key={rowIndex}
+                                rowIndex={rowIndex}
+                                row={baseRow}
+                                fields={this.props.fields}
+                                index={rowIndex}
+                                isLast={rowIndex === (this.props.rows.length-1)}
+                                fontSize={this.props.fontSize}
+                                columnSizes={columnSizes}
+                            />
                         })
                     }
-                </tr>
-                </thead>
-                <tbody>
-                {
-                    rows.map((baseRow, rowIndex) =>
                     {
-                        return <Row
-                            key={rowIndex}
-                            rowIndex={rowIndex}
-                            row={baseRow}
-                            fields={this.props.fields}
-                            index={rowIndex}
-                            isLast={rowIndex === (this.props.rows.length-1)}
-                            fontSize={this.props.fontSize}
-                            columnSizes={columnSizes}
-                        />
-                    })
-                }
-                {
-                    this.props.totals ? this.props.totals.map((row, rowIndex) =>
-                    {
-                        return <Row
-                            key={rowIndex}
-                            total
-                            row={row}
-                            fields={this.props.fields}
-                            index={rowIndex}
-                            isLast={rowIndex === (this.props.rows.length-1)}
-                            fontSize={this.props.fontSize}
-                            columnSizes={columnSizes}
-                        />
-                    }) : null
-                }
-                </tbody>
-            </table>
+                        this.props.totals ? this.props.totals.map((row, rowIndex) =>
+                        {
+                            return <Row
+                                key={rowIndex}
+                                total
+                                row={row}
+                                fields={this.props.fields}
+                                index={rowIndex}
+                                isLast={rowIndex === (this.props.rows.length-1)}
+                                fontSize={this.props.fontSize}
+                                columnSizes={columnSizes}
+                            />
+                        }) : null
+                    }
+                    </tbody>
+                </table>
+            </center>
         )
     }
 }

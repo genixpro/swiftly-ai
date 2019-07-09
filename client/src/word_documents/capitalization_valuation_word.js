@@ -5,7 +5,7 @@ import fs from "fs";
 import Moment from 'react-moment';
 import _ from "underscore";
 import NumberFormat from 'react-number-format';
-import CustomTable from "./styled_table";
+import StyledTable from "./styled_table";
 import {Value, CurrencyValue, PercentValue, IntegerValue} from "./value";
 import Spacer from "./spacer";
 import FinancialTable from "./financial_table";
@@ -196,7 +196,7 @@ class App extends React.Component
             <p>In estimating the overall capitalization rate applicable to the subject property we have researched sales of
                 similar {this.props.appraisal.propertyType ? this.props.appraisal.propertyType.toString() + " " : ""}properties. Emphasis has been given to recent sales of {this.props.appraisal.propertyType ? this.props.appraisal.propertyType.toString() + " " : ""}
                 properties between {minCompSize} and {maxCompSize} square feet, fully leased and occupied pursuant to Tenancy types. Relevant details of comparable sales are summarized in the chart below.</p>
-            <CustomTable
+            <StyledTable
                 headers={["Index \n Date", "Address", "Consideration", "Leasable Area \n (Occupancy)", "Net Income \n PSF", "Stabilized \n OCR"]}
                 rows={this.props.comparableSales}
                 fontSize={10}

@@ -5,7 +5,7 @@ import fs from "fs";
 import Moment from 'react-moment';
 import _ from "underscore";
 import NumberFormat from 'react-number-format';
-import CustomTable from "./styled_table";
+import StyledTable from "./styled_table";
 import {Value, CurrencyValue, PercentValue, IntegerValue} from "./value";
 import Spacer from "./spacer";
 import renderDocument from "./render_doc";
@@ -46,7 +46,7 @@ class App extends React.Component
             <br/>
             <h2>Operating Expenses</h2>
             <br/>
-            <CustomTable
+            <StyledTable
                 headers={operatingHeaders}
                 rows={operatingExpenses}
                 fields={operatingExpenseFields}
@@ -55,7 +55,7 @@ class App extends React.Component
             {/*<br/>*/}
             {/*<h2>Management Expenses</h2>*/}
             {/*<br/>*/}
-            {/*<CustomTable*/}
+            {/*<StyledTable*/}
             {/*    headers={managementHeaders}*/}
             {/*    rows={managementExpenses}*/}
             {/*    fields={managementFields}*/}
@@ -64,7 +64,7 @@ class App extends React.Component
             {/*<br/>*/}
             {/*<h2>Taxes</h2>*/}
             {/*<br/>*/}
-            {/*<CustomTable*/}
+            {/*<StyledTable*/}
             {/*    headers={taxesHeaders}*/}
             {/*    rows={taxExpenses}*/}
             {/*    fields={taxFields}*/}
