@@ -113,6 +113,19 @@ class AppraisalModel extends BaseModel
         }
     }
 
+    marketRentForUnit(unit)
+    {
+        for(let marketRent of this.marketRents)
+        {
+            if (marketRent.name === unit.marketRent)
+            {
+                return marketRent;
+            }
+        }
+
+        return null;
+    }
+
     getEffectiveDate()
     {
         if (this.effectiveDate)

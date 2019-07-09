@@ -79,6 +79,7 @@
     "i18next-browser-languagedetector": "2.2.4",
     "i18next-xhr-backend": "1.5.1",
     "ika.jvectormap": "themicon/ika.jvectormap",
+    "jStat": "^1.8.5",
     "jqcloud2": "2.0.3",
     "jquery": ">=3.4.0",
     "jquery-knob": "1.2.11",

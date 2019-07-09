@@ -806,8 +806,17 @@ class CapitalizationValuationWordFile(ExportAPI):
         if not auth:
             raise HTTPForbidden("You do not have access to this appraisal.")
 
+        query = {"id__in": appraisal.comparableSalesDCA + appraisal.comparableSalesCapRate}
+
+        if "view_all" not in self.request.effective_principals:
+            query["owner"] = self.request.authenticated_userid
+
+        comparables = ComparableSale.objects(**query)
+
         data = {
-            "appraisal": json.loads(appraisal.to_json())
+            "appraisal": json.loads(appraisal.to_json()),
+            "comparableSales": [json.loads(comp.to_json()) for comp in comparables],
+            "accessToken": getAccessTokenForRequest(self.request)
         }
 
         buffer = self.renderTemplate("capitalization_valuation_word", data)

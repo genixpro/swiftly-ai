@@ -15,10 +15,10 @@ class ComparableSalesTable extends React.Component {
     {
         let fields = [];
 
-        if (!this.props.fields)
-        {
-            fields = ["saleDate", "address", "salePrice", "sizeSquareFootage", "capitalizationRate"]
-        }
+        // if (!this.props.fields)
+        // {
+        //     fields = ["saleDate", "address", "salePrice", "sizeSquareFootage", "capitalizationRate"]
+        // }
 
 
         return (

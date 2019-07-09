@@ -13,11 +13,125 @@ import AppraisalModel from "../models/AppraisalModel";
 import IntegerFormat from "../pages/components/IntegerFormat";
 import AreaFormat from "../pages/components/AreaFormat";
 import ComparableLeaseModel from "../models/ComparableLeaseModel";
+import CurrencyFormat from "../pages/components/CurrencyFormat";
 
 class MarketRentsWord extends React.Component
 {
+    cleanNumericalValue(value)
+    {
+        value = value.toString();
+        const cleanText = value.replace(/[^0-9.]/g, "");
+        const isNegative = value.indexOf("-") !== -1 || value.indexOf("(") !== -1 || value.indexOf(")") !== -1;
+
+        if (cleanText === "")
+        {
+            return 0;
+        }
+
+        try {
+            if (isNegative)
+            {
+                return -Number(cleanText);
+            }
+            else
+            {
+                return Number(cleanText);
+            }
+        }
+        catch(err) {
+            return 0;
+        }
+    }
+
     render()
     {
+        let minRent = null;
+        let maxRent = null;
+
+        let minTI = null;
+        let maxTI = null;
+
+        let minEscalations = null;
+        let maxEscalations = null;
+
+        let countWithEscalations = 0;
+
+        let allNet = true;
+        let allGross = true;
+
+        this.props.comparableLeases.forEach((lease) =>
+        {
+            if (lease.rentType === 'gross')
+            {
+                allNet = false;
+            }
+            else if (lease.rentType === 'net')
+            {
+                allGross = false;
+            }
+
+            lease.rentEscalations.forEach((escalation) =>
+            {
+                if (minRent === null || escalation.yearlyRent < minRent)
+                {
+                    minRent = escalation.yearlyRent;
+                }
+
+                if (maxRent === null || escalation.yearlyRent > maxRent)
+                {
+                    maxRent = escalation.yearlyRent;
+                }
+            });
+
+            if (lease.rentEscalations.length)
+            {
+                if (minEscalations === null || lease.rentEscalations.length < minEscalations)
+                {
+                    minEscalations = lease.rentEscalations.length;
+                }
+
+                if (maxEscalations === null || lease.rentEscalations.length > maxEscalations)
+                {
+                    maxEscalations = lease.rentEscalations.length;
+                }
+            }
+
+            if (lease.rentEscalations.length > 1)
+            {
+                countWithEscalations += 1;
+            }
+
+            if (lease.tenantInducements && this.cleanNumericalValue(lease.tenantInducements))
+            {
+                if (minTI === null || this.cleanNumericalValue(lease.tenantInducements) < minTI)
+                {
+                    minTI = this.cleanNumericalValue(lease.tenantInducements);
+                }
+
+                if (maxTI === null || this.cleanNumericalValue(lease.tenantInducements) > maxTI)
+                {
+                    maxTI = this.cleanNumericalValue(lease.tenantInducements);
+                }
+            }
+        });
+
+        const ratioOfEscalations = this.props.comparableLeases.length ? countWithEscalations / this.props.comparableLeases.length : 1;
+
+        const marketRents = {};
+        for (let unit of this.props.appraisal.units)
+        {
+            if (unit.marketRentAmount)
+            {
+                if (!marketRents[unit.marketRentAmount])
+                {
+                    marketRents[unit.marketRentAmount] = 1;
+                }
+                else
+                {
+                    marketRents[unit.marketRentAmount] += 1;
+                }
+            }
+        }
 
         return (
             <html>
@@ -25,93 +139,151 @@ class MarketRentsWord extends React.Component
             <br/>
             <h3>Market Rents</h3>
             <p>To determine the long-term income potential of the subject property the market rent for the property must
-                be estimated. Estabspanshing market rent also contextuaspanzes current contract rent within the building as
-                compared to the prevaispanng market levels. In estabspanshing the market rent the following analysis has been
+                be estimated. Establishing market rent also contextualizes current contract rent within the building as
+                compared to the prevailing market levels. In establishing the market rent the following analysis has been
                 completed:</p>
             <ul>
-                <span>Analyzed the most recent lease deals from within the subject building;</span>
-                <span>Researched, and analyzed, recent leases and current asking rates involving comparable industrial buildings
-                    located throughout the {this.props.appraisal.address} and surrounding areas.</span>
+                <li>Analyzed the most recent lease deals from within the subject building;</li>
+                <li>Researched, and analyzed, recent leases and current asking rates involving comparable industrial buildings
+                    located throughout the {this.props.appraisal.address} and surrounding areas.</li>
             </ul>
 
             <CustomTable
                 headers={["Index \n Date", "Address", "Size", "Rent", "Remarks"]}
                 rows={this.props.comparableLeases}
+                fontSize={10}
+                columnSizes={[
+                    "10%",
+                    "40%",
+                    "10%",
+                    "10%",
+                    "30%"
+                ]}
                 fields={{
-                    "leaseDate": (leaseDate, obj, objIndex) => <Value><p>L{objIndex + 1}</p><br/><Moment format="YYYY">{leaseDate}</Moment></Value>,
+                    "leaseDate": (leaseDate, obj, objIndex) => <Value><span>L{objIndex + 1}</span><br/><Moment format="YYYY">{leaseDate}</Moment></Value>,
                     "address": (address) => <Value>{address}</Value>,
                     "sizeOfUnit": (sizeOfUnit) => <AreaFormat value={sizeOfUnit} />,
                     "rentEscalations": (rentEscalations, obj) => <span>{rentEscalations ? rentEscalations.map((escalation) =>
                         <span>
-                            Yrs {escalation.startYear}-{escalation.endYear} @ <CurrencyValue cents={false}>{escalation.yearlyRent}</CurrencyValue>
+                            Yrs {escalation.startYear}-{escalation.endYear} @ <CurrencyFormat value={escalation.yearlyRent} />
                         </span>
                     ) : null}
                     {
                         obj.rentType === 'gross' ? <span>gross</span> : null
                     }
                     </span>,
-                    "remarks": (remarks, obj) => <p>
-                        <span>{remarks}</span>
+                    "remarks": (remarks, obj) => <span>
+                        {
+                            remarks ?
+                                <span>{remarks}<br/></span>
+                                : null
+                        }
                         {
                             obj.finishedOfficePercentage ?
-                                <span><PercentValue>{obj.finishedOfficePercentage}</PercentValue> finished office percentage</span> : null
+                                <span><PercentValue>{obj.finishedOfficePercentage}</PercentValue> finished office percentage<br/></span> : null
                         }
                         {
                             obj.shippingDoorsDoubleMan || obj.shippingDoorsTruckLevel || obj.shippingDoorsDriveIn ?
                                 <span>
                                     {
-                                        obj.shippingDoorsDoubleMan ? <span><IntegerFormat value={obj.shippingDoorsDoubleMan}/> D/M </span> : null
+                                        obj.shippingDoorsDoubleMan ? <span><IntegerFormat value={obj.shippingDoorsDoubleMan}/> D/M <br/></span> : null
                                     }
                                     {
-                                        obj.shippingDoorsTruckLevel ? <span><IntegerFormat value={obj.shippingDoorsTruckLevel}/> T/L </span> : null
+                                        obj.shippingDoorsTruckLevel ? <span><IntegerFormat value={obj.shippingDoorsTruckLevel}/> T/L <br/></span> : null
                                     }
                                     {
-                                        obj.shippingDoorsDriveIn ? <span><IntegerFormat value={obj.shippingDoorsDriveIn}/> D/I </span> : null
+                                        obj.shippingDoorsDriveIn ? <span><IntegerFormat value={obj.shippingDoorsDriveIn}/> D/I <br/></span> : null
                                     }
                                 </span> : null
                         }
                         {
                             obj.tenantName ?
-                                <span>Lease to {obj.tenantName}</span>
+                                <span>Lease to {obj.tenantName}<br/></span>
                                 : null
                         }
                         {
                             obj.taxesMaintenanceInsurance ?
-                                <span>TMI @ <CurrencyValue cents={true}>{obj.taxesMaintenanceInsurance}</CurrencyValue></span>
+                                <span>TMI @ <CurrencyFormat value={obj.taxesMaintenanceInsurance} /><br/></span>
                                 : null
                         }
                         {
                             obj.tenantInducementsPSF ?
-                                <span>TI @ <CurrencyValue cents={true}>{obj.tenantInducementsPSF}</CurrencyValue></span>
+                                <span>TI @ <CurrencyFormat value={obj.tenantInducementsPSF} /><br/></span>
                                 : null
                         }
                         {
                             obj.freeRentMonths ?
-                                <span>Free Rent <IntegerValue>{obj.freeRentMonths}</IntegerValue></span>
+                                <span>Free Rent <IntegerFormat value={obj.freeRentMonths} /><br/></span>
                                 : null
                         }
-                    </p>
+                    </span>
                 }} />
 
+            <ul>
+                <li>The comparable lease data detailed above shows rents in the range from <CurrencyFormat value={minRent} /> to <CurrencyFormat value={maxRent} /> per square foot (net) for industrial space located in {this.props.appraisal.address} and surrounding areas. The indicated range refers to the rent payable in the first few years of leases that range in length from <IntegerFormat value={minEscalations} /> to <IntegerFormat value={maxEscalations} /> years.</li>
+                <li>
+                    {
+                        allNet ? <span>The leases are net</span> : null
+                    }
+                    {
+                        allGross ? <span>The leases are gross</span> : null
+                    }
+                    {
+                        !allNet && !allGross ? <span>The leases are a mixture of net and gross</span> : null
+                    }
+                    {
+                        minTI || maxTI ?
+                            <span> and included tenant inducements ranging from <CurrencyFormat value={minTI} /> to <CurrencyFormat value={maxTI} /></span> :
+                            <span> and did not include any significant tenant inducements or allowances.</span>
+                    }
+                </li>
+                <li>
+                    The rates at the upper end of the range refer to modern buildings that offer a superior level of accommodation in terms of age, clear ceiling height, features, and finished office space.
+                </li>
+                <li>
+                    Rates at the low end of the range are generally indicated in older buildings with an inferior level of
+                    accommodation and older age, including a lower clear ceiling height.
+                </li>
+            </ul>
+            <h3>Summary of Market Rents</h3>
+            <ul>
+                <li>
+                    The comparable lease deals indicate a range from <CurrencyFormat value={minRent} /> to over <CurrencyFormat value={maxRent} /> per square foot (net),
+                    {
+                        allNet ? <span>and are all net leases.</span> : null
+                    }
+                    {
+                        allGross ? <span>and are all gross leases.</span> : null
+                    }
+                    {
+                        !allNet && !allGross ? <span>and are a mixture of net and gross leases.</span> : null
+                    }
+                </li>
+                <li>
+                    {
+                        ratioOfEscalations > 0.5 ?
+                            <span>Most of the comparable leases deals included rent escalations over the term.</span>
+                            : <span>Most of the comparable leases did not have escalations over the term.</span>
+                    }
+                </li>
+                {
+                    Object.keys(marketRents).length === 0 ? <li>
+                        <span>We deemed all of the units to to be at the market rate.</span>
+                    </li> : null
+                }
+                {
+                    Object.keys(marketRents).forEach((marketRentAmount) =>
+                    {
+                        let unitCountString = "";
+                        if (Object.keys(marketRents).length > 2)
+                        {
+                            unitCountString += ` for ${Object.keys(marketRents).length} units`;
+                        }
 
-
-
-            <p>
-                {/*The subject has a total of <IntegerValue>{this.props.appraisal.sizeOfBuilding}</IntegerValue> square feet. As of the effective date, the build was*/}
-                {/*100% leased and occupied by <IntegerValue>{this.numberOfOccupiedUnits()}</IntegerValue> units*/}
-            </p>
-            {/*<br/>*/}
-            {/*<h2>Management Expenses</h2>*/}
-            {/*<br/>*/}
-            {/*<br/>*/}
-            {/*<h2>Taxes</h2>*/}
-            {/*<br/>*/}
-            {/*<CustomTable*/}
-            {/*    headers={taxesHeaders}*/}
-            {/*    rows={taxExpenses}*/}
-            {/*    fields={taxFields}*/}
-            {/*    totals={taxTotals}*/}
-            {/*/>*/}
+                        return <li>A rate of <CurrencyFormat value={marketRentAmount} /> per square foot is considered appropriate {unitCountString}, as an average rate over a five-year lease term, and paired with a tenant inducement, detailed in this report.</li>
+                    })
+                }
+            </ul>
             </body>
             </html>
         )
