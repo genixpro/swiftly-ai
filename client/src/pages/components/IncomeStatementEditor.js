@@ -895,6 +895,7 @@ class IncomeStatementEditor extends React.Component
     getDefaultFile()
     {
         let defaultFile = null;
+        let defaultPage = null;
 
         Object.keys(this.props.appraisal.dataTypeReferences).forEach((dataType) =>
         {
@@ -903,6 +904,7 @@ class IncomeStatementEditor extends React.Component
                 if (this.props.appraisal.dataTypeReferences['INCOME_STATEMENT'].length > 0)
                 {
                     defaultFile = this.props.appraisal.dataTypeReferences['INCOME_STATEMENT'][0].fileId;
+                    defaultPage = this.props.appraisal.dataTypeReferences['INCOME_STATEMENT'][0].pageNumbers[0];
                 }
             }
             else if (dataType === 'EXPENSE_STATEMENT' && defaultFile === null && this.props.field === 'expense')
@@ -910,11 +912,12 @@ class IncomeStatementEditor extends React.Component
                 if (this.props.appraisal.dataTypeReferences['EXPENSE_STATEMENT'].length > 0)
                 {
                     defaultFile = this.props.appraisal.dataTypeReferences['EXPENSE_STATEMENT'][0].fileId;
+                    defaultPage = this.props.appraisal.dataTypeReferences['INCOME_STATEMENT'][0].pageNumbers[0];
                 }
             }
         });
 
-        return defaultFile;
+        return {fileId: defaultFile, page: defaultPage};
     }
 
 
@@ -940,7 +943,7 @@ class IncomeStatementEditor extends React.Component
                                     <FileSelector
                                         appraisalId={this.props.appraisal._id}
                                         onChange={(fileId) => this.onFileChanged(fileId)}
-                                        defaultFile={this.getDefaultFile()}
+                                        defaultFile={this.getDefaultFile().fileId}
                                         value={this.state.selectedFileId ? this.state.selectedFileId : null}
                                     />
                                 </Col>
@@ -952,6 +955,7 @@ class IncomeStatementEditor extends React.Component
                                             <FileViewer
                                                 ref={(ref) => this.fileViewer = ref}
                                                 document={this.state.file}
+                                                defaultPage={(this.state.file && this.state.file._id === this.getDefaultFile().fileId) ? this.getDefaultFile().page : 0}
                                                 hilightWords={this.state.hoverReference ? this.state.hoverReference.wordIndexes : []}
                                             />
                                         </Col> : null

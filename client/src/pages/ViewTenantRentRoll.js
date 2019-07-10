@@ -117,6 +117,7 @@ class ViewTenantsRentRoll extends React.Component
     getDefaultFile()
     {
         let defaultFile = null;
+        let defaultPage = null;
 
         Object.keys(this.props.appraisal.dataTypeReferences).forEach((dataType) =>
         {
@@ -125,11 +126,12 @@ class ViewTenantsRentRoll extends React.Component
                 if (this.props.appraisal.dataTypeReferences['RENT_ROLL'].length > 0)
                 {
                     defaultFile = this.props.appraisal.dataTypeReferences['RENT_ROLL'][0].fileId;
+                    defaultPage = this.props.appraisal.dataTypeReferences['RENT_ROLL'][0].pageNumbers[0];
                 }
             }
         });
 
-        return defaultFile;
+        return {fileId: defaultFile, page: defaultPage};
     }
 
 
@@ -152,8 +154,8 @@ class ViewTenantsRentRoll extends React.Component
                                 </DropdownToggle>
                                 <DropdownMenu>
                                     <DropdownItem onClick={() => this.downloadWordTenants()}>Tenants Summary (docx)</DropdownItem>
-                                    <DropdownItem onClick={() => this.downloadWordRentRoll()}>Rent Roll Summary (docx)</DropdownItem>
-                                    <DropdownItem onClick={() => this.downloadExcelRentRoll()}>Rent Roll Spreadsheet (xlsx)</DropdownItem>
+                                    {/*<DropdownItem onClick={() => this.downloadWordRentRoll()}>Rent Roll Summary (docx)</DropdownItem>*/}
+                                    {/*<DropdownItem onClick={() => this.downloadExcelRentRoll()}>Rent Roll Spreadsheet (xlsx)</DropdownItem>*/}
                                 </DropdownMenu>
                             </Dropdown>
                         </Col>
@@ -185,7 +187,7 @@ class ViewTenantsRentRoll extends React.Component
                                     <FileSelector
                                         appraisalId={this.props.appraisal._id}
                                         onChange={(fileId) => this.onFileChanged(fileId)}
-                                        defaultFile={this.getDefaultFile()}
+                                        defaultFile={this.getDefaultFile().fileId}
                                         value={this.state.selectedFileId ? this.state.selectedFileId : ""}
                                     />
                                 </Col>
@@ -197,6 +199,7 @@ class ViewTenantsRentRoll extends React.Component
                                             <FileViewer
                                                 ref={(ref) => this.fileViewer = ref}
                                                 document={this.state.file}
+                                                defaultPage={(this.state.file && this.state.file._id === this.getDefaultFile().fileId) ? this.getDefaultFile().page : 0}
                                                 hilightWords={this.state.hoverReference ? this.state.hoverReference.wordIndexes : []}
                                             />
                                         </Col> : null

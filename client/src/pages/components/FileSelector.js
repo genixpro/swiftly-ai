@@ -72,7 +72,6 @@ class FileSelector extends React.Component
         return (
             <select
                 className="custom-select"
-                onChange={(evt) => this.onChangeValue(evt.target.value)}
                 onBlur={(evt) => this.onBlur()}
                 ref={(ref) => this.onRef(ref)}
                 value={this.props.value}
@@ -86,7 +85,7 @@ class FileSelector extends React.Component
                 }
                 {
                     this.state.files.map((file) =>
-                        <option value={file._id} key={file._id}>{file.fileName}</option>
+                        <option value={file._id} key={file._id} onClick={(evt) => this.onChangeValue(file._id)}>{file.fileName}</option>
                     )
                 }
             </select>

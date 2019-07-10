@@ -25,6 +25,7 @@ import Logout from "./Logout";
 import axios from "axios/index";
 import AppraisalModel from "../models/AppraisalModel";
 import Sidebar from "../components/Layout/Sidebar";
+import AnnotationEditor from "./components/AnnotationEditor";
 
 class ViewAppraisal extends React.Component
 {

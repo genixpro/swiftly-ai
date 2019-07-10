@@ -93,7 +93,7 @@ class FileViewer extends React.Component
         if (this.props.document._id !== this.documentId)
         {
             this.documentId = this.props.document._id;
-            this.setState({imageZoom: FileViewer.computeDefaultZoom(this.props.document)});
+            this.setState({currentPage: this.props.defaultPage || 0, imageZoom: FileViewer.computeDefaultZoom(this.props.document)});
         }
     }
 
@@ -279,14 +279,14 @@ class FileViewer extends React.Component
                     <Col xs={12}>
                         <div className={"extractions-toolbar"}>
                             <div>
-                                <select //value={this.state.currentPage}
+                                <select
+                                        value={this.state.currentPage}
                                         ref={(ref) => this.pageSelectRef = ref}
-                                        onChange={(evt) => this.changePage(Number(evt.target.value))}
                                         className="custom-select">
                                     {
                                         _.range(this.props.document.pages).map((page) =>
                                         {
-                                            return <option key={page} value={page}>Page {page + 1}</option>
+                                            return <option key={page} value={page} onClick={(evt) => this.changePage(page)}>Page {page + 1}</option>
                                         })
                                     }
                                 </select>

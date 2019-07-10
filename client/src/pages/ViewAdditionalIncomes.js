@@ -40,17 +40,17 @@ class ViewAdditionalIncomes extends React.Component
                                         <Col xs={10}>
                                             <h3>Additional Incomes</h3>
                                         </Col>
-                                        <Col xs={2}>
-                                            <Dropdown isOpen={this.state.downloadDropdownOpen} toggle={this.toggleDownload.bind(this)}>
-                                                <DropdownToggle caret color={"primary"} className={"download-dropdown-button"}>
-                                                    Download
-                                                </DropdownToggle>
-                                                <DropdownMenu>
-                                                    <DropdownItem onClick={() => this.downloadWordAdditionalIncomes()}>Additional Income Summary (docx)</DropdownItem>
-                                                    <DropdownItem onClick={() => this.downloadExcelAdditionalIncomes()}>Additioanl Income Spreadsheet (xlsx)</DropdownItem>
-                                                </DropdownMenu>
-                                            </Dropdown>
-                                        </Col>
+                                        {/*<Col xs={2}>*/}
+                                        {/*    <Dropdown isOpen={this.state.downloadDropdownOpen} toggle={this.toggleDownload.bind(this)}>*/}
+                                        {/*        <DropdownToggle caret color={"primary"} className={"download-dropdown-button"}>*/}
+                                        {/*            Download*/}
+                                        {/*        </DropdownToggle>*/}
+                                        {/*        <DropdownMenu>*/}
+                                        {/*            <DropdownItem onClick={() => this.downloadWordAdditionalIncomes()}>Additional Income Summary (docx)</DropdownItem>*/}
+                                        {/*            <DropdownItem onClick={() => this.downloadExcelAdditionalIncomes()}>Additioanl Income Spreadsheet (xlsx)</DropdownItem>*/}
+                                        {/*        </DropdownMenu>*/}
+                                        {/*    </Dropdown>*/}
+                                        {/*</Col>*/}
                                     </Row>
 
                                     <IncomeStatementEditor

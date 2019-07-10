@@ -7,6 +7,7 @@ from appraisal.models.discounted_cash_flow_inputs import DiscountedCashFlowInput
 from appraisal.models.appraisal_validation_result import AppraisalValidationResult
 from appraisal.models.comparable_sale import ComparableSale
 from appraisal.models.stabilized_statement import StabilizedStatement
+from appraisal.models.file import File
 from appraisal.models.stabilized_statement_inputs import StabilizedStatementInputs
 from appraisal.models.direct_comparison_valuation import DirectComparisonValuation
 from appraisal.models.direct_comparison_valuation_inputs import DirectComparisonValuationInputs

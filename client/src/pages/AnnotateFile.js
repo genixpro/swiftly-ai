@@ -10,7 +10,10 @@ class AnnotateFile extends React.Component
 {
     state = {};
 
-
+    reprocessFile()
+    {
+        return axios.post(`/appraisal/${this.props.match.params.id}/files/${this.props.match.params.fileId}/reprocess`, {});
+    }
 
     render() {
 
@@ -29,6 +32,7 @@ class AnnotateFile extends React.Component
                                                     annotationFields={AnnotationFields}
                                                     appraisalId={this.props.appraisal._id}
                                                     fileId={this.props.match.params.fileId}
+                                                    reprocessFile={() => this.reprocessFile()}
                                                 />
                                             </CardBody>
                                         </Card>
