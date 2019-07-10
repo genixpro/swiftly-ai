@@ -75,11 +75,8 @@ RUN gsutil cp gs://swiftly-deployment/file_type_model.bin .
 RUN gsutil cp gs://swiftly-deployment/page_type_model.bin .
 RUN gsutil cp gs://swiftly-deployment/page_type_model.vec .
 
-# Delete everything in the client directory
-RUN rm -rf /swiftly/client
-
-# Install dependencies for server
-WORKDIR /swiftly/server/appraisal/word_documents
+# Install dependencies for client, which includes downloads
+WORKDIR /swiftly/client
 RUN npm install > "/dev/null" 2>&1
 
 WORKDIR /swiftly/server
