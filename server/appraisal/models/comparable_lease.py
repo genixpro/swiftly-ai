@@ -173,8 +173,8 @@ def migration_002_update_image_urls(comparable):
             comparable.imageUrls.append(comparable.imageUrl)
 
 
-@registerMigration(ComparableLease, 3)
-def migration_003_update_comp_lease_object_id(object):
+@registerMigration(ComparableLease, 4)
+def migration_004_update_comp_lease_object_id(object):
     data = json.loads(object.to_json())
     if len(str(object.id)) == 24:
         del data['_id']

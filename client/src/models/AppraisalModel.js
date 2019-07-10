@@ -298,6 +298,20 @@ class AppraisalModel extends BaseModel
     {
         return this.loadComparableSales('comparableSalesCapRate')
     }
+
+
+    numberOfOccupiedUnits()
+    {
+        let count = 0;
+        for(let unit of this.units)
+        {
+            if (!unit.isVacantForStabilizedStatement)
+            {
+                count += 1;
+            }
+        }
+        return count;
+    }
 }
 
 export default AppraisalModel;

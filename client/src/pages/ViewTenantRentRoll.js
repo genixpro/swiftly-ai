@@ -87,6 +87,11 @@ class ViewTenantsRentRoll extends React.Component
         window.location = `${process.env.VALUATE_ENVIRONMENT.REACT_APP_SERVER_URL}appraisal/${this.props.appraisal._id}/rent_roll/excel?access_token=${Auth.getAccessToken()}`;
     }
 
+    downloadWordTenants()
+    {
+        window.location = `${process.env.VALUATE_ENVIRONMENT.REACT_APP_SERVER_URL}appraisal/${this.props.appraisal._id}/tenants/word?access_token=${Auth.getAccessToken()}`;
+    }
+
     onFileChanged(fileId)
     {
         this.setState({selectedFileId: fileId});
@@ -146,6 +151,7 @@ class ViewTenantsRentRoll extends React.Component
                                     Download
                                 </DropdownToggle>
                                 <DropdownMenu>
+                                    <DropdownItem onClick={() => this.downloadWordTenants()}>Tenants Summary (docx)</DropdownItem>
                                     <DropdownItem onClick={() => this.downloadWordRentRoll()}>Rent Roll Summary (docx)</DropdownItem>
                                     <DropdownItem onClick={() => this.downloadExcelRentRoll()}>Rent Roll Spreadsheet (xlsx)</DropdownItem>
                                 </DropdownMenu>

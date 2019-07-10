@@ -5,7 +5,7 @@ import fs from "fs";
 import Moment from 'react-moment';
 import _ from "underscore";
 import NumberFormat from 'react-number-format';
-import CustomTable from "./styled_table";
+import StyledTable from "./styled_table";
 import {Value, CurrencyValue, PercentValue, IntegerValue} from "./value";
 import Spacer from "./spacer";
 import renderDocument from "./render_doc";
@@ -148,7 +148,7 @@ class MarketRentsWord extends React.Component
                     located throughout the {this.props.appraisal.address} and surrounding areas.</li>
             </ul>
 
-            <CustomTable
+            <StyledTable
                 headers={["Index \n Date", "Address", "Size", "Rent", "Remarks"]}
                 rows={this.props.comparableLeases}
                 fontSize={10}

@@ -5,7 +5,7 @@ import fs from "fs";
 import Moment from 'react-moment';
 import _ from "underscore";
 import NumberFormat from 'react-number-format';
-import CustomTable from "./styled_table";
+import StyledTable from "./styled_table";
 import {Value, CurrencyValue, PercentValue} from "./value";
 import Spacer from "./spacer";
 import renderDocument from "./render_doc";
@@ -22,16 +22,24 @@ class ComparableSalesTable extends React.Component {
 
 
         return (
-            <CustomTable
+            <StyledTable
                 headers={["Date", "Address", "Consideration", "Building Size", "Cap Rate"]}
                 rows={this.props.comparableSales}
                 fields={{
                     "saleDate.$date": (saleDate) => <Value><Moment format="MMMM YYYY">{saleDate}</Moment></Value>,
                     "address": (address) => <Value>{address}</Value>,
                     "salePrice": (salePrice) => <CurrencyValue>{salePrice}</CurrencyValue>,
-                    "sizeSquareFootage": (sizeSquareFootage) => <Value>{sizeSquareFootage}</Value>,
+                    "sizeSquareFootage": (sizeSquareFootage) => <span style={{"textAlign": "right"}}><Value>{sizeSquareFootage}</Value></span>,
                     "capitalizationRate": (capitalizationRate) => <PercentValue>{capitalizationRate}</PercentValue>
-                }} />
+                }}
+                columnSizes={[
+                    "15%",
+                    "40%",
+                    "15%",
+                    "15%",
+                    "15%"
+                ]}
+            />
         )
     }
 }

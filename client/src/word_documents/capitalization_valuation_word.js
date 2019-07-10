@@ -5,7 +5,7 @@ import fs from "fs";
 import Moment from 'react-moment';
 import _ from "underscore";
 import NumberFormat from 'react-number-format';
-import CustomTable from "./styled_table";
+import StyledTable from "./styled_table";
 import {Value, CurrencyValue, PercentValue, IntegerValue} from "./value";
 import Spacer from "./spacer";
 import FinancialTable from "./financial_table";
@@ -196,7 +196,7 @@ class App extends React.Component
             <p>In estimating the overall capitalization rate applicable to the subject property we have researched sales of
                 similar {this.props.appraisal.propertyType ? this.props.appraisal.propertyType.toString() + " " : ""}properties. Emphasis has been given to recent sales of {this.props.appraisal.propertyType ? this.props.appraisal.propertyType.toString() + " " : ""}
                 properties between {minCompSize} and {maxCompSize} square feet, fully leased and occupied pursuant to Tenancy types. Relevant details of comparable sales are summarized in the chart below.</p>
-            <CustomTable
+            <StyledTable
                 headers={["Index \n Date", "Address", "Consideration", "Leasable Area \n (Occupancy)", "Net Income \n PSF", "Stabilized \n OCR"]}
                 rows={this.props.comparableSales}
                 fontSize={10}
@@ -213,9 +213,9 @@ class App extends React.Component
                     "saleDate": (saleDate, obj, objIndex) => <Value><span>{objIndex + 1}</span><br/><Moment format="YYYY">{saleDate}</Moment></Value>,
                     "address": (address) => <Value>{address}</Value>,
                     "salePrice": (salePrice) => <CurrencyValue>{salePrice}</CurrencyValue>,
-                    "sizeSquareFootage": (sizeSquareFootage, obj) => <span><AreaFormat value={sizeSquareFootage} /><br /><PercentFormat value={obj.occupancyRate} /></span>,
-                    "netOperatingIncome": (netOperatingIncome, obj) => <span><CurrencyValue>{netOperatingIncome}</CurrencyValue><br /><CurrencyValue>{obj.netOperatingIncomePSF}</CurrencyValue></span>,
-                    "displayCapitalizationRate": (displayCapitalizationRate, obj) => <span><PercentValue value={displayCapitalizationRate} /></span>,
+                    "sizeSquareFootage": (sizeSquareFootage, obj) => <span style={{"textAlign": "right"}}><AreaFormat value={sizeSquareFootage} /><br /><PercentFormat value={obj.occupancyRate} /></span>,
+                    "netOperatingIncome": (netOperatingIncome, obj) => <span style={{"textAlign": "right"}}><CurrencyValue>{netOperatingIncome}</CurrencyValue><br /><CurrencyValue>{obj.netOperatingIncomePSF}</CurrencyValue></span>,
+                    "displayCapitalizationRate": (displayCapitalizationRate, obj) => <span style={{"textAlign": "right"}}><PercentValue value={obj.displayCapitalizationRate} /></span>,
                 }} />
 
             <br/>
@@ -229,10 +229,10 @@ class App extends React.Component
             <h3>Summary</h3>
             <p>
                 The comparable sales detailed above indicate a range in stabilized overall capitalization rates from <PercentFormat value={minCapRate}/> to
-                <PercentFormat value={maxCapRate} />. Adjustments have been made based on the subject’s properties location, construction date/condition,
+                &nbsp;<PercentFormat value={maxCapRate} />. Adjustments have been made based on the subject’s properties location, construction date/condition,
                 and tenancy. After adjustments, it is our opinion that an overall capitalization rate of <PercentFormat value={this.props.appraisal.capitalizationRate} /> is appropriate
                 for the subject property. A capitalization rate of <PercentFormat value={this.props.appraisal.capitalizationRate} />, applied to the subjects stabilized net income of
-                <CurrencyFormat value={this.props.appraisal.stabilizedStatement.netOperatingIncome} /> is detailed below:
+                &nbsp;<CurrencyFormat value={this.props.appraisal.stabilizedStatement.netOperatingIncome} /> is detailed below:
             </p>
             <br />
             <FinancialTable rows={rows} />

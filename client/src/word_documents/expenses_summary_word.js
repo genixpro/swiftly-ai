@@ -5,30 +5,39 @@ import fs from "fs";
 import Moment from 'react-moment';
 import _ from "underscore";
 import NumberFormat from 'react-number-format';
-import CustomTable from "./styled_table";
+import StyledTable from "./styled_table";
 import {Value, CurrencyValue, PercentValue} from "./value";
 import Spacer from "./spacer";
 import renderDocument from "./render_doc";
 import AppraisalModel from "../models/AppraisalModel";
+import CurrencyFormat from "../pages/components/CurrencyFormat";
+import IntegerFormat from "../pages/components/IntegerFormat";
+import PercentFormat from "../pages/components/PercentFormat";
 
 class App extends React.Component {
 
     computeGroup(itemType)
     {
-        const headers = [""];
+        const headers = ["Expenses"];
+
+        const columnSizes = ["25%"];
 
         const fields = {
             "name": (name) => <Value>{name}</Value>,
         };
 
-        const expenses = _.filter(this.props.appraisal.incomeStatement.expenses, (expense) => expense.incomeStatementItemType === itemType);
+        const expenses = _.filter(this.props.appraisal.incomeStatement.expenses, (expense) => expense.incomeStatementItemType === itemType || itemType === null);
 
         const yearTotals = {};
 
         this.props.appraisal.incomeStatement.years.forEach((year) =>
         {
             headers.push(year.toString());
-            fields["yearlyAmounts." + year.toString()] = (amount) => <CurrencyValue>{amount}</CurrencyValue>;
+            headers.push("PSF");
+            fields["yearlyAmounts." + year.toString()] = (amount) => <CurrencyValue cents={false}>{amount}</CurrencyValue>;
+            fields["yearlyAmountsPSF." + year.toString()] = (amount, obj) => <CurrencyValue cents={true}>{obj["yearlyAmounts." + year.toString()] / this.props.appraisal.sizeOfBuilding}</CurrencyValue>;
+            columnSizes.push("15%");
+            columnSizes.push("10%");
 
             yearTotals[year] = 0;
 
@@ -43,62 +52,61 @@ class App extends React.Component {
 
         const totals = [
             {
-                "name": "Total Operating Expenses",
+                "name": "Total Expenses",
                 "yearlyAmounts": yearTotals
             }
         ];
 
-        return {headers, fields, expenses, totals}
+        return {headers, fields, expenses, totals, columnSizes}
     }
 
 
     render()
     {
-        const {headers: operatingHeaders, fields: operatingExpenseFields, expenses: operatingExpenses, totals: operatingTotals} = this.computeGroup("operating_expense");
-        const {headers: managementHeaders, fields: managementFields, expenses: managementExpenses, totals: managementTotals} = this.computeGroup("management_expense");
-        const {headers: taxesHeaders, fields: taxFields, expenses: taxExpenses, totals: taxTotals} = this.computeGroup("management_expense");
+        const {headers, fields, expenses, totals, columnSizes} = this.computeGroup(null);
+
+        let appraisalYear = this.props.appraisal.incomeStatement.latestYear;
+        let lastYear = appraisalYear - 1;
+        let twoYearsAgo = appraisalYear - 2;
 
         return (
             <html>
             <body style={{"width": "7in"}}>
             <br/>
-            <h1>Realty Taxes and Operating Costs</h1>
+            <h3>Realty Taxes and Operating Costs</h3>
             <br/>
-            <h2>Recoverable Costs</h2>
+            <h4>Recoverable Costs</h4>
             <p>
-                According to the final 2017 Realty Tax Bill, realty taxes are $170,000. According to the 2018 Budget, realty taxes were estimated to be $173,400. We have increased the 2018 Budget figures by 2.25% to estimate 2019 taxes.
+                According to the final {twoYearsAgo} Realty Tax Bill, realty taxes are <CurrencyFormat value={this.props.appraisal.incomeStatement.calculateTotalExpenses(twoYearsAgo, "taxes")}/>.
+                &nbsp;According to the {lastYear} Budget, realty taxes were estimated to be <CurrencyFormat value={this.props.appraisal.incomeStatement.calculateTotalExpenses(lastYear, "taxes")}/>.
+                &nbsp;We have increased the {lastYear} Budget figures by <PercentFormat value={100 * this.props.appraisal.incomeStatement.calculateTotalExpenses(appraisalYear, "taxes") / this.props.appraisal.incomeStatement.calculateTotalExpenses(lastYear, "taxes")}/> to estimate {appraisalYear} taxes.
             </p>
-            <br/>
             <p>
-                Operating costs cover the management of the building including items such as: insurance and property maintenance. A budget for 2018 has been provided. We have increased the 2018 Budget figures by 2.25% to estimate operating costs in 2019. Expenses are detailed below:
+                Operating costs cover the management of the building including items such as: insurance and property maintenance. A budget for {lastYear} has been provided. We have increased the 2018 Budget figures by <PercentFormat value={100 * this.props.appraisal.incomeStatement.calculateTotalExpenses(appraisalYear, "operating_expenses") / this.props.appraisal.incomeStatement.calculateTotalExpenses(lastYear, "operating_expenses")}/> to estimate operating costs in {appraisalYear}. Expenses are detailed below:
             </p>
-            <br/>
-            <h2>Operating Expenses</h2>
-            <br/>
-            <CustomTable
-                headers={operatingHeaders}
-                rows={operatingExpenses}
-                fields={operatingExpenseFields}
-                totals={operatingTotals}
+            <p>
+                *This section can be auto populated based on your company specific verbiage.
+            </p>
+            <StyledTable
+                headers={headers}
+                rows={expenses}
+                fields={fields}
+                totals={totals}
+                columnSizes={columnSizes}
             />
-            {/*<br/>*/}
-            {/*<h2>Management Expenses</h2>*/}
-            {/*<br/>*/}
-            {/*<CustomTable*/}
-            {/*    headers={managementHeaders}*/}
-            {/*    rows={managementExpenses}*/}
-            {/*    fields={managementFields}*/}
-            {/*    totals={managementTotals}*/}
-            {/*/>*/}
-            {/*<br/>*/}
-            {/*<h2>Taxes</h2>*/}
-            {/*<br/>*/}
-            {/*<CustomTable*/}
-            {/*    headers={taxesHeaders}*/}
-            {/*    rows={taxExpenses}*/}
-            {/*    fields={taxFields}*/}
-            {/*    totals={taxTotals}*/}
-            {/*/>*/}
+            <br/>
+            <p>
+                Recoverable Operating Costs are estimated at <CurrencyFormat cents={false} value={this.props.appraisal.stabilizedStatement.operatingExpenses + this.props.appraisal.stabilizedStatement.managementExpenses + this.props.appraisal.stabilizedStatement.taxes}/>
+                &nbsp;for {this.props.appraisal.incomeStatement.latestYear}. Taxes for {lastYear} are estimated at
+                &nbsp;<CurrencyFormat cents={false} value={this.props.appraisal.incomeStatement.calculateTotalExpenses(lastYear, "taxes")}/>.
+                The operating cost and expense figures are considered reasonable for the subject neighborhood, falling within the range presented by comparable leases.
+            </p>
+            <h4>Management Expense</h4>
+            <p>
+                According to leases a management fee of 15% of operating costs is recoverable from the tenants. We have offset this recovery with a management expense of
+                &nbsp;<PercentFormat value={this.props.appraisal.stabilizedStatementInputs.managementExpenseCalculationRule.percent} /> of
+                &nbsp;{this.props.appraisal.stabilizedStatementInputs.managementExpenseCalculationRule.field}.
+            </p>
             </body>
             </html>
         )

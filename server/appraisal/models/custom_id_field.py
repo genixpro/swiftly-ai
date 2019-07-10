@@ -44,9 +44,4 @@ def regularizeID(value):
         if '$oid' in value:
             return bson.ObjectId(value['$oid'])
 
-    if isinstance(value, str):
-        if len(value) == 24:
-            return bson.ObjectId(value)
-        else:
-            return value
     return value

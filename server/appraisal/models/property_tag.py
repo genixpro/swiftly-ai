@@ -26,8 +26,8 @@ class PropertyTag(Document):
     version = IntField(default=1)
 
 
-@registerMigration(PropertyTag, 1)
-def migration_001_update_tag_object_id(object):
+@registerMigration(PropertyTag, 2)
+def migration_001_002_update_tag_object_id(object):
     data = json.loads(object.to_json())
     if len(str(object.id)) == 24:
         del data['_id']
