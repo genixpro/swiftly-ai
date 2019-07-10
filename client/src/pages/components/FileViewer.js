@@ -101,17 +101,17 @@ class FileViewer extends React.Component
     {
         this.selecting = false;
         this.isDraggingImage = false;
-        this.setState({isDraggingImage: false});
+        if (this.isDraggingImage)
+        {
+            this.setState({isDraggingImage: false});
+        }
     }
 
 
     changePage(evt)
     {
         const newPage = Number(evt.target.value);
-        setTimeout(() =>
-        {
-            this.setState({currentPage: newPage})
-        });
+        this.setState({currentPage: newPage})
     }
 
     moveViewTo(imageX, imageY, containerX, containerY, slowTransition)
