@@ -259,8 +259,8 @@ class File(Document):
         ]
 
 
-@registerMigration(File, 1)
-def migration_001_update_file_object_id(object):
+@registerMigration(File, 2)
+def migration_001_002_update_file_object_id(object):
     data = json.loads(object.to_json())
     if len(str(object.id)) == 24:
         del data['_id']
@@ -269,5 +269,4 @@ def migration_001_update_file_object_id(object):
         File.objects(id=bson.ObjectId(object.id)).delete()
 
         newObject = File(**data)
-        print(data['id'])
         return newObject

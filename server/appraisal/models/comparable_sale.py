@@ -9,6 +9,7 @@ import bson
 from .custom_id_field import CustomIDField
 import json, bson
 from .custom_id_field import generateNewUUID
+from pprint import pprint
 
 class ComparableSale(Document):
     meta = {'collection': 'comparables', 'strict': False}
@@ -359,8 +360,8 @@ def migration_002_allow_sub_comp_search(comparable):
    comparable.allowSubCompSearch = True
 
 
-@registerMigration(ComparableSale, 3)
-def migration_003_update_comp_sale_object_id(object):
+@registerMigration(ComparableSale, 5)
+def migration_003_004_005_update_comp_sale_object_id(object):
     data = json.loads(object.to_json())
     if len(str(object.id)) == 24:
         del data['_id']
@@ -370,3 +371,4 @@ def migration_003_update_comp_sale_object_id(object):
 
         newObject = ComparableSale(**data)
         return newObject
+

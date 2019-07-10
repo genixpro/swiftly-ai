@@ -193,13 +193,18 @@ class UnitModel extends BaseModel
     }
 
 
-    static numberWithCommas(x) {
-        return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    static numberWithCommas(x, decimals) {
+        if (!decimals)
+        {
+            decimals = 0;
+        }
+
+        return x.toFixed(decimals).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
     }
 
     get computedDescription()
     {
-        const dateFormat = "DD MMMM, YYYY";
+        const dateFormat = "DDD MMMM, YYYY";
 
         let message = `Occupies ${UnitModel.numberWithCommas(this.squareFootage)} square feet`;
 
@@ -228,16 +233,16 @@ class UnitModel extends BaseModel
 
         let leaseYears = endTenancy.endDate.getFullYear() - startTenancy.startDate.getFullYear();
 
-        message += `pursuant to a ${leaseYears}-year lease commencing ${moment(startTenancy.startDate).format(dateFormat)} and expiring ${moment(endTenancy.endDate).format(dateFormat)}. `;
+        message += ` pursuant to a ${leaseYears}-year lease commencing ${moment(startTenancy.startDate).format(dateFormat)} and expiring ${moment(endTenancy.endDate).format(dateFormat)}. `;
 
         if (allRelevantTenancies.length > 1)
         {
             const escalationYear = allRelevantTenancies[1].startDate.getFullYear() - allRelevantTenancies[0].startDate.getFullYear();
-            message += `Annual net rent in year 1 was $${UnitModel.numberWithCommas(startTenancy.yearlyRent / this.squareFootage)} which escalates in year ${escalationYear} to $${UnitModel.numberWithCommas(allRelevantTenancies[1].yearlyRent / this.squareFootage)}`;
+            message += `Annual net rent in year 1 was $${UnitModel.numberWithCommas(startTenancy.yearlyRent / this.squareFootage, 2)} per square foot which escalates in year ${escalationYear} to $${UnitModel.numberWithCommas(allRelevantTenancies[1].yearlyRent / this.squareFootage, 2)} per square foot.`;
         }
         else
         {
-            message += `Annual net rent for the duration of the lease term is $${UnitModel.numberWithCommas(startTenancy.yearlyRent / this.squareFootage)}`;
+            message += `Annual net rent for the duration of the lease term is $${UnitModel.numberWithCommas(startTenancy.yearlyRent / this.squareFootage, 2)} per square foot.`;
         }
 
         return message;

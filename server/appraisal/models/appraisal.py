@@ -161,8 +161,8 @@ def migration_001_image_urls(appraisal):
             appraisal.imageUrls.append(appraisal.imageUrl)
 
 
-@registerMigration(Appraisal, 2)
-def migration_002_appraisal_id(appraisal):
+@registerMigration(Appraisal, 3)
+def migration_002_003_appraisal_id(appraisal):
     data = json.loads(appraisal.to_json())
     if len(str(appraisal.id)) == 24:
         del data['_id']

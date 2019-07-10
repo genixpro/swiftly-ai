@@ -5,7 +5,7 @@ import fs from "fs";
 import Moment from 'react-moment';
 import _ from "underscore";
 import NumberFormat from 'react-number-format';
-import CustomTable from "./styled_table";
+import StyledTable from "./styled_table";
 import {Value, CurrencyValue, PercentValue, IntegerValue} from "./value";
 import Spacer from "./spacer";
 import renderDocument from "./render_doc";
@@ -33,7 +33,7 @@ class App extends React.Component {
             <br/>
             <h1>Amortization Schedule</h1>
             <br/>
-            <CustomTable
+            <StyledTable
                 headers={headers}
                 rows={this.props.appraisal.amortizationSchedule.items}
                 fields={fields}

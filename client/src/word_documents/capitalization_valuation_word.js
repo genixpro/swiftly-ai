@@ -5,11 +5,19 @@ import fs from "fs";
 import Moment from 'react-moment';
 import _ from "underscore";
 import NumberFormat from 'react-number-format';
-import CustomTable from "./styled_table";
+import StyledTable from "./styled_table";
 import {Value, CurrencyValue, PercentValue, IntegerValue} from "./value";
 import Spacer from "./spacer";
 import FinancialTable from "./financial_table";
 import renderDocument from "./render_doc";
+import AppraisalModel from "../models/AppraisalModel";
+import ComparableSaleModel from "../models/ComparableSaleModel";
+import AreaFormat from "../pages/components/AreaFormat";
+import CurrencyFormat from "../pages/components/CurrencyFormat";
+import IntegerFormat from "../pages/components/IntegerFormat";
+import PercentFormat from "../pages/components/PercentFormat";
+import {jStat} from "jStat";
+import ComparableSalesSummaries from "./comparable_sales_summaries";
 
 class App extends React.Component
 {
@@ -43,7 +51,7 @@ class App extends React.Component
 
         rows.push({
             "label": <span>
-                Capitalized @ <PercentValue left>{this.props.appraisal.stabilizedStatementInputs.capitalizationRate}</PercentValue>
+                Capitalized @ <PercentValue left>{this.props.appraisal.stabilizedStatementInputs.displayCapitalizationRate}</PercentValue>
             </span>,
             "amount": <CurrencyValue cents={false}>{this.props.appraisal.stabilizedStatement.capitalization}</CurrencyValue>,
             "amountTotal": null,
@@ -129,17 +137,107 @@ class App extends React.Component
             "mode": "data"
         });
 
+        let minCompSize = null;
+        let maxCompSize = null;
+
+        let minCapRate = null;
+        let maxCapRate = null;
+        let capRateTotal = 0;
+        let capRateCount = 0;
+        let capRates = [];
+
+        this.props.comparableSales.forEach((comp) =>
+        {
+            if (comp.sizeSquareFootage)
+            {
+                if (minCompSize === null || comp.sizeSquareFootage < minCompSize)
+                {
+                    minCompSize = comp.sizeSquareFootage;
+                }
+
+                if (maxCompSize === null || comp.sizeSquareFootage > maxCompSize)
+                {
+                    maxCompSize = comp.sizeSquareFootage;
+                }
+            }
+
+            if (comp.displayCapitalizationRate)
+            {
+                if (minCapRate === null || comp.displayCapitalizationRate < minCapRate)
+                {
+                    minCapRate = comp.displayCapitalizationRate;
+                }
+
+                if (maxCapRate === null || comp.displayCapitalizationRate > maxCapRate)
+                {
+                    maxCapRate = comp.displayCapitalizationRate;
+                }
+
+                capRateTotal += comp.displayCapitalizationRate;
+                capRateCount += 1;
+                capRates.push(comp.displayCapitalizationRate);
+            }
+        });
+
+        let capRateAverage = 0;
+        if (capRateCount)
+        {
+            capRateAverage = capRateTotal / capRateCount;
+        }
+
+        let capRateMedian = jStat.median(capRates);
+
         return (
             <html>
             <body style={{"width": "7in"}}>
             <br/>
             <h1 style={headerStyle}>Capitalization Valuation</h1>
             <h2 style={subHeaderStyle}>{this.props.appraisal.address}</h2>
+            <p>In estimating the overall capitalization rate applicable to the subject property we have researched sales of
+                similar {this.props.appraisal.propertyType ? this.props.appraisal.propertyType.toString() + " " : ""}properties. Emphasis has been given to recent sales of {this.props.appraisal.propertyType ? this.props.appraisal.propertyType.toString() + " " : ""}
+                properties between {minCompSize} and {maxCompSize} square feet, fully leased and occupied pursuant to Tenancy types. Relevant details of comparable sales are summarized in the chart below.</p>
+            <StyledTable
+                headers={["Index \n Date", "Address", "Consideration", "Leasable Area \n (Occupancy)", "Net Income \n PSF", "Stabilized \n OCR"]}
+                rows={this.props.comparableSales}
+                fontSize={10}
+                columnSizes={[
+                    "10%",
+                    "40%",
+                    "10%",
+                    "10%",
+                    "10%",
+                    "10%",
+                    "10%"
+                ]}
+                fields={{
+                    "saleDate": (saleDate, obj, objIndex) => <Value><span>{objIndex + 1}</span><br/><Moment format="YYYY">{saleDate}</Moment></Value>,
+                    "address": (address) => <Value>{address}</Value>,
+                    "salePrice": (salePrice) => <CurrencyValue>{salePrice}</CurrencyValue>,
+                    "sizeSquareFootage": (sizeSquareFootage, obj) => <span style={{"textAlign": "right"}}><AreaFormat value={sizeSquareFootage} /><br /><PercentFormat value={obj.occupancyRate} /></span>,
+                    "netOperatingIncome": (netOperatingIncome, obj) => <span style={{"textAlign": "right"}}><CurrencyValue>{netOperatingIncome}</CurrencyValue><br /><CurrencyValue>{obj.netOperatingIncomePSF}</CurrencyValue></span>,
+                    "displayCapitalizationRate": (displayCapitalizationRate, obj) => <span style={{"textAlign": "right"}}><PercentValue value={obj.displayCapitalizationRate} /></span>,
+                }} />
+
             <br/>
+            <p>As detailed above, the sales show a range in capitalization rates from <PercentFormat value={minCapRate} /> to <PercentFormat value={maxCapRate} />.
+                The average rate of the comparable sales is <PercentFormat value={capRateAverage} />, with most comparable sales being above <PercentFormat value={capRateMedian} />.
+                The range is mostly attributed to differences in location and sale date. For the purpose of the appraisal, adjustments have been made to allow for differences between
+                comparable properties and the subject. A summary of the comparable sales is presented below.</p>
+            <br />
+            <ComparableSalesSummaries comparableSales={this.props.comparableSales}/>
             <br/>
+            <h3>Summary</h3>
+            <p>
+                The comparable sales detailed above indicate a range in stabilized overall capitalization rates from <PercentFormat value={minCapRate}/> to
+                &nbsp;<PercentFormat value={maxCapRate} />. Adjustments have been made based on the subject’s properties location, construction date/condition,
+                and tenancy. After adjustments, it is our opinion that an overall capitalization rate of <PercentFormat value={this.props.appraisal.capitalizationRate} /> is appropriate
+                for the subject property. A capitalization rate of <PercentFormat value={this.props.appraisal.capitalizationRate} />, applied to the subjects stabilized net income of
+                &nbsp;<CurrencyFormat value={this.props.appraisal.stabilizedStatement.netOperatingIncome} /> is detailed below:
+            </p>
+            <br />
             <FinancialTable rows={rows} />
             <br/>
-            <h3 style={resultStyle}>Value by the Overall Capitalization Rate Method ... <CurrencyValue cents={false} center>{this.props.appraisal.stabilizedStatement.valuationRounded}</CurrencyValue></h3>
+            <h3 style={resultStyle}>Value by the Overall Capitalization Rate Approach <br /> <CurrencyValue cents={false} center>{this.props.appraisal.stabilizedStatement.valuationRounded}</CurrencyValue></h3>
             </body>
             </html>
         )
@@ -149,7 +247,11 @@ class App extends React.Component
 
 renderDocument((data) =>
 {
+    const appraisal = AppraisalModel.create(data.appraisal);
+    const comparableSales = data.comparableSales.map((comp) => ComparableSaleModel.create(comp));
+
     return <App
-        appraisal={data.appraisal}
+        comparableSales={comparableSales}
+        appraisal={appraisal}
     />;
 });

@@ -22,8 +22,8 @@ class Zone(Document):
 
     version = IntField(default=1)
 
-@registerMigration(Zone, 1)
-def migration_001_update_zone_object_id(object):
+@registerMigration(Zone, 2)
+def migration_001_002_update_zone_object_id(object):
     data = json.loads(object.to_json())
     if len(str(object.id)) == 24:
         del data['_id']

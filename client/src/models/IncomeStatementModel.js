@@ -98,6 +98,24 @@ class IncomeStatementModel extends BaseModel
         }
         return _.max(this.years);
     }
+
+    calculateTotalExpenses(year, incomeStatementItemType)
+    {
+        if (this.years.indexOf(year) === -1)
+        {
+            return 0;
+        }
+
+        let total = 0;
+        this.expenses.forEach((expense) =>
+        {
+            if ((expense.incomeStatementItemType === incomeStatementItemType || incomeStatementItemType === null) && expense.yearlyAmounts[year])
+            {
+                total += expense.yearlyAmounts[year];
+            }
+        });
+        return total;
+    }
 }
 
 export {IncomeStatementItemModel, IncomeStatementModel};

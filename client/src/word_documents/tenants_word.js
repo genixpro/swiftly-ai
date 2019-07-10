@@ -5,7 +5,7 @@ import fs from "fs";
 import Moment from 'react-moment';
 import _ from "underscore";
 import NumberFormat from 'react-number-format';
-import CustomTable from "./styled_table";
+import StyledTable from "./styled_table";
 import {Value, CurrencyValue, PercentValue, IntegerValue} from "./value";
 import Spacer from "./spacer";
 import renderDocument from "./render_doc";
@@ -14,19 +14,6 @@ import IntegerFormat from "../pages/components/IntegerFormat";
 
 class App extends React.Component
 {
-    numberOfOccupiedUnits()
-    {
-        let count = 0;
-        for(let unit of this.props.appraisal.units)
-        {
-            if (!unit.isVacantForStabilizedStatement)
-            {
-                count += 1;
-            }
-        }
-        return count;
-    }
-
     render()
     {
 
@@ -36,40 +23,19 @@ class App extends React.Component
             <br/>
             <h1>Tenancy</h1>
             <p>
-                The subject has a total of <IntegerValue>{this.props.appraisal.sizeOfBuilding}</IntegerValue> square feet. As of the effective date, the build was
-                100% leased and occupied by <IntegerValue>{this.numberOfOccupiedUnits()}</IntegerValue> units
+                The subject has a total of <IntegerFormat value={this.props.appraisal.sizeOfBuilding} /> square feet. As of the effective date, the build was
+                100% leased and occupied by <IntegerFormat value={this.props.appraisal.numberOfOccupiedUnits()} /> tenants.
             </p>
+            <ul>
+                {
+                    this.props.appraisal.units.map((unit, unitIndex) =>
+                        {
+                            return <li key={unitIndex}><p>Tenant {unitIndex + 1}: {unit.computedDescription}</p></li>
+                        })
+                }
+            </ul>
+            <p>*This section can be auto populated based on your company specific verbiage.</p>
             <br/>
-            <p>
-                Operating costs cover the management of the building including items such as: insurance and property maintenance. A budget for 2018 has been provided. We have increased the 2018 Budget figures by 2.25% to estimate operating costs in 2019. Expenses are detailed below:
-            </p>
-            <br/>
-            <h2>Operating Expenses</h2>
-            <br/>
-            <CustomTable
-                headers={operatingHeaders}
-                rows={operatingExpenses}
-                fields={operatingExpenseFields}
-                totals={operatingTotals}
-            />
-            {/*<br/>*/}
-            {/*<h2>Management Expenses</h2>*/}
-            {/*<br/>*/}
-            {/*<CustomTable*/}
-            {/*    headers={managementHeaders}*/}
-            {/*    rows={managementExpenses}*/}
-            {/*    fields={managementFields}*/}
-            {/*    totals={managementTotals}*/}
-            {/*/>*/}
-            {/*<br/>*/}
-            {/*<h2>Taxes</h2>*/}
-            {/*<br/>*/}
-            {/*<CustomTable*/}
-            {/*    headers={taxesHeaders}*/}
-            {/*    rows={taxExpenses}*/}
-            {/*    fields={taxFields}*/}
-            {/*    totals={taxTotals}*/}
-            {/*/>*/}
             </body>
             </html>
         )

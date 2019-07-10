@@ -9,6 +9,7 @@ from appraisal.models.comparable_sale import ComparableSale
 from appraisal.models.zone import Zone
 from appraisal.models.property_tag import PropertyTag
 from appraisal.models.image import Image
+from appraisal.models.custom_id_field import generateNewUUID
 import bz2
 import sys
 import os
@@ -36,6 +37,8 @@ def loadObjects(model, ):
 
     objects = model.objects()
 
+    print("Loaded", len(objects))
+
     return objects
 
 
@@ -50,18 +53,16 @@ def saveObjects(model, objects, newOwner):
     for object in objects:
         data = json.loads(object.to_json())
 
-        # pprint(data)
-
         del data['_id']
         data['owner'] = newOwner
 
         newObject = model(**data)
 
         oldId = str(object.id)
+        newId = generateNewUUID(model)
 
+        newObject.id = newId
         newObject.save(validate=False)
-
-        newId = str(newObject.id)
 
         newObjects.append(newObject)
 

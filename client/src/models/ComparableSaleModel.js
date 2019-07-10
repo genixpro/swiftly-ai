@@ -617,7 +617,7 @@ class ComparableSaleModel extends EquationMdoel
 
         if(comparableSale.constructionDate)
         {
-            text += `construction date of ${moment(comparableSale.constructionDate).format(dateFormat)}, `;
+            text += `construction date of ${comparableSale.constructionDate}, `;
         }
 
         if(comparableSale.clearCeilingHeight)

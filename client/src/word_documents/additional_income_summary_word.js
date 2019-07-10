@@ -5,7 +5,7 @@ import fs from "fs";
 import Moment from 'react-moment';
 import _ from "underscore";
 import NumberFormat from 'react-number-format';
-import CustomTable from "./styled_table";
+import StyledTable from "./styled_table";
 import {Value, CurrencyValue, PercentValue} from "./value";
 import Spacer from "./spacer";
 import renderDocument from "./render_doc";
@@ -61,7 +61,7 @@ class App extends React.Component {
             <br/>
             <h1>Additional Income Summary</h1>
             <br/>
-            <CustomTable
+            <StyledTable
                 headers={headers}
                 rows={incomes}
                 fields={fields}
