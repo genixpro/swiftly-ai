@@ -137,7 +137,7 @@ class MarketRentsWord extends React.Component
             <html>
             <body style={{"width": "7in"}}>
             <br/>
-            <h3>Market Rents</h3>
+            <h4 style={{"textAlign": "center"}}>MARKET RENTS</h4>
             <p>To determine the long-term income potential of the subject property the market rent for the property must
                 be estimated. Establishing market rent also contextualizes current contract rent within the building as
                 compared to the prevailing market levels. In establishing the market rent the following analysis has been
@@ -156,21 +156,23 @@ class MarketRentsWord extends React.Component
                     "10%",
                     "40%",
                     "10%",
-                    "10%",
-                    "30%"
+                    "15%",
+                    "25%"
                 ]}
                 fields={{
                     "leaseDate": (leaseDate, obj, objIndex) => <Value><span>L{objIndex + 1}</span><br/><Moment format="YYYY">{leaseDate}</Moment></Value>,
                     "address": (address) => <Value>{address}</Value>,
                     "sizeOfUnit": (sizeOfUnit) => <AreaFormat value={sizeOfUnit} />,
-                    "rentEscalations": (rentEscalations, obj) => <span>{rentEscalations ? rentEscalations.map((escalation) =>
-                        <span>
-                            Yrs {escalation.startYear}-{escalation.endYear} @ <CurrencyFormat value={escalation.yearlyRent} />
-                        </span>
-                    ) : null}
-                    {
-                        obj.rentType === 'gross' ? <span>gross</span> : null
-                    }
+                    "rentEscalations": (rentEscalations, obj) => <span>{
+                        obj.rentEscalations.length ? obj.rentEscalations.map((escalation, escalationIndex) =>
+                            <span key={escalationIndex}>
+                                Yrs {escalation.startYear}-{escalation.endYear} @ <CurrencyFormat value={escalation.yearlyRent} />
+                                <br/>
+                            </span>
+                        ): null}
+                        {
+                            obj.rentType === 'gross' ? <span>gross</span> : null
+                        }
                     </span>,
                     "remarks": (remarks, obj) => <span>
                         {
@@ -218,6 +220,7 @@ class MarketRentsWord extends React.Component
                         }
                     </span>
                 }} />
+            <br />
 
             <ul>
                 <li>The comparable lease data detailed above shows rents in the range from <CurrencyFormat value={minRent} /> to <CurrencyFormat value={maxRent} /> per square foot (net) for industrial space located in {this.props.appraisal.address} and surrounding areas. The indicated range refers to the rent payable in the first few years of leases that range in length from <IntegerFormat value={minEscalations} /> to <IntegerFormat value={maxEscalations} /> years.</li>

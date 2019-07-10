@@ -13,10 +13,11 @@ import AppraisalModel from "../models/AppraisalModel";
 import CurrencyFormat from "../pages/components/CurrencyFormat";
 import IntegerFormat from "../pages/components/IntegerFormat";
 import PercentFormat from "../pages/components/PercentFormat";
+import {nameForCalculationField} from "../pages/components/CalculationFieldSelector";
 
 class App extends React.Component {
 
-    computeGroup(itemType)
+    computeRows()
     {
         const headers = ["Expenses"];
 
@@ -26,16 +27,42 @@ class App extends React.Component {
             "name": (name) => <Value>{name}</Value>,
         };
 
-        const expenses = _.filter(this.props.appraisal.incomeStatement.expenses, (expense) => expense.incomeStatementItemType === itemType || itemType === null);
+        const operatingExpenses = _.filter(this.props.appraisal.incomeStatement.expenses, (expense) => expense.incomeStatementItemType === "operating_expense");
+        const managementExpenses = _.filter(this.props.appraisal.incomeStatement.expenses, (expense) => expense.incomeStatementItemType === "management_expense");
+        const taxes = _.filter(this.props.appraisal.incomeStatement.expenses, (expense) => expense.incomeStatementItemType === "taxes");
 
         const yearTotals = {};
 
+        const totalOperating = {
+            "name": "Total Operating Expenses",
+            "yearlyAmounts": {}
+        };
+
+        const totalTaxes = {
+            "name": "Total Realty Taxes",
+            "yearlyAmounts": {}
+        };
+
+        const totalManagement = {
+            "name": "Total Management Expenses",
+            "yearlyAmounts": {}
+        };
+
         this.props.appraisal.incomeStatement.years.forEach((year) =>
         {
-            headers.push(year.toString());
+            totalOperating.yearlyAmounts[year.toString()] = _.reduce(operatingExpenses, function(memo, expense){ return memo + expense.yearlyAmounts[year]; }, 0);
+            totalTaxes.yearlyAmounts[year.toString()] = _.reduce(taxes, function(memo, expense){ return memo + expense.yearlyAmounts[year]; }, 0);
+            totalManagement.yearlyAmounts[year.toString()] = _.reduce(managementExpenses, function(memo, expense){ return memo + expense.yearlyAmounts[year]; }, 0);
+        });
+
+        const rows = operatingExpenses.concat([totalOperating, {yearlyAmounts: {}}]).concat(managementExpenses).concat([totalManagement, {yearlyAmounts: {}}]).concat(taxes).concat([totalTaxes]);
+
+        this.props.appraisal.incomeStatement.years.forEach((year) =>
+        {
+            headers.push(year.toString() + "\n" + this.props.appraisal.incomeStatement.customYearTitles[year]);
             headers.push("PSF");
             fields["yearlyAmounts." + year.toString()] = (amount) => <CurrencyValue cents={false}>{amount}</CurrencyValue>;
-            fields["yearlyAmountsPSF." + year.toString()] = (amount, obj) => <CurrencyValue cents={true}>{obj["yearlyAmounts." + year.toString()] / this.props.appraisal.sizeOfBuilding}</CurrencyValue>;
+            fields["yearlyAmountsPSF." + year.toString()] = (amount, obj) => <CurrencyValue cents={true}>{obj["yearlyAmounts"][year.toString()] ? obj["yearlyAmounts"][year.toString()] / this.props.appraisal.sizeOfBuilding : null}</CurrencyValue>;
             columnSizes.push("15%");
             columnSizes.push("10%");
 
@@ -57,29 +84,32 @@ class App extends React.Component {
             }
         ];
 
-        return {headers, fields, expenses, totals, columnSizes}
+        return {headers, fields, rows, totals, columnSizes}
     }
 
 
     render()
     {
-        const {headers, fields, expenses, totals, columnSizes} = this.computeGroup(null);
+        const {headers, fields, rows, totals, columnSizes} = this.computeRows();
 
         let appraisalYear = this.props.appraisal.incomeStatement.latestYear;
         let lastYear = appraisalYear - 1;
         let twoYearsAgo = appraisalYear - 2;
 
+        let hasLastYear = this.props.appraisal.incomeStatement.years.indexOf(lastYear) !== -1;
+        let hasTwoYearsAgo = this.props.appraisal.incomeStatement.years.indexOf(twoYearsAgo) !== -1;
+
         return (
             <html>
             <body style={{"width": "7in"}}>
             <br/>
-            <h3>Realty Taxes and Operating Costs</h3>
+            <h4 style={{"textAlign": "center"}}>REALTY TAXES AND OPERATING COSTS</h4>
             <br/>
-            <h4>Recoverable Costs</h4>
+            <h5>Recoverable Costs</h5>
             <p>
-                According to the final {twoYearsAgo} Realty Tax Bill, realty taxes are <CurrencyFormat value={this.props.appraisal.incomeStatement.calculateTotalExpenses(twoYearsAgo, "taxes")}/>.
+                {hasTwoYearsAgo ? <span>According to the final {twoYearsAgo} Realty Tax Bill, realty taxes are <CurrencyFormat value={this.props.appraisal.incomeStatement.calculateTotalExpenses(twoYearsAgo, "taxes")}/>.</span> : null}
                 &nbsp;According to the {lastYear} Budget, realty taxes were estimated to be <CurrencyFormat value={this.props.appraisal.incomeStatement.calculateTotalExpenses(lastYear, "taxes")}/>.
-                &nbsp;We have increased the {lastYear} Budget figures by <PercentFormat value={100 * this.props.appraisal.incomeStatement.calculateTotalExpenses(appraisalYear, "taxes") / this.props.appraisal.incomeStatement.calculateTotalExpenses(lastYear, "taxes")}/> to estimate {appraisalYear} taxes.
+                &nbsp;We have increased the {lastYear} Budget figures by <PercentFormat value={100 * (this.props.appraisal.incomeStatement.calculateTotalExpenses(appraisalYear, "taxes") / this.props.appraisal.incomeStatement.calculateTotalExpenses(lastYear, "taxes") - 1) }/> to estimate {appraisalYear} taxes.
             </p>
             <p>
                 Operating costs cover the management of the building including items such as: insurance and property maintenance. A budget for {lastYear} has been provided. We have increased the 2018 Budget figures by <PercentFormat value={100 * this.props.appraisal.incomeStatement.calculateTotalExpenses(appraisalYear, "operating_expenses") / this.props.appraisal.incomeStatement.calculateTotalExpenses(lastYear, "operating_expenses")}/> to estimate operating costs in {appraisalYear}. Expenses are detailed below:
@@ -89,7 +119,7 @@ class App extends React.Component {
             </p>
             <StyledTable
                 headers={headers}
-                rows={expenses}
+                rows={rows}
                 fields={fields}
                 totals={totals}
                 columnSizes={columnSizes}
@@ -99,14 +129,21 @@ class App extends React.Component {
                 Recoverable Operating Costs are estimated at <CurrencyFormat cents={false} value={this.props.appraisal.stabilizedStatement.operatingExpenses + this.props.appraisal.stabilizedStatement.managementExpenses + this.props.appraisal.stabilizedStatement.taxes}/>
                 &nbsp;for {this.props.appraisal.incomeStatement.latestYear}. Taxes for {lastYear} are estimated at
                 &nbsp;<CurrencyFormat cents={false} value={this.props.appraisal.incomeStatement.calculateTotalExpenses(lastYear, "taxes")}/>.
-                The operating cost and expense figures are considered reasonable for the subject neighborhood, falling within the range presented by comparable leases.
+                The operating cost and expense figures are considered reasonable for the subject neighborhood, falling within the range presented by properties.
             </p>
-            <h4>Management Expense</h4>
-            <p>
-                According to leases a management fee of 15% of operating costs is recoverable from the tenants. We have offset this recovery with a management expense of
-                &nbsp;<PercentFormat value={this.props.appraisal.stabilizedStatementInputs.managementExpenseCalculationRule.percent} /> of
-                &nbsp;{this.props.appraisal.stabilizedStatementInputs.managementExpenseCalculationRule.field}.
-            </p>
+
+            {
+                (this.props.appraisal.managementExpenseMode === 'rule' || this.props.appraisal.managementExpenseMode === 'combined_structural_rule') &&
+                this.props.appraisal.stabilizedStatementInputs.managementExpenseCalculationRule.percent ?
+                    <div>
+                        <h4>Management Expense</h4>
+                        <p>
+                            According to leases a management fee of 15% of operating costs is recoverable from the tenants. We have offset this recovery with a management expense of
+                            &nbsp;<PercentFormat value={this.props.appraisal.stabilizedStatementInputs.managementExpenseCalculationRule.percent} /> of
+                            &nbsp;{nameForCalculationField(this.props.appraisal.stabilizedStatementInputs.managementExpenseCalculationRule.field)}.
+                        </p>
+                    </div> : null
+            }
             </body>
             </html>
         )

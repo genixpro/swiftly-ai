@@ -38,7 +38,7 @@ class ComparableSalesSummaries extends React.Component {
 
                                 const descriptionElem =
                                     <td>
-                                        {comp.description || comp.computedDescriptionText}
+                                        <span style={{"fontWeight": "bold"}}>Index {compIndex + 1} - {comp.address}:</span> {comp.description || comp.computedDescriptionText}
                                     </td>;
 
                                 if (compIndex % 2 === 0)

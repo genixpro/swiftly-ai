@@ -61,9 +61,7 @@ class App extends React.Component
         if (this.props.appraisal.stabilizedStatement.marketRentDifferential && this.props.appraisal.stabilizedStatementInputs.applyMarketRentDifferential)
         {
             rows.push({
-                "label": <span>
-                Market Rent Differential, Discounted At @ <PercentValue left>{this.props.appraisal.stabilizedStatementInputs.marketRentDifferentialDiscountRate}</PercentValue>
-            </span>,
+                "label": <span>Market Rent Differential</span>,
                 "amount": <CurrencyValue cents={false}>{this.props.appraisal.stabilizedStatement.marketRentDifferential}</CurrencyValue>,
                 "amountTotal": null,
                 "mode": "data"
@@ -210,12 +208,12 @@ class App extends React.Component
                     "10%"
                 ]}
                 fields={{
-                    "saleDate": (saleDate, obj, objIndex) => <Value><span>{objIndex + 1}</span><br/><Moment format="YYYY">{saleDate}</Moment></Value>,
+                    "saleDate": (saleDate, obj, objIndex) => <span style={{"textAlign": "center"}}><span>{objIndex + 1}</span><br/><Moment format="M/YY">{saleDate}</Moment></span>,
                     "address": (address) => <Value>{address}</Value>,
                     "salePrice": (salePrice) => <CurrencyValue>{salePrice}</CurrencyValue>,
-                    "sizeSquareFootage": (sizeSquareFootage, obj) => <span style={{"textAlign": "right"}}><AreaFormat value={sizeSquareFootage} /><br /><PercentFormat value={obj.occupancyRate} /></span>,
-                    "netOperatingIncome": (netOperatingIncome, obj) => <span style={{"textAlign": "right"}}><CurrencyValue>{netOperatingIncome}</CurrencyValue><br /><CurrencyValue>{obj.netOperatingIncomePSF}</CurrencyValue></span>,
-                    "displayCapitalizationRate": (displayCapitalizationRate, obj) => <span style={{"textAlign": "right"}}><PercentValue value={obj.displayCapitalizationRate} /></span>,
+                    "sizeSquareFootage": (sizeSquareFootage, obj) => <span style={{"textAlign": "center"}}><AreaFormat value={sizeSquareFootage} /><br /><PercentFormat value={obj.occupancyRate} /></span>,
+                    "netOperatingIncome": (netOperatingIncome, obj) => <span style={{"textAlign": "center"}}><CurrencyValue>{netOperatingIncome}</CurrencyValue><br /><CurrencyValue>{obj.netOperatingIncomePSF}</CurrencyValue></span>,
+                    "displayCapitalizationRate": (displayCapitalizationRate, obj) => <span style={{"textAlign": "center"}}><PercentFormat value={obj.displayCapitalizationRate} /></span>,
                 }} />
 
             <br/>
@@ -230,8 +228,8 @@ class App extends React.Component
             <p>
                 The comparable sales detailed above indicate a range in stabilized overall capitalization rates from <PercentFormat value={minCapRate}/> to
                 &nbsp;<PercentFormat value={maxCapRate} />. Adjustments have been made based on the subject’s properties location, construction date/condition,
-                and tenancy. After adjustments, it is our opinion that an overall capitalization rate of <PercentFormat value={this.props.appraisal.capitalizationRate} /> is appropriate
-                for the subject property. A capitalization rate of <PercentFormat value={this.props.appraisal.capitalizationRate} />, applied to the subjects stabilized net income of
+                and tenancy. After adjustments, it is our opinion that an overall capitalization rate of <PercentFormat value={this.props.appraisal.stabilizedStatementInputs.capitalizationRate} /> is appropriate
+                for the subject property. A capitalization rate of <PercentFormat value={this.props.appraisal.stabilizedStatementInputs.capitalizationRate} />, applied to the subjects stabilized net income of
                 &nbsp;<CurrencyFormat value={this.props.appraisal.stabilizedStatement.netOperatingIncome} /> is detailed below:
             </p>
             <br />

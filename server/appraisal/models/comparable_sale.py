@@ -132,8 +132,6 @@ class ComparableSale(Document):
 
     netOperatingIncomePSF = FloatField()
 
-    noiPSFMultiple = FloatField()
-
     numberOfUnits = FloatField()
 
     averageMonthlyRentPerUnit = FloatField()
@@ -290,11 +288,6 @@ class ComparableSale(Document):
             self.netOperatingIncomePSF = self.netOperatingIncome / self.sizeSquareFootage
         else:
             self.netOperatingIncomePSF = None
-
-        if self.netOperatingIncomePSF and self.pricePerSquareFoot:
-            self.noiPSFMultiple = self.netOperatingIncomePSF / self.pricePerSquareFoot
-        else:
-            self.noiPSFMultiple = None
 
         numberOfUnits = [comp.numberOfUnits for comp in subComps if comp.numberOfUnits]
         self.numberOfUnits = float(numpy.sum(numberOfUnits)) if len(numberOfUnits) else None

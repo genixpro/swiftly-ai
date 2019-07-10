@@ -12,7 +12,7 @@ from appraisal.authorization import checkUserOwnsObject
 from pyramid.httpexceptions import HTTPForbidden
 from ..models.comparable_lease import ComparableLease
 from ..models.custom_id_field import generateNewUUID, regularizeID
-import rapidjson as jsondiff
+import jsondiff
 
 @resource(collection_path='/appraisal/', path='/appraisal/{id}', renderer='bson', cors_enabled=True, cors_origins="*", permission="everything")
 class AppraisalAPI(object):

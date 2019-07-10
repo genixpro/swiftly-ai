@@ -39,12 +39,12 @@ class CalculationFieldSelector extends React.Component
 
         const options = [
             <option value={""} key={"blank"}>&nbsp;</option>,
-            <option value={"operatingExpenses"} key={"operatingExpenses"}>Operating Expenses</option>,
-            <option value={"operatingExpensesAndTaxes"} key={"operatingExpensesAndTaxes"}>Operating Expenses & Taxes</option>,
-            <option value={"managementExpenses"} key={"managementExpenses"}>Management Expenses</option>,
-            <option value={"taxes"} key={"taxes"}>Taxes</option>,
-            <option value={"effectiveGrossIncome"} key={"effectiveGrossIncome"}>Effective Gross Income</option>,
-            <option value={"rentalIncome"} key={"rentalIncome"}>Rental Income</option>
+            <option value={"operatingExpenses"} key={"operatingExpenses"}>{nameForCalculationField("operatingExpenses")}</option>,
+            <option value={"operatingExpensesAndTaxes"} key={"operatingExpensesAndTaxes"}>{nameForCalculationField("operatingExpensesAndTaxes")}</option>,
+            <option value={"managementExpenses"} key={"managementExpenses"}>{nameForCalculationField("managementExpenses")}</option>,
+            <option value={"taxes"} key={"taxes"}>{nameForCalculationField("taxes")}</option>,
+            <option value={"effectiveGrossIncome"} key={"effectiveGrossIncome"}>{nameForCalculationField("effectiveGrossIncome")}</option>,
+            <option value={"rentalIncome"} key={"rentalIncome"}>{nameForCalculationField("rentalIncome")}</option>
         ];
 
         // .concat(
@@ -70,5 +70,37 @@ class CalculationFieldSelector extends React.Component
     }
 }
 
+function nameForCalculationField(calculationField)
+{
+    if (calculationField === "operatingExpenses")
+    {
+        return "Operating Expenses";
+    }
+    if (calculationField === "operatingExpensesAndTaxes")
+    {
+        return "Operating Expenses & Taxes";
+    }
+    if (calculationField === "managementExpenses")
+    {
+        return "Management Expenses";
+    }
+    if (calculationField === "taxes")
+    {
+        return "Taxes";
+    }
+    if (calculationField === "effectiveGrossIncome")
+    {
+        return "Effective Gross Income";
+    }
+    if (calculationField === "rentalIncome")
+    {
+        return "Rental Income";
+    }
+    return "";
+}
+
+
+
 
 export default CalculationFieldSelector;
+export {CalculationFieldSelector, nameForCalculationField}

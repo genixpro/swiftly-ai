@@ -23,13 +23,18 @@ class App extends React.Component
             <br/>
             <h1>Tenancy</h1>
             <p>
-                The subject has a total of <IntegerFormat value={this.props.appraisal.sizeOfBuilding} /> square feet. As of the effective date, the build was
+                The subject has a total rentable area of <IntegerFormat value={this.props.appraisal.sizeOfBuilding} /> square feet. As of the effective date, the building was
                 100% leased and occupied by <IntegerFormat value={this.props.appraisal.numberOfOccupiedUnits()} /> tenants.
             </p>
             <ul>
                 {
                     this.props.appraisal.units.map((unit, unitIndex) =>
                         {
+                            if (unit.isVacantForStabilizedStatement)
+                            {
+                                return null;
+                            }
+                            
                             return <li key={unitIndex}><p>Tenant {unitIndex + 1}: {unit.computedDescription}</p></li>
                         })
                 }

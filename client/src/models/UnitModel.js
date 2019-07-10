@@ -204,7 +204,7 @@ class UnitModel extends BaseModel
 
     get computedDescription()
     {
-        const dateFormat = "DDD MMMM, YYYY";
+        const dateFormat = "D MMMM, YYYY";
 
         let message = `Occupies ${UnitModel.numberWithCommas(this.squareFootage)} square feet`;
 

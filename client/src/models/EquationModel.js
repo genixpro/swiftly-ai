@@ -22,8 +22,10 @@ class EquationModel extends BaseModel
             const calculatedValue = this[EquationModel.calculatedValue];
 
             let didCalculate = true;
+            const limit = 10;
+            let rounds = 0;
 
-            while(didCalculate)
+            while(didCalculate && rounds < limit)
             {
                 didCalculate = false;
                 Object.keys(equations).forEach((fieldName) =>
@@ -46,6 +48,8 @@ class EquationModel extends BaseModel
                         });
                     }
                 });
+
+                rounds += 1;
             }
         }
         catch(err)

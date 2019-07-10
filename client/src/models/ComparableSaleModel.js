@@ -41,7 +41,6 @@ class ComparableSaleModel extends EquationMdoel
     static purchaser = new StringField();
 
     static netOperatingIncomePSF = new FloatField();
-    static noiPSFMultiple = new FloatField();
 
     static vendor = new StringField();
 
@@ -108,6 +107,15 @@ class ComparableSaleModel extends EquationMdoel
 
     static portfolioCompilationLinkId = new StringField();
     static portfolioLinkedComps = new ListField(new StringField());
+
+    get noiPSFMultiple()
+    {
+        if (this.pricePerSquareFoot && this.netOperatingIncomePSF)
+        {
+            return this.pricePerSquareFoot / this.netOperatingIncomePSF;
+        }
+        return null;
+    }
 
     get displayNetOperatingIncome()
     {

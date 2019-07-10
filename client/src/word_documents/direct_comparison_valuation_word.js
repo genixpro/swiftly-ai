@@ -9,6 +9,8 @@ import AppraisalModel from "../models/AppraisalModel";
 import CurrencyFormat from "../pages/components/CurrencyFormat";
 import StyledTable from "./styled_table";
 import Moment from "react-moment";
+import AreaFormat from "../pages/components/AreaFormat";
+import IntegerFormat from "../pages/components/IntegerFormat";
 
 class App extends React.Component
 {
@@ -63,7 +65,26 @@ class App extends React.Component
             {/*<h2 style={subHeaderStyle}>{this.props.appraisal.address}</h2>*/}
             <p>The Direct Comparison Approach: This section will be auto populated based on your company specific verbiage.</p>
             <br/>
-            <ComparableSalesTable comparableSales={this.props.comparableSales} />
+            <StyledTable
+                headers={["Date", "Address", "Consideration", "Building Size (sf)", "Cap Rate"]}
+                rows={this.props.comparableSales}
+                fields={{
+                    "saleDate.$date": (saleDate) => <span style={{"textAlign": "center"}}><Moment format="M/YY">{saleDate}</Moment></span>,
+                    "address": (address) => <Value>{address}</Value>,
+                    "salePrice": (salePrice) => <CurrencyValue center>{salePrice}</CurrencyValue>,
+                    "sizeSquareFootage": (sizeSquareFootage) => <span style={{"textAlign": "center"}}><IntegerFormat value={sizeSquareFootage} /></span>,
+                    "capitalizationRate": (capitalizationRate) => <PercentValue center>{capitalizationRate}</PercentValue>
+                }}
+                columnSizes={[
+                    "10%",
+                    "45%",
+                    "15%",
+                    "15%",
+                    "15%"
+                ]}
+            />
+
+            <br/>
 
             <p>
                 The sales identified above indicate a range in values from approximately <CurrencyFormat value={minPricePerSquareFoot} /> to upwards of <CurrencyFormat value={maxPricePerSquareFoot} /> per square foot.
@@ -92,9 +113,9 @@ class App extends React.Component
                 rows={this.props.comparableSales}
                 fields={{
                     "index": (field, obj, index) => <Value>{index}</Value>,
-                    "pricePerSquareFoot": (pricePerSquareFoot) => <CurrencyValue>{pricePerSquareFoot}</CurrencyValue>,
-                    "netOperatingIncomePSF": (netOperatingIncomePSF) => <CurrencyValue>{netOperatingIncomePSF}</CurrencyValue>,
-                    "noiPSFMultiple": (noiPSFMultiple) => <CurrencyValue>{noiPSFMultiple}</CurrencyValue>
+                    "pricePerSquareFoot": (pricePerSquareFoot) => <span style={{"textAlign": "center"}}><CurrencyFormat value={pricePerSquareFoot}/></span>,
+                    "netOperatingIncomePSF": (netOperatingIncomePSF) => <span style={{"textAlign": "center"}}><CurrencyFormat value={netOperatingIncomePSF}/></span>,
+                    "noiPSFMultiple": (noiPSFMultiple, obj) => <span style={{"textAlign": "center"}}>{obj.noiPSFMultiple ? obj.noiPSFMultiple.toFixed(2) : ""}</span>,
                 }} />
 
             <br/>
@@ -105,7 +126,7 @@ class App extends React.Component
                         : null
                 }
 
-                <li>Utilizing the subject’s net operating income per square foot figure of <CurrencyFormat value={this.props.appraisal.stabilizedStatement.netOperatingIncome / this.props.appraisal.sizeOfBuilding} /> psf, we have applied a multiplier of {this.props.appraisal.directComparisonInputs.noiPSFMultiple.toFixed(1)} results in a value estimate of <CurrencyFormat value={this.props.appraisal.directComparisonInputs.pricePerSquareFoot} /> per square foot (rounded).</li>
+                <li>Utilizing the subject’s net operating income per square foot figure of <CurrencyFormat value={this.props.appraisal.stabilizedStatement.netOperatingIncome / this.props.appraisal.sizeOfBuilding} /> psf, we have applied a multiplier of {this.props.appraisal.directComparisonInputs.noiPSFMultiple.toFixed(1)} results in a value estimate of <CurrencyFormat value={this.props.appraisal.directComparisonInputs.noiPSFPricePerSquareFoot} /> per square foot (rounded).</li>
             </ul>
             <br/>
             <DirectComparisonTable appraisal={this.props.appraisal} />

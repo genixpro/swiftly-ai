@@ -84,19 +84,19 @@ class Row extends React.Component
                     if (keyIndex === 0)
                     {
                         return <td key={keyIndex} style={styleLeft} width={this.props.columnSizes[keyIndex]}>
-                            {this.props.fields[key](row[key], row, this.props.rowIndex)}
+                            {this.props.fields[key](row[key], this.props.row, this.props.rowIndex)}
                         </td>
                     }
                     else if (keyIndex === (Object.keys(this.props.fields).length - 1))
                     {
                         return <td key={keyIndex} style={styleRight} width={this.props.columnSizes[keyIndex]}>
-                            {this.props.fields[key](row[key], row, this.props.rowIndex)}
+                            {this.props.fields[key](row[key], this.props.row, this.props.rowIndex)}
                         </td>
                     }
                     else
                     {
                         return <td key={keyIndex} style={style} width={this.props.columnSizes[keyIndex]}>
-                            {this.props.fields[key](row[key], row, this.props.rowIndex)}
+                            {this.props.fields[key](row[key], this.props.row, this.props.rowIndex)}
                         </td>
                     }
                 })
@@ -148,19 +148,19 @@ class StyledTable extends React.Component {
                                 if (index === 0)
                                 {
                                     return <td key={index} style={tableHeaderLeftStyle} width={columnSizes[index]}>
-                                        {header}
+                                        {header.toString().split("\n").map((text, i) => <span key={i}>{text}<br/></span>)}
                                     </td>
                                 }
                                 else if (index === this.props.headers.length -1)
                                 {
                                     return <td key={index} style={tableHeaderRightStyle} width={columnSizes[index]}>
-                                        {header}
+                                        {header.toString().split("\n").map((text, i) => <span key={i}>{text}<br/></span>)}
                                     </td>
                                 }
                                 else
                                 {
                                     return <td key={index} style={tableHeaderStyle} width={columnSizes[index]}>
-                                        {header}
+                                        {header.toString().split("\n").map((text, i) => <span key={i}>{text}<br/></span>)}
                                     </td>
                                 }
 
