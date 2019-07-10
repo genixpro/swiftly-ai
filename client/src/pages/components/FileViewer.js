@@ -105,9 +105,13 @@ class FileViewer extends React.Component
     }
 
 
-    changePage(newPage)
+    changePage(evt)
     {
-        this.setState({currentPage: newPage})
+        const newPage = Number(evt.target.value);
+        setTimeout(() =>
+        {
+            this.setState({currentPage: newPage})
+        });
     }
 
     moveViewTo(imageX, imageY, containerX, containerY, slowTransition)
@@ -282,11 +286,12 @@ class FileViewer extends React.Component
                                 <select
                                         value={this.state.currentPage}
                                         ref={(ref) => this.pageSelectRef = ref}
+                                        onChange={(evt) => this.changePage(evt)}
                                         className="custom-select">
                                     {
                                         _.range(this.props.document.pages).map((page) =>
                                         {
-                                            return <option key={page} value={page} onClick={(evt) => this.changePage(page)}>Page {page + 1}</option>
+                                            return <option key={page} value={page}>Page {page + 1}</option>
                                         })
                                     }
                                 </select>

@@ -76,6 +76,7 @@ class FileSelector extends React.Component
                 ref={(ref) => this.onRef(ref)}
                 value={this.props.value}
                 disabled={this.props.disabled}
+                onChange={(evt) => this.onChangeValue(evt.target.value)}
                 style={this.state.files.length === 0 ? {"color": "lightgray"} : null}
             >
                 {
@@ -85,7 +86,7 @@ class FileSelector extends React.Component
                 }
                 {
                     this.state.files.map((file) =>
-                        <option value={file._id} key={file._id} onClick={(evt) => this.onChangeValue(file._id)}>{file.fileName}</option>
+                        <option value={file._id} key={file._id}>{file.fileName}</option>
                     )
                 }
             </select>
