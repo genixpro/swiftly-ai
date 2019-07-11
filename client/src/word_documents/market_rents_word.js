@@ -160,7 +160,7 @@ class MarketRentsWord extends React.Component
                     "25%"
                 ]}
                 fields={{
-                    "leaseDate": (leaseDate, obj, objIndex) => <Value><span>L{objIndex + 1}</span><br/><Moment format="YYYY">{leaseDate}</Moment></Value>,
+                    "leaseDate": (leaseDate, obj, objIndex) => <Value><span>L{objIndex + 1}</span><br/><Moment format="M/YY">{leaseDate}</Moment></Value>,
                     "address": (address) => <Value>{address}</Value>,
                     "sizeOfUnit": (sizeOfUnit) => <AreaFormat value={sizeOfUnit} />,
                     "rentEscalations": (rentEscalations, obj) => <span>{
