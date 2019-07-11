@@ -126,6 +126,7 @@ class ViewAppraisalComparableLeases extends React.Component {
                                             history={this.props.history}
                                             appraisalId={this.props.match.params._id}
                                             appraisalComparables={this.props.appraisal.comparableLeases}
+                                            appraisal={this.props.appraisal}
                                             onRemoveComparableClicked={(comp) => this.removeComparableFromAppraisal(comp)}
                                             onChange={(comps) => this.onComparablesChanged(comps)}
                         />
