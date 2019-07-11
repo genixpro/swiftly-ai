@@ -246,6 +246,8 @@ class UnitModel extends BaseModel
 
         if (allRelevantTenancies.length > 1)
         {
+            let lastRent = null;
+
             message += `Annual net rent in year 1 was $${UnitModel.numberWithCommas(startTenancy.yearlyRent / this.squareFootage, 2)} per square foot which `;
             allRelevantTenancies.forEach((tenancy, tenancyIndex) =>
             {
@@ -257,11 +259,27 @@ class UnitModel extends BaseModel
                 // const escalationYear = tenancy.startDate.getFullYear() - allRelevantTenancies[0].startDate.getFullYear();
                 if (new Date(tenancy.startDate).getTime() < new Date().getTime())
                 {
-                    message += `escalated on ${moment(tenancy.startDate).format(dateFormat)} to $${UnitModel.numberWithCommas(allRelevantTenancies[1].yearlyRent / this.squareFootage, 2)} per square foot`;
+                    if (lastRent === null || tenancy.yearlyRent >= lastRent)
+                    {
+                        message += "escalated";
+                    }
+                    else
+                    {
+                        message += "was reduced";
+                    }
+                    message += ` on ${moment(tenancy.startDate).format(dateFormat)} to $${UnitModel.numberWithCommas(tenancy.yearlyRent / this.squareFootage, 2)} per square foot`;
                 }
                 else
                 {
-                    message += `escalates on ${moment(tenancy.startDate).format(dateFormat)} to $${UnitModel.numberWithCommas(allRelevantTenancies[1].yearlyRent / this.squareFootage, 2)} per square foot`;
+                    if (lastRent === null || tenancy.yearlyRent >= lastRent)
+                    {
+                        message += "escalated";
+                    }
+                    else
+                    {
+                        message += "is being reduced";
+                    }
+                    message += ` on ${moment(tenancy.startDate).format(dateFormat)} to $${UnitModel.numberWithCommas(tenancy.yearlyRent / this.squareFootage, 2)} per square foot`;
                 }
 
                 if (tenancyIndex < allRelevantTenancies.length - 1)
@@ -273,6 +291,7 @@ class UnitModel extends BaseModel
                     message += '.'
                 }
 
+                lastRent = tenancy.yearlyRent;
             })
         }
         else
