@@ -635,7 +635,7 @@ class ComparableSaleModel extends EquationMdoel
 
         if(comparableSale.siteCoverage)
         {
-            text += `site coverage of ${(comparableSale.siteCoverage*100).toFixed(0)}, `;
+            text += `site coverage of ${(comparableSale.siteCoverage*100).toFixed(0)}%, `;
         }
 
         if(comparableSale.finishedOfficePercent)
