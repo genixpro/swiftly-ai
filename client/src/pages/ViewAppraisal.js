@@ -69,9 +69,9 @@ class ViewAppraisal extends React.Component
             {
                 this.state.appraisal.clearUpdates();
 
-                newAppraisal.applyDiff(response.data);
+                // newAppraisal.applyDiff(response.data);
 
-                this.setState({appraisal: newAppraisal});
+                this.setState({appraisal: AppraisalModel.create(response.data.appraisal)});
             });
         }
     }
