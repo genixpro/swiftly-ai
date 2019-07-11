@@ -6,7 +6,7 @@ from appraisal.models.property_tag import PropertyTag
 import tempfile
 import subprocess
 import os
-import rapidjson as json
+import json as json
 from pyramid.security import Authenticated
 from pyramid.authorization import Allow, Deny, Everyone
 from appraisal.authorization import checkUserOwnsObject

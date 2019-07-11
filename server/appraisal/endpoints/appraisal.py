@@ -1,7 +1,7 @@
 from cornice.resource import resource
 from pyramid.authorization import Allow, Everyone
 import bson
-import rapidjson as json
+import json as json
 from appraisal.components.document_processor import DocumentProcessor
 from pprint import pprint
 from appraisal.models.appraisal import Appraisal

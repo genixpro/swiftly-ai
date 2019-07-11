@@ -5,7 +5,7 @@ import tempfile
 import subprocess
 import os
 import io
-import rapidjson as json
+import json as json
 from base64 import b64encode
 import re
 import requests

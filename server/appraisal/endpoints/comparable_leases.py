@@ -4,7 +4,7 @@ import pymongo
 import bson
 import tempfile
 import subprocess
-import rapidjson as json
+import json as json
 import os
 from appraisal.models.comparable_lease import ComparableLease
 from pyramid.security import Authenticated

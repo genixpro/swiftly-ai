@@ -2,7 +2,7 @@ from appraisal.models.comparable_lease import ComparableLease
 import bz2
 import sys
 import os
-import rapidjson as json
+import json as json
 import os
 from google.cloud import storage
 from mongoengine.queryset.visitor import Q

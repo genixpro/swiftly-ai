@@ -5,7 +5,7 @@ import bson
 from mongoengine.queryset.visitor import Q
 import tempfile
 import subprocess
-import rapidjson as json
+import json as json
 import os
 from appraisal.models.comparable_sale import ComparableSale
 from pyramid.security import Authenticated

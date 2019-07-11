@@ -6,7 +6,7 @@ import google.api_core.exceptions
 import dateparser
 from .custom_id_field import CustomIDField
 from ..migrations import registerMigration
-import rapidjson as json, bson
+import json as json, bson
 from .custom_id_field import generateNewUUID
 
 class Word(EmbeddedDocument):

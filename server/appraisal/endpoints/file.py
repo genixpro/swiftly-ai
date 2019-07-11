@@ -4,14 +4,14 @@ import tempfile
 import subprocess
 import os
 import io
-import rapidjson as json
+import json as json
 from base64 import b64encode
 import re
 import requests
 import bson
 from PIL import Image
 import hashlib
-import rapidjson as jsondiff
+import json as jsondiff
 from pprint import pprint
 import concurrent.futures
 import filetype

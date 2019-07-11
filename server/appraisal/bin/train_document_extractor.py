@@ -3,7 +3,7 @@ import bz2
 import sys
 import os
 import requests
-import rapidjson as json
+import json as json
 
 from pyramid.config import Configurator
 from pprint import pprint
