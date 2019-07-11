@@ -43,6 +43,12 @@ class MarketRentsWord extends React.Component
         }
     }
 
+    getCity(address)
+    {
+        const words = address.split(",");
+        return words[words.length - 3];
+    }
+
     render()
     {
         let minRent = null;
@@ -51,8 +57,8 @@ class MarketRentsWord extends React.Component
         let minTI = null;
         let maxTI = null;
 
-        let minEscalations = null;
-        let maxEscalations = null;
+        let minYears = null;
+        let maxYears = null;
 
         let countWithEscalations = 0;
 
@@ -85,14 +91,16 @@ class MarketRentsWord extends React.Component
 
             if (lease.rentEscalations.length)
             {
-                if (minEscalations === null || lease.rentEscalations.length < minEscalations)
+                const numYears = lease.rentEscalations[lease.rentEscalations.length - 1].endYear - lease.rentEscalations[0].startYear;
+
+                if (minYears === null || numYears < minYears)
                 {
-                    minEscalations = lease.rentEscalations.length;
+                    minYears = numYears;
                 }
 
-                if (maxEscalations === null || lease.rentEscalations.length > maxEscalations)
+                if (maxYears === null || numYears > maxYears)
                 {
-                    maxEscalations = lease.rentEscalations.length;
+                    maxYears = numYears;
                 }
             }
 
@@ -145,7 +153,7 @@ class MarketRentsWord extends React.Component
             <ul>
                 <li>Analyzed the most recent lease deals from within the subject building;</li>
                 <li>Researched, and analyzed, recent leases and current asking rates involving comparable industrial buildings
-                    located throughout the {this.props.appraisal.address} and surrounding areas.</li>
+                    located throughout the {this.getCity(this.props.appraisal.address)} and surrounding areas.</li>
             </ul>
 
             <StyledTable
@@ -223,7 +231,7 @@ class MarketRentsWord extends React.Component
             <br />
 
             <ul>
-                <li>The comparable lease data detailed above shows rents in the range from <CurrencyFormat value={minRent} /> to <CurrencyFormat value={maxRent} /> per square foot (net) for industrial space located in {this.props.appraisal.address} and surrounding areas. The indicated range refers to the rent payable in the first few years of leases that range in length from <IntegerFormat value={minEscalations} /> to <IntegerFormat value={maxEscalations} /> years.</li>
+                <li>The comparable lease data detailed above shows rents in the range from <CurrencyFormat value={minRent} /> to <CurrencyFormat value={maxRent} /> per square foot (net) for industrial space located in {this.getCity(this.props.appraisal.address)} and surrounding areas. The indicated range refers to the rent payable in the first few years of leases that range in length from <IntegerFormat value={minYears} /> to <IntegerFormat value={maxYears} /> years.</li>
                 <li>
                     {
                         allNet ? <span>The leases are net</span> : null
@@ -251,15 +259,15 @@ class MarketRentsWord extends React.Component
             <h3>Summary of Market Rents</h3>
             <ul>
                 <li>
-                    The comparable lease deals indicate a range from <CurrencyFormat value={minRent} /> to over <CurrencyFormat value={maxRent} /> per square foot (net),
+                    The comparable lease deals indicate a range from <CurrencyFormat value={minRent} /> to over <CurrencyFormat value={maxRent} /> per square foot
                     {
-                        allNet ? <span>and are all net leases.</span> : null
+                        allNet ? <span> (net)</span> : null
                     }
                     {
-                        allGross ? <span>and are all gross leases.</span> : null
+                        allGross ? <span> (gross)</span> : null
                     }
                     {
-                        !allNet && !allGross ? <span>and are a mixture of net and gross leases.</span> : null
+                        !allNet && !allGross ? <span>, and are a mixture of net and gross leases.</span> : null
                     }
                 </li>
                 <li>
