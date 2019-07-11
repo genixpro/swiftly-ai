@@ -68,8 +68,9 @@ class App extends React.Component
             <StyledTable
                 headers={["Date", "Address", "Consideration", "Building Size (sf)", "Cap Rate"]}
                 rows={this.props.comparableSales}
+                fontSize={10}
                 fields={{
-                    "saleDate.$date": (saleDate) => <span style={{"textAlign": "center"}}><Moment format="M/YY">{saleDate}</Moment></span>,
+                    "saleDate": (saleDate, obj) => <span style={{"textAlign": "center"}}><Moment format="M/YY">{obj.saleDate}</Moment></span>,
                     "address": (address) => <Value>{address}</Value>,
                     "salePrice": (salePrice) => <CurrencyValue center>{salePrice}</CurrencyValue>,
                     "sizeSquareFootage": (sizeSquareFootage) => <span style={{"textAlign": "center"}}><IntegerFormat value={sizeSquareFootage} /></span>,
@@ -110,6 +111,7 @@ class App extends React.Component
 
             <StyledTable
                 headers={["Index", "Price PSF", "NOI PSF", "Multiple"]}
+                fontSize={10}
                 rows={this.props.comparableSales}
                 fields={{
                     "index": (field, obj, index) => <Value>{index}</Value>,

@@ -189,26 +189,25 @@ class App extends React.Component
             <html>
             <body style={{"width": "7in"}}>
             <br/>
-            <h1 style={headerStyle}>Capitalization Valuation</h1>
-            <h2 style={subHeaderStyle}>{this.props.appraisal.address}</h2>
+            <h4 style={headerStyle}>Capitalization Valuation</h4>
+            <h5 style={subHeaderStyle}>{this.props.appraisal.address}</h5>
             <p>In estimating the overall capitalization rate applicable to the subject property we have researched sales of
                 similar {this.props.appraisal.propertyType ? this.props.appraisal.propertyType.toString() + " " : ""}properties. Emphasis has been given to recent sales of {this.props.appraisal.propertyType ? this.props.appraisal.propertyType.toString() + " " : ""}
-                properties between {minCompSize} and {maxCompSize} square feet, fully leased and occupied pursuant to Tenancy types. Relevant details of comparable sales are summarized in the chart below.</p>
+                properties between <IntegerFormat value={minCompSize} /> and <IntegerFormat value={maxCompSize} /> square feet. Relevant details of comparable sales are summarized in the chart below.</p>
             <StyledTable
                 headers={["Index \n Date", "Address", "Consideration", "Leasable Area \n (Occupancy)", "Net Income \n PSF", "Stabilized \n OCR"]}
                 rows={this.props.comparableSales}
                 fontSize={10}
                 columnSizes={[
                     "10%",
-                    "40%",
-                    "10%",
-                    "10%",
-                    "10%",
-                    "10%",
-                    "10%"
+                    "35%",
+                    "15%",
+                    "12.5%",
+                    "15%",
+                    "12.5%"
                 ]}
                 fields={{
-                    "saleDate": (saleDate, obj, objIndex) => <span style={{"textAlign": "center"}}><span>{objIndex + 1}</span><br/><Moment format="M/YY">{saleDate}</Moment></span>,
+                    "saleDate": (saleDate, obj, objIndex) => <span style={{"textAlign": "center"}}><span>{objIndex + 1}</span><br/><Moment format="M/YY">{obj.saleDate}</Moment></span>,
                     "address": (address) => <Value>{address}</Value>,
                     "salePrice": (salePrice) => <CurrencyValue>{salePrice}</CurrencyValue>,
                     "sizeSquareFootage": (sizeSquareFootage, obj) => <span style={{"textAlign": "center"}}><AreaFormat value={sizeSquareFootage} /><br /><PercentFormat value={obj.occupancyRate} /></span>,

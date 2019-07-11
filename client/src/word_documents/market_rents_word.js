@@ -91,7 +91,7 @@ class MarketRentsWord extends React.Component
 
             if (lease.rentEscalations.length)
             {
-                const numYears = lease.rentEscalations[lease.rentEscalations.length - 1].endYear - lease.rentEscalations[0].startYear;
+                const numYears = lease.rentEscalations[lease.rentEscalations.length - 1].endYear;
 
                 if (minYears === null || numYears < minYears)
                 {
@@ -207,8 +207,8 @@ class MarketRentsWord extends React.Component
                                 </span> : null
                         }
                         {
-                            obj.tenantName ?
-                                <span>Lease to {obj.tenantName}<br/></span>
+                            obj.name ?
+                                <span>Lease to {obj.name}<br/></span>
                                 : null
                         }
                         {

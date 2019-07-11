@@ -237,8 +237,8 @@ class App extends React.Component
             <html>
             <body style={{"width": "7in"}}>
             <br/>
-            <h1 style={headerStyle}>Stabilized Income & Expense Statement</h1>
-            <h2 style={subHeaderStyle}>{this.props.appraisal.address}</h2>
+            <h4 style={{"textAlign": "center"}}>STABILIZED INCOME & EXPENSE STATEMENT</h4>
+            <h5 style={subHeaderStyle}>{this.props.appraisal.address}</h5>
             <br/>
             <br/>
             <FinancialTable rows={rows} />

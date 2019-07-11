@@ -17,11 +17,12 @@ class App extends React.Component
     render()
     {
 
+        let tenantIndex = 0;
         return (
             <html>
             <body style={{"width": "7in"}}>
             <br/>
-            <h1>Tenancy</h1>
+            <h4 style={{"textAlign": "center"}}>TENANCY</h4>
             <p>
                 The subject has a total rentable area of <IntegerFormat value={this.props.appraisal.sizeOfBuilding} /> square feet. As of the effective date, the building was
                 100% leased and occupied by <IntegerFormat value={this.props.appraisal.numberOfOccupiedUnits()} /> tenants.
@@ -34,8 +35,10 @@ class App extends React.Component
                             {
                                 return null;
                             }
-                            
-                            return <li key={unitIndex}><p>Tenant {unitIndex + 1}: {unit.computedDescription}</p></li>
+
+                            tenantIndex += 1;
+
+                            return <li key={unitIndex}><p>{unit.currentTenancy.name}: {unit.computedDescription}</p></li>
                         })
                 }
             </ul>

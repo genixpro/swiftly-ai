@@ -31,6 +31,15 @@ class TenancyModel extends BaseModel
         this.monthlyRent = this.yearlyRent / 12.0;
         this.setDirtyField("yearlyRent");
     }
+
+    get tenantName()
+    {
+        return this.name;
+    }
+    set tenantName(value)
+    {
+        this.name = value;
+    }
 }
 
 
@@ -204,15 +213,15 @@ class UnitModel extends BaseModel
 
     get computedDescription()
     {
-        const dateFormat = "D MMMM, YYYY";
+        const dateFormat = "MMMM D, YYYY";
 
         let message = `Occupies ${UnitModel.numberWithCommas(this.squareFootage)} square feet`;
 
-        let currentTenantName = this.currentTenancy.tenantName;
+        let currentTenantName = this.currentTenancy.name;
 
         let allRelevantTenancies = this.tenancies.filter((tenancy) =>
         {
-            return tenancy.tenantName === currentTenantName;
+            return tenancy.name === currentTenantName;
         });
 
         allRelevantTenancies.sort((itemA, itemB) =>
@@ -237,8 +246,34 @@ class UnitModel extends BaseModel
 
         if (allRelevantTenancies.length > 1)
         {
-            const escalationYear = allRelevantTenancies[1].startDate.getFullYear() - allRelevantTenancies[0].startDate.getFullYear();
-            message += `Annual net rent in year 1 was $${UnitModel.numberWithCommas(startTenancy.yearlyRent / this.squareFootage, 2)} per square foot which escalates in year ${escalationYear} to $${UnitModel.numberWithCommas(allRelevantTenancies[1].yearlyRent / this.squareFootage, 2)} per square foot.`;
+            message += `Annual net rent in year 1 was $${UnitModel.numberWithCommas(startTenancy.yearlyRent / this.squareFootage, 2)} per square foot which `;
+            allRelevantTenancies.forEach((tenancy, tenancyIndex) =>
+            {
+                if(tenancyIndex === 0)
+                {
+                    return;
+                }
+
+                // const escalationYear = tenancy.startDate.getFullYear() - allRelevantTenancies[0].startDate.getFullYear();
+                if (new Date(tenancy.startDate).getTime() < new Date().getTime())
+                {
+                    message += `escalated on ${moment(tenancy.startDate).format(dateFormat)} to $${UnitModel.numberWithCommas(allRelevantTenancies[1].yearlyRent / this.squareFootage, 2)} per square foot`;
+                }
+                else
+                {
+                    message += `escalates on ${moment(tenancy.startDate).format(dateFormat)} to $${UnitModel.numberWithCommas(allRelevantTenancies[1].yearlyRent / this.squareFootage, 2)} per square foot`;
+                }
+
+                if (tenancyIndex < allRelevantTenancies.length - 1)
+                {
+                    message += `, and `;
+                }
+                else
+                {
+                    message += '.'
+                }
+
+            })
         }
         else
         {
