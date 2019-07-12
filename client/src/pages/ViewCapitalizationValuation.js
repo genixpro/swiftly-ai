@@ -328,13 +328,13 @@ class ViewCapitalizationValuation extends React.Component
                                                 this.props.appraisal.stabilizedStatement.amortizedCapitalInvestment && this.props.appraisal.stabilizedStatementInputs.applyAmortization ?
                                                     <tr className={"data-row capitalization-row"}>
                                                         <td className={"label-column"}>
-                                                            <Link to={`/appraisal/${this.props.appraisal._id}/tenants/amortization`}>
+                                                            <Link to={`/appraisal/${this.props.appraisal._id}/amortization`}>
                                                                 <span>Amortized Capital Investment</span>
                                                             </Link>
                                                         </td>
                                                         <td className={"amount-column"}></td>
                                                         <td className={"amount-total-column"}>
-                                                            <Link to={`/appraisal/${this.props.appraisal._id}/tenants/amortization`}>
+                                                            <Link to={`/appraisal/${this.props.appraisal._id}/amortization`}>
                                                                 <CurrencyFormat value={this.props.appraisal.stabilizedStatement.amortizedCapitalInvestment} />
                                                             </Link>
                                                         </td>
