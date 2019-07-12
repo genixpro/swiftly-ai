@@ -89,7 +89,7 @@ class PropertyTagAPI(object):
     def delete(self):
         propertyTagId = self.request.matchdict['id']
 
-        propertyTag = PropertyTag.objects(id=regularizeID(propertyTagId)).first()
+        propertyTag = PropertyTag.objects(name=propertyTagId).first()
 
         auth = checkUserOwnsObject(self.request.authenticated_userid, self.request.effective_principals, propertyTag)
         if not auth:

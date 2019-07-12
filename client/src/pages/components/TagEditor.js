@@ -104,6 +104,7 @@ class TagEditor extends React.Component {
         evt.stopPropagation();
         axios.delete(`/property_tags/` + tagId).then((response) =>
         {
+            this.reloadDefaults();
             this.selectRef.blur();
         });
     }
