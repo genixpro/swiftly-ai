@@ -3,7 +3,7 @@ import {Row, Col, Button, DropdownItem, DropdownToggle, Dropdown, DropdownMenu, 
 import NumberFormat from 'react-number-format';
 import {Link} from "react-router-dom";
 import _ from 'underscore';
-import FieldDisplayEdit from './FieldDisplayEdit';
+import {DroppableFieldDisplayEdit} from './FieldDisplayEdit';
 import Datetime from 'react-datetime';
 import 'react-datetime/css/react-datetime.css'
 import UnitsTable from "./UnitsTable";
@@ -47,7 +47,7 @@ class UnitDetailsEditor extends React.Component
             key={tenancyIndex}
         >
             <td>
-                <FieldDisplayEdit
+                <DroppableFieldDisplayEdit
                     type='text'
                     hideIcon={true}
                     value={tenantInfo.name}
@@ -55,7 +55,7 @@ class UnitDetailsEditor extends React.Component
                     onChange={(newValue) => this.changeTenancyField(tenantInfo, 'name', newValue)}/>
             </td>
             <td>
-                <FieldDisplayEdit
+                <DroppableFieldDisplayEdit
                     type='date'
                     hideIcon={true}
                     value={tenantInfo.startDate}
@@ -63,7 +63,7 @@ class UnitDetailsEditor extends React.Component
                     onChange={(newValue) => this.changeTenancyField(tenantInfo, 'startDate', newValue)}/>
             </td>
             <td>
-                <FieldDisplayEdit
+                <DroppableFieldDisplayEdit
                     type='date'
                     hideIcon={true}
                     value={tenantInfo.endDate}
@@ -71,7 +71,7 @@ class UnitDetailsEditor extends React.Component
                     onChange={(newValue) => this.changeTenancyField(tenantInfo, 'endDate', newValue)}/>
             </td>
             <td>
-                <FieldDisplayEdit
+                <DroppableFieldDisplayEdit
                     type='rentType'
                     hideIcon={true}
                     value={tenantInfo.rentType}
@@ -79,7 +79,7 @@ class UnitDetailsEditor extends React.Component
                     onChange={(newValue) => this.changeTenancyField(tenantInfo, 'rentType', newValue)}/>
             </td>
             <td>
-                <FieldDisplayEdit
+                <DroppableFieldDisplayEdit
                     type='currency'
                     hideIcon={true}
                     value={tenantInfo.yearlyRentPSF}
@@ -87,7 +87,7 @@ class UnitDetailsEditor extends React.Component
                     onChange={(newValue) => this.changeTenancyField(tenantInfo, 'yearlyRentPSF', newValue)}/>
             </td>
             <td>
-                <FieldDisplayEdit
+                <DroppableFieldDisplayEdit
                     type='currency'
                     hideIcon={true}
                     value={tenantInfo.yearlyRent}
@@ -128,7 +128,7 @@ class UnitDetailsEditor extends React.Component
         return <tr className={"tenant-row"}
                    key={this.props.unit.tenancies.length}>
             <td>
-                <FieldDisplayEdit
+                <DroppableFieldDisplayEdit
                     hideIcon={true}
                     value={""}
                     placeholder={"Name"}
@@ -137,7 +137,7 @@ class UnitDetailsEditor extends React.Component
             </td>
 
             <td>
-                <FieldDisplayEdit
+                <DroppableFieldDisplayEdit
                     type='date'
                     placeholder={"Start Date"}
                     hideIcon={true}
@@ -146,7 +146,7 @@ class UnitDetailsEditor extends React.Component
                 />
             </td>
             <td>
-                <FieldDisplayEdit
+                <DroppableFieldDisplayEdit
                     type='date'
                     placeholder={"End Date"}
                     hideIcon={true}
@@ -154,7 +154,7 @@ class UnitDetailsEditor extends React.Component
                 />
             </td>
             <td>
-                <FieldDisplayEdit
+                <DroppableFieldDisplayEdit
                     type='rentType'
                     value={""}
                     placeholder={"Net vs Gross"}
@@ -162,7 +162,7 @@ class UnitDetailsEditor extends React.Component
                     onChange={(newValue) => this.createNewTenancy('rentType', newValue)}/>
             </td>
             <td>
-                <FieldDisplayEdit
+                <DroppableFieldDisplayEdit
                     type='currency'
                     value={""}
                     placeholder={"Annual rent psf"}
@@ -170,7 +170,7 @@ class UnitDetailsEditor extends React.Component
                     onChange={(newValue) => this.createNewTenancy('yearlyRentPSF', newValue)}/>
             </td>
             <td>
-                <FieldDisplayEdit
+                <DroppableFieldDisplayEdit
                     type='currency'
                     value={""}
                     placeholder={"Annual rent"}
@@ -378,7 +378,7 @@ class UnitDetailsEditor extends React.Component
                                         <div className={"use-market-rent-selector"}>
                                             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                                             <strong>Apply Market Rent</strong>
-                                            <FieldDisplayEdit hideIcon={true} type="boolean"
+                                            <DroppableFieldDisplayEdit hideIcon={true} type="boolean"
                                                               placeholder={"Use Market Rent for Stabilized Statement?"}
                                                               value={this.props.unit.shouldUseMarketRent}
                                                               onChange={(newValue) => this.changeUnitField('shouldUseMarketRent', newValue)}/>
@@ -402,7 +402,7 @@ class UnitDetailsEditor extends React.Component
                                     this.props.unit.marketRent ?
                                         <div className={"use-market-rent-selector"}>
                                             <strong>Apply Market Rent Differential</strong>
-                                            <FieldDisplayEdit hideIcon={true} type="boolean" placeholder={"Apply Market Rent Differential?"}
+                                            <DroppableFieldDisplayEdit hideIcon={true} type="boolean" placeholder={"Apply Market Rent Differential?"}
                                                               value={this.props.unit.shouldApplyMarketRentDifferential}
                                                               onChange={(newValue) => this.changeUnitField('shouldApplyMarketRentDifferential', newValue)}/>
                                         </div> : null
@@ -451,7 +451,7 @@ class UnitDetailsEditor extends React.Component
                         <strong>Tenant Name</strong>
                     </td>
                     <td>
-                        <FieldDisplayEdit placeholder={"Tenant Name"} value={this.props.unit.currentTenancy.name}
+                        <DroppableFieldDisplayEdit placeholder={"Tenant Name"} value={this.props.unit.currentTenancy.name}
                                           onChange={(newValue) => this.changeAllTenantField('name', newValue)}/>
                     </td>
                 </tr>
@@ -460,7 +460,7 @@ class UnitDetailsEditor extends React.Component
                         <strong>Unit Number</strong>
                     </td>
                     <td>
-                        <FieldDisplayEdit placeholder={"Unit Number"}
+                        <DroppableFieldDisplayEdit placeholder={"Unit Number"}
                                           value={this.props.unit.unitNumber}
                                           type={"text"}
                                           onChange={(newValue) => this.changeUnitField('unitNumber', newValue)}/>
@@ -471,7 +471,7 @@ class UnitDetailsEditor extends React.Component
                         <strong>Floor Number</strong>
                     </td>
                     <td>
-                        <FieldDisplayEdit
+                        <DroppableFieldDisplayEdit
                             placeholder={"Floor Number"}
                             value={this.props.unit.floorNumber}
                             onChange={(newValue) => this.changeUnitField('floorNumber', newValue)}
@@ -484,7 +484,7 @@ class UnitDetailsEditor extends React.Component
                         <strong>Unit Size</strong>
                     </td>
                     <td>
-                        <FieldDisplayEdit type="area" placeholder={"Unit Size"} value={this.props.unit.squareFootage}
+                        <DroppableFieldDisplayEdit type="area" placeholder={"Unit Size"} value={this.props.unit.squareFootage}
                                           onChange={(newValue) => this.changeUnitField('squareFootage', newValue)}/>
                     </td>
                 </tr>
@@ -493,7 +493,7 @@ class UnitDetailsEditor extends React.Component
                         <strong>Net / Gross</strong>
                     </td>
                     <td>
-                        <FieldDisplayEdit type="rentType" value={this.props.unit.currentTenancy.rentType}
+                        <DroppableFieldDisplayEdit type="rentType" value={this.props.unit.currentTenancy.rentType}
                                           onChange={(newValue) => this.changeAllTenantField('rentType', newValue)}/>
                     </td>
                 </tr>
@@ -504,7 +504,7 @@ class UnitDetailsEditor extends React.Component
                                 <strong>Free Rent Period (months)</strong>
                             </td>
                             <td>
-                                <FieldDisplayEdit type="months" placeholder={"Free Rent Period (months)"}
+                                <DroppableFieldDisplayEdit type="months" placeholder={"Free Rent Period (months)"}
                                                   value={this.props.unit.currentTenancy.freeRentMonths}
                                                   onChange={(newValue) => this.changeTenancyField(this.props.unit.currentTenancy, 'freeRentMonths', newValue)}/>
                             </td>
@@ -517,7 +517,7 @@ class UnitDetailsEditor extends React.Component
                                 <strong>Free Rent Type</strong>
                             </td>
                             <td>
-                                <FieldDisplayEdit type="rentType"
+                                <DroppableFieldDisplayEdit type="rentType"
                                                   value={this.props.unit.currentTenancy.freeRentType}
                                                   onChange={(newValue) => this.changeAllTenantField('freeRentType', newValue)}/>
                             </td>
@@ -530,7 +530,7 @@ class UnitDetailsEditor extends React.Component
                                 <strong>Recovery Structure</strong>
                             </td>
                             <td>
-                                <FieldDisplayEdit type="recoveryStructure" placeholder={"Recovery Structure"}
+                                <DroppableFieldDisplayEdit type="recoveryStructure" placeholder={"Recovery Structure"}
                                                   recoveryStructures={this.props.appraisal.recoveryStructures}
                                                   value={this.props.unit.currentTenancy.recoveryStructure}
                                                   onChange={(newValue) => this.changeAllTenantField('recoveryStructure', newValue)}/>
@@ -544,7 +544,7 @@ class UnitDetailsEditor extends React.Component
                                 <strong>Leasing Cost Structure</strong>
                             </td>
                             <td>
-                                <FieldDisplayEdit type="leasingCostStructure" placeholder={"Leasing Cost Structure"}
+                                <DroppableFieldDisplayEdit type="leasingCostStructure" placeholder={"Leasing Cost Structure"}
                                                   leasingCostStructures={this.props.appraisal.leasingCosts}
                                                   value={this.props.unit.leasingCostStructure}
                                                   onChange={(newValue) => this.changeUnitField('leasingCostStructure', newValue)}/>
@@ -556,7 +556,7 @@ class UnitDetailsEditor extends React.Component
                         <strong>Remarks</strong>
                     </td>
                     <td>
-                        <FieldDisplayEdit value={this.props.unit.remarks} placeholder={"Remarks"}
+                        <DroppableFieldDisplayEdit value={this.props.unit.remarks} placeholder={"Remarks"}
                                           onChange={(newValue) => this.changeUnitField('remarks', newValue)}/>
                     </td>
                 </tr>
@@ -565,7 +565,7 @@ class UnitDetailsEditor extends React.Component
                         <strong>Consider as Vacant Unit</strong>
                     </td>
                     <td style={{"paddingTop": "10px", "paddingLeft": "15px", "paddingBottom": "10px"}}>
-                        <FieldDisplayEdit
+                        <DroppableFieldDisplayEdit
                             value={this.props.unit.isVacantForStabilizedStatement}
                             type={"boolean"}
                             hideIcon={true}
@@ -583,7 +583,7 @@ class UnitDetailsEditor extends React.Component
                             <td className={"leasing-commission-line"}>
                                 {
                                     this.getUnitLeasingCosts().leasingCommissionMode === 'psf' ?
-                                        <FieldDisplayEdit
+                                        <DroppableFieldDisplayEdit
                                             type="currency"
                                             value={this.getUnitLeasingCosts().leasingCommissionPSF}
                                             hideInput={true}
@@ -591,7 +591,7 @@ class UnitDetailsEditor extends React.Component
                                             onChange={(newValue) => this.changeLeasingCostField('leasingCommissionPSF', newValue)}
                                         /> : null
                                 }
-                                <FieldDisplayEdit
+                                <DroppableFieldDisplayEdit
                                     type="leasingCommissionMode"
                                     value={this.getUnitLeasingCosts().leasingCommissionMode}
                                     hideInput={true}
@@ -608,7 +608,7 @@ class UnitDetailsEditor extends React.Component
                                 <strong>Leasing Commission - Year 1</strong>
                             </td>
                             <td>
-                                <FieldDisplayEdit
+                                <DroppableFieldDisplayEdit
                                     type="percent"
                                     value={this.getUnitLeasingCosts().leasingCommissionPercentYearOne}
                                     hideInput={true}
@@ -625,7 +625,7 @@ class UnitDetailsEditor extends React.Component
                                 <strong>Leasing Commission - Remaining Years</strong>
                             </td>
                             <td>
-                                <FieldDisplayEdit
+                                <DroppableFieldDisplayEdit
                                     type="percent"
                                     value={this.getUnitLeasingCosts().leasingCommissionPercentRemainingYears}
                                     hideInput={true}
@@ -642,7 +642,7 @@ class UnitDetailsEditor extends React.Component
                                 <strong>Tenant Inducements (psf)</strong>
                             </td>
                             <td>
-                                <FieldDisplayEdit placeholder={"Leasing Costs (psf)"}
+                                <DroppableFieldDisplayEdit placeholder={"Leasing Costs (psf)"}
                                                   value={this.getUnitLeasingCosts().tenantInducementsPSF}
                                                   type={"currency"}
                                                   onChange={(newValue) => this.changeLeasingCostField('tenantInducementsPSF', newValue)}/>
@@ -656,7 +656,7 @@ class UnitDetailsEditor extends React.Component
                                 <strong>Renewal Period</strong>
                             </td>
                             <td>
-                                <FieldDisplayEdit placeholder={"Leasing Renewal Period"}
+                                <DroppableFieldDisplayEdit placeholder={"Leasing Renewal Period"}
                                                   value={this.getUnitLeasingCosts().renewalPeriod}
                                                   type={"months"}
                                                   onChange={(newValue) => this.changeLeasingCostField('renewalPeriod', newValue)}/>
@@ -676,7 +676,7 @@ class UnitDetailsEditor extends React.Component
                                 <strong>Market Rent (psf)</strong>
                             </td>
                             <td>
-                                <FieldDisplayEdit placeholder={"Market Rent (psf)"}
+                                <DroppableFieldDisplayEdit placeholder={"Market Rent (psf)"}
                                                   value={this.getUnitMarketRent() ? this.getUnitMarketRent().amountPSF : null}
                                                   type={"currency"}
                                                   onChange={(newValue) => this.changeMarketRentField('amountPSF', newValue)}/>
@@ -690,7 +690,7 @@ class UnitDetailsEditor extends React.Component
                                 <strong>Market Rent</strong>
                             </td>
                             <td>
-                                <FieldDisplayEdit type="marketRent" placeholder={"Market Rent"} marketRents={this.props.appraisal.marketRents}
+                                <DroppableFieldDisplayEdit type="marketRent" placeholder={"Market Rent"} marketRents={this.props.appraisal.marketRents}
                                                   value={this.props.unit.marketRent}
                                                   onChange={(newValue) => this.changeUnitField('marketRent', newValue)}/>
                             </td>
