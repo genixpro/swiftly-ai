@@ -26,7 +26,6 @@ class App extends React.Component
 
         const resultStyle = {
             "textAlign": "center",
-            "fontStyle": "italic",
             "fontFamily": "monospace, serif",
             "fontSize": "14px",
             "letterSpacing": "-1px"
@@ -113,17 +112,17 @@ class App extends React.Component
                 }} />
 
             <br/>
-            <ul>
+            <p>
                 {
                     noiMultipleCount ?
-                        <li>The average multiple of the comparable properties is {(noiMultipleTotal / noiMultipleCount).toFixed(2)}.
+                        <span>The average multiple of the comparable properties is {(noiMultipleTotal / noiMultipleCount).toFixed(2)}.
                             A rate of {this.props.appraisal.directComparisonInputs.noiPSFMultiple.toFixed(1)} is reasonable for the subject.
                             The subjects NOI was multiplied by {this.props.appraisal.directComparisonInputs.noiPSFMultiple.toFixed(1)} for a PSF
                             estimate of <CurrencyFormat value={this.props.appraisal.directComparisonInputs.noiPSFPricePerSquareFoot} />
-                        </li>
+                        </span>
                         : null
                 }
-            </ul>
+            </p>
             <br/>
             <DirectComparisonTable appraisal={this.props.appraisal} />
             <br/>

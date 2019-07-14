@@ -29,7 +29,6 @@ class App extends React.Component
 
         const resultStyle = {
             "textAlign": "center",
-            "fontStyle": "italic",
             "fontFamily": "monospace, serif",
             "fontSize": "14px",
             "letterSpacing": "-1px"

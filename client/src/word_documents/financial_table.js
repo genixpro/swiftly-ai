@@ -58,13 +58,14 @@ class Row extends React.Component
             "marginBottom": "0px",
             "fontFamily": "monospace, serif",
             "fontSize": fontSize,
+            "textAlign": "center",
             "whiteSpace": "nowrap"
         };
 
         const amountSpanStyle = {
             "marginBottom": "0px",
             "paddingLeft": "20px",
-            "textAlign": "right",
+            "textAlign": "center",
             "fontFamily": "monospace, serif",
             "fontSize": fontSize,
             "whiteSpace": "nowrap"
@@ -73,7 +74,7 @@ class Row extends React.Component
         const amountTotalSpanStyle = {
             "marginBottom": "0px",
             "paddingLeft": "20px",
-            "textAlign": "right",
+            "textAlign": "center",
             "fontFamily": "monospace, serif",
             "fontSize": fontSize,
             "whiteSpace": "nowrap"
