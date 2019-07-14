@@ -17,17 +17,21 @@ class ComparableSalesSummaries extends React.Component {
         const imageStyle = {
             "marginLeft": "auto",
             "marginRight": "auto",
-            "width": "2.4in",
-            "height": "1.8in",
+            "width": "3.2in",
+            "height": "2.4in",
             "border": "1px solid black"
         };
+
+        const tableStyle = {
+            "border": "0px solid white"
+        }
 
         return (
             <div>
                 {
                     this.props.comparableSales.map((comp, compIndex) =>
                     {
-                        const imgElem = <td width={"30%"}>
+                        const imgElem = <td style={tableStyle}>
                             <img
                                 src={comp.imageUrls.length ? (comp.imageUrls[0]) : "https://maps.googleapis.com/maps/api/streetview?key=AIzaSyBRmZ2N4EhJjXmC29t3VeiLUQssNG-MY1I&size=640x480&source=outdoor&location=" + comp.address}
                                 style={imageStyle}
@@ -35,15 +39,15 @@ class ComparableSalesSummaries extends React.Component {
                         </td>;
 
                         const descriptionElem =
-                            <td width={"70%"}>
+                            <td style={tableStyle}>
                                 <span style={{"fontWeight": "bold"}}>Index {compIndex + 1} - {comp.address}:</span> {comp.description || comp.computedDescriptionText}
                             </td>;
 
                         if (compIndex % 2 === 0)
                         {
-                            return <table key={compIndex}>
-                                <tbody>
-                                        <tr>
+                            return <table key={compIndex} style={tableStyle}>
+                                <tbody style={tableStyle}>
+                                        <tr style={tableStyle}>
                                         {imgElem}
                                         {descriptionElem}
                                     </tr>
@@ -52,9 +56,9 @@ class ComparableSalesSummaries extends React.Component {
                         }
                         else
                         {
-                            return <table key={compIndex}>
-                            <tbody>
-                            <tr>
+                            return <table key={compIndex} style={tableStyle}>
+                            <tbody style={tableStyle}>
+                            <tr style={tableStyle}>
                                 {descriptionElem}
                                 {imgElem}
                             </tr>
