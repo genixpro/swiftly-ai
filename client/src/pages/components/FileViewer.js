@@ -74,7 +74,7 @@ class FileViewer extends React.Component
         const adjustedAverageWordHeight = averageWordWidth * (averageWordWidth / averageWordHeight) * viewportHeight;
 
         const zoomLevel = (40 / adjustedAverageWordHeight) * 100;
-        return zoomLevel;
+        return Math.max(zoomLevel, 100);
     }
 
 
