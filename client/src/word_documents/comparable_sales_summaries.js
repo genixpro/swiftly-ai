@@ -41,9 +41,9 @@ class ComparableSalesSummaries extends React.Component {
 
                         if (compIndex % 2 === 0)
                         {
-                            return <table>
+                            return <table key={compIndex}>
                                 <tbody>
-                                        <tr key={compIndex}>
+                                        <tr>
                                         {imgElem}
                                         {descriptionElem}
                                     </tr>
@@ -52,9 +52,9 @@ class ComparableSalesSummaries extends React.Component {
                         }
                         else
                         {
-                            return <table>
+                            return <table key={compIndex}>
                             <tbody>
-                            <tr key={compIndex}>
+                            <tr>
                                 {descriptionElem}
                                 {imgElem}
                             </tr>
