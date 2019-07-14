@@ -664,6 +664,9 @@ class ComparableSaleModel extends EquationMdoel
 
         text = text.replace(", .", ".");
 
+        text = text.replace("an retail", "a retail");
+        text = text.replace("an land", "a land");
+
         if(comparableSale.capitalizationRate)
         {
             text += `The net income yielded a ${comparableSale.capitalizationRate.toFixed(2)}% rate of return. `;
