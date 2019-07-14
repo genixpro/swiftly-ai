@@ -659,7 +659,7 @@ class ComparableSaleModel extends EquationMdoel
 
         if (propertyFeatures)
         {
-            text += `Property features include: ${propertyFeatures}.`;
+            text += `Property features include: ${propertyFeatures}. `;
         }
 
         text = text.replace(", .", ".");
