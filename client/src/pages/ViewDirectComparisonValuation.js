@@ -16,6 +16,7 @@ import IntegerFormat from "./components/IntegerFormat";
 import FloatFormat from "./components/FloatFormat";
 import TotalRemainingFreeRentPopoverWrapper from "./components/TotalRemainingFreeRentPopoverWrapper";
 import TotalMarketRentDifferentialCalculationPopoverWrapper from "./components/TotalMarketRentDifferentialCalculationPopoverWrapper";
+import ComparableAdjustmentChart from "./components/ComparableAdjustmentChart";
 
 class ViewDirectComparisonValuation extends React.Component
 {
@@ -39,6 +40,12 @@ class ViewDirectComparisonValuation extends React.Component
     onComparablesChanged(comps)
     {
         this.setState({comparableSales: comps});
+    }
+
+    changeShowAdjustmentChart(newValue)
+    {
+        this.props.appraisal.adjustmentChart.showAdjustmentChart = newValue;
+        this.props.saveAppraisal(this.props.appraisal);
     }
 
 
@@ -291,6 +298,25 @@ class ViewDirectComparisonValuation extends React.Component
                             </div>
                                 </Col>
                             </Row>
+
+
+                            {
+                                this.props.appraisal.adjustmentChart.showAdjustmentChart ?
+                                <Row>
+                                    <Col xs={8}>
+                                        <br/>
+                                        <h3>Adjustment Chart</h3>
+
+                                            <ComparableAdjustmentChart
+                                                appraisal={this.props.appraisal}
+                                                comparableSales={this.state.comparableSales}
+                                                onChange={() => this.props.saveAppraisal(this.props.appraisal)}
+                                            />
+                                            <br/>
+                                        <br/>
+                                    </Col>
+                                </Row>: null
+                            }
 
                             <Row>
                                 <Col xs={8}>
@@ -549,6 +575,17 @@ class ViewDirectComparisonValuation extends React.Component
                                             <h3>Inputs</h3>
 
                                             <Table>
+                                                <tr>
+                                                    <td>Show Adjustment Chart</td>
+                                                    <td>
+                                                        <FieldDisplayEdit
+                                                            type={"boolean"}
+                                                            placeholder={"Whether or not to show the adjustment chart"}
+                                                            value={this.props.appraisal.adjustmentChart.showAdjustmentChart}
+                                                            onChange={(newValue) => this.changeShowAdjustmentChart(newValue)}
+                                                        />
+                                                    </td>
+                                                </tr>
                                                 <tr>
                                                     <td>Comparison Metric</td>
                                                     <td>

@@ -17,6 +17,7 @@ from appraisal.models.recovery_structure import RecoveryStructure, CalculationRu
 from appraisal.models.leasing_cost_structure import LeasingCostStructure
 from appraisal.models.date_field import ConvertingDateField
 from appraisal.models.extraction_reference import ExtractionReference
+from appraisal.models.comparable_adjustment_chart import ComparableAdjustmentChart
 from appraisal.components.document_processor import DocumentProcessor
 import numpy
 import json as json
@@ -125,6 +126,9 @@ class Appraisal(Document):
 
     # This is the market rent
     marketRents = ListField(EmbeddedDocumentField(MarketRent))
+
+    # Comparable adjustment chart
+    adjustmentChart = EmbeddedDocumentField(ComparableAdjustmentChart)
 
     # A list of recovery structures for this building
     recoveryStructures = ListField(EmbeddedDocumentField(RecoveryStructure), default=[
