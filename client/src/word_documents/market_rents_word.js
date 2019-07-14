@@ -150,8 +150,8 @@ class MarketRentsWord extends React.Component
                 property must be established. Estimating market rent also allows the appraiser to analyze
                 current contract rent within the building as compared to the market levels. In establishing the
                 market rent the following analysis has been completed: Analyzed the lease deals from the subject
-                building and analyzed recent completed leases involving similar ${this.props.appraisal.propertyType}
-                buildings located throughout {this.getCity(this.props.appraisal.address)} and surrounding areas.</p>
+                building and analyzed recent completed leases involving similar {this.props.appraisal.propertyType} buildings
+                located throughout {this.getCity(this.props.appraisal.address)} and surrounding areas.</p>
 
             <StyledTable
                 headers={["Index \n Date", "Address", "Size", "Rent", "Remarks"]}
@@ -245,16 +245,12 @@ class MarketRentsWord extends React.Component
                     }
                     {
                         minTI || maxTI ?
-                            <span> and included tenant inducements ranging from <CurrencyFormat value={minTI} /> to <CurrencyFormat value={maxTI} /></span> :
-                            <span> and did not include any significant tenant inducements or allowances.</span>
+                            <span> and included tenant inducements ranging from <CurrencyFormat value={minTI} /> to <CurrencyFormat value={maxTI} />. </span> :
+                            <span> and did not include any significant tenant inducements or allowances. </span>
                     }
                 </span>
-                <span>
-                    The rates at the upper end of the range refer to modern buildings that offer a superior level of accommodation in terms of age, clear ceiling height, features, and finished office space.
-                </span>
-                <span>
-                    Rates at the low end of the range are generally indicated in older buildings with an inferior level of accommodation.
-                </span>
+                <span>The rates at the upper end of the range refer to modern buildings that offer a superior level of accommodation in terms of age, clear ceiling height, features, and finished office space. </span>
+                <span>Rates at the low end of the range are generally indicated in older buildings with an inferior level of accommodation. </span>
             </p>
             <h3>Summary of Market Rents</h3>
             <ul>
