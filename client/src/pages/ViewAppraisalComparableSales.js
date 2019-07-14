@@ -167,18 +167,18 @@ class ViewAppraisalComparableSales extends React.Component {
                         <Col xs={10}>
                             <h3>View Comparable Sales</h3>
                         </Col>
-                        <Col xs={2}>
-                            <Dropdown isOpen={this.state.downloadDropdownOpen} toggle={this.toggle.bind(this)}>
-                                <DropdownToggle caret color={"primary"} className={"download-dropdown-button"}>
-                                    Download
-                                </DropdownToggle>
-                                <DropdownMenu>
-                                    <DropdownItem onClick={() => this.downloadExcelSummary()}>Spreadsheet (xls)</DropdownItem>
-                                    <DropdownItem onClick={() => this.downloadWordSummary()}>Cap-Rate Summary (docx)</DropdownItem>
-                                    <DropdownItem onClick={() => this.downloadDetailedSummary()}>Detailed Summary (docx)</DropdownItem>
-                                </DropdownMenu>
-                            </Dropdown>
-                        </Col>
+                        {/*<Col xs={2}>*/}
+                        {/*    <Dropdown isOpen={this.state.downloadDropdownOpen} toggle={this.toggle.bind(this)}>*/}
+                        {/*        <DropdownToggle caret color={"primary"} className={"download-dropdown-button"}>*/}
+                        {/*            Download*/}
+                        {/*        </DropdownToggle>*/}
+                        {/*        <DropdownMenu>*/}
+                        {/*            /!*<DropdownItem onClick={() => this.downloadExcelSummary()}>Spreadsheet (xls)</DropdownItem>*!/*/}
+                        {/*            <DropdownItem onClick={() => this.downloadWordSummary()}>Cap-Rate Summary (docx)</DropdownItem>*/}
+                        {/*            <DropdownItem onClick={() => this.downloadDetailedSummary()}>Detailed Summary (docx)</DropdownItem>*/}
+                        {/*        </DropdownMenu>*/}
+                        {/*    </Dropdown>*/}
+                        {/*</Col>*/}
                     </Row>
                     <Row>
                         <Col xs={8}>

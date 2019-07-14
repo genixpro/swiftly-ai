@@ -263,7 +263,7 @@ class ViewDirectComparisonValuation extends React.Component
                                 </DropdownToggle>
                                 <DropdownMenu>
                                     <DropdownItem onClick={() => this.downloadWordSummary()}>Direct Comparison Approach Summary (docx)</DropdownItem>
-                                    <DropdownItem onClick={() => this.downloadExcelSummary()}>Direct Comparison Approach Spreadsheet (xlsx)</DropdownItem>
+                                    {/*<DropdownItem onClick={() => this.downloadExcelSummary()}>Direct Comparison Approach Spreadsheet (xlsx)</DropdownItem>*/}
                                 </DropdownMenu>
                             </Dropdown>
 
@@ -539,14 +539,8 @@ class ViewDirectComparisonValuation extends React.Component
                                 </Table>
                                 <br/>
                                 <br/>
-                                <h4 className={"final-valuation"}>Value by the Direct Comparison Approach ... $<NumberFormat
-                                    value={this.props.appraisal.directComparisonValuation.valuationRounded}
-                                    displayType={'text'}
-                                    thousandSeparator={', '}
-                                    decimalScale={2}
-                                    fixedDecimalScale={true}
-                                />
-                                </h4>
+                                <h4 className={"final-valuation"}>Final Value by Direct Comparison
+                                    Approach <CurrencyFormat value={this.props.appraisal.directComparisonValuation.valuationRounded} cents={false}/></h4>
                             </div>
                                 </Col>
                                 <Col xs={4}>

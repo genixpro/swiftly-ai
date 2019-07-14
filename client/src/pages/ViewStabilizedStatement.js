@@ -211,7 +211,7 @@ class ViewStabilizedStatement extends React.Component
                                 </DropdownToggle>
                                 <DropdownMenu>
                                     <DropdownItem onClick={() => this.downloadWordSummary()}>Stabilized Statement Summary (docx)</DropdownItem>
-                                    <DropdownItem onClick={() => this.downloadExcelSummary()}>Stabilized Statement Spreadsheet (xlsx)</DropdownItem>
+                                    {/*<DropdownItem onClick={() => this.downloadExcelSummary()}>Stabilized Statement Spreadsheet (xlsx)</DropdownItem>*/}
                                 </DropdownMenu>
                             </Dropdown>
 

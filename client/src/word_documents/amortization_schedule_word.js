@@ -31,7 +31,7 @@ class App extends React.Component {
             <html>
             <body style={{"width": "7in"}}>
             <br/>
-            <h1>Amortization Schedule</h1>
+            <h4>Amortization Schedule</h4>
             <br/>
             <StyledTable
                 headers={headers}

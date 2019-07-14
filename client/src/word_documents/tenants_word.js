@@ -22,7 +22,7 @@ class App extends React.Component
             <html>
             <body style={{"width": "7in"}}>
             <br/>
-            <h4 style={{"textAlign": "center"}}>TENANCY</h4>
+            <h4 style={{"textAlign": "center", "color": "#2f5496"}}>TENANCY</h4>
             <p>
                 The subject has a total rentable area of <IntegerFormat value={this.props.appraisal.sizeOfBuilding} /> square feet. As of the effective date, the building was
                 100% leased and occupied by <IntegerFormat value={this.props.appraisal.numberOfOccupiedUnits()} /> tenants.

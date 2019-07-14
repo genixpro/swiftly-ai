@@ -23,10 +23,6 @@ class App extends React.Component
 {
     render()
     {
-        const headerStyle = {
-            "textAlign": "center"
-        };
-
         const subHeaderStyle = {
             "textAlign": "center"
         };
@@ -51,7 +47,7 @@ class App extends React.Component
 
         rows.push({
             "label": <span>
-                Capitalized @ <PercentValue left>{this.props.appraisal.stabilizedStatementInputs.displayCapitalizationRate}</PercentValue>
+                Capitalized @ <PercentValue left>{this.props.appraisal.stabilizedStatementInputs.capitalizationRate}</PercentValue>
             </span>,
             "amount": <CurrencyValue cents={false}>{this.props.appraisal.stabilizedStatement.capitalization}</CurrencyValue>,
             "amountTotal": null,
@@ -91,7 +87,7 @@ class App extends React.Component
         if (this.props.appraisal.stabilizedStatement.vacantUnitLeasupCosts && this.props.appraisal.stabilizedStatementInputs.applyVacantUnitLeasingCosts)
         {
             rows.push({
-                "label": "Vacant Unit Leasup Costs",
+                "label": "Vacant Unit Leasing Costs",
                 "amount": <CurrencyValue cents={false}>{this.props.appraisal.stabilizedStatement.vacantUnitLeasupCosts}</CurrencyValue>,
                 "amountTotal": null,
                 "mode": "data"
@@ -189,11 +185,13 @@ class App extends React.Component
             <html>
             <body style={{"width": "7in"}}>
             <br/>
-            <h4 style={headerStyle}>Capitalization Valuation</h4>
+            <h4 style={{"textAlign": "center", "color": "#2f5496"}}>Capitalization Valuation</h4>
             <h5 style={subHeaderStyle}>{this.props.appraisal.address}</h5>
-            <p>In estimating the overall capitalization rate applicable to the subject property we have researched sales of
-                similar {this.props.appraisal.propertyType ? this.props.appraisal.propertyType.toString() + " " : ""}properties. Emphasis has been given to recent sales of {this.props.appraisal.propertyType ? this.props.appraisal.propertyType.toString() + " " : ""}
-                properties between <IntegerFormat value={minCompSize} /> and <IntegerFormat value={maxCompSize} /> square feet. Relevant details of comparable sales are summarized in the chart below.</p>
+
+            <p>In estimating the capitalization rate for the subject we have analyzed sales of similar ${this.props.appraisal.propertyType ? this.props.appraisal.propertyType.toString() + " " : ""}
+                properties. Research included ${this.props.appraisal.propertyType ? this.props.appraisal.propertyType.toString() + " " : ""}properties between <IntegerFormat value={minCompSize} /> and <IntegerFormat value={maxCompSize} /> square feet.
+                Relevant details of comparable sales are summarized in the chart below.</p>
+
             <StyledTable
                 headers={["Index \n Date", "Address", "Consideration", "Leasable Area \n (Occupancy)", "Net Income \n PSF", "Stabilized \n OCR"]}
                 rows={this.props.comparableSales}
@@ -223,7 +221,7 @@ class App extends React.Component
             <br />
             <ComparableSalesSummaries comparableSales={this.props.comparableSales}/>
             <br/>
-            <h3>Summary</h3>
+            <h4 style={{"textAlign": "left", "color": "#2f5496"}}>Summary</h4>
             <p>
                 The comparable sales detailed above indicate a range in stabilized overall capitalization rates from <PercentFormat value={minCapRate}/> to
                 &nbsp;<PercentFormat value={maxCapRate} />. Adjustments have been made based on the subject’s properties location, construction date/condition,
@@ -234,7 +232,7 @@ class App extends React.Component
             <br />
             <FinancialTable rows={rows} />
             <br/>
-            <h3 style={resultStyle}>Value by the Overall Capitalization Rate Approach <br /> <CurrencyValue cents={false} center>{this.props.appraisal.stabilizedStatement.valuationRounded}</CurrencyValue></h3>
+            <h3 style={resultStyle}>Final Value by the Overall Capitalization Approach <br /> <CurrencyValue cents={false} center>{this.props.appraisal.stabilizedStatement.valuationRounded}</CurrencyValue></h3>
             </body>
             </html>
         )

@@ -10,6 +10,8 @@ class Row extends React.Component
 {
     render()
     {
+        const fontSize = this.props.fontSize ? `${this.props.fontSize}px` : "9px";
+
         const headerStyle = {
             "textAlign": "center"
         };
@@ -55,23 +57,26 @@ class Row extends React.Component
         const labelSpanStyle = {
             "marginBottom": "0px",
             "fontFamily": "monospace, serif",
-            "fontSize": "11px"
+            "fontSize": fontSize,
+            "whiteSpace": "nowrap"
         };
 
         const amountSpanStyle = {
             "marginBottom": "0px",
-            "marginLeft": "20px",
+            "paddingLeft": "20px",
             "textAlign": "right",
             "fontFamily": "monospace, serif",
-            "fontSize": "11px"
+            "fontSize": fontSize,
+            "whiteSpace": "nowrap"
         };
 
         const amountTotalSpanStyle = {
             "marginBottom": "0px",
-            "marginLeft": "20px",
+            "paddingLeft": "20px",
             "textAlign": "right",
             "fontFamily": "monospace, serif",
-            "fontSize": "11px"
+            "fontSize": fontSize,
+            "whiteSpace": "nowrap"
         };
 
         const titleLabelColumnStyle = _.extend({}, labelColumnStyle, {
@@ -116,7 +121,7 @@ class Row extends React.Component
         });
 
         const dataLabelSpanStyle = _.extend({}, labelSpanStyle, {
-            "marginLeft": "25px"
+            "paddingLeft": "25px"
         });
 
         const dataAmountSpanStyle = _.extend({}, amountSpanStyle, {
@@ -140,7 +145,7 @@ class Row extends React.Component
         });
 
         const sumAfterDataLabelSpanStyle = _.extend({}, labelSpanStyle, {
-            "marginLeft": "25px"
+            "paddingLeft": "25px"
         });
 
         const sumAfterDataAmountSpanStyle = _.extend({}, amountSpanStyle, {
@@ -165,7 +170,7 @@ class Row extends React.Component
 
         const sumDataLabelSpanStyle = _.extend({}, labelSpanStyle, {
             "marginTop": "25px",
-            "marginLeft": "25px"
+            "paddingLeft": "25px"
         });
 
         const sumDataAmountSpanStyle = _.extend({}, amountSpanStyle, {
@@ -191,7 +196,7 @@ class Row extends React.Component
 
         const totalSumDataLabelSpanStyle = _.extend({}, labelSpanStyle, {
             "marginTop": "25px",
-            "marginLeft": "25px"
+            "paddingLeft": "25px"
         });
 
         const totalSumDataAmountSpanStyle = _.extend({}, amountSpanStyle, {
@@ -276,16 +281,18 @@ class FinancialTable extends React.Component {
     render()
     {
         return (
-            <table cellSpacing={0} align="center">
-                <tbody>
-                {
-                    this.props.rows.map((row, rowIndex) =>
+            <center>
+                <table cellSpacing={0} align="center">
+                    <tbody>
                     {
-                        return <Row key={rowIndex} row={row} mode={row.mode}/>
-                    })
-                }
-                </tbody>
-            </table>
+                        this.props.rows.map((row, rowIndex) =>
+                        {
+                            return <Row key={rowIndex} row={row} mode={row.mode} fontSize={this.props.fontSize}/>
+                        })
+                    }
+                    </tbody>
+                </table>
+            </center>
         )
     }
 }

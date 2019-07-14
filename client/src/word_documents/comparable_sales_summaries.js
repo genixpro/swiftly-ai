@@ -17,8 +17,8 @@ class ComparableSalesSummaries extends React.Component {
         const imageStyle = {
             "marginLeft": "auto",
             "marginRight": "auto",
-            "width": "3.2in",
-            "height": "2.4in",
+            "width": "2.4in",
+            "height": "1.8in",
             "border": "1px solid black"
         };
 

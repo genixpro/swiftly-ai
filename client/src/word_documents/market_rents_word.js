@@ -145,7 +145,7 @@ class MarketRentsWord extends React.Component
             <html>
             <body style={{"width": "7in"}}>
             <br/>
-            <h4 style={{"textAlign": "center"}}>MARKET RENTS</h4>
+            <h4 style={{"textAlign": "center", "color": "#2f5496"}}>MARKET RENTS</h4>
             <p>To determine the long-term income potential of the subject property the market rent for the
                 property must be established. Estimating market rent also allows the appraiser to analyze
                 current contract rent within the building as compared to the market levels. In establishing the

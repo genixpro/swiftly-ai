@@ -61,7 +61,7 @@ class App extends React.Component
             <html>
             <body style={{"width": "7in"}}>
             <br/>
-            <h4 style={headerStyle}>DIRECT COMPARISON APPROACH</h4>
+            <h4 style={{"textAlign": "center", "color": "#2f5496"}}>DIRECT COMPARISON APPROACH</h4>
             {/*<h2 style={subHeaderStyle}>{this.props.appraisal.address}</h2>*/}
             <p>The Direct Comparison Approach: This section will be auto populated based on your company specific verbiage.</p>
             <br/>
@@ -92,21 +92,13 @@ class App extends React.Component
                 The range reflects differences in the comparable properties such as: location, quality of finishing’s, average net rent.
             </p>
 
-            <h4>PROPERTY RIGHTS</h4>
+            <h4 style={{"textAlign": "left", "color": "#2f5496"}}>LAND</h4>
             <ul><li>This section will be auto populated based on your company specific verbiage.</li></ul>
-            <h4>PROPERTY FINANCING</h4>
+            <h4 style={{"textAlign": "left", "color": "#2f5496"}}>FINANCING</h4>
             <ul><li>This section will be auto populated based on your company specific verbiage.</li></ul>
-            <h4>COMPARABLE BUILDING SALE CONDITIONS</h4>
+            <h4 style={{"textAlign": "left", "color": "#2f5496"}}>COMPARABLE BUILDING SALE CONDITIONS</h4>
             <ul><li>This section will be auto populated based on your company specific verbiage.</li></ul>
-            <h4>DATE OF SALE</h4>
-            <ul><li>This section will be auto populated based on your company specific verbiage.</li></ul>
-            <h4>LOCATION</h4>
-            <ul><li>This section will be auto populated based on your company specific verbiage.</li></ul>
-            <h4>ACCOMMODATION</h4>
-            <ul><li>This section will be auto populated based on your company specific verbiage.</li></ul>
-            <h4>BUILDING/LOT SIZE</h4>
-            <ul><li>This section will be auto populated based on your company specific verbiage.</li></ul>
-            <h4>NOI PSF / MULTIPLE CALCULATOR</h4>
+            <h4 style={{"textAlign": "left", "color": "#2f5496"}}>NOI PSF / MULTIPLE CALCULATOR</h4>
             <ul><li>This section will be auto populated based on your company specific verbiage.</li></ul>
 
             <StyledTable
@@ -124,17 +116,19 @@ class App extends React.Component
             <ul>
                 {
                     noiMultipleCount ?
-                        <li>The average income multiplier presented by the comparable properties is {(noiMultipleTotal / noiMultipleCount).toFixed(2)}. A rate similar to the average is considered appropriate for the subject.</li>
+                        <li>The average multiple of the comparable properties is {(noiMultipleTotal / noiMultipleCount).toFixed(2)}.
+                            A rate of {this.props.appraisal.directComparisonInputs.noiPSFMultiple.toFixed(1)} is reasonable for the subject.
+                            The subjects NOI was multiplied by {this.props.appraisal.directComparisonInputs.noiPSFMultiple.toFixed(1)} for a PSF
+                            estimate of <CurrencyFormat value={this.props.appraisal.directComparisonInputs.noiPSFPricePerSquareFoot} />
+                        </li>
                         : null
                 }
-
-                <li>Utilizing the subject’s net operating income per square foot figure of <CurrencyFormat value={this.props.appraisal.stabilizedStatement.netOperatingIncome / this.props.appraisal.sizeOfBuilding} /> psf, we have applied a multiplier of {this.props.appraisal.directComparisonInputs.noiPSFMultiple.toFixed(1)} results in a value estimate of <CurrencyFormat value={this.props.appraisal.directComparisonInputs.noiPSFPricePerSquareFoot} /> per square foot (rounded).</li>
             </ul>
             <br/>
             <DirectComparisonTable appraisal={this.props.appraisal} />
             <br/>
 
-            <h3 style={resultStyle}>Value by the Direct Comparison Approach... <CurrencyFormat cents={false} value={this.props.appraisal.stabilizedStatement.valuationRounded} /></h3>
+            <h3 style={resultStyle}>Final Value by the DCA <br/> <CurrencyFormat cents={false} center value={this.props.appraisal.stabilizedStatement.valuationRounded}/></h3>
             </body>
             </html>
         )
