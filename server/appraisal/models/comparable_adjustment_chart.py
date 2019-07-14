@@ -10,11 +10,11 @@ class ComparableAdjustment(EmbeddedDocument):
 
     adjustmentType = StringField(choices=[None, "", "percentage", "amount", "text"], default="percentage")
 
-    adjustmentPercentages = DictField(FloatField())
+    adjustmentPercentages = DictField(FloatField(), default={})
 
-    adjustmentAmounts = DictField(FloatField())
+    adjustmentAmounts = DictField(FloatField(), default={})
 
-    adjustmentTexts = DictField(StringField())
+    adjustmentTexts = DictField(StringField(), default={})
 
 
 
@@ -22,7 +22,7 @@ class ComparableAdjustmentChart(EmbeddedDocument):
     meta = {'strict': False}
 
     # A list of adjustments
-    adjustments = EmbeddedDocumentListField(ComparableAdjustment)
+    adjustments = EmbeddedDocumentListField(ComparableAdjustment, default=[])
 
     showAdjustmentChart = BooleanField()
 
