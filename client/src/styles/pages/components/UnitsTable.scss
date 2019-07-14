@@ -75,15 +75,16 @@
     }
   }
 
-  .action-column
-  {
-    .btn {
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 0s;
+  .unit-row {
+    .action-column {
+      .btn {
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0s;
+      }
+      max-width: 70px;
+      padding-left: 10px;
     }
-    max-width: 70px;
-    padding-left: 10px;
   }
 
   &.allow-selection

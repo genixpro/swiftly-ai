@@ -47,12 +47,13 @@ class FreeRentLossForUnitCalculationPopoverWrapper extends React.Component
         return (
             [
                 <a id={this.popoverId}
+                   key={1}
                    onClick={() => this.setState({freeRentLossPopoverOpen: !this.state.freeRentLossPopoverOpen})}>
                     {
                         this.props.children
                     }
                 </a>,
-                <Popover placement="bottom" isOpen={this.state.freeRentLossPopoverOpen} target={this.popoverId}
+                <Popover key={2} placement="bottom" isOpen={this.state.freeRentLossPopoverOpen} target={this.popoverId}
                          toggle={() => this.setState({freeRentLossPopoverOpen: !this.state.freeRentLossPopoverOpen})}>
                     <PopoverHeader>Free Rent Loss</PopoverHeader>
                     <PopoverBody>
