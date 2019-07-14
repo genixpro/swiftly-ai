@@ -288,7 +288,7 @@ class UnitModel extends BaseModel
                 }
                 else
                 {
-                    message += '.'
+                    message += '. '
                 }
 
                 lastRent = tenancy.yearlyRent;
