@@ -185,6 +185,9 @@ def uploadData(data, dbAlias, storageBucket, newOwner, oldEnv, newEnv):
             if newAppraisal.zoning:
                 newAppraisal.zoning = zoneIDReverseMap[newAppraisal.zoning]
 
+            for key in newAppraisal.dataTypeReferences.keys():
+                newAppraisal.dataTypeReferences[key] = [fileIDReverseMap[oldId] for oldId in newAppraisal.dataTypeReferences[key] if oldId in fileIDReverseMap]
+
             newAppraisal.save(validate=False)
 
     with switch_db(ComparableSale, dbAlias) as TargetComparableSale:
