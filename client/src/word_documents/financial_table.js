@@ -287,7 +287,7 @@ class FinancialTable extends React.Component {
     render()
     {
         const tableStyle = {
-            
+
         };
 
         return (

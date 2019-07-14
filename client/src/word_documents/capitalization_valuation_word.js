@@ -221,7 +221,7 @@ class App extends React.Component
             <br/>
             <h4 style={{"textAlign": "left", "color": "black"}}>Summary</h4>
             <p>
-                The comparable sales detailed above indicate a range in capitalization rates from <PercentFormat value={minCapRate}/> to <PercentFormat value={maxCapRate} />. It is our opinion that an overall capitalization rate of <PercentFormat value={this.props.appraisal.stabilizedStatementInputs.capitalizationRate} /> is reasonable
+                The comparable sales detailed above indicate a range in capitalization rates from <PercentFormat value={minCapRate}/> to <PercentFormat value={maxCapRate} />. It is our opinion that a capitalization rate of <PercentFormat value={this.props.appraisal.stabilizedStatementInputs.capitalizationRate} /> is reasonable
                 for the subject property. A capitalization rate of <PercentFormat value={this.props.appraisal.stabilizedStatementInputs.capitalizationRate} />, applied to the subject NOI is detailed below:
             </p>
             <br />
