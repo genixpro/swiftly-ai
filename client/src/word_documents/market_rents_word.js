@@ -146,15 +146,12 @@ class MarketRentsWord extends React.Component
             <body style={{"width": "7in"}}>
             <br/>
             <h4 style={{"textAlign": "center"}}>MARKET RENTS</h4>
-            <p>To determine the long-term income potential of the subject property the market rent for the property must
-                be estimated. Establishing market rent also contextualizes current contract rent within the building as
-                compared to the prevailing market levels. In establishing the market rent the following analysis has been
-                completed:</p>
-            <ul>
-                <li>Analyzed the most recent lease deals from within the subject building;</li>
-                <li>Researched, and analyzed, recent leases and current asking rates involving comparable industrial buildings
-                    located throughout the {this.getCity(this.props.appraisal.address)} and surrounding areas.</li>
-            </ul>
+            <p>To determine the long-term income potential of the subject property the market rent for the
+                property must be established. Estimating market rent also allows the appraiser to analyze
+                current contract rent within the building as compared to the market levels. In establishing the
+                market rent the following analysis has been completed: Analyzed the lease deals from the subject
+                building and analyzed recent completed leases involving similar ${this.props.appraisal.propertyType}
+                buildings located throughout {this.getCity(this.props.appraisal.address)} and surrounding areas.</p>
 
             <StyledTable
                 headers={["Index \n Date", "Address", "Size", "Rent", "Remarks"]}
@@ -217,8 +214,8 @@ class MarketRentsWord extends React.Component
                                 : null
                         }
                         {
-                            obj.tenantInducementsPSF ?
-                                <span>TI @ <CurrencyFormat value={obj.tenantInducementsPSF} /><br/></span>
+                            obj.tenantInducements ?
+                                <span>TI @ <CurrencyFormat value={obj.tenantInducements} /><br/></span>
                                 : null
                         }
                         {
@@ -231,7 +228,11 @@ class MarketRentsWord extends React.Component
             <br />
 
             <ul>
-                <li>The comparable lease data detailed above shows rents in the range from <CurrencyFormat value={minRent} /> to <CurrencyFormat value={maxRent} /> per square foot (net) for industrial space located in {this.getCity(this.props.appraisal.address)} and surrounding areas. The indicated range refers to the rent payable in the first few years of leases that range in length from <IntegerFormat value={minYears} /> to <IntegerFormat value={maxYears} /> years.</li>
+                <li>
+                    The comparable lease data detailed above shows rents in the range from <CurrencyFormat value={minRent} /> to <CurrencyFormat value={maxRent} /> per
+                    square foot (net) for ${this.props.appraisal.propertyType} space located in {this.getCity(this.props.appraisal.address)} and surrounding areas. The rental
+                    range is in terms of the first-year net rental figures of leases that range in length from <IntegerFormat value={minYears} /> to <IntegerFormat value={maxYears} /> years.
+                </li>
                 <li>
                     {
                         allNet ? <span>The leases are net</span> : null
