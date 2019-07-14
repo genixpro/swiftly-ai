@@ -187,12 +187,12 @@ class App extends React.Component
             <h4 style={{"textAlign": "center", "color": "black"}}>Capitalization Valuation</h4>
             <h5 style={subHeaderStyle}>{this.props.appraisal.address}</h5>
 
-            <p>In estimating the capitalization rate for the subject we have analyzed sales of similar ${this.props.appraisal.propertyType ? this.props.appraisal.propertyType.toString() + " " : ""}
-                properties. Research included ${this.props.appraisal.propertyType ? this.props.appraisal.propertyType.toString() + " " : ""}properties between <IntegerFormat value={minCompSize} /> and <IntegerFormat value={maxCompSize} /> square feet.
+            <p>In estimating the capitalization rate for the subject we have analyzed sales of similar {this.props.appraisal.propertyType ? this.props.appraisal.propertyType.toString() + " " : ""}
+                properties. Research included {this.props.appraisal.propertyType ? this.props.appraisal.propertyType.toString() + " " : ""}properties between <IntegerFormat value={minCompSize} /> and <IntegerFormat value={maxCompSize} /> square feet.
                 Relevant details of comparable sales are summarized in the chart below.</p>
 
             <StyledTable
-                headers={["Index \n Date", "Address", "Consideration", "Leasable Area \n (Occupancy)", "Net Income \n PSF", "Stabilized \n OCR"]}
+                headers={["Index \n Date", "Address", "Sale Price", "Leasable Area \n (Occupancy)", "Net Income \n PSF", "Capitalization Rate"]}
                 rows={this.props.comparableSales}
                 fontSize={10}
                 columnSizes={[
@@ -221,9 +221,8 @@ class App extends React.Component
             <br/>
             <h4 style={{"textAlign": "left", "color": "black"}}>Summary</h4>
             <p>
-                The comparable sales detailed above indicate a range in stabilized overall capitalization rates from <PercentFormat value={minCapRate}/> to <PercentFormat value={maxCapRate} />. Adjustments have been made based on the subject’s properties location, construction date/condition,
-                and tenancy. After adjustments, it is our opinion that an overall capitalization rate of <PercentFormat value={this.props.appraisal.stabilizedStatementInputs.capitalizationRate} /> is appropriate
-                for the subject property. A capitalization rate of <PercentFormat value={this.props.appraisal.stabilizedStatementInputs.capitalizationRate} />, applied to the subjects stabilized net income of <CurrencyFormat value={this.props.appraisal.stabilizedStatement.netOperatingIncome} /> is detailed below:
+                The comparable sales detailed above indicate a range in capitalization rates from <PercentFormat value={minCapRate}/> to <PercentFormat value={maxCapRate} />. It is our opinion that an overall capitalization rate of <PercentFormat value={this.props.appraisal.stabilizedStatementInputs.capitalizationRate} /> is reasonable
+                for the subject property. A capitalization rate of <PercentFormat value={this.props.appraisal.stabilizedStatementInputs.capitalizationRate} />, applied to the subject NOI is detailed below:
             </p>
             <br />
             <FinancialTable rows={rows} />

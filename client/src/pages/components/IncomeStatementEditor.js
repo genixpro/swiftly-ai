@@ -1,7 +1,7 @@
 import React from 'react';
 import {Row, Col, Button, Popover, PopoverHeader, PopoverBody} from 'reactstrap';
 import axios from "axios/index";
-import {DroppableFieldDisplayEdit} from './FieldDisplayEdit';
+import {DroppableFieldDisplayEdit, NonDroppableFieldDisplayEdit} from './FieldDisplayEdit';
 import _ from 'underscore';
 import {SortableContainer, SortableElement, SortableHandle} from 'react-sortable-hoc';
 import arrayMove from "array-move";
@@ -88,7 +88,7 @@ class IncomeStatementEditor extends React.Component
                                                             Add a new year. Apply Discount Rate to Items:
                                                             <br/>
                                                             <br/>
-                                                            <DroppableFieldDisplayEdit
+                                                            <NonDroppableFieldDisplayEdit
                                                                 type={"percent"}
                                                                 value={this.state.newYearGrowthPercent}
                                                                 onChange={(newValue) => this.setState({newYearGrowthPercent: newValue})}
@@ -190,7 +190,7 @@ class IncomeStatementEditor extends React.Component
                                     Add a new year. Apply Growth Rate to Items:
                                     <br/>
                                     <br/>
-                                    <DroppableFieldDisplayEdit
+                                    <NonDroppableFieldDisplayEdit
                                         type={"percent"}
                                         value={this.state.newYearGrowthPercent}
                                         onChange={(newValue) => this.setState({newYearGrowthPercent: newValue})}

@@ -114,7 +114,7 @@ class App extends React.Component {
             <p>
                 Operating costs recoveries recoup the owners’ costs of operating the building including items such as: taxes, insurance and maintenance.
 
-                A budget for {lastYear} has been provided. We have increased the 2018 Budget figures by <PercentFormat value={100 * this.props.appraisal.incomeStatement.calculateTotalExpenses(appraisalYear, "operating_expense") / this.props.appraisal.incomeStatement.calculateTotalExpenses(lastYear, "operating_expense")}/> to estimate operating costs in {appraisalYear}. Expenses are detailed below:
+                A budget for {lastYear} has been provided. We have increased the 2018 Budget figures by <PercentFormat value={100 * (this.props.appraisal.incomeStatement.calculateTotalExpenses(appraisalYear, "operating_expense") / this.props.appraisal.incomeStatement.calculateTotalExpenses(lastYear, "operating_expense") - 1)}/> to estimate operating costs in {appraisalYear}. Expenses are detailed below:
             </p>
             <p>
                 *This section can be auto populated based on your company specific verbiage.
@@ -129,8 +129,8 @@ class App extends React.Component {
             />
             <br/>
             <p>
-                Recoverable Operating Costs are estimated at <CurrencyFormat cents={false} value={this.props.appraisal.stabilizedStatement.operatingExpenses}/>
-                for {appraisalYear}. Taxes for {appraisalYear} are estimated at <CurrencyFormat cents={false} value={this.props.appraisal.incomeStatement.calculateTotalExpenses(appraisalYear, "taxes")}/>.
+                Recoverable Operating Costs are estimated at <CurrencyFormat cents={false} value={this.props.appraisal.stabilizedStatement.operatingExpenses}/> for
+                <span> {appraisalYear}</span>. Taxes for {appraisalYear} are estimated at <CurrencyFormat cents={false} value={this.props.appraisal.incomeStatement.calculateTotalExpenses(appraisalYear, "taxes")}/>.
                 The operating cost and expense figures are found to be reasonable for the subject neighborhood, falling within the TMI range of comparable properties.
             </p>
 

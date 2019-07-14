@@ -65,7 +65,7 @@ class App extends React.Component
             <p>The Direct Comparison Approach: This section will be auto populated based on your company specific verbiage.</p>
             <br/>
             <StyledTable
-                headers={["Date", "Address", "Consideration", "Building Size (sf)", "Cap Rate"]}
+                headers={["Date", "Address", "Sale Price", "Building Size (sf)", "Price Per Square Foot", "NOI PSF"]}
                 rows={this.props.comparableSales}
                 fontSize={10}
                 fields={{
@@ -73,14 +73,16 @@ class App extends React.Component
                     "address": (address) => <Value>{address}</Value>,
                     "salePrice": (salePrice) => <CurrencyValue center>{salePrice}</CurrencyValue>,
                     "sizeSquareFootage": (sizeSquareFootage) => <span style={{"textAlign": "center"}}><IntegerFormat value={sizeSquareFootage} /></span>,
-                    "capitalizationRate": (capitalizationRate) => <PercentValue center>{capitalizationRate}</PercentValue>
+                    "pricePerSquareFoot": (pricePerSquareFoot) => <span style={{"textAlign": "center"}}><CurrencyFormat value={pricePerSquareFoot} /></span>,
+                    "netOperatingIncomePSF": (netOperatingIncomePSF) => <CurrencyValue center>{netOperatingIncomePSF}</CurrencyValue>
                 }}
                 columnSizes={[
                     "10%",
-                    "45%",
+                    "40%",
                     "15%",
                     "15%",
-                    "15%"
+                    "10%",
+                    "10%"
                 ]}
             />
 
@@ -105,7 +107,7 @@ class App extends React.Component
                 fontSize={10}
                 rows={this.props.comparableSales}
                 fields={{
-                    "index": (field, obj, index) => <Value>{index}</Value>,
+                    "index": (field, obj, index) => <Value>{index+1}</Value>,
                     "pricePerSquareFoot": (pricePerSquareFoot) => <span style={{"textAlign": "center"}}><CurrencyFormat value={pricePerSquareFoot}/></span>,
                     "netOperatingIncomePSF": (netOperatingIncomePSF) => <span style={{"textAlign": "center"}}><CurrencyFormat value={netOperatingIncomePSF}/></span>,
                     "noiPSFMultiple": (noiPSFMultiple, obj) => <span style={{"textAlign": "center"}}>{obj.noiPSFMultiple ? obj.noiPSFMultiple.toFixed(2) : ""}</span>,

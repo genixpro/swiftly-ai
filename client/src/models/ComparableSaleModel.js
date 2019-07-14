@@ -612,7 +612,7 @@ class ComparableSaleModel extends EquationMdoel
 
         if(comparableSale.vendor && comparableSale.purchaser)
         {
-            text += `The property vendor was ${comparableSale.vendor} and the purchaser was ${comparableSale.purchaser}. `;
+            text += `The vendor was ${comparableSale.vendor} and the purchaser was ${comparableSale.purchaser}. `;
         }
 
         if (comparableSale.salePrice)

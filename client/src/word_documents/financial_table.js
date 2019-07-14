@@ -21,14 +21,17 @@ class Row extends React.Component
         };
 
         const tableStyle = {
-            "marginLeft": "1in"
+            // "marginLeft": "1in",
+            "border": "0px solid white"
         };
 
         const titleRowStyle = {
+            "border": "0px solid white",
 
         };
 
         const dataRowStyle = {
+            "border": "0px solid white"
         };
 
         const sumAfterDataRowStyle = {
@@ -45,13 +48,15 @@ class Row extends React.Component
 
 
         const labelColumnStyle = {
-
+            "border": "0px solid white"
         };
 
         const amountColumnStyle = {
+            "border": "0px solid white"
         };
 
         const amountTotalColumnStyle = {
+            "border": "0px solid white"
         };
 
         const labelSpanStyle = {
@@ -281,9 +286,13 @@ class Row extends React.Component
 class FinancialTable extends React.Component {
     render()
     {
+        const tableStyle = {
+            
+        };
+
         return (
             <center>
-                <table cellSpacing={0} align="center">
+                <table cellSpacing={0} align="center" style={tableStyle}>
                     <tbody>
                     {
                         this.props.rows.map((row, rowIndex) =>
