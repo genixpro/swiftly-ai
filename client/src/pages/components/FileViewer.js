@@ -74,7 +74,7 @@ class FileViewer extends React.Component
         const adjustedAverageWordHeight = averageWordWidth * (averageWordWidth / averageWordHeight) * viewportHeight;
 
         const zoomLevel = (40 / adjustedAverageWordHeight) * 100;
-        return Math.max(zoomLevel, 100);
+        return Math.max(zoomLevel, 75);
     }
 
 
@@ -210,15 +210,15 @@ class FileViewer extends React.Component
         const currentZoom = this.state.imageZoom;
         if (currentZoom > 250)
         {
-            this.setState({imageZoom: Math.max(currentZoom - 100, 100)}, () => this.moveViewTo(imageX, imageY, containerX, containerY));
+            this.setState({imageZoom: Math.max(currentZoom - 100, 75)}, () => this.moveViewTo(imageX, imageY, containerX, containerY));
         }
         else if (currentZoom > 150)
         {
-            this.setState({imageZoom: Math.max(currentZoom - 50, 100)}, () => this.moveViewTo(imageX, imageY, containerX, containerY));
+            this.setState({imageZoom: Math.max(currentZoom - 50, 75)}, () => this.moveViewTo(imageX, imageY, containerX, containerY));
         }
         else
         {
-            this.setState({imageZoom: Math.max(currentZoom - 25, 100)}, () => this.moveViewTo(imageX, imageY, containerX, containerY));
+            this.setState({imageZoom: Math.max(currentZoom - 25, 75)}, () => this.moveViewTo(imageX, imageY, containerX, containerY));
         }
 
     }
