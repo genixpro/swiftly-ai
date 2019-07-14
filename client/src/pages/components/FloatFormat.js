@@ -15,7 +15,7 @@ class FloatFormat extends React.Component
         return <span><NumberFormat
             value={this.props.value}
             displayType={'text'}
-            thousandSeparator={', '}
+            thousandSeparator={','}
             decimalScale={2}
             fixedDecimalScale={true}
         /></span>

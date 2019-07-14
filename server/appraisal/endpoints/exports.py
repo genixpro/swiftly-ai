@@ -130,7 +130,7 @@ class ComparableSalesExcelFile(ExportAPI):
         if "view_all" not in self.request.effective_principals:
             query["owner"] = self.request.authenticated_userid
 
-        comparables = ComparableSale.objects(**query).order_by("saleDate", "capitalizationRate", "_id")
+        comparables = ComparableSale.objects(**query).order_by("-saleDate", "capitalizationRate", "_id")
 
         wb = Workbook()
 
@@ -203,7 +203,7 @@ class ComparableSalesWordFile(ExportAPI):
         if "view_all" not in self.request.effective_principals:
             query["owner"] = self.request.authenticated_userid
 
-        comparables = ComparableSale.objects(**query).order_by("saleDate", "capitalizationRate", "_id")
+        comparables = ComparableSale.objects(**query).order_by("-saleDate", "capitalizationRate", "_id")
 
         data = {
             "appraisal": json.loads(appraisal.to_json()),
@@ -251,7 +251,7 @@ class ComparableSalesDetailedWordFile(ExportAPI):
         if "view_all" not in self.request.effective_principals:
             query["owner"] = self.request.authenticated_userid
 
-        comparables = ComparableSale.objects(**query).order_by("saleDate", "capitalizationRate", "_id")
+        comparables = ComparableSale.objects(**query).order_by("-saleDate", "capitalizationRate", "_id")
 
         comparables = [comp for comp in comparables]
 
@@ -314,7 +314,7 @@ class ComparableLeasesExcelFile(ExportAPI):
         if "view_all" not in self.request.effective_principals:
             query["owner"] = self.request.authenticated_userid
 
-        comparables = ComparableLease.objects(**query).order_by("leaseDate", "sizeOfUnit", "_id")
+        comparables = ComparableLease.objects(**query).order_by("-leaseDate", "sizeOfUnit", "_id")
 
         wb = Workbook()
 
@@ -387,7 +387,7 @@ class ComparableLeasesWordFile(ExportAPI):
         if "view_all" not in self.request.effective_principals:
             query["owner"] = self.request.authenticated_userid
 
-        comparables = ComparableLease.objects(**query).order_by("leaseDate", "sizeOfUnit", "_id")
+        comparables = ComparableLease.objects(**query).order_by("-leaseDate", "sizeOfUnit", "_id")
 
         document = Document()
 
@@ -811,7 +811,7 @@ class CapitalizationValuationWordFile(ExportAPI):
         if "view_all" not in self.request.effective_principals:
             query["owner"] = self.request.authenticated_userid
 
-        comparables = ComparableSale.objects(**query).order_by("saleDate", "capitalizationRate", "_id")
+        comparables = ComparableSale.objects(**query).order_by("-saleDate", "capitalizationRate", "_id")
 
         data = {
             "appraisal": json.loads(appraisal.to_json()),
@@ -924,7 +924,7 @@ class DirectComparisonValuationWordFile(ExportAPI):
         if "view_all" not in self.request.effective_principals:
             query["owner"] = self.request.authenticated_userid
 
-        comparables = ComparableSale.objects(**query).order_by("saleDate", "capitalizationRate", "_id")
+        comparables = ComparableSale.objects(**query).order_by("-saleDate", "capitalizationRate", "_id")
 
         data = {
             "appraisal": json.loads(appraisal.to_json()),
@@ -1258,7 +1258,7 @@ class MarketRentsWordFile(ExportAPI):
         if "view_all" not in self.request.effective_principals:
             query["owner"] = self.request.authenticated_userid
 
-        comparables = ComparableLease.objects(**query).order_by("leaseDate", "sizeOfUnit", "_id")
+        comparables = ComparableLease.objects(**query).order_by("-leaseDate", "sizeOfUnit", "_id")
 
         comparables = [comp for comp in comparables]
 

@@ -505,7 +505,7 @@ class ComparableSaleListItem extends React.Component
                 render: (value) => <NumberFormat
                     value={value}
                     displayType={'text'}
-                    thousandSeparator={', '}
+                    thousandSeparator={','}
                     decimalScale={0}
                     fixedDecimalScale={true}
                 />,
@@ -515,7 +515,7 @@ class ComparableSaleListItem extends React.Component
                 render: (value) => <NumberFormat
                     value={value}
                     displayType={'text'}
-                    thousandSeparator={', '}
+                    thousandSeparator={','}
                     decimalScale={0}
                     fixedDecimalScale={true}
                 />,
@@ -525,7 +525,7 @@ class ComparableSaleListItem extends React.Component
                 render: (value) => <NumberFormat
                     value={value}
                     displayType={'text'}
-                    thousandSeparator={', '}
+                    thousandSeparator={','}
                     decimalScale={1}
                     fixedDecimalScale={true}
                 />,
@@ -535,7 +535,7 @@ class ComparableSaleListItem extends React.Component
                 render: (value) => <NumberFormat
                     value={value}
                     displayType={'text'}
-                    thousandSeparator={', '}
+                    thousandSeparator={','}
                     decimalScale={0}
                     fixedDecimalScale={true}
                 />,

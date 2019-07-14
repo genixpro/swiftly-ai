@@ -61,7 +61,7 @@ class App extends React.Component
             <html>
             <body style={{"width": "7in"}}>
             <br/>
-            <h4 style={{"textAlign": "center", "color": "#2f5496"}}>DIRECT COMPARISON APPROACH</h4>
+            <h4 style={{"textAlign": "center", "color": "black"}}>DIRECT COMPARISON APPROACH</h4>
             {/*<h2 style={subHeaderStyle}>{this.props.appraisal.address}</h2>*/}
             <p>The Direct Comparison Approach: This section will be auto populated based on your company specific verbiage.</p>
             <br/>
@@ -92,13 +92,13 @@ class App extends React.Component
                 The range reflects differences in the comparable properties such as: location, quality of finishing’s, average net rent.
             </p>
 
-            <h4 style={{"textAlign": "left", "color": "#2f5496"}}>LAND</h4>
+            <h4 style={{"textAlign": "left", "color": "black"}}>LAND</h4>
             <ul><li>This section will be auto populated based on your company specific verbiage.</li></ul>
-            <h4 style={{"textAlign": "left", "color": "#2f5496"}}>FINANCING</h4>
+            <h4 style={{"textAlign": "left", "color": "black"}}>FINANCING</h4>
             <ul><li>This section will be auto populated based on your company specific verbiage.</li></ul>
-            <h4 style={{"textAlign": "left", "color": "#2f5496"}}>COMPARABLE BUILDING SALE CONDITIONS</h4>
+            <h4 style={{"textAlign": "left", "color": "black"}}>COMPARABLE BUILDING SALE CONDITIONS</h4>
             <ul><li>This section will be auto populated based on your company specific verbiage.</li></ul>
-            <h4 style={{"textAlign": "left", "color": "#2f5496"}}>NOI PSF / MULTIPLE CALCULATOR</h4>
+            <h4 style={{"textAlign": "left", "color": "black"}}>NOI PSF / MULTIPLE CALCULATOR</h4>
             <ul><li>This section will be auto populated based on your company specific verbiage.</li></ul>
 
             <StyledTable

@@ -145,7 +145,7 @@ class MarketRentsWord extends React.Component
             <html>
             <body style={{"width": "7in"}}>
             <br/>
-            <h4 style={{"textAlign": "center", "color": "#2f5496"}}>MARKET RENTS</h4>
+            <h4 style={{"textAlign": "center", "color": "black"}}>MARKET RENTS</h4>
             <p>To determine the long-term income potential of the subject property the market rent for the
                 property must be established. Estimating market rent also allows the appraiser to analyze
                 current contract rent within the building as compared to the market levels. In establishing the
@@ -227,13 +227,13 @@ class MarketRentsWord extends React.Component
                 }} />
             <br />
 
-            <ul>
-                <li>
+            <p>
+                <span>
                     The comparable lease data detailed above shows rents in the range from <CurrencyFormat value={minRent} /> to <CurrencyFormat value={maxRent} /> per
-                    square foot (net) for ${this.props.appraisal.propertyType} space located in {this.getCity(this.props.appraisal.address)} and surrounding areas. The rental
+                    square foot (net) for {this.props.appraisal.propertyType} space located in {this.getCity(this.props.appraisal.address)} and surrounding areas. The rental
                     range is in terms of the first-year net rental figures of leases that range in length from <IntegerFormat value={minYears} /> to <IntegerFormat value={maxYears} /> years.
-                </li>
-                <li>
+                </span>
+                <span>
                     {
                         allNet ? <span>The leases are net</span> : null
                     }
@@ -248,15 +248,14 @@ class MarketRentsWord extends React.Component
                             <span> and included tenant inducements ranging from <CurrencyFormat value={minTI} /> to <CurrencyFormat value={maxTI} /></span> :
                             <span> and did not include any significant tenant inducements or allowances.</span>
                     }
-                </li>
-                <li>
+                </span>
+                <span>
                     The rates at the upper end of the range refer to modern buildings that offer a superior level of accommodation in terms of age, clear ceiling height, features, and finished office space.
-                </li>
-                <li>
-                    Rates at the low end of the range are generally indicated in older buildings with an inferior level of
-                    accommodation and older age, including a lower clear ceiling height.
-                </li>
-            </ul>
+                </span>
+                <span>
+                    Rates at the low end of the range are generally indicated in older buildings with an inferior level of accommodation.
+                </span>
+            </p>
             <h3>Summary of Market Rents</h3>
             <ul>
                 <li>

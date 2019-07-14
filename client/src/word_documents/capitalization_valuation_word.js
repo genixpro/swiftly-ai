@@ -185,7 +185,7 @@ class App extends React.Component
             <html>
             <body style={{"width": "7in"}}>
             <br/>
-            <h4 style={{"textAlign": "center", "color": "#2f5496"}}>Capitalization Valuation</h4>
+            <h4 style={{"textAlign": "center", "color": "black"}}>Capitalization Valuation</h4>
             <h5 style={subHeaderStyle}>{this.props.appraisal.address}</h5>
 
             <p>In estimating the capitalization rate for the subject we have analyzed sales of similar ${this.props.appraisal.propertyType ? this.props.appraisal.propertyType.toString() + " " : ""}
@@ -205,7 +205,7 @@ class App extends React.Component
                     "12.5%"
                 ]}
                 fields={{
-                    "saleDate": (saleDate, obj, objIndex) => <span style={{"textAlign": "center"}}><span>{objIndex + 1}</span><br/><Moment format="M/YY">{obj.saleDate}</Moment></span>,
+                    "saleDate": (saleDate, obj, objIndex) => <span style={{"textAlign": "left"}}><span>{objIndex + 1}</span><br/><Moment format="M/YY">{obj.saleDate}</Moment></span>,
                     "address": (address) => <Value>{address}</Value>,
                     "salePrice": (salePrice) => <CurrencyValue>{salePrice}</CurrencyValue>,
                     "sizeSquareFootage": (sizeSquareFootage, obj) => <span style={{"textAlign": "center"}}><AreaFormat value={sizeSquareFootage} /><br /><PercentFormat value={obj.occupancyRate} /></span>,
@@ -216,18 +216,15 @@ class App extends React.Component
             <br/>
             <p>As detailed above, the sales show a range in capitalization rates from <PercentFormat value={minCapRate} /> to <PercentFormat value={maxCapRate} />.
                 The average rate of the comparable sales is <PercentFormat value={capRateAverage} />, with most comparable sales being above <PercentFormat value={capRateMedian} />.
-                The range is mostly attributed to differences in location and sale date. For the purpose of the appraisal, adjustments have been made to allow for differences between
-                comparable properties and the subject. A summary of the comparable sales is presented below.</p>
+                The range is mostly attributed to differences in location and sale date. A summary of the comparable sales is presented below.</p>
             <br />
             <ComparableSalesSummaries comparableSales={this.props.comparableSales}/>
             <br/>
-            <h4 style={{"textAlign": "left", "color": "#2f5496"}}>Summary</h4>
+            <h4 style={{"textAlign": "left", "color": "black"}}>Summary</h4>
             <p>
-                The comparable sales detailed above indicate a range in stabilized overall capitalization rates from <PercentFormat value={minCapRate}/> to
-                &nbsp;<PercentFormat value={maxCapRate} />. Adjustments have been made based on the subject’s properties location, construction date/condition,
+                The comparable sales detailed above indicate a range in stabilized overall capitalization rates from <PercentFormat value={minCapRate}/> to <PercentFormat value={maxCapRate} />. Adjustments have been made based on the subject’s properties location, construction date/condition,
                 and tenancy. After adjustments, it is our opinion that an overall capitalization rate of <PercentFormat value={this.props.appraisal.stabilizedStatementInputs.capitalizationRate} /> is appropriate
-                for the subject property. A capitalization rate of <PercentFormat value={this.props.appraisal.stabilizedStatementInputs.capitalizationRate} />, applied to the subjects stabilized net income of
-                &nbsp;<CurrencyFormat value={this.props.appraisal.stabilizedStatement.netOperatingIncome} /> is detailed below:
+                for the subject property. A capitalization rate of <PercentFormat value={this.props.appraisal.stabilizedStatementInputs.capitalizationRate} />, applied to the subjects stabilized net income of <CurrencyFormat value={this.props.appraisal.stabilizedStatement.netOperatingIncome} /> is detailed below:
             </p>
             <br />
             <FinancialTable rows={rows} />

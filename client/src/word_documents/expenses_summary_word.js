@@ -103,7 +103,7 @@ class App extends React.Component {
             <html>
             <body style={{"width": "7in"}}>
             <br/>
-            <h4 style={{"textAlign": "center", "color": "#2f5496"}}>REALTY TAXES AND OPERATING COSTS</h4>
+            <h4 style={{"textAlign": "center", "color": "black"}}>REALTY TAXES AND OPERATING COSTS</h4>
             <br/>
             <h5>Recoverable Costs</h5>
             <p>

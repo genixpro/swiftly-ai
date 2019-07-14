@@ -71,7 +71,7 @@ class ComparableLeaseAPI(object):
         if 'sort' in self.request.GET:
             comparableLeases = comparableLeases.order_by(self.request.GET['sort'])
         else:
-            comparableLeases = comparableLeases.order_by("leaseDate", "sizeOfUnit", "_id")
+            comparableLeases = comparableLeases.order_by("-leaseDate", "sizeOfUnit", "_id")
 
         return {"comparableLeases": list([json.loads(sale.to_json()) for sale in comparableLeases])}
 

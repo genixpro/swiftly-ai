@@ -21,7 +21,7 @@ class CurrencyFormat extends React.Component
             return <span title={this.props.title}>($<NumberFormat
                 value={-this.props.value || 0}
                 displayType={'text'}
-                thousandSeparator={', '}
+                thousandSeparator={','}
                 decimalScale={this.props.cents ? 2 : 0}
                 fixedDecimalScale={true}
             />)</span>
@@ -31,7 +31,7 @@ class CurrencyFormat extends React.Component
             return <span title={this.props.title}>$<NumberFormat
                 value={this.props.value || 0}
                 displayType={'text'}
-                thousandSeparator={', '}
+                thousandSeparator={','}
                 decimalScale={this.props.cents ? 2 : 0}
                 fixedDecimalScale={true}
             /></span>
