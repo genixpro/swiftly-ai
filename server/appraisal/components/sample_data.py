@@ -186,7 +186,11 @@ def uploadData(data, dbAlias, storageBucket, newOwner, oldEnv, newEnv):
                 newAppraisal.zoning = zoneIDReverseMap[newAppraisal.zoning]
 
             for key in newAppraisal.dataTypeReferences.keys():
-                newAppraisal.dataTypeReferences[key] = [fileIDReverseMap[oldId] for oldId in newAppraisal.dataTypeReferences[key] if oldId in fileIDReverseMap]
+                for reference in newAppraisal.dataTypeReferences[key]:
+                    if reference.fileId in fileIDReverseMap:
+                        reference.fileId = fileIDReverseMap[reference.fileId]
+                    else:
+                        reference.fileId = None
 
             newAppraisal.save(validate=False)
 
