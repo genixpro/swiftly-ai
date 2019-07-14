@@ -267,23 +267,23 @@ class ViewStabilizedStatement extends React.Component
                                                         <td/>
                                                     </tr> : null
                                             }
-                                            {
-                                                this.props.appraisal.appraisalType === 'detailed' && this.props.appraisal.stabilizedStatement.additionalIncome ?
-                                                    <tr className={"data-row"}>
-                                                        <td className={"label-column"}>
-                                                            <Link to={`/appraisal/${this.props.appraisal._id}/additional_income`}>Additional Income</Link>
-                                                        </td>
-                                                        <td className={"amount-column"}>
-                                                            <Link to={`/appraisal/${this.props.appraisal._id}/additional_income`}>
-                                                                <CurrencyFormat value={this.props.appraisal.stabilizedStatement.additionalIncome} />
-                                                            </Link>
-                                                        </td>
-                                                        <td className={"amount-total-column"}/>
-                                                    </tr> : null
-                                            }
+                                            {/*{*/}
+                                            {/*    this.props.appraisal.appraisalType === 'detailed' && this.props.appraisal.stabilizedStatement.additionalIncome ?*/}
+                                            {/*        <tr className={"data-row"}>*/}
+                                            {/*            <td className={"label-column"}>*/}
+                                            {/*                <Link to={`/appraisal/${this.props.appraisal._id}/additional_income`}>Additional Income</Link>*/}
+                                            {/*            </td>*/}
+                                            {/*            <td className={"amount-column"}>*/}
+                                            {/*                <Link to={`/appraisal/${this.props.appraisal._id}/additional_income`}>*/}
+                                            {/*                    <CurrencyFormat value={this.props.appraisal.stabilizedStatement.additionalIncome} />*/}
+                                            {/*                </Link>*/}
+                                            {/*            </td>*/}
+                                            {/*            <td className={"amount-total-column"}/>*/}
+                                            {/*        </tr> : null*/}
+                                            {/*}*/}
 
                                             {
-                                                this.props.appraisal.appraisalType === 'simple' ? (this.props.appraisal.incomeStatement.incomes || []).map((incomeItem, index) =>
+                                                (this.props.appraisal.incomeStatement.incomes || []).map((incomeItem, index) =>
                                                 {
                                                     return <tr className={"data-row income-row"} key={index}>
                                                         <td className={"label-column"}>
@@ -328,7 +328,7 @@ class ViewStabilizedStatement extends React.Component
                                                         <td className={"amount-total-column"}>
                                                         </td>
                                                     </tr>
-                                                ]) : null
+                                                ])
                                             }
                                             {
                                                 this.props.appraisal.appraisalType === 'detailed' ? this.props.appraisal.stabilizedStatement.recoverableIncome ?

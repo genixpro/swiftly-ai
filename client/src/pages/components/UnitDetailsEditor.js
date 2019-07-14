@@ -141,8 +141,8 @@ class UnitDetailsEditor extends React.Component
                     type='date'
                     placeholder={"Start Date"}
                     hideIcon={true}
-
-                    onChange={(newValue) => newValue.toDate ? this.createNewTenancy('startDate', newValue.toDate()) : null}
+                    defaultDate={this.props.unit.tenancies.length > 0 ? this.props.unit.tenancies[this.props.unit.tenancies.length -1].endDate : new Date()}
+                    onChange={(newValue) => this.createNewTenancy('startDate', newValue)}
                 />
             </td>
             <td>
@@ -150,7 +150,8 @@ class UnitDetailsEditor extends React.Component
                     type='date'
                     placeholder={"End Date"}
                     hideIcon={true}
-                    onChange={(newValue) => newValue.toDate ? this.createNewTenancy('endDate', newValue.toDate()) : null}
+                    defaultDate={this.props.unit.tenancies.length > 0 ? this.props.unit.tenancies[this.props.unit.tenancies.length -1].endDate : new Date()}
+                    onChange={(newValue) => this.createNewTenancy('endDate', newValue)}
                 />
             </td>
             <td>

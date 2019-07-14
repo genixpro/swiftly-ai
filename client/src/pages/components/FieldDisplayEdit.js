@@ -389,6 +389,7 @@ class FieldDisplayEdit extends React.Component
                                 title={this.props.title || this.props.placeholder}
                                 timeFormat={false}
                                 input={true}
+                                viewDate={this.props.defaultDate ? this.props.defaultDate : null}
                                 utc={true}
                                 closeOnSelect={true}
                                 value={this.state.isEditing ? this.state.value : this.formatValue(this.props.value)}
