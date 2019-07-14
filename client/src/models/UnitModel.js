@@ -296,7 +296,7 @@ class UnitModel extends BaseModel
         }
         else
         {
-            message += `Annual net rent for the duration of the lease term is $${UnitModel.numberWithCommas(startTenancy.yearlyRent / this.squareFootage, 2)} per square foot.`;
+            message += `Annual net rent for the duration of the lease term is $${UnitModel.numberWithCommas(startTenancy.yearlyRent / this.squareFootage, 2)} per square foot. `;
         }
 
         if (this.currentTenancy.freeRentMonths)
