@@ -3,7 +3,7 @@ import {Card, CardBody, CardHeader, CardTitle, Collapse } from 'reactstrap';
 
 class ChecklistGroup extends React.Component {
     state = {
-        detailsOpen: false
+        detailsOpen: true
     };
 
 
@@ -32,28 +32,23 @@ class ChecklistGroup extends React.Component {
             <Card className="checklist-item">
                 <CardHeader onClick={() => this.toggleAccordion()}>
                     <CardTitle tag="h4">
-                        {/*<a className="text-inherit">*/}
-                        {
-                            this.props.completed ?
-                                <small>
-                                    <i className={"fa fa-check"}></i>
-                                </small> :
-                                <small>
-                                    <i className={"fa fa-times"}></i>
-                                </small>
-                        }
-                        &nbsp;
-                        &nbsp;
-                        <span>{this.props.title}</span>
+                        <span className={"checklist-group-title"}>{this.props.title}</span>
                         {
                             (this.props.fileNames ? this.props.fileNames : []).length > 0 ?
-                                <span>&nbsp;-&nbsp;</span>
+                                <span className={"checklist-spacer"}>&nbsp;-&nbsp;</span>
                                 : null
                         }
                         {
-                            (this.props.fileNames ? this.props.fileNames : []).map((name) =>
+                            (this.props.fileNames ? this.props.fileNames : []).map((name, nameIndex) =>
                             {
-                                return <span>{name}&nbsp;</span>
+                                if (nameIndex < this.props.fileNames.length - 1)
+                                {
+                                    return <span className={"checklist-file-name"}>{name}, &nbsp;</span>;
+                                }
+                                else
+                                {
+                                    return <span className={"checklist-file-name"}>{name}</span>;
+                                }
                             })
                         }
                         {/*</a>*/}

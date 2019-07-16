@@ -1,13 +1,51 @@
 
 .checklist-item, .checklist-item.card-default
 {
-  background: $primary;
+  background: #a2a2a2;
   margin-bottom: 5px;
   color: white;
+  flex-grow: 1;
+  flex-shrink: 1;
+  flex-basis: 33%;
+
+  margin-left: 5px;
+  margin-right: 5px;
 
   .card-header
   {
     cursor: pointer;
     background: transparent;
+  }
+
+
+  .checklist-group-title
+  {
+    font-weight: bold;
+    font-size: 18px;
+  }
+
+  .checklist-spacer
+  {
+    font-weight: normal;
+    font-size: 18px;
+  }
+
+  .checklist-file-name
+  {
+    font-weight: normal;
+    font-size: 14px;
+  }
+
+
+  .fa.fa-check
+  {
+    color: #53ff40;
+    font-size: 16px;
+  }
+
+  .fa.fa-times
+  {
+    color: #ee3841;
+    font-size: 16px;
   }
 }
