@@ -264,6 +264,8 @@ class ViewDirectComparisonValuation extends React.Component
                     <Card className="card-default">
                         <CardBody>
 
+                            <Row>
+                                <Col xs={12}>
                             <Dropdown isOpen={this.state.downloadDropdownOpen} toggle={this.toggle.bind(this)}>
                                 <DropdownToggle caret color={"primary"} className={"download-dropdown-button"}>
                                     Download
@@ -273,6 +275,8 @@ class ViewDirectComparisonValuation extends React.Component
                                     {/*<DropdownItem onClick={() => this.downloadExcelSummary()}>Direct Comparison Approach Spreadsheet (xlsx)</DropdownItem>*/}
                                 </DropdownMenu>
                             </Dropdown>
+                                </Col>
+                            </Row>
 
 
                             <Row>
@@ -302,8 +306,8 @@ class ViewDirectComparisonValuation extends React.Component
 
                             {
                                 this.props.appraisal.adjustmentChart.showAdjustmentChart ?
-                                <Row>
-                                    <Col xs={8}>
+                                <Row className={"adjustment-chart-row"}>
+                                    <Col xs={12}>
                                         <br/>
                                         <h3>Adjustment Chart</h3>
 
