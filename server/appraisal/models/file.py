@@ -8,6 +8,7 @@ from .custom_id_field import CustomIDField
 from ..migrations import registerMigration
 import json as json, bson
 from .custom_id_field import generateNewUUID
+import hashlib
 
 class Word(EmbeddedDocument):
     meta = {'strict': False}
@@ -85,6 +86,9 @@ class File(Document):
 
     # The ID of the Appraisal object that this File is attached to
     appraisalId = StringField()
+
+    # This is an SHA-256 hash of the original file upload
+    hash = StringField()
 
     # The type of this document
     fileType = StringField()
@@ -270,3 +274,14 @@ def migration_001_002_update_file_object_id(object):
 
         newObject = File(**data)
         return newObject
+
+@registerMigration(File, 3)
+def migration_003_update_document_hash(object):
+    data = object.downloadFileData()
+
+    m = hashlib.sha256()
+    m.update(data)
+    hash = m.hexdigest()
+
+    object.hash = hash
+

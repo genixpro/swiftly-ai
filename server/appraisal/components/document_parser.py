@@ -310,7 +310,7 @@ class DocumentParser:
         return words
 
 
-    def processPDF(self, input_file, extractWords=True, local=False):
+    def processPDF(self, input_file, extractWords=True):
         with tempfile.TemporaryDirectory() as dir:
             with tempfile.NamedTemporaryFile('wb', dir=dir, suffix="pdf") as tempFile:
                 tempFile.write(input_file)
@@ -325,9 +325,9 @@ class DocumentParser:
 
                 words = []
                 if extractWords:
-                    if local:
-                        words = self.extractWordsFromPDFLocal(input_file)
-                    else:
+                    words = self.extractWordsFromPDFLocal(input_file)
+
+                    if len(words) == 0:
                         with concurrent.futures.ThreadPoolExecutor(max_workers=4) as executor:
                             pageFutures = []
                             for page in range(pdfInfo['pages']):

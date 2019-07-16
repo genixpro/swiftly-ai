@@ -1122,7 +1122,7 @@ class AnnotationEditor extends React.Component
                                         onChange={(evt) => this.onReviewStatusChanged(evt.target.value)}>
                                     <option value={"fresh"}>Fresh</option>
                                     <option value={"in_review"}>In Review</option>
-                                    <option value={"verifed"}>Verified</option>
+                                    <option value={"verified"}>Verified</option>
                                 </select>
                             </div>
                             <div>
