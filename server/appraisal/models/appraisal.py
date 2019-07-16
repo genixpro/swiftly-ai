@@ -27,7 +27,17 @@ from ..migrations import registerMigration
 from .custom_id_field import CustomIDField, generateNewUUID
 
 class Appraisal(Document):
-    meta = {'collection': 'appraisals', 'strict': False}
+    meta = {
+        'collection': 'appraisals',
+        'strict': False,
+        'indexes': [
+            ('owner', 'appraisalType'),
+            ('owner', '$name'),
+            ('owner', 'address'),
+            ['owner', ("location", "2dsphere")],
+            'version'
+        ]
+    }
 
     id = CustomIDField()
 

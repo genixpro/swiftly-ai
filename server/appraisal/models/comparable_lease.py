@@ -21,7 +21,18 @@ class RentEscalation(EmbeddedDocument):
 
 
 class ComparableLease(Document):
-    meta = {'collection': 'comparable_leases', 'strict': False}
+    meta = {
+        'collection': 'comparable_leases',
+        'strict': False,
+        'indexes': [
+            ('owner', 'propertyType'),
+            ('owner', 'leaseDate'),
+            ('owner', 'sizeOfUnit'),
+            ('owner', 'rentEscalations.yearlyRent'),
+            ['owner', ("location", "2dsphere")],
+            'version'
+        ]
+    }
 
     id = CustomIDField()
 

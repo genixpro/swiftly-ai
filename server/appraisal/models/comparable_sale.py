@@ -12,7 +12,19 @@ from .custom_id_field import generateNewUUID
 from pprint import pprint
 
 class ComparableSale(Document):
-    meta = {'collection': 'comparables', 'strict': False}
+    meta = {
+        'collection': 'comparables',
+        'strict': False,
+        'indexes': [
+            ('owner', 'propertyType'),
+            ('owner', 'saleDate'),
+            ('owner', 'salePrice'),
+            ('owner', 'sizeSquareFootage'),
+            ('owner', 'propertyTags'),
+            ['owner', ("location", "2dsphere")],
+            'version'
+        ]
+    }
 
     id = CustomIDField()
 

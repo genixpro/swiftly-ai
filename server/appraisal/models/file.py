@@ -72,7 +72,16 @@ class Word(EmbeddedDocument):
 
 
 class File(Document):
-    meta = {'collection': 'files', 'strict': False}
+    meta = {
+        'collection': 'files',
+        'strict': False,
+        'indexes': [
+            ('owner', 'appraisalId'),
+            ('owner', 'fileType'),
+            ('hash'),
+            'version'
+        ]
+    }
 
     id = CustomIDField()
 

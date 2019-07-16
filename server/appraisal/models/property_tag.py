@@ -7,7 +7,13 @@ from .custom_id_field import generateNewUUID
 
 
 class PropertyTag(Document):
-    meta = {'strict': False}
+    meta = {
+        'strict': False,
+        'indexes': [
+            ('owner', '$name', 'propertyType'),
+            'version'
+        ]
+    }
 
     id = CustomIDField()
 
