@@ -3,7 +3,7 @@ import pymongo
 from appraisal.authorization import CustomAuthenticationPolicy
 from pyramid.authorization import ACLAuthorizationPolicy
 import collections
-from mongoengine import connect
+from mongoengine import connect, register_connection
 import os
 import json as json
 import pkg_resources
@@ -74,6 +74,7 @@ def main(global_config, **settings):
         registry.modelConfig = json.load(pkg_resources.resource_stream("appraisal", f"model_configuration/{settings.get('modelConfig')}"))
 
         connect(settings.get('db.name'), host=settings.get('db.uri'))
+        register_connection("default", db=settings.get('db.name'), host=settings.get('db.uri'))
         appraisal.endpoints.demo.loadSampleDataForDemos()
 
 

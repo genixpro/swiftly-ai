@@ -66,7 +66,7 @@ class DemoLaunch(object):
 
         owner = response.json()['user_id']
 
-        appraisal.components.sample_data.uploadData(globalSampleData, None, self.request.registry.storageBucket, owner, 'sample', self.request.registry.environment)
+        appraisal.components.sample_data.uploadData(globalSampleData, 'default', self.request.registry.storageBucket, owner, 'sample', self.request.registry.environment)
 
         response = requests.post("https://swiftlyai.auth0.com/oauth/token", headers={
             # "Authorization": "Bearer " + self.mgmt_api_token
