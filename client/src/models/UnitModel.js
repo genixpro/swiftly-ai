@@ -15,8 +15,8 @@ class TenancyModel extends BaseModel
     static yearlyRent = new FloatField("yearlyRent", 0);
     static rentType = new StringField("rentType", "net");
     static freeRentType = new StringField("freeRentType", "net");
-    static startDate = new DateField("startDate", () => new Date());
-    static endDate = new DateField("endDate", () => new Date());
+    static startDate = new DateField("startDate");
+    static endDate = new DateField("endDate");
     static freeRentMonths = new FloatField("freeRentMonths", 0);
     static recoveryStructure = new StringField("recoveryStructure", "Standard");
 
@@ -30,6 +30,15 @@ class TenancyModel extends BaseModel
         this.yearlyRent = newValue * this.parent.squareFootage;
         this.monthlyRent = this.yearlyRent / 12.0;
         this.setDirtyField("yearlyRent");
+    }
+
+    get tenantName()
+    {
+        return this.name;
+    }
+    set tenantName(value)
+    {
+        this.name = value;
     }
 }
 
@@ -204,15 +213,15 @@ class UnitModel extends BaseModel
 
     get computedDescription()
     {
-        const dateFormat = "D MMMM, YYYY";
+        const dateFormat = "MMMM D, YYYY";
 
         let message = `Occupies ${UnitModel.numberWithCommas(this.squareFootage)} square feet`;
 
-        let currentTenantName = this.currentTenancy.tenantName;
+        let currentTenantName = this.currentTenancy.name;
 
         let allRelevantTenancies = this.tenancies.filter((tenancy) =>
         {
-            return tenancy.tenantName === currentTenantName;
+            return tenancy.name === currentTenantName;
         });
 
         allRelevantTenancies.sort((itemA, itemB) =>
@@ -237,13 +246,64 @@ class UnitModel extends BaseModel
 
         if (allRelevantTenancies.length > 1)
         {
-            const escalationYear = allRelevantTenancies[1].startDate.getFullYear() - allRelevantTenancies[0].startDate.getFullYear();
-            message += `Annual net rent in year 1 was $${UnitModel.numberWithCommas(startTenancy.yearlyRent / this.squareFootage, 2)} per square foot which escalates in year ${escalationYear} to $${UnitModel.numberWithCommas(allRelevantTenancies[1].yearlyRent / this.squareFootage, 2)} per square foot.`;
+            let lastRent = null;
+
+            message += `Annual net rent in year 1 was $${UnitModel.numberWithCommas(startTenancy.yearlyRent / this.squareFootage, 2)} per square foot which `;
+            allRelevantTenancies.forEach((tenancy, tenancyIndex) =>
+            {
+                if(tenancyIndex === 0)
+                {
+                    return;
+                }
+
+                // const escalationYear = tenancy.startDate.getFullYear() - allRelevantTenancies[0].startDate.getFullYear();
+                if (new Date(tenancy.startDate).getTime() < new Date().getTime())
+                {
+                    if (lastRent === null || tenancy.yearlyRent >= lastRent)
+                    {
+                        message += "escalated";
+                    }
+                    else
+                    {
+                        message += "was reduced";
+                    }
+                    message += ` on ${moment(tenancy.startDate).format(dateFormat)} to $${UnitModel.numberWithCommas(tenancy.yearlyRent / this.squareFootage, 2)} per square foot`;
+                }
+                else
+                {
+                    if (lastRent === null || tenancy.yearlyRent >= lastRent)
+                    {
+                        message += "escalated";
+                    }
+                    else
+                    {
+                        message += "is being reduced";
+                    }
+                    message += ` on ${moment(tenancy.startDate).format(dateFormat)} to $${UnitModel.numberWithCommas(tenancy.yearlyRent / this.squareFootage, 2)} per square foot`;
+                }
+
+                if (tenancyIndex < allRelevantTenancies.length - 1)
+                {
+                    message += `, and `;
+                }
+                else
+                {
+                    message += '. '
+                }
+
+                lastRent = tenancy.yearlyRent;
+            })
         }
         else
         {
-            message += `Annual net rent for the duration of the lease term is $${UnitModel.numberWithCommas(startTenancy.yearlyRent / this.squareFootage, 2)} per square foot.`;
+            message += `Annual net rent for the duration of the lease term is $${UnitModel.numberWithCommas(startTenancy.yearlyRent / this.squareFootage, 2)} per square foot. `;
         }
+
+        if (this.currentTenancy.freeRentMonths)
+        {
+            message += `Lease provided the tenant with: ${this.currentTenancy.freeRentMonths} months of free ${this.currentTenancy.freeRentType} rent.`;
+        }
+
 
         return message;
     }

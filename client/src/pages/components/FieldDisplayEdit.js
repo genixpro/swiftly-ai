@@ -27,6 +27,7 @@ import TenancyTypeSelector from "./TenancyTypeSelector";
 import TenantNameSelector from "./TenantNameSelector";
 import {DropTarget} from "react-dnd/lib/index";
 import ReactDOM from 'react-dom';
+import AdjustmentTypeSelector from "./AdjustmentTypeSelector";
 
 class FieldDisplayEdit extends React.Component
 {
@@ -114,8 +115,16 @@ class FieldDisplayEdit extends React.Component
         }
         else if (this.props.type === 'percent')
         {
+
             try {
-                return this.numberWithCommas(Number(value).toFixed(2).toString()) + "%";
+                if (Number(value) < 0)
+                {
+                    return "(" + this.numberWithCommas(-Number(value).toFixed(2).toString()) + "%)";
+                }
+                else
+                {
+                    return this.numberWithCommas(Number(value).toFixed(2).toString()) + "%";
+                }
             }
             catch(err) {
                 return this.numberWithCommas(value.toString()) + "%";
@@ -389,6 +398,8 @@ class FieldDisplayEdit extends React.Component
                                 title={this.props.title || this.props.placeholder}
                                 timeFormat={false}
                                 input={true}
+                                viewDate={this.props.defaultDate ? this.props.defaultDate : null}
+                                utc={true}
                                 closeOnSelect={true}
                                 value={this.state.isEditing ? this.state.value : this.formatValue(this.props.value)}
                                 onChange={(newValue) => newValue.toDate ? this.dateInputUpdated(newValue.toDate()) : newValue === "" ? this.dateInputUpdated(null) : null}
@@ -433,6 +444,17 @@ class FieldDisplayEdit extends React.Component
                     {
                         this.props.type === "retailLocationType" ?
                             <RetailLocationTypeSelector
+                                value={this.state.isEditing ? this.state.value : this.props.value}
+                                title={this.props.title || this.props.placeholder}
+                                disabled={!this.props.edit}
+                                onChange={(newValue) => this.selectInputUpdated(newValue) }
+                                onBlur={() => this.finishEditing()}
+                                innerRef={(inputElem) => this.inputElem = inputElem}
+                            /> : null
+                    }
+                    {
+                        this.props.type === "adjustmentType" ?
+                            <AdjustmentTypeSelector
                                 value={this.state.isEditing ? this.state.value : this.props.value}
                                 title={this.props.title || this.props.placeholder}
                                 disabled={!this.props.edit}

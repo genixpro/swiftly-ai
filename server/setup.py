@@ -19,7 +19,7 @@ requires = [
     'pillow',
     'filetype',
     'python-docx',
-    'python-rapidjson',
+    'orjson',
     'matplotlib',
     'dateparser',
     'python-dateutil',

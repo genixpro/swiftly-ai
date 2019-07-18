@@ -103,17 +103,17 @@ class ViewAppraisalComparableLeases extends React.Component {
                     <Col xs={10}>
                         <h3>View Comparable Leases</h3>
                     </Col>
-                    <Col xs={2}>
-                        <Dropdown isOpen={this.state.downloadDropdownOpen} toggle={this.toggleDownload.bind(this)}>
-                            <DropdownToggle caret color={"primary"} className={"download-dropdown-button"}>
-                                Download
-                            </DropdownToggle>
-                            <DropdownMenu>
-                                <DropdownItem onClick={() => this.downloadExcelSummary()}>Spreadsheet (xls)</DropdownItem>
-                                <DropdownItem onClick={() => this.downloadWordSummary()}>Cap-Rate Summary (docx)</DropdownItem>
-                            </DropdownMenu>
-                        </Dropdown>
-                    </Col>
+                    {/*<Col xs={2}>*/}
+                    {/*    <Dropdown isOpen={this.state.downloadDropdownOpen} toggle={this.toggleDownload.bind(this)}>*/}
+                    {/*        <DropdownToggle caret color={"primary"} className={"download-dropdown-button"}>*/}
+                    {/*            Download*/}
+                    {/*        </DropdownToggle>*/}
+                    {/*        <DropdownMenu>*/}
+                    {/*            /!*<DropdownItem onClick={() => this.downloadExcelSummary()}>Spreadsheet (xls)</DropdownItem>*!/*/}
+                    {/*            <DropdownItem onClick={() => this.downloadWordSummary()}>Cap-Rate Summary (docx)</DropdownItem>*/}
+                    {/*        </DropdownMenu>*/}
+                    {/*    </Dropdown>*/}
+                    {/*</Col>*/}
                 </Row>
                 <Row>
                     <Col xs={8}>
@@ -126,6 +126,7 @@ class ViewAppraisalComparableLeases extends React.Component {
                                             history={this.props.history}
                                             appraisalId={this.props.match.params._id}
                                             appraisalComparables={this.props.appraisal.comparableLeases}
+                                            appraisal={this.props.appraisal}
                                             onRemoveComparableClicked={(comp) => this.removeComparableFromAppraisal(comp)}
                                             onChange={(comps) => this.onComparablesChanged(comps)}
                         />

@@ -5,7 +5,7 @@ from pyramid.authorization import ACLAuthorizationPolicy
 import collections
 from mongoengine import connect
 import os
-import rapidjson as json
+import json as json
 import pkg_resources
 from google.cloud import storage
 import appraisal.endpoints.demo

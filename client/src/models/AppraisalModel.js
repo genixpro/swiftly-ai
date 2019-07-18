@@ -26,6 +26,7 @@ import ComparableSaleModel from "./ComparableSaleModel";
 import Promise from "bluebird";
 import axios from "axios/index";
 import ComparableLeaseModel from "./ComparableLeaseModel";
+import ComparableAdjustmentChartModel from "./ComparableAdjustmentChartModel";
 
 class AppraisalModel extends BaseModel
 {
@@ -71,6 +72,8 @@ class AppraisalModel extends BaseModel
     static recoveryStructures = new ListField(new ModelField(RecoveryStructureModel));
     static amortizationSchedule = new ModelField(AmortizationScheduleModel);
     static leasingCosts = new ListField(new ModelField(LeasingCostStructureModel));
+
+    static adjustmentChart = new ModelField(ComparableAdjustmentChartModel);
 
     static dataTypeReferences = new DictField(new ListField(new ModelField(ExtractionReferenceModel)));
 

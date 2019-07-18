@@ -39,11 +39,11 @@ const Menu = [
                 path: '/appraisal/:appraisalId/expenses',
                 appraisalType: 'detailed'
             },
-            {
-                name: 'Additional Income',
-                path: '/appraisal/:appraisalId/additional_income',
-                appraisalType: 'detailed'
-            },
+            // {
+            //     name: 'Additional Income',
+            //     path: '/appraisal/:appraisalId/additional_income',
+            //     appraisalType: 'detailed'
+            // },
             {
                 name: 'Amortization Schedule',
                 path: '/appraisal/:appraisalId/amortization',

@@ -4,11 +4,20 @@ from appraisal.models.extraction_reference import ExtractionReference
 import google.api_core.exceptions
 from .custom_id_field import CustomIDField
 from ..migrations import registerMigration
-import rapidjson as json, bson
+import json as json, bson
 from .custom_id_field import generateNewUUID
 
 
 class Image(Document):
+    meta = {
+        'collection': 'files',
+        'strict': False,
+        'indexes': [
+            ('owner'),
+            'version'
+        ]
+    }
+
     # The owner of this image
     id = CustomIDField()
 

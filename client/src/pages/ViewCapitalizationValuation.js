@@ -168,7 +168,7 @@ class ViewCapitalizationValuation extends React.Component
                                 </DropdownToggle>
                                 <DropdownMenu>
                                     <DropdownItem onClick={() => this.downloadWordSummary()}>Capitalization Valuation Summary (docx)</DropdownItem>
-                                    <DropdownItem onClick={() => this.downloadExcelSummary()}>Capitalization Valuation Spreadshseet (xlsx)</DropdownItem>
+                                    {/*<DropdownItem onClick={() => this.downloadExcelSummary()}>Capitalization Valuation Spreadshseet (xlsx)</DropdownItem>*/}
                                 </DropdownMenu>
                             </Dropdown>
 
@@ -328,13 +328,13 @@ class ViewCapitalizationValuation extends React.Component
                                                 this.props.appraisal.stabilizedStatement.amortizedCapitalInvestment && this.props.appraisal.stabilizedStatementInputs.applyAmortization ?
                                                     <tr className={"data-row capitalization-row"}>
                                                         <td className={"label-column"}>
-                                                            <Link to={`/appraisal/${this.props.appraisal._id}/tenants/amortization`}>
+                                                            <Link to={`/appraisal/${this.props.appraisal._id}/amortization`}>
                                                                 <span>Amortized Capital Investment</span>
                                                             </Link>
                                                         </td>
                                                         <td className={"amount-column"}></td>
                                                         <td className={"amount-total-column"}>
-                                                            <Link to={`/appraisal/${this.props.appraisal._id}/tenants/amortization`}>
+                                                            <Link to={`/appraisal/${this.props.appraisal._id}/amortization`}>
                                                                 <CurrencyFormat value={this.props.appraisal.stabilizedStatement.amortizedCapitalInvestment} />
                                                             </Link>
                                                         </td>
@@ -406,12 +406,9 @@ class ViewCapitalizationValuation extends React.Component
                                         </Table>
                                         <br/>
                                         <br/>
-                                        <h4 className={"final-valuation"}>Value by the Overall Capitalization Rate Method ... $<NumberFormat
+                                        <h4 className={"final-valuation"}>Final Value By Capitalization Approach: <CurrencyFormat
                                             value={this.props.appraisal.stabilizedStatement.valuationRounded}
-                                            displayType={'text'}
-                                            thousandSeparator={', '}
-                                            decimalScale={2}
-                                            fixedDecimalScale={true}
+                                            cents={false}
                                         />
                                         </h4>
                                     </div>

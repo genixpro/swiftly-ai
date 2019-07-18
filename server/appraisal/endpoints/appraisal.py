@@ -1,7 +1,7 @@
 from cornice.resource import resource
 from pyramid.authorization import Allow, Everyone
 import bson
-import rapidjson as json
+import orjson as json
 from appraisal.components.document_processor import DocumentProcessor
 from pprint import pprint
 from appraisal.models.appraisal import Appraisal
@@ -108,17 +108,21 @@ class AppraisalAPI(object):
 
         appraisal.modify(**data)
 
-        origJson = json.loads(appraisal.to_json())
+        # origJson = json.loads(appraisal.to_json())
+        #
+        # self.processor.processAppraisalResults(appraisal)
+        #
+        # appraisal.save()
+        #
+        # newJson = json.loads(appraisal.to_json())
+        #
+        # diff = jsondiff.diff(origJson, newJson)
 
         self.processor.processAppraisalResults(appraisal)
 
         appraisal.save()
 
-        newJson = json.loads(appraisal.to_json())
-
-        diff = jsondiff.diff(origJson, newJson)
-
-        return self.cleanDiffKeys(diff)
+        return {"appraisal": json.loads(appraisal.to_json())}
 
 
 

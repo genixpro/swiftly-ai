@@ -39,6 +39,18 @@ class BaseModel extends Object
             throw new Error(`You can not call the constructor of ${this.constructor.name} directly. You must instead call ${this.constructor.name}.create()`);
         }
 
+        this[BaseModel.dirtyFieldsSymbol] = {};
+        this[BaseModel.fieldNameSymbol] = fieldName;
+
+        if (parent)
+        {
+            this[BaseModel.parentSymbol] = parent;
+        }
+        else
+        {
+            this[BaseModel.parentSymbol] = null;
+        }
+
         if (!data)
         {
             return;
@@ -47,18 +59,6 @@ class BaseModel extends Object
         try
         {
             const modelClass = this.constructor;
-
-            this[BaseModel.dirtyFieldsSymbol] = {};
-            this[BaseModel.fieldNameSymbol] = fieldName;
-
-            if (parent)
-            {
-                this[BaseModel.parentSymbol] = parent;
-            }
-            else
-            {
-                this[BaseModel.parentSymbol] = null;
-            }
 
             // First validate
             Object.keys(data).forEach((key) =>

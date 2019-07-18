@@ -1,6 +1,6 @@
 from cornice.resource import resource
 import bson
-import rapidjson as json
+import json as json
 from pyramid.security import Authenticated
 from pyramid.authorization import Allow, Deny, Everyone
 from appraisal.authorization import checkUserOwnsObject

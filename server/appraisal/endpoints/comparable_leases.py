@@ -4,7 +4,7 @@ import pymongo
 import bson
 import tempfile
 import subprocess
-import rapidjson as json
+import json as json
 import os
 from appraisal.models.comparable_lease import ComparableLease
 from pyramid.security import Authenticated
@@ -70,6 +70,8 @@ class ComparableLeaseAPI(object):
 
         if 'sort' in self.request.GET:
             comparableLeases = comparableLeases.order_by(self.request.GET['sort'])
+        else:
+            comparableLeases = comparableLeases.order_by("-leaseDate", "sizeOfUnit", "_id")
 
         return {"comparableLeases": list([json.loads(sale.to_json()) for sale in comparableLeases])}
 

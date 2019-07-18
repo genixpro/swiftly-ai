@@ -6,7 +6,7 @@ from appraisal.models.property_tag import PropertyTag
 import tempfile
 import subprocess
 import os
-import rapidjson as json
+import json as json
 from pyramid.security import Authenticated
 from pyramid.authorization import Allow, Deny, Everyone
 from appraisal.authorization import checkUserOwnsObject
@@ -89,7 +89,7 @@ class PropertyTagAPI(object):
     def delete(self):
         propertyTagId = self.request.matchdict['id']
 
-        propertyTag = PropertyTag.objects(id=regularizeID(propertyTagId)).first()
+        propertyTag = PropertyTag.objects(name=propertyTagId).first()
 
         auth = checkUserOwnsObject(self.request.authenticated_userid, self.request.effective_principals, propertyTag)
         if not auth:

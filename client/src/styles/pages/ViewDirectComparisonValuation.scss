@@ -15,7 +15,6 @@
     {
       font-family: monospace, sans-serif;
       letter-spacing: -2px;
-      font-style: italic;
       font-weight: bolder;
       color: black;
       text-decoration: underline;
@@ -46,6 +45,13 @@
   {
     text-decoration: underline !important;
     cursor: pointer;
+  }
+
+  .adjustment-chart-row
+  {
+    h3 {
+      text-align: center;
+    }
   }
 
   .statement-table

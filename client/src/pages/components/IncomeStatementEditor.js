@@ -1,7 +1,7 @@
 import React from 'react';
 import {Row, Col, Button, Popover, PopoverHeader, PopoverBody} from 'reactstrap';
 import axios from "axios/index";
-import FieldDisplayEdit from './FieldDisplayEdit';
+import {DroppableFieldDisplayEdit, NonDroppableFieldDisplayEdit} from './FieldDisplayEdit';
 import _ from 'underscore';
 import {SortableContainer, SortableElement, SortableHandle} from 'react-sortable-hoc';
 import arrayMove from "array-move";
@@ -88,7 +88,7 @@ class IncomeStatementEditor extends React.Component
                                                             Add a new year. Apply Discount Rate to Items:
                                                             <br/>
                                                             <br/>
-                                                            <FieldDisplayEdit
+                                                            <NonDroppableFieldDisplayEdit
                                                                 type={"percent"}
                                                                 value={this.state.newYearGrowthPercent}
                                                                 onChange={(newValue) => this.setState({newYearGrowthPercent: newValue})}
@@ -157,7 +157,7 @@ class IncomeStatementEditor extends React.Component
                                     {year}
                                     <br/>
                                         {
-                                            <FieldDisplayEdit
+                                            <DroppableFieldDisplayEdit
                                                 type={'text'}
                                                 hideIcon={true}
                                                 value={this.props.appraisal.incomeStatement.customYearTitles[year]}
@@ -190,7 +190,7 @@ class IncomeStatementEditor extends React.Component
                                     Add a new year. Apply Growth Rate to Items:
                                     <br/>
                                     <br/>
-                                    <FieldDisplayEdit
+                                    <NonDroppableFieldDisplayEdit
                                         type={"percent"}
                                         value={this.state.newYearGrowthPercent}
                                         onChange={(newValue) => this.setState({newYearGrowthPercent: newValue})}
@@ -613,8 +613,9 @@ class IncomeStatementEditor extends React.Component
                 </div>
             </Col>
             <Col className={"name-column"}>
-                <FieldDisplayEdit
+                <DroppableFieldDisplayEdit
                     hideIcon={true}
+                    type={"text"}
                     value={incomeStatementItem.name}
                     onChange={(newValue) => this.changeIncomeItemName(incomeStatementItem, newValue)}
                 />
@@ -629,7 +630,7 @@ class IncomeStatementEditor extends React.Component
                     }
 
                     return [<Col key={year.toString() + "1"} className={"amount-column"}>
-                        <FieldDisplayEdit
+                        <DroppableFieldDisplayEdit
                             type="currency"
                             hideIcon={true}
                             edit={true}
@@ -641,7 +642,7 @@ class IncomeStatementEditor extends React.Component
                     </Col>,
                         this.props.appraisal.sizeOfBuilding ?
                             <Col key={year.toString() + "2"} className={"amount-column psf"}>
-                                <FieldDisplayEdit
+                                <DroppableFieldDisplayEdit
                                     type="currency"
                                     hideIcon={true}
                                     edit={true}
@@ -720,7 +721,7 @@ class IncomeStatementEditor extends React.Component
         return <li className={"row expense-row"}>
             {this.renderHiddenHandleColumn()}
             <Col className={"name-column"}>
-                <FieldDisplayEdit
+                <DroppableFieldDisplayEdit
                     hideIcon={true}
                     value={""}
                     onChange={_.once((newValue) => this.createNewIncomeItem("name", newValue, incomeStatementItemType))}
@@ -735,7 +736,7 @@ class IncomeStatementEditor extends React.Component
                     }
 
                     return [<Col key={year.toString() + "1"} className={"amount-column"}>
-                        <FieldDisplayEdit
+                        <DroppableFieldDisplayEdit
                             type="currency"
                             hideIcon={true}
                             value={""}
@@ -895,6 +896,7 @@ class IncomeStatementEditor extends React.Component
     getDefaultFile()
     {
         let defaultFile = null;
+        let defaultPage = null;
 
         Object.keys(this.props.appraisal.dataTypeReferences).forEach((dataType) =>
         {
@@ -903,6 +905,7 @@ class IncomeStatementEditor extends React.Component
                 if (this.props.appraisal.dataTypeReferences['INCOME_STATEMENT'].length > 0)
                 {
                     defaultFile = this.props.appraisal.dataTypeReferences['INCOME_STATEMENT'][0].fileId;
+                    defaultPage = this.props.appraisal.dataTypeReferences['INCOME_STATEMENT'][0].pageNumbers[0];
                 }
             }
             else if (dataType === 'EXPENSE_STATEMENT' && defaultFile === null && this.props.field === 'expense')
@@ -910,11 +913,12 @@ class IncomeStatementEditor extends React.Component
                 if (this.props.appraisal.dataTypeReferences['EXPENSE_STATEMENT'].length > 0)
                 {
                     defaultFile = this.props.appraisal.dataTypeReferences['EXPENSE_STATEMENT'][0].fileId;
+                    defaultPage = this.props.appraisal.dataTypeReferences['INCOME_STATEMENT'][0].pageNumbers[0];
                 }
             }
         });
 
-        return defaultFile;
+        return {fileId: defaultFile, page: defaultPage};
     }
 
 
@@ -940,7 +944,7 @@ class IncomeStatementEditor extends React.Component
                                     <FileSelector
                                         appraisalId={this.props.appraisal._id}
                                         onChange={(fileId) => this.onFileChanged(fileId)}
-                                        defaultFile={this.getDefaultFile()}
+                                        defaultFile={this.getDefaultFile().fileId}
                                         value={this.state.selectedFileId ? this.state.selectedFileId : null}
                                     />
                                 </Col>
@@ -952,6 +956,7 @@ class IncomeStatementEditor extends React.Component
                                             <FileViewer
                                                 ref={(ref) => this.fileViewer = ref}
                                                 document={this.state.file}
+                                                defaultPage={(this.state.file && this.state.file._id === this.getDefaultFile().fileId) ? this.getDefaultFile().page : 0}
                                                 hilightWords={this.state.hoverReference ? this.state.hoverReference.wordIndexes : []}
                                             />
                                         </Col> : null

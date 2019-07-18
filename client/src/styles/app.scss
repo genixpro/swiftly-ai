@@ -39,6 +39,7 @@
 @import "app/common/inputs";
 @import "app/common/utils";
 @import "app/common/print";
+@import "general";
 
 // Import the styles for specific pages
 @import "pages/StartAppraisal";
@@ -101,5 +102,5 @@
 @import "pages/components/Toolbar";
 @import "pages/components/ComparableConfirmationDialog";
 @import "pages/components/UnitDetailsEditor";
-@import "general";
+@import "pages/components/ComparableAdjustmentChart";
 

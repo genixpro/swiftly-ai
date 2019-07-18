@@ -58,7 +58,15 @@ class CurrencyValue extends React.Component {
             decimalScale = 0;
         }
 
-        return <Value style={style}>$<NumberFormat value={this.props.children} displayType={"text"} decimalScale={decimalScale} thousandSeparator={", "} /></Value>;
+        if (this.props.children < 0)
+        {
+            return <Value style={style}>($<NumberFormat value={-this.props.children} displayType={"text"} decimalScale={decimalScale} thousandSeparator={", "} />)</Value>;
+        }
+        else
+        {
+
+            return <Value style={style}>$<NumberFormat value={this.props.children} displayType={"text"} decimalScale={decimalScale} thousandSeparator={", "} /></Value>;
+        }
     }
 }
 

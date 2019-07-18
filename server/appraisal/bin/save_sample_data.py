@@ -10,7 +10,7 @@ import appraisal.components.sample_data
 import bz2
 import sys
 import os
-import rapidjson as json
+import json as json
 import os
 from google.cloud import storage
 

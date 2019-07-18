@@ -1,5 +1,5 @@
 import pkg_resources
-import rapidjson as json
+import json as json
 import os.path
 from appraisal.models.appraisal import Appraisal
 from mongoengine import connect

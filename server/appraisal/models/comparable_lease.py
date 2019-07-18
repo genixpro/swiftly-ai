@@ -7,7 +7,7 @@ import re
 from ..migrations import registerMigration
 from dateutil import relativedelta
 from .custom_id_field import CustomIDField
-import rapidjson as json, bson
+import json as json, bson
 from .custom_id_field import generateNewUUID
 
 class RentEscalation(EmbeddedDocument):
@@ -21,7 +21,18 @@ class RentEscalation(EmbeddedDocument):
 
 
 class ComparableLease(Document):
-    meta = {'collection': 'comparable_leases', 'strict': False}
+    meta = {
+        'collection': 'comparable_leases',
+        'strict': False,
+        'indexes': [
+            ('owner', 'propertyType'),
+            ('owner', 'leaseDate'),
+            ('owner', 'sizeOfUnit'),
+            ('owner', 'rentEscalations.yearlyRent'),
+            ['owner', ("location", "2dsphere")],
+            'version'
+        ]
+    }
 
     id = CustomIDField()
 

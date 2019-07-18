@@ -602,7 +602,7 @@ class ComparableSaleModel extends EquationMdoel
 
         if (comparableSale.saleDate && comparableSale.propertyType && comparableSale.address)
         {
-            text += `Sale is in reference to the ${moment(comparableSale.saleDate).format(dateFormat)} sale of a ${comparableSale.floors ? comparableSale.floors : ""} ${comparableSale.propertyType} building located at ${comparableSale.address}. `;
+            text += `Sale of an ${comparableSale.propertyType} building located at ${comparableSale.address}. `;
         }
 
         if (comparableSale.sizeSquareFootage)
@@ -610,10 +610,14 @@ class ComparableSaleModel extends EquationMdoel
             text += `The building has a gross rentable area of ${ComparableSaleModel.numberWithCommas(comparableSale.sizeSquareFootage)} square feet. `;
         }
 
-
-        if(comparableSale.vendor && comparableSale.purchaser && comparableSale.salePrice)
+        if(comparableSale.vendor && comparableSale.purchaser)
         {
-            text += `The property was sold by ${comparableSale.vendor} and was acquired by ${comparableSale.purchaser} for a consideration of $${ComparableSaleModel.numberWithCommas(comparableSale.salePrice)}. `;
+            text += `The vendor was ${comparableSale.vendor} and the purchaser was ${comparableSale.purchaser}. `;
+        }
+
+        if (comparableSale.salePrice)
+        {
+            text += `The property was sold for $${ComparableSaleModel.numberWithCommas(comparableSale.salePrice)}. `
         }
 
         if(comparableSale.tenants)
@@ -621,41 +625,47 @@ class ComparableSaleModel extends EquationMdoel
             text += `The tenants include: ${comparableSale.tenants}. `;
         }
 
-        text += `Property features include: `;
+        let propertyFeatures = '';
 
         if(comparableSale.constructionDate)
         {
-            text += `construction date of ${comparableSale.constructionDate}, `;
+            propertyFeatures += `construction date of ${comparableSale.constructionDate}, `;
         }
 
         if(comparableSale.clearCeilingHeight)
         {
-            text += `clear ceiling height of ${comparableSale.clearCeilingHeight} feet, `;
+            propertyFeatures += `clear ceiling height of ${comparableSale.clearCeilingHeight} feet, `;
         }
 
         if(comparableSale.siteCoverage)
         {
-            text += `site coverage of ${comparableSale.siteCoverage.toFixed(2)}, `;
+            propertyFeatures += `site coverage of ${(comparableSale.siteCoverage).toFixed(0)}%, `;
         }
 
         if(comparableSale.finishedOfficePercent)
         {
-            text += `finished office percentage of ${comparableSale.finishedOfficePercent.toFixed(2)}%, `;
+            propertyFeatures += `finished office percentage of ${comparableSale.finishedOfficePercent.toFixed(2)}%, `;
         }
 
         if(comparableSale.parking)
         {
-            text += `${comparableSale.parking} parking spaces, `;
+            propertyFeatures += `${comparableSale.parking} parking spaces, `;
         }
 
         if(comparableSale.additionalInfo)
         {
-            text += comparableSale.additionalInfo;
+            propertyFeatures += comparableSale.additionalInfo;
         }
 
-        text += ". ";
+        if (propertyFeatures)
+        {
+            text += `Property features include: ${propertyFeatures}. `;
+        }
 
         text = text.replace(", .", ".");
+
+        text = text.replace("an retail", "a retail");
+        text = text.replace("an land", "a land");
 
         if(comparableSale.capitalizationRate)
         {

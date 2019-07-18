@@ -2,10 +2,12 @@ from appraisal.components.document_parser import DocumentParser
 from appraisal.components.document_extractor import DocumentExtractor
 from appraisal.models.file import File, Word
 from appraisal.models.custom_id_field import generateNewUUID
+from mongoengine.queryset.visitor import Q
 from appraisal.models.extraction_reference import ExtractionReference
 import filetype
 import re
-import rapidjson as json
+import json as json
+import hashlib
 from pprint import pprint
 from appraisal.components.tenancy_data_extractor import TenancyDataExtractor
 from appraisal.components.income_statement_data_extractor import IncomeStatementDataExtractor
@@ -56,10 +58,17 @@ class DocumentProcessor:
             file.owner = owner
             file.appraisalId = None
         file.id = generateNewUUID(File)
-        file.save()
-        fileId = str(file.id)
 
-        file.uploadFileData(self.storageBucket, fileId)
+        m = hashlib.sha256()
+        m.update(fileData)
+        hash = m.hexdigest()
+        file.hash = hash
+
+        file.save()
+
+        # fileId = str(file.id)
+
+        file.uploadFileData(self.storageBucket, fileData)
         self.renderImagesAndExtractWords(file, fileData, extractWords=True)
         self.classifyAndProcessDocument(file)
 
@@ -79,7 +88,7 @@ class DocumentProcessor:
         mimeType = filetype.guess(fileData).mime
 
         if mimeType == 'application/pdf':
-            images, words = self.parser.processPDF(fileData, extractWords=extractWords, local=True)
+            images, words = self.parser.processPDF(fileData, extractWords=extractWords)
 
             imageFileNames = []
             for page, imageData in enumerate(images):
@@ -104,14 +113,22 @@ class DocumentProcessor:
 
 
     def classifyAndProcessDocument(self, file):
-        extractor = DocumentExtractor(self.db, self.modelConfig, self.vectorServerURL)
-        extractor.loadAlgorithm()
-        # extractor.predictDocument(file)
-        for word in file.words:
-            word.classification = "null"
-            word.modifiers = []
-            word.textType = "block"
-            word.groups = {}
+        existingFile = File.objects(Q(hash=file.hash) & (Q(reviewStatus="verifed") | Q(reviewStatus="verified") ) ).first()
+        hasExistingData = existingFile and len(existingFile.words) > 0
+
+        if hasExistingData:
+            file.words = existingFile.words
+            file.pageTypes = existingFile.pageTypes
+            file.fileType = existingFile.fileType
+        else:
+            extractor = DocumentExtractor(self.db, self.modelConfig, self.vectorServerURL)
+            extractor.loadAlgorithm()
+            extractor.predictDocument(file)
+            # for word in file.words:
+            #     word.classification = "null"
+            #     word.modifiers = []
+            #     word.textType = "block"
+            #     word.groups = {}
 
 
     def extractAndMergeAppraisalData(self, file, appraisal):

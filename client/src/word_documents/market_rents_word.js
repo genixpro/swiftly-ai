@@ -43,6 +43,12 @@ class MarketRentsWord extends React.Component
         }
     }
 
+    getCity(address)
+    {
+        const words = address.split(",");
+        return words[words.length - 3];
+    }
+
     render()
     {
         let minRent = null;
@@ -51,8 +57,8 @@ class MarketRentsWord extends React.Component
         let minTI = null;
         let maxTI = null;
 
-        let minEscalations = null;
-        let maxEscalations = null;
+        let minYears = null;
+        let maxYears = null;
 
         let countWithEscalations = 0;
 
@@ -85,14 +91,16 @@ class MarketRentsWord extends React.Component
 
             if (lease.rentEscalations.length)
             {
-                if (minEscalations === null || lease.rentEscalations.length < minEscalations)
+                const numYears = lease.rentEscalations[lease.rentEscalations.length - 1].endYear;
+
+                if (minYears === null || numYears < minYears)
                 {
-                    minEscalations = lease.rentEscalations.length;
+                    minYears = numYears;
                 }
 
-                if (maxEscalations === null || lease.rentEscalations.length > maxEscalations)
+                if (maxYears === null || numYears > maxYears)
                 {
-                    maxEscalations = lease.rentEscalations.length;
+                    maxYears = numYears;
                 }
             }
 
@@ -137,16 +145,13 @@ class MarketRentsWord extends React.Component
             <html>
             <body style={{"width": "7in"}}>
             <br/>
-            <h4 style={{"textAlign": "center"}}>MARKET RENTS</h4>
-            <p>To determine the long-term income potential of the subject property the market rent for the property must
-                be estimated. Establishing market rent also contextualizes current contract rent within the building as
-                compared to the prevailing market levels. In establishing the market rent the following analysis has been
-                completed:</p>
-            <ul>
-                <li>Analyzed the most recent lease deals from within the subject building;</li>
-                <li>Researched, and analyzed, recent leases and current asking rates involving comparable industrial buildings
-                    located throughout the {this.props.appraisal.address} and surrounding areas.</li>
-            </ul>
+            <h4 style={{"textAlign": "center", "color": "black"}}>MARKET RENTS</h4>
+            <p>To determine the long-term income potential of the subject property the market rent for the
+                property must be established. Estimating market rent also allows the appraiser to analyze
+                current contract rent within the building as compared to the market levels. In establishing the
+                market rent the following analysis has been completed: Analyzed the lease deals from the subject
+                building and analyzed recent completed leases involving similar {this.props.appraisal.propertyType} buildings
+                located throughout {this.getCity(this.props.appraisal.address)} and surrounding areas.</p>
 
             <StyledTable
                 headers={["Index \n Date", "Address", "Size", "Rent", "Remarks"]}
@@ -160,7 +165,7 @@ class MarketRentsWord extends React.Component
                     "25%"
                 ]}
                 fields={{
-                    "leaseDate": (leaseDate, obj, objIndex) => <Value><span>L{objIndex + 1}</span><br/><Moment format="YYYY">{leaseDate}</Moment></Value>,
+                    "leaseDate": (leaseDate, obj, objIndex) => <Value><span>L{objIndex + 1}</span><br/><Moment format="M/YY">{obj.leaseDate}</Moment></Value>,
                     "address": (address) => <Value>{address}</Value>,
                     "sizeOfUnit": (sizeOfUnit) => <AreaFormat value={sizeOfUnit} />,
                     "rentEscalations": (rentEscalations, obj) => <span>{
@@ -199,8 +204,8 @@ class MarketRentsWord extends React.Component
                                 </span> : null
                         }
                         {
-                            obj.tenantName ?
-                                <span>Lease to {obj.tenantName}<br/></span>
+                            obj.name ?
+                                <span>Lease to {obj.name}<br/></span>
                                 : null
                         }
                         {
@@ -209,8 +214,8 @@ class MarketRentsWord extends React.Component
                                 : null
                         }
                         {
-                            obj.tenantInducementsPSF ?
-                                <span>TI @ <CurrencyFormat value={obj.tenantInducementsPSF} /><br/></span>
+                            obj.tenantInducements ?
+                                <span>TI @ <CurrencyFormat value={obj.tenantInducements} /><br/></span>
                                 : null
                         }
                         {
@@ -222,9 +227,13 @@ class MarketRentsWord extends React.Component
                 }} />
             <br />
 
-            <ul>
-                <li>The comparable lease data detailed above shows rents in the range from <CurrencyFormat value={minRent} /> to <CurrencyFormat value={maxRent} /> per square foot (net) for industrial space located in {this.props.appraisal.address} and surrounding areas. The indicated range refers to the rent payable in the first few years of leases that range in length from <IntegerFormat value={minEscalations} /> to <IntegerFormat value={maxEscalations} /> years.</li>
-                <li>
+            <p>
+                <span>
+                    The comparable lease data detailed above shows rents in the range from <CurrencyFormat value={minRent} /> to <CurrencyFormat value={maxRent} /> per
+                    square foot (net) for {this.props.appraisal.propertyType} space located in {this.getCity(this.props.appraisal.address)} and surrounding areas. The rental
+                    range is in terms of the first-year net rental figures of leases that range in length from <IntegerFormat value={minYears} /> to <IntegerFormat value={maxYears} /> years.
+                </span>
+                <span>
                     {
                         allNet ? <span>The leases are net</span> : null
                     }
@@ -236,30 +245,25 @@ class MarketRentsWord extends React.Component
                     }
                     {
                         minTI || maxTI ?
-                            <span> and included tenant inducements ranging from <CurrencyFormat value={minTI} /> to <CurrencyFormat value={maxTI} /></span> :
-                            <span> and did not include any significant tenant inducements or allowances.</span>
+                            <span> and included tenant inducements ranging from <CurrencyFormat value={minTI} /> to <CurrencyFormat value={maxTI} />. </span> :
+                            <span> and did not include any significant tenant inducements or allowances. </span>
                     }
-                </li>
-                <li>
-                    The rates at the upper end of the range refer to modern buildings that offer a superior level of accommodation in terms of age, clear ceiling height, features, and finished office space.
-                </li>
-                <li>
-                    Rates at the low end of the range are generally indicated in older buildings with an inferior level of
-                    accommodation and older age, including a lower clear ceiling height.
-                </li>
-            </ul>
+                </span>
+                <span>The rates at the upper end of the range refer to modern buildings that offer a superior level of accommodation in terms of age, clear ceiling height, features, and finished office space. </span>
+                <span>Rates at the low end of the range are generally indicated in older buildings with an inferior level of accommodation. </span>
+            </p>
             <h3>Summary of Market Rents</h3>
             <ul>
                 <li>
-                    The comparable lease deals indicate a range from <CurrencyFormat value={minRent} /> to over <CurrencyFormat value={maxRent} /> per square foot (net),
+                    The comparable lease deals indicate a range from <CurrencyFormat value={minRent} /> to over <CurrencyFormat value={maxRent} /> per square foot
                     {
-                        allNet ? <span>and are all net leases.</span> : null
+                        allNet ? <span> (net)</span> : null
                     }
                     {
-                        allGross ? <span>and are all gross leases.</span> : null
+                        allGross ? <span> (gross)</span> : null
                     }
                     {
-                        !allNet && !allGross ? <span>and are a mixture of net and gross leases.</span> : null
+                        !allNet && !allGross ? <span>, and are a mixture of net and gross leases.</span> : null
                     }
                 </li>
                 <li>

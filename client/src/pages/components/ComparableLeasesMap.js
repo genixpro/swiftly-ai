@@ -27,7 +27,7 @@ class ComparableLeasesMap extends React.Component {
         {
             mapParams.defaultCenter.lng = this.props.appraisal.location.coordinates[0];
             mapParams.defaultCenter.lat = this.props.appraisal.location.coordinates[1];
-            mapParams.defaultZoom = 12;
+            mapParams.defaultZoom = 11;
         }
 
         return mapParams;

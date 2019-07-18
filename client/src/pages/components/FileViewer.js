@@ -74,7 +74,7 @@ class FileViewer extends React.Component
         const adjustedAverageWordHeight = averageWordWidth * (averageWordWidth / averageWordHeight) * viewportHeight;
 
         const zoomLevel = (40 / adjustedAverageWordHeight) * 100;
-        return zoomLevel;
+        return Math.max(zoomLevel, 75);
     }
 
 
@@ -93,7 +93,7 @@ class FileViewer extends React.Component
         if (this.props.document._id !== this.documentId)
         {
             this.documentId = this.props.document._id;
-            this.setState({imageZoom: FileViewer.computeDefaultZoom(this.props.document)});
+            this.setState({currentPage: this.props.defaultPage || 0, imageZoom: FileViewer.computeDefaultZoom(this.props.document)});
         }
     }
 
@@ -101,12 +101,16 @@ class FileViewer extends React.Component
     {
         this.selecting = false;
         this.isDraggingImage = false;
-        this.setState({isDraggingImage: false});
+        if (this.isDraggingImage)
+        {
+            this.setState({isDraggingImage: false});
+        }
     }
 
 
-    changePage(newPage)
+    changePage(evt)
     {
+        const newPage = Number(evt.target.value);
         this.setState({currentPage: newPage})
     }
 
@@ -206,15 +210,15 @@ class FileViewer extends React.Component
         const currentZoom = this.state.imageZoom;
         if (currentZoom > 250)
         {
-            this.setState({imageZoom: Math.max(currentZoom - 100, 100)}, () => this.moveViewTo(imageX, imageY, containerX, containerY));
+            this.setState({imageZoom: Math.max(currentZoom - 100, 75)}, () => this.moveViewTo(imageX, imageY, containerX, containerY));
         }
         else if (currentZoom > 150)
         {
-            this.setState({imageZoom: Math.max(currentZoom - 50, 100)}, () => this.moveViewTo(imageX, imageY, containerX, containerY));
+            this.setState({imageZoom: Math.max(currentZoom - 50, 75)}, () => this.moveViewTo(imageX, imageY, containerX, containerY));
         }
         else
         {
-            this.setState({imageZoom: Math.max(currentZoom - 25, 100)}, () => this.moveViewTo(imageX, imageY, containerX, containerY));
+            this.setState({imageZoom: Math.max(currentZoom - 25, 75)}, () => this.moveViewTo(imageX, imageY, containerX, containerY));
         }
 
     }
@@ -279,9 +283,10 @@ class FileViewer extends React.Component
                     <Col xs={12}>
                         <div className={"extractions-toolbar"}>
                             <div>
-                                <select //value={this.state.currentPage}
+                                <select
+                                        value={this.state.currentPage}
                                         ref={(ref) => this.pageSelectRef = ref}
-                                        onChange={(evt) => this.changePage(Number(evt.target.value))}
+                                        onChange={(evt) => this.changePage(evt)}
                                         className="custom-select">
                                     {
                                         _.range(this.props.document.pages).map((page) =>

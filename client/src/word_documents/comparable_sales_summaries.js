@@ -22,43 +22,51 @@ class ComparableSalesSummaries extends React.Component {
             "border": "1px solid black"
         };
 
+        const tableStyle = {
+            "border": "0px solid white"
+        }
+
         return (
             <div>
-                <table>
-                    <tbody>
+                {
+                    this.props.comparableSales.map((comp, compIndex) =>
+                    {
+                        const imgElem = <td style={tableStyle}>
+                            <img
+                                src={comp.imageUrls.length ? (comp.imageUrls[0]) : "https://maps.googleapis.com/maps/api/streetview?key=AIzaSyBRmZ2N4EhJjXmC29t3VeiLUQssNG-MY1I&size=640x480&source=outdoor&location=" + comp.address}
+                                style={imageStyle}
+                            />
+                        </td>;
+
+                        const descriptionElem =
+                            <td style={tableStyle}>
+                                <span style={{"fontWeight": "bold"}}>Index {compIndex + 1} - {comp.address}:</span> {comp.description || comp.computedDescriptionText}
+                            </td>;
+
+                        if (compIndex % 2 === 0)
                         {
-                            this.props.comparableSales.map((comp, compIndex) =>
-                            {
-                                const imgElem = <td>
-                                    <img
-                                        src={comp.imageUrls.length ? (comp.imageUrls[0]) : "https://maps.googleapis.com/maps/api/streetview?key=AIzaSyBRmZ2N4EhJjXmC29t3VeiLUQssNG-MY1I&size=640x480&source=outdoor&location=" + comp.address}
-                                        style={imageStyle}
-                                    />
-                                </td>;
-
-                                const descriptionElem =
-                                    <td>
-                                        <span style={{"fontWeight": "bold"}}>Index {compIndex + 1} - {comp.address}:</span> {comp.description || comp.computedDescriptionText}
-                                    </td>;
-
-                                if (compIndex % 2 === 0)
-                                {
-                                    return <tr key={compIndex}>
+                            return <table key={compIndex} style={tableStyle}>
+                                <tbody style={tableStyle}>
+                                        <tr style={tableStyle}>
                                         {imgElem}
                                         {descriptionElem}
-                                    </tr>;
-                                }
-                                else
-                                {
-                                    return <tr key={compIndex}>
-                                        {descriptionElem}
-                                        {imgElem}
-                                    </tr>;
-                                }
-                            })
+                                    </tr>
+                                </tbody>
+                            </table>;
                         }
-                    </tbody>
-                </table>
+                        else
+                        {
+                            return <table key={compIndex} style={tableStyle}>
+                            <tbody style={tableStyle}>
+                            <tr style={tableStyle}>
+                                {descriptionElem}
+                                {imgElem}
+                            </tr>
+                            </tbody>
+                            </table>;
+                        }
+                    })
+                }
             </div>
         )
     }

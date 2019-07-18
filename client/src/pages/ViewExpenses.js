@@ -76,7 +76,7 @@ class ViewExpenses extends React.Component
                                                     </DropdownToggle>
                                                     <DropdownMenu>
                                                         <DropdownItem onClick={() => this.downloadWordExpenses()}>Expenses Summary (docx)</DropdownItem>
-                                                        <DropdownItem onClick={() => this.downloadExcelExpenses()}>Expenses Spreadsheet (xlsx)</DropdownItem>
+                                                        {/*<DropdownItem onClick={() => this.downloadExcelExpenses()}>Expenses Spreadsheet (xlsx)</DropdownItem>*/}
                                                     </DropdownMenu>
                                                 </Dropdown>
                                             </ButtonGroup>

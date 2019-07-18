@@ -2,12 +2,18 @@ from mongoengine import *
 import datetime
 from .custom_id_field import CustomIDField
 from ..migrations import registerMigration
-import rapidjson as json, bson
+import json as json, bson
 from .custom_id_field import generateNewUUID
 
 
 class PropertyTag(Document):
-    meta = {'strict': False}
+    meta = {
+        'strict': False,
+        'indexes': [
+            ('owner', '$name', 'propertyType'),
+            'version'
+        ]
+    }
 
     id = CustomIDField()
 

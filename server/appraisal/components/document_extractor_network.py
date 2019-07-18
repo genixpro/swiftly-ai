@@ -7,7 +7,7 @@ import numpy
 import pickle
 import math
 import random
-import rapidjson as json
+import json as json
 import io
 from pprint import pprint
 import concurrent.futures

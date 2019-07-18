@@ -5,7 +5,7 @@ import bson
 from mongoengine.queryset.visitor import Q
 import tempfile
 import subprocess
-import rapidjson as json
+import json as json
 import os
 from appraisal.models.comparable_sale import ComparableSale
 from pyramid.security import Authenticated
@@ -124,6 +124,8 @@ class ComparableSaleAPI(object):
 
         if 'sort' in self.request.GET:
             comparableSales = comparableSales.order_by(self.request.GET['sort'])
+        else:
+            comparableSales = comparableSales.order_by("-saleDate", "capitalizationRate", "_id")
 
         return {"comparableSales": list([json.loads(sale.to_json()) for sale in comparableSales])}
 

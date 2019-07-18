@@ -7,6 +7,7 @@ from appraisal.models.discounted_cash_flow_inputs import DiscountedCashFlowInput
 from appraisal.models.appraisal_validation_result import AppraisalValidationResult
 from appraisal.models.comparable_sale import ComparableSale
 from appraisal.models.stabilized_statement import StabilizedStatement
+from appraisal.models.file import File
 from appraisal.models.stabilized_statement_inputs import StabilizedStatementInputs
 from appraisal.models.direct_comparison_valuation import DirectComparisonValuation
 from appraisal.models.direct_comparison_valuation_inputs import DirectComparisonValuationInputs
@@ -16,16 +17,27 @@ from appraisal.models.recovery_structure import RecoveryStructure, CalculationRu
 from appraisal.models.leasing_cost_structure import LeasingCostStructure
 from appraisal.models.date_field import ConvertingDateField
 from appraisal.models.extraction_reference import ExtractionReference
+from appraisal.models.comparable_adjustment_chart import ComparableAdjustmentChart
 from appraisal.components.document_processor import DocumentProcessor
 import numpy
-import rapidjson as json
+import json as json
 import bson
 from mongoengine import signals
 from ..migrations import registerMigration
 from .custom_id_field import CustomIDField, generateNewUUID
 
 class Appraisal(Document):
-    meta = {'collection': 'appraisals', 'strict': False}
+    meta = {
+        'collection': 'appraisals',
+        'strict': False,
+        'indexes': [
+            ('owner', 'appraisalType'),
+            ('owner', '$name'),
+            ('owner', 'address'),
+            ['owner', ("location", "2dsphere")],
+            'version'
+        ]
+    }
 
     id = CustomIDField()
 
@@ -124,6 +136,9 @@ class Appraisal(Document):
 
     # This is the market rent
     marketRents = ListField(EmbeddedDocumentField(MarketRent))
+
+    # Comparable adjustment chart
+    adjustmentChart = EmbeddedDocumentField(ComparableAdjustmentChart)
 
     # A list of recovery structures for this building
     recoveryStructures = ListField(EmbeddedDocumentField(RecoveryStructure), default=[

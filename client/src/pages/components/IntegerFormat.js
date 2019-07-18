@@ -15,7 +15,7 @@ class IntegerFormat extends React.Component
         return <span><NumberFormat
             value={this.props.value}
             displayType={'text'}
-            thousandSeparator={', '}
+            thousandSeparator={','}
             decimalScale={0}
             fixedDecimalScale={true}
         /></span>

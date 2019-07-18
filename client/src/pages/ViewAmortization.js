@@ -244,17 +244,17 @@ class ViewAmortization extends React.Component
                                     <Col xs={10}>
                                         <h3>Amortization Schedule</h3>
                                     </Col>
-                                    <Col xs={2}>
-                                        <Dropdown isOpen={this.state.downloadDropdownOpen} toggle={this.toggleDownload.bind(this)}>
-                                            <DropdownToggle caret color={"primary"} className={"download-dropdown-button"}>
-                                                Download
-                                            </DropdownToggle>
-                                            <DropdownMenu>
-                                                <DropdownItem onClick={() => this.downloadWordAmortizationSchedule()}>Amortization Schedule Summary (docx)</DropdownItem>
-                                                <DropdownItem onClick={() => this.downloadExcelAmortizationSchedule()}>Amortization Schedule Spreadsheet (xlsx)</DropdownItem>
-                                            </DropdownMenu>
-                                        </Dropdown>
-                                    </Col>
+                                    {/*<Col xs={2}>*/}
+                                    {/*    <Dropdown isOpen={this.state.downloadDropdownOpen} toggle={this.toggleDownload.bind(this)}>*/}
+                                    {/*        <DropdownToggle caret color={"primary"} className={"download-dropdown-button"}>*/}
+                                    {/*            Download*/}
+                                    {/*        </DropdownToggle>*/}
+                                    {/*        <DropdownMenu>*/}
+                                    {/*            <DropdownItem onClick={() => this.downloadWordAmortizationSchedule()}>Amortization Schedule Summary (docx)</DropdownItem>*/}
+                                    {/*            <DropdownItem onClick={() => this.downloadExcelAmortizationSchedule()}>Amortization Schedule Spreadsheet (xlsx)</DropdownItem>*/}
+                                    {/*        </DropdownMenu>*/}
+                                    {/*    </Dropdown>*/}
+                                    {/*</Col>*/}
                                 </Row>
                                 <Row>
                                     <Col xs={12} md={12} lg={12} xl={12}>

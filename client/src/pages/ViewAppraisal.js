@@ -25,6 +25,7 @@ import Logout from "./Logout";
 import axios from "axios/index";
 import AppraisalModel from "../models/AppraisalModel";
 import Sidebar from "../components/Layout/Sidebar";
+import AnnotationEditor from "./components/AnnotationEditor";
 
 class ViewAppraisal extends React.Component
 {
@@ -68,9 +69,9 @@ class ViewAppraisal extends React.Component
             {
                 this.state.appraisal.clearUpdates();
 
-                newAppraisal.applyDiff(response.data);
+                // newAppraisal.applyDiff(response.data);
 
-                this.setState({appraisal: newAppraisal});
+                this.setState({appraisal: AppraisalModel.create(response.data.appraisal)});
             });
         }
     }

@@ -7,12 +7,24 @@ import scipy.stats
 import numpy
 import bson
 from .custom_id_field import CustomIDField
-import rapidjson as json, bson
+import json as json, bson
 from .custom_id_field import generateNewUUID
 from pprint import pprint
 
 class ComparableSale(Document):
-    meta = {'collection': 'comparables', 'strict': False}
+    meta = {
+        'collection': 'comparables',
+        'strict': False,
+        'indexes': [
+            ('owner', 'propertyType'),
+            ('owner', 'saleDate'),
+            ('owner', 'salePrice'),
+            ('owner', 'sizeSquareFootage'),
+            ('owner', 'propertyTags'),
+            ['owner', ("location", "2dsphere")],
+            'version'
+        ]
+    }
 
     id = CustomIDField()
 

@@ -124,13 +124,13 @@ class ComparableSalesStatistics extends React.Component
                 render: (value) => <CurrencyFormat value={value} cents={false}/>
             },
             noiPSFMultiple: {
-                rangeTitle: "Multiple Range ($)",
-                averageTitle: "Multiple Average ($)",
+                rangeTitle: "Multiple Range",
+                averageTitle: "Multiple Average",
                 render: (value) => <FloatFormat value={value} cents={false}/>
             },
             displayNOIPSFMultiple: {
-                rangeTitle: "Multiple Range ($)",
-                averageTitle: "Multiple Average ($)",
+                rangeTitle: "Multiple Range",
+                averageTitle: "Multiple Average",
                 render: (value) => <FloatFormat value={value} cents={false}/>
             },
             netOperatingIncomePSF: {

@@ -13,7 +13,7 @@ from appraisal.models.custom_id_field import generateNewUUID
 import bz2
 import sys
 import os
-import rapidjson as json
+import json as json
 import os
 from google.cloud import storage
 
@@ -197,6 +197,13 @@ def uploadData(data, dbAlias, storageBucket, newOwner, oldEnv, newEnv):
             newAppraisal.comparableLeases = [compLeaseIdReverseMap[oldId] for oldId in newAppraisal.comparableLeases if oldId in compLeaseIdReverseMap]
             if newAppraisal.zoning:
                 newAppraisal.zoning = zoneIDReverseMap[newAppraisal.zoning]
+
+            for key in newAppraisal.dataTypeReferences.keys():
+                for reference in newAppraisal.dataTypeReferences[key]:
+                    if reference.fileId in fileIDReverseMap:
+                        reference.fileId = fileIDReverseMap[reference.fileId]
+                    else:
+                        reference.fileId = None
 
             newAppraisal.save(validate=False)
 

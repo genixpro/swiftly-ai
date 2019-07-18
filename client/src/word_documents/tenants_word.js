@@ -17,16 +17,17 @@ class App extends React.Component
     render()
     {
 
+        let tenantIndex = 0;
         return (
             <html>
             <body style={{"width": "7in"}}>
             <br/>
-            <h1>Tenancy</h1>
+            <h4 style={{"textAlign": "center", "color": "black"}}>TENANCY</h4>
             <p>
-                The subject has a total rentable area of <IntegerFormat value={this.props.appraisal.sizeOfBuilding} /> square feet. As of the effective date, the building was
-                100% leased and occupied by <IntegerFormat value={this.props.appraisal.numberOfOccupiedUnits()} /> tenants.
+                The subject has a total rentable area of <IntegerFormat value={this.props.appraisal.sizeOfBuilding} /> square feet. At the time of the appraisal,
+                the building was 100% leased to <IntegerFormat value={this.props.appraisal.numberOfOccupiedUnits()} /> tenants.
             </p>
-            <ul>
+            <div>
                 {
                     this.props.appraisal.units.map((unit, unitIndex) =>
                         {
@@ -34,11 +35,13 @@ class App extends React.Component
                             {
                                 return null;
                             }
-                            
-                            return <li key={unitIndex}><p>Tenant {unitIndex + 1}: {unit.computedDescription}</p></li>
+
+                            tenantIndex += 1;
+
+                            return <p key={unitIndex}>{unit.currentTenancy.name}: {unit.computedDescription}</p>
                         })
                 }
-            </ul>
+            </div>
             <p>*This section can be auto populated based on your company specific verbiage.</p>
             <br/>
             </body>

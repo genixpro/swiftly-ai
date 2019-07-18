@@ -29,6 +29,7 @@ class UploadedFileListItem extends React.Component
 
     onDeleteFile(evt)
     {
+
         evt.stopPropagation();
         if (window.confirm("Are you sure you want to remove the file?"))
         {

@@ -70,6 +70,7 @@ class FileModel extends BaseModel
     static reviewStatus = new StringField();
     static appraisalId = new GenericField();
     static fileType = new GenericField();
+    static hash = new StringField();
 
     static images = new ListField(new GenericField());
     static words = new ListField(new ModelField(WordModel));

@@ -16,6 +16,7 @@ import IntegerFormat from "./components/IntegerFormat";
 import FloatFormat from "./components/FloatFormat";
 import TotalRemainingFreeRentPopoverWrapper from "./components/TotalRemainingFreeRentPopoverWrapper";
 import TotalMarketRentDifferentialCalculationPopoverWrapper from "./components/TotalMarketRentDifferentialCalculationPopoverWrapper";
+import ComparableAdjustmentChart from "./components/ComparableAdjustmentChart";
 
 class ViewDirectComparisonValuation extends React.Component
 {
@@ -39,6 +40,12 @@ class ViewDirectComparisonValuation extends React.Component
     onComparablesChanged(comps)
     {
         this.setState({comparableSales: comps});
+    }
+
+    changeShowAdjustmentChart(newValue)
+    {
+        this.props.appraisal.adjustmentChart.showAdjustmentChart = newValue;
+        this.props.saveAppraisal(this.props.appraisal);
     }
 
 
@@ -257,15 +264,19 @@ class ViewDirectComparisonValuation extends React.Component
                     <Card className="card-default">
                         <CardBody>
 
+                            <Row>
+                                <Col xs={12}>
                             <Dropdown isOpen={this.state.downloadDropdownOpen} toggle={this.toggle.bind(this)}>
                                 <DropdownToggle caret color={"primary"} className={"download-dropdown-button"}>
                                     Download
                                 </DropdownToggle>
                                 <DropdownMenu>
                                     <DropdownItem onClick={() => this.downloadWordSummary()}>Direct Comparison Approach Summary (docx)</DropdownItem>
-                                    <DropdownItem onClick={() => this.downloadExcelSummary()}>Direct Comparison Approach Spreadsheet (xlsx)</DropdownItem>
+                                    {/*<DropdownItem onClick={() => this.downloadExcelSummary()}>Direct Comparison Approach Spreadsheet (xlsx)</DropdownItem>*/}
                                 </DropdownMenu>
                             </Dropdown>
+                                </Col>
+                            </Row>
 
 
                             <Row>
@@ -291,6 +302,25 @@ class ViewDirectComparisonValuation extends React.Component
                             </div>
                                 </Col>
                             </Row>
+
+
+                            {
+                                this.props.appraisal.adjustmentChart.showAdjustmentChart ?
+                                <Row className={"adjustment-chart-row"}>
+                                    <Col xs={12}>
+                                        <br/>
+                                        <h3>Adjustment Chart</h3>
+
+                                            <ComparableAdjustmentChart
+                                                appraisal={this.props.appraisal}
+                                                comparableSales={this.state.comparableSales}
+                                                onChange={() => this.props.saveAppraisal(this.props.appraisal)}
+                                            />
+                                            <br/>
+                                        <br/>
+                                    </Col>
+                                </Row>: null
+                            }
 
                             <Row>
                                 <Col xs={8}>
@@ -539,14 +569,8 @@ class ViewDirectComparisonValuation extends React.Component
                                 </Table>
                                 <br/>
                                 <br/>
-                                <h4 className={"final-valuation"}>Value by the Direct Comparison Approach ... $<NumberFormat
-                                    value={this.props.appraisal.directComparisonValuation.valuationRounded}
-                                    displayType={'text'}
-                                    thousandSeparator={', '}
-                                    decimalScale={2}
-                                    fixedDecimalScale={true}
-                                />
-                                </h4>
+                                <h4 className={"final-valuation"}>Final Value by Direct Comparison
+                                    Approach <CurrencyFormat value={this.props.appraisal.directComparisonValuation.valuationRounded} cents={false}/></h4>
                             </div>
                                 </Col>
                                 <Col xs={4}>
@@ -555,6 +579,17 @@ class ViewDirectComparisonValuation extends React.Component
                                             <h3>Inputs</h3>
 
                                             <Table>
+                                                <tr>
+                                                    <td>Show Adjustment Chart</td>
+                                                    <td>
+                                                        <FieldDisplayEdit
+                                                            type={"boolean"}
+                                                            placeholder={"Whether or not to show the adjustment chart"}
+                                                            value={this.props.appraisal.adjustmentChart.showAdjustmentChart}
+                                                            onChange={(newValue) => this.changeShowAdjustmentChart(newValue)}
+                                                        />
+                                                    </td>
+                                                </tr>
                                                 <tr>
                                                     <td>Comparison Metric</td>
                                                     <td>

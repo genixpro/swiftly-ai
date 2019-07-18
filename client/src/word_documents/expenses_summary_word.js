@@ -103,22 +103,25 @@ class App extends React.Component {
             <html>
             <body style={{"width": "7in"}}>
             <br/>
-            <h4 style={{"textAlign": "center"}}>REALTY TAXES AND OPERATING COSTS</h4>
+            <h4 style={{"textAlign": "center", "color": "black"}}>REALTY TAXES AND OPERATING COSTS</h4>
             <br/>
             <h5>Recoverable Costs</h5>
             <p>
-                {hasTwoYearsAgo ? <span>According to the final {twoYearsAgo} Realty Tax Bill, realty taxes are <CurrencyFormat value={this.props.appraisal.incomeStatement.calculateTotalExpenses(twoYearsAgo, "taxes")}/>.</span> : null}
-                &nbsp;According to the {lastYear} Budget, realty taxes were estimated to be <CurrencyFormat value={this.props.appraisal.incomeStatement.calculateTotalExpenses(lastYear, "taxes")}/>.
-                &nbsp;We have increased the {lastYear} Budget figures by <PercentFormat value={100 * (this.props.appraisal.incomeStatement.calculateTotalExpenses(appraisalYear, "taxes") / this.props.appraisal.incomeStatement.calculateTotalExpenses(lastYear, "taxes") - 1) }/> to estimate {appraisalYear} taxes.
+                {hasTwoYearsAgo ? <span>According to the final {twoYearsAgo} Realty Tax Bill, realty taxes are <CurrencyFormat value={this.props.appraisal.incomeStatement.calculateTotalExpenses(twoYearsAgo, "taxes")} cents={false} />.</span> : null} According
+                to the {lastYear} Budget, realty taxes were estimated to be <CurrencyFormat value={this.props.appraisal.incomeStatement.calculateTotalExpenses(lastYear, "taxes")} cents={false} />. We
+                have increased the {lastYear} Budget figures by <PercentFormat value={100 * (this.props.appraisal.incomeStatement.calculateTotalExpenses(appraisalYear, "taxes") / this.props.appraisal.incomeStatement.calculateTotalExpenses(lastYear, "taxes") - 1) }/> to estimate {appraisalYear} taxes.
             </p>
             <p>
-                Operating costs cover the management of the building including items such as: insurance and property maintenance. A budget for {lastYear} has been provided. We have increased the 2018 Budget figures by <PercentFormat value={100 * this.props.appraisal.incomeStatement.calculateTotalExpenses(appraisalYear, "operating_expenses") / this.props.appraisal.incomeStatement.calculateTotalExpenses(lastYear, "operating_expenses")}/> to estimate operating costs in {appraisalYear}. Expenses are detailed below:
+                Operating costs recoveries recoup the owners’ costs of operating the building including items such as: taxes, insurance and maintenance.
+
+                A budget for {lastYear} has been provided. We have increased the 2018 Budget figures by <PercentFormat value={100 * (this.props.appraisal.incomeStatement.calculateTotalExpenses(appraisalYear, "operating_expense") / this.props.appraisal.incomeStatement.calculateTotalExpenses(lastYear, "operating_expense") - 1)}/> to estimate operating costs in {appraisalYear}. Expenses are detailed below:
             </p>
             <p>
                 *This section can be auto populated based on your company specific verbiage.
             </p>
             <StyledTable
                 headers={headers}
+                fontSize={10}
                 rows={rows}
                 fields={fields}
                 totals={totals}
@@ -126,10 +129,9 @@ class App extends React.Component {
             />
             <br/>
             <p>
-                Recoverable Operating Costs are estimated at <CurrencyFormat cents={false} value={this.props.appraisal.stabilizedStatement.operatingExpenses + this.props.appraisal.stabilizedStatement.managementExpenses + this.props.appraisal.stabilizedStatement.taxes}/>
-                &nbsp;for {this.props.appraisal.incomeStatement.latestYear}. Taxes for {lastYear} are estimated at
-                &nbsp;<CurrencyFormat cents={false} value={this.props.appraisal.incomeStatement.calculateTotalExpenses(lastYear, "taxes")}/>.
-                The operating cost and expense figures are considered reasonable for the subject neighborhood, falling within the range presented by properties.
+                Recoverable Operating Costs are estimated at <CurrencyFormat cents={false} value={this.props.appraisal.stabilizedStatement.operatingExpenses}/> for
+                <span> {appraisalYear}</span>. Taxes for {appraisalYear} are estimated at <CurrencyFormat cents={false} value={this.props.appraisal.incomeStatement.calculateTotalExpenses(appraisalYear, "taxes")}/>.
+                The operating cost and expense figures are found to be reasonable for the subject neighborhood, falling within the TMI range of comparable properties.
             </p>
 
             {
