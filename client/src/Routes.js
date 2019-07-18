@@ -33,12 +33,18 @@ const AuthenticationCallback = (props) =>
 };
 
 
+const RapidAuthCallback = (props) =>
+{
+    Auth.handleRapidDemoAuth((redirect) => props.history.push(redirect));
+    return <span>Setting Up Demo Account</span>;
+};
+
 
 const Routes = ({ location }) => {
     const currentKey = location.pathname.split('/')[1] || '/';
     const timeout = { enter: 500, exit: 500 };
 
-    if (!Auth.isAuthenticated() && window.location.pathname.substr(0, "/callback".length) !== "/callback")
+    if (!Auth.isAuthenticated() && window.location.pathname.substr(0, "/callback".length) !== "/callback" && window.location.pathname.substr(0, "/rapidauth".length) !== "/rapidauth")
     {
         Auth.login();
         return null;
@@ -76,6 +82,7 @@ const Routes = ({ location }) => {
                             <Route path="/appraisal/:id" component={ViewAppraisal} history={history}/>
                             <Route path="/appraisals/" component={ViewAllAppraisals} history={history}/>
                             <Route path="/callback" component={AuthenticationCallback} history={history}/>
+                            <Route path="/rapidauth" component={RapidAuthCallback} history={history}/>
                             <Route path="/logout/" component={Logout} history={history}/>
 
                             <Redirect to="/appraisals/"/>

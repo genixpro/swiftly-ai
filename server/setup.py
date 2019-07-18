@@ -34,7 +34,8 @@ requires = [
     "jwcrypto",
     "jsondiff",
     "dnspython",
-    "google-cloud-storage"
+    "google-cloud-storage",
+    "auth0-python"
 ]
 
 tests_require = [

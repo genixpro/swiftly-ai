@@ -88,22 +88,35 @@ def updateImageUrl(jointIdMap, oldUrl, oldEnv, newEnv):
     return newUrl
 
 
-def downloadData(storageBucket):
-    appraisals = loadObjects(Appraisal)
-    files = loadObjects(File)
-    fileContents = {}
-    fileImages = {}
-    for file in files:
-        print(f"Downloading file data for {str(file.id)}")
-        fileContents[str(file.id)] = file.downloadFileData(storageBucket)
-        if file.pages:
-            fileImages[str(file.id)] = [file.downloadRenderedImage(page, storageBucket) for page in range(file.pages)]
+def downloadData(storageBucket, dbAlias=None):
+    with switch_db(Appraisal, dbAlias) as TargetAppraisal:
+        appraisals = loadObjects(TargetAppraisal)
 
-    tags = loadObjects(PropertyTag)
-    zones = loadObjects(Zone)
-    comparableSales = loadObjects(ComparableSale)
-    comparableLeases = loadObjects(ComparableLease)
-    images = loadObjects(Image)
+    with switch_db(File, dbAlias) as TargetFile:
+        files = loadObjects(TargetFile)
+        fileContents = {}
+        fileImages = {}
+        for file in files:
+            print(f"Downloading file data for {str(file.id)}")
+            fileContents[str(file.id)] = file.downloadFileData(storageBucket)
+            if file.pages:
+                fileImages[str(file.id)] = [file.downloadRenderedImage(page, storageBucket) for page in range(file.pages)]
+
+    with switch_db(PropertyTag, dbAlias) as TargetPropertyTag:
+        tags = loadObjects(TargetPropertyTag)
+
+    with switch_db(Zone, dbAlias) as TargetZone:
+        zones = loadObjects(TargetZone)
+
+    with switch_db(ComparableSale, dbAlias) as TargetComparableSale:
+        comparableSales = loadObjects(TargetComparableSale)
+
+    with switch_db(ComparableLease, dbAlias) as TargetComparableLease:
+        comparableLeases = loadObjects(TargetComparableLease)
+
+    with switch_db(Image, dbAlias) as TargetImage:
+        images = loadObjects(TargetImage)
+
     imageDatas = {}
     imageDatasCropped = {}
     for image in images:

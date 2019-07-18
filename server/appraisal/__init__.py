@@ -8,6 +8,7 @@ import os
 import rapidjson as json
 import pkg_resources
 from google.cloud import storage
+import appraisal.endpoints.demo
 
 
 def conditional_http_tween_factory(handler, registry):
@@ -52,6 +53,8 @@ def main(global_config, **settings):
 
         os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = pkg_resources.resource_filename("appraisal", "gcloud-storage-key.json")
 
+        config.registry.environment = settings['environment']
+
         storage_client = storage.Client()
         config.registry.storageBucket = storage_client.get_bucket(settings['storage.bucket'])
 
@@ -59,11 +62,19 @@ def main(global_config, **settings):
         db = pymongo.MongoClient(settings.get('db.uri'))[settings.get('db.name')]
         registry.db = db
 
+        registry.frontendUrl = settings.get('frontend.url')
         registry.apiUrl = settings.get('api.url')
+        registry.auth0ClientID = settings.get('auth0.clientID')
+        registry.auth0Secret = settings.get('auth0.secret')
+
+        registry.auth0MgmtClientID = settings.get('auth0.mgmtClientID')
+        registry.auth0MgmtSecret = settings.get('auth0.mgmtSecret')
 
         registry.vectorServerURL = settings.get('vectorServerURL')
         registry.modelConfig = json.load(pkg_resources.resource_stream("appraisal", f"model_configuration/{settings.get('modelConfig')}"))
 
         connect(settings.get('db.name'), host=settings.get('db.uri'))
+        appraisal.endpoints.demo.loadSampleDataForDemos()
+
 
     return config.make_wsgi_app()

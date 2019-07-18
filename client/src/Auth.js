@@ -3,6 +3,8 @@ import auth0 from 'auth0-js';
 import axios from "axios";
 
 import history from './history';
+import queryString from 'query-string'
+import jwt from "jsonwebtoken";
 
 class Auth
 {
@@ -40,6 +42,26 @@ class Auth
         this.getAccessToken = this.getAccessToken.bind(this);
         this.getIdToken = this.getIdToken.bind(this);
         this.renewSession = this.renewSession.bind(this);
+    }
+
+    handleRapidDemoAuth(done)
+    {
+        const params = queryString.parse(history.location.search)
+        if (params['rapidauth'])
+        {
+            const rapidauth = JSON.parse(params['rapidauth']);
+
+            const authResult = {
+                idTokenPayload: jwt.decode(rapidauth.id_token),
+                idToken: rapidauth.id_token,
+                accessToken: rapidauth.access_token,
+                expiresIn: rapidauth.expires_in
+            };
+
+            this.setSession(authResult);
+
+            done("/appraisals");
+        }
     }
 
     handleAuthentication(done)
