@@ -245,6 +245,7 @@ def uploadData(data, dbAlias, storageBucket, newOwner, oldEnv, newEnv):
             if croppedImageData:
                 newImage.uploadImageData(storageBucket, croppedImageData, cropped=True)
 
-            newImage.url = updateImageUrl(jointIdMap, newImage.url, oldEnv, newEnv)
+            if newImage.url:
+                newImage.url = updateImageUrl(jointIdMap, newImage.url, oldEnv, newEnv)
             newImage.save(validate=False)
 
