@@ -32,7 +32,7 @@ spec:
             path: /home
             port: 80
             scheme: HTTP
-          initialDelaySeconds: 5
+          initialDelaySeconds: 30
           periodSeconds: 3
           successThreshold: 1
           timeoutSeconds: 3
