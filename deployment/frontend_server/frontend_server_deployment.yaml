@@ -29,5 +29,6 @@ spec:
             memory: 250Mi
       dnsPolicy: ClusterFirst
       restartPolicy: Always
+      priorityClassName: __SWIFTLY_ENV__-priority
       schedulerName: default-scheduler
-      terminationGracePeriodSeconds: 30
+      terminationGracePeriodSeconds: 15

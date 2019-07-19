@@ -1,0 +1,7 @@
+apiVersion: scheduling.k8s.io/v1
+kind: PriorityClass
+metadata:
+  name: testing-priority
+value: 1
+globalDefault: false
+description: "This class is for the testing environment."

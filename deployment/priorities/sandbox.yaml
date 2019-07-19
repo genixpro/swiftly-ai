@@ -1,0 +1,7 @@
+apiVersion: scheduling.k8s.io/v1
+kind: PriorityClass
+metadata:
+  name: sandbox-priority
+value: 60
+globalDefault: false
+description: "This priority class is for our sandbox, where beta users can have fun"

@@ -12,7 +12,7 @@ spec:
   strategy:
     rollingUpdate:
       maxSurge: 2
-      maxUnavailable: 0
+      maxUnavailable: 1
     type: RollingUpdate
   template:
     metadata:
@@ -39,5 +39,6 @@ spec:
             memory: 9Gi
       dnsPolicy: ClusterFirst
       restartPolicy: Always
+      priorityClassName: production-priority
       schedulerName: default-scheduler
-      terminationGracePeriodSeconds: 30
+      terminationGracePeriodSeconds: 10
