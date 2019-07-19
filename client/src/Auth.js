@@ -160,6 +160,7 @@ class Auth
         localStorage.setItem('userId', this.userId);
         localStorage.setItem('isAdmin', this.isAdmin);
         this.updateAxiosToken();
+        this.updateMixpanelIdentity();
     }
 
     loadSession()
@@ -172,6 +173,7 @@ class Auth
             this.userId = localStorage.getItem("userId");
             this.isAdmin = localStorage.getItem("isAdmin");
             this.updateAxiosToken();
+            this.updateMixpanelIdentity();
         }
     }
 
