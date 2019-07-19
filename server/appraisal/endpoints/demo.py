@@ -9,10 +9,12 @@ import uuid
 import appraisal.components.sample_data
 import os
 import json
+import threading
 import urllib.parse
 from google.cloud import storage
 from mongoengine import connect, register_connection
-
+from appraisal.models.demo_account import DemoAccount
+from ..models.custom_id_field import generateNewUUID, regularizeID
 
 def loadSampleDataForDemos():
     global globalSampleData
@@ -35,15 +37,6 @@ def loadSampleDataForDemos():
 class DemoLaunch(object):
 
     def __init__(self, request, context=None):
-        domain = 'swiftlyai.auth0.com'
-        non_interactive_client_id = request.registry.auth0MgmtClientID
-        non_interactive_client_secret = request.registry.auth0MgmtSecret
-
-        get_token = GetToken(domain)
-        token = get_token.client_credentials(non_interactive_client_id, non_interactive_client_secret,
-                                             'https://{}/api/v2/'.format(domain))
-
-        self.mgmt_api_token = token['access_token']
         self.request = request
 
     def __acl__(self):
@@ -53,23 +46,16 @@ class DemoLaunch(object):
         ]
 
     def get(self):
+        global globalThread
+
         if not self.request.registry.allowRapidDemo:
             return HTTPForbidden()
 
-        username = uuid.uuid4().hex + "@swiftlyai.com"
-        password = "demo123$$"
-
-        response = requests.post("https://swiftlyai.auth0.com/api/v2/users", headers={
-            "Authorization": "Bearer " + self.mgmt_api_token
-        }, json={
-            "connection": "Username-Password-Authentication",
-            "email": username,
-            "password": password
-        })
-
-        owner = response.json()['user_id']
-
-        appraisal.components.sample_data.uploadData(globalSampleData, 'default', self.request.registry.storageBucket, owner, 'sample', self.request.registry.environment)
+        demoAccount = DemoAccount.objects(used=False).first()
+        if demoAccount is None:
+            demoAccount = createDemoAccountData(self.request.registry)
+        demoAccount.used = True
+        demoAccount.save()
 
         response = requests.post("https://swiftlyai.auth0.com/oauth/token", headers={
             # "Authorization": "Bearer " + self.mgmt_api_token
@@ -77,9 +63,9 @@ class DemoLaunch(object):
             "grant_type": "password",
             "client_id": self.request.registry.auth0ClientID,
             "audience": self.request.registry.apiUrl,
-            "scope": "openid",
-            "username": username,
-            "password": password,
+            "scope": "openid email profile",
+            "username": demoAccount.email,
+            "password": demoAccount.password,
             "connection": "Username-Password-Authentication"
         })
 
@@ -87,4 +73,56 @@ class DemoLaunch(object):
 
         frontendUrl += "rapidauth?" + urllib.parse.urlencode({"rapidauth": response.content})
 
+        # This is a cheap hack, we should be using a background queuing system
+        # If we don't offload it, it will hurt response time
+        globalThread = threading.Thread(target=createDemoAccountsIfNeeded, args=[self.request.registry]).start()
+
         return HTTPTemporaryRedirect(location=frontendUrl)
+
+def createDemoAccountsIfNeeded(registry):
+    existing = DemoAccount.objects(used=False).count()
+
+    needed = max(0, 5 - existing)
+
+    for n in range(needed):
+        createDemoAccountData(registry)
+
+def createDemoAccountData(registry):
+    domain = 'swiftlyai.auth0.com'
+    non_interactive_client_id = registry.auth0MgmtClientID
+    non_interactive_client_secret = registry.auth0MgmtSecret
+
+    get_token = GetToken(domain)
+    token = get_token.client_credentials(non_interactive_client_id, non_interactive_client_secret,
+                                         'https://{}/api/v2/'.format(domain))
+
+    mgmt_api_token = token['access_token']
+
+    email = uuid.uuid4().hex + "@swiftlyai.com"
+    password = "demo123$$" + uuid.uuid4().hex
+
+    response = requests.post("https://swiftlyai.auth0.com/api/v2/users", headers={
+        "Authorization": "Bearer " + mgmt_api_token
+    }, json={
+        "connection": "Username-Password-Authentication",
+        "email": email,
+        "password": password
+    })
+
+    owner = response.json()['user_id']
+
+    appraisal.components.sample_data.uploadData(globalSampleData, 'default', self.request.registry.storageBucket,
+                                                owner, 'sample', self.request.registry.environment)
+
+    demoAccount = DemoAccount(
+        email=email,
+        password=password,
+        owner=owner,
+        used=False
+    )
+
+    demoAccount.id = generateNewUUID(DemoAccount)
+
+    demoAccount.save()
+
+    return demoAccount

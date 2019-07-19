@@ -25,8 +25,6 @@ import HTML5Backend from 'react-dnd-html5-backend'
 import Auth from './Auth';
 import mixpanel from "mixpanel-browser";
 
-mixpanel.init("d500c431c55caac36b9af41885e9e642");
-
 axios.defaults.baseURL = process.env.VALUATE_ENVIRONMENT.REACT_APP_SERVER_URL;
 
 axios.interceptors.response.use(function (response) {

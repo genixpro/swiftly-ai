@@ -5,7 +5,9 @@ import axios from "axios";
 import history from './history';
 import queryString from 'query-string'
 import jwt from "jsonwebtoken";
-import mixpanel from 'mixpanel-browser';
+const mixpanel = require('mixpanel-browser');
+
+mixpanel.init("d500c431c55caac36b9af41885e9e642");
 
 class Auth
 {
@@ -32,12 +34,14 @@ class Auth
         {
             mixpanel.identify(userId);
 
-            axios.get("/account/me").then((response) => {
-                mixpanel.people.set({
-                    "$name": response.data.name,
-                    "$email": response.data.email,
-                    "environment": process.env.VALUATE_ENVIRONMENT.REACT_APP_ENVIRONMENT
-                });
+            mixpanel.register({
+                "environment": process.env.VALUATE_ENVIRONMENT.REACT_APP_ENVIRONMENT
+            });
+
+            mixpanel.people.set({
+                "$name": this.idTokenPayload.name,
+                "$email": this.idTokenPayload.email,
+                "environment": process.env.VALUATE_ENVIRONMENT.REACT_APP_ENVIRONMENT
             });
         }
     }
@@ -149,6 +153,7 @@ class Auth
         let expiresAt = (authResult.expiresIn * 1000) + new Date().getTime();
         this.accessToken = authResult.accessToken;
         this.idToken = authResult.idToken;
+        this.idTokenPayload = authResult.idTokenPayload;
         this.expiresAt = expiresAt;
         this.isAdmin = authResult.idTokenPayload[`${process.env.VALUATE_ENVIRONMENT.REACT_APP_SERVER_URL.replace("https://", "http://")}groups`].indexOf("admin") !== -1;
         this.userId = (authResult.idTokenPayload.sub || authResult.idTokenPayload.user_id);
@@ -156,6 +161,7 @@ class Auth
 
         localStorage.setItem('accessToken', this.accessToken);
         localStorage.setItem('idToken', this.idToken);
+        localStorage.setItem('idTokenPayload', this.idTokenPayload);
         localStorage.setItem('expiresAt', this.expiresAt);
         localStorage.setItem('userId', this.userId);
         localStorage.setItem('isAdmin', this.isAdmin);
@@ -169,6 +175,7 @@ class Auth
         {
             this.accessToken = localStorage.getItem("accessToken");
             this.idToken = localStorage.getItem("idToken");
+            this.idTokenPayload = localStorage.getItem("idTokenPayload");
             this.expiresAt = localStorage.getItem("expiresAt");
             this.userId = localStorage.getItem("userId");
             this.isAdmin = localStorage.getItem("isAdmin");
@@ -207,6 +214,7 @@ class Auth
         localStorage.removeItem('isLoggedIn');
         localStorage.removeItem('accessToken');
         localStorage.removeItem('idToken');
+        localStorage.removeItem('idTokenPayload');
         localStorage.removeItem('expiresAt');
         localStorage.removeItem('isAdmin');
 
