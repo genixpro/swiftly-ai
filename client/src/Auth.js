@@ -28,9 +28,10 @@ class Auth
     updateMixpanelIdentity()
     {
         const accessToken = localStorage.getItem('accessToken');
+        const idTokenPayload = localStorage.getItem('idTokenPayload');
         const userId = localStorage.getItem('userId');
 
-        if (accessToken)
+        if (accessToken && idTokenPayload)
         {
             mixpanel.identify(userId);
 
@@ -39,8 +40,8 @@ class Auth
             });
 
             mixpanel.people.set({
-                "$name": this.idTokenPayload.name,
-                "$email": this.idTokenPayload.email,
+                "$name": idTokenPayload.name,
+                "$email": idTokenPayload.email,
                 "environment": process.env.VALUATE_ENVIRONMENT.REACT_APP_ENVIRONMENT
             });
         }
