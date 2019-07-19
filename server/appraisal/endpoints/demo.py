@@ -62,7 +62,7 @@ class DemoLaunch(object):
         }, json={
             "grant_type": "password",
             "client_id": self.request.registry.auth0ClientID,
-            "audience": self.request.registry.apiUrl,
+            "audience": self.request.registry.apiUrl.replace("https://", "http://"),
             "scope": "openid email profile",
             "username": demoAccount.email,
             "password": demoAccount.password,
