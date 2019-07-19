@@ -188,9 +188,7 @@ def uploadData(data, dbAlias, storageBucket, newOwner, oldEnv, newEnv):
 
     with switch_db(Appraisal, dbAlias) as TargetAppraisal:
         for newAppraisal in newAppraisals:
-            if newAppraisal.imageUrl:
-                newAppraisal.imageUrl = updateImageUrl(jointIdMap, newAppraisal.imageUrl, oldEnv, newEnv)
-
+            newAppraisal.imageUrls = [updateImageUrl(jointIdMap, imageUrl, oldEnv, newEnv) for imageUrl in newAppraisal.imageUrls]
             newAppraisal.comparableSalesCapRate = [compSaleIdReverseMap[oldId] for oldId in newAppraisal.comparableSalesCapRate if oldId in compSaleIdReverseMap]
             newAppraisal.comparableSalesDCA = [compSaleIdReverseMap[oldId] for oldId in newAppraisal.comparableSalesDCA if oldId in compSaleIdReverseMap]
 
@@ -209,16 +207,15 @@ def uploadData(data, dbAlias, storageBucket, newOwner, oldEnv, newEnv):
 
     with switch_db(ComparableSale, dbAlias) as TargetComparableSale:
         for newComp in newComparableSales:
-            if newComp.imageUrl:
-                newComp.imageUrl = updateImageUrl(jointIdMap, newComp.imageUrl, oldEnv, newEnv)
+            newComp.imageUrls = [updateImageUrl(jointIdMap, imageUrl, oldEnv, newEnv) for imageUrl in newComp.imageUrls]
+
             if newComp.zoning:
                 newComp.zoning = zoneIDReverseMap[newComp.zoning]
             newComp.save(validate=False)
 
     with switch_db(ComparableLease, dbAlias) as TargetComparableLease:
         for newComp in newComparableLeases:
-            if newComp.imageUrl:
-                newComp.imageUrl = updateImageUrl(jointIdMap, newComp.imageUrl, oldEnv, newEnv)
+            newComp.imageUrls = [updateImageUrl(jointIdMap, imageUrl, oldEnv, newEnv) for imageUrl in newComp.imageUrls]
             newComp.save(validate=False)
 
     with switch_db(File, dbAlias) as TargetFile:
