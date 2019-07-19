@@ -111,8 +111,8 @@ def createDemoAccountData(registry):
 
     owner = response.json()['user_id']
 
-    appraisal.components.sample_data.uploadData(globalSampleData, 'default', self.request.registry.storageBucket,
-                                                owner, 'sample', self.request.registry.environment)
+    appraisal.components.sample_data.uploadData(globalSampleData, 'default', registry.storageBucket,
+                                                owner, 'sample', registry.environment)
 
     demoAccount = DemoAccount(
         email=email,
