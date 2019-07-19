@@ -6,12 +6,17 @@ import ViewComparableLeasesDatabase from "./ViewComparableLeasesDatabase";
 import ViewAppraisalComparableLeases from "./ViewAppraisalComparableLeases";
 import {NavLink as RRNavLink} from 'react-router-dom';
 import {Switch, Route} from 'react-router-dom';
+import mixpanel from "mixpanel-browser";
 
 
 class ViewComparableLeases extends React.Component {
     state = {
         comparableLeases: []
     };
+
+    componentDidMount() {
+        mixpanel.track("view-comparable-leases");
+    }
 
     render()
     {

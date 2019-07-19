@@ -4,6 +4,7 @@ import {Row, Col, Card, CardBody, FormGroup, Input} from 'reactstrap';
 import axios from 'axios';
 import FieldDisplayEdit from "./components/FieldDisplayEdit";
 import Sidebar from "../components/Layout/Sidebar";
+import mixpanel from "mixpanel-browser";
 
 class StartAppraisal extends React.Component
 {
@@ -13,6 +14,10 @@ class StartAppraisal extends React.Component
         mode: 'type',
         newAppraisal: {}
     };
+
+    componentDidMount() {
+        mixpanel.track("view-new-appraisal");
+    }
 
     changeLanguage = lng =>
     {
@@ -29,6 +34,8 @@ class StartAppraisal extends React.Component
 
     createAppraisal(evt)
     {
+        mixpanel.track("create-appraisal");
+
         evt.preventDefault();
 
         axios.post("/appraisal/", this.state.newAppraisal).then((response) =>

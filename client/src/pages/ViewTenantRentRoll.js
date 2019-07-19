@@ -20,6 +20,7 @@ import Moment from "react-moment";
 import axios from "axios/index";
 import FileModel from "../models/FileModel";
 import ActionButton from "./components/ActionButton";
+import mixpanel from "mixpanel-browser";
 
 class ViewTenantsRentRoll extends React.Component
 {
@@ -89,6 +90,7 @@ class ViewTenantsRentRoll extends React.Component
 
     downloadWordTenants()
     {
+        mixpanel.track("download-tenants");
         window.location = `${process.env.VALUATE_ENVIRONMENT.REACT_APP_SERVER_URL}appraisal/${this.props.appraisal._id}/tenants/word?access_token=${Auth.getAccessToken()}`;
     }
 

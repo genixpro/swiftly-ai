@@ -3,6 +3,7 @@ import { Row, Col, Card, CardBody, Button, ButtonGroup, DropdownItem, DropdownTo
 import IncomeStatementEditor from './components/IncomeStatementEditor';
 import AppraisalContentHeader from "./components/AppraisalContentHeader";
 import Auth from "../Auth";
+import mixpanel from "mixpanel-browser";
 
 
 class ViewExpenses extends React.Component
@@ -12,6 +13,8 @@ class ViewExpenses extends React.Component
 
     componentDidMount()
     {
+        mixpanel.track("view-expenses");
+
         if (this.props.appraisal.stabilizedStatementInputs.expensesMode === 'tmi')
         {
             this.props.history.push(`/appraisal/${this.props.appraisal._id}/expenses_tmi`);
@@ -25,6 +28,8 @@ class ViewExpenses extends React.Component
 
     downloadWordExpenses()
     {
+        mixpanel.track("download-expenses");
+
         window.location = `${process.env.VALUATE_ENVIRONMENT.REACT_APP_SERVER_URL}appraisal/${this.props.appraisal._id}/expenses/word?access_token=${Auth.getAccessToken()}`;
     }
 

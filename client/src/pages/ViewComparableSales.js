@@ -6,12 +6,18 @@ import ViewComparableSalesDatabase from "./ViewComparableSalesDatabase";
 import ViewAppraisalComparableSales from "./ViewAppraisalComparableSales";
 import {NavLink as RRNavLink} from 'react-router-dom';
 import {Switch, Route} from 'react-router-dom';
+import mixpanel from "mixpanel-browser";
+
 
 
 class ViewComparableSales extends React.Component {
     state = {
         comparableSales: []
     };
+
+    componentDidMount() {
+        mixpanel.track("view-comparable-sales");
+    }
 
     render()
     {

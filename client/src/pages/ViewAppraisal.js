@@ -26,6 +26,7 @@ import axios from "axios/index";
 import AppraisalModel from "../models/AppraisalModel";
 import Sidebar from "../components/Layout/Sidebar";
 import AnnotationEditor from "./components/AnnotationEditor";
+import mixpanel from "mixpanel-browser";
 
 class ViewAppraisal extends React.Component
 {
@@ -34,6 +35,8 @@ class ViewAppraisal extends React.Component
 
     componentDidMount()
     {
+        mixpanel.track("view-appraisal");
+
         this.reloadAppraisal();
     }
 

@@ -13,6 +13,7 @@ import StructuralAllowanceCalculationPopoverWrapper from "./components/Structura
 import {IncomeStatementItemModel} from "../models/IncomeStatementModel";
 import _ from "underscore";
 import TotalRecoverableIncomePopoverWrapper from "./components/TotalRecoverableIncomePopoverWrapper";
+import mixpanel from "mixpanel-browser";
 
 class ViewStabilizedStatement extends React.Component
 {
@@ -22,7 +23,7 @@ class ViewStabilizedStatement extends React.Component
 
     componentDidMount()
     {
-
+        mixpanel.track("view-stabilized-statement");
     }
 
 
@@ -48,6 +49,7 @@ class ViewStabilizedStatement extends React.Component
 
     downloadWordSummary()
     {
+        mixpanel.track("download-stabilized-statement");
         window.location = `${process.env.VALUATE_ENVIRONMENT.REACT_APP_SERVER_URL}appraisal/${this.props.appraisal._id}/stabilized_statement/word?access_token=${Auth.getAccessToken()}`;
     }
 

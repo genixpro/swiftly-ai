@@ -9,6 +9,7 @@ import {NavLink as RRNavLink} from 'react-router-dom';
 import {Switch, Route} from 'react-router-dom';
 import AppraisalContentHeader from "./components/AppraisalContentHeader";
 import {withProps} from "recompose";
+import mixpanel from "mixpanel-browser";
 
 class ViewTenants extends React.Component
 {
@@ -16,6 +17,10 @@ class ViewTenants extends React.Component
         width: 0,
         height: 0
     };
+
+    componentDidMount() {
+        mixpanel.track("view-tenants");
+    }
 
     render()
     {

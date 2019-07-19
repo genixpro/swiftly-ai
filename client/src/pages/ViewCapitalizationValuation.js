@@ -18,6 +18,8 @@ import TotalMarketRentDifferentialCalculationPopoverWrapper from "./components/T
 import TotalRemainingFreeRentPopoverWrapper from "./components/TotalRemainingFreeRentPopoverWrapper";
 import TotalLeasingCostsCalculationPopoverWrapper from "./components/TotalLeasingCostsCalculationPopoverWrapper";
 import TotalVacantUnitRentLossCalculationPopoverWrapper from "./components/TotalVacantUnitRentLossCalculationPopoverWrapper";
+import mixpanel from "mixpanel-browser";
+
 
 class ViewCapitalizationValuation extends React.Component
 {
@@ -31,6 +33,8 @@ class ViewCapitalizationValuation extends React.Component
 
     componentDidMount()
     {
+        mixpanel.track("view-capitalization-valuation");
+
         this.props.appraisal.loadComparableSalesCapRate().then((comparableSales) =>
         {
             this.setState({comparableSales: ComparableSaleModel.sortComparables(comparableSales.filter((item) => item), this.state.sort)})
@@ -110,6 +114,8 @@ class ViewCapitalizationValuation extends React.Component
 
     downloadWordSummary()
     {
+        mixpanel.track("download-capitalization-valuation");
+
         window.location = `${process.env.VALUATE_ENVIRONMENT.REACT_APP_SERVER_URL}appraisal/${this.props.appraisal._id}/capitalization_valuation/word?access_token=${Auth.getAccessToken()}`;
     }
 

@@ -1,6 +1,6 @@
 from cornice.resource import resource
 from pyramid.security import Authenticated
-from pyramid.httpexceptions import HTTPTemporaryRedirect
+from pyramid.httpexceptions import HTTPTemporaryRedirect, HTTPForbidden
 from pyramid.authorization import Allow, Deny, Everyone
 import pkg_resources
 import requests
@@ -53,6 +53,9 @@ class DemoLaunch(object):
         ]
 
     def get(self):
+        if not self.request.registry.allowRapidDemo:
+            return HTTPForbidden()
+
         username = uuid.uuid4().hex + "@swiftlyai.com"
         password = "demo123$$"
 

@@ -17,6 +17,7 @@ import FloatFormat from "./components/FloatFormat";
 import TotalRemainingFreeRentPopoverWrapper from "./components/TotalRemainingFreeRentPopoverWrapper";
 import TotalMarketRentDifferentialCalculationPopoverWrapper from "./components/TotalMarketRentDifferentialCalculationPopoverWrapper";
 import ComparableAdjustmentChart from "./components/ComparableAdjustmentChart";
+import mixpanel from "mixpanel-browser";
 
 class ViewDirectComparisonValuation extends React.Component
 {
@@ -30,6 +31,7 @@ class ViewDirectComparisonValuation extends React.Component
 
     componentDidMount()
     {
+        mixpanel.track("view-direct-comparison-valuation");
         this.props.appraisal.loadComparableSalesDCA().then((comparableSales) =>
         {
             this.setState({comparableSales: ComparableSaleModel.sortComparables(comparableSales.filter((item) => item), this.state.sort)})
@@ -122,6 +124,8 @@ class ViewDirectComparisonValuation extends React.Component
 
     downloadWordSummary()
     {
+        mixpanel.track("download-direct-comparison-valuation");
+
         window.location = `${process.env.VALUATE_ENVIRONMENT.REACT_APP_SERVER_URL}appraisal/${this.props.appraisal._id}/direct_comparison_valuation/word?access_token=${Auth.getAccessToken()}`;
     }
 

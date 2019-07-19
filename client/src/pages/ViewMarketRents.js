@@ -22,6 +22,7 @@ import MarketRentModel from "../models/MarketRentModel";
 import CurrencyFormat from "./components/CurrencyFormat";
 import ActionButton from "./components/ActionButton";
 import Auth from "../Auth";
+import mixpanel from "mixpanel-browser";
 
 
 class TenantApplicableEditor extends React.Component
@@ -301,6 +302,8 @@ class ViewMarketRents extends React.Component
 
     downloadMarketRents()
     {
+        mixpanel.track("download-market-rents");
+
         window.location = `${process.env.VALUATE_ENVIRONMENT.REACT_APP_SERVER_URL}appraisal/${this.props.appraisal._id}/market_rents/word?access_token=${Auth.getAccessToken()}`;
     }
 

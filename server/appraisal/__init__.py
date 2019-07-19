@@ -73,9 +73,13 @@ def main(global_config, **settings):
         registry.vectorServerURL = settings.get('vectorServerURL')
         registry.modelConfig = json.load(pkg_resources.resource_stream("appraisal", f"model_configuration/{settings.get('modelConfig')}"))
 
+        registry.allowRapidDemo = settings.get('allowRapidDemo') == 'true'
+
         connect(settings.get('db.name'), host=settings.get('db.uri'))
         register_connection("default", db=settings.get('db.name'), host=settings.get('db.uri'))
-        appraisal.endpoints.demo.loadSampleDataForDemos()
+
+        if registry.allowRapidDemo:
+            appraisal.endpoints.demo.loadSampleDataForDemos()
 
 
     return config.make_wsgi_app()

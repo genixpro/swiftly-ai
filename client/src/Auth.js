@@ -5,6 +5,7 @@ import axios from "axios";
 import history from './history';
 import queryString from 'query-string'
 import jwt from "jsonwebtoken";
+import mixpanel from 'mixpanel-browser';
 
 class Auth
 {
@@ -21,6 +22,25 @@ class Auth
         responseType: 'token id_token',
         scope: 'openid email profile'
     });
+
+    updateMixpanelIdentity()
+    {
+        const accessToken = localStorage.getItem('accessToken');
+        const userId = localStorage.getItem('userId');
+
+        if (accessToken)
+        {
+            mixpanel.identify(userId);
+
+            axios.get("/account/me").then((response) => {
+                mixpanel.people.set({
+                    "$name": response.data.name,
+                    "$email": response.data.email,
+                    "environment": process.env.VALUATE_ENVIRONMENT.REACT_APP_ENVIRONMENT
+                });
+            });
+        }
+    }
 
     login()
     {

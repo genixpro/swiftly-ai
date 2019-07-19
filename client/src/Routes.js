@@ -12,6 +12,7 @@ import ViewAppraisal from './pages/ViewAppraisal';
 import ViewAllAppraisals from './pages/ViewAllAppraisals';
 import ClientDropbox from './pages/ClientDropbox';
 import Logout from './pages/Logout';
+import mixpanel from "mixpanel-browser";
 
 import Auth from "./Auth";
 
@@ -35,6 +36,7 @@ const AuthenticationCallback = (props) =>
 
 const RapidAuthCallback = (props) =>
 {
+    mixpanel.track("demo-setup");
     Auth.handleRapidDemoAuth((redirect) => props.history.push(redirect));
     return <span>Setting Up Demo Account</span>;
 };
@@ -54,6 +56,7 @@ const Routes = ({ location }) => {
     //      'rag-fadeIn'
     //      'rag-fadeInRight'
     //      'rag-fadeInLeft'
+
 
     const animationName = 'rag-fadeIn';
 

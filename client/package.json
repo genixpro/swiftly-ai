@@ -95,6 +95,7 @@
     "jszip": "3.1.5",
     "loaders.css": "^0.1.2",
     "matchmedia": "0.1.2",
+    "mixpanel-browser": "^2.29.0",
     "modernizr": "3.6.0",
     "moment": "2.22.2",
     "morris.js.so": "0.5.1",

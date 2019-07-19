@@ -9,6 +9,7 @@ import 'spinkit/css/spinkit.css';
 import AppraisalContentHeader from "./components/AppraisalContentHeader";
 import Checklist from "./components/Checklist";
 import FileModel from "../models/FileModel";
+import mixpanel from "mixpanel-browser";
 
 
 class UploadFiles extends React.Component {
@@ -39,6 +40,8 @@ class UploadFiles extends React.Component {
 
     onDrop(files)
     {
+        mixpanel.track("upload-file");
+
         this.setState({uploading: true});
         Promise.mapSeries(files, (file) => {
             return new Promise((resolve, reject) => {
