@@ -108,6 +108,8 @@ class ComparableSaleModel extends EquationMdoel
     static portfolioCompilationLinkId = new StringField();
     static portfolioLinkedComps = new ListField(new StringField());
 
+    static vendorTakebackPercent = new FloatField();
+
     get noiPSFMultiple()
     {
         if (this.pricePerSquareFoot && this.netOperatingIncomePSF)

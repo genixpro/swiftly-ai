@@ -19,6 +19,7 @@ import PercentFormat from "../pages/components/PercentFormat";
 import {jStat} from "jStat";
 import ComparableSalesSummaries from "./comparable_sales_summaries";
 
+
 class App extends React.Component
 {
     render()
@@ -217,7 +218,7 @@ class App extends React.Component
                 The average rate of the comparable sales is <PercentFormat value={capRateAverage} />, with most comparable sales being above <PercentFormat value={capRateMedian} />.
                 The range is mostly attributed to differences in location and sale date. A summary of the comparable sales is presented below.</p>
             <br />
-            <ComparableSalesSummaries comparableSales={this.props.comparableSales}/>
+            <ComparableSalesSummaries comparableSales={this.props.comparableSales} appraisal={this.props.appraisal}/>
             <br/>
             <h4 style={{"textAlign": "left", "color": "black"}}>Summary</h4>
             <p>

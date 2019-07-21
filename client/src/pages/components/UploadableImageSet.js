@@ -8,6 +8,7 @@ import {Button,
     CarouselIndicators,
     CarouselCaption} from 'reactstrap';
 import _ from 'underscore';
+import proxy from "../../proxy";
 
 class UploadableImageSet extends React.Component
 {
@@ -99,7 +100,7 @@ class UploadableImageSet extends React.Component
 
     getUrlsForDisplay()
     {
-        const streetViewUrl = `https://maps.googleapis.com/maps/api/streetview?key=AIzaSyBRmZ2N4EhJjXmC29t3VeiLUQssNG-MY1I&size=640x480&source=outdoor&location=${this.props.address}`;
+        const streetViewUrl = proxy(`https://maps.googleapis.com/maps/api/streetview?key=AIzaSyBRmZ2N4EhJjXmC29t3VeiLUQssNG-MY1I&size=640x480&source=outdoor&location=${this.props.address}`);
 
         let urls = [];
 
@@ -156,7 +157,11 @@ class UploadableImageSet extends React.Component
                             next={this.next.bind(this)}
                             previous={this.previous.bind(this)}
                         >
-                            <CarouselIndicators items={urls} activeIndex={this.state.activeIndex} onClickHandler={this.goToIndex.bind(this)} />
+                            {
+                                urls.length > 1 ?
+                                    <CarouselIndicators items={urls} activeIndex={this.state.activeIndex} onClickHandler={this.goToIndex.bind(this)} />
+                                    : null
+                            }
 
                             {
                                 urls.map((url) =>
@@ -171,12 +176,19 @@ class UploadableImageSet extends React.Component
                                     </CarouselItem>
                                 })
                             }
-                            <CarouselControl direction="prev" directionText="Previous" onClickHandler={this.previous.bind(this)} />
-                            <CarouselControl direction="next" directionText="Next" onClickHandler={this.next.bind(this)} />
+                            {
+                                urls.length > 1 ?
+                                    <CarouselControl direction="prev" directionText="Previous"
+                                                     onClickHandler={this.previous.bind(this)}/>
+                                    : null
+                            }
+                            {
+                                urls.length > 1 ?
+                                    <CarouselControl direction="next" directionText="Next"
+                                                     onClickHandler={this.next.bind(this)}/>
+                                    : null
+                            }
                         </Carousel>
-
-
-
 
                         {/*<AliceCarousel ref={(el) => this.Carousel = el} buttonsDisabled={true} dotsDisabled={true} items={urls.map((url) => <img src={url}/>)} />*/}
                         <nav className={"uploadable-icons-nav"}>

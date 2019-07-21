@@ -174,6 +174,8 @@ class ComparableSale(Document):
     portfolioCompilationLinkId = StringField()
     portfolioLinkedComps = ListField(StringField())
 
+    vendorTakebackPercent = FloatField()
+
     version = IntField(default=3)
 
 

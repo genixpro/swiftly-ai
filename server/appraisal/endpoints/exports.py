@@ -5,6 +5,8 @@ import tempfile
 import subprocess
 import os
 import io
+import sys
+import copy
 import json as json
 from base64 import b64encode
 import re
@@ -37,6 +39,9 @@ from ..models.custom_id_field import generateNewUUID, regularizeID
 
 
 class ExportAPI(object):
+    def __init__(self, request):
+        self.request = request
+
     def addBackground(self, cell, color):
         shading_elm_1 = parse_xml((r'<w:shd {} w:fill="{}" w:textColor="ffffff"/>').format(nsdecls('w'), color))
         cell._tc.get_or_add_tcPr().append(shading_elm_1)
@@ -60,7 +65,10 @@ class ExportAPI(object):
             with tempfile.NamedTemporaryFile(suffix=".html", dir=tempDir) as temp:
                 data["fileName"] = temp.name
 
-                renderHtml = subprocess.run(args=["npm",  "run-script", templateName], cwd=wordDocFolder, input=bytes(json.dumps(data), 'utf8'), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+                env = copy.copy(os.environ)
+                env['VALUATE_ENV'] = self.request.registry.environment
+
+                renderHtml = subprocess.run(args=["npm",  "run-script", templateName], cwd=wordDocFolder, input=bytes(json.dumps(data), 'utf8'), stdout=subprocess.PIPE, stderr=subprocess.PIPE, env=env)
 
                 stdout = str(renderHtml.stdout, 'utf8')
                 stderr = str(renderHtml.stderr, 'utf8')
@@ -108,6 +116,7 @@ class ExportAPI(object):
 class ComparableSalesExcelFile(ExportAPI):
 
     def __init__(self, request, context=None):
+        super(ComparableSalesExcelFile, self).__init__(self)
         self.request = request
 
     def __acl__(self):
@@ -181,6 +190,7 @@ class ComparableSalesExcelFile(ExportAPI):
 class ComparableSalesWordFile(ExportAPI):
 
     def __init__(self, request, context=None):
+        super(ComparableSalesWordFile, self).__init__(self)
         self.request = request
 
     def __acl__(self):
@@ -225,6 +235,7 @@ class ComparableSalesWordFile(ExportAPI):
 class ComparableSalesDetailedWordFile(ExportAPI):
 
     def __init__(self, request, context=None):
+        super(ComparableSalesDetailedWordFile, self).__init__(self)
         self.request = request
 
     def __acl__(self):
@@ -292,6 +303,7 @@ class ComparableSalesDetailedWordFile(ExportAPI):
 class ComparableLeasesExcelFile(ExportAPI):
 
     def __init__(self, request, context=None):
+        super(ComparableLeasesExcelFile, self).__init__(self)
         self.request = request
 
     def __acl__(self):
@@ -360,6 +372,7 @@ class ComparableLeasesExcelFile(ExportAPI):
 class ComparableLeasesWordFile(ExportAPI):
 
     def __init__(self, request, context=None):
+        super(ComparableLeasesWordFile, self).__init__(self)
         self.request = request
 
 
@@ -447,6 +460,7 @@ class ComparableLeasesWordFile(ExportAPI):
 class RentRollWordFile(ExportAPI):
 
     def __init__(self, request, context=None):
+        super(RentRollWordFile, self).__init__(self)
         self.request = request
 
     def __acl__(self):
@@ -490,6 +504,7 @@ class RentRollWordFile(ExportAPI):
 class RentRollExcelFile(ExportAPI):
 
     def __init__(self, request, context=None):
+        super(RentRollExcelFile, self).__init__(self)
         self.request = request
 
     def __acl__(self):
@@ -553,6 +568,7 @@ class RentRollExcelFile(ExportAPI):
 class ExpensesWordFile(ExportAPI):
 
     def __init__(self, request, context=None):
+        super(ExpensesWordFile, self).__init__(self)
         self.request = request
 
     def __acl__(self):
@@ -587,6 +603,7 @@ class ExpensesWordFile(ExportAPI):
 class ExpensesExcelFile(ExportAPI):
 
     def __init__(self, request, context=None):
+        super(ExpensesExcelFile, self).__init__(self)
         self.request = request
 
     def __acl__(self):
@@ -669,6 +686,7 @@ class ExpensesExcelFile(ExportAPI):
 class StabilizedStatementWordFile(ExportAPI):
 
     def __init__(self, request, context=None):
+        super(StabilizedStatementWordFile, self).__init__(self)
         self.request = request
 
     def __acl__(self):
@@ -703,6 +721,7 @@ class StabilizedStatementWordFile(ExportAPI):
 class StabilizedStatementExcelFile(ExportAPI):
 
     def __init__(self, request, context=None):
+        super(StabilizedStatementExcelFile, self).__init__(self)
         self.request = request
 
     def __acl__(self):
@@ -789,6 +808,7 @@ class StabilizedStatementExcelFile(ExportAPI):
 class CapitalizationValuationWordFile(ExportAPI):
 
     def __init__(self, request, context=None):
+        super(CapitalizationValuationWordFile, self).__init__(self)
         self.request = request
 
     def __acl__(self):
@@ -832,6 +852,7 @@ class CapitalizationValuationWordFile(ExportAPI):
 class CapitalizationValuationExcelFile(ExportAPI):
 
     def __init__(self, request, context=None):
+        super(CapitalizationValuationExcelFile, self).__init__(self)
         self.request = request
 
     def __acl__(self):
@@ -902,6 +923,7 @@ class CapitalizationValuationExcelFile(ExportAPI):
 class DirectComparisonValuationWordFile(ExportAPI):
 
     def __init__(self, request, context=None):
+        super(DirectComparisonValuationWordFile, self).__init__(self)
         self.request = request
 
     def __acl__(self):
@@ -946,6 +968,7 @@ class DirectComparisonValuationWordFile(ExportAPI):
 class DirectComparisonValuationExcelFile(ExportAPI):
 
     def __init__(self, request, context=None):
+        super(DirectComparisonValuationExcelFile, self).__init__(self)
         self.request = request
 
     def __acl__(self):
@@ -1024,6 +1047,7 @@ class DirectComparisonValuationExcelFile(ExportAPI):
 class AdditionalIncomeWordFile(ExportAPI):
 
     def __init__(self, request, context=None):
+        super(AdditionalIncomeWordFile, self).__init__(self)
         self.request = request
 
     def __acl__(self):
@@ -1059,6 +1083,7 @@ class AdditionalIncomeWordFile(ExportAPI):
 class AdditionalIncomeExcelFile(ExportAPI):
 
     def __init__(self, request, context=None):
+        super(AdditionalIncomeExcelFile, self).__init__(self)
         self.request = request
 
     def __acl__(self):
@@ -1114,6 +1139,7 @@ class AdditionalIncomeExcelFile(ExportAPI):
 class AmortizationScheduleWordFile(ExportAPI):
 
     def __init__(self, request, context=None):
+        super(AmortizationScheduleWordFile, self).__init__(self)
         self.request = request
 
     def __acl__(self):
@@ -1149,6 +1175,7 @@ class AmortizationScheduleWordFile(ExportAPI):
 class AmortizationScheduleExcelFile(ExportAPI):
 
     def __init__(self, request, context=None):
+        super(AmortizationScheduleExcelFile, self).__init__(self)
         self.request = request
 
     def __acl__(self):
@@ -1202,6 +1229,7 @@ class AmortizationScheduleExcelFile(ExportAPI):
 class TenantsWordFile(ExportAPI):
 
     def __init__(self, request, context=None):
+        super(TenantsWordFile, self).__init__(self)
         self.request = request
 
     def __acl__(self):
@@ -1236,6 +1264,7 @@ class TenantsWordFile(ExportAPI):
 @resource(path='/appraisal/{appraisalId}/market_rents/word', cors_enabled=True, cors_origins="*", permission="everything")
 class MarketRentsWordFile(ExportAPI):
     def __init__(self, request, context=None):
+        super(MarketRentsWordFile, self).__init__(self)
         self.request = request
 
     def __acl__(self):

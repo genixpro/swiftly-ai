@@ -1312,6 +1312,16 @@ class ComparableSaleListItem extends React.Component
                                             onChange={this.changeComparableField.bind(this)}
                                         />
 
+                                        <ComparableSaleListItemField
+                                            title="Vendor Takeback Percent"
+                                            field="vendorTakebackPercent"
+                                            fieldType="percent"
+                                            // propertyType={"land"}
+                                            edit={allowEdit}
+                                            comparableSale={comparableSale}
+                                            onChange={this.changeComparableField.bind(this)}
+                                        />
+
 
                                         {
                                             comparableSale.propertyType === 'land' ?

@@ -11,6 +11,7 @@ import StyledTable from "./styled_table";
 import Moment from "react-moment";
 import AreaFormat from "../pages/components/AreaFormat";
 import IntegerFormat from "../pages/components/IntegerFormat";
+import AdjustmentChart from "./adjustment_chart";
 
 class App extends React.Component
 {
@@ -128,7 +129,11 @@ class App extends React.Component
             <br/>
             <DirectComparisonTable appraisal={this.props.appraisal} />
             <br/>
-
+            {
+                this.props.appraisal.adjustmentChart.showAdjustmentChart ?
+                    <AdjustmentChart comparableSales={this.props.comparableSales} appraisal={this.props.appraisal} />
+                    : null
+            }
             <h3 style={resultStyle}>Final Value by the DCA <br/> <CurrencyFormat cents={false} center value={this.props.appraisal.stabilizedStatement.valuationRounded}/></h3>
             </body>
             </html>
@@ -140,8 +145,10 @@ class App extends React.Component
 renderDocument((data) =>
 {
     const appraisal = AppraisalModel.create(data.appraisal);
+    const comparableSales = data.comparableSales.map((comp) => ComparableSaleModel.create(comp));
+
     return <App
         appraisal={appraisal}
-        comparableSales={data.comparableSales.map((comp) => ComparableSaleModel.create(comp))}
+        comparableSales={comparableSales}
     />;
 });

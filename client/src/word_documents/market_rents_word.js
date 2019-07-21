@@ -14,6 +14,7 @@ import IntegerFormat from "../pages/components/IntegerFormat";
 import AreaFormat from "../pages/components/AreaFormat";
 import ComparableLeaseModel from "../models/ComparableLeaseModel";
 import CurrencyFormat from "../pages/components/CurrencyFormat";
+import {getCity} from "./utilities";
 
 class MarketRentsWord extends React.Component
 {
@@ -45,8 +46,7 @@ class MarketRentsWord extends React.Component
 
     getCity(address)
     {
-        const words = address.split(",");
-        return words[words.length - 3];
+        return getCity(address);
     }
 
     render()
