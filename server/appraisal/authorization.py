@@ -46,7 +46,9 @@ class CustomAuthenticationPolicy(CallbackAuthenticationPolicy):
         try:
             key = JWK(**self.authKey)
 
-            token = JWT(jwt=token, key=key, check_claims={'iss': self.authDomain, 'aud': self.apiUrl.replace("https://", "http://")})
+            # print(key.alg)
+
+            token = JWT(jwt=token, key=key, check_claims={'iss': self.authDomain, 'aud': self.apiUrl.replace("https://", "http://")}, algs=['RS256'])
 
             claims = json_decode(token.claims)
 
