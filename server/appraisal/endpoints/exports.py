@@ -627,20 +627,20 @@ class ExpensesExcelFile(ExportAPI):
 
         headers = [""]
 
-        for year in appraisal.incomeStatement.years:
+        for year in appraisal.expenseStatement.years:
             headers.append(str(year))
 
         headers[0] = "Operating Expenses"
         ws1.append(headers)
 
-        operatingExpenses = [expense for expense in appraisal.incomeStatement.expenses if expense.incomeStatementItemType == 'operating_expense']
-        managementExpenses = [expense for expense in appraisal.incomeStatement.expenses if expense.incomeStatementItemType == 'management_expense']
-        taxExpenses = [expense for expense in appraisal.incomeStatement.expenses if expense.incomeStatementItemType == 'taxes']
+        operatingExpenses = [expense for expense in appraisal.expenseStatement.expenses if expense.incomeStatementItemType == 'operating_expense']
+        managementExpenses = [expense for expense in appraisal.expenseStatement.expenses if expense.incomeStatementItemType == 'management_expense']
+        taxExpenses = [expense for expense in appraisal.expenseStatement.expenses if expense.incomeStatementItemType == 'taxes']
 
         for expense in operatingExpenses:
             row = [expense.name]
 
-            for year in appraisal.incomeStatement.years:
+            for year in appraisal.expenseStatement.years:
                 row.append(expense.yearlyAmounts.get(str(year)))
 
             ws1.append(row)
@@ -653,7 +653,7 @@ class ExpensesExcelFile(ExportAPI):
         for expense in managementExpenses:
             row = [expense.name]
 
-            for year in appraisal.incomeStatement.years:
+            for year in appraisal.expenseStatement.years:
                 row.append(expense.yearlyAmounts.get(str(year)))
 
             ws1.append(row)
@@ -666,7 +666,7 @@ class ExpensesExcelFile(ExportAPI):
         for expense in taxExpenses:
             row = [expense.name]
 
-            for year in appraisal.incomeStatement.years:
+            for year in appraisal.expenseStatement.years:
                 row.append(expense.yearlyAmounts.get(str(year)))
 
             ws1.append(row)

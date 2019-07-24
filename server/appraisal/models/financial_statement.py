@@ -3,7 +3,7 @@ import datetime
 from appraisal.models.extraction_reference import ExtractionReference
 
 
-class IncomeStatementItem(EmbeddedDocument):
+class FinancialStatementItem(EmbeddedDocument):
     meta = {'strict': False}
 
     # The name of the income statement item
@@ -57,37 +57,31 @@ class IncomeStatementItem(EmbeddedDocument):
 
 
 
-class IncomeStatement(EmbeddedDocument):
+class FinancialStatement(EmbeddedDocument):
     years = ListField(IntField(), default=[])
 
     yearlySourceTypes = DictField(StringField(), default={})
 
     customYearTitles = DictField(StringField(), default={})
 
-    incomes = ListField(EmbeddedDocumentField(IncomeStatementItem))
+    # DEPRECATED
+    incomes = ListField(EmbeddedDocumentField(FinancialStatementItem))
 
-    expenses = ListField(EmbeddedDocumentField(IncomeStatementItem))
+    # DEPRECATED
+    expenses = ListField(EmbeddedDocumentField(FinancialStatementItem))
+
+    items = ListField(EmbeddedDocumentField(FinancialStatementItem))
 
     def mergeWithIncomeStatement(self, otherIncomeStatement):
-        for otherIncome in otherIncomeStatement.incomes:
+        for otherItem in otherIncomeStatement.items:
             found = False
-            for income in self.incomes:
-                if income.name == otherIncome.name:
-                    income.mergeWithIncomeStatementItem(otherIncome)
+            for item in self.items:
+                if item.name == otherItem.name:
+                    item.mergeWithIncomeStatementItem(otherItem)
                     found = True
 
             if found == False:
-                self.incomes.append(otherIncome)
-
-        for otherExpense in otherIncomeStatement.expenses:
-            found = False
-            for expense in self.expenses:
-                if expense.name == otherExpense.name:
-                    expense.mergeWithIncomeStatementItem(otherExpense)
-                    found = True
-
-            if found == False:
-                self.expenses.append(otherExpense)
+                self.items.append(otherItem)
 
         self.years = sorted(list(set(self.years).union(set(otherIncomeStatement.years))))
         self.yearlySourceTypes = {}

@@ -1,7 +1,7 @@
 from mongoengine import *
 import datetime
 from appraisal.models.unit import Unit
-from appraisal.models.income_statement import IncomeStatement
+from appraisal.models.financial_statement import FinancialStatement
 from appraisal.models.discounted_cash_flow import DiscountedCashFlow
 from appraisal.models.discounted_cash_flow_inputs import DiscountedCashFlowInputs
 from appraisal.models.appraisal_validation_result import AppraisalValidationResult
@@ -99,7 +99,10 @@ class Appraisal(Document):
     units = ListField(EmbeddedDocumentField(Unit))
 
     # Income statement for this Appraisal
-    incomeStatement = EmbeddedDocumentField(IncomeStatement, default=IncomeStatement)
+    incomeStatement = EmbeddedDocumentField(FinancialStatement, default=FinancialStatement)
+
+    # Expense statement for this Appraisal. This is kept separate from income statement
+    expenseStatement = EmbeddedDocumentField(FinancialStatement, default=FinancialStatement)
 
     # The inputs used in a discounted cash flow
     discountedCashFlowInputs = EmbeddedDocumentField(DiscountedCashFlowInputs, default=DiscountedCashFlowInputs)
@@ -159,7 +162,7 @@ class Appraisal(Document):
     def sizeOfBuilding(self):
         return float(numpy.sum([unit.squareFootage for unit in self.units]))
 
-    version = IntField(default=2)
+    version = IntField(default=4)
 
 
     def getLeasingCostStructureWithName(self, name):
@@ -188,3 +191,10 @@ def migration_002_003_appraisal_id(appraisal):
         newAppraisal = Appraisal(**data)
         return newAppraisal
 
+@registerMigration(Appraisal, 4)
+def migration_004_income_statement_items(appraisal):
+    appraisal.incomeStatement.items = appraisal.incomeStatement.incomes
+    appraisal.expenseStatement.items = appraisal.incomeStatement.expenses
+    appraisal.expenseStatement.years = appraisal.incomeStatement.years
+    appraisal.expenseStatement.yearlySourceTypes = appraisal.incomeStatement.yearlySourceTypes
+    appraisal.expenseStatement.customYearTitles = appraisal.incomeStatement.customYearTitles

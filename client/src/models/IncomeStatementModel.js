@@ -87,8 +87,11 @@ class IncomeStatementModel extends BaseModel
     static years = new ListField(new FloatField());
     static yearlySourceTypes = new DictField(new StringField());
     static customYearTitles = new DictField(new StringField(), {});
+    // DEPRECATED
     static incomes = new ListField(new ModelField(IncomeStatementItemModel));
+    // DEPRECATED
     static expenses = new ListField(new ModelField(IncomeStatementItemModel));
+    static items = new ListField(new ModelField(IncomeStatementItemModel));
 
     get latestYear()
     {

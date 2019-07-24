@@ -43,7 +43,7 @@ class IncomeStatementEditor extends React.Component
                         <div className={"header-wrapper"}>Name</div>
                     </Col>
                     {
-                        this.props.appraisal.incomeStatement.years.map((year) =>
+                        this.props.appraisal[this.props.field].years.map((year) =>
                         {
                             if (this.state.pinnedYear !== null && year !== this.state.pinnedYear)
                             {
@@ -68,7 +68,7 @@ class IncomeStatementEditor extends React.Component
                                         </Button>
 
                                         {
-                                            year === this.props.appraisal.incomeStatement.years[0] ?
+                                            year === this.props.appraisal[this.props.field].years[0] ?
                                                 [
                                                     <Button
                                                         key={1}
@@ -160,7 +160,7 @@ class IncomeStatementEditor extends React.Component
                                             <DroppableFieldDisplayEdit
                                                 type={'text'}
                                                 hideIcon={true}
-                                                value={this.props.appraisal.incomeStatement.customYearTitles[year]}
+                                                value={this.props.appraisal[this.props.field].customYearTitles[year]}
                                                 onChange={(newValue) => this.changeYearTitle(year, newValue)}
                                             />
                                         }
@@ -227,7 +227,7 @@ class IncomeStatementEditor extends React.Component
                 <div className={"value-wrapper"}>{name}</div>
             </Col>
             {
-                this.props.appraisal.incomeStatement.years.map((year) =>
+                this.props.appraisal[this.props.field].years.map((year) =>
                 {
                     if (this.state.pinnedYear !== null && year !== this.state.pinnedYear)
                     {
@@ -285,7 +285,7 @@ class IncomeStatementEditor extends React.Component
                                 {/*</Col>*/}
 
                                 {/*{*/}
-                                    {/*this.props.appraisal.incomeStatement.years.map((year) =>*/}
+                                    {/*this.props.appraisal[this.props.field].years.map((year) =>*/}
                                     {/*{*/}
                                         {/*if (this.state.pinnedYear !== null && year !== this.state.pinnedYear)*/}
                                         {/*{*/}
@@ -310,7 +310,7 @@ class IncomeStatementEditor extends React.Component
     {
         const appraisal = this.props.appraisal;
 
-        appraisal.incomeStatement.customYearTitles[year] = newValue;
+        appraisal[this.props.field].customYearTitles[year] = newValue;
 
         this.props.saveAppraisal(this.props.appraisal)
     }
@@ -392,16 +392,16 @@ class IncomeStatementEditor extends React.Component
         Object.keys(this.props.groups).forEach((group) =>
         {
             totals[group + "_total"] = {};
-            for (let year of this.props.appraisal.incomeStatement.years)
+            for (let year of this.props.appraisal[this.props.field].years)
             {
                     totals[group + "_total"][year] = 0;
             }
         });
 
 
-        if (this.props.appraisal.incomeStatement[this.props.field])
+        if (this.props.appraisal[this.props.field].items)
         {
-            this.props.appraisal.incomeStatement[this.props.field].forEach((expense) =>
+            this.props.appraisal[this.props.field].items.forEach((expense) =>
             {
                 if (expense.yearlyAmounts)
                 {
@@ -516,16 +516,16 @@ class IncomeStatementEditor extends React.Component
         if (givenYear)
         {
             newYear = givenYear - 1;
-            this.props.appraisal.incomeStatement.years.splice(0, 0, newYear);
+            this.props.appraisal[this.props.field].years.splice(0, 0, newYear);
         }
         else
         {
-            const currentYear = this.props.appraisal.incomeStatement.latestYear || new Date().getFullYear();
+            const currentYear = this.props.appraisal[this.props.field].latestYear || new Date().getFullYear();
             newYear = currentYear + 1;
-            this.props.appraisal.incomeStatement.years.push(newYear);
+            this.props.appraisal[this.props.field].years.push(newYear);
         }
 
-        this.props.appraisal.incomeStatement.yearlySourceTypes[newYear] = 'user';
+        this.props.appraisal[this.props.field].yearlySourceTypes[newYear] = 'user';
 
         const adjustFunction = (expense) =>
         {
@@ -558,16 +558,15 @@ class IncomeStatementEditor extends React.Component
             }
         };
 
-        this.props.appraisal.incomeStatement.incomes.forEach(adjustFunction);
-        this.props.appraisal.incomeStatement.expenses.forEach(adjustFunction);
+        this.props.appraisal[this.props.field].items.forEach(adjustFunction);
 
         this.props.saveAppraisal(this.props.appraisal);
     }
 
     removeYear(year)
     {
-        this.props.appraisal.incomeStatement.years.splice(this.props.appraisal.incomeStatement.years.indexOf(year), 1);
-        delete this.props.appraisal.incomeStatement.yearlySourceTypes[year];
+        this.props.appraisal[this.props.field].years.splice(this.props.appraisal[this.props.field].years.indexOf(year), 1);
+        delete this.props.appraisal[this.props.field].yearlySourceTypes[year];
 
         const deleteFunction = (expense) =>
         {
@@ -577,8 +576,7 @@ class IncomeStatementEditor extends React.Component
             }
         };
 
-        this.props.appraisal.incomeStatement.incomes.forEach(deleteFunction);
-        this.props.appraisal.incomeStatement.expenses.forEach(deleteFunction);
+        this.props.appraisal[this.props.field].items.forEach(deleteFunction);
 
         this.props.saveAppraisal(this.props.appraisal);
     }
@@ -586,13 +584,13 @@ class IncomeStatementEditor extends React.Component
 
     removeIncomeItem(item)
     {
-        let expensedGrouped = this.sortIncomeStatementItems(this.props.appraisal.incomeStatement[this.props.field]);
+        let expensedGrouped = this.sortIncomeStatementItems(this.props.appraisal[this.props.field].items);
         const expensesSorted = expensedGrouped.sorted;
         const origIndex = _.indexOf(expensesSorted, _.filter(expensesSorted, (expense) => expense[sortableIndex] === item[sortableIndex])[0]);
 
         expensesSorted.splice(origIndex, 1);
 
-        this.props.appraisal.incomeStatement[this.props.field] = expensesSorted;
+        this.props.appraisal[this.props.field].items = expensesSorted;
 
         this.computeExpenseTotals();
         this.props.saveAppraisal(this.props.appraisal);
@@ -622,7 +620,7 @@ class IncomeStatementEditor extends React.Component
             </Col>
 
             {
-                this.props.appraisal.incomeStatement.years.map((year, yearIndex) =>
+                this.props.appraisal[this.props.field].years.map((year, yearIndex) =>
                 {
                     if (this.state.pinnedYear && year !== this.state.pinnedYear)
                     {
@@ -673,7 +671,7 @@ class IncomeStatementEditor extends React.Component
         const newItem = IncomeStatementItemModel.create({
             cashFlowType: "expense",
             incomeStatementItemType: incomeStatementItemType
-        }, this.props.appraisal.incomeStatement, this.props.field);
+        }, this.props.appraisal[this.props.field], this.props.field);
 
         if (field)
         {
@@ -700,7 +698,7 @@ class IncomeStatementEditor extends React.Component
             newItem['extractionReferences'] = extractionReferences
         }
 
-        this.props.appraisal.incomeStatement[this.props.field].push(newItem);
+        this.props.appraisal[this.props.field].items.push(newItem);
 
         this.computeExpenseTotals();
         this.props.saveAppraisal(this.props.appraisal)
@@ -728,7 +726,7 @@ class IncomeStatementEditor extends React.Component
                 />
             </Col>
             {
-                this.props.appraisal.incomeStatement.years.map((year, yearIndex) =>
+                this.props.appraisal[this.props.field].years.map((year, yearIndex) =>
                 {
                     if (this.state.pinnedYear !== null && year !== this.state.pinnedYear)
                     {
@@ -781,7 +779,7 @@ class IncomeStatementEditor extends React.Component
 
     onSortEnd({oldIndex, newIndex})
     {
-        let expensedGrouped = this.sortIncomeStatementItems(this.props.appraisal.incomeStatement[this.props.field]);
+        let expensedGrouped = this.sortIncomeStatementItems(this.props.appraisal[this.props.field].items);
 
         let expensesSorted = expensedGrouped.sorted;
 
@@ -854,7 +852,7 @@ class IncomeStatementEditor extends React.Component
             expensesSorted[origOldIndex].incomeStatementItemType = newIncomeStatementItemType;
         }
 
-        appraisal.incomeStatement[this.props.field] = expensesSorted;
+        appraisal[this.props.field].items = expensesSorted;
 
         this.props.saveAppraisal(appraisal);
         this.computeExpenseTotals();
@@ -930,10 +928,10 @@ class IncomeStatementEditor extends React.Component
                         <Col xs={this.state.pinnedYear !== null ? 5 : 7} md={this.state.pinnedYear !== null ? 5 : 7} lg={this.state.pinnedYear !== null ? 4 : 7} xl={this.state.pinnedYear !== null ? 3 : 7}>
 
                             {
-                                this.props.appraisal.incomeStatement[this.props.field] ?
+                                this.props.appraisal[this.props.field].items ?
                                     <this.SortableList
                                         useDragHandle={true}
-                                        items={this.sortIncomeStatementItems(this.props.appraisal.incomeStatement[this.props.field]).sorted}
+                                        items={this.sortIncomeStatementItems(this.props.appraisal[this.props.field].items).sorted}
                                         onSortEnd={this.onSortEnd.bind(this)}/>
                                     : null
                             }

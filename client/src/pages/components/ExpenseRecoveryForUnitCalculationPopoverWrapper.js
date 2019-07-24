@@ -48,7 +48,7 @@ class ExpenseRecoveryForUnitCalculationPopoverWrapper extends React.Component
             return null;
         }
 
-        const expenses = this.props.appraisal.incomeStatement.expenses.filter((expense) => expense.incomeStatementItemType === this.props.incomeStatementItemType);
+        const expenses = this.props.appraisal.expenseStatement.items.filter((expense) => expense.incomeStatementItemType === this.props.incomeStatementItemType);
         const unit = this.props.unit;
         const recoveryStructure = this.props.appraisal.recoveryStructureForUnit(unit);
 

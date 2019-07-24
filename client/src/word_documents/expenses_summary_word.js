@@ -27,9 +27,9 @@ class App extends React.Component {
             "name": (name) => <Value>{name}</Value>,
         };
 
-        const operatingExpenses = _.filter(this.props.appraisal.incomeStatement.expenses, (expense) => expense.incomeStatementItemType === "operating_expense");
-        const managementExpenses = _.filter(this.props.appraisal.incomeStatement.expenses, (expense) => expense.incomeStatementItemType === "management_expense");
-        const taxes = _.filter(this.props.appraisal.incomeStatement.expenses, (expense) => expense.incomeStatementItemType === "taxes");
+        const operatingExpenses = _.filter(this.props.appraisal.expenseStatement.items, (expense) => expense.incomeStatementItemType === "operating_expense");
+        const managementExpenses = _.filter(this.props.appraisal.expenseStatement.items, (expense) => expense.incomeStatementItemType === "management_expense");
+        const taxes = _.filter(this.props.appraisal.expenseStatement.items, (expense) => expense.incomeStatementItemType === "taxes");
 
         const yearTotals = {};
 
@@ -68,7 +68,7 @@ class App extends React.Component {
 
             yearTotals[year] = 0;
 
-            this.props.appraisal.incomeStatement.expenses.forEach((expense) =>
+            this.props.appraisal.expenseStatement.items.forEach((expense) =>
             {
                 if (_.isNumber(expense.yearlyAmounts[year]))
                 {

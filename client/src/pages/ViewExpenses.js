@@ -90,7 +90,7 @@ class ViewExpenses extends React.Component
 
                                     <IncomeStatementEditor
                                         appraisal={this.props.appraisal}
-                                        field={"expenses"}
+                                        field={"expenseStatement"}
                                         groups={{
                                             "operating_expense": "Operating Expense",
                                             "management_expense": "Management Expense",

@@ -66,7 +66,7 @@ class App extends React.Component
         const appraisalYear = this.getAppraisalYear();
         if (this.props.appraisal.appraisalType === 'simple')
         {
-            this.props.appraisal.incomeStatement.incomes.forEach((incomeStatementItem) =>
+            this.props.appraisal.incomeStatement.items.forEach((incomeStatementItem) =>
             {
                 rows.push(
                     {
@@ -130,7 +130,7 @@ class App extends React.Component
 
         if (this.props.appraisal.appraisalType === 'simple')
         {
-            this.props.appraisal.incomeStatement.expenses.forEach((incomeStatementItem) =>
+            this.props.appraisal.expenseStatement.items.forEach((incomeStatementItem) =>
             {
                 rows.push(
                     {

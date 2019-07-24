@@ -20,7 +20,7 @@ class App extends React.Component {
             "name": (name) => <Value>{name}</Value>,
         };
 
-        const incomes = _.filter(this.props.appraisal.incomeStatement.incomes, (income) => income.incomeStatementItemType === itemType);
+        const incomes = _.filter(this.props.appraisal.incomeStatement.items, (income) => income.incomeStatementItemType === itemType);
 
         const yearTotals = {};
 
@@ -31,7 +31,7 @@ class App extends React.Component {
 
             yearTotals[year] = 0;
 
-            this.props.appraisal.incomeStatement.incomes.forEach((income) =>
+            this.props.appraisal.incomeStatement.items.forEach((income) =>
             {
                 if (_.isNumber(income.yearlyAmounts[year]))
                 {

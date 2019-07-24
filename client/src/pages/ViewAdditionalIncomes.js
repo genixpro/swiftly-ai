@@ -55,7 +55,7 @@ class ViewAdditionalIncomes extends React.Component
 
                                     <IncomeStatementEditor
                                         appraisal={this.props.appraisal}
-                                        field={"incomes"}
+                                        field={"incomeStatement"}
                                         groups={{
                                             "additional_income": "Additional Income"
                                         }}

@@ -10,7 +10,7 @@ import json as json
 import hashlib
 from pprint import pprint
 from appraisal.components.tenancy_data_extractor import TenancyDataExtractor
-from appraisal.components.income_statement_data_extractor import IncomeStatementDataExtractor
+from appraisal.components.financial_statement_data_extractor import FinancialStatementDataExtractor
 from appraisal.components.comparable_sale_data_extractor import ComparableSaleDataExtractor
 from appraisal.components.discounted_cash_flow_model import DiscountedCashFlowModel
 from appraisal.components.appraisal_validator import AppraisalValidator
@@ -30,7 +30,7 @@ class DocumentProcessor:
         self.modelConfig = modelConfig
         self.vectorServerURL = vectorServerURL
         self.tenancyDataExtractor = TenancyDataExtractor()
-        self.incomeStatementExtractor = IncomeStatementDataExtractor()
+        self.financialStatementExtractor = FinancialStatementDataExtractor()
         self.discountedCashFlow = DiscountedCashFlowModel()
         self.appraisalValidator = AppraisalValidator()
         self.stabilizedStatement = StabilizedStatementModel()
@@ -153,12 +153,19 @@ class DocumentProcessor:
                         appraisal.units.append(extractedUnit)
             elif dataType == 'INCOME_STATEMENT' or dataType == 'EXPENSE_STATEMENT':
                 # TODO: Change to only extract data within a comp.
-                incomeStatement = self.incomeStatementExtractor.extractIncomeStatement(file)
+                incomeStatement = self.financialStatementExtractor.extractIncomeStatement(file)
 
                 if appraisal.incomeStatement is None:
                     appraisal.incomeStatement = incomeStatement
                 else:
                     appraisal.incomeStatement.mergeWithIncomeStatement(incomeStatement)
+
+                expenseStatement = self.financialStatementExtractor.extractExpenseStatement(file)
+
+                if appraisal.expenseStatement is None:
+                    appraisal.expenseStatement = expenseStatement
+                else:
+                    appraisal.expenseStatement.mergeWithIncomeStatement(expenseStatement)
             elif dataType == 'COMPARABLE_SALE':
                 comparableSale = self.comparableSaleDataExtractor.extractComparable(group)
                 comparableSale.save()

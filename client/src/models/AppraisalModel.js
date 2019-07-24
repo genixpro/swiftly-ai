@@ -56,6 +56,7 @@ class AppraisalModel extends BaseModel
 
     static units = new ListField(new ModelField(UnitModel));
     static incomeStatement = new ModelField(IncomeStatementModel);
+    static expenseStatement = new ModelField(IncomeStatementModel);
     static discountedCashFlowInputs = new ModelField(DiscountedCashFlowInputsModel);
     static discountedCashFlow = new ModelField(DiscountedCashFlowModel);
     static validationResult = new ModelField(AppraisalValidationResultModel);

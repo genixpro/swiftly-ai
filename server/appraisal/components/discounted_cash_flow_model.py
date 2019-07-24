@@ -192,9 +192,9 @@ class DiscountedCashFlowModel(ValuationModelBase):
 
     def getMonthlyCashFlowItems(self, appraisal):
         cashFlows = []
-        for item in appraisal.incomeStatement.incomes:
+        for item in appraisal.incomeStatement.items:
             cashFlows.extend(self.projectCashFlows(incomeStatementItem=item, startYear=self.getEffectiveDate(appraisal).year, endYear=self.getEffectiveDate(appraisal).year + 10, discountCashFlowInputs=appraisal.discountedCashFlowInputs))
-        for item in appraisal.incomeStatement.expenses:
+        for item in appraisal.expenseStatement.items:
             cashFlows.extend(self.projectCashFlows(incomeStatementItem=item, startYear=self.getEffectiveDate(appraisal).year, endYear=self.getEffectiveDate(appraisal).year + 10, discountCashFlowInputs=appraisal.discountedCashFlowInputs))
 
         return cashFlows

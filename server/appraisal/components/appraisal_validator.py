@@ -32,7 +32,7 @@ class AppraisalValidator:
         return result
 
     def checkIncomeStatement(self, appraisal):
-        if appraisal.incomeStatement is not None and len(appraisal.incomeStatement.expenses) > 0:
+        if appraisal.expenseStatement is not None and len(appraisal.expenseStatement.expenses) > 0:
             return True
         return False
 

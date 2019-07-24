@@ -35,9 +35,10 @@ def main():
 
     settings = get_appsettings(config_uri)
 
-    # os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = pkg_resources.resource_filename("appraisal", "gcloud-storage-key.json")
+    os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = pkg_resources.resource_filename("appraisal", "gcloud-storage-key.json")
 
-    # storageBucket = storage_client.get_bucket(settings['storage.bucket'])
+    storage_client = storage.Client()
+    storageBucket = storage_client.get_bucket(settings['storage.bucket'])
 
     connect(db=settings.get('db.name'), host=settings.get('db.uri'))
 
@@ -61,7 +62,11 @@ def main():
             completed = 0
 
             for object in objects:
-                returnObject = func(object)
+                args = {}
+                if 'storageBucket' in func.__code__.co_varnames:
+                    args['storageBucket'] = storageBucket
+
+                returnObject = func(object, **args)
                 if returnObject is not None:
                     object = returnObject
 

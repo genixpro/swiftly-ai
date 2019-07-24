@@ -631,7 +631,7 @@ class ViewRecoveryStructures extends React.Component
                                 this.props.appraisal.recoveryStructures.map((recovery, recoveryIndex) =>
                                 {
                                     return <RecoveryStructureEditor
-                                        expenses={this.props.appraisal.incomeStatement.expenses}
+                                        expenses={this.props.appraisal.expenseStatement.items}
                                         units={this.props.appraisal.units}
                                         recovery={recovery}
                                         appraisal={this.props.appraisal}

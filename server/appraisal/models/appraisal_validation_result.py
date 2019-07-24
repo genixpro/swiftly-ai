@@ -1,7 +1,7 @@
 from mongoengine import *
 import datetime
 from appraisal.models.unit import Unit
-from appraisal.models.income_statement import IncomeStatement
+from appraisal.models.financial_statement import FinancialStatement
 from appraisal.models.discounted_cash_flow import DiscountedCashFlow
 from appraisal.models.discounted_cash_flow_inputs import DiscountedCashFlowInputs
 

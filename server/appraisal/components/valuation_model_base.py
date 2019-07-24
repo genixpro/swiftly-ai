@@ -229,7 +229,7 @@ class ValuationModelBase:
     def computeAdditionalIncome(self, appraisal):
         total = 0
 
-        for income in appraisal.incomeStatement.incomes:
+        for income in appraisal.incomeStatement.items:
             if income.incomeStatementItemType == 'additional_income':
                 total += self.getLatestAmount(income)
 
@@ -239,7 +239,7 @@ class ValuationModelBase:
     def computeRecoverableOperatingExpenses(self, appraisal):
         total = 0
 
-        for expense in appraisal.incomeStatement.expenses:
+        for expense in appraisal.expenseStatement.items:
             if expense.incomeStatementItemType == 'operating_expense':
                 total += self.getLatestAmount(expense)
 
@@ -249,7 +249,7 @@ class ValuationModelBase:
     def computeTotalOperatingExpenses(self, appraisal):
         total = 0
 
-        for expense in appraisal.incomeStatement.expenses:
+        for expense in appraisal.expenseStatement.items:
             if expense.incomeStatementItemType == 'operating_expense':
                 total += self.getLatestAmount(expense)
 
@@ -259,7 +259,7 @@ class ValuationModelBase:
     def computeTaxes(self, appraisal):
         total = 0
 
-        for expense in appraisal.incomeStatement.expenses:
+        for expense in appraisal.expenseStatement.items:
             if expense.incomeStatementItemType == 'taxes':
                 total += self.getLatestAmount(expense)
 
@@ -270,7 +270,7 @@ class ValuationModelBase:
         total = 0
 
         if appraisal.stabilizedStatementInputs.managementExpenseMode == 'income_statement':
-            for expense in appraisal.incomeStatement.expenses:
+            for expense in appraisal.expenseStatement.items:
                 if expense.incomeStatementItemType == 'management_expense':
                     total += self.getLatestAmount(expense)
         elif appraisal.stabilizedStatementInputs.managementExpenseMode == 'rule' or appraisal.stabilizedStatementInputs.managementExpenseMode == 'combined_structural_rule':
@@ -302,7 +302,7 @@ class ValuationModelBase:
         if name == "operatingExpensesAndTaxes":
             return self.computeTotalOperatingExpenses(appraisal) + self.computeTaxes(appraisal)
 
-        for expense in appraisal.incomeStatement.expenses:
+        for expense in appraisal.expenseStatement.items:
             if expense.name == name:
                 return expense.getLatestAmount()
 
@@ -345,7 +345,7 @@ class ValuationModelBase:
 
             return recoveredAmount
         elif recoveryStructure.managementRecoveryMode == "custom":
-            for expense in appraisal.incomeStatement.expenses:
+            for expense in appraisal.expenseStatement.items:
                 if expense.incomeStatementItemType == 'operating_expense' or expense.incomeStatementItemType == 'taxes':
                     percentage = (recoveryStructure.managementRecoveries.get(expense.machineName, 100)) / 100.0
 
@@ -370,7 +370,7 @@ class ValuationModelBase:
         if unit.currentTenancy.rentType == 'gross':
             return 0
 
-        for expense in appraisal.incomeStatement.expenses:
+        for expense in appraisal.expenseStatement.items:
             if expense.incomeStatementItemType == 'operating_expense':
                 percentage = (recoveryStructure.expenseRecoveries.get(expense.machineName, 100)) / 100.0
 
@@ -392,7 +392,7 @@ class ValuationModelBase:
         if unit.currentTenancy.rentType == 'gross':
             return 0
 
-        for expense in appraisal.incomeStatement.expenses:
+        for expense in appraisal.expenseStatement.items:
             if expense.incomeStatementItemType == 'taxes':
                 percentage = (recoveryStructure.taxRecoveries.get(expense.machineName, 100)) / 100.0
 
@@ -411,7 +411,7 @@ class ValuationModelBase:
 
         for recoveryStructure in appraisal.recoveryStructures:
             recoveryStructure.calculatedManagementRecoveries = {}
-            for expense in appraisal.incomeStatement.expenses:
+            for expense in appraisal.expenseStatement.items:
                 if expense.incomeStatementItemType == 'operating_expense' or expense.incomeStatementItemType == 'management_expense' or expense.incomeStatementItemType == 'taxes':
                     recoveryStructure.calculatedManagementRecoveries[expense.machineName] = 0
             recoveryStructure.calculatedManagementRecoveryTotal = 0
@@ -436,7 +436,7 @@ class ValuationModelBase:
             elif recoveryStructure.managementRecoveryMode == "custom":
                 recoveryStructure = self.recoveryStructureForUnit(appraisal, unit)
 
-                for expense in appraisal.incomeStatement.expenses:
+                for expense in appraisal.expenseStatement.items:
                     if expense.incomeStatementItemType == 'operating_expense' or expense.incomeStatementItemType == 'taxes':
                         percentage = (recoveryStructure.managementRecoveries.get(expense.machineName, 100)) / 100.0
 
@@ -458,7 +458,7 @@ class ValuationModelBase:
 
         for recoveryStructure in appraisal.recoveryStructures:
             recoveryStructure.calculatedExpenseRecoveries = {}
-            for expense in appraisal.incomeStatement.expenses:
+            for expense in appraisal.expenseStatement.items:
                 if expense.incomeStatementItemType == 'operating_expense':
                     recoveryStructure.calculatedExpenseRecoveries[expense.machineName] = 0
 
@@ -469,7 +469,7 @@ class ValuationModelBase:
             if unit.currentTenancy.rentType == 'gross':
                 continue
 
-            for expense in appraisal.incomeStatement.expenses:
+            for expense in appraisal.expenseStatement.items:
                 if expense.incomeStatementItemType == 'operating_expense':
                     percentage = (recoveryStructure.expenseRecoveries.get(expense.machineName, 100)) / 100.0
 
@@ -489,7 +489,7 @@ class ValuationModelBase:
 
         for recoveryStructure in appraisal.recoveryStructures:
             recoveryStructure.calculatedTaxRecoveries = {}
-            for expense in appraisal.incomeStatement.expenses:
+            for expense in appraisal.expenseStatement.items:
                 if expense.incomeStatementItemType == 'taxes':
                     recoveryStructure.calculatedTaxRecoveries[expense.machineName] = 0
 
@@ -500,7 +500,7 @@ class ValuationModelBase:
             if unit.currentTenancy.rentType == 'gross':
                 continue
 
-            for expense in appraisal.incomeStatement.expenses:
+            for expense in appraisal.expenseStatement.items:
                 if expense.incomeStatementItemType == 'taxes':
                     percentage = (recoveryStructure.taxRecoveries.get(expense.machineName, 100)) / 100.0
 

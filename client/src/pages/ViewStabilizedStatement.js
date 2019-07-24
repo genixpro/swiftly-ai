@@ -144,7 +144,7 @@ class ViewStabilizedStatement extends React.Component
                 newItem['name'] = 'New Item';
             }
 
-            this.props.appraisal.incomeStatement[incomeField].push(newItem);
+            this.props.appraisal[incomeField].items.push(newItem);
             this.props.saveAppraisal(this.props.appraisal);
         }
     }
@@ -154,7 +154,7 @@ class ViewStabilizedStatement extends React.Component
         let appraisalYear = this.getAppraisalYear();
         if (field === 'yearlyAmounts' && value === null)
         {
-            this.props.appraisal.incomeStatement[incomeField].splice(index, 1);
+            this.props.appraisal[incomeField].items.splice(index, 1);
             this.props.saveAppraisal(this.props.appraisal);
         }
         else
@@ -163,9 +163,9 @@ class ViewStabilizedStatement extends React.Component
             {
                 value = {[appraisalYear]: value};
             }
-            const incomeItem = this.props.appraisal.incomeStatement[incomeField][index];
+            const incomeItem = this.props.appraisal[incomeField].items[index];
             incomeItem[field] = value;
-            this.props.appraisal.incomeStatement[incomeField][index] = incomeItem;
+            this.props.appraisal[incomeField].items[index] = incomeItem;
             this.props.saveAppraisal(this.props.appraisal);
         }
     }
@@ -285,7 +285,7 @@ class ViewStabilizedStatement extends React.Component
                                             {/*}*/}
 
                                             {
-                                                (this.props.appraisal.incomeStatement.incomes || []).map((incomeItem, index) =>
+                                                (this.props.appraisal.incomeStatement.items || []).map((incomeItem, index) =>
                                                 {
                                                     return <tr className={"data-row income-row"} key={index}>
                                                         <td className={"label-column"}>
@@ -310,7 +310,7 @@ class ViewStabilizedStatement extends React.Component
                                                         </td>
                                                     </tr>
                                                 }).concat([
-                                                    <tr className={"data-row income-row"} key={(this.props.appraisal.incomeStatement.incomes || []).length}>
+                                                    <tr className={"data-row income-row"} key={(this.props.appraisal.incomeStatement.items || []).length}>
                                                         <td className={"label-column"}>
                                                     <span><FieldDisplayEdit
                                                         type={"text"}
@@ -403,7 +403,7 @@ class ViewStabilizedStatement extends React.Component
                                                 <td className={"amount-total-column"}></td>
                                             </tr>
                                             {
-                                                this.props.appraisal.appraisalType === 'simple' ? (this.props.appraisal.incomeStatement.expenses || []).map((incomeItem, index) =>
+                                                this.props.appraisal.appraisalType === 'simple' ? (this.props.appraisal.expenseStatement.items || []).map((incomeItem, index) =>
                                                 {
                                                     return <tr className={"data-row income-row"} key={index}>
                                                         <td className={"label-column"}>
@@ -428,7 +428,7 @@ class ViewStabilizedStatement extends React.Component
                                                         </td>
                                                     </tr>
                                                 }).concat([
-                                                    <tr className={"data-row income-row"} key={(this.props.appraisal.incomeStatement.expenses || []).length}>
+                                                    <tr className={"data-row income-row"} key={(this.props.appraisal.expenseStatement.items || []).length}>
                                                         <td className={"label-column"}>
                                                     <span><FieldDisplayEdit
                                                         type={"text"}
@@ -610,7 +610,7 @@ class ViewStabilizedStatement extends React.Component
                                                                 <FieldDisplayEdit
                                                                     type="calculationField"
                                                                     className={"management-expense-mode"}
-                                                                    expenses={this.props.appraisal.incomeStatement.expenses}
+                                                                    expenses={this.props.appraisal.expenseStatement.items}
                                                                     placeholder={"Expense Calculation Field"}
                                                                     value={this.props.appraisal.stabilizedStatementInputs ? this.props.appraisal.stabilizedStatementInputs.managementExpenseCalculationRule.field : null}
                                                                     hideIcon={true}

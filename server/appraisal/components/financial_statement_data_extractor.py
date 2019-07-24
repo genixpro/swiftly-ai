@@ -3,12 +3,12 @@ from appraisal.models.unit import Unit, Tenancy
 import dateparser
 import re
 import datetime
-from appraisal.models.income_statement import IncomeStatement, IncomeStatementItem
+from appraisal.models.financial_statement import FinancialStatement, FinancialStatementItem
 from appraisal.models.extraction_reference import ExtractionReference
 from pprint import pprint
 import json as json
 
-class IncomeStatementDataExtractor(DataExtractor):
+class FinancialStatementDataExtractor(DataExtractor):
     """ This class is for extracting income statement information from documents. """
 
     def __init__(self):
@@ -18,22 +18,19 @@ class IncomeStatementDataExtractor(DataExtractor):
     def extractIncomeStatement(self, document):
         items = self.extractIncomeStatementItems(document)
 
-        incomeStatement = IncomeStatement()
+        incomeStatement = FinancialStatement()
 
-        incomeStatement.incomes = []
-        incomeStatement.expenses = []
+        incomeStatement.items = []
 
         years = set()
         yearTypes = {}
         for item in items:
             if item.cashFlowType == 'income':
-                incomeStatement.incomes.append(item)
-            elif item.cashFlowType == 'expense':
-                incomeStatement.expenses.append(item)
+                incomeStatement.items.append(item)
 
-            years = years.union(item.yearlyAmounts.keys())
-            for year, yearType in item.yearlySourceTypes.items():
-                yearTypes[year] = yearType
+                years = years.union(item.yearlyAmounts.keys())
+                for year, yearType in item.yearlySourceTypes.items():
+                    yearTypes[year] = yearType
 
         incomeStatement.years = sorted([int(year) for year in years])
         incomeStatement.yearlySourceTypes = yearTypes
@@ -42,6 +39,29 @@ class IncomeStatementDataExtractor(DataExtractor):
 
         return incomeStatement
 
+    def extractExpenseStatement(self, document):
+        items = self.extractIncomeStatementItems(document)
+
+        expenseStatement = FinancialStatement()
+
+        expenseStatement.items = []
+
+        years = set()
+        yearTypes = {}
+        for item in items:
+            if item.cashFlowType == 'expense':
+                expenseStatement.items.append(item)
+
+                years = years.union(item.yearlyAmounts.keys())
+                for year, yearType in item.yearlySourceTypes.items():
+                    yearTypes[year] = yearType
+
+        expenseStatement.years = sorted([int(year) for year in years])
+        expenseStatement.yearlySourceTypes = yearTypes
+
+        # pprint(json.loads(incomeStatement.to_json()))
+
+        return expenseStatement
 
     def mergeIncomeStatementItems(self, items):
         toRemove = []
@@ -308,7 +328,7 @@ class IncomeStatementDataExtractor(DataExtractor):
         # Finally, we create the income statement item objects from each line marked for extraction.
         incomeStatementItems = []
         for lineItem in extractionLines:
-            incomeStatementItem = IncomeStatementItem()
+            incomeStatementItem = FinancialStatementItem()
             incomeStatementItem.name = lineItem.get('name', '')
             incomeStatementItem.cashFlowType = self.cashFlowTypeFromModifiers(lineItem['modifiers'])
             incomeStatementItem.incomeStatementItemType = self.incomeStatementItemTypeFromModifiers(lineItem['modifiers'])

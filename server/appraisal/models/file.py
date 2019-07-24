@@ -285,8 +285,8 @@ def migration_001_002_update_file_object_id(object):
         return newObject
 
 @registerMigration(File, 3)
-def migration_003_update_document_hash(object):
-    data = object.downloadFileData()
+def migration_003_update_document_hash(object, storageBucket):
+    data = object.downloadFileData(storageBucket)
 
     m = hashlib.sha256()
     m.update(data)
