@@ -50,11 +50,10 @@ def main():
     storage_client = storage.Client()
     sampleStorageBucket = storage_client.get_bucket(sampleDataBucket)
 
-    connect(db=sampleDataDBName, host=sampleDataURI)
-
     print("Connected to sample db, loading objects")
 
-    data = appraisal.components.sample_data.downloadData(sampleStorageBucket)
+    register_connection("default", db=sampleDataDBName, host=sampleDataURI)
+    data = appraisal.components.sample_data.downloadData(sampleStorageBucket, 'default')
 
     storageBucket = storage_client.get_bucket(settings['storage.bucket'])
     register_connection("target", db=settings.get('db.name'), host=settings.get('db.uri'))

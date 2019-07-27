@@ -61,8 +61,10 @@ def main():
             new.save()
 
             row['linkId'] = id
+            row['link'] = new.link
         else:
             row['linkId'] = unique.id
+            row['link'] = unique.link
 
         newRows.append(row)
 

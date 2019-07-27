@@ -64,7 +64,7 @@ server {
         }
 
         location /demo_activate/ {
-            proxy_pass http://swiftly-sandbox-api.default/demo_activate;
+            proxy_pass http://swiftly-sandbox-api.default/demo_activate/;
         }
 
 	location / {

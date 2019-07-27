@@ -59,7 +59,8 @@ def main():
 
     print("Connected to environment db, loading objects")
 
-    data = appraisal.components.sample_data.downloadData(storageBucket)
+    register_connection("default", db=settings.get('db.name'), host=settings.get('db.uri'))
+    data = appraisal.components.sample_data.downloadData(storageBucket, 'default')
 
     sampleStorageBucket = storage_client.get_bucket(sampleDataBucket)
     register_connection("target", db=sampleDataDBName, host=sampleDataURI)
