@@ -43,7 +43,7 @@ RUN mv build/* /build
 RUN rm -rf /swiftly
 
 # Delete nodejs to trim down the image size
-RUN apt-get purge nodejs python3 -y
+#RUN apt-get purge nodejs python3 -y
 
 # Setup and configure systemd
 ENTRYPOINT ["/usr/sbin/nginx", "-g", "daemon off;"]
