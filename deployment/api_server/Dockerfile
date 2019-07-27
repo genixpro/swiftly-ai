@@ -22,7 +22,7 @@ RUN gcloud auth activate-service-account --key-file /swiftly/appraisalai-be8f24d
 # Install the python dependencies. We do this ahead of running "ADD . /swiftly" so the builds run faster when your
 # making code changes regularly. As long as requirements file hasn't changed, then docker can use the cached image
 COPY server/requirements.txt /swiftly/server/requirements.txt
-RUN pip3 install -r /swiftly/server/requirements.txt && \
+RUN pip3 install -r /swiftly/server/requirements.txt
 
 # We add package.json first so that the docker image build
 # can use the cache as long as contents of package.json
