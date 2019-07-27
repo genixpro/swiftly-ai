@@ -64,6 +64,7 @@ setup(
             'appraisal_run_migrations = appraisal.bin.run_migrations:main',
             'appraisal_update_property_tag_stats = appraisal.bin.update_property_tag_stats:main',
             'appraisal_generate_demo_unique_links = appraisal.bin.generate_demo_unique_links:main',
+            'appraisal_refresh_sandbox_accounts = appraisal.bin.refresh_sandbox_accounts:main',
         ]
     },
 )
