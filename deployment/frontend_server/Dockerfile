@@ -22,9 +22,9 @@ COPY client/package.json /swiftly/client
 RUN npm install
 
 # Copy the NGINX configuration
-COPY deployment/nginx_${SWIFTLY_ENV} /etc/nginx/sites-enabled/default
-COPY deployment/ssl/swiftly.key /etc/nginx/ssl/nginx.key
-COPY deployment/ssl/certbundle.pem /etc/nginx/ssl/nginx.pem
+ADD deployment/nginx_${SWIFTLY_ENV} /etc/nginx/sites-enabled/default
+ADD deployment/ssl/swiftly.key /etc/nginx/ssl/nginx.key
+ADD deployment/ssl/certbundle.pem /etc/nginx/ssl/nginx.pem
 
 # Copy the current directory contents into the container at /swiftly
 ADD . /swiftly
