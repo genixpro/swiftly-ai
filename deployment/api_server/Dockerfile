@@ -49,3 +49,4 @@ RUN python3 setup.py install > "/dev/null" 2>&1
 ENTRYPOINT ["bash", "-c", "gunicorn -t 600 -w 4 -b 0.0.0.0:80 --paste $SWIFTLY_ENV.ini"]
 
 EXPOSE 80
+
