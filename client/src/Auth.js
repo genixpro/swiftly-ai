@@ -28,7 +28,16 @@ class Auth
     updateMixpanelIdentity()
     {
         const accessToken = localStorage.getItem('accessToken');
-        const idTokenPayload = JSON.parse(localStorage.getItem('idTokenPayload'));
+
+        let idTokenPayload = null;
+        try {
+            idTokenPayload = JSON.parse(localStorage.getItem('idTokenPayload'));
+        }
+        catch(err)
+        {
+
+        }
+
         const userId = localStorage.getItem('userId');
 
         if (accessToken && idTokenPayload)
