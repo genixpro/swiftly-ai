@@ -2,12 +2,10 @@ steps:
 - name: 'gcr.io/kaniko-project/executor:latest'
   id: Build Frontend Docker Image
   args:
-    - "--destination=gcr.io/$PROJECT_ID/image"
+    - "--destination=gcr.io/appraisalai/swiftly:$REVISION_ID-$_SWIFTLY_ENV-frontend"
     - "--cache=true"
     - "--cache-ttl=72h"
     - "build"
-    - "--tag"
-    - "gcr.io/appraisalai/swiftly:$REVISION_ID-$_SWIFTLY_ENV-frontend"
     - "."
     - "--build-arg"
     - "SWIFTLY_ENV=$_SWIFTLY_ENV"
