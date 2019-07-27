@@ -43,6 +43,7 @@ mv /tmp/fastText/fasttext /usr/bin
 rm -rf /tmp/fastText
 
 # Upgrade version of pip and setuptools
+cd /swiftly/server
 pip3 install --upgrade pip
 pip3 install --upgrade setuptools
 
