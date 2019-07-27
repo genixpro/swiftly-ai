@@ -14,6 +14,12 @@ RUN apt-get update && apt-get install \
 # Set the working directory to /app
 WORKDIR /swiftly
 
+# We add package.json first so that the  docker image build
+# can use the cache as long as contents of package.json
+# hasn't changed.
+COPY client/package.json /swiftly/client
+RUN npm install --ignore-scripts --unsafe-perm
+
 # Copy the current directory contents into the container at /swiftly
 ADD . /swiftly
 
