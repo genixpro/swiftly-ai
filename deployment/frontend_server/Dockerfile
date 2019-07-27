@@ -21,29 +21,24 @@ RUN mkdir /swiftly/client
 COPY client/package.json /swiftly/client
 RUN npm install
 
+# Copy the NGINX configuration
+COPY deployment/nginx_${SWIFTLY_ENV} /etc/nginx/sites-enabled/default
+COPY deployment/ssl/swiftly.key /etc/nginx/ssl/nginx.key
+COPY deployment/ssl/certbundle.pem /etc/nginx/ssl/nginx.pem
+
 # Copy the current directory contents into the container at /swiftly
 ADD . /swiftly
-
 ARG SWIFTLY_ENV
-
-# Copy the NGINX configuration
-ADD deployment/nginx_${SWIFTLY_ENV} /etc/nginx/sites-enabled/default
-ADD deployment/ssl/swiftly.key /etc/nginx/ssl/nginx.key
-ADD deployment/ssl/certbundle.pem /etc/nginx/ssl/nginx.pem
 
 # Set the working directory to /swiftly/client, and build the frontend package
 WORKDIR /swiftly/client
-RUN npm install > "/dev/null" 2>&1
 ENV VALUATE_ENV=${SWIFTLY_ENV}
-RUN npm run-script build
-RUN mkdir /build
-RUN mv build/* /build
-
-# Delete all the swiftly code to trim down the image size
-RUN rm -rf /swiftly
-
-# Delete nodejs to trim down the image size
-#RUN apt-get purge nodejs python3 -y
+# Build the frontend static files and delete all the swiftly code, nodejs and python to trim down the image size
+RUN npm run-script build && \
+        mkdir /build && \
+        mv build/* /build && \
+        rm -rf /swiftly && \
+        apt-get purge nodejs python3 -y
 
 # Setup and configure systemd
 ENTRYPOINT ["/usr/sbin/nginx", "-g", "daemon off;"]
