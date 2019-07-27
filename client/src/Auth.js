@@ -28,22 +28,38 @@ class Auth
     updateMixpanelIdentity()
     {
         const accessToken = localStorage.getItem('accessToken');
-        const idTokenPayload = localStorage.getItem('idTokenPayload');
+        const idTokenPayload = JSON.parse(localStorage.getItem('idTokenPayload'));
         const userId = localStorage.getItem('userId');
 
         if (accessToken && idTokenPayload)
         {
+            //
             mixpanel.identify(userId);
 
             mixpanel.register({
                 "environment": process.env.VALUATE_ENVIRONMENT.REACT_APP_ENVIRONMENT
             });
 
-            mixpanel.people.set({
-                "$name": idTokenPayload.name,
-                "$email": idTokenPayload.email,
-                "environment": process.env.VALUATE_ENVIRONMENT.REACT_APP_ENVIRONMENT
-            });
+            // const trackingEmailClaim = `${process.env.VALUATE_ENVIRONMENT.REACT_APP_SERVER_URL.replace("https://", "http://")}email`;
+            const trackingEmailClaim = `http://testing.swiftlyai.com/api/email`;
+            const trackingEmail = idTokenPayload[trackingEmailClaim];
+
+            if (trackingEmail)
+            {
+                mixpanel.people.set({
+                    "$name": idTokenPayload.name,
+                    "$email": trackingEmail,
+                    "environment": process.env.VALUATE_ENVIRONMENT.REACT_APP_ENVIRONMENT
+                });
+            }
+            else
+            {
+                mixpanel.people.set({
+                    "$name": idTokenPayload.name,
+                    "$email": idTokenPayload.email,
+                    "environment": process.env.VALUATE_ENVIRONMENT.REACT_APP_ENVIRONMENT
+                });
+            }
         }
     }
 
@@ -71,7 +87,7 @@ class Auth
 
     handleRapidDemoAuth(done)
     {
-        const params = queryString.parse(history.location.search)
+        const params = queryString.parse(history.location.search);
         if (params['rapidauth'])
         {
             const rapidauth = JSON.parse(params['rapidauth']);
@@ -82,6 +98,7 @@ class Auth
                 accessToken: rapidauth.access_token,
                 expiresIn: rapidauth.expires_in
             };
+
 
             this.setSession(authResult);
 
@@ -162,7 +179,7 @@ class Auth
 
         localStorage.setItem('accessToken', this.accessToken);
         localStorage.setItem('idToken', this.idToken);
-        localStorage.setItem('idTokenPayload', this.idTokenPayload);
+        localStorage.setItem('idTokenPayload', JSON.stringify(this.idTokenPayload));
         localStorage.setItem('expiresAt', this.expiresAt);
         localStorage.setItem('userId', this.userId);
         localStorage.setItem('isAdmin', this.isAdmin);
@@ -176,7 +193,13 @@ class Auth
         {
             this.accessToken = localStorage.getItem("accessToken");
             this.idToken = localStorage.getItem("idToken");
-            this.idTokenPayload = localStorage.getItem("idTokenPayload");
+            try {
+                this.idTokenPayload = JSON.parse(localStorage.getItem("idTokenPayload"));
+            }
+            catch(err)
+            {
+                //
+            }
             this.expiresAt = localStorage.getItem("expiresAt");
             this.userId = localStorage.getItem("userId");
             this.isAdmin = localStorage.getItem("isAdmin");

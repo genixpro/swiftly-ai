@@ -29,8 +29,8 @@ class CustomIDField(mongoengine.fields.StringField):
         return str(value)
 
 
-def generateNewUUID(modelClass):
-    currentLength = 8
+def generateNewUUID(modelClass, minimumLength=8):
+    currentLength = minimumLength
     id = base64.urlsafe_b64encode(uuid.uuid4().bytes).rstrip(b'=').decode('ascii')[:currentLength]
     while modelClass.objects(id=id):
         currentLength += 4

@@ -14,6 +14,7 @@ import urllib.parse
 from google.cloud import storage
 from mongoengine import connect, register_connection
 from appraisal.models.demo_account import DemoAccount
+from appraisal.models.demo_unique_link import DemoUniqueLink
 from ..models.custom_id_field import generateNewUUID, regularizeID
 
 def loadSampleDataForDemos():
@@ -33,7 +34,7 @@ def loadSampleDataForDemos():
 
 
 
-@resource(path='/demo_activate', renderer='bson', cors_enabled=True, cors_origins="*", permission="everything")
+@resource(path='/demo_activate/{linkId}', renderer='bson', cors_enabled=True, cors_origins="*", permission="everything")
 class DemoLaunch(object):
 
     def __init__(self, request, context=None):
@@ -48,14 +49,46 @@ class DemoLaunch(object):
     def get(self):
         global globalThread
 
-        if not self.request.registry.allowRapidDemo:
-            return HTTPForbidden()
+        # if not self.request.registry.allowRapidDemo:
+        #     return HTTPForbidden()
 
-        demoAccount = DemoAccount.objects(used=False).first()
+        linkId = self.request.matchdict['linkId']
+        
+        demoAccount = DemoAccount.objects(uniqueLinkId=linkId).first()
         if demoAccount is None:
-            demoAccount = createDemoAccountData(self.request.registry)
-        demoAccount.used = True
-        demoAccount.save()
+            uniqueLink = DemoUniqueLink.objects(id=str(linkId)).first()
+            if uniqueLink is None:
+                return HTTPForbidden()
+            else:
+                demoAccount = DemoAccount.objects(used=False).first()
+                if demoAccount is None:
+                    demoAccount = createDemoAccountData(self.request.registry)
+                demoAccount.used = True
+                demoAccount.uniqueLinkId = linkId
+                demoAccount.uniqueEmail = uniqueLink.email
+                demoAccount.save()
+
+                uniqueLink.demoAccountEmail = demoAccount.email
+                uniqueLink.save()
+
+                domain = 'swiftlyai.auth0.com'
+                non_interactive_client_id = self.request.registry.auth0MgmtClientID
+                non_interactive_client_secret = self.request.registry.auth0MgmtSecret
+
+                get_token = GetToken(domain)
+                token = get_token.client_credentials(non_interactive_client_id,
+                                                     non_interactive_client_secret,
+                                                     'https://{}/api/v2/'.format(domain))
+
+                mgmt_api_token = token['access_token']
+
+                response = requests.patch(f"https://swiftlyai.auth0.com/api/v2/users/{demoAccount.owner}", headers={
+                    "Authorization": "Bearer " + mgmt_api_token
+                }, json={
+                    "app_metadata": {
+                        "demoLinkEmail": demoAccount.uniqueEmail
+                    }
+                })
 
         response = requests.post("https://swiftlyai.auth0.com/oauth/token", headers={
             # "Authorization": "Bearer " + self.mgmt_api_token
@@ -68,6 +101,8 @@ class DemoLaunch(object):
             "password": demoAccount.password,
             "connection": "Username-Password-Authentication"
         })
+
+        print(response.content)
 
         frontendUrl = self.request.registry.frontendUrl
 
@@ -111,8 +146,8 @@ def createDemoAccountData(registry):
 
     owner = response.json()['user_id']
 
-    appraisal.components.sample_data.uploadData(globalSampleData, 'default', registry.storageBucket,
-                                                owner, 'sample', registry.environment)
+    # appraisal.components.sample_data.uploadData(globalSampleData, 'default', registry.storageBucket,
+    #                                             owner, 'sample', registry.environment)
 
     demoAccount = DemoAccount(
         email=email,

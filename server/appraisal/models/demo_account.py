@@ -23,7 +23,9 @@ class DemoAccount(Document):
         'collection': 'demo_accounts',
         'strict': False,
         'indexes': [
-            ('used')
+            ('used'),
+            ('uniqueLinkId'),
+            ('uniqueEmail')
         ]
     }
 
@@ -36,4 +38,8 @@ class DemoAccount(Document):
     owner = StringField()
 
     used = BooleanField(default=False)
+
+    uniqueLinkId = StringField()
+
+    uniqueEmail = StringField()
 
