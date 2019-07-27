@@ -5,6 +5,7 @@ steps:
     - "--destination=gcr.io/appraisalai/swiftly:$REVISION_ID-$_SWIFTLY_ENV-api"
     - "--cache=true"
     - "--cache-ttl=72h"
+    - "--snapshotMode=time"
     - "."
     - "--build-arg"
     - "SWIFTLY_ENV=$_SWIFTLY_ENV"
