@@ -403,6 +403,19 @@ class ComparableSaleModel extends EquationMdoel
         return null;
     }
 
+    get city()
+    {
+        const words = this.address.split(",");
+        return words[words.length - 3];
+    }
+
+
+    get streetAddress()
+    {
+        const words = this.address.split(",");
+        return words.slice(0, words.length - 3);
+    }
+
     static equations = {
         "netOperatingIncome": [
             {
