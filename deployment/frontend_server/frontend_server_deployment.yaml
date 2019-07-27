@@ -11,8 +11,8 @@ spec:
       app: swiftly-__SWIFTLY_ENV__-frontend
   strategy:
     rollingUpdate:
-      maxSurge: 2
-      maxUnavailable: 0
+      maxSurge: 50%
+      maxUnavailable: 50%
     type: RollingUpdate
   template:
     metadata:
