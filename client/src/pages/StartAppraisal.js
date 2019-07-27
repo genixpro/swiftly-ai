@@ -109,7 +109,7 @@ class StartAppraisal extends React.Component
 
                                                 <div className={"description-block"}>
                                                     <div className={"title-wrapper"}>
-                                                        <span className={"title"}>Start A Simple Appraisal</span>
+                                                        <span className={"title"}>Start A Short Appraisal</span>
                                                     </div>
                                                     <div className={"features-list-wrapper"}>
                                                         <ul>
