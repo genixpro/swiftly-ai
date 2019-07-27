@@ -10,7 +10,7 @@ from .custom_id_field import generateNewUUID
 
 class Image(Document):
     meta = {
-        'collection': 'files',
+        'collection': 'images',
         'strict': False,
         'indexes': [
             ('owner'),
