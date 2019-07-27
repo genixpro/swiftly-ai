@@ -17,22 +17,6 @@ from appraisal.models.demo_account import DemoAccount
 from appraisal.models.demo_unique_link import DemoUniqueLink
 from ..models.custom_id_field import generateNewUUID, regularizeID
 
-def loadSampleDataForDemos():
-    global globalSampleData
-    sampleDataDBName = "swiftly_sample_data"
-    sampleDataURI = "mongodb+srv://testing:PEpYlP1hTQ5AUEAB@swiftlyprimary-ikito.gcp.mongodb.net/swiftly_sample_data?retryWrites=true"
-    sampleDataBucket = 'swiftly-sample-files'
-
-    os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = pkg_resources.resource_filename("appraisal",
-                                                                                   "gcloud-storage-key.json")
-
-    storage_client = storage.Client()
-    sampleStorageBucket = storage_client.get_bucket(sampleDataBucket)
-
-    register_connection("sample", db=sampleDataDBName, host=sampleDataURI)
-    globalSampleData = appraisal.components.sample_data.downloadData(sampleStorageBucket, "sample")
-
-
 
 @resource(path='/demo_activate/{linkId}', renderer='bson', cors_enabled=True, cors_origins="*", permission="everything")
 class DemoLaunch(object):
@@ -123,6 +107,20 @@ def createDemoAccountsIfNeeded(registry):
         createDemoAccountData(registry)
 
 def createDemoAccountData(registry):
+    sampleDataDBName = "swiftly_sample_data"
+    sampleDataURI = "mongodb+srv://testing:PEpYlP1hTQ5AUEAB@swiftlyprimary-ikito.gcp.mongodb.net/swiftly_sample_data?retryWrites=true"
+    sampleDataBucket = 'swiftly-sample-files'
+
+    os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = pkg_resources.resource_filename("appraisal",
+                                                                                   "gcloud-storage-key.json")
+
+    storage_client = storage.Client()
+    sampleStorageBucket = storage_client.get_bucket(sampleDataBucket)
+
+    register_connection("sample", db=sampleDataDBName, host=sampleDataURI)
+    sampleData = appraisal.components.sample_data.downloadData(sampleStorageBucket, "sample")
+
+
     domain = 'swiftlyai.auth0.com'
     non_interactive_client_id = registry.auth0MgmtClientID
     non_interactive_client_secret = registry.auth0MgmtSecret
@@ -146,9 +144,9 @@ def createDemoAccountData(registry):
 
     owner = response.json()['user_id']
 
-    appraisal.components.sample_data.uploadData(globalSampleData, 'default', registry.storageBucket,
+    appraisal.components.sample_data.uploadData(sampleData, 'default', registry.storageBucket,
                                                 owner, 'sample', registry.environment)
-
+    
     demoAccount = DemoAccount(
         email=email,
         password=password,

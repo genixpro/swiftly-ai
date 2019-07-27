@@ -78,8 +78,6 @@ def main(global_config, **settings):
         connect(settings.get('db.name'), host=settings.get('db.uri'))
         register_connection("default", db=settings.get('db.name'), host=settings.get('db.uri'))
 
-        if registry.allowRapidDemo:
-            appraisal.endpoints.demo.loadSampleDataForDemos()
 
 
     return config.make_wsgi_app()
