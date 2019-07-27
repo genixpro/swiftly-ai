@@ -12,7 +12,7 @@ RUN mkdir /swiftly && \
 
 # Install some basic system dependencies
 COPY deployment/api_server/install_system_dependencies.sh /swiftly/deployment
-RUN /swiftly/deployment/install_system_dependencies.sh
+RUN chmod +x /swiftly/deployment/install_system_dependencies.sh && /swiftly/deployment/install_system_dependencies.sh
 
 # Enable the google cloud service account
 COPY appraisalai-be8f24d217e0.json /swiftly

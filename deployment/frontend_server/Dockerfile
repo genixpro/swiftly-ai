@@ -35,6 +35,7 @@ ADD client /swiftly/client
 # Set the working directory to /swiftly/client, and build the frontend package
 WORKDIR /swiftly/client
 ENV VALUATE_ENV=${SWIFTLY_ENV}
+
 # Build the frontend static files and delete all the swiftly code, nodejs and python to trim down the image size
 RUN npm run-script build && \
         mkdir /build && \
