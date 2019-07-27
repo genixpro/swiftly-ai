@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-kubectl apply -f deployment/priority/production.yaml
+kubectl apply -f deployment/priorities/production.yaml
 
 sed "s/__REVISION_ID__/$REVISION_ID/g" deployment/vector_server/vectorserver_deployment.yaml > vectorserver_deployment.yaml
 kubectl apply -f vectorserver_deployment.yaml
