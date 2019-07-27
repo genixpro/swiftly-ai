@@ -141,7 +141,7 @@ class Appraisal(Document):
     marketRents = ListField(EmbeddedDocumentField(MarketRent))
 
     # Comparable adjustment chart
-    adjustmentChart = EmbeddedDocumentField(ComparableAdjustmentChart)
+    adjustmentChart = EmbeddedDocumentField(ComparableAdjustmentChart, default=ComparableAdjustmentChart)
 
     # A list of recovery structures for this building
     recoveryStructures = ListField(EmbeddedDocumentField(RecoveryStructure), default=[
