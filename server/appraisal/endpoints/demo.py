@@ -49,8 +49,8 @@ class DemoLaunch(object):
     def get(self):
         global globalThread
 
-        # if not self.request.registry.allowRapidDemo:
-        #     return HTTPForbidden()
+        if not self.request.registry.allowRapidDemo:
+            return HTTPForbidden()
 
         linkId = self.request.matchdict['linkId']
         
@@ -146,8 +146,8 @@ def createDemoAccountData(registry):
 
     owner = response.json()['user_id']
 
-    # appraisal.components.sample_data.uploadData(globalSampleData, 'default', registry.storageBucket,
-    #                                             owner, 'sample', registry.environment)
+    appraisal.components.sample_data.uploadData(globalSampleData, 'default', registry.storageBucket,
+                                                owner, 'sample', registry.environment)
 
     demoAccount = DemoAccount(
         email=email,
