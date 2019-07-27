@@ -46,3 +46,4 @@ RUN npm run-script build && \
 ENTRYPOINT ["/usr/sbin/nginx", "-g", "daemon off;"]
 EXPOSE 80
 EXPOSE 443
+
