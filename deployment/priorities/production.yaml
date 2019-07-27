@@ -2,6 +2,6 @@ apiVersion: scheduling.k8s.io/v1beta1
 kind: PriorityClass
 metadata:
   name: production-priority
-value: 100
+value: 10000
 globalDefault: false
 description: "This is the priority class for production pods - current users. Our top priority."

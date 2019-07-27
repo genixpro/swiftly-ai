@@ -2,6 +2,6 @@ apiVersion: scheduling.k8s.io/v1beta1
 kind: PriorityClass
 metadata:
   name: demo-priority
-value: 40
+value: 4000
 globalDefault: false
 description: "This priority class is for in-person sales demos"

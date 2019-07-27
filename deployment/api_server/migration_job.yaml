@@ -15,4 +15,5 @@ spec:
             cpu: 1
             memory: 512Mi
       restartPolicy: Never
+      priorityClassName: __SWIFTLY_ENV__-priority
   backoffLimit: 4
