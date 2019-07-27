@@ -17,7 +17,6 @@ WORKDIR /swiftly
 # We add package.json first so that the  docker image build
 # can use the cache as long as contents of package.json
 # hasn't changed.
-RUN mkdir /swiftly
 RUN mkdir /swiftly/client
 COPY client/package.json /swiftly/client
 RUN npm install
