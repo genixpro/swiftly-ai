@@ -3,90 +3,44 @@
 FROM       python:3.6.8
 MAINTAINER Electric Brain <info@electricbrain.io>
 
-RUN echo "deb http://packages.cloud.google.com/apt cloud-sdk-stretch main" | tee -a /etc/apt/sources.list.d/google-cloud-sdk.list
-RUN curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add -
-RUN curl -sL https://deb.nodesource.com/setup_8.x | bash
+RUN mkdir /swiftly && \
+    mkdir /swiftly/deployment && \
+    mkdir /swiftly/client && \
+    mkdir /swiftly/server && \
+    mkdir /swiftly/server/models
 
 # Install some basic system dependencies
-RUN apt-get update && apt-get install \
-    gcc \
-    g++ \
-    git \
-    wget \
-    sudo \
-    vim \
-    python3 \
-    python3-pip \
-    python3-setuptools \
-    python3-tk \
-    python3-dev \
-    libpng-dev \
-    freetype* \
-    libblas-dev \
-    liblapack-dev \
-    libatlas-base-dev \
-    unzip \
-    google-cloud-sdk \
-    nodejs \
-    libreoffice \
-    poppler-utils \
-    gfortran -y > "/dev/null" 2>&1 && \
-    rm -rf /var/lib/apt/lists/*
+COPY deployment/api_server/install_system_dependencies.sh /swiftly/deployment
+RUN /build/install_system_dependencies.sh
 
-# Install some dependencies which can take a long time to install. We do this ahead of running "ADD . /swiftly" so the builds run faster when your
-# making code changes regularly
-RUN pip3 install --upgrade pip
-RUN pip3 install --upgrade setuptools
-RUN pip3 install numpy
-RUN pip3 install scikit-learn
-RUN pip3 install matplotlib
-RUN pip3 install gunicorn
-
-RUN  \
-  git clone https://github.com/facebookresearch/fastText.git /tmp/fastText && \
-  rm -rf /tmp/fastText/.git* && \
-  cd /tmp/fastText/ && \
-  make -j 8 && \
-  mv /tmp/fastText/fasttext /usr/bin && \
-  rm -rf /tmp/fastText
-
-
-# Set the working directory to /app
+# Enable the google cloud service account
+COPY appraisalai-be8f24d217e0.json /swiftly
 WORKDIR /swiftly
+RUN gcloud auth activate-service-account --key-file /swiftly/appraisalai-be8f24d217e0.json
+
+# Install the python dependencies. We do this ahead of running "ADD . /swiftly" so the builds run faster when your
+# making code changes regularly.
+COPY server/requirements.txt /swiftly/server/requirements.txt
+RUN pip3 install -r /swiftly/server/requirements.txt && \
 
 # We add package.json first so that the  docker image build
 # can use the cache as long as contents of package.json
 # hasn't changed.
-RUN mkdir /swiftly/client
 COPY client/package.json /swiftly/client
 WORKDIR /swiftly/client
-RUN npm install
+RUN npm install > "/dev/null" 2>&1
 
-# Copy the current directory contents into the container at /swiftly
-ADD . /swiftly
-
-ARG SWIFTLY_ENV
-
-WORKDIR /swiftly
-RUN gcloud auth activate-service-account --key-file appraisalai-be8f24d217e0.json
-
-# Download models from gs cloud
-WORKDIR /swiftly/server
-RUN mkdir models
+# Download latest machine learning models from gs cloud
 WORKDIR /swiftly/server/models
 RUN gsutil cp gs://swiftly-deployment/models.zip . && \
     unzip models.zip && \
     rm -rf models.zip
 
-WORKDIR /swiftly/server
-RUN gsutil cp gs://swiftly-deployment/file_type_model.bin .
-RUN gsutil cp gs://swiftly-deployment/page_type_model.bin .
-RUN gsutil cp gs://swiftly-deployment/page_type_model.vec .
+# Copy the current directory contents into the container at /swiftly
+ADD . /swiftly
+ARG SWIFTLY_ENV
 
 # Install dependencies for client, which includes downloads
-WORKDIR /swiftly/client
-RUN npm install > "/dev/null" 2>&1
-
 WORKDIR /swiftly/server
 RUN python3 setup.py install > "/dev/null" 2>&1
 

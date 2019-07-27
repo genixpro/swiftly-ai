@@ -7,36 +7,8 @@ with open(os.path.join(here, 'README.txt')) as f:
     README = f.read()
 with open(os.path.join(here, 'CHANGES.txt')) as f:
     CHANGES = f.read()
-
-requires = [
-    'plaster_pastedeploy',
-    'pyramid',
-    'pyramid_jinja2',
-    'pyramid_debugtoolbar',
-    'waitress',
-    'cornice',
-    'pymongo',
-    'pillow',
-    'filetype',
-    'python-docx',
-    'orjson',
-    'matplotlib',
-    'dateparser',
-    'python-dateutil',
-    'mongoengine',
-    'pycollada',
-    'tensorflow===1.13.1',
-    'gunicorn',
-    'scipy',
-    'scikit-learn',
-    'openpyxl',
-    "scikit-image",
-    "jwcrypto",
-    "jsondiff",
-    "dnspython",
-    "google-cloud-storage",
-    "auth0-python"
-]
+with open('requirements.txt', 'rt') as f:
+    requires = f.readlines()
 
 tests_require = [
     'WebTest >= 1.3.1',  # py3 compat
