@@ -19,6 +19,7 @@ WORKDIR /swiftly
 # hasn't changed.
 RUN mkdir /swiftly/client
 COPY client/package.json /swiftly/client
+WORKDIR /swiftly/client
 RUN npm install
 
 # Copy the current directory contents into the container at /swiftly
