@@ -6,7 +6,7 @@ steps:
     - "--cache=true"
     - "--cache-ttl=72h"
     - "build"
-    - "-t"
+    - "--tag"
     - "gcr.io/appraisalai/swiftly:$REVISION_ID-$_SWIFTLY_ENV-frontend"
     - "."
     - "--build-arg"
