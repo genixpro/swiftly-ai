@@ -22,14 +22,15 @@ COPY client/package.json /swiftly/client
 WORKDIR /swiftly/client
 RUN npm install
 
-# Copy the current directory contents into the container at /swiftly
-ADD . /swiftly
 ARG SWIFTLY_ENV
 
 # Copy the NGINX configuration
 ADD deployment/nginx_${SWIFTLY_ENV} /etc/nginx/sites-enabled/default
 ADD deployment/ssl/swiftly.key /etc/nginx/ssl/nginx.key
 ADD deployment/ssl/certbundle.pem /etc/nginx/ssl/nginx.pem
+
+# Copy the current directory contents into the container at /swiftly
+ADD client /swiftly/client
 
 # Set the working directory to /swiftly/client, and build the frontend package
 WORKDIR /swiftly/client
