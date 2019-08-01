@@ -25,7 +25,8 @@
     "additional_income_word": "node_modules/.bin/babel-node ./src/word_documents/additional_income_summary_word.js",
     "amortization_schedule_word": "node_modules/.bin/babel-node ./src/word_documents/amortization_schedule_word.js",
     "tenants_word": "node_modules/.bin/babel-node ./src/word_documents/tenants_word.js",
-    "market_rents_word": "node_modules/.bin/babel-node ./src/word_documents/market_rents_word.js"
+    "market_rents_word": "node_modules/.bin/babel-node ./src/word_documents/market_rents_word.js",
+    "subject_details_word": "node_modules/.bin/babel-node ./src/word_documents/subject_details_word.js"
   },
   "eslintConfig": {
     "extends": "react-app"

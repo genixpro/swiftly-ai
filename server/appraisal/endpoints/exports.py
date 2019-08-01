@@ -1306,3 +1306,43 @@ class MarketRentsWordFile(ExportAPI):
         response.content_disposition = "attachment; filename=\"MarketRents.docx\""
         return response
 
+
+@resource(path='/appraisal/{appraisalId}/subject_details/word', cors_enabled=True, cors_origins="*", permission="everything")
+class SubjectDetailsWordFile(ExportAPI):
+    def __init__(self, request, context=None):
+        super(SubjectDetailsWordFile, self).__init__(self)
+        self.request = request
+
+    def __acl__(self):
+        return [
+            (Allow, Authenticated, 'everything'),
+            (Deny, Everyone, 'everything')
+        ]
+
+    def get(self):
+        appraisalId = self.request.matchdict['appraisalId']
+
+        appraisal = Appraisal.objects(id=regularizeID(appraisalId)).first()
+
+        auth = checkUserOwnsObject(self.request.authenticated_userid, self.request.effective_principals, appraisal)
+        if not auth:
+            raise HTTPForbidden("You do not have access to this appraisal.")
+
+        query = {}
+
+        if "view_all" not in self.request.effective_principals:
+            query["owner"] = self.request.authenticated_userid
+
+        data = {
+            "appraisal": json.loads(appraisal.to_json()),
+            "accessToken": getAccessTokenForRequest(self.request)
+        }
+
+        buffer = self.renderTemplate("subject_details_word", data)
+
+        response = Response()
+        response.body_file = buffer
+        response.content_type = "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+        response.content_disposition = "attachment; filename=\"SubjectDetails.docx\""
+        return response
+

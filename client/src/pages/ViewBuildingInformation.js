@@ -1,5 +1,5 @@
 import React from 'react';
-import { Row, Col, Card, CardBody } from 'reactstrap';
+import { Row, Col, Card, CardBody, Dropdown, DropdownItem, DropdownMenu, DropdownToggle} from 'reactstrap';
 import FieldDisplayEdit from "./components/FieldDisplayEdit";
 import AppraisalContentHeader from "./components/AppraisalContentHeader";
 import IndustrialSubtypeSelector from "./components/IndustrialSubtypeSelector";
@@ -43,6 +43,16 @@ class ViewBuildingInformation extends React.Component
         </tr>;
     }
 
+    downloadWordSummary()
+    {
+        window.location = `${process.env.VALUATE_ENVIRONMENT.REACT_APP_SERVER_URL}appraisal/${this.props.appraisal._id}/subject_details/word?access_token=${Auth.getAccessToken()}`;
+    }
+
+    toggleDownload()
+    {
+        this.setState({showBuildingInformation: !this.state.showBuildingInformation});
+    }
+
     render() {
         return (
             (this.props.appraisal) ?
@@ -52,6 +62,19 @@ class ViewBuildingInformation extends React.Component
                         <Col xs={12} md={12} lg={12} xl={12}>
                             <Card className="card-default">
                                 <CardBody>
+                                    <Row>
+                                        <Col xs={12}>
+                                            <Dropdown isOpen={this.state.showBuildingInformation} toggle={this.toggleDownload.bind(this)}>
+                                                <DropdownToggle caret color={"primary"} className={"download-dropdown-button"}>
+                                                    Download
+                                                </DropdownToggle>
+                                                <DropdownMenu>
+                                                    {/*<DropdownItem onClick={() => this.downloadExcelSummary()}>Spreadsheet (xls)</DropdownItem>*/}
+                                                    <DropdownItem onClick={() => this.downloadWordSummary()}>Subject Details (word)</DropdownItem>
+                                                </DropdownMenu>
+                                            </Dropdown>
+                                        </Col>
+                                    </Row>
                                     <Row>
                                         <Col xs={12} sm={10} md={8}>
                                             <table className="table property-information-fields-table">

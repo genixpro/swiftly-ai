@@ -163,6 +163,8 @@ class UploadableImageSet extends React.Component
                             activeIndex={this.state.activeIndex}
                             next={this.next.bind(this)}
                             previous={this.previous.bind(this)}
+                            interval={false}
+                            ride={false}
                         >
                             {
                                 urls.length > 1 ?
