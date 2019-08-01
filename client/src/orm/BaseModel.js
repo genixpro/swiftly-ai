@@ -103,6 +103,8 @@ class BaseModel extends Object
                 alert(err);
             }
         }
+
+        this.initialize();
     }
 
     get fieldNames()
@@ -219,6 +221,11 @@ class BaseModel extends Object
                 }
             }
         });
+    }
+
+    initialize()
+    {
+
     }
 
     // We use a getter like this with a javascript Symbol, so that the parent reference doesn't get serialized if this object is converted back into JSON

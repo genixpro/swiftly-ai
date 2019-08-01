@@ -42,6 +42,9 @@ class ComparableSale(Document):
     # This provides the urls for images of this comp
     imageUrls = ListField(StringField())
 
+    # Captions for the images of this building.
+    captions = ListField(StringField(), default=[])
+
     # The description of the comparable
     description = StringField()
 

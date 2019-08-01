@@ -65,6 +65,9 @@ class Appraisal(Document):
     # The URLs for the images of this building.
     imageUrls = ListField(StringField(), default=[])
 
+    # Captions for the images of this building.
+    captions = ListField(StringField(), default=[])
+
     # The Effective Date for this appraisal
     effectiveDate = ConvertingDateField()
 

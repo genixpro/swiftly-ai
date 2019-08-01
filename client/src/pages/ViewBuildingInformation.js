@@ -67,6 +67,8 @@ class ViewBuildingInformation extends React.Component
                                                             accessToken={Auth.getAccessToken()}
                                                             value={this.props.appraisal.imageUrls}
                                                             onChange={(newUrls) => this.changeAppraisalField('imageUrls', newUrls)}
+                                                            captions={this.props.appraisal.captions}
+                                                            onChangeCaptions={(newCaptions) => this.changeAppraisalField('captions', newCaptions)}
                                                         />
                                                     </td>
                                                 </tr>

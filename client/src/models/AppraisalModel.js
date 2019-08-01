@@ -42,6 +42,8 @@ class AppraisalModel extends BaseModel
     static imageUrl = new StringField(); // Deprecated. DO NOT USE.
 
     static imageUrls = new ListField(new StringField());
+    static captions = new ListField(new StringField());
+
     static effectiveDate = new DateField();
     static propertyType = new StringField();
     static industrialSubType = new StringField();
@@ -78,6 +80,17 @@ class AppraisalModel extends BaseModel
 
     static dataTypeReferences = new DictField(new ListField(new ModelField(ExtractionReferenceModel)));
 
+    initialize()
+    {
+        if (this.captions && this.captions.length < this.imageUrls.length)
+        {
+            const captions = this.captions;
+            while (captions.length < this.imageUrls.length)
+            {
+                captions.push("");
+            }
+        }
+    }
 
     leasingCostsForUnit(unit)
     {

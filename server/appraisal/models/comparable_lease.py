@@ -49,6 +49,9 @@ class ComparableLease(Document):
 
     imageUrls = ListField(StringField())
 
+    # Captions for the images of the unit
+    captions = ListField(StringField(), default=[])
+
     # The type of property, as an enumeration.
     propertyType = StringField()
 

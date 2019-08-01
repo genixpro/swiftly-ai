@@ -329,6 +329,8 @@ class ComparableLeaseListItem extends React.Component
                                 accessToken={Auth.getAccessToken()}
                                 value={this.props.comparableLease.imageUrls}
                                 onChange={(newUrls) => this.changeComparableField('imageUrls', newUrls)}
+                                captions={this.props.comparableLease.captions}
+                                onChangeCaptions={(newCaptions) => this.changeComparableField('captions', newCaptions)}
                             />
                             <div className={`comparable-lease-content`}>
                                 <div className={"comparable-fields-area"}>
@@ -543,17 +545,17 @@ class ComparableLeaseListItem extends React.Component
                                                     value={comparableLease.finishedOfficePercentage}
                                                     onChange={(newValue) => this.changeComparableField('finishedOfficePercentage', newValue)}
                                                 />,
-                                                <span className={"comparable-field-label"} key={1} >Clear Ceiling Height:</span>,
+                                                <span className={"comparable-field-label"} key={3} >Clear Ceiling Height:</span>,
                                                 <FieldDisplayEdit
-                                                    key={2}
+                                                    key={4}
                                                     type={"length"}
                                                     edit={this.props.edit}
                                                     placeholder={"Clear Ceiling Height"}
                                                     value={comparableLease.clearCeilingHeight}
                                                     onChange={(newValue) => this.changeComparableField('clearCeilingHeight', newValue)}
                                                 />,
-                                                <span className={"comparable-field-label"} key={3} >Shipping Doors:</span>,
-                                                <div className={"shipping-doors"} key={4}>
+                                                <span className={"comparable-field-label"} key={5} >Shipping Doors:</span>,
+                                                <div className={"shipping-doors"} key={6}>
                                                     <div className={"shipping-doors-line"}>
                                                         <div><span>Double Man:</span></div>
                                                         <FieldDisplayEdit

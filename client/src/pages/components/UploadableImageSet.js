@@ -9,6 +9,7 @@ import {Button,
     CarouselCaption} from 'reactstrap';
 import _ from 'underscore';
 import proxy from "../../proxy";
+import {NonDroppableFieldDisplayEdit} from "./FieldDisplayEdit";
 
 class UploadableImageSet extends React.Component
 {
@@ -72,6 +73,12 @@ class UploadableImageSet extends React.Component
     }
 
 
+    changeCaption(newCaption)
+    {
+        const captions = this.props.captions;
+        captions[this.state.activeIndex] = newCaption;
+        this.props.onChangeCaptions(captions);
+    }
 
 
     toggleFullscreen()
@@ -189,6 +196,15 @@ class UploadableImageSet extends React.Component
                                     : null
                             }
                         </Carousel>
+                        {
+                            (this.props.value && this.props.value.length > 0) ?
+                                <NonDroppableFieldDisplayEdit
+                                    type={"text"}
+                                    placeholder={"Caption..."}
+                                    value={this.props.captions[this.state.activeIndex]}
+                                    onChange={(newValue) => this.changeCaption(newValue)}
+                                /> : null
+                        }
 
                         {/*<AliceCarousel ref={(el) => this.Carousel = el} buttonsDisabled={true} dotsDisabled={true} items={urls.map((url) => <img src={url}/>)} />*/}
                         <nav className={"uploadable-icons-nav"}>

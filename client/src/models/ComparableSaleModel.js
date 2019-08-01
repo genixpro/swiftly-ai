@@ -25,6 +25,7 @@ class ComparableSaleModel extends EquationMdoel
     static imageUrl = new StringField(); // DEPRECATED
 
     static imageUrls = new ListField(new StringField());
+    static captions = new ListField(new StringField());
 
     static address = new StringField();
     static location = new GenericField();
@@ -109,6 +110,18 @@ class ComparableSaleModel extends EquationMdoel
     static portfolioLinkedComps = new ListField(new StringField());
 
     static vendorTakebackPercent = new FloatField();
+
+    initialize()
+    {
+        if (this.captions && this.captions.length < this.imageUrls.length)
+        {
+            const captions = this.captions;
+            while (captions.length < this.imageUrls.length)
+            {
+                captions.push("");
+            }
+        }
+    }
 
     get noiPSFMultiple()
     {

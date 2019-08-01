@@ -37,9 +37,10 @@ class ImageAPI(object):
         input_file = request.POST['file'].value
         input_file_name = request.POST['fileName']
 
-        image = Image()
-        image.save()
+        newImageId = generateNewUUID(Image)
 
+        image = Image()
+        image.id = newImageId
         image.fileName = str(image.id) + "-uploaded-image.png"
         image.url = self.request.registry.apiUrl + "images/" + str(image.id)
         image.owner = self.request.authenticated_userid

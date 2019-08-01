@@ -756,6 +756,8 @@ class ComparableSaleListItem extends React.Component
                                     accessToken={Auth.getAccessToken()}
                                     value={comparableSale.imageUrls}
                                     onChange={(newUrls) => this.changeComparableField('imageUrls', newUrls)}
+                                    captions={comparableSale.captions}
+                                    onChangeCaptions={(newCaptions) => this.changeComparableField('captions', newCaptions)}
                                 />
 
                                 {

@@ -24,6 +24,7 @@ class ComparableLeaseModel extends BaseModel
     static location = new GenericField();
     static imageUrl = new StringField(); // DEPRECATED.
     static imageUrls = new ListField(new StringField());
+    static captions = new ListField(new StringField());
     static propertyType = new StringField();
     static sizeOfUnit = new FloatField();
     static rentEscalations = new ListField(new ModelField(RentEscalation));
@@ -53,6 +54,18 @@ class ComparableLeaseModel extends BaseModel
 
     static remarks = new StringField();
     static tenancyType = new StringField();
+
+    initialize()
+    {
+        if (this.captions && this.captions.length < this.imageUrls.length)
+        {
+            const captions = this.captions;
+            while (captions.length < this.imageUrls.length)
+            {
+                captions.push("");
+            }
+        }
+    }
 
     get startingYearlyRent()
     {
