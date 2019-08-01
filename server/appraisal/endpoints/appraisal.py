@@ -159,7 +159,7 @@ class ConvertTenantsToComparables(object):
 
         leases = []
         for unit in appraisal.units:
-            if not unit.isVacantForStabilizedStatement and not unit.isVacantInFirstYear:
+            if not unit.isVacantForStabilizedStatement:
                 lease = ComparableLease()
 
                 lease.fillDataFromAppraisal(appraisal, unit)

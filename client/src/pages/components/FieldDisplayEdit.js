@@ -398,11 +398,17 @@ class FieldDisplayEdit extends React.Component
                                 title={this.props.title || this.props.placeholder}
                                 timeFormat={false}
                                 input={true}
-                                viewDate={this.props.defaultDate ? this.props.defaultDate : null}
+                                viewDate={this.props.defaultDate ? this.props.defaultDate : this.props.value ? this.props.value : new Date()}
                                 utc={true}
                                 closeOnSelect={true}
                                 value={this.state.isEditing ? this.state.value : this.formatValue(this.props.value)}
-                                onChange={(newValue) => newValue.toDate ? this.dateInputUpdated(newValue.toDate()) : newValue === "" ? this.dateInputUpdated(null) : null}
+                                onChange={
+                                    (newValue) => newValue.toDate ?
+                                        this.dateInputUpdated(newValue.toDate())
+                                        : newValue === ""
+                                            ? this.dateInputUpdated(null)
+                                            : null
+                                }
                                 onBlur={() => setTimeout(() => this.finishEditing(), 100)}
                             /> : null
                     }

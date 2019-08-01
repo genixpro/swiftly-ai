@@ -116,7 +116,10 @@ class Unit(EmbeddedDocument):
         if self.shouldTreatAsVacant is not None:
             return self.shouldTreatAsVacant
         else:
-            return self.isVacantInFirstYear
+            if self.currentTenancy.yearlyRent is not None and self.currentTenancy.yearlyRent > 0:
+                return False
+            else:
+                return True
 
     @property
     def isVacantInFirstYear(self):

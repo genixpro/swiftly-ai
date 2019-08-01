@@ -572,10 +572,8 @@ class ViewRecoveryStructures extends React.Component
 
     defaultRecoveryStructureData = {
         name: "New Recovery Structure",
-        managementCalculationRule: {
-            percentage: 100,
-            field: "managementExpenses"
-        },
+        managementRecoveryMode: "operatingExpenses",
+        managementRecoveryOperatingPercentage: 15,
         expenseRecoveries: {},
         taxRecoveries: {}
     };

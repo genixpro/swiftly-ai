@@ -125,7 +125,14 @@ class UnitModel extends BaseModel
     {
         if(_.isNull(this.shouldTreatAsVacant))
         {
-            return this.isVacantInFirstYear;
+            if (this.currentTenancy.yearlyRent !== null && this.currentTenancy.yearlyRent > 0)
+            {
+                return false;
+            }
+            else
+            {
+                return true;
+            }
         }
         else
         {
