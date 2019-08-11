@@ -48,7 +48,8 @@ class DemoLaunch(object):
         if demoAccount is None:
             uniqueLink = DemoUniqueLink.objects(id=str(linkId)).first()
             if uniqueLink is None:
-                uniqueLink = DemoUniqueLink(email='demo@swiftlyai.com')
+                id = generateNewUUID(DemoUniqueLink, minimumLength=20)
+                uniqueLink = DemoUniqueLink(id=id, email='demo@swiftlyai.com')
 
             demoAccount = DemoAccount.objects(used=False).first()
             if demoAccount is None:
