@@ -18,7 +18,7 @@ from appraisal.models.demo_unique_link import DemoUniqueLink
 from ..models.custom_id_field import generateNewUUID, regularizeID
 
 
-@resource(collection_get='/demo_activate/', path='/demo_activate/{linkId}', renderer='bson', cors_enabled=True, cors_origins="*", permission="everything")
+@resource(collection_path='/demo_activate/', path='/demo_activate/{linkId}', renderer='bson', cors_enabled=True, cors_origins="*", permission="everything")
 class DemoLaunch(object):
 
     def __init__(self, request, context=None):
