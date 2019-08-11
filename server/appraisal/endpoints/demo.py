@@ -31,7 +31,7 @@ class DemoLaunch(object):
         ]
 
     def collection_get(self):
-        self.get()
+        return self.get()
 
     def get(self):
         global globalThread
