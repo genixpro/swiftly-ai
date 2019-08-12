@@ -67,6 +67,10 @@ server {
             proxy_pass http://swiftly-sandbox-api.default/demo_activate/;
         }
 
+        location /demo_activate {
+            proxy_pass http://swiftly-sandbox-api.default/demo_activate/;
+        }
+
 	location / {
 		# First attempt to serve request as file, then
 		# as directory, then fall back to displaying a 404.

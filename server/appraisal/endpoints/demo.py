@@ -18,7 +18,7 @@ from appraisal.models.demo_unique_link import DemoUniqueLink
 from ..models.custom_id_field import generateNewUUID, regularizeID
 
 
-@resource(collection_get='/demo_activate/', path='/demo_activate/{linkId}', renderer='bson', cors_enabled=True, cors_origins="*", permission="everything")
+@resource(collection_path='/demo_activate/', path='/demo_activate/{linkId}', renderer='bson', cors_enabled=True, cors_origins="*", permission="everything")
 class DemoLaunch(object):
 
     def __init__(self, request, context=None):
@@ -31,7 +31,7 @@ class DemoLaunch(object):
         ]
 
     def collection_get(self):
-        self.get()
+        return self.get()
 
     def get(self):
         global globalThread
@@ -48,7 +48,8 @@ class DemoLaunch(object):
         if demoAccount is None:
             uniqueLink = DemoUniqueLink.objects(id=str(linkId)).first()
             if uniqueLink is None:
-                uniqueLink = DemoUniqueLink(email='demo@swiftlyai.com')
+                id = generateNewUUID(DemoUniqueLink, minimumLength=20)
+                uniqueLink = DemoUniqueLink(id=id, email='demo@swiftlyai.com')
 
             demoAccount = DemoAccount.objects(used=False).first()
             if demoAccount is None:
