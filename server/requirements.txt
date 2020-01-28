@@ -14,7 +14,7 @@ dateparser
 python-dateutil
 mongoengine
 pycollada
-tensorflow===1.15.0
+tensorflow===1.15.2
 gunicorn
 scipy
 scikit-learn
