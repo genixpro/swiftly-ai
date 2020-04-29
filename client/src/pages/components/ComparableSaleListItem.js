@@ -905,7 +905,7 @@ class ComparableSaleListItem extends React.Component
                                                     <PopoverBody>
                                                         <div id="place-pin-body-wrapper" className={"place-pin-body-wrapper"} onMouseMove={(evt) => this.onPinMapMouseMove(evt)} onMouseLeave={() => this.onPinMapMouseOff()}>
                                                             <GoogleMapReact
-                                                                bootstrapURLKeys={{ key: "AIzaSyBRmZ2N4EhJjXmC29t3VeiLUQssNG-MY1I" }}
+                                                                bootstrapURLKeys={{ key: "AIzaSyDfDNwiviqhg0DLZR-MyCR7GEqu1-Ku-ak" }}
                                                                 defaultCenter={this.getDefaultMapParams().defaultCenter}
                                                                 defaultZoom={this.getDefaultMapParams().defaultZoom}
                                                                 onClick={(evt) => this.onPinMapMouseClicked(evt)}

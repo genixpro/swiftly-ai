@@ -9,7 +9,7 @@ class ComparableMarkerMap extends React.Component {
         // let averageLng = mean(this.props.comparableSales.filter((comp) => comp.location).map((comp) => comp.location.coordinates[0]));
 
 
-        let url = `https://maps.googleapis.com/maps/api/staticmap?key=AIzaSyBRmZ2N4EhJjXmC29t3VeiLUQssNG-MY1I&size=640x480`;
+        let url = `https://maps.googleapis.com/maps/api/staticmap?key=AIzaSyDfDNwiviqhg0DLZR-MyCR7GEqu1-Ku-ak&size=640x480`;
 
         this.props.comparableSales.forEach((comp, compIndex) =>
         {

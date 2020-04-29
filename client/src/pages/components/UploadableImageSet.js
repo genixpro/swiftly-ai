@@ -107,7 +107,7 @@ class UploadableImageSet extends React.Component
 
     getUrlsForDisplay()
     {
-        const streetViewUrl = proxy(`https://maps.googleapis.com/maps/api/streetview?key=AIzaSyBRmZ2N4EhJjXmC29t3VeiLUQssNG-MY1I&size=640x480&source=outdoor&location=${this.props.address}`);
+        const streetViewUrl = proxy(`https://maps.googleapis.com/maps/api/streetview?key=AIzaSyDfDNwiviqhg0DLZR-MyCR7GEqu1-Ku-ak&size=640x480&source=outdoor&location=${this.props.address}`);
 
         let urls = [];
 

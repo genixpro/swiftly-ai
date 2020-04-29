@@ -271,7 +271,7 @@ class ComparableSalesDetailedWordFile(ExportAPI):
         for comp in comparables:
             newUrls = []
             if len(comp.imageUrls) == 0:
-                image = requests.get(f"https://maps.googleapis.com/maps/api/streetview?key=AIzaSyBRmZ2N4EhJjXmC29t3VeiLUQssNG-MY1I&size=640x480&source=outdoor&location={comp.address}").content
+                image = requests.get(f"https://maps.googleapis.com/maps/api/streetview?key=AIzaSyDfDNwiviqhg0DLZR-MyCR7GEqu1-Ku-ak&size=640x480&source=outdoor&location={comp.address}").content
                 data64 = u''.join(str(base64.encodebytes(image), 'utf8'))
                 newUrls.append(u'data:%s;base64,%s' % ("image/jpeg", data64))
             else:

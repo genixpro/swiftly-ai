@@ -37,7 +37,7 @@ class App extends React.Component {
                             <div key={compIndex.toString()}>
                                 <h2>{comp.address}</h2>
                                 <img
-                                    src={comp.imageUrls.length ? (comp.imageUrls[0]) : "https://maps.googleapis.com/maps/api/streetview?key=AIzaSyBRmZ2N4EhJjXmC29t3VeiLUQssNG-MY1I&size=640x480&source=outdoor&location=" + comp.address}
+                                    src={comp.imageUrls.length ? (comp.imageUrls[0]) : "https://maps.googleapis.com/maps/api/streetview?key=AIzaSyDfDNwiviqhg0DLZR-MyCR7GEqu1-Ku-ak&size=640x480&source=outdoor&location=" + comp.address}
                                     style={imageStyle}
                                 />
                                 <br/>

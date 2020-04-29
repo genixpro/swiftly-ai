@@ -105,7 +105,7 @@ class DocumentParser:
                                          }]
                                      }]
                                  },
-                                 params={'key': "AIzaSyBRmZ2N4EhJjXmC29t3VeiLUQssNG-MY1I"},
+                                 params={'key': "AIzaSyDfDNwiviqhg0DLZR-MyCR7GEqu1-Ku-ak"},
                                  headers={'Content-Type': 'application/json'})
 
         memFile = io.BytesIO()

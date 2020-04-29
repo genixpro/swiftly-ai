@@ -87,7 +87,7 @@ class ComparableLeasesMap extends React.Component {
         return [
             <div className={"comparable-leases-map"} id={"comparable-leases-map"}>
                 <GoogleMapReact
-                    bootstrapURLKeys={{ key: "AIzaSyBRmZ2N4EhJjXmC29t3VeiLUQssNG-MY1I" }}
+                    bootstrapURLKeys={{ key: "AIzaSyDfDNwiviqhg0DLZR-MyCR7GEqu1-Ku-ak" }}
                     defaultCenter={this.getDefaultMapParams().defaultCenter}
                     defaultZoom={this.getDefaultMapParams().defaultZoom}
                     onChange={(location) => this.onMapChanged(location)}
