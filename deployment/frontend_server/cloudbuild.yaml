@@ -1,5 +1,5 @@
 steps:
-- name: 'gcr.io/kaniko-project/executor:latest'
+- name: 'gcr.io/cloud-builders/docker'
   id: Build Frontend Docker Image
   args:
     - "--destination=gcr.io/swiftly-2020/swiftly:$REVISION_ID-$_SWIFTLY_ENV-frontend"
@@ -13,6 +13,12 @@ steps:
     - "-f"
     - "deployment/frontend_server/Dockerfile"
   timeout: 1800s
+- name: 'gcr.io/cloud-builders/docker'
+  id: Push the API Server
+  args:
+    - "push"
+    - "gcr.io/swiftly-2020/swiftly:$REVISION_ID-$_SWIFTLY_ENV-frontend"
+  timeout: 7200s
 - name: 'gcr.io/cloud-builders/kubectl'
   args:
   - 'cluster-info'

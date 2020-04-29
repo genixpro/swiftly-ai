@@ -1,17 +1,21 @@
 steps:
-- name: 'gcr.io/kaniko-project/executor:latest'
+- name: 'gcr.io/cloud-builders/docker'
   id: Build API Server Docker Image
   args:
-    - "--destination=gcr.io/swiftly-2020/swiftly:$REVISION_ID-$_SWIFTLY_ENV-api"
-    - "--cache=false"
-    - "--cache-ttl=72h"
-    - "--snapshotMode=time"
     - "build"
     - "."
+    - "-t"
+    - "gcr.io/swiftly-2020/swiftly:$REVISION_ID-$_SWIFTLY_ENV-api"
     - "--build-arg"
     - "SWIFTLY_ENV=$_SWIFTLY_ENV"
     - "-f"
     - "deployment/api_server/Dockerfile"
+  timeout: 7200s
+- name: 'gcr.io/cloud-builders/docker'
+  id: Push the API Server
+  args:
+    - "push"
+    - "gcr.io/swiftly-2020/swiftly:$REVISION_ID-$_SWIFTLY_ENV-api"
   timeout: 7200s
 - name: 'gcr.io/cloud-builders/kubectl'
   args:
