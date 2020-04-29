@@ -43,7 +43,7 @@ def main():
     connect(db=settings.get('db.name'), host=settings.get('db.uri'))
 
     sampleDataDBName = "swiftly_sample_data"
-    sampleDataURI = "mongodb+srv://testing:PEpYlP1hTQ5AUEAB@swiftlyprimary-ikito.gcp.mongodb.net/swiftly_sample_data?retryWrites=true"
+    sampleDataURI = "mongodb+srv://demo:kveGG2qAbnKQh1Un9By6Z3oq@demo-bdwlc.gcp.mongodb.net/swiftly_sample_data?retryWrites=true"
     sampleDataBucket = 'swiftly-sample-files'
 
     os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = pkg_resources.resource_filename("appraisal", "gcloud-storage-key.json")
