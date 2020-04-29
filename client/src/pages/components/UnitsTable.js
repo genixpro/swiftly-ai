@@ -41,7 +41,7 @@ class UnitRow extends React.Component
 
     componentDidMount()
     {
-        if (this.props.history && this.props.allowSelection && this.getQueryVariable("unit").toString() === (this.props.unitIndex || "").toString())
+        if (this.props.history && this.props.allowSelection && this.getQueryVariable("unit").toString() === (this.props.unitIndex || "null").toString())
         {
             this.setState({collapse: true});
         }
