@@ -6,6 +6,7 @@ steps:
     - "--cache=false"
     - "--cache-ttl=72h"
     - "--snapshotMode=time"
+    - "build"
     - "."
     - "--build-arg"
     - "SWIFTLY_ENV=$_SWIFTLY_ENV"
