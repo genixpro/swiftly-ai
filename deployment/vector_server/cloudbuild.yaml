@@ -13,7 +13,7 @@ steps:
   - 'cluster-info'
   env:
   - 'CLOUDSDK_COMPUTE_ZONE=us-central1-a'
-  - 'CLOUDSDK_CONTAINER_CLUSTER=swiftly-cluster-api'
+  - 'CLOUDSDK_CONTAINER_CLUSTER=cluster-1'
   timeout: 30s
 - name: 'gcr.io/cloud-builders/gcloud'
   id: Update Vector Server Deployment
@@ -22,7 +22,7 @@ steps:
   - "./deployment/vector_server/update_vector_server.sh"
   env:
   - 'CLOUDSDK_COMPUTE_ZONE=us-central1-a'
-  - 'CLOUDSDK_CONTAINER_CLUSTER=swiftly-cluster-api'
+  - 'CLOUDSDK_CONTAINER_CLUSTER=cluster-1'
   - 'REVISION_ID=$REVISION_ID'
   timeout: 600s
 timeout: 15000s
