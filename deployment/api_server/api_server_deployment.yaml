@@ -47,3 +47,4 @@ spec:
       priorityClassName: __SWIFTLY_ENV__-priority
       schedulerName: default-scheduler
       terminationGracePeriodSeconds: 15
+
