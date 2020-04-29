@@ -2,7 +2,7 @@ steps:
 - name: 'gcr.io/kaniko-project/executor:latest'
   id: Build API Server Docker Image
   args:
-    - "--destination=gcr.io/appraisalai/swiftly:$REVISION_ID-$_SWIFTLY_ENV-api"
+    - "--destination=gcr.io/swiftly-2020/swiftly:$REVISION_ID-$_SWIFTLY_ENV-api"
     - "--cache=true"
     - "--cache-ttl=72h"
     - "--snapshotMode=time"

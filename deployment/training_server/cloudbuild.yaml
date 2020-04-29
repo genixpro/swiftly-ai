@@ -1,11 +1,11 @@
 steps:
 - name: 'gcr.io/cloud-builders/docker'
   id: Build training server image
-  args: ["build", "-t", "gcr.io/appraisalai/swiftly:$REVISION_ID-trainingserver", ".", "-f", "deployment/training_server/Dockerfile"]
+  args: ["build", "-t", "gcr.io/swiftly-2020/swiftly:$REVISION_ID-trainingserver", ".", "-f", "deployment/training_server/Dockerfile"]
   timeout: 7200s
 - name: 'gcr.io/cloud-builders/docker'
   id: Upload training server image
-  args: ["push", "gcr.io/appraisalai/swiftly:$REVISION_ID-trainingserver"]
+  args: ["push", "gcr.io/swiftly-2020/swiftly:$REVISION_ID-trainingserver"]
   timeout: 3600s
 - name: 'gcr.io/cloud-builders/kubectl'
   id: Fetch Kubernetes Auth

@@ -45,7 +45,7 @@ class TriggerClient(google.cloud.client.ClientWithProject):
     """The scopes required for authenticating as a Cloud Storage consumer."""
 
     def __init__(self):
-        super(TriggerClient, self).__init__(project="appraisalai", credentials=None, _http=None)
+        super(TriggerClient, self).__init__(project="swiftly", credentials=None, _http=None)
         self._connection = Connection(self)
 
 
@@ -61,7 +61,7 @@ def triggerRebuild(environment, triggerId):
 
     api_response = client._connection.api_request(
         method="POST",
-        path=f"projects/appraisalai/triggers/{triggerId}:run",
+        path=f"projects/swiftly/triggers/{triggerId}:run",
         data=json.dumps(data),
         content_type="application/json",
         # headers=client._connection._encryption_headers(),

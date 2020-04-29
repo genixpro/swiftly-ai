@@ -15,9 +15,9 @@ COPY deployment/api_server/install_system_dependencies.sh /swiftly/deployment
 RUN chmod +x /swiftly/deployment/install_system_dependencies.sh && sh /swiftly/deployment/install_system_dependencies.sh
 
 # Enable the google cloud service account
-COPY appraisalai-be8f24d217e0.json /swiftly
+COPY swiftly-2020-da055f21a18f.json /swiftly
 WORKDIR /swiftly
-RUN gcloud auth activate-service-account --key-file /swiftly/appraisalai-be8f24d217e0.json
+RUN gcloud auth activate-service-account --key-file /swiftly/swiftly-2020-da055f21a18f.json
 
 # Install the python dependencies. We do this ahead of running "ADD . /swiftly" so the builds run faster when your
 # making code changes regularly. As long as requirements file hasn't changed, then docker can use the cached image

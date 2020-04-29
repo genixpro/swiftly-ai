@@ -1,11 +1,11 @@
 steps:
 - name: 'gcr.io/cloud-builders/docker'
   id: Build Docker Image for Vector Server
-  args: ["build", "-t", "gcr.io/appraisalai/swiftly:$REVISION_ID-vectorserver", ".", "-f", "deployment/vector_server/Dockerfile"]
+  args: ["build", "-t", "gcr.io/swiftly-2020/swiftly:$REVISION_ID-vectorserver", ".", "-f", "deployment/vector_server/Dockerfile"]
   timeout: 7200s
 - name: 'gcr.io/cloud-builders/docker'
   id: Push Docker Image for Vector Server
-  args: ["push", "gcr.io/appraisalai/swiftly:$REVISION_ID-vectorserver"]
+  args: ["push", "gcr.io/swiftly-2020/swiftly:$REVISION_ID-vectorserver"]
   timeout: 3600s
 - name: 'gcr.io/cloud-builders/kubectl'
   id: Fetch Kubernetes Auth

@@ -54,7 +54,7 @@ WORKDIR /swiftly
 ADD . /swiftly
 
 WORKDIR /swiftly
-RUN gcloud auth activate-service-account --key-file appraisalai-be8f24d217e0.json
+RUN gcloud auth activate-service-account --key-file swiftly-2020-da055f21a18f.json
 
 # Download the vector model from google cloud
 WORKDIR /swiftly/server

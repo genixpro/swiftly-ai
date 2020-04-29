@@ -10,7 +10,7 @@ spec:
         spec:
           containers:
           - name: eb-appraisal-sha256
-            image: gcr.io/appraisalai/swiftly:__REVISION_ID__-trainingserver
+            image: gcr.io/swiftly-2020/swiftly:__REVISION_ID__-trainingserver
             command: ["/usr/local/bin/appraisal_train_extractor", "production_readonly.ini"]
             resources:
               requests:
