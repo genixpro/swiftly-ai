@@ -2,10 +2,10 @@ steps:
 - name: 'gcr.io/cloud-builders/docker'
   id: Build Frontend Docker Image
   args:
-    - "-t"
-    - "gcr.io/swiftly-2020/swiftly:$REVISION_ID-$_SWIFTLY_ENV-frontend"
     - "build"
     - "."
+    - "-t"
+    - "gcr.io/swiftly-2020/swiftly:$REVISION_ID-$_SWIFTLY_ENV-frontend"
     - "--build-arg"
     - "SWIFTLY_ENV=$_SWIFTLY_ENV"
     - "-f"
