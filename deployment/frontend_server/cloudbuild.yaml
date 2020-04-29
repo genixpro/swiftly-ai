@@ -21,7 +21,7 @@ steps:
   args:
   - 'cluster-info'
   env:
-  - 'CLOUDSDK_COMPUTE_ZONE=us-central1-a'
+  - 'CLOUDSDK_COMPUTE_ZONE=us-central1-c'
   - 'CLOUDSDK_CONTAINER_CLUSTER=cluster-1'
   timeout: 30s
 - name: 'gcr.io/cloud-builders/gcloud'
@@ -30,7 +30,7 @@ steps:
   args:
   - "./deployment/frontend_server/update_frontend_server.sh"
   env:
-  - 'CLOUDSDK_COMPUTE_ZONE=us-central1-a'
+  - 'CLOUDSDK_COMPUTE_ZONE=us-central1-c'
   - 'CLOUDSDK_CONTAINER_CLUSTER=cluster-1'
   - 'SWIFTLY_ENV=$_SWIFTLY_ENV'
   - 'REVISION_ID=$REVISION_ID'

@@ -21,7 +21,7 @@ steps:
   args:
   - 'cluster-info'
   env:
-  - 'CLOUDSDK_COMPUTE_ZONE=us-central1-a'
+  - 'CLOUDSDK_COMPUTE_ZONE=us-central1-c'
   - 'CLOUDSDK_CONTAINER_CLUSTER=cluster-1'
   timeout: 30s
 - name: 'gcr.io/cloud-builders/gcloud'
@@ -30,7 +30,7 @@ steps:
   args:
   - "./deployment/api_server/update_api_server.sh"
   env:
-  - 'CLOUDSDK_COMPUTE_ZONE=us-central1-a'
+  - 'CLOUDSDK_COMPUTE_ZONE=us-central1-c'
   - 'CLOUDSDK_CONTAINER_CLUSTER=cluster-1'
   - 'SWIFTLY_ENV=$_SWIFTLY_ENV'
   - 'REVISION_ID=$REVISION_ID'
@@ -41,7 +41,7 @@ steps:
   args:
   - "./deployment/api_server/run_migration_job.sh"
   env:
-  - 'CLOUDSDK_COMPUTE_ZONE=us-central1-a'
+  - 'CLOUDSDK_COMPUTE_ZONE=us-central1-c'
   - 'CLOUDSDK_CONTAINER_CLUSTER=cluster-1'
   - 'SWIFTLY_ENV=$_SWIFTLY_ENV'
   - 'REVISION_ID=$REVISION_ID'
@@ -52,7 +52,7 @@ steps:
   args:
   - "./deployment/api_server/update_demo_reset.sh"
   env:
-  - 'CLOUDSDK_COMPUTE_ZONE=us-central1-a'
+  - 'CLOUDSDK_COMPUTE_ZONE=us-central1-c'
   - 'CLOUDSDK_CONTAINER_CLUSTER=cluster-1'
   - 'SWIFTLY_ENV=$_SWIFTLY_ENV'
   - 'REVISION_ID=$REVISION_ID'
