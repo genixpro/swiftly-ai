@@ -151,7 +151,7 @@
     "spinkit": "^1.2.5",
     "sweetalert": "2.1.2",
     "underscore": "^1.9.1",
-    "validator": "10.9.0",
+    "validator": "13.7.0",
     "weather-icons": "github:erikflowers/weather-icons",
     "whirl": "github:themicon/whirl"
   },
