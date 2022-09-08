@@ -93,7 +93,7 @@
     "jquery.flot.tooltip": "github:krzysu/flot.tooltip",
     "js-storage": "1.0.4",
     "jsonwebtoken": "^8.5.1",
-    "jszip": "3.1.5",
+    "jszip": "3.7.0",
     "loaders.css": "^0.1.2",
     "matchmedia": "0.1.2",
     "mixpanel-browser": "^2.29.0",
