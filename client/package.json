@@ -45,7 +45,7 @@
     "animate.css": "3.7.0",
     "array-move": "^2.1.0",
     "auth0-js": "^9.10.2",
-    "axios": "^0.18.0",
+    "axios": "^1.6.0",
     "babel-plugin-relay": "^2.0.0-rc.1",
     "bluebird": "^3.5.3",
     "bootbox": "^5.1.0",
