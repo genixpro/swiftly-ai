@@ -1,0 +1,17 @@
+client/node_modules
+client/.idea
+server/.idea
+.idea
+extension/.idea
+server/data
+.env
+openai
+data/
+api/.pytest_cache/
+api/.venv/
+api/__pycache__/
+api/app/__pycache__/
+api/tests/__pycache__/
+client/dist/
+test-results/
+playwright-report/

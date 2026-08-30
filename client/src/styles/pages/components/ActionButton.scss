@@ -1,0 +1,47 @@
+
+.action-button
+{
+  display: flex;
+  flex-direction: row;
+
+  span.contents {
+    animation: appearTransition 0.5s ease-in-out;
+  }
+
+  i.result {
+    animation: appearTransition 0.5s ease-in-out;
+  }
+
+  .loader-wrapper {
+    animation: appearTransition 0.5s ease-in-out;
+    width: 35px;
+    height: 25px;
+    .ball-pulse {
+      transform: scale(0.5);
+      & > div {
+        background-color: blue;
+      }
+    }
+  }
+
+  .children
+  {
+    margin-right: 10px;
+  }
+
+  .button-loading-wrapper
+  {
+    display: flex;
+    flex-direction: row;
+  }
+}
+
+
+@keyframes appearTransition {
+  from {
+    opacity:0;
+  }
+  to {
+    opacity:1;
+  }
+}

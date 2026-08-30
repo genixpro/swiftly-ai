@@ -1,0 +1,1 @@
+{"document_type":"financial_statement","confidence":0.9,"fields":[],"tenant_lease_rows":[],"income_expense_rows":[{"values":[{"name":"expenses","value":1000,"citations":[{"page":1,"text":"Expenses 1000"}]}],"citations":[{"page":1,"text":"Expenses 1000"}]}],"comparable_sales":[],"citations":[{"page":1,"text":"Expenses 1000"}]}

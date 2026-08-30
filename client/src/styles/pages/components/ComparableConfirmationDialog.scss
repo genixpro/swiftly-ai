@@ -1,0 +1,33 @@
+
+
+.comparable-confirmation-dialog
+{
+  width: 90vw;
+  max-width: 90vw;
+
+  .comp-row
+  {
+    cursor: pointer;
+    &.selected
+    {
+      background-color: #f0f0f0;
+    }
+  }
+
+  .comparable-confirmation-dialog-loader
+  {
+    margin-left:auto;
+    margin-right:auto;
+
+
+    div {
+      background-color: blue;
+    }
+  }
+
+  .bottom-button-area
+  {
+    display: flex;
+    justify-content: flex-end;
+  }
+}

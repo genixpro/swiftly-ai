@@ -1,0 +1,54 @@
+name: CI
+on: [push, pull_request]
+jobs:
+  secrets:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: bash scripts/check_no_secrets.sh
+  api:
+    runs-on: ubuntu-latest
+    defaults: { run: { working-directory: api } }
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: '3.12' }
+      - run: pip install -r requirements-dev.txt
+      - run: ruff check app tests
+      - run: pytest -q
+  web:
+    runs-on: ubuntu-latest
+    defaults: { run: { working-directory: client } }
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22, cache: npm, cache-dependency-path: client/package-lock.json }
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run typecheck
+      - run: npm run test -- --passWithNoTests
+      - run: npm run build
+  extension:
+    runs-on: ubuntu-latest
+    defaults: { run: { working-directory: extension } }
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22, cache: npm, cache-dependency-path: extension/package-lock.json }
+      - run: npm ci
+      - run: npm run build
+      - run: npm audit --omit=dev --audit-level=high
+  e2e:
+    runs-on: ubuntu-latest
+    defaults: { run: { working-directory: client } }
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22, cache: npm, cache-dependency-path: client/package-lock.json }
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
+      - run: API_PORT=8000 WEB_PORT=5173 docker compose -f ../docker-compose.yml up --build -d
+      - run: curl --retry 20 --retry-connrefused --retry-delay 1 --fail http://localhost:8000/health
+      - run: E2E_BASE_URL=http://localhost:5173 npm run test:e2e
+      - if: always()
+        run: API_PORT=8000 WEB_PORT=5173 docker compose -f ../docker-compose.yml down -v

@@ -1,0 +1,24 @@
+{
+  "appraisal": {
+    "name": "Golden Harbour",
+    "address": "10 Golden Way",
+    "units": [{"tenantName": "Anchor Tenant", "yearlyRent": 120000}],
+    "expenses": [{"name": "Repairs", "amount": 12000}],
+    "additionalIncomes": [{"name": "Parking", "amount": 5000}],
+    "comparableSales": [{"address": "11 Golden Way", "salePrice": 1500000}],
+    "comparableLeases": [{"tenantName": "Market Tenant", "sizeOfUnit": 2500}],
+    "stabilizedStatement": {"netOperatingIncome": 108000, "capitalization": 2160000},
+    "directComparisonValuation": {"comparativeValue": 2200000},
+    "amortizationSchedule": {"items": [{"name": "Roof", "amount": 25000}]}
+  },
+  "expectedRows": {
+    "comparable_sales": [["11 Golden Way", 1500000]],
+    "comparable_leases": [["Market Tenant", 2500]],
+    "rent_roll": [["Anchor Tenant", 120000]],
+    "expenses": [["Repairs", 12000]],
+    "additional_incomes": [["Parking", 5000]],
+    "amortization_schedule": [["Roof", 25000]],
+    "capitalization_valuation": [["netOperatingIncome", 108000], ["capitalization", 2160000]],
+    "direct_comparison_valuation": [["comparativeValue", 2200000]]
+  }
+}
