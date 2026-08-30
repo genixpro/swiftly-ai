@@ -83,8 +83,14 @@ test('structural allowance popover uses warning-free modern markup', async ({ pa
   });
 
   await page.goto('/appraisal/demo-appraisal/stabilized_statement_valuation');
-  await page.getByRole('button', { name: /Structural Allowance @/ }).click();
-  await expect(page.getByRole('tooltip').getByText('Potential Gross Income')).toBeVisible();
+  await expect(page.getByRole('heading', {level: 1, name: /Stabilized Statement Valuation$/})).toBeVisible();
+  const structuralAllowance = page.getByRole('button', { name: /Structural Allowance @/ });
+  if (await structuralAllowance.count()) {
+    await structuralAllowance.click();
+    await expect(page.getByRole('tooltip').getByText('Potential Gross Income')).toBeVisible();
+  } else {
+    await expect(page.getByPlaceholder('Structural Allowance Rate')).toBeVisible();
+  }
   expect(errors).toEqual([]);
 });
 

@@ -1,0 +1,612 @@
+/* general */
+
+
+
+.atlwdg-trigger
+{
+  z-index: 1000;
+}
+.ball-pulse {
+  display: inline-flex;
+  gap: .25rem;
+  align-items: center;
+}
+
+.ball-pulse > div {
+  width: .55rem;
+  height: .55rem;
+  border-radius: 50%;
+  background: currentColor;
+  animation: swiftly-pulse .9s ease-in-out infinite alternate;
+}
+
+.ball-pulse > div:nth-child(2) { animation-delay: .2s; }
+.ball-pulse > div:nth-child(3) { animation-delay: .4s; }
+
+@keyframes swiftly-pulse {
+  from { opacity: .35; transform: scale(.75); }
+  to { opacity: 1; transform: scale(1); }
+}
+/* pages/StartAppraisal */
+
+
+
+.start-appraisal
+{
+  .appraisal-type-selector
+  {
+    display: flex;
+    flex-direction: row;
+  }
+
+  .selector-fields-wrapper
+  {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+  }
+
+  .appraisal-fields-area
+  {
+    margin-left: 50px;
+    min-width: calc(80vw - 600px);
+    animation: appraisalFieldsAppearance 0.5s ease-in-out;
+  }
+
+  .appraisal-type-button
+  {
+    width: 400px;
+    height: 400px;
+    margin: 10px;
+    cursor: pointer;
+
+    border-style: outset;
+    border-width: 2px;
+
+    &:hover
+    {
+      background-color: #f5f5f5;
+    }
+
+    .type-icon
+    {
+      position: absolute;
+      left: calc(50% - 40px);
+      top: calc(20% - 40px);
+      font-size: 80px;
+    }
+
+    .description-block
+    {
+      position: absolute;
+      top: 40%;
+      height: 30%;
+      width: calc(100% - 20px);
+      left: 10px;
+    }
+
+    .title-wrapper
+    {
+      font-size: 16px;
+      font-weight: bold;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .features-list-wrapper
+    {
+      display: flex;
+      flex-direction: row;
+      ul {
+        padding-left: 15px;
+        padding-right: 5px;
+        width: 50%;
+      }
+    }
+
+  }
+
+  .appraisal-type-option:focus-visible .appraisal-type-button {
+    box-shadow: 0 0 0 3px rgba(91, 155, 213, 0.35);
+  }
+
+  @media (max-width: 767.98px) {
+    .appraisal-type-selector,
+    .selector-fields-wrapper {
+      flex-direction: column;
+      width: 100%;
+    }
+
+    .appraisal-type-option,
+    .appraisal-type-button {
+      width: 100%;
+    }
+
+    .appraisal-type-button {
+      height: 400px;
+      margin: 0 0 1rem;
+    }
+
+    .appraisal-fields-area {
+      margin-left: 0;
+      min-width: 0;
+      width: 100%;
+    }
+  }
+
+
+}
+@keyframes appraisalFieldsAppearance {
+  from {
+    opacity:0;
+  }
+  to {
+    opacity:1;
+  }
+}
+
+
+/* pages/UploadFiles */
+
+
+.upload-files-page
+{
+  .upload-zone-column, .checklist-column
+  {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    .appraisal-checklist {
+      flex-basis: 58%;
+    }
+
+    .upload-zone.card
+    {
+      cursor: pointer;
+      flex-basis: 30%;
+      padding: 0;
+    }
+
+    .upload-zone.upload-disabled
+    {
+      cursor: not-allowed;
+    }
+
+    .upload-zone:after {
+      content: "";
+      display: block;
+      padding-bottom: 75%;
+    }
+
+    .drop-zone-content-wrapper {
+      position: absolute;
+      width: calc(100%);
+      height: calc(100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+
+      transition: background-color 0.2s;
+
+      .fa {
+        font-size: 30px;
+        padding-bottom: 10px;
+      }
+    }
+
+    .drop-zone-content-wrapper:hover {
+      background-color: #eeeeee;
+    }
+  }
+
+
+  .upload-files-loader.ball-pulse
+  {
+    margin-top: 15px;
+    line-height: 10px;
+  }
+
+  .upload-files-loader.ball-pulse > div
+  {
+    background-color: blue;
+  }
+}
+
+
+
+/* pages/ViewAppraisal */
+
+
+.view-appraisal
+{
+  .content-column
+  {
+    margin-left:-15px;
+    margin-right:-15px;
+  }
+
+  .card-default
+  {
+    border-top-width: 1px;
+  }
+
+  .drop-zone-content-wrapper
+  {
+
+  }
+}
+
+/* pages/ViewLeases */
+
+
+
+/* pages/ViewLeaseReport */
+
+.lease-report-variable-name
+{
+  width: 200px;
+}
+
+.lease-report-row
+{
+
+}
+
+/* pages/components/AppraisalList */
+
+
+
+/* pages/components/AppraisalListItem */
+
+.appraisal-list-item
+{
+  .action-column {
+    white-space: nowrap;
+  }
+}
+
+
+/* pages/components/UploadedFileList */
+
+
+/* pages/components/UploadedFileListItem */
+
+.uploaded-file-list-item.clickable
+{
+  cursor: pointer;
+}
+
+/* pages/components/LeaseList */
+
+
+/* pages/components/LeaseListItem */
+
+.lease-list-item
+{
+  cursor: pointer;
+}
+
+/* pages/components/FinancialStatementList */
+
+
+/* pages/components/FinancialStatementListItem */
+
+.financial-statement-list-item
+{
+  cursor: pointer;
+}
+
+/* pages/ViewFinancialStatement */
+
+
+/* pages/ViewFinancialStatementReport */
+
+
+/* pages/ViewFinancialStatementAuditClassification */
+
+.view-financial-statement-audit-classification
+{
+  .name-column
+  {
+
+  }
+  .amount-column
+  {
+    text-align: right;
+    max-width: 60px;
+  }
+
+  .include-column
+  {
+    width: 30px;
+  }
+
+  .excluded-item
+  {
+    text-decoration: line-through;
+  }
+}
+
+/* pages/ViewStabilizedStatement */
+
+
+.view-stabilized-statement
+{
+  .stabilized-statement-centered
+  {
+    position: relative;
+    min-width: 50%;
+
+    h3, h4 {
+      text-align: center;
+    }
+
+    .final-valuation
+    {
+      font-family: monospace, sans-serif;
+      letter-spacing: -2px;
+      font-style: italic;
+      font-weight: bolder;
+      color: black;
+      text-decoration: underline;
+    }
+  }
+
+  .stabilized-statement-inputs
+  {
+    border: 1px solid lightgray;
+    float: right;
+
+    .management-expense-rule
+    {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+
+      .spacer {
+        margin-left: 10px;
+        margin-right: 10px;
+      }
+
+      .field-display-edit {
+        flex-grow: 1;
+        flex-shrink: 2;
+      }
+
+      .field-display-edit.management-expense-mode, .field-display-edit.management-recovery-mode
+      {
+        flex-grow: 2;
+        flex-shrink: 1;
+      }
+    }
+  }
+
+  .valuation-table-scroll {
+    overflow-x: auto;
+    width: 100%;
+  }
+
+  @media (max-width: 991.98px) {
+    .stabilized-statement-inputs {
+      float: none;
+      margin-top: 1rem;
+    }
+
+    .statement-table td.label-column {
+      padding-right: 1rem;
+    }
+  }
+
+  @media (max-width: 767.98px) {
+    .valuation-table-scroll .statement-table {
+      table-layout: fixed;
+      width: 100%;
+
+      td.label-column {
+        padding-left: 0;
+        padding-right: 0.5rem;
+        width: 55%;
+
+        span {
+          white-space: normal;
+        }
+      }
+
+      td.amount-column {
+        left: 0 !important;
+        padding-left: 0.25rem;
+        width: 8%;
+      }
+
+      td.amount-total-column {
+        padding-left: 0.25rem;
+        white-space: nowrap;
+        width: 37%;
+      }
+
+      input {
+        min-width: 0;
+        width: 100%;
+      }
+    }
+
+    .final-valuation {
+      font-size: 1rem;
+      letter-spacing: -0.5px;
+      overflow-wrap: anywhere;
+    }
+  }
+
+  .title {
+    font-weight: bold;
+    font-size: 150%;
+  }
+
+  .statement-table
+  {
+    margin-left: auto;
+    margin-right: auto;
+    width: auto;
+
+    a {
+      color: #656565;
+    }
+
+    a:hover {
+      color: #656565;
+      text-decoration: underline;
+      cursor: pointer;
+    }
+
+    td {
+      vertical-align: middle;
+    }
+
+    .title-row
+    {
+
+    }
+
+    .data-row
+    {
+      font-family: monospace, serif;
+    }
+
+    tr:not(.title-row)
+    {
+      td.label-column
+      {
+        padding-left: 25px;
+      }
+    }
+
+    td.amount-column
+    {
+      padding-left: 20px;
+      font-family: monospace, serif;
+      text-align: right;
+    }
+
+    td.amount-total-column
+    {
+      padding-left: 20px;
+      font-family: monospace, serif;
+      text-align: right;
+    }
+
+    td.label-column
+    {
+      padding-right: 50px;
+    }
+
+    tr.statement-sum-after-row td.amount-column
+    {
+      border-bottom: 1px solid grey;
+    }
+
+    tr.statement-total-sum-row td.amount-total-column {
+      border-bottom: 1px solid grey;
+    }
+
+    tr.statement-sum-row td, tr.statement-total-sum-row td
+    {
+      padding-top: 25px;
+    }
+
+    tr.title-row td
+    {
+      padding-top: 25px;
+      &.amount-total-column
+      {
+        font-weight: bold;
+        color: black;
+      }
+    }
+
+    tr.rounding-row
+    {
+      td.amount-total-column
+      {
+        font-weight: bold;
+        color: black;
+      }
+    }
+
+    tr.capitalization-row, tr.vacancy-row
+    {
+      td.label-column
+      {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+
+        span
+        {
+          white-space: nowrap;
+        }
+
+        .field-display-edit
+        {
+          flex-grow: 1;
+          flex-shrink: 1;
+        }
+      }
+    }
+
+    tr.income-row
+    {
+      td.label-column {
+        padding-left: 10px;
+      }
+
+      .amount-column {
+        position: relative;
+        left: 15px;
+        input {
+          text-align: right;
+        }
+        input::placeholder
+        {
+          text-align: right;
+        }
+      }
+    }
+
+
+    td {
+      padding: 2px;
+      border: 0;
+    }
+  }
+}
+
+
+.explanation-popover-table
+{
+  td:first-child
+  {
+    font-weight: bold;
+  }
+
+  td:not(:first-child)
+  {
+    padding-left: 10px;
+  }
+
+  td:not(:last-child)
+  {
+    padding-right: 10px;
+  }
+
+  td.underline
+  {
+    border-bottom: 1px solid black;
+  }
+
+  tr.total-row td
+  {
+    padding-top: 10px;
+  }
+}

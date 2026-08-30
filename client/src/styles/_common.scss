@@ -1,0 +1,1864 @@
+/* app/common/typo */
+/* ========================================================================
+     Component: typo
+ ========================================================================== */
+
+
+body {
+    font-family: "Source Sans 3", "Source Sans Pro", sans-serif;
+    color: $body-color;
+    font-size: 0.875rem; // 14px
+}
+
+h1,h2,h3,h4 {
+    font-weight: bold;
+}
+
+h1,h2,h3,h4,h5,h6,
+.h1,.h2,.h3,.h4,.h5,.h6 {
+    margin-bottom: 0.65625rem;
+}
+
+h1,.h1 {
+    font-size: 2.25rem; // 36px
+}
+
+h2,.h2 {
+    font-size: 1.875rem; // 30px
+}
+
+h3,.h3 {
+    font-size: 1.5rem; // 24px
+}
+
+h4,.h4 {
+    font-size: 1.125rem; // 18px
+}
+
+h5,.h5 {
+    font-size: .875rem;
+}
+
+h6,.h6 {
+    font-size: 1rem;
+}
+
+p {
+    margin-bottom: .65rem; // ~10px
+}
+/* app/common/bootstrap-reset */
+/* ========================================================================
+     Component: bootstrap-reset
+ ========================================================================== */
+
+// Use this file to reset simple bootstrap styles
+// instead of modifying the core files
+// Makes easy to update new framework versions
+// --------------------------------------------------
+
+a {
+    &.text-muted {
+        &:hover,
+        &:focus {
+            color: color.adjust($text-muted, $lightness: -10%);
+        }
+    }
+}
+
+hr {
+    border-top: 1px solid $gray-light;
+}
+
+// custom element
+[data-now] {
+    display: inline-block;
+}
+
+.badge {
+    padding: 0.1875rem 0.4375rem;
+    font-size: 0.75rem;
+    border-radius: 0.625rem;
+    &.badge-warning {
+        color: #fff !important;
+    }
+    &.badge-secondary {
+        background-color: $gray-dark;
+        color: #fff;
+    }
+}
+
+.list-group {
+    line-height: 1.3;
+    .list-group-item {
+        padding: 10px;
+        color: #555;
+        &.active {
+            color: #fff;
+            .badge {
+                background-color: #fff;
+                color: $primary;
+            }
+        }
+        .card>& {
+            border: 0;
+        }
+    }
+}
+
+.list-group+.card-footer {
+    border-top: 0;
+}
+
+.page-header {
+    padding-bottom: 0.59375rem;
+    margin: 2.625rem 0 1.3125rem;
+    border-bottom: 1px solid $gray-light;
+}
+
+.card {
+    border-color: transparent;
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05);
+    .card-header {
+        border-bottom: 0;
+        padding: 0.625rem 0.9375rem;
+        background-color: transparent;
+        .card-title {
+            margin-bottom: 0;
+            font-size: 1rem;
+        }
+        a {
+            text-decoration: none !important;
+        }
+    }
+}
+.card-body {
+    padding: 0.9375rem; //15px
+}
+.card-footer {
+    padding: 0.625rem 0.9375rem;
+}
+
+.card-default {
+
+    border-top-width: 3px;
+    border-color: $card-default-border-color;
+
+    .card-header {
+        background-color: #fff;
+    }
+}
+
+.well {
+    border: 1px solid $gray;
+}
+
+.jumbotron {
+    border: 1px solid $gray;
+    background-color: #fff;
+    @include media-breakpoint-up(md) {
+        padding: $jumbotron-padding math.div($jumbotron-padding, 2);
+    }
+}
+
+.nav-tabs>.nav-item>.nav-link {
+    font-weight: bold;
+    color: $body-color;
+    background-color: $gray-lighter;
+    margin: 0;
+    border: 1px solid $gray;
+    border-radius: 0;
+    padding: 10px 20px;
+    &.active {
+        background-color: $nav-tabs-link-active-bg;
+        &,
+        &:hover,
+        &:focus {
+            //color: inherit;
+            border-bottom-color: #fff;
+        }
+    }
+}
+
+.tab-content {
+    padding: 10px 20px;
+    border-style: solid;
+    border-width: 0 1px 1px 1px;
+    border-color: $gray;
+    .nav-pills+& {
+        border: 0;
+        padding: 0;
+    }
+    .p-0 & {
+        padding: 0 !important
+    }
+}
+
+
+.btn {
+    border-radius: 3px;
+    font-size: 13px;
+    -webkit-appearance: none;
+    min-height: 36px;
+    @include transition(all .1s);
+    &.btn-link {
+        box-shadow: none;
+        border: 0;
+    }
+    .input-group & {
+        font-size: 14px;
+        border-color: $input-border-color;
+    }
+    .input-group .form-control-sm+.input-group-btn & {
+        font-size: 0.8125rem;
+        padding: 0.3125rem 0.625rem;
+        margin-left: -1px;
+        border-top-left-radius: 0;
+        border-bottom-left-radius: 0;
+    }
+}
+
+:where(a, button, input, select, textarea, [tabindex]):focus-visible {
+    outline: 3px solid #0b5fcc !important;
+    outline-offset: 2px !important;
+    box-shadow: 0 0 0 2px #fff !important;
+}
+
+input[type="checkbox"] {
+    min-height: 24px;
+    min-width: 24px;
+}
+
+// Override button styles
+.btn {
+    &.btn-warning {
+        color: #fff;
+    }
+    &.btn-outline-warning {
+        @include hover-focus-active {
+            color: #fff;
+        }
+    }
+}
+
+.btn-secondary {
+    background-color: $btn-secondary-bg;
+    border-color: $btn-secondary-border;
+    color: $btn-secondary-color;
+    &:hover {
+        background-color: #f5f5f5;
+    } // active state override
+    &:not(:disabled):not(.disabled):active,
+    &:not(:disabled):not(.disabled).active,
+    .show>&.dropdown-toggle {
+        background-color: #f5f5f5;
+        box-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
+    }
+}
+
+.btn-outline-secondary {
+    border-color: $btn-secondary-border !important;
+    color: $btn-secondary-color;
+    &:hover {
+        color: $btn-secondary-color;
+        background-color: #f5f5f5 !important;
+    }
+    &:focus {
+        box-shadow: 0 0 0 0.2rem rgba($btn-secondary-border, 0.5);
+    }
+}
+
+span.btn { -webkit-appearance: none !important; }
+
+// FORMS
+.form-control {
+    box-shadow: 0 0 0 #000 !important;
+    font-size: 0.875rem; //14px
+    &:focus {
+        border-color: $input-focus-border-color;
+    }
+}
+
+.form-control-sm,
+select.form-control-sm {
+    font-size: .75rem;
+    height: 31px;
+}
+
+.form-select {
+    -webkit-appearance: none;
+}
+
+.custom-control-label::before {
+    top: 0.19rem;
+    border: 1px solid $gray;
+}
+
+fieldset {
+    padding-bottom: 20px;
+    border-bottom: 1px dashed #eee;
+    margin-bottom: 20px;
+    &.last-child,
+    &:last-child {
+        border-bottom: 0;
+    }
+    .form-group {
+        margin-bottom: 0;
+    }
+}
+
+.input-group-text {
+    font-size: .875rem; // 14px
+}
+
+@include media-breakpoint-down(sm) {
+    // Remove Input Shadows on iPad
+    input[type="text"],
+    input[type="email"],
+    input[type="search"],
+    input[type="password"] {
+        -webkit-appearance: none;
+    }
+}
+
+// TABLES
+.table-responsive {
+    overflow-y: hidden;
+}
+
+.table {
+
+    // Bottom align for column headings
+    >thead>tr>th {
+        border-bottom-width: 0;
+    } // Account for multiple tbody instances
+    >tbody+tbody {
+        border-bottom-width: 1px;
+    }
+
+    .form-control {
+        max-width: 100%;
+    }
+}
+
+.table-bordered {
+    >thead>tr {
+        >th,
+        >td {
+            border-bottom-width: 1px;
+        }
+    }
+}
+
+
+.progress {
+    @include box-shadow(0 0 0 #000);
+    border-radius: $border-radius-sm;
+    border: 1px solid $progress-bg;
+    background-color: #fff;
+    .progress-bar {
+        @include box-shadow(0 0 0 #000);
+    }
+}
+
+// Popover
+// --------------------------------------------------
+.popover {
+    box-shadow: 0 0 0 #000;
+    border-color: #eee;
+    border-bottom: 2px solid $gray-light;
+    border-radius: $border-radius-sm;
+    .popover-title {
+        border: 0;
+    }
+}
+
+
+// NAV
+.nav {
+    &.nav-pills {
+        .active>a {
+            background-color: $primary;
+        }
+    }
+}
+
+// DROPDOWN
+.dropdown-menu {
+    border-radius: $border-radius-sm;
+    font-size: 14px;
+    padding: 0.3125rem 0;
+    box-shadow: rgba(0, 0, 0, 0.176) 0px 6px 12px;
+    border-color: $dropdown-border-color;
+    .dropdown-item {
+        line-height: 1.52857143;
+        padding: 0.1875rem 1.25rem;
+    }
+}
+
+.dropdown-header {
+    color: #a1a2a3;
+}
+
+.navbar-top .navbar-nav>.active>a {
+    color: #999;
+    &:hover,
+    &:focus {
+        color: #d1d2d3;
+    }
+}
+
+
+.navbar-default .navbar-nav .open .dropdown-menu>li>a {
+    color: #666;
+    &:hover,
+    &:focus {
+        color: #222;
+    }
+}
+
+// CAROUSEL
+.carousel {
+    .carousel-indicators {
+        bottom: 0;
+    }
+    .carousel-control {
+        &.left,
+        &.right {
+            background-image: none;
+        } // Add support for font awesome
+        em {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            z-index: 5;
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            margin-top: -10px;
+            margin-left: -10px;
+        }
+    }
+}
+
+// ALERT
+@each $color,
+$value in $theme-colors {
+    .alert-#{$color} {
+        @include alert-variant($value, $value, #fff);
+    }
+}
+
+.alert-secondary {
+    color: $body-color;
+    border-color: $gray-light;
+}
+
+// fix for ie9 (dropdwon no showing)
+.topnavbar,
+.navbar,
+.navbar .dropdown-menu {
+    filter: none !important;
+}
+
+
+/* app/common/bootstrap-custom */
+/* ========================================================================
+     Component: bootstrap-custom
+ ========================================================================== */
+
+// Use this file to add custom css that may
+// depend on Bootstrap styles
+
+
+
+// Different container size to wrap content
+.container-sm {
+    max-width: map.get($container-max-widths, "sm");
+    width: auto;
+}
+
+.container-md {
+    max-width: map.get($container-max-widths, "md");
+    width: auto;
+}
+
+.container-lg {
+    max-width: map.get($container-max-widths, "lg");
+    width: auto;
+}
+
+// Remove padding and collapse columns
+.row-flush {
+    margin: 0;
+    >.col,
+    >[class*="col-"] {
+        padding-left: 0;
+        padding-right: 0;
+    }
+}
+
+
+// Breadcrumb variants
+
+.breadcrumb {
+    font-weight: normal;
+    border-radius: 0;
+    color: $text-muted;
+    padding: 10px 20px;
+}
+
+.content-heading {
+    // Breadcrumb below title
+    .breadcrumb {
+        font-size: 0.8125rem;
+        margin-bottom: 0;
+    }
+    // Breadcrumb next to view title
+    +.breadcrumb {
+        margin: -25px -25px 20px -20px;
+        background-color: $content-heading-bg;
+        border-top: 1px solid $content-heading-border;
+        border-bottom: 1px solid $content-heading-border;
+    }
+}
+
+// Different size of Progress bars
+$progress-height-sm: 15px;
+$progress-height-xs: 8px;
+
+.progress-sm {
+    height: $progress-height-sm;
+}
+
+.progress-xs {
+    height: $progress-height-xs;
+}
+
+
+// Extra badges
+
+.badge-inverse {
+    @include badge-variant($inverse);
+}
+
+.badge-green {
+    @include badge-variant($green);
+}
+
+.badge-pink {
+    @include badge-variant($pink);
+}
+
+.badge-purple {
+    @include badge-variant($purple);
+}
+
+
+// Extra alert
+
+.alert-purple {
+    @include alert-variant($purple, $purple, #fff);
+}
+.alert-green {
+    @include alert-variant($green, $green, #fff);
+}
+.alert-pink {
+    @include alert-variant($pink, $pink, #fff);
+}
+.alert-inverse {
+    @include alert-variant($inverse, $inverse, #fff);
+}
+
+// Form Rounded
+.form-control-rounded {
+    border-radius: 100px;
+}
+
+
+/* app/common/button-extra */
+/* ========================================================================
+     Component: button-extra
+ ========================================================================== */
+
+//
+// Extension for Bootstrap buttons
+// ------------------------------------
+// BUTTONS LABEL mixin
+// --------------------------------------------------
+@mixin button-label-size($padding-vertical, $padding-horizontal, $border-radius) {
+    padding: $padding-vertical $padding-horizontal;
+    left: (-1 * $padding-horizontal);
+    border-radius: ($border-radius/*  - 1px */
+    ) 0 0 ($border-radius/*  - 1px */
+    );
+
+    &.btn-label-right {
+        left: auto;
+        right: (-1 * $padding-horizontal);
+        border-radius: 0 ($border-radius/*  - 1px */
+        ) ($border-radius/*  - 1px */
+        ) 0;
+    }
+}
+
+
+// New colors
+.btn-inverse {
+    @include button-variant($inverse, $inverse);
+}
+
+.btn-green {
+    @include button-variant($green, $green);
+}
+
+.btn-purple {
+    @include button-variant($purple, $purple);
+}
+
+.btn-pink {
+    @include button-variant($pink, $pink);
+}
+
+// Flat square button
+.btn-flat {
+    border-bottom-width: 1px;
+    border-radius: 0;
+    box-shadow: 0 0 0 #000;
+}
+
+// Extra size
+.btn-xs {
+    padding: 0.0625rem 0.3125rem;
+    font-size: 0.8125rem;
+    line-height: 1.5;
+}
+
+.btn-xl {
+    padding: 20px 16px;
+    font-size: 18px;
+}
+
+// Button square
+.btn-square {
+    border-radius: 0;
+}
+
+
+// Button pill
+.btn-pill-left {
+    border-top-left-radius: 50px;
+    border-bottom-left-radius: 50px;
+    padding-left: 18px;
+}
+
+.btn-pill-right {
+    border-top-right-radius: 50px;
+    border-bottom-right-radius: 50px;
+    padding-right: 18px;
+}
+
+// Rounded buttons
+.btn-oval {
+    @extend .btn-pill-right;
+    @extend .btn-pill-left;
+}
+
+// Labels for buttons
+// --------------------------------------------------
+.btn-labeled {
+    padding-top: 0;
+    padding-bottom: 0;
+}
+
+.btn-label {
+    position: relative;
+    background: transparent;
+    background: rgba(0, 0, 0, 0.05);
+    display: inline-block;
+    @include button-label-size($input-btn-padding-y, $input-btn-padding-x, $border-radius);
+}
+
+.btn-lg .btn-label {
+    @include button-label-size($input-btn-padding-y-lg, $input-btn-padding-x-lg, $border-radius-lg);
+}
+
+.btn-sm .btn-label {
+    @include button-label-size($input-btn-padding-y-sm, $input-btn-padding-x-sm, $border-radius-sm);
+}
+
+.btn-xs .btn-label {
+    @include button-label-size(1px, 5px, $border-radius-sm);
+}
+
+
+// Fixed width buttons
+// --------------------------------------------------
+$btn-fw-default : 80px;
+$btn-fw-sm : 40px;
+$btn-fw-md : 60px;
+$btn-fw-lg : 140px;
+
+.btn-fw {
+    min-width: $btn-fw-default;
+    &.btn-sm {
+        min-width: $btn-fw-sm;
+    }
+    &.btn-md {
+        min-width: $btn-fw-md;
+    }
+    &.btn-lg {
+        min-width: $btn-fw-lg;
+    }
+}
+
+
+
+// Button Circle
+// -----------------------------------
+.btn-circle {
+    $sz: 35px;
+    width: $sz;
+    height: $sz;
+    text-align: center;
+    font-size: 12px;
+    line-height: $sz;
+    border-radius: 500px;
+    padding: 0;
+    border: 0;
+    >* {
+        line-height: inherit !important;
+    }
+    &.btn-lg {
+        $sz-lg: 50px;
+        width: $sz-lg;
+        height: $sz-lg;
+        font-size: 18px;
+        line-height: $sz-lg;
+    }
+}
+
+// Button Outline
+// -----------------------------------
+.btn-outline {
+    &-inverse {
+        @include button-outline-variant($inverse);
+    }
+    &-green {
+        @include button-outline-variant($green);
+    }
+    &-purple {
+        @include button-outline-variant($purple);
+    }
+    &-pink {
+        @include button-outline-variant($pink);
+    }
+}
+
+
+/* app/common/placeholder */
+/* ========================================================================
+     Component: placeholder
+ ========================================================================== */
+
+// Defines styles for placeholder boxes
+// Create a placeholder space that can be used for uploading files via drag and drop.
+// Based on uikit placeholder addon
+// ==========================================================================
+// Variables
+// ==========================================================================
+$placeholder-margin-vertical : 15px;
+$placeholder-padding : 20px;
+$placeholder-border : #ddd;
+$placeholder-background : #fafafa;
+$placeholder-color : #444;
+
+$placeholder-large-padding-vertical : 80px;
+
+
+// Placeholder container
+.box-placeholder {
+    margin-bottom: $placeholder-margin-vertical;
+    padding: $placeholder-padding;
+    border: 1px dashed $placeholder-border;
+    background: $placeholder-background;
+    color: $placeholder-color;
+}
+
+
+// Remove margin from the last-child
+.box-placeholder> :last-child {
+    margin-bottom: 0;
+}
+
+// Variant
+.box-placeholder-lg {
+    padding-top: $placeholder-large-padding-vertical;
+    padding-bottom: $placeholder-large-padding-vertical;
+}
+
+
+/* app/common/cards */
+/* ========================================================================
+     Component: cards
+ ========================================================================== */
+
+.card {
+    margin-bottom: 1.25rem; //20px
+}
+
+//
+// Adds support to use more components inside cards
+//
+.card {
+    .table {
+        margin-bottom: 0;
+        >thead>tr>th {
+            border-top: 0;
+        }
+    }
+    &.card-transparent {
+        border: 0;
+        background-color: transparent;
+        box-shadow: 0 0 0 #000;
+        .card-header,
+        .card-body {
+            background-color: transparent;
+            padding-left: 0;
+            padding-right: 0;
+        }
+    }
+}
+
+
+.card-flat {
+    margin: 0 !important;
+    border: 0;
+}
+
+.card-columns-2 {
+    column-count: 1;
+    @include media-breakpoint-up(md) {
+        column-count: 2;
+    }
+}
+
+.card-tool {
+    display: inline-block;
+    color: #fff;
+    text-align: center;
+    &:hover {
+        cursor: pointer;
+    }
+    > em + em {
+        margin-left: 12px;
+    }
+}
+
+.card-header {
+
+    .card-default & {
+        >.card-tool {
+            color: #c1c2c3;
+        }
+    } // right floated labels adjust position
+    >.badge.float-end {
+        margin-top: 3px;
+        +.badge.float-end {
+            margin-right: 10px;
+        }
+    }
+}
+
+.card-footer {
+    .pagination {
+        margin: 0;
+    }
+    .radial-bar {
+        margin-bottom: 0;
+    }
+    p {
+        margin-bottom: 0;
+    }
+}
+
+
+/* app/common/circles */
+/* ========================================================================
+     Component: circles
+ ========================================================================== */
+
+// Colored circle for indication purposes
+$point-sz-sm : 5px;
+$point-sz : 7px;
+$point-sz-lg : 11px;
+$point-sz-xl : 18px;
+
+.circle {
+    display: inline-block;
+    width: $point-sz;
+    height: $point-sz;
+    border-radius: 500px;
+    margin: 0 .5em;
+    background-color: #ddd;
+    vertical-align: baseline;
+    border: 2px solid transparent;
+    &.text-left {
+        margin-left: 0;
+    }
+    &.text-right {
+        margin-right: 0;
+    }
+}
+
+// Sizes
+.circle-sm {
+    width: $point-sz-sm;
+    height: $point-sz-sm;
+}
+
+.circle-lg {
+    width: $point-sz-lg;
+    height: $point-sz-lg;
+}
+
+.circle-xl {
+    width: $point-sz-xl;
+    height: $point-sz-xl;
+}
+
+
+/* app/common/dropdown-extra */
+/* ========================================================================
+     Component: dropdown-extras
+ ========================================================================== */
+
+
+// Allows to mix list group inside dropdowns
+.dropdown-list {
+
+    .dropdown-item {
+        padding: 0;
+    }
+
+    >.dropdown-menu {
+        padding: 0;
+        min-width: 220px;
+    }
+
+    .list-group {
+        margin: 0;
+    }
+
+    .list-group-item {
+        border-radius: 0;
+        border-left: 0;
+        border-right: 0;
+        &:first-child {
+            border-top: 0;
+        }
+        &:last-child {
+            border-bottom: 0;
+        }
+    }
+}
+
+// Labels inside dropdowns
+.dropdown {
+    >a {
+        position: relative;
+        >.badge {
+            position: absolute;
+            top: 10px;
+            right: 0;
+            padding: 2px 5px;
+        }
+    }
+}
+
+// Popper doesnt place correctly dropdowns
+// we can use forced class to place them
+.dropdown-menu-right-forced {
+    right: 0 !important;
+    left: auto !important;
+}
+
+// Remove default icon from dropdowns
+.dropdown-toggle-nocaret {
+    &:after {
+        display: none;
+    }
+}
+
+
+/* app/common/half-float */
+/* ========================================================================
+     Component: half-float
+ ========================================================================== */
+
+//
+// Float an absolute positioned element
+// and align it with a half top and bottom offset
+// relative to its parent
+//
+// .half-float
+//  > .half-float-[top|bottom]
+//
+// ----------------------------------------------
+$half-aligned-size : 128px;
+$half-aligned-gutter : 5px;
+
+.half-float {
+    position: relative;
+    margin-bottom: math.div($half-aligned-size, 2) + $half-aligned-gutter;
+
+    .half-float-bottom,
+    .half-float-top {
+        position: absolute;
+        left: 50%;
+        bottom: math.div($half-aligned-size, 2) * -1;
+        width: $half-aligned-size;
+        height: $half-aligned-size;
+        margin-left: math.div($half-aligned-size, 2) * -1;
+        z-index: 2;
+    }
+
+    .half-float-top {
+        bottom: auto;
+        top: math.div($half-aligned-size, 2) * -1;
+    }
+}
+
+
+/* app/common/animate */
+/* ========================================================================
+     Component: animate
+ ========================================================================== */
+
+@charset "UTF-8";
+
+// New Animations
+// -----------------------------------
+@-webkit-keyframes fadeOutUpShort {
+    0% {
+        opacity: 1;
+    }
+
+    100% {
+        opacity: 0;
+        -webkit-transform: translate3d(0, -20px, 0);
+        transform: translate3d(0, -20px, 0);
+    }
+}
+
+@keyframes fadeOutUpShort {
+    0% {
+        opacity: 1;
+    }
+
+    100% {
+        opacity: 0;
+        -webkit-transform: translate3d(0, -20px, 0);
+        -ms-transform: translate3d(0, -20px, 0);
+        transform: translate3d(0, -20px, 0);
+    }
+}
+
+.fadeOutUpShort {
+    -webkit-animation-name: fadeOutUpShort;
+    animation-name: fadeOutUpShort;
+}
+
+@-webkit-keyframes fadeInUpShort {
+    0% {
+        opacity: 0;
+        -webkit-transform: translate3d(0, 20px, 0);
+        transform: translate3d(0, 20px, 0);
+    }
+
+    100% {
+        opacity: 1;
+        -webkit-transform: none;
+        transform: none;
+    }
+}
+
+@keyframes fadeInUpShort {
+    0% {
+        opacity: 0;
+        -webkit-transform: translate3d(0, 20px, 0);
+        -ms-transform: translate3d(0, 20px, 0);
+        transform: translate3d(0, 20px, 0);
+    }
+
+    100% {
+        opacity: 1;
+        -webkit-transform: none;
+        -ms-transform: none;
+        transform: none;
+    }
+}
+
+.fadeInUpShort {
+    -webkit-animation-name: fadeInUpShort;
+    animation-name: fadeInUpShort;
+}
+
+
+@-webkit-keyframes zoomInShort {
+    0% {
+        opacity: 0;
+        -webkit-transform: scale3d(.95, .95, .95);
+        transform: scale3d(.95, .95, .95);
+    }
+
+    50% {
+        opacity: 1;
+    }
+}
+
+@keyframes zoomInShort {
+    0% {
+        opacity: 0;
+        -webkit-transform: scale3d(.95, .95, .95);
+        -ms-transform: scale3d(.95, .95, .95);
+        transform: scale3d(.95, .95, .95);
+    }
+
+    50% {
+        opacity: 1;
+    }
+}
+
+.zoomInShort {
+    -webkit-animation-name: zoomInShort;
+    animation-name: zoomInShort;
+}
+
+@-webkit-keyframes zoomBack {
+    0% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0;
+        -webkit-transform: scale3d(.5, .5, .5);
+        transform: scale3d(.5, .5, .5);
+    }
+
+    100% {
+        opacity: 0;
+    }
+}
+
+@keyframes zoomBack {
+    0% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0;
+        -webkit-transform: scale3d(.5, .5, .5);
+        -ms-transform: scale3d(.5, .5, .5);
+        transform: scale3d(.5, .5, .5);
+    }
+
+    100% {
+        opacity: 0;
+    }
+}
+
+.zoomBack {
+    -webkit-animation-name: zoomBack;
+    animation-name: zoomBack;
+}
+
+
+@-webkit-keyframes fadeInLeft {
+    0% {
+        opacity: 0;
+        -webkit-transform: translate3d(-20px, 0, 0);
+        transform: translate3d(-20px, 0, 0);
+    }
+
+    100% {
+        opacity: 1;
+        -webkit-transform: none;
+        transform: none;
+    }
+}
+
+@keyframes fadeInLeft {
+    0% {
+        opacity: 0;
+        -webkit-transform: translate3d(-20px, 0, 0);
+        -ms-transform: translate3d(-20px, 0, 0);
+        transform: translate3d(-20px, 0, 0);
+    }
+
+    100% {
+        opacity: 1;
+        -webkit-transform: none;
+        -ms-transform: none;
+        transform: none;
+    }
+}
+
+.fadeInLeft {
+    -webkit-animation-name: fadeInLeft;
+    animation-name: fadeInLeft;
+}
+
+// Timing functions
+// -----------------------------------
+// Cubic
+$easeInCubic : cubic-bezier(0.550, 0.055, 0.675, 0.190);
+$easeOutCubic : cubic-bezier(0.215, 0.610, 0.355, 1.000);
+$easeInOutCubic : cubic-bezier(0.645, 0.045, 0.355, 1.000);
+
+// Circ
+$easeInCirc : cubic-bezier(0.600, 0.040, 0.980, 0.335);
+$easeOutCirc : cubic-bezier(0.075, 0.820, 0.165, 1.000);
+$easeInOutCirc : cubic-bezier(0.785, 0.135, 0.150, 0.860);
+
+// Expo
+$easeInExpo : cubic-bezier(0.950, 0.050, 0.795, 0.035);
+$easeOutExpo : cubic-bezier(0.190, 1.000, 0.220, 1.000);
+$easeInOutExpo : cubic-bezier(1.000, 0.000, 0.000, 1.000);
+
+// Quad
+$easeInQuad : cubic-bezier(0.550, 0.085, 0.680, 0.530);
+$easeOutQuad : cubic-bezier(0.250, 0.460, 0.450, 0.940);
+$easeInOutQuad : cubic-bezier(0.455, 0.030, 0.515, 0.955);
+
+// Quart
+$easeInQuart : cubic-bezier(0.895, 0.030, 0.685, 0.220);
+$easeOutQuart : cubic-bezier(0.165, 0.840, 0.440, 1.000);
+$easeInOutQuart : cubic-bezier(0.770, 0.000, 0.175, 1.000);
+
+// Quint
+$easeInQuint : cubic-bezier(0.755, 0.050, 0.855, 0.060);
+$easeOutQuint : cubic-bezier(0.230, 1.000, 0.320, 1.000);
+$easeInOutQuint : cubic-bezier(0.860, 0.000, 0.070, 1.000);
+
+// Sine
+$easeInSine : cubic-bezier(0.470, 0.000, 0.745, 0.715);
+$easeOutSine : cubic-bezier(0.390, 0.575, 0.565, 1.000);
+$easeInOutSine : cubic-bezier(0.445, 0.050, 0.550, 0.950);
+
+// Back
+$easeInBack : cubic-bezier(0.600, -0.280, 0.735, 0.045);
+$easeOutBack : cubic-bezier(0.175, 0.885, 0.320, 1.275);
+$easeInOutBack : cubic-bezier(0.680, -0.550, 0.265, 1.550);
+
+$animate-duration: 0.5s;
+
+.rag-fadeIn-enter {
+    animation: fadeIn $animate-duration;
+}
+.rag-fadeIn-exit {
+    display: none;
+}
+
+.rag-fadeInRight-enter {
+    animation: fadeInRight $animate-duration;
+}
+.rag-fadeInRight-exit {
+    display: none;
+}
+
+.rag-fadeInLeft-enter {
+    animation: fadeInLeft $animate-duration;
+}
+.rag-fadeInLeft-exit {
+    display: none;
+}
+
+
+/* app/common/inputs */
+/* ========================================================================
+     Component: inputs
+ ========================================================================== */
+
+
+/**
+ * Custom form elements
+ *    - Checkbox
+ *    - Radios
+ *    - Switch
+ *    - Note editor
+ */
+
+//
+// CHECKBOX AND RADIOS
+//
+$ui-fg-color: $primary;
+$ui-bg-color: #ddd;
+
+
+@mixin switch-variant($wd, $hg) {
+    & span {
+        width: $wd;
+        height: $hg;
+    }
+
+    & span:after {
+        height: $hg - 2;
+        width: $hg - 2;
+    }
+}
+
+.c-checkbox,
+.c-radio {
+    margin-right: 4px;
+    * {
+        cursor: pointer;
+    }
+    input {
+        opacity: 0;
+        position: absolute;
+        margin-left: 0 !important;
+    } // the element that replaces the input
+    span {
+        position: relative;
+        display: inline-block;
+        vertical-align: top; // margin-left: -20px;
+        width: 20px;
+        height: 20px;
+        border-radius: 2px;
+        border: 1px solid #ccc;
+        margin-right: 5px;
+        text-align: center;
+        &:before {
+            margin-left: 1px; // fa align trick
+        }
+    }
+
+    &:hover span {
+        border-color: $ui-fg-color;
+    }
+
+    .form-inline & span {
+        margin-left: 0;
+    }
+
+    &.c-checkbox-rounded,
+    &.c-radio-rounded {
+        span {
+            border-radius: 500px;
+        }
+    }
+}
+
+/* override for radio */
+.c-radio span {
+    border-radius: 500px;
+}
+
+/* the icon */
+.c-checkbox,
+.c-radio {
+    span:before {
+        //content: "\2713"; /* comment content to use custom icon classes */
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        opacity: 0;
+        text-align: center !important;
+        font-size: 12px;
+        line-height: 18px;
+        vertical-align: middle;
+    }
+}
+
+
+/* Checked state */
+.c-checkbox,
+.c-radio {
+    input[type=checkbox]:checked+span:before,
+    input[type=radio]:checked+span:before {
+        color: #fff;
+        opacity: 1;
+        transition: color .3s ease-out;
+    }
+
+    input[type=checkbox]:checked+span,
+    input[type=radio]:checked+span {
+        border-color: $ui-fg-color;
+        background-color: $ui-fg-color;
+    }
+
+    /* override for radio */
+    input[type=radio]:checked+span {
+        background-color: #fff;
+        &:before {
+            color: $ui-fg-color;
+        }
+    }
+
+    /* Disable state */
+    input[type=checkbox]:disabled+span,
+    input[type=radio]:disabled+span {
+        border-color: $ui-bg-color !important;
+        background-color: $ui-bg-color !important;
+    }
+    /* override for radio */
+    input[type=radio]:disabled+span {
+        background-color: #fff !important;
+        &:before {
+            color: $ui-bg-color;
+        }
+    }
+}
+
+.c-radio.c-radio-nofont {
+    span {
+        &:before {
+            $sz: 10px;
+            content: "";
+            width: $sz;
+            height: $sz;
+            top: 50%;
+            left: 50%;
+            margin-top: math.div($sz, 2) * -1;
+            margin-left: math.div($sz, 2) * -1;
+            border-radius: 500px;
+        }
+    }
+
+    input[type=radio]:checked+span:before {
+        color: #fff;
+        opacity: 1;
+        transition: color .3s ease-out;
+    }
+
+    input[type=radio]:checked+span {
+        border-color: $ui-fg-color;
+        background-color: $ui-fg-color;
+    }
+
+    /* override for radio */
+    input[type=radio]:checked+span {
+        background-color: #fff;
+        &:before {
+            background-color: $ui-fg-color;
+        }
+    }
+
+    /* Disable state */
+    input[type=radio]:disabled+span {
+        border-color: $ui-bg-color !important;
+        background-color: $ui-bg-color !important;
+    }
+    /* override for radio */
+    input[type=radio]:disabled+span {
+        background-color: #fff !important;
+        &:before {
+            background-color: $ui-bg-color;
+        }
+    }
+}
+
+
+//
+// Form SWITCH
+// Supports radio and checkbox
+//
+
+$switch-wd: 40px;
+$switch-hg: math.div($switch-wd, 2);
+
+$switch-lg-wd: 50px;
+$switch-lg-hg: math.div($switch-lg-wd, 2);
+
+$switch-sm-wd: 30px;
+$switch-sm-hg: math.div($switch-sm-wd, 2);
+
+.switch {
+    .form-control {
+        padding-top: 7px;
+        margin-bottom: 0;
+    }
+}
+
+.switch * {
+    cursor: pointer;
+}
+
+.switch input {
+    opacity: 0;
+    position: absolute;
+    z-index: -1;
+}
+
+.switch {
+    display: flex;
+    align-items: center;
+    margin: 0;
+    & span {
+        position: relative;
+        display: inline-block;
+        width: $switch-wd;
+        height: $switch-hg;
+        background-color: #fff;
+        border: 1px solid $ui-bg-color;
+        border-radius: 100px;
+        transition: all .5s;
+        box-shadow: 1px 2px 3px rgba(0, 0, 0, 0.1) inset;
+    }
+
+    & span:after {
+        content: "";
+        position: absolute;
+        background-color: #fff;
+        top: 0;
+        left: 0;
+        height: $switch-hg - 2;
+        width: $switch-hg - 2;
+        border: 1px solid #ddd;
+        border-radius: 400px;
+        box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.1);
+        -webkit-transition: all .2s;
+    }
+
+    &.switch-lg {
+        @include switch-variant($switch-lg-wd, $switch-lg-hg);
+    }
+    &.switch-sm {
+        @include switch-variant($switch-sm-wd, $switch-sm-hg);
+    }
+}
+
+.switch input {
+    &:checked+span {
+        background-color: $ui-fg-color;
+        border-color: $ui-fg-color;
+        transition: all .5s;
+    }
+
+    &:checked+span:after {
+        left: 50%;
+        transition: all .2s;
+    }
+
+    &:disabled+span {
+        background-color: #f1f1f1;
+        cursor: not-allowed;
+    }
+}
+
+//
+// Textarea note editor
+//
+
+.note-editor {
+    background-image: -webkit-linear-gradient(#eee .1em, transparent .1em);
+    background-image: linear-gradient(#eee .1em, transparent .1em);
+
+    background-size: 100% 20px;
+    background-color: #fff;
+
+    line-height: 20px;
+    margin-top: 5px;
+    padding: 0;
+    padding-bottom: 1px;
+    border: none;
+    $margin-color: $warning;
+    &.note-editor-margin {
+        background-image: -webkit-linear-gradient(0deg, transparent 49px, color.adjust($margin-color, $lightness: 30%) 49px, color.adjust($margin-color, $lightness: 30%) 51px, transparent 51px), -webkit-linear-gradient(#eee .1em, transparent .1em);
+        background-image: linear-gradient(90deg, transparent 49px, color.adjust($margin-color, $lightness: 30%) 49px, color.adjust($margin-color, $lightness: 30%) 51px, transparent 51px),
+        linear-gradient(#eee .1em, transparent .1em);
+        padding-left: 55px;
+    }
+}
+
+
+/* app/common/utils */
+/* ========================================================================
+         Component: utils
+ ========================================================================== */
+
+// Utilities classes to simplify
+// components constructions
+
+
+// Extra Background helpers
+@function custom-color($key) {
+  @return map.get($colors, $key);
+}
+
+@mixin bgcolor-variant($bgcolor, $text-color: #fff) {
+  $amountOfLight: 10%;
+  & {
+    background-color: custom-color($bgcolor);
+    color: $text-color !important;
+  }
+  &-light {
+    $col: custom-color($bgcolor + '-light');
+    background-color: #{$col};
+    color: $text-color !important;
+  }
+  &-dark {
+    $col: custom-color($bgcolor + '-dark');
+    background-color: #{$col};
+    color: $text-color !important;
+  }
+  small {
+    color: inherit;
+  }
+}
+
+@mixin make-bg($bgcolor, $text-color: #fff) {
+  background-color: $bgcolor;
+  color: $text-color !important;
+}
+
+// Common thumbnail sizes (ideal for images)
+@mixin thumnbail-size($sz: 8px) {
+  width: $sz !important;
+  height: $sz !important;
+}
+
+
+
+// Border
+// --------------------
+
+.b0 { border-width: 0 !important; }
+.bl0 { border-left-width: 0 !important; }
+.br0 { border-right-width: 0 !important; }
+.bt0 { border-top-width: 0 !important; }
+.bb0 { border-bottom-width: 0 !important; }
+
+.br { border-right: 1px solid $border-color;}
+.bl { border-left: 1px solid $border-color;}
+.bt { border-top: 1px solid $border-color;}
+.bb { border-bottom: 1px solid $border-color;}
+.b, .ba  { @extend .br;@extend .bl;@extend .bt;@extend .bb; } // all borders
+
+
+// Text helpers
+
+.text-primary { color: $primary !important; }
+.text-success { color: $success !important; }
+.text-info { color: $info !important; }
+.text-warning { color: $warning !important; }
+.text-danger { color: $danger !important; }
+
+.text-white         { color: #fff !important; }
+.text-inverse       { color: $inverse !important; }
+.text-alpha         { color: $text-alpha !important; }
+.text-pink          { color: $pink !important; }
+.text-purple        { color: $purple !important; }
+.text-dark          { color: $dark !important; }
+.text-alpha-inverse { color: $text-alpha-inverse !important; }
+.text-green         { color: $green !important; }
+.text-yellow        { color: $yellow !important; }
+.text-gray-darker   { color: $gray-darker !important; }
+.text-gray-dark     { color: $gray-dark !important; }
+.text-gray          { color: $gray !important; }
+.text-gray-light    { color: $gray-light !important; }
+.text-gray-lighter  { color: $gray-lighter !important; }
+.text-inherit       { color: inherit !important; }
+
+// Text sizing
+
+.text-sm { font-size: $text-sm; }
+.text-md { font-size: $text-md; }
+.text-lg { font-size: $text-lg; }
+
+// Text others
+
+.text-nowrap { white-space: nowrap; }
+.text-thin   { font-weight: 100 !important; }
+.text-normal { font-weight: normal !important; }
+.text-bold   { font-weight: bold !important; }
+
+.inline { display: inline-block !important; }
+.block-center { margin: 0 auto; }
+
+// Background helpers
+
+.bg-primary      { @include bgcolor-variant('primary'); }
+.bg-success      { @include bgcolor-variant('success'); }
+.bg-info         { @include bgcolor-variant('info'); }
+.bg-warning      { @include bgcolor-variant('warning'); }
+.bg-danger       { @include bgcolor-variant('danger'); }
+.bg-green        { @include bgcolor-variant('green'); }
+.bg-pink         { @include bgcolor-variant('pink'); }
+.bg-purple       { @include bgcolor-variant('purple'); }
+.bg-inverse      { @include bgcolor-variant('inverse'); }
+.bg-yellow       { @include bgcolor-variant('yellow'); }
+
+.bg-white        { @include make-bg(#fff, inherit); }
+.bg-gray-darker  { @include make-bg($gray-darker); }
+.bg-gray-dark    { @include make-bg($gray-dark); }
+.bg-gray         { @include make-bg($gray, $body-color); }
+.bg-gray-light   { @include make-bg($gray-light, $body-color); }
+.bg-gray-lighter { @include make-bg($gray-lighter, $body-color); }
+
+.bg-transparent  { background-color: transparent !important; }
+
+.bg-cover {
+    background-size: cover;
+}
+
+// Common thumbnail sizes (ideal for images)
+
+.thumb8   { @include thumnbail-size(); }
+.thumb16  { @include thumnbail-size(16px); }
+.thumb24  { @include thumnbail-size(24px); }
+.thumb32  { @include thumnbail-size(32px); }
+.thumb48  { @include thumnbail-size(48px); }
+.thumb64  { @include thumnbail-size(64px); }
+.thumb80  { @include thumnbail-size(80px); }
+.thumb96  { @include thumnbail-size(96px); }
+.thumb128 { @include thumnbail-size(128px); }
+
+
+// Vertical align helpers
+
+.align-middle {
+    vertical-align: middle;
+}
+.align-top {
+    vertical-align: top;
+}
+.align-bottom {
+    vertical-align: bottom;
+}
+
+
+// Background image
+.bg-center {
+    background-position: center center;
+    background-size: cover;
+}
+
+// List
+.list-icon {
+    em {
+        font-size: 14px;
+        width: 40px;
+        vertical-align: middle;
+        margin: 0;
+        display: inline-block;
+        text-align: center;
+        @include transition(all .2s);
+        line-height: 30px;
+    }
+    div:hover em {
+        transform: scale(3, 3)
+    }
+}
+
+// Fixed table layout algorithm
+.d-table-fixed {
+    table-layout: fixed;
+}
+
+// Components size
+
+.wd-xxs  { width: $wd-xxs;  }
+.wd-xs   { width: $wd-xs;   }
+.wd-sm   { width: $wd-sm;   }
+.wd-sd   { width: $wd-sd;   }
+.wd-md   { width: $wd-md;   }
+.wd-lg   { width: $wd-lg;   }
+.wd-xl   { width: $wd-xl;   }
+.wd-xxl  { width: $wd-xxl;  }
+.wd-wide { width: $wd-wide; }
+.wd-auto { width: $wd-auto; }
+.wd-zero { width: $wd-zero; }
+
+// Simulate clickable element
+.clickable {
+    cursor: pointer;
+}
+
+// Absolute center element
+// -----------------------------------
+
+.abs-center-container {
+    position: relative;
+}
+.abs-center {
+    // width: 50%;
+    height: 50%;
+    overflow: auto;
+    margin: auto;
+    position: absolute;
+    top: 0; left: 0; bottom: 0; right: 0;
+
+    &.abs-fixed {
+        position: fixed;
+        z-index: 999;
+    }
+
+    &.abs-right {
+        left: auto; right: 20px;
+        text-align: right;
+    }
+
+    &.abs-left {
+        right: auto; left: 20px;
+        text-align: left;
+    }
+}
+
+@media (max-height: 720px) {
+    .abs-center {
+        position: relative;
+    }
+}
+
+
+.link-unstyled {
+    text-decoration: none !important;
+    outline: none !important;
+}
+
+.no-resize {
+    resize: none;
+    max-width: 100%;
+    min-width: 100%;
+}
+
+.ie-fix-flex {
+    -ms-flex: 0 0 auto;
+}
+
+
+/* app/common/print */
+/* ========================================================================
+     Component: print
+ ========================================================================== */
+
+// Put here all rules required to style the print view
+
+@media print {
+
+    .sidebar,
+    .topnavbar,
+    .offsidebar,
+    .btn {
+        display: none !important;
+        width: 0 !important;
+        height: 0 !important;
+    }
+
+    .wrapper,
+    .wrapper .section-container,
+    .content-wrapper {
+        margin: 0 !important;
+        /* remove margin used for sidebar and expand the content */
+        padding: 0 !important;
+        width: 100% !important;
+    }
+
+
+    .content-wrapper {
+        overflow: hidden !important;
+    }
+}

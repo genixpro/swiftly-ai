@@ -1,13 +1,13 @@
 import {afterEach, describe, expect, it, vi} from 'vitest';
 
 afterEach(() => {
-    delete globalThis.window;
+    delete globalThis.window.__SWIFTLY_API_BASE_URL__;
     vi.resetModules();
 });
 
 describe('central API URL construction', () => {
     it('uses the runtime base URL override and canonical resource paths', async () => {
-        globalThis.window = {__SWIFTLY_API_BASE_URL__: 'https://swiftly.example.test/internal/'};
+        globalThis.window.__SWIFTLY_API_BASE_URL__ = 'https://swiftly.example.test/internal/';
         const {apiBaseUrl, fileContentUrl, renderedPageUrl, reportUrl} = await import('./client');
 
         expect(apiBaseUrl).toBe('https://swiftly.example.test/internal');

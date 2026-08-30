@@ -1,6 +1,4 @@
 import React from 'react';
-import { Button } from 'reactstrap';
-import _ from 'underscore';
 import Datetime from '@components/Common/DatetimeCompat';
 import PropertyTypeSelector from './PropertyTypeSelector';
 import RentTypeSelector from './RentTypeSelector';
@@ -25,6 +23,7 @@ import TenancyTypeSelector from "./TenancyTypeSelector";
 import TenantNameSelector from "./TenantNameSelector";
 import {useDroppable} from '@dnd-kit/core';
 import AdjustmentTypeSelector from "./AdjustmentTypeSelector";
+import {cleanFieldValue, formatFieldValue} from './field-editor/values';
 
 class FieldDisplayEdit extends React.Component
 {
@@ -67,187 +66,15 @@ class FieldDisplayEdit extends React.Component
     }
 
 
-    numberWithCommas(x)
-    {
-        return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-    }
-
-
     formatValue(value)
     {
-        if (value === "")
-        {
-            return "";
-        }
-
-        if (_.isUndefined(value))
-        {
-            return "";
-        }
-
-        if (_.isNull(value))
-        {
-            return "";
-        }
-
-        else if (this.props.type === 'currency')
-        {
-            try {
-                if (this.props.cents)
-                {
-                    if (Number(value) < 0)
-                    {
-                        return "($" + this.numberWithCommas(Number(-value).toFixed(2).toString()) + ")";
-                    }
-                    else
-                    {
-                        return "$" + this.numberWithCommas(Number(value).toFixed(2).toString());
-                    }
-                }
-                else
-                {
-                    if (Number(value) < 0)
-                    {
-                        return "($" + this.numberWithCommas(Number(-value).toFixed(0).toString()) + ")";
-                    }
-                    else
-                    {
-                        return "$" + this.numberWithCommas(Number(value).toFixed(0).toString());
-                    }
-                }
-            }
-            catch(err) {
-                return "$" + this.numberWithCommas(value.toString());
-            }
-        }
-        else if (this.props.type === 'percent')
-        {
-
-            try {
-                if (Number(value) < 0)
-                {
-                    return "(" + this.numberWithCommas(-Number(value).toFixed(2).toString()) + "%)";
-                }
-                else
-                {
-                    return this.numberWithCommas(Number(value).toFixed(2).toString()) + "%";
-                }
-            }
-            catch(err) {
-                return this.numberWithCommas(value.toString()) + "%";
-            }
-        }
-        else if (this.props.type === 'number')
-        {
-            try {
-                return this.numberWithCommas(Number(value).toFixed(0).toString());
-            }
-            catch(err) {
-                return this.numberWithCommas(value.toString());
-            }
-        }
-        else if (this.props.type === 'float')
-        {
-            try {
-                return this.numberWithCommas(Number(value).toFixed(2).toString());
-            }
-            catch(err) {
-                return this.numberWithCommas(value.toString());
-            }
-        }
-        else if (this.props.type === 'length')
-        {
-            try {
-                return this.numberWithCommas(Number(value).toFixed(0).toString()) + " ft";
-            }
-            catch(err) {
-                return this.numberWithCommas(value.toString());
-            }
-        }
-        else if (this.props.type === 'area')
-        {
-            try {
-                return this.numberWithCommas(Number(value).toFixed(0).toString()) + " sqft";
-            }
-            catch(err) {
-                return this.numberWithCommas(value.toString());
-            }
-        }
-        else if (this.props.type === 'acres')
-        {
-
-            try {
-                return this.numberWithCommas(Number(value).toFixed(2).toString()) + " ac";
-            }
-            catch(err) {
-                return this.numberWithCommas(value.toString());
-            }
-        }
-        else if (this.props.type === 'months')
-        {
-            try {
-                return this.numberWithCommas(Number(value).toFixed(0).toString()) + " months";
-            }
-            catch(err) {
-                return this.numberWithCommas(value.toString());
-            }
-        }
-
-        return value;
+        return formatFieldValue(this.props.type, value, this.props.cents);
     }
 
 
     static cleanValue(type, value)
     {
-        if (type === 'currency' ||
-            type === 'number' ||
-            type === 'percent' ||
-            type === 'length' ||
-            type === 'area' ||
-            type === 'acres' ||
-            type === 'months'
-        )
-        {
-            const isNegative = value.toString().indexOf("-") !== -1 || value.toString().indexOf("(") !== -1 || value.toString().indexOf(")") !== -1;
-
-            let cleanText = value.toString().replace(/[^0-9.]/g, "");
-
-            if (type === 'number' ||
-                type === 'length' ||
-                type === 'area' ||
-                type === 'months')
-            {
-                cleanText = cleanText.replace(/\.[0-9]*/g, "");
-            }
-
-            if (cleanText === "")
-            {
-                return null;
-            }
-
-            try {
-
-                if (isNegative)
-                {
-                    return -Number(cleanText);
-                }
-                else
-                {
-                    return Number(cleanText);
-                }
-            }
-            catch(err) {
-                return null;
-            }
-        }
-        else if(type === 'tags')
-        {
-            if (!value)
-            {
-                return [];
-            }
-        }
-        return value;
+        return cleanFieldValue(type, value);
     }
 
     startEditing()

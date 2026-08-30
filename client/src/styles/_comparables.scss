@@ -1,0 +1,1467 @@
+/* pages/components/ComparableSaleList */
+
+.new-comparable-sale
+{
+  cursor: pointer;
+  margin-bottom: 20px;
+  color: gray;
+  text-align: center;
+  border-radius: 0;
+  width: 100%;
+  font: inherit;
+}
+.comparable-sort-button {
+  width: 100%;
+  min-height: 36px;
+  padding: 0;
+  border: 0;
+  color: inherit;
+  background: transparent;
+  font: inherit;
+  font-weight: inherit;
+  text-align: inherit;
+}
+
+.new-comp-dialog
+{
+  .comparable-type-buttons
+  {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+  }
+
+  .comp-type-button
+  {
+    margin-left: 15px;
+    margin-right: 15px;
+    width: 125px;
+    height: 125px;
+    text-wrap: normal;
+    white-space: normal;
+    overflow: hidden;
+    text-align: center;
+    em {
+      margin: 0;
+    }
+  }
+}
+
+
+/* pages/components/ComparableSaleListItem */
+
+
+
+.new-comparable-sale:hover
+{
+  background-color: #eeeeee;
+}
+
+.comparable-sale-list-item {
+  min-width: 40vw;
+
+  display: flex;
+  flex-direction: row;
+
+  .middle-col
+  {
+    flex-basis: 0.125%;
+  }
+
+  .place-pin-on-map-button-container
+  {
+    display: flex;
+    justify-content: flex-end;
+
+
+  }
+
+  .no-comps-in-portfolio
+  {
+    margin-left: auto;
+    margin-right: auto;
+
+    .no-comps-in-portfolio-button
+    {
+      margin-top: 100px;
+      width: 200px;
+      height: 200px;
+      white-space: normal;
+
+    }
+  }
+
+  .comparable-sale-item-content
+  {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+  }
+
+  margin-bottom: 0;
+  border-radius: 0;
+
+  &:not(.last)
+  {
+    border-bottom: 0;
+  }
+
+  &.last
+  {
+    border-bottom-left-radius: 0.25rem;
+    border-bottom-right-radius: 0.25rem;
+  }
+
+  .comparable-sale-list-item-body {
+    display: flex;
+    flex-direction: row;
+    padding-left: 0;
+
+  .comparable-sale-list-item-left-column
+  {
+    position: relative;
+    flex-grow: 0;
+    flex-shrink: 0;
+    flex-basis: 25%;
+    margin-left: 15px;
+    margin-right: 15px;
+  }
+
+    .uploadable-image {
+
+    }
+
+    .comparable-sale-content {
+      flex-grow: 1;
+
+      display: flex;
+      flex-direction: column;
+    }
+
+    .comparable-name {
+      position: relative;
+      left: -15px;
+      width: calc(100% + 15px);
+      flex-grow: 0;
+    }
+
+    .comparable-fields-area {
+      flex-grow: 1;
+      display: grid;
+      grid-template-columns: max-content auto;
+      grid-template-rows: min-content min-content min-content min-content min-content min-content min-content 1fr;
+      align-items: start;
+
+      .comparable-field-label {
+        margin-top: 6px;
+        margin-right: 5px;
+        grid-column: 1 / span 1;
+      }
+
+      .field-display-edit {
+        grid-column: 2 / span 1;
+        height: 100%;
+      }
+    }
+  }
+
+  .comparable-list-boxes
+  {
+    display: flex;
+    flex-direction: row;
+    white-space: nowrap;
+    .field-display-edit
+    {
+      padding-left: 10px;
+    }
+  }
+
+  .portfolio-table
+  {
+    tr.comp-selection-row:hover
+    {
+      cursor: pointer;
+      background-color: #f0f0f0;
+    }
+
+    td.arrow-column
+    {
+      width: 16px;
+    }
+
+    td.portfolio-number-column
+    {
+      width: 16px;
+    }
+
+    tr.comp-selection-row.selected
+    {
+      background-color: #e6e6e6;
+    }
+
+    td.portfolio-action-column
+    {
+      .action-button-wrapper
+      {
+        width: 45px;
+      }
+    }
+
+    td.portfolio-action-column:not(:hover)
+    {
+      .btn
+      {
+        width: 100%;
+
+        display: none;
+      }
+    }
+
+    span.no-data
+    {
+      font-style: italic;
+    }
+  }
+
+  .comparable-button-row {
+    position: relative;
+    height: 100%;
+
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: space-between;
+
+    .btn {
+      border-radius: 0;
+      padding: 8px;
+    }
+
+    .btn:first-child {
+      border-top-left-radius: calc(0.25rem - 1px);
+    }
+
+    .btn:last-child, .btn:only-child {
+      border-bottom-left-radius: calc(0.25rem - 1px);
+    }
+
+    .move-comparable-button {
+      flex-grow: 1;
+      min-height: 50px;
+      transition: flex-grow 0s 0.4s ease-in-out;
+    }
+
+    .delete-comparable-button {
+      transition: opacity 0.4s ease-in-out, height 0.4s ease-in-out, padding 0.4s ease-in-out, margin 0.4s ease-in-out, border 0.4s ease-in-out;
+      overflow: hidden;
+    }
+
+    .delete-comparable-button.hidden {
+      opacity: 1;
+      height: 0;
+      padding: 0;
+      margin: 0;
+      border: 0;
+    }
+  }
+
+  &.expanded
+  {
+    .comparable-button-row {
+      .move-comparable-button {
+        flex-grow: 0;
+        transition: flex-grow 0s 0s ease-in-out;
+      }
+    }
+  }
+
+  .group-heading {
+    font-weight: bold;
+    padding-top: 10px;
+    margin-bottom: 0;
+  }
+
+  .shipping-doors
+  {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    .shipping-doors-line
+    {
+      width: 100%;
+      display: flex;
+      flex-direction: row;
+      align-items: stretch;
+
+      span {
+        position: relative;
+        white-space: nowrap;
+        padding-left: 18px;
+        flex-grow: 0;
+        top: 7px;
+      }
+    }
+  }
+
+  .stabilize-noi-button-container
+  {
+    .btn
+    {
+      float: right;
+    }
+  }
+}
+
+.comparable-sale-list-header
+{
+  margin-bottom: 0;
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+  border-bottom: 0;
+  .header-field-column
+  {
+    font-weight: bold !important;
+  }
+}
+
+.comparable-sale-list-item-header
+{
+  font-size: 12px;
+
+  .comparable-expand-button {
+    width: 100%;
+    min-height: 36px;
+    padding: 0;
+    border: 0;
+    color: inherit;
+    background: transparent;
+    font: inherit;
+    text-align: inherit;
+    cursor: pointer;
+  }
+  span {
+    font-size: 12px;
+  }
+
+  span.no-data
+  {
+    font-style: italic;
+  }
+
+  .header-field-column
+  {
+    font-size: 12px;
+  }
+
+  .header-field-column:not(:first-child)
+  {
+    border-left: 1px solid #eeeeee;
+  }
+
+  &.first-spacing
+  {
+    padding-left: 60px;
+  }
+}
+
+.popover
+{
+  z-index: 100100;
+}
+
+.place-pin-on-map-popover
+{
+  .place-pin-body-wrapper {
+    width: 25vw;
+    height: 50vh;
+  }
+
+  .current-building-map-icon
+  {
+    cursor: grab;
+    position: relative;
+    width: 25px;
+    left: -12.5px;
+    top: -37px;
+    user-select: none;
+    pointer-events: none;
+  }
+
+  .pin-map-icon
+  {
+    cursor: grab;
+    position: relative;
+    width: 25px;
+    left: -12.5px;
+    //top: 8px;
+    top: -28px;
+    user-select: none;
+    pointer-events: none;
+    opacity: 0.7;
+  }
+
+  .close-button
+  {
+    float: right;
+
+  }
+}
+
+
+.stabilized-noi-popover
+{
+    .stabilized-noi-result-line
+    {
+      .result-column
+      {
+        border-top: 1px solid black;
+      }
+    }
+
+  tr:not(.stabilized-noi-custom-line)
+  {
+    td:first-child
+    {
+      position: relative;
+      left: 10px
+    }
+  }
+
+  tr.stabilized-noi-custom-line
+  {
+    td:first-child
+    {
+      position: relative;
+      left: -5px
+    }
+  }
+}
+
+
+/* pages/ViewDiscountedCashFlow */
+
+
+.view-discounted-cash-flow
+{
+
+  tr.header-row
+  {
+    border-bottom: 1px solid darkgray;
+  }
+
+
+  .name-column
+  {
+    border: 0;
+  }
+  .amount-column
+  {
+    text-align: right;
+    min-width: 120px;
+    border: 0;
+  }
+
+  tr.total-row
+  {
+
+    td
+    {
+      padding-bottom: 50px;
+    }
+
+    td.name-column
+    {
+
+    }
+
+    td.amount-column
+    {
+      border-top: 1px solid darkgray;
+    }
+  }
+}
+
+/* pages/ViewTenantsRentRoll */
+
+
+.view-tenants-rent-roll
+{
+
+
+
+  .download-dropdown-button, .action-button
+  {
+    float: none;
+    margin-left: 10px;
+    height: 35px;
+  }
+
+
+  .button-bar
+  {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+  }
+
+}
+
+/* pages/components/FieldDisplayEdit */
+
+
+
+.field-display-edit
+{
+  display: flex;
+  align-items: flex-end;
+
+  .input-group-append
+  {
+    //transition: opacity 0.2s ease-in-out;
+  }
+
+  &.edit-type-boolean
+  {
+    input
+    {
+      margin-left: 15px;
+    }
+  }
+
+  input, textarea, select, .zone-selector .zone-selector__control, .tag-editor .tag-editor__control, .tenant-name-selector .tenant-name-selector__control {
+    transition: border-color 0.2s ease-in-out;
+  }
+
+
+  &.editable
+  {
+    input, textarea, select, select:focus, .zone-selector .zone-selector__control, .tag-editor .tag-editor__control, .tenant-name-selector .tenant-name-selector__control  {
+      border: 1px solid lightgray;
+      box-shadow: 0 0;
+      background: transparent;
+    }
+
+    &.static:hover
+    {
+      .input-group-append
+      {
+        opacity: 0.5;
+      }
+      input, textarea, select, .zone-selector .zone-selector__control, .tag-editor .tag-editor__control, .tenant-name-selector .tenant-name-selector__control  {
+        cursor: pointer;
+      }
+    }
+
+
+    &.static:hover, &.editing
+    {
+      input, textarea, select, .zone-selector .zone-selector__control, .tag-editor .tag-editor__control, .tenant-name-selector .tenant-name-selector__control  {
+        background: white;
+      }
+    }
+  }
+
+  &.non-editable
+  {
+    input:disabled, textarea:disabled, select:disabled, .zone-selector .zone-selector__control, .tag-editor .tag-editor__control, .tenant-name-selector .tenant-name-selector__control
+    {
+      background: transparent;
+      color: #656565;
+    }
+  }
+
+
+  &.static.hide-input:not(:hover), &.hide-input.non-editable
+  {
+    .input-group-append
+    {
+      opacity: 0;
+    }
+
+    input, textarea, select, .zone-selector .zone-selector__control, .tag-editor .tag-editor__control, .tenant-name-selector .tenant-name-selector__control
+    {
+      border: 1px white;
+      border-radius: 0;
+    }
+
+    padding-right: 1px;
+  }
+
+  &.hide-input.non-editable {
+    .input-group-append {
+      display: none;
+    }
+  }
+
+  .rdt
+  {
+    flex-grow: 1;
+  }
+
+  .zone-selector, .tag-editor, .tenant-name-selector
+  {
+    flex-grow: 1;
+  }
+
+ .zone-selector__dropdown-indicator, .zone-selector__indicator-separator, .zone-selector__loading-indicator, .tag-editor__indicators, .tenant-name-selector__dropdown-indicator, .tenant-name-selector__indicator-separator, .tenant-name-selector__loading-indicator
+  {
+    display: none;
+  }
+
+
+  textarea {
+    flex-grow: 1;
+    resize: none;
+    height: 100%;
+    min-height: 150px;
+    padding: 0.375rem 1rem;
+    border-bottom-left-radius: 0.25rem;
+    border-top-left-radius: 0.25rem;
+    color: #495057;
+  }
+
+  textarea::placeholder {
+    color: gray;
+  }
+
+  .geosuggest {
+    position: relative;
+    text-align: left;
+    flex-grow: 1;
+
+    input {
+      border-bottom-left-radius: 0;
+      border-bottom-right-radius: 0;
+    }
+  }
+
+  .geosuggest__suggests {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    max-height: 25em;
+    padding: 0;
+    margin-top: -1px;
+    background: #fff;
+    border: 1px solid #66afe9;
+    border-top-width: 0;
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+    overflow-x: hidden;
+    overflow-y: auto;
+    list-style: none;
+    z-index: 5;
+    //-webkit-transition: max-height 0.2s, border 0.2s;
+    //transition: max-height 0.2s, border 0.2s;
+  }
+  .geosuggest__suggests--hidden {
+    max-height: 0;
+    overflow: hidden;
+    border-width: 0;
+  }
+
+  /**
+   * A geosuggest item
+   */
+  .geosuggest__item {
+    font-size: 18px;
+    font-size: 1rem;
+    padding: .5em .65em;
+    cursor: pointer;
+  }
+  .geosuggest__item:hover,
+  .geosuggest__item:focus {
+    background: #f5f5f5;
+  }
+  .geosuggest__item--active {
+    background: #267dc0;
+    color: #fff;
+  }
+  .geosuggest__item--active:hover,
+  .geosuggest__item--active:focus {
+    background: #ccc;
+  }
+  .geosuggest__item__matched-text {
+    font-weight: bold;
+  }
+}
+
+/* pages/ViewTenants */
+
+
+/* pages/ViewTenantLeasingCosts */
+
+
+.leasing-cost-structures-list
+{
+  display: flex;
+  flex-direction: column;
+  justify-items: stretch;
+  justify-content: stretch;
+  width: fit-content;
+}
+
+.leasing-cost-structure-editor
+{
+  border: 1px solid lightgray;
+  width: fit-content;
+
+  a:hover
+  {
+    cursor: pointer;
+    text-decoration: underline !important;
+  }
+
+
+  .title
+  {
+    font-size: 150%;
+  }
+
+  .label-column
+  {
+    padding-right: 15px;
+    min-width: 150px;
+  }
+
+  .delete-button
+  {
+    float: right;
+    margin-top: 10px;
+  }
+
+  .leasing-cost-structure-table
+  {
+    .value-column
+    {
+      display: flex;
+      flex-direction: row;
+      white-space: nowrap;
+      justify-content: space-between;
+      width: 100%;
+      min-width: 350px;
+    }
+  }
+
+  .none-found
+  {
+    font-size: 85%;
+    font-style: italic;
+  }
+
+
+  .unit-size-column, .calculated-vacant-unit-leasup-costs-column, .should-treat-unit-as-vacant-column, .calculated-vacant-unit-rent-loss
+  {
+    padding-left: 15px;
+    text-align: right;
+    min-width: 150px;
+  }
+
+  .should-treat-unit-as-vacant-column
+  {
+    display: flex;
+    justify-content: flex-end;
+    .field-display-edit
+    {
+      width: auto;
+
+    }
+  }
+
+
+  .header-row
+  {
+    .unit-size-column
+    {
+
+    }
+
+    .calculated-vacant-unit-leasup-costs-column
+    {
+
+    }
+
+    .calculated-vacant-unit-rent-loss
+    {
+
+    }
+  }
+
+  .total-spacer-row
+  {
+    td {
+      padding-top: 15px;
+    }
+
+    .unit-size-column
+    {
+      border-bottom: 1px solid black;
+    }
+
+    .calculated-vacant-unit-leasup-costs-column
+    {
+      border-bottom: 1px solid black;
+    }
+
+    .calculated-vacant-unit-rent-loss
+    {
+      border-bottom: 1px solid black;
+    }
+  }
+
+  .total-row
+  {
+    .value-column
+    {
+      justify-content: flex-end;
+      text-align: right;
+    }
+  }
+}
+
+.new-leasing-cost-structure
+{
+  border: 0;
+  .btn {
+    border: 1px solid lightgray;
+    padding-top: 20px;
+
+    padding-bottom: 20px;
+    width: 100%;
+    height: 100%;
+    font-size: 16px;
+    color: #777;
+  }
+}
+
+
+/* pages/components/Checklist */
+
+
+.appraisal-checklist
+{
+  display: flex;
+  flex-direction: row;
+}
+
+/* pages/components/ChecklistItem */
+
+.checklist-item, .checklist-item.card-default
+{
+  background: #a2a2a2;
+  margin-bottom: 5px;
+  color: white;
+  flex-grow: 1;
+  flex-shrink: 1;
+  flex-basis: 33%;
+
+  margin-left: 5px;
+  margin-right: 5px;
+
+  .card-header
+  {
+    cursor: pointer;
+    background: transparent;
+  }
+
+
+  .checklist-group-title
+  {
+    font-weight: bold;
+    font-size: 18px;
+  }
+
+  .checklist-spacer
+  {
+    font-weight: normal;
+    font-size: 18px;
+  }
+
+  .checklist-file-name
+  {
+    font-weight: normal;
+    font-size: 14px;
+  }
+
+
+  .fa.fa-check
+  {
+    color: #53ff40;
+    font-size: 16px;
+  }
+
+  .fa.fa-times
+  {
+    color: #ee3841;
+    font-size: 16px;
+  }
+}
+
+
+/* pages/ViewBuildingInformation */
+
+.property-information-fields-table
+{
+  tr:first-child td
+  {
+    border-top: 0;
+  }
+
+  .uploadable-image
+  {
+    max-width: 25vw;
+  }
+}
+
+@media (max-width: 575.98px)
+{
+  .property-information-fields-table,
+  .property-information-fields-table tbody,
+  .property-information-fields-table tr,
+  .property-information-fields-table td
+  {
+    display: block;
+    width: 100%;
+  }
+
+  .property-information-fields-table tr
+  {
+    border-bottom: 1px solid #eee;
+    padding: 0.5rem 0;
+  }
+
+  .property-information-fields-table td
+  {
+    border-top: 0;
+    padding: 0.35rem 0.75rem !important;
+    white-space: normal;
+  }
+
+  .property-information-fields-table .field-display-edit,
+  .property-information-fields-table .input-group,
+  .property-information-fields-table input,
+  .property-information-fields-table select
+  {
+    width: 100%;
+    min-width: 0;
+  }
+}
+
+
+/* pages/ViewComparablesDatabase */
+
+
+
+.view-comparables-database
+{
+
+}
+
+.popover
+{
+  max-width: none;
+}
+
+/* pages/components/ComparableLeaseList */
+
+.new-comp-dialog
+{
+  width: 50vw;
+  max-width: none;
+}
+
+.no-comparables-found
+{
+  margin-bottom: 0;
+  color: gray;
+  text-align: center;
+}
+
+
+/* pages/components/ComparableLeaseListItem */
+
+
+.new-comparable
+{
+  cursor: pointer;
+  margin-bottom: 0;
+  color: gray;
+  text-align: center;
+  border-radius: 0;
+  width: 100%;
+  font: inherit;
+}
+
+.new-comparable:hover
+{
+  background-color: #eeeeee;
+}
+
+.comparable-lease-list-item {
+  min-width: 40vw;
+
+  margin-bottom: 0;
+
+  display: flex;
+  flex-direction: row;
+
+  .comparable-lease-item-content
+  {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+  }
+
+
+  &:not(.last)
+  {
+    border-bottom: 0;
+  }
+
+  &.last
+  {
+    border-bottom-left-radius: 0.25rem;
+    border-bottom-right-radius: 0.25rem;
+  }
+
+
+  .comparable-lease-list-item-body {
+    display: flex;
+    flex-direction: row;
+    //padding-left: 0;
+
+    .uploadable-image {
+      position: relative;
+      flex-grow: 0;
+      flex-shrink: 0;
+      flex-basis: 25%;
+      margin-left: 15px;
+      margin-right: 15px;
+    }
+
+    &.editable {
+
+    }
+
+    .comparable-lease-content {
+      flex-grow: 1;
+
+      display: flex;
+      flex-direction: column;
+    }
+
+    .comparable-name {
+      flex-grow: 0;
+    }
+
+    .comparable-fields-area {
+      flex-grow: 1;
+      display: grid;
+      grid-template-columns: max-content auto;
+      grid-template-rows: min-content min-content min-content min-content min-content min-content min-content 1fr;
+      align-items: start;
+
+      .comparable-field-label {
+        margin-top: 6px;
+        margin-right: 5px;
+        grid-column: 1 / span 1;
+      }
+
+      .field-display-edit {
+        grid-column: 2 / span 1;
+        height: 100%;
+      }
+    }
+  }
+
+  .card-footer
+  {
+    padding-top: 0;
+    padding-bottom: 0;
+  }
+
+  .comparable-button-row {
+    position: relative;
+    height: 100%;
+
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: space-between;
+
+    .btn {
+      border-radius: 0;
+      padding: 8px;
+    }
+
+    .btn:first-child {
+      border-bottom-left-radius: calc(0.25rem - 1px);
+    }
+
+    .btn:last-child {
+      border-bottom-right-radius: calc(0.25rem - 1px);
+    }
+
+    .move-comparable-button {
+      flex-grow: 1;
+      min-height: 40px;
+      transition: flex-grow 0s 0.4s ease-in-out;
+    }
+
+    .delete-comparable-button {
+      transition: opacity 0.4s ease-in-out, height 0.4s ease-in-out, padding 0.4s ease-in-out, margin 0.4s ease-in-out, border 0.4s ease-in-out;
+      overflow: hidden;
+    }
+
+    .delete-comparable-button.hidden {
+      opacity: 1;
+      height: 0;
+      padding: 0;
+      margin: 0;
+      border: 0;
+    }
+  }
+
+  &.expanded
+  {
+    .comparable-button-row {
+      .move-comparable-button {
+        flex-grow: 0;
+        transition: flex-grow 0s 0s ease-in-out;
+      }
+    }
+  }
+
+  .escalation {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+
+  }
+
+  .free-rent
+  {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+  }
+
+  .shipping-doors
+  {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    .shipping-doors-line
+    {
+      width: 100%;
+      display: flex;
+      flex-direction: row;
+      align-items: stretch;
+
+      span {
+        position: relative;
+        padding-left: 18px;
+        white-space: nowrap;
+        flex-grow: 0;
+        top: 7px;
+      }
+    }
+  }
+}
+
+
+.comparable-lease-list-header
+{
+  margin-bottom: 0;
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+  border-bottom: 0;
+}
+
+.comparable-lease-list-item-header
+{
+  .comparable-expand-button {
+    width: 100%;
+    min-height: 36px;
+    padding: 0;
+    border: 0;
+    color: inherit;
+    background: transparent;
+    font: inherit;
+    text-align: inherit;
+    cursor: pointer;
+  }
+
+  span.no-data
+  {
+    font-style: italic;
+  }
+
+  font-size: 12px;
+  span {
+    font-size: 12px;
+  }
+
+  .header-field-column
+  {
+    font-size: 12px;
+  }
+
+  .header-field-column:not(:first-child)
+  {
+    border-left: 1px solid #eeeeee;
+  }
+
+  &.first-spacing
+  {
+    padding-left: 60px;
+  }
+}
+
+
+/* pages/ViewVacancySchedule */
+
+
+
+
+
+.view-vacancy-schedule
+{
+  .vacancy-schedule-table
+  {
+    td {
+      border: 1px solid lightgray;
+      text-align: center;
+    }
+
+    tbody
+    {
+      td.occupancy-cell {
+        padding-left: 0;
+        padding-right: 0;
+      }
+    }
+
+
+  }
+}
+
+/* pages/components/ComparableSalesStatistics */
+
+
+.comparable-sales-statistics
+{
+  .statBlock
+  {
+    display: inline-block;
+  }
+
+  .statRow
+  {
+    justify-content: flex-start;
+  }
+
+  .statColumn
+  {
+    flex: 0 0 50%;
+    flex-grow: 1;
+    flex-shrink: 0;
+    white-space: nowrap;
+  }
+
+}
+
+/* pages/components/ComparableLeasesStatistics */
+
+
+.comparable-leases-statistics
+{
+
+  .statBlock
+  {
+    display: inline-block;
+  }
+
+  .statRow
+  {
+    justify-content: flex-start;
+  }
+
+  .statColumn
+  {
+    flex: 0 0 33%;
+    flex-grow: 1;
+    flex-shrink: 0;
+    white-space: nowrap;
+  }
+
+}
+
+/* pages/ViewAppraisalComparableSales */
+
+
+.view-appraisal-comparable-sales
+{
+  @media (max-width: 767.98px)
+  {
+    .comparables-list-column
+    {
+      overflow-x: auto;
+      padding-bottom: 0.75rem;
+    }
+
+    .comparable-sale-list-header,
+    .comparable-sale-list-item
+    {
+      min-width: 720px;
+    }
+
+    .comparables-map-column
+    {
+      margin-top: 1rem;
+    }
+
+    .comparable-sales-map
+    {
+      height: 55vh;
+      min-height: 360px;
+    }
+  }
+}
+
+@media (max-width: 767.98px)
+{
+  .comparables-navigation
+  {
+    flex-direction: column;
+
+    .nav-item,
+    .nav-link
+    {
+      width: 100%;
+    }
+  }
+}
+
+.download-dropdown-button
+{
+  float: right;
+
+}
+
+.dropdown-menu
+{
+  z-index: 1001;
+}
+
+
+/* pages/ViewAppraisalComparableLeases */
+
+
+.view-appraisal-comparable-leases
+{
+  .dropdown
+  {
+    float: right;
+
+  }
+
+  @media (max-width: 767.98px)
+  {
+    .comparables-list-column
+    {
+      overflow-x: auto;
+      padding-bottom: 0.75rem;
+    }
+
+    .comparable-lease-list-header,
+    .comparable-lease-list-item
+    {
+      min-width: 650px;
+    }
+
+    .comparables-map-column
+    {
+      margin-top: 1rem;
+    }
+
+    .comparable-leases-map
+    {
+      height: 55vh;
+      min-height: 360px;
+    }
+  }
+}
+
+
+/* pages/components/ComparableLeasesMap */
+
+.comparable-leases-map
+{
+  width: 100%;
+  height: 75vh;
+
+  .building-map-icon
+  {
+    cursor: pointer;
+    position: relative;
+    width: 25px;
+    left: -12.5px;
+    top: -37px;
+  }
+
+  .gm-fullscreen-control
+  {
+    display: none;
+  }
+
+
+
+  .full-screen-button
+  {
+    position: absolute;
+    right: 1.5vw;
+    top: 1vw;
+    .btn {
+      font-size: 1.0vw;
+    }
+  }
+}
+
+
+/* pages/components/ComparableSalesMap */
+
+.comparable-sales-map
+{
+  width: 100%;
+  height: 75vh;
+
+  .building-map-icon
+  {
+    cursor: pointer;
+    position: relative;
+    width: 25px;
+    left: -12.5px;
+    top: -37px;
+  }
+
+  .gm-fullscreen-control
+  {
+    display: none;
+  }
+
+
+  .full-screen-button
+  {
+    position: absolute;
+    right: 1.5vw;
+    top: 1vw;
+    .btn {
+      font-size: 1.0vw;
+    }
+  }
+}

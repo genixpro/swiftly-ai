@@ -8,7 +8,12 @@
     "skipLibCheck": true,
     "module": "ESNext",
     "moduleResolution": "bundler",
-    "target": "ES2022"
+    "target": "ES2022",
+    "paths": {
+      "@api/*": ["./src/api/*"],
+      "@utils/*": ["./src/utils/*"],
+      "@components/*": ["./src/components/*"]
+    }
   },
   "include": [
     "src/**/*.js",

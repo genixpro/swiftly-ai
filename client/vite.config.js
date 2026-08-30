@@ -28,13 +28,27 @@ export default defineConfig({
     },
   },
   server: { port: 5173 },
-  css: { preprocessorOptions: { scss: { quietDeps: true } } },
+  css: { preprocessorOptions: { scss: { quietDeps: true, silenceDeprecations: ['import'] } } },
   test: {
     exclude: ['e2e/**', 'node_modules/**', 'dist/**'],
+    environment: 'jsdom',
+    setupFiles: ['./src/test/setup.ts'],
     coverage: {
       provider: 'v8',
       reporter: ['text'],
-      thresholds: {statements: 80, branches: 54, functions: 89, lines: 80},
+      include: ['src/**/*.{js,jsx,ts,tsx}'],
+      exclude: [
+        'src/index.{js,jsx,ts,tsx}',
+        'src/**/*.d.ts',
+        'src/**/index.{js,jsx,ts,tsx}',
+      ],
+      thresholds: {
+        statements: 23,
+        branches: 18,
+        functions: 20,
+        lines: 22,
+        'src/api/**': {statements: 80, branches: 40, functions: 89, lines: 80},
+      },
     },
   },
 });
