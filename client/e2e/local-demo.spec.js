@@ -51,6 +51,43 @@ test('application shell assets load from nested routes', async ({ page }) => {
   expect(await shellImages.evaluateAll(images => images.map(image => image.complete && image.naturalWidth > 0))).toEqual([true, true]);
 });
 
+test('modern Bootstrap theme preserves the established visual surfaces', async ({ page }) => {
+  await page.goto('/appraisal/demo-appraisal/general');
+
+  const visualStyles = await page.evaluate(() => {
+    const body = getComputedStyle(document.body);
+    const card = getComputedStyle(document.querySelector('.card'));
+    const heading = getComputedStyle(document.querySelector('.page-title'));
+    return {
+      bodyBackground: body.backgroundColor,
+      cardBackground: card.backgroundColor,
+      cardRadius: card.borderRadius,
+      fontFamily: body.fontFamily,
+      headingOutline: heading.outlineStyle,
+    };
+  });
+
+  expect(visualStyles).toMatchObject({
+    bodyBackground: 'rgb(245, 247, 250)',
+    cardBackground: 'rgb(255, 255, 255)',
+    cardRadius: '4px',
+    headingOutline: 'none',
+  });
+  expect(visualStyles.fontFamily).toContain('Source Sans 3');
+});
+
+test('structural allowance popover uses warning-free modern markup', async ({ page }) => {
+  const errors = [];
+  page.on('console', message => {
+    if (message.type() === 'error') errors.push(message.text());
+  });
+
+  await page.goto('/appraisal/demo-appraisal/stabilized_statement_valuation');
+  await page.getByRole('button', { name: /Structural Allowance @/ }).click();
+  await expect(page.getByRole('tooltip').getByText('Potential Gross Income')).toBeVisible();
+  expect(errors).toEqual([]);
+});
+
 test('local demo shell omits retired template controls', async ({ page }) => {
   await page.goto('/appraisals/');
   await expect(page.getByRole('search')).toHaveCount(0);

@@ -238,7 +238,7 @@ export class Sidebar extends Component
                 className='aside-container'
                 aria-label="Primary navigation"
                 aria-hidden={this.props.isMobile && !this.props.mobileNavigationOpen ? true : undefined}
-                inert={this.props.isMobile && !this.props.mobileNavigationOpen ? "" : undefined}
+                inert={this.props.isMobile && !this.props.mobileNavigationOpen}
                 ref={(element) => this.asideElement = element}
             >
                 {/* START Sidebar (left) */}

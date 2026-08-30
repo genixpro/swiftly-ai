@@ -1,9 +1,7 @@
 import React from 'react';
-import _ from "underscore";
 import {Popover, PopoverBody, PopoverHeader} from 'reactstrap';
 import PercentFormat from "./PercentFormat";
 import CurrencyFormat from "./CurrencyFormat";
-import IntegerFormat from "./IntegerFormat";
 import PropTypes from "prop-types";
 import AppraisalModel from "../../models/AppraisalModel";
 
@@ -29,32 +27,34 @@ class StructuralAllowanceCalculationPopoverWrapper extends React.Component
     render()
     {
         return (
-            [
+            <>
                 <button type="button" className="btn btn-link p-0" id={this.popoverId} onClick={() => this.setState({structuralAllowancePopoverOpen: !this.state.structuralAllowancePopoverOpen})}>
                     {this.props.children}
-                </button>,
+                </button>
                 <Popover placement="bottom" isOpen={this.state.structuralAllowancePopoverOpen} target={this.popoverId}
                          toggle={() => this.setState({structuralAllowancePopoverOpen: !this.state.structuralAllowancePopoverOpen})}>
                     <PopoverHeader>Structural Allowance</PopoverHeader>
                     <PopoverBody>
                         <table className={"explanation-popover-table"}>
-                            <tr>
-                                <td>Potential Gross Income</td>
-                                <td><CurrencyFormat value={this.props.appraisal.stabilizedStatement.potentialGrossIncome}/></td>
-                            </tr>
-                            <tr>
-                                <td></td>
-                                <td className={"underline"}>* <PercentFormat value={this.props.appraisal.stabilizedStatementInputs.structuralAllowancePercent}/>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>Structural Allowance</td>
-                                <td><CurrencyFormat value={this.props.appraisal.stabilizedStatement.structuralAllowance}/></td>
-                            </tr>
+                            <tbody>
+                                <tr>
+                                    <td>Potential Gross Income</td>
+                                    <td><CurrencyFormat value={this.props.appraisal.stabilizedStatement.potentialGrossIncome}/></td>
+                                </tr>
+                                <tr>
+                                    <td></td>
+                                    <td className={"underline"}>* <PercentFormat value={this.props.appraisal.stabilizedStatementInputs.structuralAllowancePercent}/>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Structural Allowance</td>
+                                    <td><CurrencyFormat value={this.props.appraisal.stabilizedStatement.structuralAllowance}/></td>
+                                </tr>
+                            </tbody>
                         </table>
                     </PopoverBody>
                 </Popover>
-            ]
+            </>
         );
     }
 }

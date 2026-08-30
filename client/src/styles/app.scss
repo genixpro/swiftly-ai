@@ -5,10 +5,22 @@
 @use "bootstrap/scss/bootstrap" as * with (
   $primary: #2563a6, $secondary: #fff, $success: #27c24c, $info: #087a9b,
   $warning: #ff902b, $danger: #c83243, $dark: #3a3f51,
-  $body-bg: #f5f7fa, $body-color: #656565, $font-size-base: 1rem,
+  $body-bg: #f5f7fa, $body-color: #656565,
+  $font-family-sans-serif: ("Source Sans 3", "Source Sans Pro", sans-serif),
+  $font-size-base: 1rem,
   $line-height-base: 1.528571429, $headings-line-height: 1.1,
-  $table-border-color: #eee, $input-border-color: #dde6e9,
-  $input-focus-border-color: #66afe9, $input-placeholder-color: #6f7580
+  $border-radius: .25rem, $border-radius-sm: .2rem, $border-radius-lg: .375rem,
+  $table-bg: transparent, $table-border-color: #eee,
+  $card-bg: #fff, $input-bg: #fff, $input-disabled-bg: #edf1f2,
+  $form-select-bg: #fff, $dropdown-bg: #fff, $accordion-bg: #fff,
+  $list-group-bg: #fff, $modal-content-bg: #fff, $popover-bg: #fff,
+  $input-border-color: #dde6e9, $input-focus-border-color: #66afe9,
+  $input-placeholder-color: #6f7580,
+  $input-btn-padding-y: .375rem, $input-btn-padding-x: 1rem,
+  $input-btn-padding-y-sm: .3125rem, $input-btn-padding-x-sm: .625rem,
+  $input-btn-padding-y-lg: .625rem, $input-btn-padding-x-lg: 1.25rem,
+  $dropdown-border-color: #e1e1e1, $nav-tabs-link-active-bg: #fff,
+  $list-group-border-color: #e4eaec
 );
 
 $gray-darker:#232735;$gray-dark:#3a3f51;$gray:#dde6e9;$gray-light:#e4eaec;$gray-lighter:#edf1f2;
@@ -1439,7 +1451,7 @@ $tablet-landscape: 1025px;
 
 
 body {
-    font-family: "Source Sans Pro", sans-serif;
+    font-family: "Source Sans 3", "Source Sans Pro", sans-serif;
     color: $body-color;
     font-size: 0.875rem; // 14px
 }
@@ -7250,6 +7262,12 @@ $switch-sm-hg: math.div($switch-sm-wd, 2);
   font-size: inherit;
   font-weight: inherit;
   line-height: inherit;
+
+  // Page headings receive focus programmatically so assistive technology
+  // announces route changes, but they are not keyboard-interactive controls.
+  &:focus {
+    outline: none !important;
+  }
 }
 
 .icon-button {
@@ -7269,4 +7287,3 @@ $switch-sm-hg: math.div($switch-sm-wd, 2);
     font-size: 0.8125rem;
   }
 }
-
