@@ -9,23 +9,29 @@ def test_extraction_contract_routes_are_registered():
     assert "/appraisals/{appraisal_id}/files/{file_id}/extraction" in paths
 
 
-def test_legacy_browser_contract_routes_are_registered():
+def test_canonical_browser_contract_routes_are_registered():
     paths = {route.path for route in app.routes}
     required = {
-        "/appraisal/", "/appraisal/{appraisal_id}", "/appraisal/{appraisal_id}/files",
-        "/appraisal/{appraisal_id}/files/{file_id}", "/appraisal/{appraisal_id}/files/{file_id}/reprocess",
-        "/appraisal/{appraisal_id}/files/{file_id}/rendered/{page}",
-        "/appraisal/{appraisal_id}/convert_tenants", "/comparable_sales", "/comparable_sales/{comparable_id}",
-        "/comparable_leases", "/comparable_leases/{comparable_id}", "/comparable_sales_portfolio/",
-        "/zones", "/zone/{zone_id}", "/property_tags", "/property_tags/{tag_id}", "/tenant_names",
-        "/images", "/images/{image_id}", "/comparable_sale_upload/",
+        "/appraisals", "/appraisals/{appraisal_id}", "/appraisals/{appraisal_id}/files",
+        "/appraisals/{appraisal_id}/files/{file_id}", "/appraisals/{appraisal_id}/files/{file_id}/extract",
+        "/appraisals/{appraisal_id}/files/{file_id}/rendered-pages/{page}",
+        "/appraisals/{appraisal_id}/comparable-leases/from-tenants", "/comparable-sales", "/comparable-sales/{comparable_id}",
+        "/comparable-leases", "/comparable-leases/{comparable_id}", "/comparable-sale-portfolios",
+        "/zones", "/zones/{zone_id}", "/property-tags", "/property-tags/{tag_id}", "/tenant-names",
+        "/images", "/images/{image_id}", "/comparable-sales/import",
+        "/appraisals/{appraisal_id}/reports/{report}",
     }
     assert required <= paths
 
 
-def test_specific_file_route_precedes_broad_legacy_export_route():
-    paths = [route.path for route in app.routes]
-    assert paths.index("/appraisal/{appraisal_id}/files/{file_id}") < paths.index("/appraisal/{appraisal_id}/{report}/{format}")
+def test_resource_updates_use_patch_and_not_post():
+    methods_by_path = {}
+    for route in app.routes:
+        if hasattr(route, "methods"):
+            methods_by_path.setdefault(route.path, set()).update(route.methods)
+    assert methods_by_path["/appraisals/{appraisal_id}"] == {"GET", "PATCH", "DELETE"}
+    assert methods_by_path["/comparable-sales/{comparable_id}"] >= {"GET", "PATCH", "DELETE"}
+    assert methods_by_path["/appraisals/{appraisal_id}/files/{file_id}"] >= {"GET", "PATCH", "DELETE"}
 
 
 def test_file_responses_hide_retired_token_annotation_metadata():

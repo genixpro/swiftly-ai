@@ -5,16 +5,16 @@ const Menu = [
     {
         name: 'Start an Appraisal',
         path: '/appraisal/new',
-        icon : 'icon-plus',
+        icon : 'fas fa-plus',
     },
     {
         name: 'View Appraisals',
         path: '/appraisals',
-        icon : 'icon-menu',
+        icon : 'fas fa-list',
     },
     {
         name: 'Appraisal',
-        icon: 'icon-docs',
+        icon: 'fas fa-copy',
         match: '/appraisal/:appraisalId/',
         openByDefault: true,
         submenu: [

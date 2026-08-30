@@ -24,7 +24,7 @@ export default function OpenStreetMapFallback({subject, comparables = [], label}
         <iframe title={`${label} map`} src={mapUrl(center)} style={{border: 0, height: '360px', width: '100%'}} loading="lazy" />
         <div className="mt-2 small">
             {subjectLocation && <a href={`https://www.openstreetmap.org/?mlat=${subjectLocation.lat}&mlon=${subjectLocation.lng}#map=14/${subjectLocation.lat}/${subjectLocation.lng}`} target="_blank" rel="noreferrer">Subject property</a>}
-            {points.map(({comparable, location}) => <span key={comparable._id} className="ml-3">
+            {points.map(({comparable, location}) => <span key={comparable._id} className="ms-3">
                 <a href={`https://www.openstreetmap.org/?mlat=${location.lat}&mlon=${location.lng}#map=14/${location.lat}/${location.lng}`} target="_blank" rel="noreferrer">{comparable.address || comparable.tenantName || 'Comparable'}</a>
             </span>)}
             {!subjectLocation && !points.length && <span>Add locations to the subject or comparables to place them on the map.</span>}

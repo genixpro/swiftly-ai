@@ -1,9 +1,9 @@
 import React from 'react';
-import moment from 'moment';
+import { formatDate } from '../../utils/dates';
 
-/** Minimal, React-18-safe replacement for the retired react-moment wrapper. */
+/** Compatibility-shaped date display while callers move to the shared formatter. */
 export default function MomentDisplay({ children, date, value, format, ...props }) {
   const source = date ?? value ?? children;
-  const rendered = source == null || source === '' ? '' : moment(source).format(format || 'LL');
+  const rendered = formatDate(source, format || 'LL');
   return <time {...props}>{rendered}</time>;
 }

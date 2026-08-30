@@ -5,3 +5,24 @@
 {
   z-index: 1000;
 }
+.ball-pulse {
+  display: inline-flex;
+  gap: .25rem;
+  align-items: center;
+}
+
+.ball-pulse > div {
+  width: .55rem;
+  height: .55rem;
+  border-radius: 50%;
+  background: currentColor;
+  animation: swiftly-pulse .9s ease-in-out infinite alternate;
+}
+
+.ball-pulse > div:nth-child(2) { animation-delay: .2s; }
+.ball-pulse > div:nth-child(3) { animation-delay: .4s; }
+
+@keyframes swiftly-pulse {
+  from { opacity: .35; transform: scale(.75); }
+  to { opacity: 1; transform: scale(1); }
+}

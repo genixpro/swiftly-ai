@@ -1,6 +1,6 @@
 import React from 'react';
 
-// React 18-safe replacement for the retired react-datetime widget.
+// React 18-safe replacement for the retired @components/Common/DatetimeCompat widget.
 export default function DatetimeCompat({ value, onChange, inputProps = {} }) {
   let rendered = '';
   if (value && typeof value.format === 'function') rendered = value.format('YYYY-MM-DD');

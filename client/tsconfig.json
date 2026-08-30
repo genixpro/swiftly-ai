@@ -7,10 +7,12 @@
     "skipLibCheck": true,
     "module": "ESNext",
     "moduleResolution": "bundler",
-    "target": "ES2020"
+    "target": "ES2022"
   },
   "include": [
-    "src/App.js",
-    "src/components/Common/MomentDisplay.jsx"
+    "src/**/*.js",
+    "src/**/*.jsx",
+    "vite.config.js",
+    "playwright.config.js"
   ]
 }

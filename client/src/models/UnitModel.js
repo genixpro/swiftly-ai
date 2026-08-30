@@ -6,7 +6,7 @@ import DateField from "../orm/DateField";
 import _ from "underscore";
 import FloatField from "../orm/FloatField";
 import BoolField from "../orm/BoolField";
-import moment from "moment";
+import { formatDate } from '../utils/dates';
 
 class TenancyModel extends BaseModel
 {
@@ -250,7 +250,7 @@ class UnitModel extends BaseModel
 
         let leaseYears = endTenancy.endDate.getFullYear() - startTenancy.startDate.getFullYear();
 
-        message += ` pursuant to a ${leaseYears}-year lease commencing ${moment(startTenancy.startDate).format(dateFormat)} and expiring ${moment(endTenancy.endDate).format(dateFormat)}. `;
+        message += ` pursuant to a ${leaseYears}-year lease commencing ${formatDate(startTenancy.startDate, dateFormat)} and expiring ${formatDate(endTenancy.endDate, dateFormat)}. `;
 
         if (allRelevantTenancies.length > 1)
         {
@@ -275,7 +275,7 @@ class UnitModel extends BaseModel
                     {
                         message += "was reduced";
                     }
-                    message += ` on ${moment(tenancy.startDate).format(dateFormat)} to $${UnitModel.numberWithCommas(tenancy.yearlyRent / this.squareFootage, 2)} per square foot`;
+                    message += ` on ${formatDate(tenancy.startDate, dateFormat)} to $${UnitModel.numberWithCommas(tenancy.yearlyRent / this.squareFootage, 2)} per square foot`;
                 }
                 else
                 {
@@ -287,7 +287,7 @@ class UnitModel extends BaseModel
                     {
                         message += "is being reduced";
                     }
-                    message += ` on ${moment(tenancy.startDate).format(dateFormat)} to $${UnitModel.numberWithCommas(tenancy.yearlyRent / this.squareFootage, 2)} per square foot`;
+                    message += ` on ${formatDate(tenancy.startDate, dateFormat)} to $${UnitModel.numberWithCommas(tenancy.yearlyRent / this.squareFootage, 2)} per square foot`;
                 }
 
                 if (tenancyIndex < allRelevantTenancies.length - 1)

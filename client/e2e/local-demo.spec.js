@@ -1,6 +1,10 @@
-const { test, expect } = require('@playwright/test');
-const path = require('path');
-const fs = require('fs');
+import {test, expect} from '@playwright/test';
+import fs from 'node:fs';
+import path from 'node:path';
+import {fileURLToPath} from 'node:url';
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const apiBaseUrl = process.env.E2E_API_BASE_URL || 'http://localhost:8000';
 
 const appraisalRoutes = [
   '/appraisal/demo-appraisal/upload',
@@ -37,8 +41,8 @@ test('local no-login demo lists its seeded appraisal', async ({ page }) => {
 test('application shell assets load from nested routes', async ({ page }) => {
   await page.goto('/appraisal/demo-appraisal/general');
   const shellImages = page.locator('img[alt="Swiftly"], img[alt="Avatar"]');
-  await expect(shellImages).toHaveCount(3);
-  expect(await shellImages.evaluateAll(images => images.map(image => image.complete && image.naturalWidth > 0))).toEqual([true, true, true]);
+  await expect(shellImages).toHaveCount(2);
+  expect(await shellImages.evaluateAll(images => images.map(image => image.complete && image.naturalWidth > 0))).toEqual([true, true]);
 });
 
 test('local demo shell omits retired template controls', async ({ page }) => {
@@ -259,10 +263,52 @@ test('core workflows expose accessible structure, focus, labels, and controls', 
   expect(focusStyle).not.toBe('none');
 });
 
+test('unit rows support keyboard and pointer drag-and-drop', async ({page, request, browserName}) => {
+  const source = (await (await request.get(`${apiBaseUrl}/appraisals/demo-appraisal`)).json()).appraisal;
+  const created = await request.post(`${apiBaseUrl}/appraisals`, {
+    data: {...source, name: `Drag controls ${browserName} ${Date.now()}`},
+  });
+  expect(created.ok()).toBeTruthy();
+  const appraisalId = (await created.json())._id;
+  const originalOrder = source.units.map(unit => unit.unitNumber);
+  const swappedOrder = [originalOrder[1], originalOrder[0], ...originalOrder.slice(2)];
+  const readOrder = async () => {
+    const response = await request.get(`${apiBaseUrl}/appraisals/${appraisalId}`);
+    return (await response.json()).appraisal.units.map(unit => unit.unitNumber);
+  };
+
+  try {
+    await page.goto(`/appraisal/${appraisalId}/tenants/rent_roll`);
+    const firstHandle = page.getByRole('button', {name: 'Reorder unit'}).first();
+    await firstHandle.focus();
+    await page.keyboard.press('Space');
+    await page.waitForTimeout(100);
+    await page.keyboard.press('ArrowDown');
+    await page.waitForTimeout(100);
+    await page.keyboard.press('Space');
+    await expect(page.locator('[id^="DndLiveRegion-"]').filter({hasText: /was dropped over droppable area/})).toHaveCount(1);
+    await expect.poll(readOrder, {timeout: 10_000}).toEqual(swappedOrder);
+
+    await page.reload();
+    const handles = page.getByRole('button', {name: 'Reorder unit'});
+    const firstBox = await handles.nth(0).boundingBox();
+    const secondBox = await handles.nth(1).boundingBox();
+    expect(firstBox).not.toBeNull();
+    expect(secondBox).not.toBeNull();
+    await page.mouse.move(firstBox.x + firstBox.width / 2, firstBox.y + firstBox.height / 2);
+    await page.mouse.down();
+    await page.mouse.move(secondBox.x + secondBox.width / 2, secondBox.y + secondBox.height / 2, {steps: 10});
+    await page.mouse.up();
+    await expect.poll(readOrder, {timeout: 10_000}).toEqual(originalOrder);
+  } finally {
+    await request.delete(`${apiBaseUrl}/appraisals/${appraisalId}`);
+  }
+});
+
 test('failed appraisal saves show recoverable feedback', async ({ page }) => {
   await page.goto('/appraisal/demo-appraisal/general');
-  await page.route('**/appraisal/demo-appraisal', route => {
-    if (route.request().method() === 'POST') return route.abort('failed');
+  await page.route('**/appraisals/demo-appraisal', route => {
+    if (route.request().method() === 'PATCH') return route.abort('failed');
     return route.continue();
   });
 
@@ -297,7 +343,7 @@ test('upload and remove a document through the browser', async ({ page }) => {
   const upload = page.locator('input[type="file"]');
   const uploadName = `financial-statement-${Date.now()}.pdf`;
   const rows = page.locator('tr', { hasText: uploadName });
-  const uploadResponse = page.waitForResponse(response => response.url().includes('/appraisal/demo-appraisal/files') && response.request().method() === 'POST' && response.ok());
+  const uploadResponse = page.waitForResponse(response => response.url().includes('/appraisals/demo-appraisal/files') && response.request().method() === 'POST' && response.ok());
   await upload.setInputFiles({
     name: uploadName,
     mimeType: 'application/pdf',
@@ -310,6 +356,23 @@ test('upload and remove a document through the browser', async ({ page }) => {
   page.once('dialog', dialog => dialog.accept());
   await row.getByRole('button', { name: 'Remove' }).click();
   await expect(rows).toHaveCount(0);
+});
+
+test('reports and stored file resources use the canonical API', async ({request}) => {
+  const report = await request.get(`${apiBaseUrl}/appraisals/demo-appraisal/reports/rent_roll?format=xlsx`);
+  expect(report.ok()).toBeTruthy();
+  expect(report.headers()['content-type']).toContain('spreadsheetml');
+
+  const content = await request.get(`${apiBaseUrl}/appraisals/demo-appraisal/files/demo-financial-statement/content`);
+  expect(content.ok()).toBeTruthy();
+  expect(content.headers()['content-type']).toBe('application/pdf');
+
+  const renderedPage = await request.get(`${apiBaseUrl}/appraisals/demo-appraisal/files/demo-financial-statement/rendered-pages/1`);
+  expect(renderedPage.ok()).toBeTruthy();
+  expect(renderedPage.headers()['content-type']).toBe('image/png');
+
+  expect((await request.get(`${apiBaseUrl}/appraisal/demo-appraisal`)).status()).toBe(404);
+  expect((await request.get(`${apiBaseUrl}/appraisal/demo-appraisal/files/demo-financial-statement/content`)).status()).toBe(404);
 });
 
 for (const route of appraisalRoutes) {

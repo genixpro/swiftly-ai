@@ -23,8 +23,8 @@ import DateField from "../orm/DateField";
 import LeasingCostStructureModel from "./LeasingCostStructureModel";
 import _ from "underscore";
 import ComparableSaleModel from "./ComparableSaleModel";
-import Promise from "bluebird";
-import axios from "axios";
+import axios from '@api/client';
+import { mapConcurrent } from '@utils/promises';
 import ComparableLeaseModel from "./ComparableLeaseModel";
 import ComparableAdjustmentChartModel from "./ComparableAdjustmentChartModel";
 
@@ -251,7 +251,7 @@ class AppraisalModel extends BaseModel
             this[AppraisalModel._loadedComparableSales] = {};
         }
 
-        return Promise.map(this[compField], (comparableSaleId) =>
+        return mapConcurrent(this[compField], (comparableSaleId) =>
         {
             if (this[AppraisalModel._loadedComparableSales][comparableSaleId])
             {
@@ -259,7 +259,7 @@ class AppraisalModel extends BaseModel
             }
             else
             {
-                return axios.get(`/comparable_sales/` + comparableSaleId).then((response) =>
+                return axios.get(`/comparable-sales/` + comparableSaleId).then((response) =>
                 {
                     if (response.data.comparableSale)
                     {
@@ -281,7 +281,7 @@ class AppraisalModel extends BaseModel
             this[AppraisalModel._loadedComparableLeases] = {};
         }
 
-        return Promise.map(this.comparableLeases, (comparableLeaseId) =>
+        return mapConcurrent(this.comparableLeases, (comparableLeaseId) =>
         {
             if (this[AppraisalModel._loadedComparableLeases][comparableLeaseId])
             {
@@ -289,7 +289,7 @@ class AppraisalModel extends BaseModel
             }
             else
             {
-                return axios.get(`/comparable_leases/` + comparableLeaseId).then((response) =>
+                return axios.get(`/comparable-leases/` + comparableLeaseId).then((response) =>
                 {
                     if (response.data.comparableLease)
                     {

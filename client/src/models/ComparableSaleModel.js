@@ -6,7 +6,6 @@ import DateField from "../orm/DateField";
 import _ from "underscore";
 import StringField from "../orm/StringField";
 import FloatField from "../orm/FloatField";
-import moment from "moment";
 import BoolField from "../orm/BoolField";
 
 class ComparableSaleModel extends EquationMdoel

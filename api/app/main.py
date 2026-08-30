@@ -165,7 +165,7 @@ def public(document: dict) -> dict:
 
 
 def clean_payload(payload: dict) -> dict:
-    """Legacy clients send Mongo `_id`; identity is always route-controlled."""
+    """Ignore client-supplied identity fields; route parameters remain authoritative."""
     return {key: value for key, value in payload.items() if key not in {"_id", "id", "owner", "createdAt"}}
 
 
@@ -420,13 +420,12 @@ def health(request: Request):
     return {"status": "ok"}
 
 
-@app.get("/appraisal/")
 @app.get("/appraisals")
 def list_appraisals(request: Request):
     return {"appraisals": [public(item) for item in request.app.state.db.appraisals.find({}, {"name": 1, "address": 1, "appraisalType": 1})]}
 
 
-@app.post("/appraisal/")
+@app.post("/appraisals")
 def create_appraisal(payload: dict, request: Request):
     appraisal_id = str(uuid4())
     payload = with_appraisal_defaults(clean_payload(payload))
@@ -435,14 +434,14 @@ def create_appraisal(payload: dict, request: Request):
     return {"_id": appraisal_id}
 
 
-@app.get("/appraisal/{appraisal_id}")
+@app.get("/appraisals/{appraisal_id}")
 def get_appraisal(appraisal_id: str, request: Request):
     appraisal = request.app.state.db.appraisals.find_one({"_id": appraisal_id})
     if not appraisal: raise HTTPException(404, "Appraisal not found")
     return {"appraisal": public(appraisal)}
 
 
-@app.post("/appraisal/{appraisal_id}")
+@app.patch("/appraisals/{appraisal_id}")
 def update_appraisal(appraisal_id: str, payload: dict, request: Request):
     payload = clean_payload(payload)
     existing = request.app.state.db.appraisals.find_one({"_id": appraisal_id})
@@ -454,7 +453,7 @@ def update_appraisal(appraisal_id: str, payload: dict, request: Request):
     return {"appraisal": public(result)}
 
 
-@app.delete("/appraisal/{appraisal_id}")
+@app.delete("/appraisals/{appraisal_id}")
 def delete_appraisal(appraisal_id: str, request: Request):
     result = request.app.state.db.appraisals.find_one_and_delete({"_id": appraisal_id})
     if not result: raise HTTPException(404, "Appraisal not found")
@@ -465,7 +464,7 @@ def delete_appraisal(appraisal_id: str, request: Request):
     return {}
 
 
-@app.post("/appraisal/{appraisal_id}/convert_tenants")
+@app.post("/appraisals/{appraisal_id}/comparable-leases/from-tenants")
 def convert_tenants(appraisal_id: str, request: Request):
     appraisal = request.app.state.db.appraisals.find_one({"_id": appraisal_id})
     if not appraisal: raise HTTPException(404, "Appraisal not found")
@@ -500,42 +499,42 @@ def update_child(payload: dict, request: Request, collection: str, appraisal_id:
     return {"_id": record_id}
 
 
-@app.get("/appraisal/{appraisal_id}/leases")
+@app.get("/appraisals/{appraisal_id}/leases")
 def list_leases(appraisal_id: str, request: Request):
     return child_records(request, "leases", appraisal_id, "leases")
 
 
-@app.post("/appraisal/{appraisal_id}/leases")
+@app.post("/appraisals/{appraisal_id}/leases")
 def create_lease(appraisal_id: str, payload: dict, request: Request):
     return create_child(payload, request, "leases", appraisal_id)
 
 
-@app.get("/appraisal/{appraisal_id}/leases/{lease_id}")
+@app.get("/appraisals/{appraisal_id}/leases/{lease_id}")
 def get_lease(appraisal_id: str, lease_id: str, request: Request):
     return get_child(request, "leases", appraisal_id, lease_id, "lease")
 
 
-@app.post("/appraisal/{appraisal_id}/leases/{lease_id}")
+@app.patch("/appraisals/{appraisal_id}/leases/{lease_id}")
 def update_lease(appraisal_id: str, lease_id: str, payload: dict, request: Request):
     return update_child(payload, request, "leases", appraisal_id, lease_id)
 
 
-@app.get("/appraisal/{appraisal_id}/financial_statements")
+@app.get("/appraisals/{appraisal_id}/financial-statements")
 def list_financial_statements(appraisal_id: str, request: Request):
     return child_records(request, "financial_statements", appraisal_id, "financial_statements")
 
 
-@app.post("/appraisal/{appraisal_id}/financial_statements")
+@app.post("/appraisals/{appraisal_id}/financial-statements")
 def create_financial_statement(appraisal_id: str, payload: dict, request: Request):
     return create_child(payload, request, "financial_statements", appraisal_id)
 
 
-@app.get("/appraisal/{appraisal_id}/financial_statements/{statement_id}")
+@app.get("/appraisals/{appraisal_id}/financial-statements/{statement_id}")
 def get_financial_statement(appraisal_id: str, statement_id: str, request: Request):
     return get_child(request, "financial_statements", appraisal_id, statement_id, "financialStatement")
 
 
-@app.post("/appraisal/{appraisal_id}/financial_statements/{statement_id}")
+@app.patch("/appraisals/{appraisal_id}/financial-statements/{statement_id}")
 def update_financial_statement(appraisal_id: str, statement_id: str, payload: dict, request: Request):
     return update_child(payload, request, "financial_statements", appraisal_id, statement_id)
 
@@ -546,7 +545,7 @@ def collection_list(request: Request, collection: str, response_key: str, query:
     return {response_key: [public(record) for record in records]}
 
 
-@app.get("/comparable_sales")
+@app.get("/comparable-sales")
 def list_comparable_sales(request: Request):
     params = request.query_params
     query = numeric_filters(params, {"salePrice": "salePrice", "leaseableArea": "sizeSquareFootage", "capitalizationRate": "capitalizationRate", "pricePerSquareFoot": "pricePerSquareFoot", "clearCeilingHeight": "clearCeilingHeight", "shippingDoors": "shippingDoors", "siteCoverage": "siteCoverage", "sizeOfLandAcres": "sizeOfLandAcres", "sizeOfLandSqft": "sizeOfLandSqft", "pricePerSquareFootLand": "pricePerSquareFootLand", "pricePerAcreLand": "pricePerAcreLand", "pricePerSquareFootBuildableArea": "pricePerSquareFootBuildableArea"})
@@ -555,34 +554,33 @@ def list_comparable_sales(request: Request):
     return collection_list(request, "comparable_sales", "comparableSales", query, params.get("sort") or "-saleDate")
 
 
-@app.post("/comparable_sales")
+@app.post("/comparable-sales")
 def create_comparable_sale(payload: dict, request: Request):
     record = {**clean_payload(payload), "_id": str(uuid4()), "owner": "local-demo", "createdAt": datetime.now(UTC)}
     request.app.state.db.comparable_sales.insert_one(record)
     return {"_id": record["_id"]}
 
 
-@app.get("/comparable_sales/{comparable_id}")
+@app.get("/comparable-sales/{comparable_id}")
 def get_comparable_sale(comparable_id: str, request: Request):
     record = request.app.state.db.comparable_sales.find_one({"_id": comparable_id})
     return {"comparableSale": public(record) if record else None}
 
 
-@app.post("/comparable_sales/{comparable_id}")
+@app.patch("/comparable-sales/{comparable_id}")
 def update_comparable_sale(comparable_id: str, payload: dict, request: Request):
     result = request.app.state.db.comparable_sales.update_one({"_id": comparable_id}, {"$set": clean_payload(payload)})
     if not result.matched_count: raise HTTPException(404, "Comparable sale not found")
     return {"_id": comparable_id}
 
 
-@app.delete("/comparable_sales/{comparable_id}")
-@app.delete("/comparable_sale/{comparable_id}")
+@app.delete("/comparable-sales/{comparable_id}")
 def delete_comparable_sale(comparable_id: str, request: Request):
     if not request.app.state.db.comparable_sales.delete_one({"_id": comparable_id}).deleted_count: raise HTTPException(404, "Comparable sale not found")
     return {}
 
 
-@app.post("/comparable_sales_portfolio/")
+@app.post("/comparable-sale-portfolios")
 def save_comparable_sale_portfolio(payload: dict, request: Request):
     """Persist the legacy portfolio edit dialog atomically as individual comps."""
     raw_portfolio = payload.get("portfolio") or {}
@@ -599,7 +597,7 @@ def save_comparable_sale_portfolio(payload: dict, request: Request):
     return {"_id": portfolio_id, "subCompIds": portfolio["subCompIds"]}
 
 
-@app.get("/comparable_leases")
+@app.get("/comparable-leases")
 def list_comparable_leases(request: Request):
     params = request.query_params
     query = numeric_filters(params, {"sizeOfUnit": "sizeOfUnit", "taxesMaintenanceInsurance": "taxesMaintenanceInsurance"})
@@ -610,28 +608,28 @@ def list_comparable_leases(request: Request):
     return collection_list(request, "comparable_leases", "comparableLeases", query, params.get("sort") or "-leaseDate")
 
 
-@app.post("/comparable_leases")
+@app.post("/comparable-leases")
 def create_comparable_lease(payload: dict, request: Request):
     record = {**clean_payload(payload), "_id": str(uuid4()), "owner": "local-demo", "createdAt": datetime.now(UTC)}
     request.app.state.db.comparable_leases.insert_one(record)
     return {"_id": record["_id"]}
 
 
-@app.get("/comparable_leases/{comparable_id}")
+@app.get("/comparable-leases/{comparable_id}")
 def get_comparable_lease(comparable_id: str, request: Request):
     record = request.app.state.db.comparable_leases.find_one({"_id": comparable_id})
     if not record: raise HTTPException(404, "Comparable lease not found")
     return {"comparableLease": public(record)}
 
 
-@app.post("/comparable_leases/{comparable_id}")
+@app.patch("/comparable-leases/{comparable_id}")
 def update_comparable_lease(comparable_id: str, payload: dict, request: Request):
     result = request.app.state.db.comparable_leases.update_one({"_id": comparable_id}, {"$set": clean_payload(payload)})
     if not result.matched_count: raise HTTPException(404, "Comparable lease not found")
     return {"_id": comparable_id}
 
 
-@app.delete("/comparable_leases/{comparable_id}")
+@app.delete("/comparable-leases/{comparable_id}")
 def delete_comparable_lease(comparable_id: str, request: Request):
     if not request.app.state.db.comparable_leases.delete_one({"_id": comparable_id}).deleted_count: raise HTTPException(404, "Comparable lease not found")
     return {}
@@ -651,26 +649,26 @@ def create_zone(payload: dict, request: Request):
     return {"_id": record["_id"]}
 
 
-@app.get("/zone/{zone_id}")
+@app.get("/zones/{zone_id}")
 def get_zone(zone_id: str, request: Request):
     record = request.app.state.db.zones.find_one({"_id": zone_id})
     if not record: raise HTTPException(404, "Zone not found")
     return {"zone": public(record)}
 
 
-@app.post("/zone/{zone_id}")
+@app.patch("/zones/{zone_id}")
 def update_zone(zone_id: str, payload: dict, request: Request):
     if not request.app.state.db.zones.update_one({"_id": zone_id}, {"$set": clean_payload(payload)}).matched_count: raise HTTPException(404, "Zone not found")
     return {"_id": zone_id}
 
 
-@app.delete("/zone/{zone_id}")
+@app.delete("/zones/{zone_id}")
 def delete_zone(zone_id: str, request: Request):
     if not request.app.state.db.zones.delete_one({"_id": zone_id}).deleted_count: raise HTTPException(404, "Zone not found")
     return {}
 
 
-@app.get("/property_tags")
+@app.get("/property-tags")
 def list_property_tags(request: Request):
     query = {}
     if name := request.query_params.get("name"): query["name"] = {"$regex": name, "$options": "i"}
@@ -679,21 +677,21 @@ def list_property_tags(request: Request):
     return {"tags": [public(record) for record in records]}
 
 
-@app.post("/property_tags")
+@app.post("/property-tags")
 def create_property_tag(payload: dict, request: Request):
     record = {**clean_payload(payload), "_id": str(uuid4()), "owner": "local-demo"}
     request.app.state.db.property_tags.insert_one(record)
     return {"_id": record["_id"]}
 
 
-@app.delete("/property_tags/{tag_id}")
+@app.delete("/property-tags/{tag_id}")
 def delete_property_tag(tag_id: str, request: Request):
     deleted = request.app.state.db.property_tags.delete_one({"$or": [{"_id": tag_id}, {"name": tag_id}]}).deleted_count
     if not deleted: raise HTTPException(404, "Property tag not found")
     return {}
 
 
-@app.get("/tenant_names")
+@app.get("/tenant-names")
 def tenant_names(request: Request):
     query = {"tenantName": {"$ne": ""}}
     if name := request.query_params.get("tenantName"): query["tenantName"] = {"$regex": name, "$options": "i"}
@@ -792,7 +790,7 @@ def imported_comparable_rows(upload: UploadFile) -> list[dict]:
     return rows
 
 
-@app.post("/comparable_sale_upload/")
+@app.post("/comparable-sales/import")
 def upload_comparable_sales(request: Request, file: UploadFile = Upload(...)):
     rows = imported_comparable_rows(file)
     import_id = str(uuid4())
@@ -835,7 +833,7 @@ def report_rows(appraisal: dict, report: str, db=None) -> list[tuple[str, object
     return [("Property", appraisal.get("name", "")), ("Address", appraisal.get("address", ""))]
 
 
-@app.get("/appraisal/{appraisal_id}/files")
+@app.get("/appraisals/{appraisal_id}/files")
 def list_files(appraisal_id: str, request: Request, type: str | None = None):
     query = {"appraisalId": appraisal_id}
     if type: query["fileType"] = type
@@ -916,11 +914,6 @@ def upload_file(appraisal_id: str, request: Request, background_tasks: Backgroun
     return {"file": public(record)}
 
 
-@app.post("/appraisal/{appraisal_id}/files")
-def legacy_upload_file(appraisal_id: str, request: Request, background_tasks: BackgroundTasks, file: UploadFile = Upload(...)):
-    return upload_file(appraisal_id, request, background_tasks, file)
-
-
 def run_extraction(job_id: str, request: Request):
     db = request.app.state.db; job = db.extractions.find_one({"_id": job_id}); file = db.files.find_one({"_id": job["fileId"]})
     db.extractions.update_one({"_id": job_id}, {"$set": {"status": "running", "startedAt": datetime.now(UTC)}})
@@ -948,7 +941,6 @@ def run_extraction(job_id: str, request: Request):
 
 
 @app.post("/appraisals/{appraisal_id}/files/{file_id}/extract")
-@app.post("/appraisal/{appraisal_id}/files/{file_id}/reprocess")
 def extract_file(appraisal_id: str, file_id: str, request: Request, background_tasks: BackgroundTasks):
     if not request.app.state.db.files.find_one({"_id": file_id, "appraisalId": appraisal_id}): raise HTTPException(404, "File not found")
     job_id = queue_extraction(appraisal_id, file_id, request, background_tasks)
@@ -974,14 +966,14 @@ def patch_extraction(appraisal_id: str, file_id: str, payload: ExtractionPatch, 
     return {"file": public(result)}
 
 
-@app.get("/appraisal/{appraisal_id}/files/{file_id}")
+@app.get("/appraisals/{appraisal_id}/files/{file_id}")
 def get_file(appraisal_id: str, file_id: str, request: Request):
     record = request.app.state.db.files.find_one({"_id": file_id, "appraisalId": appraisal_id})
     if not record: raise HTTPException(404, "File not found")
     return {"file": public(record)}
 
 
-@app.post("/appraisal/{appraisal_id}/files/{file_id}")
+@app.patch("/appraisals/{appraisal_id}/files/{file_id}")
 def update_file(appraisal_id: str, file_id: str, payload: dict, request: Request):
     payload.pop("_id", None)
     record = request.app.state.db.files.find_one_and_update({"_id": file_id, "appraisalId": appraisal_id}, {"$set": payload}, return_document=ReturnDocument.AFTER)
@@ -989,7 +981,7 @@ def update_file(appraisal_id: str, file_id: str, payload: dict, request: Request
     return {"file": public(record)}
 
 
-@app.delete("/appraisal/{appraisal_id}/files/{file_id}")
+@app.delete("/appraisals/{appraisal_id}/files/{file_id}")
 def delete_file(appraisal_id: str, file_id: str, request: Request):
     record = request.app.state.db.files.find_one_and_delete({"_id": file_id, "appraisalId": appraisal_id})
     if not record: raise HTTPException(404, "File not found")
@@ -998,14 +990,14 @@ def delete_file(appraisal_id: str, file_id: str, request: Request):
     return {}
 
 
-@app.get("/appraisal/{appraisal_id}/files/{file_id}/contents")
+@app.get("/appraisals/{appraisal_id}/files/{file_id}/content")
 def file_contents(appraisal_id: str, file_id: str, request: Request):
     record = request.app.state.db.files.find_one({"_id": file_id, "appraisalId": appraisal_id})
     if not record: raise HTTPException(404, "File not found")
     return FileResponse(record["path"], filename=record["fileName"])
 
 
-@app.get("/appraisal/{appraisal_id}/files/{file_id}/rendered/{page}")
+@app.get("/appraisals/{appraisal_id}/files/{file_id}/rendered-pages/{page}")
 def rendered_file_page(appraisal_id: str, file_id: str, page: int, request: Request):
     record = request.app.state.db.files.find_one({"_id": file_id, "appraisalId": appraisal_id})
     if not record: raise HTTPException(404, "File not found")
@@ -1014,15 +1006,15 @@ def rendered_file_page(appraisal_id: str, file_id: str, page: int, request: Requ
     return FileResponse(images[page - 1])
 
 
-# This broad legacy route is intentionally declared after specific file routes.
-# Starlette matches in declaration order; putting it earlier would swallow file GETs.
-@app.get("/appraisal/{appraisal_id}/{report}/{format}")
+@app.get("/appraisals/{appraisal_id}/reports/{report}")
 def export_report(appraisal_id: str, report: str, format: str, request: Request):
-    if report not in REPORT_TITLES or format not in {"word", "excel", "detailed_word"}: raise HTTPException(404, "Export not found")
+    format_map = {"docx": "word", "xlsx": "excel", "detailed-docx": "detailed_word"}
+    legacy_format = format_map.get(format)
+    if report not in REPORT_TITLES or not legacy_format: raise HTTPException(404, "Export not found")
     appraisal = request.app.state.db.appraisals.find_one({"_id": appraisal_id})
     if not appraisal: raise HTTPException(404, "Appraisal not found")
     title, rows = REPORT_TITLES[report], report_rows(appraisal, report, request.app.state.db)
-    if format in {"word", "detailed_word"}:
+    if legacy_format in {"word", "detailed_word"}:
         document = Document(); document.add_heading(title, 0); document.add_paragraph(appraisal.get("name", ""))
         table = document.add_table(rows=1, cols=2); table.style = "Light Shading Accent 1"; table.rows[0].cells[0].text = "Item"; table.rows[0].cells[1].text = "Value"
         for label, value in rows: cells = table.add_row().cells; cells[0].text = str(label); cells[1].text = str(value)
