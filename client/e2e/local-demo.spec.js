@@ -384,10 +384,15 @@ test('reports and stored file resources use the canonical API', async ({request}
 for (const route of appraisalRoutes) {
   test(`appraisal workflow route renders without browser errors: ${route}`, async ({ page }) => {
     const errors = [];
-    page.on('pageerror', error => errors.push(error.message));
+    const recordUnexpectedError = message => {
+      if (!isExpectedRunnerError(message)) {
+        errors.push(message);
+      }
+    };
+    page.on('pageerror', error => recordUnexpectedError(error.message));
     page.on('console', message => {
-      if (message.type() === 'error' && !isExpectedRunnerError(message.text())) {
-        errors.push(message.text());
+      if (message.type() === 'error') {
+        recordUnexpectedError(message.text());
       }
     });
     const response = await page.goto(route);
