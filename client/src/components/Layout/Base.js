@@ -1,24 +1,69 @@
 import React from 'react';
+import { withRouter } from 'react-router-dom';
 
 import Header from './Header'
 import Sidebar from './Sidebar'
-import Offsidebar from './Offsidebar'
 import Footer from './Footer'
 
-const Base = props => (
-    <div className="wrapper">
-        <Header />
+class Base extends React.Component {
+    state = {isMobile: false, mobileNavigationOpen: false};
 
-        <Sidebar />
+    componentDidMount() {
+        this.mobileQuery = window.matchMedia('(max-width: 767.98px)');
+        this.updateMobileState(this.mobileQuery);
+        if (this.mobileQuery.addEventListener) this.mobileQuery.addEventListener('change', this.updateMobileState);
+        else this.mobileQuery.addListener(this.updateMobileState);
+    }
 
-        <Offsidebar />
+    componentDidUpdate(previousProps, previousState) {
+        if (previousProps.location.pathname !== this.props.location.pathname && this.state.mobileNavigationOpen) {
+            this.setState({mobileNavigationOpen: false});
+            return;
+        }
+        if (previousState.mobileNavigationOpen !== this.state.mobileNavigationOpen) {
+            document.body.classList.toggle('aside-toggled', this.state.mobileNavigationOpen);
+            if (this.state.mobileNavigationOpen) {
+                window.requestAnimationFrame(() => document.querySelector('#app-sidebar a, #app-sidebar button')?.focus());
+            }
+        }
+    }
 
-        <section className="section-container">
-            { props.children }
-        </section>
+    componentWillUnmount() {
+        if (this.mobileQuery) {
+            if (this.mobileQuery.removeEventListener) this.mobileQuery.removeEventListener('change', this.updateMobileState);
+            else this.mobileQuery.removeListener(this.updateMobileState);
+        }
+        document.body.classList.remove('aside-toggled');
+    }
 
-        <Footer />
-    </div>
-)
+    updateMobileState = (query) => {
+        this.setState({
+            isMobile: query.matches,
+            mobileNavigationOpen: query.matches ? this.state.mobileNavigationOpen : false
+        });
+    };
 
-export default Base;
+    toggleMobileNavigation = () => this.setState((state) => ({mobileNavigationOpen: !state.mobileNavigationOpen}));
+    closeMobileNavigation = () => this.state.mobileNavigationOpen && this.setState({mobileNavigationOpen: false});
+
+    render() {
+        const {isMobile, mobileNavigationOpen} = this.state;
+        return (
+            <div className="wrapper">
+                <a className="skip-link" href="#main-content">Skip to main content</a>
+                <Header
+                    mobileNavigationOpen={mobileNavigationOpen}
+                    onMobileNavigationToggle={this.toggleMobileNavigation}
+                    onMobileNavigationClose={this.closeMobileNavigation}
+                />
+                <Sidebar isMobile={isMobile} mobileNavigationOpen={mobileNavigationOpen} onNavigate={this.closeMobileNavigation} />
+                <main id="main-content" className="section-container" tabIndex="-1">
+                    {this.props.children}
+                </main>
+                <Footer />
+            </div>
+        );
+    }
+}
+
+export default withRouter(Base);

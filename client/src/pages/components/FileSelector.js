@@ -77,6 +77,7 @@ class FileSelector extends React.Component
                 ref={(ref) => this.onRef(ref)}
                 value={this.props.value}
                 disabled={this.props.disabled}
+                aria-label={this.props.ariaLabel || "Source file"}
                 onChange={(evt) => this.onChangeValue(evt.target.value)}
                 style={this.state.files.length === 0 ? {"color": "lightgray"} : null}
             >

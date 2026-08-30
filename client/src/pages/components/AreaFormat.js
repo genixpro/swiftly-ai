@@ -6,7 +6,7 @@ import _ from 'underscore';
 class AreaFormat extends React.Component
 {
     static defaultProps = {
-        spaces: true
+        spaces: false
     };
 
     render()

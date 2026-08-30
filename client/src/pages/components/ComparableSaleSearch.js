@@ -112,6 +112,7 @@ class ComparableSaleSearch extends React.Component
                                                         <FieldDisplayEdit
                                                             isSearch={true}
                                                             type={"date"}
+                                                            ariaLabel="Sale date start"
                                                             value={this.state.search.saleDateFrom}
                                                             onChange={(newValue) => this.changeSearchField("saleDateFrom", newValue)}
                                                             hideInput={false}
@@ -133,6 +134,7 @@ class ComparableSaleSearch extends React.Component
                                                         <FieldDisplayEdit
                                                             isSearch={true}
                                                             type={"date"}
+                                                            ariaLabel="Sale date end"
                                                             value={this.state.search.saleDateTo}
                                                             onChange={(newValue) => this.changeSearchField("saleDateTo", newValue)}
                                                             hideInput={false}
@@ -287,6 +289,7 @@ class ComparableSaleSearch extends React.Component
                                                         <FieldDisplayEdit
                                                             isSearch={true}
                                                             type={"date"}
+                                                            ariaLabel="Sale date start"
                                                             value={this.state.search.saleDateFrom}
                                                             onChange={(newValue) => this.changeSearchField("saleDateFrom", newValue)}
                                                             hideInput={false}
@@ -307,6 +310,7 @@ class ComparableSaleSearch extends React.Component
                                                         <FieldDisplayEdit
                                                             isSearch={true}
                                                             type={"date"}
+                                                            ariaLabel="Sale date end"
                                                             value={this.state.search.saleDateTo}
                                                             onChange={(newValue) => this.changeSearchField("saleDateTo", newValue)}
                                                             hideInput={false}
@@ -818,4 +822,3 @@ class ComparableSaleSearch extends React.Component
 
 
 export default ComparableSaleSearch;
-

@@ -212,9 +212,11 @@ class ComparableLeaseListItem extends React.Component
 
         const lastClass = this.props.last ? "last" : "";
 
+        const detailsOpen = _.isUndefined(this.state.detailsOpen) ? this.state.openByDefault : this.state.detailsOpen;
+
         const headerConfigurations = {
             leaseDate: {
-                render: (value) => <span>{new Date(value).getMonth() + 1} / {new Date(value).getFullYear().toString().substr(2)}</span>,
+                render: (value) => <span>{new Date(value).toLocaleDateString('en-CA', {month: 'short', year: 'numeric', timeZone: 'UTC'})}</span>,
                 size: 1
             },
             address: {
@@ -234,7 +236,7 @@ class ComparableLeaseListItem extends React.Component
                     }
                     else
                     {
-                        return null;
+                        return <span key={escalationIndex}><CurrencyFormat value={escalation.yearlyRent} cents={true} /><br/></span>;
                     }
                 }),
                 size: 2
@@ -276,10 +278,10 @@ class ComparableLeaseListItem extends React.Component
                     {
                         this.props.onRemoveComparableClicked && this.isCompWithinAppraisal(this.props.appraisalComparables) ?
                             <div className={`comparable-button-row`}>
-                                <Button color={"primary"} onClick={(evt) => this.props.onRemoveComparableClicked(comparableLease)} className={"move-comparable-button"}>
+                                <Button color={"primary"} onClick={(evt) => this.props.onRemoveComparableClicked(comparableLease)} className={"move-comparable-button"} title="Included in appraisal" aria-label="Remove comparable lease from appraisal">
                                     <i className={"fa fa-check-square"} />
                                 </Button>
-                                <Button color={"danger"} onClick={(evt) => this.deleteComparable()} className={"delete-comparable-button " + (this.state.detailsOpen ? "" : "hidden")}>
+                                <Button color={"danger"} onClick={(evt) => this.deleteComparable()} className={"delete-comparable-button " + (this.state.detailsOpen ? "" : "hidden")} title="Delete comparable lease" aria-label="Delete comparable lease">
                                     <i className={"fa fa-trash-alt"} />
                                 </Button>
                             </div> : null
@@ -287,10 +289,10 @@ class ComparableLeaseListItem extends React.Component
                     {
                         this.props.onAddComparableClicked && !this.isCompWithinAppraisal(this.props.appraisalComparables) ?
                             <div className={`comparable-button-row`}>
-                                <Button color={"primary"} onClick={(evt) => this.props.onAddComparableClicked(comparableLease)} className={"move-comparable-button"}>
+                                <Button color={"primary"} onClick={(evt) => this.props.onAddComparableClicked(comparableLease)} className={"move-comparable-button"} title="Not included in appraisal" aria-label="Add comparable lease to appraisal">
                                     <i className={"fa fa-square"} />
                                 </Button>
-                                <Button color={"danger"} onClick={(evt) => this.deleteComparable()} className={"delete-comparable-button " + (this.state.detailsOpen ? "" : "hidden")}>
+                                <Button color={"danger"} onClick={(evt) => this.deleteComparable()} className={"delete-comparable-button " + (this.state.detailsOpen ? "" : "hidden")} title="Delete comparable lease" aria-label="Delete comparable lease">
                                     <i className={"fa fa-trash-alt"} />
                                 </Button>
                             </div> : null
@@ -299,8 +301,15 @@ class ComparableLeaseListItem extends React.Component
                 <div className={"comparable-lease-item-content"}>
                     {
                         comparableLease && comparableLease._id && !this.props.openByDefault ?
-                            <CardHeader onClick={() => this.toggleDetails()} className={"comparable-lease-list-item-header"}>
-                                <CardTitle>
+                            <CardHeader className={"comparable-lease-list-item-header"}>
+                                <button
+                                    type="button"
+                                    className="comparable-expand-button"
+                                    onClick={() => this.toggleDetails()}
+                                    aria-expanded={Boolean(detailsOpen)}
+                                    aria-controls={`comparable-lease-details-${String(comparableLease._id).replace(/[^a-z0-9_-]/gi, '-')}`}
+                                >
+                                <CardTitle tag="div">
                                     <Row>
                                         {
                                             this.props.headers.map((headerFieldList, headerIndex) =>
@@ -315,9 +324,13 @@ class ComparableLeaseListItem extends React.Component
                                         }
                                     </Row>
                                 </CardTitle>
+                                </button>
                             </CardHeader> : null
                     }
-                    <Collapse isOpen={_.isUndefined(this.state.detailsOpen) ? this.state.openByDefault : this.state.detailsOpen}>
+                    <Collapse
+                        id={comparableLease && comparableLease._id ? `comparable-lease-details-${String(comparableLease._id).replace(/[^a-z0-9_-]/gi, '-')}` : undefined}
+                        isOpen={detailsOpen}
+                    >
                         <div className={`card-body comparable-lease-list-item-body ${editableClass}`}>
                             <UploadableImageSet
                                 editable={this.props.edit}
@@ -416,7 +429,7 @@ class ComparableLeaseListItem extends React.Component
                                                         value={escalation.yearlyRent}
                                                         onChange={(newValue) => this.changeEscalationField(escalation, 'yearlyRent', newValue)}
                                                     />
-                                                    <Button color={"secondary"} onClick={() => this.removeEscalation(escalationIndex)}><i className={"fa fa-trash"} /></Button>
+                                                    <Button color={"secondary"} onClick={() => this.removeEscalation(escalationIndex)} aria-label={`Remove rent escalation ${escalationIndex + 1}`}><i className={"fa fa-trash"} aria-hidden="true" /></Button>
                                                 </div>
                                             }).concat([
                                                 <div className={"escalation"} key={(comparableLease.rentEscalations || [] ).length}>
@@ -444,7 +457,7 @@ class ComparableLeaseListItem extends React.Component
                                                         placeholder={"Yearly Rent"}
                                                         onChange={(newValue) => this.createNewEscalation('yearlyRent', newValue)}
                                                     />
-                                                    <Button color={"secondary"} onClick={() => this.createNewEscalation('yearlyRent', 0)}><i className={"fa fa-plus"} /></Button>
+                                                    <Button color={"secondary"} onClick={() => this.createNewEscalation('yearlyRent', 0)} aria-label="Add rent escalation"><i className={"fa fa-plus"} aria-hidden="true" /></Button>
                                                 </div>
                                             ])
                                         }

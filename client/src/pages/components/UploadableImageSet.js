@@ -175,7 +175,7 @@ class UploadableImageSet extends React.Component
                                         onExited={this.onExited.bind(this)}
                                         key={url}
                                     >
-                                        <img src={url} alt={"Image of Property"} />
+                                        <img src={url} alt={this.props.address ? `Property at ${this.props.address}` : "Property"} />
                                         {/*<CarouselCaption captionText={item.caption} captionHeader={item.caption} />*/}
                                     </CarouselItem>
                                 })
@@ -209,14 +209,15 @@ class UploadableImageSet extends React.Component
                                 (this.props.value || []).map((item, itemIndex) =>
                                 {
                                     return <div className={"image-wrapper"} key={item} onClick={() => this.setState({activeIndex: itemIndex})} >
-                                            <img src={item + "?access_token=" + this.props.accessToken} className={"uploadable-image-carousel-image"} />
+                                            <img src={item + "?access_token=" + this.props.accessToken} className={"uploadable-image-carousel-image"} alt={`Property thumbnail ${itemIndex + 1}`} />
                                             {
                                                 this.props.editable ?
                                                     <Button
                                                         color="secondary"
                                                         className={"delete-image-button"}
                                                         onClick={(evt) => this.deleteImage(itemIndex)}
-                                                        title={"Delete Expense"}
+                                                        title={"Delete image"}
+                                                        aria-label={`Delete property image ${itemIndex + 1}`}
                                                     >
                                                         <i className="fa fa-times"></i>
                                                     </Button> : null
@@ -242,17 +243,21 @@ class UploadableImageSet extends React.Component
                             }
                             {
                                 this.props.editable ?
-                                <Dropzone onDrop={acceptedFiles => this.onFileUpload(acceptedFiles)} className={"file-upload-box"}>
-                                    <Button className={"uploadable-image-new-image-button"}>
-                                        <i className={"fa fa-plus"} />
+                                <Dropzone
+                                    onDrop={acceptedFiles => this.onFileUpload(acceptedFiles)}
+                                    className={"file-upload-box"}
+                                    inputProps={{'aria-label': 'Upload property images'}}
+                                >
+                                    <Button type="button" className={"uploadable-image-new-image-button"} title="Add property image" aria-label="Add property image">
+                                        <i className={"fa fa-plus"} aria-hidden="true" />
                                     </Button>
                                 </Dropzone> : null
                             }
                         </nav>
                     </div>
                 </div>
-                <div className={"full-screen-button"} onClick={() => this.toggleFullscreen()}>
-                    <Button color={"secondary"}><i className={"fa fa-expand"} /> </Button>
+                <div className={"full-screen-button"}>
+                    <Button color={"secondary"} onClick={() => this.toggleFullscreen()} title="View image fullscreen" aria-label="View property image fullscreen"><i className={"fa fa-expand"} /> </Button>
                 </div>
             </div>
         );

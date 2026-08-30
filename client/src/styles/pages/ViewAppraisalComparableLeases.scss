@@ -7,4 +7,30 @@
     float: right;
 
   }
+
+  @media (max-width: 767.98px)
+  {
+    .comparables-list-column
+    {
+      overflow-x: auto;
+      padding-bottom: 0.75rem;
+    }
+
+    .comparable-lease-list-header,
+    .comparable-lease-list-item
+    {
+      min-width: 650px;
+    }
+
+    .comparables-map-column
+    {
+      margin-top: 1rem;
+    }
+
+    .comparable-leases-map
+    {
+      height: 55vh;
+      min-height: 360px;
+    }
+  }
 }

@@ -305,6 +305,7 @@ class FileViewer extends React.Component
                                         value={this.state.currentPage}
                                         ref={(ref) => this.pageSelectRef = ref}
                                         onChange={(evt) => this.changePage(evt)}
+                                        aria-label="Preview page"
                                         className="custom-select">
                                     {
                                         _.range(1, pageCount + 1).map((page) =>
@@ -314,12 +315,12 @@ class FileViewer extends React.Component
                                     }
                                 </select>
                             </div>
-                            <div>
-                                <em className="fa-2x icon-magnifier-add mr-2" onClick={() => this.zoomIn()}></em>
-                            </div>
-                            <div>
-                                <em className="fa-2x icon-magnifier-remove mr-2" onClick={() => this.zoomOut()}></em>
-                            </div>
+                            <button type="button" className="viewer-toolbar-button icon-button" onClick={() => this.zoomIn()} aria-label="Zoom document preview in">
+                                <em className="fa-2x icon-magnifier-add" aria-hidden="true"></em>
+                            </button>
+                            <button type="button" className="viewer-toolbar-button icon-button" onClick={() => this.zoomOut()} aria-label="Zoom document preview out">
+                                <em className="fa-2x icon-magnifier-remove" aria-hidden="true"></em>
+                            </button>
                         </div> : null}
                         <div className={"file-viewer-image-outer-container"}
                              id={"file-viewer-image-outer-container"}

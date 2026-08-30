@@ -36,8 +36,9 @@ class ComparableLeaseListHeaderColumn extends React.Component
             colClass = "middle-col"
         }
 
-        return <Col className={`header-field-column ${colClass}`} {...colProps} onClick={() => this.props.changeSortColumn(this.props.sortField)}>
-
+        const sortDirection = this.props.sort === `+${this.props.sortField}` ? 'ascending' : this.props.sort === `-${this.props.sortField}` ? 'descending' : 'none';
+        return <Col className={`header-field-column ${colClass}`} {...colProps} role="columnheader" aria-sort={sortDirection}>
+            <button type="button" className="comparable-sort-button" onClick={() => this.props.changeSortColumn(this.props.sortField)}>
             {
                 this.props.fields.map((field, fieldIndex) =>
                 {
@@ -49,6 +50,7 @@ class ComparableLeaseListHeaderColumn extends React.Component
                 })
             }
 
+            </button>
         </Col>
     }
 }
@@ -211,11 +213,11 @@ class ComparableLeaseList extends React.Component
 
     renderNewItemRow()
     {
-        return <div className="card b new-comparable" onClick={() => this.toggleCreateNewItem()}>
+        return <button type="button" className="card b new-comparable" onClick={() => this.toggleCreateNewItem()}>
             <div className="card-body">
                 <span>Create new comparable...</span>
             </div>
-        </div>
+        </button>
     }
 
     changeSortColumn(field)
@@ -315,7 +317,7 @@ class ComparableLeaseList extends React.Component
                 {
                     <div className={`card b comparable-lease-list-header`}>
                         <CardHeader className={`comparable-lease-list-item-header ${firstSpacing}`}>
-                            <CardTitle>
+                            <CardTitle tag="div">
                                 <Row>
                                     {
                                         headerFields.map((headerFieldList, headerIndex) =>

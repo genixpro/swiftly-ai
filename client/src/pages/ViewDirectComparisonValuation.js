@@ -288,7 +288,8 @@ class ViewDirectComparisonValuation extends React.Component
                             <div className={"stabilized-statement-centered"}>
                                 <h3>Direct Comparison Approach</h3>
                                 <h4>{this.props.appraisal.address}</h4>
-                                <div className="comparable-list-scroll">
+                                <div className="horizontal-scroll-hint">Scroll horizontally to review every comparable field.</div>
+                                <div className="comparable-list-scroll" tabIndex="0" aria-label="Comparable sales; scroll horizontally for more columns">
                                 <ComparableSaleList comparableSales={this.state.comparableSales}
                                                     statsTitle={""}
                                                     statsPosition={"below"}
@@ -332,7 +333,8 @@ class ViewDirectComparisonValuation extends React.Component
                                 <Col xs={12} lg={8}>
                                     <div className={"stabilized-statement-centered"}>
                                 <h3>Valuation</h3>
-                                <div className="valuation-table-scroll">
+                                <div className="horizontal-scroll-hint">Scroll horizontally to review the complete valuation.</div>
+                                <div className="valuation-table-scroll" tabIndex="0" aria-label="Valuation table; scroll horizontally for more columns">
                                 <Table className={"statement-table "}>
                                     <tbody>
                                     {/*<tr className={"data-row"}>*/}
@@ -352,7 +354,7 @@ class ViewDirectComparisonValuation extends React.Component
                                                                 <NumberFormat
                                                                     value={this.props.appraisal.sizeOfBuilding || 0}
                                                                     displayType={'text'}
-                                                                    thousandSeparator={', '}
+                                                                    thousandSeparator={','}
                                                                     decimalScale={0}
                                                                     fixedDecimalScale={true}
                                                                 /> sqft @ <CurrencyFormat value={this.props.appraisal.directComparisonInputs.pricePerSquareFoot} />
@@ -364,7 +366,7 @@ class ViewDirectComparisonValuation extends React.Component
                                                                 <NumberFormat
                                                                     value={this.props.appraisal.sizeOfBuilding || 0}
                                                                     displayType={'text'}
-                                                                    thousandSeparator={', '}
+                                                                    thousandSeparator={','}
                                                                     decimalScale={0}
                                                                     fixedDecimalScale={true}
                                                                 /> sqft @ <CurrencyFormat value={this.props.appraisal.directComparisonInputs.noiPSFPricePerSquareFoot}/>
@@ -376,7 +378,7 @@ class ViewDirectComparisonValuation extends React.Component
                                                                 <NumberFormat
                                                                     value={this.props.appraisal.sizeOfLand * 43560 || 0}
                                                                     displayType={'text'}
-                                                                    thousandSeparator={', '}
+                                                                    thousandSeparator={','}
                                                                     decimalScale={0}
                                                                     fixedDecimalScale={true}
                                                                 /> sqft @ <CurrencyFormat value={this.props.appraisal.directComparisonInputs.pricePerSquareFootLand}/>
@@ -388,7 +390,7 @@ class ViewDirectComparisonValuation extends React.Component
                                                                 <NumberFormat
                                                                     value={this.props.appraisal.sizeOfLand || 0}
                                                                     displayType={'text'}
-                                                                    thousandSeparator={', '}
+                                                                    thousandSeparator={','}
                                                                     decimalScale={0}
                                                                     fixedDecimalScale={true}
                                                                 /> acres @ <CurrencyFormat value={this.props.appraisal.directComparisonInputs.pricePerAcreLand}/>
@@ -400,7 +402,7 @@ class ViewDirectComparisonValuation extends React.Component
                                                                 <NumberFormat
                                                                     value={this.props.appraisal.buildableArea || 0}
                                                                     displayType={'text'}
-                                                                    thousandSeparator={', '}
+                                                                    thousandSeparator={','}
                                                                     decimalScale={0}
                                                                     fixedDecimalScale={true}
                                                                 /> psf @ <CurrencyFormat value={this.props.appraisal.directComparisonInputs.pricePerSquareFootBuildableArea}/>
@@ -412,7 +414,7 @@ class ViewDirectComparisonValuation extends React.Component
                                                                 <NumberFormat
                                                                     value={this.props.appraisal.buildableUnits || 0}
                                                                     displayType={'text'}
-                                                                    thousandSeparator={', '}
+                                                                    thousandSeparator={','}
                                                                     decimalScale={0}
                                                                     fixedDecimalScale={true}
                                                                 /> units @ <CurrencyFormat value={this.props.appraisal.directComparisonInputs.pricePerBuildableUnit}/>

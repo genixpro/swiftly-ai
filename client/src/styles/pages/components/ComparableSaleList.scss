@@ -6,6 +6,20 @@
   color: gray;
   text-align: center;
   border-radius: 0;
+  width: 100%;
+  font: inherit;
+}
+
+.comparable-sort-button {
+  width: 100%;
+  min-height: 36px;
+  padding: 0;
+  border: 0;
+  color: inherit;
+  background: transparent;
+  font: inherit;
+  font-weight: inherit;
+  text-align: inherit;
 }
 
 .new-comp-dialog

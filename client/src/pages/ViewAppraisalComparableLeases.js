@@ -116,7 +116,7 @@ class ViewAppraisalComparableLeases extends React.Component {
                     {/*</Col>*/}
                 </Row>
                 <Row>
-                    <Col xs={8}>
+                    <Col xs={12} md={8} className="comparables-list-column">
                         <ComparableLeaseList comparableLeases={this.state.comparableLeases}
                                              statsTitle={"Statistics for Selected Comps"}
                                             allowNew={false}
@@ -131,7 +131,7 @@ class ViewAppraisalComparableLeases extends React.Component {
                                             onChange={(comps) => this.onComparablesChanged(comps)}
                         />
                     </Col>
-                    <Col xs={4}>
+                    <Col xs={12} md={4} className="comparables-map-column">
                         <ComparableLeasesMap
                             appraisal={this.props.appraisal}
                             comparableLeases={this.state.comparableLeases}

@@ -59,7 +59,7 @@ class ViewDiscountedCashFlow extends React.Component
             </td>
             {
                 this.props.appraisal.discountedCashFlow.cashFlowSummary.years.map((year) => <td key={year} className={"amount-column"}>
-                    <span><NumberFormat value={cashFlowSummaryItem.amounts[year]} displayType={"text"} decimalScale={2} thousandSeparator={", "} /></span>
+                    <span><NumberFormat value={cashFlowSummaryItem.amounts[year]} displayType={"text"} decimalScale={2} thousandSeparator={","} /></span>
                 </td>)
             }
         </tr>

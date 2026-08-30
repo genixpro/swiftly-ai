@@ -83,11 +83,6 @@ const Menu = [
             // }
         ]
     },
-    {
-        name: 'Log Out',
-        path: '/logout',
-        icon : 'fa fa-door-open',
-    },
 ];
 
 export default Menu;

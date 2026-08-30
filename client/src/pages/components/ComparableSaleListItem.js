@@ -473,6 +473,7 @@ class ComparableSaleListItem extends React.Component
         const lastClass = this.props.last ? "last" : "";
 
         let comparableSale = this.props.comparableSale;
+        const detailsOpen = _.isUndefined(this.state.detailsOpen) ? this.state.openByDefault : this.state.detailsOpen;
 
         let allowEdit = this.props.edit;
 
@@ -699,10 +700,10 @@ class ComparableSaleListItem extends React.Component
                     {
                         this.props.onRemoveComparableClicked && this.props.appraisal.hasComparableSale(comparableSale) ?
                             <div className={`comparable-button-row`}>
-                                <Button color={"primary"} onClick={(evt) => this.props.onRemoveComparableClicked(comparableSale)} className={"move-comparable-button"}>
+                                <Button color={"primary"} onClick={(evt) => this.props.onRemoveComparableClicked(comparableSale)} className={"move-comparable-button"} title="Included in appraisal" aria-label="Remove comparable sale from appraisal">
                                     <i className={"fa fa-check-square"} />
                                 </Button>
-                                <Button color={"danger"} onClick={(evt) => this.deleteComparable()} className={"delete-comparable-button " + (this.state.detailsOpen ? "" : "hidden")}>
+                                <Button color={"danger"} onClick={(evt) => this.deleteComparable()} className={"delete-comparable-button " + (this.state.detailsOpen ? "" : "hidden")} title="Delete comparable sale" aria-label="Delete comparable sale">
                                     <i className={"fa fa-trash-alt"} />
                                 </Button>
                             </div> : null
@@ -710,10 +711,10 @@ class ComparableSaleListItem extends React.Component
                     {
                         this.props.onAddComparableClicked && !this.props.appraisal.hasComparableSale(comparableSale) ?
                             <div className={`comparable-button-row`}>
-                                <Button color={"primary"} onClick={(evt) => this.props.onAddComparableClicked(comparableSale)} className={"move-comparable-button"}>
+                                <Button color={"primary"} onClick={(evt) => this.props.onAddComparableClicked(comparableSale)} className={"move-comparable-button"} title="Not included in appraisal" aria-label="Add comparable sale to appraisal">
                                     <i className={"fa fa-square"} />
                                 </Button>
-                                <Button color={"danger"} onClick={(evt) => this.deleteComparable()} className={"delete-comparable-button " + (this.state.detailsOpen ? "" : "hidden")}>
+                                <Button color={"danger"} onClick={(evt) => this.deleteComparable()} className={"delete-comparable-button " + (this.state.detailsOpen ? "" : "hidden")} title="Delete comparable sale" aria-label="Delete comparable sale">
                                     <i className={"fa fa-trash-alt"} />
                                 </Button>
                             </div> : null
@@ -722,8 +723,15 @@ class ComparableSaleListItem extends React.Component
                 <div className={"comparable-sale-item-content"}>
                     {
                         comparableSale._id && !this.props.openByDefault ?
-                        <CardHeader onClick={() => this.toggleDetails()} className={"comparable-sale-list-item-header"}>
-                            <CardTitle>
+                        <CardHeader className={"comparable-sale-list-item-header"}>
+                            <button
+                                type="button"
+                                className="comparable-expand-button"
+                                onClick={() => this.toggleDetails()}
+                                aria-expanded={Boolean(detailsOpen)}
+                                aria-controls={`comparable-details-${String(comparableSale._id).replace(/[^a-z0-9_-]/gi, '-')}`}
+                            >
+                            <CardTitle tag="div">
                                 <Row>
                                     {
                                         this.props.headers.map((headerFieldList, headerIndex) =>
@@ -740,9 +748,13 @@ class ComparableSaleListItem extends React.Component
                                     }
                                 </Row>
                             </CardTitle>
+                            </button>
                         </CardHeader> : null
                     }
-                    <Collapse isOpen={_.isUndefined(this.state.detailsOpen) ? this.state.openByDefault : this.state.detailsOpen}>
+                    <Collapse
+                        id={comparableSale._id ? `comparable-details-${String(comparableSale._id).replace(/[^a-z0-9_-]/gi, '-')}` : undefined}
+                        isOpen={detailsOpen}
+                    >
                         <div className={`card-body comparable-sale-list-item-body ${editableClass}`}>
                             <div className={"comparable-sale-list-item-left-column"}>
                                 <UploadableImageSet

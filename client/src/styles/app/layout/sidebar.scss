@@ -14,7 +14,7 @@ $sidebar-icon-color-active:       $nav-top-bg;
 $sidebar-bullet-color:            rgba(0,0,0,.25);
 $sidebar-bullet-color-active:     $sidebar-icon-color-active;
 
-$sidebar-heading-color:           #919DA8;
+$sidebar-heading-color:           #66727c;
 $sidebar-label-color:             $sidebar-item-color;
 
 $submenu-header-hg:               40px;   // Submenu header when hover collapse sidebar
@@ -75,11 +75,14 @@ $scrollbar-wd:                    17px;
             letter-spacing: .025em;
             font-weight: normal;
             cursor: pointer;
+            width: 100%;
+            border: 0;
+            background: transparent;
+            font: inherit;
+            text-align: left;
 
-            &:focus,
             &:hover {
                 text-decoration: none;
-                outline: none;
                 color: $sidebar-item-color-active;
             } // Item icon
             >em {

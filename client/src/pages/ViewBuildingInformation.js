@@ -34,6 +34,8 @@ class ViewBuildingInformation extends React.Component
             <td>
                 <FieldDisplayEdit
                     type={fieldType}
+                    title={title}
+                    ariaLabel={title}
                     value={this.props.appraisal[fieldName]}
                     onChange={(newValue) => this.changeAppraisalField(fieldName, newValue)}
                     location={this.props.appraisal.location ? {lat: () => this.props.appraisal.location.coordinates[1], lng: () => this.props.appraisal.location.coordinates[0]} : null}

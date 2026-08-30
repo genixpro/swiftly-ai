@@ -38,7 +38,7 @@ class ViewComparableSales extends React.Component {
             <AppraisalContentHeader key={1} appraisal={this.props.appraisal} title="Comparable Sales" />,
             <Row key={2}>
                 <Col xs={12}>
-                    <Nav tabs>
+                    <Nav tabs className="comparables-navigation">
                         <NavItem>
                             <NavLink to={`${this.props.match.url}/database`} activeClassName="active" tag={RRNavLink}>Comparable Sales Database</NavLink>
                         </NavItem>

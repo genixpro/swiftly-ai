@@ -40,6 +40,7 @@ class TenancyTypeSelector extends React.Component
                 ref={(ref) => this.onRef(ref)}
                 value={this.props.value}
                 title={this.props.title || this.props.placeholder}
+                aria-label={this.props.title || this.props.placeholder || "Tenancy type"}
                 disabled={this.props.disabled}
                 style={{"color": !this.props.value ? "lightgrey" : ""}}
 

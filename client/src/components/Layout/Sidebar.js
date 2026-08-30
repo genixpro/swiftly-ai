@@ -16,9 +16,9 @@ const SidebarItemHeader = ({item}) => (
 );
 
 /** Normal items for the sidebar */
-const SidebarItem = ({item, isActive}) => (
+const SidebarItem = ({item, isActive, onNavigate, navigationDisabled}) => (
     <li className={isActive ? 'active' : ''}>
-        <Link to={item.path} title={item.name}>
+        <Link to={item.path} title={item.name} onClick={onNavigate} tabIndex={navigationDisabled ? -1 : undefined} aria-current={isActive ? 'page' : undefined}>
             {item.label && <Badge tag="div" className="float-right" color={item.label.color}>{item.label.value}</Badge>}
             {item.icon && <em className={item.icon}></em>}
             <span><Trans i18nKey={item.translate}>{item.name}</Trans></span>
@@ -27,20 +27,21 @@ const SidebarItem = ({item, isActive}) => (
 );
 
 /** Build a sub menu with items inside and attach collapse behavior */
-const SidebarSubItem = ({item, isActive, handler, children, isOpen}) => (
-    <li className={isActive ? 'active' : ''}>
-        <div className="nav-item" onClick={handler}>
+const SidebarSubItem = ({item, isActive, handler, children, isOpen, navigationDisabled}) => {
+    const submenuId = `sidebar-submenu-${item.name.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`;
+    return <li className={isActive ? 'active' : ''}>
+        <button type="button" className="nav-item" onClick={handler} tabIndex={navigationDisabled ? -1 : undefined} aria-expanded={isOpen} aria-controls={submenuId}>
             {item.label && <Badge tag="div" className="float-right" color={item.label.color}>{item.label.value}</Badge>}
-            {item.icon && <em className={item.icon}></em>}
+            {item.icon && <em className={item.icon} aria-hidden="true"></em>}
             <span><Trans i18nKey={item.translate}>{item.name}</Trans></span>
-        </div>
+        </button>
         <Collapse isOpen={isOpen}>
-            <ul id={item.path} className="sidebar-nav sidebar-subnav">
+            <ul id={submenuId} className="sidebar-nav sidebar-subnav">
                 {children}
             </ul>
         </Collapse>
-    </li>
-);
+    </li>;
+};
 
 /** Component used to display a header on menu when using collapsed/hover mode */
 const SidebarSubHeader = ({item}) => (
@@ -52,7 +53,8 @@ export class Sidebar extends Component
 
     state = {
         collapse: {},
-        appraisalType: "detailed"
+        appraisalType: null,
+        hasActiveAppraisal: false
     };
 
     static globalSidebar = null;
@@ -64,12 +66,19 @@ export class Sidebar extends Component
 
     changeAppraisalType(appraisalType)
     {
-        if (appraisalType !== this.state.appraisalType)
+        if (appraisalType !== this.state.appraisalType || !this.state.hasActiveAppraisal)
         {
-            this.setState({appraisalType: appraisalType})
+            this.setState({appraisalType: appraisalType, hasActiveAppraisal: true})
         }
     }
 
+    clearAppraisal()
+    {
+        if (this.state.hasActiveAppraisal)
+        {
+            this.setState({appraisalType: null, hasActiveAppraisal: false});
+        }
+    }
     componentDidMount()
     {
         Sidebar.globalSidebar = this;
@@ -77,7 +86,20 @@ export class Sidebar extends Component
         // pass navigator to access router api
         SidebarRun(this.navigator.bind(this));
         // prepare the flags to handle menu collapsed states
-        this.buildCollapseList()
+        this.buildCollapseList();
+        this.updateInertState();
+    }
+
+    componentDidUpdate(previousProps) {
+        if (previousProps.isMobile !== this.props.isMobile || previousProps.mobileNavigationOpen !== this.props.mobileNavigationOpen) {
+            this.updateInertState();
+        }
+    }
+
+    updateInertState() {
+        if (this.asideElement) {
+            this.asideElement.inert = Boolean(this.props.isMobile && !this.props.mobileNavigationOpen);
+        }
     }
 
     /** prepare initial state of collapse menus. Doesn't allow same route names */
@@ -156,6 +178,11 @@ export class Sidebar extends Component
         const route = this.matchRouteForItem(item);
         if (route.indexOf(":appraisalId") !== -1)
         {
+            if (!this.state.hasActiveAppraisal)
+            {
+                return false;
+            }
+
             if(item.appraisalType)
             {
                 if (this.state.appraisalType !== item.appraisalType)
@@ -210,7 +237,14 @@ export class Sidebar extends Component
     render()
     {
         return (
-            <aside className='aside-container'>
+            <aside
+                id="app-sidebar"
+                className='aside-container'
+                aria-label="Primary navigation"
+                aria-hidden={this.props.isMobile && !this.props.mobileNavigationOpen ? true : undefined}
+                inert={this.props.isMobile && !this.props.mobileNavigationOpen ? "" : undefined}
+                ref={(element) => this.asideElement = element}
+            >
                 {/* START Sidebar (left) */}
                 <div className="aside-inner">
                     <nav data-sidebar-anyclick-close="" className="sidebar">
@@ -242,6 +276,8 @@ export class Sidebar extends Component
                                             return (
                                                 <SidebarItem isActive={this.routeActive(this.matchRouteForItem(item))}
                                                              item={this.getItemWithIds(item)}
+                                                             onNavigate={this.props.onNavigate}
+                                                             navigationDisabled={this.props.isMobile && !this.props.mobileNavigationOpen}
                                                              key={i}/>
                                             );
                                         if (this.itemType(item) === 'submenu')
@@ -250,6 +286,7 @@ export class Sidebar extends Component
                                                                 isOpen={this.state.collapse[item.name]}
                                                                 handler={this.toggleItemCollapse.bind(this, item.name)}
                                                                 isActive={this.routeActive(this.getSubRoutes(item))}
+                                                                navigationDisabled={this.props.isMobile && !this.props.mobileNavigationOpen}
                                                                 key={i}>
                                                     <SidebarSubHeader item={item} key={i}/>
                                                     {
@@ -262,6 +299,8 @@ export class Sidebar extends Component
 
                                                                 return <SidebarItem key={i}
                                                                              item={this.getItemWithIds(subitem)}
+                                                                             onNavigate={this.props.onNavigate}
+                                                                             navigationDisabled={this.props.isMobile && !this.props.mobileNavigationOpen}
                                                                              isActive={this.routeActive(this.matchRouteForItem(subitem))}/>
                                                             }
                                                         )

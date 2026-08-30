@@ -6,6 +6,9 @@
   margin-bottom: 0;
   color: gray;
   text-align: center;
+  border-radius: 0;
+  width: 100%;
+  font: inherit;
 }
 
 .new-comparable:hover
@@ -197,7 +200,17 @@
 
 .comparable-lease-list-item-header
 {
-  cursor: pointer;
+  .comparable-expand-button {
+    width: 100%;
+    min-height: 36px;
+    padding: 0;
+    border: 0;
+    color: inherit;
+    background: transparent;
+    font: inherit;
+    text-align: inherit;
+    cursor: pointer;
+  }
 
   span.no-data
   {

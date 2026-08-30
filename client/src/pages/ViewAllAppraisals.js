@@ -15,6 +15,8 @@ class ViewAllAppraisals extends React.Component {
 
     componentDidMount()
     {
+        document.title = "Appraisals – Swiftly";
+        if (this.heading) this.heading.focus();
         this.reloadAppraisals();
     }
 
@@ -40,12 +42,12 @@ class ViewAllAppraisals extends React.Component {
         return (
             <ContentWrapper>
                 <div className="content-heading">
-                    <div>View All Appraisals
+                    <div><h1 className="page-title" tabIndex="-1" ref={(heading) => this.heading = heading}>View All Appraisals</h1>
 
                         {/* Breadcrumb below title */}
-                        <ol className="breadcrumb breadcrumb px-0 pb-0">
+                        <ol className="breadcrumb breadcrumb px-0 pb-0" aria-label="Breadcrumb">
                             <li className="breadcrumb-item"><Link to="/appraisals/">Home</Link></li>
-                            <li className="breadcrumb-item active">Appraisals</li>
+                            <li className="breadcrumb-item active" aria-current="page">Appraisals</li>
                         </ol>
                     </div>
                 </div>

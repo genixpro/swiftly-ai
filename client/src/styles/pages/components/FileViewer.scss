@@ -99,8 +99,11 @@
       top: 5px;
     }
 
-    em {
+    .viewer-toolbar-button {
+      border: 0;
+      background: transparent;
       cursor: pointer;
+      margin-right: 10px;
     }
   }
 }

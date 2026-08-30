@@ -138,6 +138,7 @@ class TagEditor extends React.Component {
                 isClearable
                 isMulti
                 isDisabled={this.props.disabled}
+                aria-label={this.props.title || "Property subtype tags"}
                 defaultOptions={this.state.defaultOptions}
                 loadOptions={(inputValue, callback) => this.loadOptions(inputValue, callback)}
                 onCreateOption={(data) => this.onCreateTag(data)}

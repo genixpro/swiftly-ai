@@ -30,11 +30,14 @@ class UploadedFileListItem extends React.Component
     {
 
         evt.stopPropagation();
-        if (window.confirm("Are you sure you want to remove the file?"))
+        if (window.confirm(`Are you sure you want to remove “${this.state.file.fileName}”?`))
         {
+            this.setState({deleting: true, deleteError: null});
             axios.delete(`/appraisal/${this.props.appraisalId}/files/${this.state.file._id}`).then((response) =>
             {
                 this.props.handleDeletion(this.props.file);
+            }).catch(() => {
+                this.setState({deleting: false, deleteError: "The file could not be removed. Please try again."});
             });
         }
     }
@@ -64,7 +67,10 @@ class UploadedFileListItem extends React.Component
                 {/*</select>*/}
                 {/*</td>*/}
                 <td>
-                    <Button color="danger" onClick={(evt) => this.onDeleteFile(evt)}>Remove</Button>
+                    <Button color="danger" disabled={this.state.deleting} onClick={(evt) => this.onDeleteFile(evt)}>
+                        {this.state.deleting ? "Removing…" : "Remove"}
+                    </Button>
+                    {this.state.deleteError ? <small className="d-block text-danger" role="alert">{this.state.deleteError}</small> : null}
                 </td>
             </tr>
         );

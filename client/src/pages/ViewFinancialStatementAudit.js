@@ -149,7 +149,7 @@ class ViewFinancialStatementAudit extends React.Component
                                                     <NumberFormat
                                                         value={this.state.incomeTotal}
                                                         displayType={'text'}
-                                                        thousandSeparator={', '}
+                                                        thousandSeparator={','}
                                                         decimalScale={2}
                                                         fixedDecimalScale={true}
                                                     />
@@ -205,7 +205,7 @@ class ViewFinancialStatementAudit extends React.Component
                                                     <NumberFormat
                                                         value={this.state.expenseTotal}
                                                         displayType={'text'}
-                                                        thousandSeparator={', '}
+                                                        thousandSeparator={','}
                                                         decimalScale={2}
                                                         fixedDecimalScale={true}
                                                     />

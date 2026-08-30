@@ -14,6 +14,25 @@ class Header extends Component {
 
     }
 
+    componentDidUpdate(previousProps) {
+        if (!previousProps.mobileNavigationOpen && this.props.mobileNavigationOpen) {
+            document.addEventListener('keydown', this.handleNavigationKeyDown);
+        } else if (previousProps.mobileNavigationOpen && !this.props.mobileNavigationOpen) {
+            document.removeEventListener('keydown', this.handleNavigationKeyDown);
+        }
+    }
+
+    componentWillUnmount() {
+        document.removeEventListener('keydown', this.handleNavigationKeyDown);
+    }
+
+    handleNavigationKeyDown = (event) => {
+        if (event.key === 'Escape' && this.props.mobileNavigationOpen) {
+            this.props.onMobileNavigationClose();
+            window.requestAnimationFrame(() => this.mobileToggle && this.mobileToggle.focus());
+        }
+    };
+
     toggleUserblock(e) {
         e.preventDefault();
         pubsub.publish('toggleUserblock');
@@ -49,24 +68,21 @@ class Header extends Component {
                                 </ToggleState>
                             </TriggerResize>
                             { /* Button to show/hide the sidebar on mobile. Visible on mobile only. */ }
-                            <ToggleState state="aside-toggled" nopersist={true}>
-                                <button type="button" className="nav-link sidebar-toggle d-md-none navbar-toggle-button" aria-label="Toggle navigation">
-                                    <em className="fas fa-bars"></em>
-                                </button>
-                            </ToggleState>
+                            <button
+                                type="button"
+                                className="nav-link sidebar-toggle d-md-none navbar-toggle-button"
+                                aria-label={this.props.mobileNavigationOpen ? "Close navigation" : "Open navigation"}
+                                aria-expanded={this.props.mobileNavigationOpen}
+                                aria-controls="app-sidebar"
+                                onClick={this.props.onMobileNavigationToggle}
+                                ref={(button) => this.mobileToggle = button}
+                            >
+                                <em className="fas fa-bars" aria-hidden="true"></em>
+                            </button>
                         </li>
                     </ul>
                     { /* END Left navbar */ }
 
-                    { /* START Search form */ }
-                    <form className="navbar-form" role="search" action="search.html">
-                       <div className="form-group">
-                          <input className="form-control" type="text" placeholder="Type and hit enter ..."/>
-                          <div className="fa fa-times navbar-form-close" data-search-dismiss=""></div>
-                       </div>
-                       <button className="d-none" type="submit">Submit</button>
-                    </form>
-                    { /* END Search form */ }
                 </nav>
                 { /* END Top Navbar */ }
             </header>

@@ -34,8 +34,10 @@ class ComparableSaleListHeaderColumn extends React.Component
             colClass = "middle-col"
         }
 
-        return <Col className={`header-field-column ${colClass}`} {...colProps} onClick={() => this.props.changeSortColumn(this.props.fields[0])}>
-
+        const sortField = this.props.fields[0];
+        const sortDirection = this.props.sort === `+${sortField}` ? 'ascending' : this.props.sort === `-${sortField}` ? 'descending' : 'none';
+        return <Col className={`header-field-column ${colClass}`} {...colProps} role="columnheader" aria-sort={sortDirection}>
+            <button type="button" className="comparable-sort-button" onClick={() => this.props.changeSortColumn(sortField)}>
             {
                 this.props.fields.map((field, fieldIndex) =>
                 {
@@ -46,7 +48,7 @@ class ComparableSaleListHeaderColumn extends React.Component
                     </span>
                 })
             }
-
+            </button>
         </Col>
     }
 }
@@ -250,11 +252,11 @@ class ComparableSaleList extends React.Component
 
     renderNewItemRow()
     {
-        return <div className="card b new-comparable-sale" onClick={() => this.toggleCreateNewItem()}>
+        return <button type="button" className="card b new-comparable-sale" onClick={() => this.toggleCreateNewItem()}>
                 <div className="card-body">
                     <span>Create new comparable...</span>
                 </div>
-            </div>
+            </button>
     }
 
     changeSortColumn(field)
@@ -551,7 +553,7 @@ class ComparableSaleList extends React.Component
                 {
                     <div className={`card b comparable-sale-list-header`}>
                         <CardHeader className={`comparable-sale-list-item-header ${firstSpacing}`}>
-                            <CardTitle>
+                            <CardTitle tag="div">
                                 <Row>
                                     {
                                         headerFields.map((headerFieldList, headerIndex) =>

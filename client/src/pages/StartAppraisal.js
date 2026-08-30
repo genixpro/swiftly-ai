@@ -13,10 +13,14 @@ class StartAppraisal extends React.Component
     state = {
         dropdownOpen: false,
         mode: 'type',
-        newAppraisal: {}
+        newAppraisal: {name: '', address: ''},
+        creating: false,
+        createError: null
     };
 
     componentDidMount() {
+        document.title = "Start an Appraisal – Swiftly";
+        if (this.heading) this.heading.focus();
         mixpanel.track("view-new-appraisal");
     }
 
@@ -39,6 +43,14 @@ class StartAppraisal extends React.Component
 
         evt.preventDefault();
 
+        if (!this.state.newAppraisal.name.trim())
+        {
+            this.setState({createError: "Enter a name for the appraisal."});
+            return;
+        }
+
+        this.setState({creating: true, createError: null});
+
         axios.post("/appraisal/", this.state.newAppraisal).then((response) =>
         {
             const newId = response.data._id;
@@ -51,6 +63,8 @@ class StartAppraisal extends React.Component
 
             this.props.history.push('/appraisal/' + newId + "/upload");
 
+        }).catch(() => {
+            this.setState({creating: false, createError: "The appraisal couldn't be created. Check the local API and try again."});
         });
     }
 
@@ -93,13 +107,13 @@ class StartAppraisal extends React.Component
             <ContentWrapper>
                 <div className={"start-appraisal"}>
                     <div className="content-heading">
-                        <div>Start a New Appraisal
+                        <div><h1 className="page-title" tabIndex="-1" ref={(heading) => this.heading = heading}>Start a New Appraisal</h1>
 
                             {/* Breadcrumb below title */}
-                            <ol className="breadcrumb breadcrumb px-0 pb-0">
+                            <ol className="breadcrumb breadcrumb px-0 pb-0" aria-label="Breadcrumb">
                                 <li className="breadcrumb-item"><Link to="/appraisals/">Home</Link></li>
                                 <li className="breadcrumb-item"><Link to="/appraisals/">Appraisals</Link></li>
-                                <li className="breadcrumb-item active">New Appraisal</li>
+                                <li className="breadcrumb-item active" aria-current="page">New Appraisal</li>
                             </ol>
                         </div>
                     </div>
@@ -175,11 +189,14 @@ class StartAppraisal extends React.Component
                                         <Card className="card-default">
                                             <CardBody>
                                                 <form onSubmit={this.createAppraisal.bind(this)}>
+                                                    {this.state.createError ? <div className="alert alert-warning" role="alert">{this.state.createError}</div> : null}
                                                     <FormGroup>
-                                                        <label>Name</label>
+                                                        <label htmlFor="new-appraisal-name">Name</label>
                                                         <Input
+                                                            id="new-appraisal-name"
                                                             type="text"
                                                             placeholder="Name"
+                                                            required
                                                             onChange={(evt) => this.updateValue("name", evt.target.value)}
                                                             value={this.state.newAppraisal.name}
                                                         />
@@ -236,7 +253,7 @@ class StartAppraisal extends React.Component
                                                             onChange={(newValue) => this.updateValue('propertyTags', newValue)}
                                                         />
                                                     </FormGroup>
-                                                    <button className="btn btn-sm btn-primary" type="submit" onClick={this.createAppraisal.bind(this)}>Create
+                                                    <button className="btn btn-sm btn-primary" type="submit" disabled={this.state.creating}>{this.state.creating ? "Creating…" : "Create"}
                                                     </button>
                                                 </form>
                                             </CardBody>

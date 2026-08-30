@@ -100,3 +100,46 @@
 @import "pages/components/UnitDetailsEditor";
 @import "pages/components/ComparableAdjustmentChart";
 
+.skip-link {
+  position: fixed;
+  top: 0.5rem;
+  left: 0.5rem;
+  z-index: 10000;
+  padding: 0.75rem 1rem;
+  color: #fff;
+  background: #1f2933;
+  border-radius: 0.25rem;
+  transform: translateY(-200%);
+}
+
+.skip-link:focus {
+  color: #fff;
+  transform: translateY(0);
+}
+
+.page-title {
+  margin: 0;
+  color: inherit;
+  font-size: inherit;
+  font-weight: inherit;
+  line-height: inherit;
+}
+
+.icon-button {
+  min-width: 36px;
+  min-height: 36px;
+}
+
+.horizontal-scroll-hint {
+  display: none;
+}
+
+@media (max-width: 767.98px) {
+  .horizontal-scroll-hint {
+    display: block;
+    margin-bottom: 0.4rem;
+    color: #505a63;
+    font-size: 0.8125rem;
+  }
+}
+

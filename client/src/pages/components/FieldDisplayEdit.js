@@ -48,8 +48,18 @@ class FieldDisplayEdit extends React.Component
 
     componentDidMount()
     {
-        this.setState({value: this.formatValue(this.props.value)})
+        this.setState({value: this.formatValue(this.props.value)}, this.deriveAccessibleLabel)
     }
+
+    deriveAccessibleLabel = () => {
+        if (this.props.ariaLabel || this.props.title || this.props.placeholder || !this.inputElem) return;
+        const container = this.inputElem.closest('tr, .comparable-list-boxes, .form-group');
+        const labelElement = container && container.querySelector('label, strong, [data-field-label], .field-label, .comparable-list-boxes > span');
+        const derivedAriaLabel = labelElement && labelElement.textContent.replace(/:\s*$/, '').trim();
+        if (derivedAriaLabel && derivedAriaLabel !== this.state.derivedAriaLabel) {
+            this.setState({derivedAriaLabel});
+        }
+    };
 
 
     inputUpdated(newValue)
@@ -60,7 +70,7 @@ class FieldDisplayEdit extends React.Component
 
     numberWithCommas(x)
     {
-        return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ", ");
+        return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
     }
 
 
@@ -349,19 +359,21 @@ class FieldDisplayEdit extends React.Component
         const editableClass = (this.props.edit === false ? "non-editable" : "editable");
         const hideInput = (this.props.hideInput === false ? "show-input" : "hide-input");
         const typeClass = `edit-type-${this.props.type}`;
+        const accessibleLabel = this.props.ariaLabel || this.props.title || this.props.placeholder || this.state.derivedAriaLabel;
 
         const rendered = (
             <div className={`field-display-edit ${editStateClass} ${customClass} ${editableClass} ${hideInput} ${typeClass}`}>
                 <InputGroup
                             onFocus={(evt) => this.startEditing()}
-                            title={this.props.title || this.props.placeholder}
+                            title={accessibleLabel}
                             style={this.props.style}
                 >
                     {
                         this.props.type === "textbox" ?
                             <textarea
                                 placeholder={this.props.placeholder}
-                                title={this.props.title || this.props.placeholder}
+                                title={accessibleLabel}
+                                aria-label={accessibleLabel}
                                 disabled={!this.props.edit}
                                 value={this.state.isEditing ? this.state.value : this.formatValue(this.props.value)}
                                 onChange={(evt) => this.inputUpdated(evt.target.value)}
@@ -380,7 +392,8 @@ class FieldDisplayEdit extends React.Component
                         !this.props.type ?
                             <Input placeholder={this.props.placeholder}
                                    disabled={!this.props.edit}
-                                   title={this.props.title || this.props.placeholder}
+                                   title={accessibleLabel}
+                                   aria-label={accessibleLabel}
                                    value={this.state.isEditing ? this.state.value : this.formatValue(this.props.value)}
                                    onChange={(evt) => this.inputUpdated(evt.target.value)}
                                    innerRef={(inputElem) => this.inputElem = inputElem}
@@ -391,9 +404,9 @@ class FieldDisplayEdit extends React.Component
                     {
                         this.props.type === "date" ?
                             <Datetime
-                                inputProps={{className: 'form-control', disabled: !this.props.edit, placeholder: this.props.placeholder}}
+                                inputProps={{className: 'form-control', disabled: !this.props.edit, placeholder: this.props.placeholder, 'aria-label': accessibleLabel}}
                                 dateFormat={"YYYY/MM/DD"}
-                                title={this.props.title || this.props.placeholder}
+                                title={accessibleLabel}
                                 timeFormat={false}
                                 input={true}
                                 viewDate={this.props.defaultDate ? this.props.defaultDate : this.props.value ? this.props.value : new Date()}
@@ -414,7 +427,7 @@ class FieldDisplayEdit extends React.Component
                         this.props.type === "propertyType" ?
                             <PropertyTypeSelector
                                 value={this.state.isEditing ? this.state.value : this.props.value}
-                                title={this.props.title || this.props.placeholder}
+                                title={accessibleLabel}
                                 disabled={!this.props.edit}
                                 onChange={(newValue) => this.selectInputUpdated(newValue) }
                                 onBlur={() => this.finishEditing()}
@@ -426,7 +439,7 @@ class FieldDisplayEdit extends React.Component
                         this.props.type === "rentType" ?
                             <RentTypeSelector
                                 value={this.state.isEditing ? this.state.value : this.props.value}
-                                title={this.props.title || this.props.placeholder}
+                                title={accessibleLabel}
                                 disabled={!this.props.edit}
                                 onChange={(newValue) => this.selectInputUpdated(newValue) }
                                 onBlur={() => this.finishEditing()}
@@ -437,7 +450,7 @@ class FieldDisplayEdit extends React.Component
                         this.props.type === "incomeItemType" ?
                             <IncomeItemTypeSelector
                                 value={this.state.isEditing ? this.state.value : this.props.value}
-                                title={this.props.title || this.props.placeholder}
+                                title={accessibleLabel}
                                 disabled={!this.props.edit}
                                 cashFlowType={this.props.cashFlowType}
                                 onChange={(newValue) => this.selectInputUpdated(newValue) }
@@ -449,7 +462,7 @@ class FieldDisplayEdit extends React.Component
                         this.props.type === "retailLocationType" ?
                             <RetailLocationTypeSelector
                                 value={this.state.isEditing ? this.state.value : this.props.value}
-                                title={this.props.title || this.props.placeholder}
+                                title={accessibleLabel}
                                 disabled={!this.props.edit}
                                 onChange={(newValue) => this.selectInputUpdated(newValue) }
                                 onBlur={() => this.finishEditing()}
@@ -460,7 +473,7 @@ class FieldDisplayEdit extends React.Component
                         this.props.type === "adjustmentType" ?
                             <AdjustmentTypeSelector
                                 value={this.state.isEditing ? this.state.value : this.props.value}
-                                title={this.props.title || this.props.placeholder}
+                                title={accessibleLabel}
                                 disabled={!this.props.edit}
                                 onChange={(newValue) => this.selectInputUpdated(newValue) }
                                 onBlur={() => this.finishEditing()}
@@ -471,7 +484,7 @@ class FieldDisplayEdit extends React.Component
                         this.props.type === "marketRent" ?
                             <MarketRentSelector
                                 value={this.props.value}
-                                title={this.props.title || this.props.placeholder}
+                                title={accessibleLabel}
                                 disabled={!this.props.edit}
                                 marketRents={this.props.marketRents}
                                 onChange={(newValue) => this.selectInputUpdated(newValue) }
@@ -484,7 +497,7 @@ class FieldDisplayEdit extends React.Component
                             <RecoveryStructureSelector
                                 value={this.props.value}
                                 disabled={!this.props.edit}
-                                title={this.props.title || this.props.placeholder}
+                                title={accessibleLabel}
                                 recoveryStructures={this.props.recoveryStructures}
                                 onChange={(newValue) => this.selectInputUpdated(newValue) }
                                 onBlur={() => this.finishEditing()}
@@ -496,7 +509,7 @@ class FieldDisplayEdit extends React.Component
                             <LeasingCostsSelector
                                 value={this.props.value}
                                 disabled={!this.props.edit}
-                                title={this.props.title || this.props.placeholder}
+                                title={accessibleLabel}
                                 leasingCostStructures={this.props.leasingCostStructures}
                                 onChange={(newValue) => this.selectInputUpdated(newValue) }
                                 onBlur={() => this.finishEditing()}
@@ -509,7 +522,8 @@ class FieldDisplayEdit extends React.Component
                                 type={"checkbox"}
                                 checked={this.props.value}
                                 disabled={!this.props.edit}
-                                title={this.props.title || this.props.placeholder}
+                                title={accessibleLabel}
+                                aria-label={accessibleLabel}
                                 onChange={(evt) => this.selectInputUpdated(!this.props.value) }
                                 onBlur={() => this.finishEditing()}
                                 ref={(inputElem) => this.inputElem = inputElem}
@@ -521,7 +535,7 @@ class FieldDisplayEdit extends React.Component
                                 expenses={this.props.expenses}
                                 value={this.state.isEditing ? this.state.value : this.props.value}
                                 disabled={!this.props.edit}
-                                title={this.props.title || this.props.placeholder}
+                                title={accessibleLabel}
                                 onChange={(newValue) => this.selectInputUpdated(newValue) }
                                 onBlur={() => this.finishEditing()}
                                 innerRef={(inputElem) => this.inputElem = inputElem}
@@ -533,7 +547,7 @@ class FieldDisplayEdit extends React.Component
                                 value={this.state.isEditing ? this.state.value : this.props.value}
                                 disabled={!this.props.edit}
                                 exclude={this.props.exclude}
-                                title={this.props.title || this.props.placeholder}
+                                title={accessibleLabel}
                                 onChange={(newValue) => this.selectInputUpdated(newValue) }
                                 onBlur={() => this.finishEditing()}
                                 innerRef={(inputElem) => this.inputElem = inputElem}
@@ -544,7 +558,7 @@ class FieldDisplayEdit extends React.Component
                             <ManagementRecoveryModeSelector
                                 value={this.state.isEditing ? this.state.value : this.props.value}
                                 disabled={!this.props.edit}
-                                title={this.props.title || this.props.placeholder}
+                                title={accessibleLabel}
                                 onChange={(newValue) => this.selectInputUpdated(newValue) }
                                 onBlur={() => this.finishEditing()}
                                 innerRef={(inputElem) => this.inputElem = inputElem}
@@ -555,7 +569,7 @@ class FieldDisplayEdit extends React.Component
                             <DirectComparisonMetricSelector
                                 value={this.state.isEditing ? this.state.value : this.props.value}
                                 disabled={!this.props.edit}
-                                title={this.props.title || this.props.placeholder}
+                                title={accessibleLabel}
                                 onChange={(newValue) => this.selectInputUpdated(newValue) }
                                 onBlur={() => this.finishEditing()}
                                 innerRef={(inputElem) => this.inputElem = inputElem}
@@ -564,7 +578,7 @@ class FieldDisplayEdit extends React.Component
                     {
                         this.props.type === "zone" ?
                             <ZoneSelector
-                                title={this.props.title || this.props.placeholder}
+                                title={accessibleLabel}
                                 disabled={!this.props.edit}
                                 value={this.state.isEditing ? this.state.value : this.props.value}
                                 onChange={(newValue) => this.zoneInputUpdated(newValue) }
@@ -574,7 +588,7 @@ class FieldDisplayEdit extends React.Component
                     {
                         this.props.type === "leasingCommissionMode" ?
                             <LeasingComissionModeSelector
-                                title={this.props.title || this.props.placeholder}
+                                title={accessibleLabel}
                                 disabled={!this.props.edit}
                                 value={this.state.isEditing ? this.state.value : this.props.value}
                                 onChange={(newValue) => this.selectInputUpdated(newValue) }
@@ -586,7 +600,7 @@ class FieldDisplayEdit extends React.Component
                         this.props.type === "tenancyType" ?
                             <TenancyTypeSelector
                                 value={this.state.isEditing ? this.state.value : this.props.value}
-                                title={this.props.title || this.props.placeholder}
+                                title={accessibleLabel}
                                 disabled={!this.props.edit}
                                 onChange={(newValue) => this.selectInputUpdated(newValue) }
                                 onBlur={() => this.finishEditing()}
@@ -597,7 +611,7 @@ class FieldDisplayEdit extends React.Component
                         this.props.type === "tenantName" ?
                             <TenantNameSelector
                                 value={this.state.isEditing ? this.state.value : this.props.value}
-                                title={this.props.title || this.props.placeholder}
+                                title={accessibleLabel}
                                 disabled={!this.props.edit}
                                 onChange={(newValue) => this.tenantNameInputUpdated(newValue) }
                                 onBlur={() => this.finishEditing()}
@@ -609,7 +623,7 @@ class FieldDisplayEdit extends React.Component
                             <TagEditor
                                 disabled={!this.props.edit}
                                 propertyType={this.props.propertyType}
-                                title={this.props.title || this.props.placeholder}
+                                title={accessibleLabel}
                                 value={this.state.isEditing ? this.state.value : this.props.value}
                                 onChange={(newValue) => this.tagInputUpdated(newValue) }
                                 onBlur={() => this.finishEditing()}
@@ -618,7 +632,8 @@ class FieldDisplayEdit extends React.Component
                     {
                         this.props.type === "address" ?
                             <Input
-                                title={this.props.title || this.props.placeholder}
+                                title={accessibleLabel}
+                                aria-label={accessibleLabel}
                                 placeholder={this.props.placeholder}
                                 disabled={!this.props.edit}
                                 value={this.state.isEditing ? this.state.value : this.formatValue(this.props.value)}

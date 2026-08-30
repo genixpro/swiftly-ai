@@ -14,7 +14,8 @@ import FileModel from "../models/FileModel";
 class UploadFiles extends React.Component {
     state = {
         files: [],
-        uploading: false
+        uploading: false,
+        uploadError: null
     };
 
     componentDidMount()
@@ -39,41 +40,41 @@ class UploadFiles extends React.Component {
 
     onDrop(files)
     {
-        this.setState({uploading: true});
+        if (this.uploadInProgress || !files || files.length === 0)
+        {
+            return;
+        }
+
+        this.uploadInProgress = true;
+        this.setState({uploading: true, uploadError: null});
         Promise.mapSeries(files, (file) => {
-            return new Promise((resolve, reject) => {
-                const data = new FormData();
-                data.set("fileName", file.name);
-                data.set("file", file);
-                const options = {
-                    method: 'post',
-                    url: "/appraisal/" + this.props.match.params['id'] + "/files",
-                    data: data
-                };
-
-                const uploadPromise = axios(options);
-
-                uploadPromise.then((response) => {
-                    resolve(null);
-                    // setTimeout(() => {
-                    // const upProg = this.state.upProg;
-                    // upProg[file.name] = 100;
-                    // this.setState({upProg});
-                    // }, 50);
-                }, (error) => {
-                    console.log(error);
-                    console.log(JSON.stringify(error, null, 2));
-                    resolve(null);
-                });
-                uploadPromise.catch(() => resolve(null));
-            })
+            const data = new FormData();
+            data.set("fileName", file.name);
+            data.set("file", file);
+            return axios({
+                method: 'post',
+                url: "/appraisal/" + this.props.match.params['id'] + "/files",
+                data: data
+            });
         }).then(() => {
-            this.setState({uploading: false});
             this.refreshFileList();
             this.props.reloadAppraisal();
-        }, (err) => {
+        }).catch(() => {
+            this.setState({uploadError: "One or more files could not be uploaded. Please try again."});
+            this.refreshFileList();
+        }).finally(() => {
+            this.uploadInProgress = false;
             this.setState({uploading: false});
         });
+    }
+
+    onUploadKeyDown(evt)
+    {
+        if (!this.state.uploading && (evt.key === 'Enter' || evt.key === ' '))
+        {
+            evt.preventDefault();
+            this.refs.dropzone.open();
+        }
     }
 
 
@@ -99,23 +100,31 @@ class UploadFiles extends React.Component {
                                                     <Dropzone className="card card-default upload-zone"
                                                               ref="dropzone"
                                                               multiple
+                                                              disableClick={this.state.uploading}
                                                               onDrop={this.onDrop.bind(this)}
+                                                              onKeyDown={this.onUploadKeyDown.bind(this)}
+                                                              role="button"
+                                                              tabIndex={this.state.uploading ? -1 : 0}
+                                                              aria-label="Upload appraisal files"
+                                                              aria-busy={this.state.uploading}
+                                                              inputProps={{'aria-label': 'Choose appraisal files to upload'}}
                                                               align="center"
                                                     >
                                                         <div className={"drop-zone-content-wrapper"}>
-                                                            <i className={"fa fa-upload drop-zone-upload-icon"}/>
+                                                            <i className={"fa fa-upload drop-zone-upload-icon"} aria-hidden="true"/>
                                                             <br/>
                                                             <br/>
                                                             <span>Drop files here or click here to upload</span>
 
                                                             {
                                                                 this.state.uploading &&
-                                                                <div className="upload-files-loader ball-pulse">
+                                                                <div className="upload-files-loader ball-pulse" role="status" aria-label="Uploading files">
                                                                     <div></div>
                                                                     <div></div>
                                                                     <div></div>
                                                                 </div>
                                                             }
+                                                            {this.state.uploadError ? <div className="alert alert-danger mt-3" role="alert">{this.state.uploadError}</div> : null}
                                                         </div>
                                                     </Dropzone> :
                                                     <div className="card card-default upload-zone upload-disabled"

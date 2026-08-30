@@ -181,7 +181,7 @@ class ViewAppraisalComparableSales extends React.Component {
                         {/*</Col>*/}
                     </Row>
                     <Row>
-                        <Col xs={8}>
+                        <Col xs={12} md={8} className="comparables-list-column">
                             <ComparableSaleList comparableSales={this.state.comparableSales}
                                                 statsTitle={"Statistics for Selected Comps"}
                                                 allowNew={false}
@@ -200,7 +200,7 @@ class ViewAppraisalComparableSales extends React.Component {
                                                 onAddCapRateClicked={(comp) => this.addComparableToCapRate(comp)}
                             />
                         </Col>
-                        <Col xs={4}>
+                        <Col xs={12} md={4} className="comparables-map-column">
                             <ComparableSalesMap
                                 appraisal={this.props.appraisal}
                                 comparableSales={this.state.comparableSales}

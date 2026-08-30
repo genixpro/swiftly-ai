@@ -20,7 +20,8 @@ class IncomeStatementEditor extends React.Component
         newYearGrowthPercent: 2.0,
         newYearPopoverShowing: {},
         pinnedYear: null,
-        deleteYearPopoverShowing: {}
+        deleteYearPopoverShowing: {},
+        reorderMessage: ""
     };
 
     constructor()
@@ -58,6 +59,7 @@ class IncomeStatementEditor extends React.Component
                                             color={this.state.pinnedYear === year ? "info" : "secondary"}
                                             onClick={(evt) => this.togglePinYear(year)}
                                             title={"Pin Column"}
+                                            aria-label={this.state.pinnedYear === year ? `Unpin ${year}` : `Pin ${year}`}
                                             style={{"float": "left"}}
                                         >
                                             {
@@ -72,17 +74,18 @@ class IncomeStatementEditor extends React.Component
                                                 [
                                                     <Button
                                                         key={1}
-                                                        id={`add-column-button-year-${year}`}
+                                                        id={`add-column-button-year-${this.props.field}-${value.replace(/\W/g, "-")}-${year}`}
                                                         className={`add-column-button-year`}
                                                         color="secondary"
                                                         onClick={(evt) => this.toggleNewYearPopover(value, year)}
                                                         title={"Add Year"}
+                                                        aria-label={`Add a year before ${year}`}
                                                     >
                                                         <i className="fa fa-plus-square"></i>
                                                     </Button>,
                                                     <Popover
                                                         key={2}
-                                                        placement="bottom" isOpen={this.state.newYearPopoverShowing[value + year]} target={`add-column-button-year-${year}`} toggle={() => this.toggleNewYearPopover(value, year)}>
+                                                        placement="bottom" isOpen={this.state.newYearPopoverShowing[value + year]} target={`add-column-button-year-${this.props.field}-${value.replace(/\W/g, "-")}-${year}`} toggle={() => this.toggleNewYearPopover(value, year)}>
                                                         <PopoverHeader>Add New Year</PopoverHeader>
                                                         <PopoverBody>
                                                             Add a new year. Apply Discount Rate to Items:
@@ -118,16 +121,17 @@ class IncomeStatementEditor extends React.Component
                                     </div>
                                     {
                                         this.state.pinnedYear === null ? <div className={"remove-column-button-wrapper"}><Button
-                                            id={`remove-year-${year.toString()}`}
+                                            id={`remove-year-${this.props.field}-${value.replace(/\W/g, "-")}-${year.toString()}`}
                                             className={`remove-column-button`}
                                             color="secondary"
                                             onClick={(evt) =>this.toggleDeleteYearPopover(value, year)}
                                             title={"Remove Column"}
+                                            aria-label={`Remove year ${year}`}
                                             style={{"float": "left"}}
                                         >
                                             <i className="fa fa-times" />
                                         </Button>
-                                                <Popover placement="bottom" isOpen={this.state.deleteYearPopoverShowing[value.toString() + year.toString()]} target={() => document.getElementById(`remove-year-${year.toString()}`)} toggle={() => this.toggleDeleteYearPopover(value, year)}>
+                                                <Popover placement="bottom" isOpen={this.state.deleteYearPopoverShowing[value.toString() + year.toString()]} target={() => document.getElementById(`remove-year-${this.props.field}-${value.replace(/\W/g, "-")}-${year.toString()}`)} toggle={() => this.toggleDeleteYearPopover(value, year)}>
                                                     <PopoverHeader>Delete Year</PopoverHeader>
                                                     <PopoverBody>
                                                         Are you sure you want to delete this year?
@@ -160,6 +164,7 @@ class IncomeStatementEditor extends React.Component
                                             <DroppableFieldDisplayEdit
                                                 type={'text'}
                                                 hideIcon={true}
+                                                ariaLabel={`Custom title for ${year}`}
                                                 value={this.props.appraisal[this.props.field].customYearTitles[year]}
                                                 onChange={(newValue) => this.changeYearTitle(year, newValue)}
                                             />
@@ -176,15 +181,16 @@ class IncomeStatementEditor extends React.Component
                     {
                         this.state.pinnedYear === null ? <Col className={"add-column-column"}>
                             <Button
-                                id={`add-column-button-${value.replace(/ /g, "")}`}
+                                id={`add-column-button-${this.props.field}-${value.replace(/\W/g, "-")}`}
                                 className={`add-column-button`}
                                 color="secondary"
                                 onClick={(evt) => this.toggleNewYearPopover(value, 'default')}
                                 title={"Add Year"}
+                                aria-label="Add a year after the latest year"
                             >
                                 <i className="fa fa-plus-square"></i>
                             </Button>
-                            <Popover placement="bottom" isOpen={this.state.newYearPopoverShowing[value+"default"]} target={`add-column-button-${value.replace(/ /g, "")}`} toggle={() => this.toggleNewYearPopover(value, 'default')}>
+                            <Popover placement="bottom" isOpen={this.state.newYearPopoverShowing[value+"default"]} target={`add-column-button-${this.props.field}-${value.replace(/\W/g, "-")}`} toggle={() => this.toggleNewYearPopover(value, 'default')}>
                                 <PopoverHeader>Add New Year</PopoverHeader>
                                 <PopoverBody>
                                     Add a new year. Apply Growth Rate to Items:
@@ -596,24 +602,51 @@ class IncomeStatementEditor extends React.Component
         this.props.saveAppraisal(this.props.appraisal);
     }
 
+    moveIncomeItem(item, direction)
+    {
+        let expensesSorted = this.sortIncomeStatementItems(this.props.appraisal[this.props.field].items).sorted;
+        const currentIndex = expensesSorted.indexOf(item);
+        const newIndex = currentIndex + direction;
+        if (currentIndex < 0 || newIndex < 0 || newIndex >= expensesSorted.length) return;
+
+        item.incomeStatementItemType = expensesSorted[newIndex].incomeStatementItemType;
+        expensesSorted = arrayMove(expensesSorted, currentIndex, newIndex);
+        this.props.appraisal[this.props.field].items = expensesSorted;
+        this.computeExpenseTotals();
+        this.props.saveAppraisal(this.props.appraisal);
+        this.setState({reorderMessage: `${item.name || 'Expense'} moved ${direction < 0 ? 'up' : 'down'}.`});
+    }
+
 
     renderIncomeStatementItemRow(values)
     {
         let incomeStatementItem = values.value, itemIndex = values.index;
 
-        const DragHandle = SortableHandle(() => <i className={"fa fa-bars"}/>);
+        const itemName = incomeStatementItem.name || "expense";
+        const DragHandle = SortableHandle(() => <button type="button" className="drag-handle icon-button" aria-label={`Drag to reorder ${itemName}`}>
+            <i className={"fa fa-bars"} aria-hidden="true"/>
+        </button>);
 
 
         return <li key={itemIndex} className={"row expense-row"}>
             <Col className={"handle-column"}>
                 <div>
                     <DragHandle/>
+                    <div className="keyboard-reorder-controls">
+                        <Button color="secondary" className="icon-button" onClick={() => this.moveIncomeItem(incomeStatementItem, -1)} aria-label={`Move ${itemName} up`}>
+                            <i className="fa fa-chevron-up" aria-hidden="true" />
+                        </Button>
+                        <Button color="secondary" className="icon-button" onClick={() => this.moveIncomeItem(incomeStatementItem, 1)} aria-label={`Move ${itemName} down`}>
+                            <i className="fa fa-chevron-down" aria-hidden="true" />
+                        </Button>
+                    </div>
                 </div>
             </Col>
             <Col className={"name-column"}>
                 <DroppableFieldDisplayEdit
                     hideIcon={true}
                     type={"text"}
+                    ariaLabel={`${itemName} name`}
                     value={incomeStatementItem.name}
                     onChange={(newValue) => this.changeIncomeItemName(incomeStatementItem, newValue)}
                 />
@@ -630,6 +663,7 @@ class IncomeStatementEditor extends React.Component
                     return [<Col key={year.toString() + "1"} className={"amount-column"}>
                         <DroppableFieldDisplayEdit
                             type="currency"
+                            ariaLabel={`${itemName}, ${year} amount`}
                             hideIcon={true}
                             edit={true}
                             value={incomeStatementItem.yearlyAmounts[year.toString()]}
@@ -642,6 +676,7 @@ class IncomeStatementEditor extends React.Component
                             <Col key={year.toString() + "2"} className={"amount-column psf"}>
                                 <DroppableFieldDisplayEdit
                                     type="currency"
+                                    ariaLabel={`${itemName}, ${year} amount per square foot`}
                                     hideIcon={true}
                                     edit={true}
                                     value={incomeStatementItem.yearlyAmountsPSF[year.toString()] ? incomeStatementItem.yearlyAmountsPSF[year.toString()] : ""}
@@ -657,8 +692,10 @@ class IncomeStatementEditor extends React.Component
                         color="secondary"
                         onClick={(evt) => this.removeIncomeItem(incomeStatementItem)}
                         title={"Delete Expense"}
+                        aria-label={`Delete ${itemName}`}
+                        className="icon-button"
                     >
-                        <i className="fa fa-trash-alt"></i>
+                        <i className="fa fa-trash-alt" aria-hidden="true"></i>
                     </Button>
                 </Col> : null
             }
@@ -721,6 +758,7 @@ class IncomeStatementEditor extends React.Component
             <Col className={"name-column"}>
                 <DroppableFieldDisplayEdit
                     hideIcon={true}
+                    ariaLabel={`New ${incomeStatementItemType} name`}
                     value={""}
                     onChange={_.once((newValue) => this.createNewIncomeItem("name", newValue, incomeStatementItemType))}
                 />
@@ -736,6 +774,7 @@ class IncomeStatementEditor extends React.Component
                     return [<Col key={year.toString() + "1"} className={"amount-column"}>
                         <DroppableFieldDisplayEdit
                             type="currency"
+                            ariaLabel={`New ${incomeStatementItemType}, ${year} amount`}
                             hideIcon={true}
                             value={""}
                             onChange={_.once((newValue, extractionReference) => newValue ? this.createNewIncomeItem("yearlyAmounts", {[year]: this.cleanNumericalValue(newValue)}, incomeStatementItemType, extractionReference ? {[year]: {
@@ -755,8 +794,10 @@ class IncomeStatementEditor extends React.Component
                         color="secondary"
                         onClick={(evt) => this.createNewIncomeItem(null, null, incomeStatementItemType)}
                         title={"New Expense"}
+                        aria-label={`Add ${incomeStatementItemType} expense`}
+                        className="icon-button"
                     >
-                        <i className="fa fa-plus-square"></i>
+                        <i className="fa fa-plus-square" aria-hidden="true"></i>
                     </Button>
                 </Col> : null
             }
@@ -906,17 +947,21 @@ class IncomeStatementEditor extends React.Component
     render()
     {
         return (
-                <div id={"income-statement-editor"} className={"income-statement-editor"}>
+                <div id={`income-statement-editor-${this.props.field}`} className={"income-statement-editor"}>
+                    <div className="sr-only" role="status" aria-live="polite">{this.state.reorderMessage}</div>
                     <Row>
                         <Col xs={12} md={this.state.pinnedYear !== null ? 5 : 7} lg={this.state.pinnedYear !== null ? 4 : 7} xl={this.state.pinnedYear !== null ? 3 : 7}>
 
                             {
                                 this.props.appraisal[this.props.field].items ?
-                                    <div className="income-statement-table-scroll">
+                                    <div>
+                                    <div className="horizontal-scroll-hint">Scroll horizontally to review all years and amounts.</div>
+                                    <div className="income-statement-table-scroll" tabIndex="0" aria-label="Income statement table; scroll horizontally for more columns">
                                     <this.SortableList
                                         useDragHandle={true}
                                         items={this.sortIncomeStatementItems(this.props.appraisal[this.props.field].items).sorted}
                                         onSortEnd={this.onSortEnd.bind(this)}/>
+                                    </div>
                                     </div>
                                     : null
                             }
@@ -926,6 +971,7 @@ class IncomeStatementEditor extends React.Component
                                 <Col xs={12}>
                                     <FileSelector
                                         appraisalId={this.props.appraisal._id}
+                                        ariaLabel="Preview source file"
                                         onChange={(fileId) => this.onFileChanged(fileId)}
                                         defaultFile={this.getDefaultFile().fileId}
                                         value={this.state.selectedFileId ? this.state.selectedFileId : null}

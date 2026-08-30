@@ -42,10 +42,11 @@ DEMO_DEFAULTS = {
     "discountedCashFlowInputs": {"projectionYears": 10, "discountRate": 0, "inflation": 0},
 }
 
-DEMO_SEED_VERSION = "2026.12"
+DEMO_SEED_VERSION = "2026.13"
 DEMO_APPRAISAL = {
     "_id": "demo-appraisal", "owner": "local-demo", "name": "Harbour Centre Demo",
     "address": "100 Harbour Street, Toronto", "appraisalType": "detailed",
+    "location": {"type": "Point", "coordinates": [-79.3777, 43.6426]},
     "propertyType": "office", "sizeOfBuilding": 15_000, "sizeOfLand": 1.4,
     "zoning": "CR 3.0", "effectiveDate": "2026-01-01",
     "units": [
@@ -98,6 +99,7 @@ DEMO_APPRAISAL = {
 DEMO_RETAIL_APPRAISAL = {
     "_id": "demo-market-hall", "owner": "local-demo", "name": "Market Hall Demo",
     "address": "45 Wellington Street, Toronto", "appraisalType": "detailed",
+    "location": {"type": "Point", "coordinates": [-79.3732, 43.6481]},
     "propertyType": "retail", "sizeOfBuilding": 18_000, "effectiveDate": "2026-01-01",
     "units": [
         {"tenantName": "Harbour Bakery", "suite": "A", "unitNumber": "A", "squareFootage": 3_200,
@@ -341,20 +343,41 @@ def ensure_demo_comparables(db) -> None:
     """Add missing seeded comparables without replacing a local user's edits."""
     sales = (
         {"_id": "demo-sale", "owner": "local-demo", "address": "25 King Street, Toronto", "salePrice": 12_500_000,
-         "sizeSquareFootage": 50_000, "saleDate": "2025-01-15", "propertyType": "Office", "allowSubCompSearch": True},
+         "sizeSquareFootage": 50_000, "saleDate": "2025-01-15", "propertyType": "Office", "allowSubCompSearch": True,
+         "netOperatingIncome": 656_250, "capitalizationRate": 5.25, "occupancyRate": 94,
+         "location": {"type": "Point", "coordinates": [-79.3791, 43.6487]}},
         {"_id": "demo-sale-retail", "owner": "local-demo", "address": "55 Queen Street, Toronto", "salePrice": 7_650_000,
-         "sizeSquareFootage": 18_400, "saleDate": "2025-04-18", "propertyType": "Retail", "allowSubCompSearch": True},
+         "sizeSquareFootage": 18_400, "saleDate": "2025-04-18", "propertyType": "Retail", "allowSubCompSearch": True,
+         "netOperatingIncome": 428_400, "capitalizationRate": 5.6, "occupancyRate": 98,
+         "location": {"type": "Point", "coordinates": [-79.3784, 43.6524]}},
     )
     leases = (
         {"_id": "demo-lease", "owner": "local-demo", "tenantName": "Northstar Foods", "address": "12 Front Street, Toronto",
-         "sizeOfUnit": 8_000, "leaseDate": "2025-02-01", "propertyType": "Industrial", "rentEscalations": [{"yearlyRent": 160_000}]},
+         "sizeOfUnit": 8_000, "leaseDate": "2025-02-01", "propertyType": "Industrial",
+         "rentEscalations": [{"startYear": 1, "endYear": 5, "yearlyRent": 160_000}],
+         "taxesMaintenanceInsurance": 12.5, "tenantInducements": "$20 psf allowance", "freeRentMonths": 3,
+         "freeRentType": "net", "location": {"type": "Point", "coordinates": [-79.3745, 43.6455]}},
         {"_id": "demo-lease-retail", "owner": "local-demo", "tenantName": "Harbour Bakery", "address": "51 Queen Street, Toronto",
-         "sizeOfUnit": 3_100, "leaseDate": "2025-03-15", "propertyType": "Retail", "rentEscalations": [{"yearlyRent": 130_200}]},
+         "sizeOfUnit": 3_100, "leaseDate": "2025-03-15", "propertyType": "Retail",
+         "rentEscalations": [{"startYear": 1, "endYear": 5, "yearlyRent": 130_200}],
+         "taxesMaintenanceInsurance": 18.75, "tenantInducements": "$35 psf allowance", "freeRentMonths": 2,
+         "freeRentType": "net", "location": {"type": "Point", "coordinates": [-79.3778, 43.6522]}},
     )
     for record in sales:
         db.comparable_sales.update_one({"_id": record["_id"]}, {"$setOnInsert": record}, upsert=True)
+        for field, value in record.items():
+            if field not in {"_id", "owner"}:
+                db.comparable_sales.update_one({"_id": record["_id"], field: {"$exists": False}}, {"$set": {field: value}})
     for record in leases:
         db.comparable_leases.update_one({"_id": record["_id"]}, {"$setOnInsert": record}, upsert=True)
+        for field, value in record.items():
+            if field not in {"_id", "owner", "rentEscalations"}:
+                db.comparable_leases.update_one({"_id": record["_id"], field: {"$exists": False}}, {"$set": {field: value}})
+        for field in ("startYear", "endYear"):
+            db.comparable_leases.update_one(
+                {"_id": record["_id"], f"rentEscalations.0.{field}": {"$exists": False}},
+                {"$set": {f"rentEscalations.0.{field}": record["rentEscalations"][0][field]}},
+            )
 
 
 def ensure_demo_zone(db) -> None:

@@ -40,6 +40,7 @@ class PropertyTypeSelector extends React.Component
                 ref={(ref) => this.onRef(ref)}
                 value={this.props.value}
                 title={this.props.title || this.props.placeholder}
+                aria-label={this.props.title || this.props.placeholder || "Property type"}
                 disabled={this.props.disabled}
                 style={{"color": !this.props.value ? "lightgrey" : ""}}
             >

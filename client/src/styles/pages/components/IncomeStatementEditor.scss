@@ -13,6 +13,7 @@
     .income-statement-table-scroll {
       overflow-x: auto;
       width: 100%;
+      padding: 3px;
 
       > ul.sortable {
         min-width: 540px;
@@ -100,8 +101,25 @@
     padding: 0;
     margin-left: 15px;
 
-    .fa {
-      padding: 10px;
+    > div {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .drag-handle {
+      border: 0;
+      background: transparent;
+      cursor: grab;
+    }
+
+    .keyboard-reorder-controls {
+      display: flex;
+      flex-direction: column;
+
+      .btn {
+        padding: 0.25rem;
+        border-radius: 0;
+      }
     }
   }
 
@@ -236,10 +254,9 @@
     //border-bottom: 0;
     border-right: 0;
     //height: 100%;
-    padding-top: 0.4vh;
-    padding-bottom: 0.2vh;
-    padding-left: 0.3vw;
-    padding-right: 0.3vw;
+    min-width: 36px;
+    min-height: 36px;
+    padding: 0.4rem;
     //.badge {
     color: red;
     font-size: 13px;

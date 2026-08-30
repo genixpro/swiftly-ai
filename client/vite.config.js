@@ -40,6 +40,21 @@ export default defineConfig(({ mode }) => {
       'react-moment': '/src/components/Common/MomentDisplay.jsx',
     },
   },
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks(id) {
+          if (!id.includes('node_modules')) return;
+          if (/node_modules\/(bootstrap|reactstrap|react-transition-group|@fortawesome)\//.test(id)) return 'ui';
+          if (/node_modules\/(google-map-react|d3|chart\.js|chartist|react-chartist|raphael)\//.test(id)) return 'visualization';
+          if (/node_modules\/(pdfmake|jszip|docxtemplater|pizzip)\//.test(id)) return 'documents';
+          if (/node_modules\/(react-dnd|react-sortable-hoc|react-select|react-table|react-data-grid|react-datetime)\//.test(id)) return 'editors';
+          if (/node_modules\/(axios|bluebird|moment|underscore|jquery)\//.test(id)) return 'utilities';
+          return 'vendor';
+        },
+      },
+    },
+  },
   server: { port: 5173 },
   test: { exclude: ['e2e/**', 'node_modules/**', 'dist/**'] },
   };

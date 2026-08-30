@@ -74,6 +74,7 @@ class ZoneSelector extends React.Component {
                 cacheOptions
                 isClearable={true}
                 title={this.props.title || this.props.placeholder}
+                aria-label={this.props.title || this.props.placeholder || "Zoning"}
                 loadOptions={this.loadOptions}
                 onCreateOption={(data) => this.onCreateZone(data)}
                 noOptionsMessage={() => <span>Search for a Zone</span>}

@@ -7,7 +7,7 @@ class AppraisalListItem extends React.Component
     deleteAppraisal(evt)
     {
         evt.stopPropagation();
-        if (window.confirm("Are you sure you want to delete the appraisal?"))
+        if (window.confirm(`Are you sure you want to delete “${this.props.appraisal.name}”?`))
         {
             this.props.deleteAppraisal(this.props.appraisal);
         }
@@ -34,26 +34,22 @@ class AppraisalListItem extends React.Component
     {
         const appraisal = this.props.appraisal;
         return (
-            <tr onClick={(evt) => this.itemClicked()}
-                onKeyDown={(evt) => (evt.key === 'Enter' || evt.key === ' ') && this.itemClicked()}
-                tabIndex={0}
-                aria-label={`Open ${appraisal.name}`}
-                className={"appraisal-list-item"}>
+            <tr className={"appraisal-list-item"}>
                 <td>{appraisal.name}</td>
                 <td>{appraisal.address}</td>
 
                 <td className={"action-column"}>
-                    <Button color="primary" onClick={(evt) => this.openAppraisal(evt)} title="Open Appraisal">
+                    <Button color="primary" onClick={(evt) => this.openAppraisal(evt)} aria-label={`Open ${appraisal.name}`}>
                         Open
                     </Button>
                     {' '}
                     <Button
                         color="danger"
                         onClick={(evt) => this.deleteAppraisal(evt)}
-                        title={"Delete Appraisal"}
+                        aria-label={`Delete ${appraisal.name}`}
+                        className="icon-button"
                     >
-                        <span className="sr-only">Delete</span>
-                        <i className="fa fa-trash-alt"></i>
+                        <i className="fa fa-trash-alt" aria-hidden="true"></i>
                     </Button>
                 </td>
             </tr>

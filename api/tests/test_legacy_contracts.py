@@ -40,6 +40,7 @@ def test_legacy_appraisal_children_and_exports_keep_their_response_shapes(client
     assert seeded["validationResult"]["hasBuildingInformation"] is True
     assert seeded["validationResult"]["hasRentRoll"] is True
     assert seeded["validationResult"]["hasFinancialInfo"] is True
+    assert seeded["location"] == {"type": "Point", "coordinates": [-79.3777, 43.6426]}
     assert client.get(f"/zone/{seeded['zoning']}").json()["zone"]["zoneName"] == "CR 3.0"
     assert seeded["dataTypeReferences"]["EXPENSE_STATEMENT"][0] == {
         "appraisalId": "demo-appraisal", "fileId": "demo-financial-statement",
@@ -47,6 +48,12 @@ def test_legacy_appraisal_children_and_exports_keep_their_response_shapes(client
     }
     seeded_files = client.get("/appraisal/demo-appraisal/files").json()["files"]
     assert {item["_id"] for item in seeded_files} >= {"demo-financial-statement", "demo-lease", "demo-comparable-sale", "demo-scanned-rent-roll"}
+    seeded_sale = client.get("/comparable_sales/demo-sale").json()["comparableSale"]
+    assert seeded_sale["capitalizationRate"] == 5.25
+    assert seeded_sale["occupancyRate"] == 94
+    seeded_lease = client.get("/comparable_leases/demo-lease").json()["comparableLease"]
+    assert seeded_lease["rentEscalations"][0] == {"startYear": 1, "endYear": 5, "yearlyRent": 160_000}
+    assert seeded_lease["taxesMaintenanceInsurance"] == 12.5
 
     created = client.post("/appraisal/", json={"name": "Contract property", "address": "1 Test Way"})
     assert created.status_code == 200

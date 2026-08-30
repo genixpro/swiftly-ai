@@ -60,12 +60,12 @@ class CurrencyValue extends React.Component {
 
         if (this.props.children < 0)
         {
-            return <Value style={style}>($<NumberFormat value={-this.props.children} displayType={"text"} decimalScale={decimalScale} thousandSeparator={", "} />)</Value>;
+            return <Value style={style}>($<NumberFormat value={-this.props.children} displayType={"text"} decimalScale={decimalScale} thousandSeparator={","} />)</Value>;
         }
         else
         {
 
-            return <Value style={style}>$<NumberFormat value={this.props.children} displayType={"text"} decimalScale={decimalScale} thousandSeparator={", "} /></Value>;
+            return <Value style={style}>$<NumberFormat value={this.props.children} displayType={"text"} decimalScale={decimalScale} thousandSeparator={","} /></Value>;
         }
     }
 }
@@ -93,7 +93,7 @@ class PercentValue extends React.Component {
             style["textAlign"] = "right";
         }
 
-        return <Value style={style}><NumberFormat value={this.props.children} displayType={"text"} decimalScale={2} fixedDecimalScale thousandSeparator={", "} />%</Value>;
+        return <Value style={style}><NumberFormat value={this.props.children} displayType={"text"} decimalScale={2} fixedDecimalScale thousandSeparator={","} />%</Value>;
     }
 }
 
@@ -121,7 +121,7 @@ class IntegerValue extends React.Component {
             style["textAlign"] = "right";
         }
 
-        return <Value style={style}><NumberFormat value={this.props.children} displayType={"text"} decimalScale={0} fixedDecimalScale thousandSeparator={", "} /></Value>;
+        return <Value style={style}><NumberFormat value={this.props.children} displayType={"text"} decimalScale={0} fixedDecimalScale thousandSeparator={","} /></Value>;
     }
 }
 
@@ -149,7 +149,7 @@ class AreaValue extends React.Component {
             style["textAlign"] = "right";
         }
 
-        return <Value style={style}><NumberFormat value={this.props.children} displayType={"text"} decimalScale={0} fixedDecimalScale thousandSeparator={", "} /> sqft</Value>;
+        return <Value style={style}><NumberFormat value={this.props.children} displayType={"text"} decimalScale={0} fixedDecimalScale thousandSeparator={","} /> sqft</Value>;
     }
 }
 
