@@ -1,0 +1,122 @@
+import React from 'react';
+import ContentWrapper from '../components/Layout/ContentWrapper';
+import { Switch, Route } from 'react-router-dom';
+
+import UploadFiles from "./UploadFiles";
+import ViewLeases from "./ViewLeases";
+import ViewLease from "./ViewLease";
+import ViewFinancialStatements from "./ViewFinancialStatements";
+import ViewFinancialStatement from "./ViewFinancialStatement";
+import ViewStabilizedStatement from "./ViewStabilizedStatement";
+import ViewComparableSales from "./ViewComparableSales";
+import ViewDiscountedCashFlow from "./ViewDiscountedCashFlow";
+import ViewDirectComparisonValuation from "./ViewDirectComparisonValuation";
+import ViewTenants from "./ViewTenants";
+import ViewBuildingInformation from "./ViewBuildingInformation";
+import ViewExpenses from "./ViewExpenses";
+import ViewComparableLeases from "./ViewComparableLeases";
+import ViewCapitalizationValuation from "./ViewCapitalizationValuation";
+import ViewAdditionalIncome from "./ViewAdditionalIncomes";
+import ViewAmortization from "./ViewAmortization";
+import AnnotateFile from "./AnnotateFile";
+import ViewExpensesTMI from "./ViewExpensesTMI";
+import Logout from "./Logout";
+import axios from "axios";
+import AppraisalModel from "../models/AppraisalModel";
+import Sidebar from "../components/Layout/Sidebar";
+import AnnotationEditor from "./components/AnnotationEditor";
+import mixpanel from "mixpanel-browser";
+
+class ViewAppraisal extends React.Component
+{
+    state = {};
+
+
+    componentDidMount()
+    {
+        mixpanel.track("view-appraisal");
+
+        this.reloadAppraisal();
+    }
+
+    reloadAppraisal()
+    {
+        axios.get(`/appraisal/${this.props.match.params.id}`).then((response) =>
+        {
+            try
+            {
+                const appraisal = AppraisalModel.create(response.data.appraisal);
+                this.setState({appraisal: appraisal});
+
+                setTimeout(() =>
+                {
+                    Sidebar.getGlobalSidebar().changeAppraisalType(appraisal.appraisalType);
+                });
+            }
+            catch(err)
+            {
+                console.log(err);
+            }
+        });
+    }
+
+    saveAppraisal(newAppraisal)
+    {
+        this.setState({appraisal: newAppraisal});
+
+        const updates = this.state.appraisal.getUpdates();
+        if (Object.keys(updates).length > 0)
+        {
+            axios.post(`/appraisal/${this.props.match.params.id}`, this.state.appraisal.getUpdates()).then((response) =>
+            {
+                this.state.appraisal.clearUpdates();
+
+                // newAppraisal.applyDiff(response.data);
+
+                this.setState({appraisal: AppraisalModel.create(response.data.appraisal)});
+            });
+        }
+    }
+
+    render() {
+        const routeProps = {
+            appraisal: this.state.appraisal,
+            saveAppraisal: this.saveAppraisal.bind(this),
+            reloadAppraisal: this.reloadAppraisal.bind(this)
+        };
+
+        return (
+            this.state.appraisal ?
+            <ContentWrapper>
+                <div className={"view-appraisal"}>
+                    <Switch>
+                        <Route path={`${this.props.match.path}/upload`} render={(props) => <UploadFiles {...routeProps} {...props} />} />
+                        <Route path={`${this.props.match.path}/leases`} render={(props) => <ViewLeases {...routeProps} {...props} />} />
+                        <Route path={`${this.props.match.path}/lease/:leaseId`} render={(props) => <ViewLease {...routeProps} {...props} />} />
+                        <Route path={`${this.props.match.path}/financial_statements`} render={(props) => <ViewFinancialStatements {...routeProps} {...props} />} />
+                        <Route path={`${this.props.match.path}/financial_statement/:financialStatementId`} render={(props) => <ViewFinancialStatement {...routeProps} {...props} />} />
+
+                        <Route path={`${this.props.match.path}/stabilized_statement_valuation`} render={(props) => <ViewStabilizedStatement {...routeProps} {...props} />} />
+                        <Route path={`${this.props.match.path}/comparable_sales`} render={(props) => <ViewComparableSales {...routeProps} {...props} />} />
+
+                        <Route path={`${this.props.match.path}/files/:fileId/annotate`} render={(props) => <AnnotateFile {...routeProps} {...props} />} />
+
+                        <Route path={`${this.props.match.path}/discounted_cash_flow`} render={(props) => <ViewDiscountedCashFlow {...routeProps} {...props} />} />
+                        <Route path={`${this.props.match.path}/tenants`} render={(props) => <ViewTenants {...routeProps} {...props} />} />
+                        <Route path={`${this.props.match.path}/general`} render={(props) => <ViewBuildingInformation {...routeProps} {...props} />} />
+                        <Route path={`${this.props.match.path}/expenses`} render={(props) => <ViewExpenses {...routeProps} {...props} />} />
+                        <Route path={`${this.props.match.path}/comparable_leases`} render={(props) => <ViewComparableLeases {...routeProps} {...props} />} />
+                        <Route path={`${this.props.match.path}/direct_comparison_valuation`} render={(props) => <ViewDirectComparisonValuation {...routeProps} {...props} />} />
+                        <Route path={`${this.props.match.path}/capitalization_valuation`} render={(props) => <ViewCapitalizationValuation {...routeProps} {...props} />} />
+                        <Route path={`${this.props.match.path}/additional_income`} render={(props) => <ViewAdditionalIncome {...routeProps} {...props} />} />
+                        <Route path={`${this.props.match.path}/amortization`} render={(props) => <ViewAmortization {...routeProps} {...props} />} />
+                        <Route path={`${this.props.match.path}/expenses_tmi`} render={(props) => <ViewExpensesTMI {...routeProps} {...props} />} />
+                        <Route path={`${this.props.match.path}/logout`} render={(props) => <Logout {...routeProps} {...props} />} />
+                    </Switch>
+                </div>
+            </ContentWrapper> : null
+        );
+    }
+}
+
+export default ViewAppraisal;

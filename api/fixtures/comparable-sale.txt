@@ -1,0 +1,9 @@
+Comparable Sale Record
+
+Property: 25 King Street, Toronto, Ontario
+Property Type: Office
+Sale Date: January 15, 2025
+Sale Price: $12,500,000
+Building Area: 50,000 square feet
+Price per Square Foot: $250.00
+Cap Rate: 5.25%

@@ -1,0 +1,41 @@
+
+
+.view-discounted-cash-flow
+{
+
+  tr.header-row
+  {
+    border-bottom: 1px solid darkgray;
+  }
+
+
+  .name-column
+  {
+    border: 0;
+  }
+  .amount-column
+  {
+    text-align: right;
+    min-width: 120px;
+    border: 0;
+  }
+
+  tr.total-row
+  {
+
+    td
+    {
+      padding-bottom: 50px;
+    }
+
+    td.name-column
+    {
+
+    }
+
+    td.amount-column
+    {
+      border-top: 1px solid darkgray;
+    }
+  }
+}

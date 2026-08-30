@@ -1,0 +1,12 @@
+{
+  "version": 1,
+  "fixtures": [
+    {"id": "lease-docx", "type": "lease", "source": "lease.docx", "expected": "lease.json"},
+    {"id": "rent-roll-csv", "type": "rent_roll", "source": "rent-roll.csv", "expected": "rent-roll.json"},
+    {"id": "financial-statement-pdf", "type": "financial_statement", "source": "financial-statement.pdf", "expected": "financial-statement.json"},
+    {"id": "financial-statement-csv", "type": "financial_statement", "source": "financial-statement.csv", "expected": "financial-statement.json"},
+    {"id": "comparable-sale-text", "type": "comparable_sale", "source": "comparable-sale.txt", "expected": "comparable-sale.json"},
+    {"id": "scanned-pdf", "type": "other", "source": "scanned-placeholder.pdf", "expected": "partial.json"},
+    {"id": "image-upload", "type": "other", "source": "image-placeholder.png", "expected": "partial.json"}
+  ]
+}

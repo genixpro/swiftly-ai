@@ -1,0 +1,14 @@
+{
+  "document_type": "comparable_sale",
+  "confidence": 0.95,
+  "fields": [
+    {"name": "address", "value": "25 King Street, Toronto, Ontario", "citations": [{"page": 1, "text": "Property: 25 King Street, Toronto, Ontario"}]},
+    {"name": "salePrice", "value": 12500000, "citations": [{"page": 1, "text": "Sale Price: $12,500,000"}]},
+    {"name": "sizeSquareFootage", "value": 50000, "citations": [{"page": 1, "text": "Building Area: 50,000 square feet"}]},
+    {"name": "capitalizationRate", "value": 5.25, "citations": [{"page": 1, "text": "Cap Rate: 5.25%"}]}
+  ],
+  "tenant_lease_rows": [],
+  "income_expense_rows": [],
+  "comparable_sales": [{"values": [{"name": "address", "value": "25 King Street, Toronto, Ontario", "citations": [{"page": 1, "text": "Property: 25 King Street, Toronto, Ontario"}]}, {"name": "salePrice", "value": 12500000, "citations": [{"page": 1, "text": "Sale Price: $12,500,000"}]}], "citations": [{"page": 1, "text": "Sale Price: $12,500,000"}]}],
+  "citations": [{"page": 1, "text": "Property: 25 King Street, Toronto, Ontario"}, {"page": 1, "text": "Sale Price: $12,500,000"}, {"page": 1, "text": "Building Area: 50,000 square feet"}, {"page": 1, "text": "Cap Rate: 5.25%"}]
+}

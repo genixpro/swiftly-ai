@@ -1,0 +1,106 @@
+/*!
+ *
+ * Angle - Bootstrap Admin Template
+ *
+ * Version: 4.1.1
+ * Author: @themicon_co
+ * Website: http://themicon.co
+ * License: https://wrapbootstrap.com/help/licenses
+ *
+ */
+
+// Bootstrap
+@import "bootstrap/functions";
+@import "bootstrap/variables";
+@import "bootstrap/mixins";
+// Variables
+@import "app/common/variables";
+// Layout
+@import "app/layout/layout";
+@import "app/layout/layout-extra";
+@import "app/layout/layout-animation";
+@import "app/layout/top-navbar";
+@import "app/layout/sidebar";
+@import "app/layout/offsidebar";
+@import "app/layout/user-block";
+@import "app/layout/settings";
+// Common
+@import "app/common/typo";
+@import "app/common/bootstrap-reset";
+@import "app/common/bootstrap-custom";
+@import "app/common/button-extra";
+@import "app/common/placeholder";
+@import "app/common/cards";
+@import "app/common/circles";
+@import "app/common/dropdown-extra";
+@import "app/common/half-float";
+@import "app/common/animate";
+@import "app/common/slim-scroll";
+@import "app/common/inputs";
+@import "app/common/utils";
+@import "app/common/print";
+@import "general";
+
+// Import the styles for specific pages
+@import "pages/StartAppraisal";
+@import "pages/UploadFiles";
+@import "pages/ViewAppraisal";
+@import "pages/ViewLeaseExtractions";
+@import "pages/ViewLeases";
+@import "pages/ViewLeaseReport";
+@import "pages/components/AppraisalList";
+@import "pages/components/AppraisalListItem";
+@import "pages/components/UploadedFileList";
+@import "pages/components/UploadedFileListItem";
+@import "pages/components/LeaseList";
+@import "pages/components/LeaseListItem";
+@import "pages/components/ContextMenu";
+@import "pages/components/FinancialStatementList";
+@import "pages/components/FinancialStatementListItem";
+@import "pages/ViewFinancialStatement";
+@import "pages/ViewFinancialStatementExtractions";
+@import "pages/ViewFinancialStatementReport";
+@import "pages/components/AnnotationEditor";
+@import "pages/ViewFinancialStatementAuditClassification";
+@import "pages/ViewStabilizedStatement";
+@import "pages/components/ComparableSaleList";
+@import "pages/components/ComparableSaleListItem";
+@import "pages/ViewDiscountedCashFlow";
+@import "pages/ViewTenantsRentRoll";
+@import "pages/components/FieldDisplayEdit";
+@import "pages/ViewTenants";
+@import "pages/ViewTenantLeasingCosts";
+@import "pages/components/Checklist";
+@import "pages/components/ChecklistItem";
+@import "pages/ViewBuildingInformation";
+@import "pages/ViewComparablesDatabase";
+@import "pages/components/ComparableLeaseList";
+@import "pages/components/ComparableLeaseListItem";
+@import "pages/ViewVacancySchedule";
+@import "pages/components/ComparableSalesStatistics";
+@import "pages/components/ComparableLeasesStatistics";
+@import "pages/ViewAppraisalComparableSales";
+@import "pages/ViewAppraisalComparableLeases";
+@import "pages/components/ComparableLeasesMap";
+@import "pages/components/ComparableSalesMap";
+@import "pages/ViewExpenses";
+@import "pages/components/FileViewer";
+@import "pages/components/UnitsTable";
+@import "pages/components/ZoneSelector";
+@import "pages/components/UploadableImageSet";
+@import "pages/ViewCapitalizationValuation";
+@import "pages/ViewDirectComparisonValuation";
+@import "pages/ViewMarketRents";
+@import "pages/ViewAdditionalIncomes";
+@import "pages/components/IncomeStatementEditor";
+@import "pages/ViewRecoveryStructure";
+@import "pages/components/ActionButton";
+@import "pages/ViewAmortization";
+@import "pages/ViewExpensesTMI";
+@import "pages/components/TagEditor";
+@import "pages/components/TenantNameSelector";
+@import "pages/components/Toolbar";
+@import "pages/components/ComparableConfirmationDialog";
+@import "pages/components/UnitDetailsEditor";
+@import "pages/components/ComparableAdjustmentChart";
+

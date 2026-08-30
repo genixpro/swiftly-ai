@@ -1,0 +1,11 @@
+fastapi==0.115.12
+uvicorn[standard]==0.34.2
+pymongo==4.12.1
+pydantic==2.11.4
+pydantic-settings==2.9.1
+python-multipart==0.0.20
+openai==1.77.0
+PyMuPDF==1.25.5
+pillow==11.2.1
+openpyxl==3.1.5
+python-docx==1.1.2

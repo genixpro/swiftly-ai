@@ -1,0 +1,226 @@
+
+
+.new-comparable
+{
+  cursor: pointer;
+  margin-bottom: 0;
+  color: gray;
+  text-align: center;
+}
+
+.new-comparable:hover
+{
+  background-color: #eeeeee;
+}
+
+.comparable-lease-list-item {
+  min-width: 40vw;
+
+  margin-bottom: 0;
+
+  display: flex;
+  flex-direction: row;
+
+  .comparable-lease-item-content
+  {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+  }
+
+
+  &:not(.last)
+  {
+    border-bottom: 0;
+  }
+
+  &.last
+  {
+    border-bottom-left-radius: 0.25rem;
+    border-bottom-right-radius: 0.25rem;
+  }
+
+
+  .comparable-lease-list-item-body {
+    display: flex;
+    flex-direction: row;
+    //padding-left: 0;
+
+    .uploadable-image {
+      position: relative;
+      flex-grow: 0;
+      flex-shrink: 0;
+      flex-basis: 25%;
+      margin-left: 15px;
+      margin-right: 15px;
+    }
+
+    &.editable {
+
+    }
+
+    .comparable-lease-content {
+      flex-grow: 1;
+
+      display: flex;
+      flex-direction: column;
+    }
+
+    .comparable-name {
+      flex-grow: 0;
+    }
+
+    .comparable-fields-area {
+      flex-grow: 1;
+      display: grid;
+      grid-template-columns: max-content auto;
+      grid-template-rows: min-content min-content min-content min-content min-content min-content min-content 1fr;
+      align-items: start;
+
+      .comparable-field-label {
+        margin-top: 6px;
+        margin-right: 5px;
+        grid-column: 1 / span 1;
+      }
+
+      .field-display-edit {
+        grid-column: 2 / span 1;
+        height: 100%;
+      }
+    }
+  }
+
+  .card-footer
+  {
+    padding-top: 0;
+    padding-bottom: 0;
+  }
+
+  .comparable-button-row {
+    position: relative;
+    height: 100%;
+
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: space-between;
+
+    .btn {
+      border-radius: 0;
+      padding: 8px;
+    }
+
+    .btn:first-child {
+      border-bottom-left-radius: calc(0.25rem - 1px);
+    }
+
+    .btn:last-child {
+      border-bottom-right-radius: calc(0.25rem - 1px);
+    }
+
+    .move-comparable-button {
+      flex-grow: 1;
+      min-height: 40px;
+      transition: flex-grow 0s 0.4s ease-in-out;
+    }
+
+    .delete-comparable-button {
+      transition: opacity 0.4s ease-in-out, height 0.4s ease-in-out, padding 0.4s ease-in-out, margin 0.4s ease-in-out, border 0.4s ease-in-out;
+      overflow: hidden;
+    }
+
+    .delete-comparable-button.hidden {
+      opacity: 1;
+      height: 0;
+      padding: 0;
+      margin: 0;
+      border: 0;
+    }
+  }
+
+  &.expanded
+  {
+    .comparable-button-row {
+      .move-comparable-button {
+        flex-grow: 0;
+        transition: flex-grow 0s 0s ease-in-out;
+      }
+    }
+  }
+
+  .escalation {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+
+  }
+
+  .free-rent
+  {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+  }
+
+  .shipping-doors
+  {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    .shipping-doors-line
+    {
+      width: 100%;
+      display: flex;
+      flex-direction: row;
+      align-items: stretch;
+
+      span {
+        position: relative;
+        padding-left: 18px;
+        white-space: nowrap;
+        flex-grow: 0;
+        top: 7px;
+      }
+    }
+  }
+}
+
+
+.comparable-lease-list-header
+{
+  margin-bottom: 0;
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+  border-bottom: 0;
+}
+
+.comparable-lease-list-item-header
+{
+  cursor: pointer;
+
+  span.no-data
+  {
+    font-style: italic;
+  }
+
+  font-size: 12px;
+  span {
+    font-size: 12px;
+  }
+
+  .header-field-column
+  {
+    font-size: 12px;
+  }
+
+  .header-field-column:not(:first-child)
+  {
+    border-left: 1px solid #eeeeee;
+  }
+
+  &.first-spacing
+  {
+    padding-left: 60px;
+  }
+}

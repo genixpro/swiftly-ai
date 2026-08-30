@@ -1,0 +1,43 @@
+
+
+.menu-entry
+{
+  cursor: pointer;
+  font-size: 14px;
+  padding: 10px;
+}
+
+.menu-entry:hover
+{
+  background-color: #bfbfff;
+}
+
+.menu-header
+{
+  padding: 5px;
+  font-weight: bold;
+}
+
+.ball-grid > div {
+  background-color: blue;
+}
+
+.loader-image
+{
+  margin-left: 25%;
+  width: 50%;
+}
+
+.checkmark-image
+{
+  opacity: 0;
+  animation: fadeInOut 3s linear;
+
+  margin-left: 25%;
+  width: 50%;
+}
+
+@keyframes fadeInOut {
+  0%,100% { opacity: 0 }
+  25%,75% { opacity: 1 }
+}
