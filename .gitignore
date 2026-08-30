@@ -8,10 +8,15 @@ server/data
 openai
 data/
 api/.pytest_cache/
+api/.coverage
+api/htmlcov/
 api/.venv/
 api/__pycache__/
 api/app/__pycache__/
 api/tests/__pycache__/
+**/__pycache__/
+*.py[cod]
 client/dist/
+client/coverage/
 test-results/
 playwright-report/

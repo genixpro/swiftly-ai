@@ -2,6 +2,7 @@
   "compilerOptions": {
     "allowJs": true,
     "checkJs": false,
+    "strict": true,
     "jsx": "react-jsx",
     "noEmit": true,
     "skipLibCheck": true,
@@ -12,6 +13,8 @@
   "include": [
     "src/**/*.js",
     "src/**/*.jsx",
+    "src/**/*.ts",
+    "src/**/*.tsx",
     "vite.config.js",
     "playwright.config.js"
   ]

@@ -1,5 +1,6 @@
 import BaseModel from "../orm/BaseModel";
 import _ from 'underscore';
+import {reportModelIssue} from './modelLogger';
 
 
 class EquationModel extends BaseModel
@@ -54,8 +55,7 @@ class EquationModel extends BaseModel
         }
         catch(err)
         {
-            console.log("Error loading BaseModel subclass fields.");
-            console.log(err);
+            reportModelIssue(`Error calculating fields for ${this.constructor.name}.`, err);
         }
     }
 }

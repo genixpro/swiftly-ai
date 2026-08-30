@@ -15,7 +15,8 @@ jobs:
         with: { python-version: '3.12' }
       - run: pip install -r requirements-dev.txt
       - run: ruff check app tests
-      - run: pytest -q
+      - run: ruff check app/services app/repositories.py app/routers --select F,I,B,UP,SIM,C90
+      - run: pytest -q --cov=app.services --cov-report=term-missing --cov-fail-under=85
   web:
     runs-on: ubuntu-latest
     defaults: { run: { working-directory: client } }
@@ -27,6 +28,7 @@ jobs:
       - run: npm run lint
       - run: npm run typecheck
       - run: npm run test -- --passWithNoTests
+      - run: npm run test:coverage
       - run: npm run build
   e2e:
     runs-on: ubuntu-latest

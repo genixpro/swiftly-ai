@@ -1,7 +1,7 @@
 import React from 'react';
 import {Row, Col, Card, CardBody} from 'reactstrap';
 import FieldDisplayEdit from "./FieldDisplayEdit";
-import _ from 'underscore';
+import {updateComparableSearch} from './comparable-sale/searchModel';
 
 class ComparableSaleSearch extends React.Component
 {
@@ -17,19 +17,8 @@ class ComparableSaleSearch extends React.Component
 
     changeSearchField(field, value)
     {
-        const search = this.state.search;
-        if (value === null || value === "")
-        {
-            if (!_.isUndefined(search[field]))
-            {
-                delete search[field];
-            }
-        }
-        else
-        {
-            search[field] = value;
-        }
-        this.setState({search: search});
+        const search = updateComparableSearch(this.state.search, field, value);
+        this.setState({search});
 
         if (this.props.onChange)
         {

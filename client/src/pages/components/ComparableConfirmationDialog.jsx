@@ -1,7 +1,7 @@
 import React from 'react';
 import {Row, Col, Modal, ModalHeader, ModalBody, Table, Button} from "reactstrap";
 import ComparableSaleListItem from "./ComparableSaleListItem"
-import axios from '@api/client';
+import {comparableSalesApi} from '@api/resources';
 import ActionButton from "./ActionButton"
 import FileViewer from "./FileViewer"
 
@@ -21,9 +21,9 @@ class ComparableConfirmationDialog extends React.Component
         }
         else
         {
-            return axios.post(`/comparable-sales`, comparable).then((response) =>
+            return comparableSalesApi.create(comparable).then((comparableId) =>
             {
-                comparable["_id"] = response.data._id;
+                comparable["_id"] = comparableId;
                 comparable[ComparableSaleListItem._newSale] = true;
 
                 this.props.onChange(this.props.comparableSales);
@@ -40,10 +40,7 @@ class ComparableConfirmationDialog extends React.Component
         this.props.onChange(this.props.comparableSales);
         if(newComparable._id)
         {
-            return axios.patch(`/comparable-sales/` + newComparable._id, newComparable).then((response) => {
-                // console.log(response.data.comparableSales);
-                // this.setState({comparableSales: response.data.comparableSales})
-            });
+            return comparableSalesApi.update(newComparable._id, newComparable);
         }
 
         return Promise.resolve();

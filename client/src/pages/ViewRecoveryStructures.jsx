@@ -1,6 +1,5 @@
 import React from 'react';
 import { Row, Col, Card, CardHeader, CardBody, Button, Popover, PopoverBody, PopoverHeader } from 'reactstrap';
-import axios from '@api/client';
 import FieldDisplayEdit from './components/FieldDisplayEdit';
 import '@components/Common/datetime-compat.css'
 import NumberFormat from "@components/Common/NumberFormatCompat";

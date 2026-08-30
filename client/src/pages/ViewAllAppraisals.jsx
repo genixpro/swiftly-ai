@@ -1,7 +1,7 @@
 import React from 'react';
 import ContentWrapper from '../components/Layout/ContentWrapper';
 import { Row } from 'reactstrap';
-import axios from '@api/client';
+import {appraisalsApi} from '@api/resources';
 import AppraisalList from './components/AppraisalList';
 import AppraisalModel from "../models/AppraisalModel";
 import {Link} from "react-router";
@@ -23,16 +23,16 @@ class ViewAllAppraisals extends React.Component {
 
     reloadAppraisals()
     {
-        axios.get("/appraisals/").then((response) =>
+        appraisalsApi.list().then((appraisals) =>
         {
-            this.setState({appraisals: response.data.appraisals.map((appraisal) => AppraisalModel.create(appraisal))});
+            this.setState({appraisals: appraisals.map((appraisal) => AppraisalModel.create(appraisal))});
         });
     }
 
 
     deleteAppraisal(appraisal)
     {
-        axios.delete("/appraisals/" + appraisal._id).then((response) =>
+        appraisalsApi.remove(appraisal._id).then(() =>
         {
             this.reloadAppraisals();
         });

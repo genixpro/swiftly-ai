@@ -6,7 +6,7 @@ import ComparableSalesStatistics from "./ComparableSalesStatistics"
 import { Button, Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
 import SortDirection from "./SortDirection";
 import ComparableSaleModel from "../../models/ComparableSaleModel";
-import axios from '@api/client';
+import {comparableSalesApi} from '@api/resources';
 import PropTypes from "prop-types";
 import _ from "underscore";
 
@@ -180,14 +180,14 @@ class ComparableSaleList extends React.Component
 
         mapConcurrent(this.state.portfolioComps, (newPortfolioComp) =>
         {
-            return axios.post(`/comparable-sales`, newPortfolioComp);
+            return comparableSalesApi.create(newPortfolioComp);
 
         }).then((portfolioResponses) =>
         {
-            newComparable.portfolioLinkedComps = _.map(portfolioResponses, (response) => (response.data._id));
-            axios.post(`/comparable-sales`, newComparable).then((response) =>
+            newComparable.portfolioLinkedComps = portfolioResponses;
+            comparableSalesApi.create(newComparable).then((comparableId) =>
             {
-                newComparable["_id"] = response.data._id;
+                newComparable["_id"] = comparableId;
                 newComparable[ComparableSaleListItem._newSale] = true;
 
                     this.lastNewComp = null;

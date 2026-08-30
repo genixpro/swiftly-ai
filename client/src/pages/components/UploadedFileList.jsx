@@ -1,7 +1,6 @@
 import React from 'react';
 import { Table } from 'reactstrap';
 import UploadedFileListItem from './UploadedFileListItem';
-import axios from '@api/client';
 import FileModel from "../../models/FileModel";
 
 class UploadedFileList extends React.Component

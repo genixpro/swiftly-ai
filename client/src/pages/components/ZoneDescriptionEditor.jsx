@@ -1,6 +1,6 @@
 import React from 'react';
 import FieldDisplayEdit from "./FieldDisplayEdit";
-import axios from '@api/client';
+import {zonesApi} from '@api/resources';
 import ZoneModel from "../../models/ZoneModel";
 
 
@@ -19,9 +19,9 @@ class ZoneDescriptionEditor extends React.Component {
 
     reloadZone()
     {
-        axios.get(`/zones/${this.props.zoneId}`).then((response) =>
+        zonesApi.get(this.props.zoneId).then((zone) =>
         {
-            this.setState({zone: ZoneModel.create(response.data.zone)})
+            this.setState({zone: ZoneModel.create(zone)})
         });
     }
 
@@ -39,10 +39,7 @@ class ZoneDescriptionEditor extends React.Component {
         const zone = this.state.zone;
         zone.description = newValue;
         this.setState({zone: zone});
-        axios.patch(`/zones/${this.props.zoneId}`, zone).then((response) =>
-        {
-            // this.setState({zone: response.data.zone})
-        });
+        zonesApi.update(this.props.zoneId, zone);
     }
 
 

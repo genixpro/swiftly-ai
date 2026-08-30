@@ -25,4 +25,16 @@ export default [
             'jsx-a11y/anchor-is-valid': 'warn',
         },
     },
+    {
+        files: ['src/**/*.{js,jsx}'],
+        ignores: ['src/api/**'],
+        rules: {
+            'no-restricted-imports': ['error', {
+                paths: [
+                    {name: 'axios', message: 'Use a typed resource service from @api/resources.'},
+                    {name: '@api/client', importNames: ['default'], message: 'Use a typed resource service from @api/resources.'},
+                ],
+            }],
+        },
+    },
 ];

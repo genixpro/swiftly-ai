@@ -1,7 +1,7 @@
 import React from 'react';
 import AsyncCreatable from 'react-select/async-creatable';
 import {Button} from 'reactstrap';
-import axios from '@api/client';
+import {tagsApi} from '@api/resources';
 import _ from "underscore";
 
 
@@ -50,10 +50,10 @@ class TagEditor extends React.Component {
             search['propertyType'] = this.props.propertyType;
         }
 
-        axios.get(`/property-tags`, {params: search}).then((response) =>
+        tagsApi.list(search).then((tags) =>
         {
             this.setState({
-                defaultOptions: response.data.tags.map((tag) => ({value: tag.name, label: tag.name}) )
+                defaultOptions: tags.map((tag) => ({value: tag.name, label: tag.name}) )
             });
         });
     }
@@ -67,7 +67,7 @@ class TagEditor extends React.Component {
             newTag['propertyType'] = this.props.propertyType;
         }
 
-        axios.post(`/property-tags`, newTag).then((response) =>
+        tagsApi.create(newTag).then(() =>
         {
             this.setState((state) => {
                 state.tags.push({value: data, label: data});
@@ -83,9 +83,9 @@ class TagEditor extends React.Component {
             search['propertyType'] = this.props.propertyType;
         }
 
-        axios.get(`/property-tags`, {params: search}).then((response) =>
+        tagsApi.list(search).then((tags) =>
         {
-            callback(response.data.tags.map((tag) => ({value: tag.name, label: tag.name}) ));
+            callback(tags.map((tag) => ({value: tag.name, label: tag.name}) ));
         });
     }
 
@@ -102,7 +102,7 @@ class TagEditor extends React.Component {
     deleteTag(evt, tagId)
     {
         evt.stopPropagation();
-        axios.delete(`/property-tags/` + tagId).then((response) =>
+        tagsApi.remove(tagId).then(() =>
         {
             this.reloadDefaults();
             this.selectRef.blur();

@@ -124,7 +124,9 @@ test('seeded dates and discounted cash-flow year headings are visible', async ({
   await expect(page.locator('input[type="date"]')).toHaveValue('2026-01-01');
 
   await page.goto('/appraisal/demo-appraisal/discounted_cash_flow');
-  const years = await page.locator('#view-discounted-cash-flow th[scope="col"]').allTextContents();
+  const yearHeadings = page.locator('#view-discounted-cash-flow th[scope="col"]');
+  await expect(yearHeadings.first()).toBeVisible();
+  const years = await yearHeadings.allTextContents();
   expect(years.length).toBeGreaterThan(1);
   expect(years.every(year => /^\d{4}$/.test(year.trim()))).toBeTruthy();
 });

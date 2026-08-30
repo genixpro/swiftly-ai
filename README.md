@@ -17,6 +17,8 @@ Copy `.env.example` to the repository-root `.env`, start MongoDB locally, then r
 Run the quality checks with `pip install -r requirements-dev.txt && ruff check app tests && pytest -q` in `api`, and `npm run lint && npm run typecheck && npm test && npm run build` in `client`.
 With Compose running, execute `E2E_BASE_URL=http://localhost:5173 npm run test:e2e` in `client` to verify the no-login workflow, uploads, persistence mutations, and each appraisal navigation area.
 
+See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for the backend repository/service boundaries, frontend API rules, and guidance for extending the application without reintroducing cross-layer coupling.
+
 ## Extraction contract
 
 `POST /appraisals/{id}/files` stores the source file. `POST /appraisals/{id}/files/{fileId}/extract` queues work, `GET /extractions/{jobId}` reads status, and `PATCH /appraisals/{id}/files/{fileId}/extraction` saves reviewer corrections. All internal API resources use the canonical plural routes; removed singular routes return 404.

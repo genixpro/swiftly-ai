@@ -29,5 +29,12 @@ export default defineConfig({
   },
   server: { port: 5173 },
   css: { preprocessorOptions: { scss: { quietDeps: true } } },
-  test: { exclude: ['e2e/**', 'node_modules/**', 'dist/**'] },
+  test: {
+    exclude: ['e2e/**', 'node_modules/**', 'dist/**'],
+    coverage: {
+      provider: 'v8',
+      reporter: ['text'],
+      thresholds: {statements: 80, branches: 54, functions: 89, lines: 80},
+    },
+  },
 });

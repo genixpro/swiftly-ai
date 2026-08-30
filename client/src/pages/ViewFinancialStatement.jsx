@@ -1,6 +1,6 @@
 import React from 'react';
 import {Row, Col, Card, CardBody, Nav, NavItem} from 'reactstrap';
-import axios from '@api/client';
+import {filesApi} from '@api/resources';
 import ViewFinancialStatementAudit from "./ViewFinancialStatementAudit";
 import {Navigate, NavLink, Route, Routes} from 'react-router';
 import FileModel from "../models/FileModel";
@@ -13,8 +13,8 @@ class ViewFinancialStatement extends React.Component {
     };
 
     componentDidMount() {
-        axios.get(`/appraisals/${this.props.appraisalId}/files/${this.props.financialStatementId}`).then((response) => {
-            this.setState({financialStatement: FileModel.create(response.data.file)})
+        filesApi.get(this.props.appraisalId, this.props.financialStatementId).then((file) => {
+            this.setState({financialStatement: FileModel.create(file)})
         });
     }
 
@@ -23,7 +23,7 @@ class ViewFinancialStatement extends React.Component {
     }
 
     saveFinancialStatementData(newLease) {
-        axios.patch(`/appraisals/${this.props.appraisalId}/files/${this.props.financialStatementId}`, newLease).then((response) => {
+        filesApi.update(this.props.appraisalId, this.props.financialStatementId, {extractedData: newLease.extractedData}).then(() => {
             this.setState({financialStatement: FileModel.create(newLease)})
         });
     }

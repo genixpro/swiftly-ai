@@ -1,6 +1,6 @@
 import React from 'react';
 import {Row, Col, Card, CardBody} from 'reactstrap';
-import axios from '@api/client';
+import {filesApi} from '@api/resources';
 import FinancialStatementList from "./components/FinancialStatementList"
 import FileModel from "../models/FileModel";
 
@@ -11,8 +11,8 @@ class ViewFinancialStatements extends React.Component {
 
     componentDidMount()
     {
-        axios.get(`/appraisals/${this.props.appraisalId}/files?type=financials`).then((response) => {
-            this.setState({financial_statements: response.data.files.map((file) => FileModel.create(file))})
+        filesApi.list(this.props.appraisalId, 'financials').then((files) => {
+            this.setState({financial_statements: files.map((file) => FileModel.create(file))})
         });
     }
 

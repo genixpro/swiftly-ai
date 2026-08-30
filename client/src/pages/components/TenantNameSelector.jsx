@@ -1,6 +1,6 @@
 import React from 'react';
 import AsyncCreatable from 'react-select/async-creatable';
-import axios from '@api/client';
+import {tenantNamesApi} from '@api/resources';
 
 
 class TenantNameSelector extends React.Component {
@@ -12,9 +12,9 @@ class TenantNameSelector extends React.Component {
     {
         if (inputValue)
         {
-            axios.get(`/tenant-names`, {params: {tenantName: inputValue}}).then((response) =>
+            tenantNamesApi.list(inputValue).then((names) =>
             {
-                callback(response.data.names.map((tenant) => ({value: tenant, label: tenant}) ));
+                callback(names.map((tenant) => ({value: tenant, label: tenant}) ));
             });
         }
         else

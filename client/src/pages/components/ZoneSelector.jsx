@@ -1,6 +1,6 @@
 import React from 'react';
 import AsyncCreatable from 'react-select/async-creatable';
-import axios from '@api/client';
+import {zonesApi} from '@api/resources';
 import ZoneModel from "../../models/ZoneModel";
 import {regularizeId} from "../../orm/IdField";
 
@@ -14,19 +14,19 @@ class ZoneSelector extends React.Component {
     {
         if (this.props.value)
         {
-            axios.get(`/zones/${this.props.value}`).then((response) =>
+            zonesApi.get(this.props.value).then((zone) =>
             {
-                this.setState({zone: {value: regularizeId(response.data.zone._id), label: response.data.zone.zoneName}})
+                this.setState({zone: {value: regularizeId(zone._id), label: zone.zoneName}})
             });
         }
     }
 
     onCreateZone(data)
     {
-        axios.post(`/zones`, {zoneName: data, description: ""}).then((response) =>
+        zonesApi.create({zoneName: data, description: ""}).then((zoneId) =>
         {
-            this.setState({zone: {value: regularizeId(response.data._id), label: data}});
-            this.props.onChange(regularizeId(response.data._id));
+            this.setState({zone: {value: regularizeId(zoneId), label: data}});
+            this.props.onChange(regularizeId(zoneId));
         });
     }
 
@@ -34,9 +34,9 @@ class ZoneSelector extends React.Component {
     {
         if (inputValue)
         {
-            axios.get(`/zones`, {params: {zoneName: inputValue}}).then((response) =>
+            zonesApi.list(inputValue).then((zones) =>
             {
-                callback(response.data.zones.map((zone) => ({value: regularizeId(zone._id), label: zone.zoneName}) ));
+                callback(zones.map((zone) => ({value: regularizeId(zone._id), label: zone.zoneName}) ));
             });
         }
         else

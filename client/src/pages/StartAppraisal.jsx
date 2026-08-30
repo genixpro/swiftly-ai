@@ -1,7 +1,7 @@
 import React from 'react';
 import ContentWrapper from '../components/Layout/ContentWrapper';
 import {Row, Col, Card, CardBody, FormGroup, Input} from 'reactstrap';
-import axios from '@api/client';
+import {appraisalsApi} from '@api/resources';
 import FieldDisplayEdit from "./components/FieldDisplayEdit";
 import { Sidebar } from "../components/Layout/Sidebar";
 import {Link} from "react-router";
@@ -43,10 +43,8 @@ class StartAppraisal extends React.Component
 
         this.setState({creating: true, createError: null});
 
-        axios.post("/appraisals", this.state.newAppraisal).then((response) =>
+        appraisalsApi.create(this.state.newAppraisal).then((newId) =>
         {
-            const newId = response.data._id;
-            
             const sidebar = Sidebar.getGlobalSidebar();
             if (sidebar)
             {

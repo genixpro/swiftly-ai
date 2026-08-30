@@ -1,6 +1,6 @@
 import React from 'react';
 import {Row, Col, Card, CardBody, Nav, NavItem} from 'reactstrap';
-import axios from '@api/client';
+import {filesApi} from '@api/resources';
 import ViewLeaseReport from "./ViewLeaseReport";
 import {Navigate, NavLink, Route, Routes} from 'react-router';
 import FileModel from "../models/FileModel";
@@ -13,8 +13,8 @@ class ViewLease extends React.Component {
     };
 
     componentDidMount() {
-        axios.get(`/appraisals/${this.props.appraisalId}/files/${this.props.leaseId}`).then((response) => {
-            this.setState({lease: FileModel.create(response.data.file)})
+        filesApi.get(this.props.appraisalId, this.props.leaseId).then((file) => {
+            this.setState({lease: FileModel.create(file)})
         });
     }
 
@@ -23,7 +23,7 @@ class ViewLease extends React.Component {
     }
 
     saveLeaseData(newLease) {
-        axios.patch(`/appraisals/${this.props.appraisalId}/files/${this.props.leaseId}`, newLease).then((response) => {
+        filesApi.update(this.props.appraisalId, this.props.leaseId, {extractedData: newLease.extractedData}).then(() => {
             this.setState({lease: newLease})
         });
     }

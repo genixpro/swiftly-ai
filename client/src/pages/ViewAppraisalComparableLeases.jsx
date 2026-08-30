@@ -1,7 +1,7 @@
 import { reportUrl } from "@api/client";
 import React from 'react';
 import {Row, Col, DropdownMenu, Dropdown, DropdownToggle, DropdownItem} from 'reactstrap';
-import axios from '@api/client';
+import {comparableLeasesApi} from '@api/resources';
 import _ from 'underscore';
 import ComparableLeaseList from "./components/ComparableLeaseList";
 import ComparableLeasesMap from "./components/ComparableLeasesMap";
@@ -18,9 +18,10 @@ class ViewAppraisalComparableLeases extends React.Component {
 
     componentDidMount()
     {
-        this.props.appraisal.loadComparableLeases().then((comparableLeases) =>
+        comparableLeasesApi.getMany(this.props.appraisal.comparableLeases).then((comparableLeases) =>
         {
-            this.setState({comparableLeases: ComparableLeaseModel.sortComparables(comparableLeases, this.state.sort)})
+            const models = comparableLeases.map((item) => ComparableLeaseModel.create(item));
+            this.setState({comparableLeases: ComparableLeaseModel.sortComparables(models, this.state.sort)})
         })
     }
 

@@ -3,7 +3,7 @@ import React from 'react';
 import {Row, Col, Card, CardBody, Table, Dropdown, DropdownItem, DropdownMenu, DropdownToggle, Popover, PopoverBody, PopoverHeader} from 'reactstrap';
 import NumberFormat from '@components/Common/NumberFormatCompat';
 import {Link} from 'react-router';
-import axios from '@api/client';
+import {comparableSalesApi} from '@api/resources';
 import FieldDisplayEdit from './components/FieldDisplayEdit';
 import AppraisalContentHeader from "./components/AppraisalContentHeader";
 import ComparableSaleList from "./components/ComparableSaleList";
@@ -32,9 +32,10 @@ class ViewCapitalizationValuation extends React.Component
     componentDidMount()
     {
 
-        this.props.appraisal.loadComparableSalesCapRate().then((comparableSales) =>
+        comparableSalesApi.getMany(this.props.appraisal.comparableSalesCapRate).then((comparableSales) =>
         {
-            this.setState({comparableSales: ComparableSaleModel.sortComparables(comparableSales.filter((item) => item), this.state.sort)})
+            const models = comparableSales.map((item) => ComparableSaleModel.create(item));
+            this.setState({comparableSales: ComparableSaleModel.sortComparables(models, this.state.sort)})
         });
     }
 

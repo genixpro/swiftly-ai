@@ -20,7 +20,7 @@ import ViewCapitalizationValuation from "./ViewCapitalizationValuation";
 import ViewAdditionalIncome from "./ViewAdditionalIncomes";
 import ViewAmortization from "./ViewAmortization";
 import ViewExpensesTMI from "./ViewExpensesTMI";
-import axios from '@api/client';
+import {appraisalsApi} from '@api/resources';
 import AppraisalModel from "../models/AppraisalModel";
 import { Sidebar } from "../components/Layout/Sidebar";
 
@@ -43,11 +43,11 @@ class ViewAppraisal extends React.Component
         {
             currentSidebar.clearAppraisal();
         }
-        axios.get(`/appraisals/${this.props.appraisalId}`).then((response) =>
+        appraisalsApi.get(this.props.appraisalId).then((data) =>
         {
             try
             {
-                const appraisal = AppraisalModel.create(response.data.appraisal);
+                const appraisal = AppraisalModel.create(data);
                 this.setState({appraisal: appraisal, loading: false, error: null});
 
                 setTimeout(() =>
@@ -69,7 +69,7 @@ class ViewAppraisal extends React.Component
             {
                 sidebar.clearAppraisal();
             }
-            const notFound = error.response && error.response.status === 404;
+            const notFound = error.status === 404;
             this.setState({
                 loading: false,
                 error: notFound
@@ -88,12 +88,12 @@ class ViewAppraisal extends React.Component
         {
             const requestId = (this.saveRequestId || 0) + 1;
             this.saveRequestId = requestId;
-            axios.patch(`/appraisals/${this.props.appraisalId}`, updates).then((response) =>
+            appraisalsApi.update(this.props.appraisalId, updates).then((data) =>
             {
                 if (requestId !== this.saveRequestId) return;
                 newAppraisal.clearUpdates();
                 this.setState({
-                    appraisal: AppraisalModel.create(response.data.appraisal),
+                    appraisal: AppraisalModel.create(data),
                     saving: false,
                     saveError: null,
                     savedAt: new Date()

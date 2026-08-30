@@ -2,7 +2,7 @@ import React from 'react';
 import { mapConcurrent } from '@utils/promises';
 import ComparableLeaseListItem from './ComparableLeaseListItem';
 import {Row, Col, CardHeader, CardTitle} from 'reactstrap';
-import axios from '@api/client';
+import {comparableLeasesApi} from '@api/resources';
 import ComparableLeasesStatistics from "./ComparableLeasesStatistics";
 import ComparableLeaseModel from "../../models/ComparableLeaseModel";
 import { Button, Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
@@ -132,10 +132,10 @@ class ComparableLeaseList extends React.Component
                     }
                     else
                     {
-                        return axios.get(`/comparable-leases/` + comparableLeaseId).then((response) =>
+                        return comparableLeasesApi.get(comparableLeaseId).then((comparableLease) =>
                         {
-                            this.loadedComparables[comparableLeaseId] = ComparableLeaseModel.create(response.data.comparableLease);
-                            return response.data.comparableLease;
+                            this.loadedComparables[comparableLeaseId] = ComparableLeaseModel.create(comparableLease);
+                            return comparableLease;
                         });
                     }
                 }).then((comparableLeases) =>
@@ -160,9 +160,9 @@ class ComparableLeaseList extends React.Component
         }
         this.lastNewComp = newComparable;
 
-        axios.post(`/comparable-leases`, newComparable).then((response) =>
+        comparableLeasesApi.create(newComparable).then((comparableId) =>
         {
-            newComparable["_id"] = response.data._id;
+            newComparable["_id"] = comparableId;
             newComparable[ComparableLeaseListItem._newLease] = true;
             this.lastNewComp = null;
 

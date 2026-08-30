@@ -1,7 +1,7 @@
 import React from 'react';
 import { mapSeries } from '@utils/promises';
 import {Row, Col, Button} from 'reactstrap';
-import axios from '@api/client';
+import {comparableSalesApi} from '@api/resources';
 import ComparableSaleList from "./components/ComparableSaleList";
 import _ from 'underscore';
 import ComparableSaleSearch from "./components/ComparableSaleSearch";
@@ -54,8 +54,8 @@ class ViewComparableSalesDatabase extends React.Component {
 
         params['sort'] = this.state.sort;
 
-        axios.get(`/comparable-sales`, {params: params}).then((response) => {
-            this.setState({comparableSales: response.data.comparableSales.map((comp) => ComparableSalesModel.create(comp))})
+        comparableSalesApi.list(params).then((comparableSales) => {
+            this.setState({comparableSales: comparableSales.map((comp) => ComparableSalesModel.create(comp))})
         });
     }
 
@@ -196,16 +196,10 @@ class ViewComparableSalesDatabase extends React.Component {
                     const data = new FormData();
                     data.set("fileName", file.name);
                     data.set("file", file);
-                    const options = {
-                        method: 'post',
-                        url: "/comparable-sales/import",
-                        data: data
-                    };
+                    const uploadPromise = comparableSalesApi.import(data);
 
-                    const uploadPromise = axios(options);
-
-                    uploadPromise.then((response) => {
-                        resolve({comps: response.data.comparableSales, file: FileModel.create(response.data.file)});
+                    uploadPromise.then((result) => {
+                        resolve({comps: result.comparableSales, file: FileModel.create(result.file)});
                     }, (error) => {
 
                         resolve(null);
@@ -214,8 +208,6 @@ class ViewComparableSalesDatabase extends React.Component {
                 })
             }).then((datas) => {
                 const comps = _.flatten(_.map(datas, (data) => data.comps), true);
-
-                console.log(datas);
 
                 self.setState({
                     uploading: false,

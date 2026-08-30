@@ -9,6 +9,7 @@ from openpyxl import load_workbook
 
 from app import main
 from app.main import REPORT_TITLES, report_rows
+from app.services.seeding import seed_demo_files
 from app.settings import settings
 
 
@@ -75,6 +76,20 @@ def test_appraisal_children_and_exports_keep_their_response_shapes(client):
     export = client.get(f"/appraisals/{appraisal_id}/reports/rent_roll?format=xlsx")
     assert export.status_code == 200
     assert export.headers["content-type"].startswith("application/vnd.openxmlformats-officedocument")
+
+
+def test_seeded_file_upgrade_normalizes_legacy_word_tokens(client):
+    repositories = client.app.state.repositories
+    repositories.files.update_one(
+        {"_id": "demo-financial-statement"},
+        {"$set": {"words": ["legacy", "tokens"]}},
+    )
+
+    seed_demo_files(client.app, FIXTURES)
+
+    words = repositories.files.find_one({"_id": "demo-financial-statement"})["words"]
+    assert [word["word"] for word in words] == ["legacy", "tokens"]
+    assert all(word["page"] == 1 for word in words)
 
 
 def test_comparable_zone_tag_and_tenant_contracts(client):
@@ -205,7 +220,8 @@ def test_file_upload_extract_and_manual_extraction_correction_contracts(client):
     assert job["status"] == "failed"  # no runtime key: failure remains reviewable/reprocessable
     assert "OPENAI_API_KEY" in job["error"]
     reviewed = client.get(f"/appraisals/demo-appraisal/files/{file['_id']}").json()["file"]
-    assert reviewed["pages"] > 0 and reviewed["images"]
+    assert reviewed["pages"] > 0
+    assert "path" not in reviewed and "images" not in reviewed
     assert reviewed["reviewStatus"] == "extraction_failed"
     assert "OPENAI_API_KEY" in reviewed["extractionError"]
     listed = client.get("/appraisals/demo-appraisal/files").json()["files"]
@@ -229,16 +245,29 @@ def test_file_upload_extract_and_manual_extraction_correction_contracts(client):
     assert patched_file["reviewStatus"] == "corrected"
     assert patched_file["extraction"] == correction["extraction"]
     assert "annotations" not in patched_file
+    assert "path" not in patched_file and "images" not in patched_file and "hash" not in patched_file
+    unsafe_patch = client.patch(
+        f"/appraisals/demo-appraisal/files/{file['_id']}",
+        json={"path": "/etc/hosts"},
+    )
+    assert unsafe_patch.status_code == 422
+    classified = client.patch(
+        f"/appraisals/demo-appraisal/files/{file['_id']}",
+        json={"fileType": "financials"},
+    )
+    assert classified.status_code == 200
+    assert classified.json()["file"]["fileType"] == "financials"
     retry = client.post(f"/appraisals/demo-appraisal/files/{file['_id']}/extract")
     assert retry.status_code == 200
     retried_file = client.get(f"/appraisals/demo-appraisal/files/{file['_id']}").json()["file"]
     assert retried_file["extractionJobId"] == retry.json()["jobId"]
     assert retried_file["reviewStatus"] == "extraction_failed"
-    source_path = Path(retried_file["path"])
-    rendered_path = Path(retried_file["images"][0])
-    assert source_path.is_file() and rendered_path.is_file()
+    source_paths = list((settings().data_dir / "uploads").glob(f"{file['_id']}.*"))
+    rendered_paths = list((settings().data_dir / "rendered" / file["_id"]).glob("page-*.png"))
+    assert len(source_paths) == 1 and source_paths[0].is_file()
+    assert rendered_paths and rendered_paths[0].is_file()
     assert client.delete(f"/appraisals/demo-appraisal/files/{file['_id']}").json() == {}
-    assert not source_path.exists() and not rendered_path.exists()
+    assert not source_paths[0].exists() and not rendered_paths[0].exists()
     assert client.get(f"/extractions/{retry.json()['jobId']}").status_code == 404
 
 

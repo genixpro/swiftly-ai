@@ -3,7 +3,7 @@ import { mapConcurrent } from '@utils/promises';
 import { Button, Collapse, CardHeader, CardTitle, Row, Col, Popover, PopoverBody, PopoverHeader, Table} from 'reactstrap';
 import FieldDisplayEdit from "./FieldDisplayEdit";
 import {NonDroppableFieldDisplayEdit} from "./FieldDisplayEdit";
-import axios from '@api/client';
+import {comparableSalesApi} from '@api/resources';
 import UploadableImageSet from "./UploadableImageSet";
 import NumberFormat from '@components/Common/NumberFormatCompat';
 import PropTypes from "prop-types";
@@ -17,109 +17,10 @@ import FloatFormat from "./FloatFormat";
 import IntegerFormat from "./IntegerFormat";
 import ComparableLeaseListItem from "./ComparableLeaseListItem";
 import FreeRentLossForUnitCalculationPopoverWrapper from "./FreeRentLossForUnitCalculationPopoverWrapper";
-
-
-class ComparableSaleListItemField extends React.Component
-{
-    static propTypes = {
-        title: PropTypes.string.isRequired,
-        field: PropTypes.string.isRequired,
-        fieldType: PropTypes.string.isRequired,
-        edit: PropTypes.bool.isRequired,
-        cents: PropTypes.bool,
-        propertyType: PropTypes.string,
-        excludedPropertyType: PropTypes.string,
-        onChange: PropTypes.func.isRequired,
-        location: PropTypes.object,
-        comparableSale: PropTypes.instanceOf(ComparableSaleModel).isRequired
-    };
-
-    render()
-    {
-        if (this.props.propertyType && this.props.comparableSale.propertyType !== this.props.propertyType)
-        {
-            return null;
-        }
-
-        if (this.props.excludedPropertyType && this.props.comparableSale.propertyType === this.props.excludedPropertyType)
-        {
-            return null;
-        }
-
-        if (!this.props.edit && (this.props.comparableSale[this.props.field] === null || this.props.comparableSale[this.props.field] === ""))
-        {
-            return null;
-        }
-
-        return [
-            <span key={1} className={"comparable-field-label"}>{this.props.title}:</span>,
-
-            <FieldDisplayEdit
-                key={2}
-                type={this.props.fieldType}
-                edit={this.props.edit}
-                cents={this.props.cents}
-                placeholder={this.props.placeholder || this.props.title}
-                value={this.props.comparableSale[this.props.field]}
-                location={this.props.location ? {lat: () => this.props.location.coordinates[1], lng: () => this.props.location.coordinates[0]} : null}
-                propertyType={this.props.comparableSale.propertyType}
-                onChange={(newValue) => this.props.onChange(this.props.field, newValue)}
-                onGeoChange={(newValue) => this.props.onChange('location', {"type": "Point", "coordinates": [newValue.lng, newValue.lat]})}
-            />
-        ]
-    }
-}
-
-
-class ComparableSaleListItemHeaderColumn extends React.Component
-{
-    static propTypes = {
-        size: PropTypes.oneOfType([PropTypes.number, PropTypes.string]).isRequired,
-        renders: PropTypes.arrayOf(PropTypes.func).isRequired,
-        noValueTexts: PropTypes.arrayOf(PropTypes.string).isRequired,
-        fields: PropTypes.arrayOf(PropTypes.string).isRequired,
-        comparableSale: PropTypes.instanceOf(ComparableSaleModel).isRequired,
-        spacers: PropTypes.arrayOf(PropTypes.object)
-    };
-
-    render()
-    {
-        const colProps = {};
-        let colClass = "";
-
-        if (_.isNumber(this.props.size))
-        {
-            colProps['xs'] = this.props.size;
-        }
-        else if(this.props.size === 'middle')
-        {
-            colClass = "middle-col"
-        }
-
-        return <Col className={`header-field-column ${colClass}`} {...colProps}>
-
-            {
-                this.props.fields.map((field, fieldIndex) =>
-                {
-                    return this.props.comparableSale[field] && !(_.isArray(this.props.comparableSale[field]) && this.props.comparableSale[field].length === 0)
-                        ? <span key={fieldIndex}>
-                            {
-                                this.props.renders[fieldIndex](this.props.comparableSale[field])
-                            }
-                            {fieldIndex !== this.props.fields.length - 1 ?
-                                (!_.isUndefined(this.props.spacers[fieldIndex]) ? this.props.spacers[fieldIndex] : <br />)
-                                    : null}
-                            </span>
-                        : <span className={"no-data"} key={fieldIndex}>
-                            <span>{!_.isUndefined(this.props.noValueTexts[fieldIndex]) ? this.props.noValueTexts[fieldIndex] : "n/a"}</span>
-                            {fieldIndex !== this.props.fields.length - 1 ? (!_.isUndefined(this.props.spacers[fieldIndex]) ? "" : <br />) : null}
-                        </span>
-                })
-            }
-
-        </Col>
-    }
-}
+import {
+    ComparableSaleField as ComparableSaleListItemField,
+    ComparableSaleHeaderColumn as ComparableSaleListItemHeaderColumn,
+} from './comparable-sale/ComparableSaleFields';
 
 class ComparableSaleListItem extends React.Component
 {
@@ -188,9 +89,9 @@ class ComparableSaleListItem extends React.Component
         {
             mapConcurrent(this.props.comparableSale.portfolioLinkedComps, (compId) =>
             {
-                return axios.get(`/comparable-sales/${compId}`).then((response) =>
+                return comparableSalesApi.get(compId).then((comparableSale) =>
                 {
-                    return ComparableSaleModel.create(response.data.comparableSale);
+                    return ComparableSaleModel.create(comparableSale);
                 })
             }).then((comps) =>
             {
@@ -201,10 +102,7 @@ class ComparableSaleListItem extends React.Component
 
     saveComparable(updatedComparable)
     {
-        axios.patch(`/comparable-sales/` + updatedComparable._id, updatedComparable).then((response) => {
-            // console.log(response.data.comparableSales);
-            // this.setState({comparableSales: response.data.comparableSales})
-        });
+        comparableSalesApi.update(updatedComparable._id, updatedComparable);
     }
 
     getDefaultMapParams()
@@ -281,8 +179,7 @@ class ComparableSaleListItem extends React.Component
                 }
 
                 this.saveComparable(newComparable);
-                axios.post(`/comparable-sale-portfolios`, {portfolio: this.props.comparableSale, subComps: this.state.portfolioComps}).then((response) => {
-                    const newPortfolioComp = response.data.comparableSale;
+                comparableSalesApi.savePortfolio(this.props.comparableSale, this.state.portfolioComps).then((newPortfolioComp) => {
                     newPortfolioComp._id = this.props.comparableSale._id;
 
                     this.saveComparable(newPortfolioComp);
@@ -298,8 +195,7 @@ class ComparableSaleListItem extends React.Component
                     this.props.onChangePortfolio(this.state.portfolioComps);
                 }
 
-                axios.post(`/comparable-sale-portfolios`, {portfolio: this.props.comparableSale, subComps: this.state.portfolioComps}).then((response) => {
-                    const newPortfolioComp = response.data.comparableSale;
+                comparableSalesApi.savePortfolio(this.props.comparableSale, this.state.portfolioComps).then((newPortfolioComp) => {
                     newPortfolioComp._id = this.props.comparableSale._id;
 
                     this.props.onChange(newPortfolioComp);
@@ -323,13 +219,13 @@ class ComparableSaleListItem extends React.Component
 
             this.props.onDeleteComparable(this.props.comparableSale);
 
-            axios.delete(`/comparable-sales/` + comp._id).then((response) => {
+            comparableSalesApi.remove(comp._id).then(() => {
 
                 if (comp.isPortfolioCompilation && deletePortfolio)
                 {
                     mapConcurrent(comp.portfolioLinkedComps, (subComp) =>
                     {
-                        return axios.delete(`/comparable-sales/` + subComp._id);
+                        return comparableSalesApi.remove(subComp._id || subComp);
                     });
                 }
 
@@ -450,7 +346,7 @@ class ComparableSaleListItem extends React.Component
 
             if (comp[0]._id)
             {
-                axios.delete(`/comparable-sales/${comp[0]._id}`);
+                comparableSalesApi.remove(comp[0]._id);
             }
 
             const newState = {

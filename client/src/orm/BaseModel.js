@@ -1,6 +1,7 @@
 import BaseField from "./BaseField";
 import _ from "underscore";
 import IntField from "./IntField";
+import {reportModelIssue} from '../models/modelLogger';
 
 /**
  * This class is encapsulates data that is sent down from the server.
@@ -68,7 +69,7 @@ class BaseModel extends Object
                 if (!this.fieldNames.includes(key) && !ignoredServerFields.has(key))
                 {
                     const message = `Unexpected key ${key} on model ${modelClass.name} on the data received from the server.`;
-                    console.error(message);
+                    reportModelIssue(message);
                 }
             });
 
@@ -94,8 +95,7 @@ class BaseModel extends Object
         }
         catch(err)
         {
-            console.log("Error loading BaseModel subclass fields.");
-            console.log(err);
+            reportModelIssue(`Error loading fields for ${this.constructor.name}.`, err);
         }
 
         this.initialize();

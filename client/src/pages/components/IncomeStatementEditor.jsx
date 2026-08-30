@@ -1,6 +1,6 @@
 import React from 'react';
 import {Row, Col, Button, Popover, PopoverHeader, PopoverBody} from 'reactstrap';
-import axios from '@api/client';
+import {filesApi} from '@api/resources';
 import {DroppableFieldDisplayEdit, NonDroppableFieldDisplayEdit} from './FieldDisplayEdit';
 import _ from 'underscore';
 import {arrayMove} from '@dnd-kit/sortable';
@@ -10,6 +10,7 @@ import {IncomeStatementItemModel} from "../../models/IncomeStatementModel";
 import FileModel from "../../models/FileModel";
 import CurrencyFormat from "./CurrencyFormat";
 import YearlySourceTypeFormat from "./YearlySourceTypeFormat";
+import {calculateGroupTotals, cleanNumericalValue} from './income-statement/domain';
 
 const sortableIndex = Symbol("sortableIndex");
 
@@ -392,62 +393,12 @@ class IncomeStatementEditor extends React.Component
 
     computeExpenseTotals()
     {
-        const totals = {};
-
-        Object.keys(this.props.groups).forEach((group) =>
-        {
-            totals[group + "_total"] = {};
-            for (let year of this.props.appraisal[this.props.field].years)
-            {
-                    totals[group + "_total"][year] = 0;
-            }
-        });
-
-
-        if (this.props.appraisal[this.props.field].items)
-        {
-            this.props.appraisal[this.props.field].items.forEach((expense) =>
-            {
-                if (expense.yearlyAmounts)
-                {
-                    for (let year of Object.keys(expense.yearlyAmounts))
-                    {
-                        if (Object.keys(this.props.groups).indexOf(expense.incomeStatementItemType) !== -1)
-                        {
-                            totals[expense.incomeStatementItemType + "_total"][year] += expense.yearlyAmounts[year];
-                        }
-                    }
-                }
-            });
-        }
-
-        this.setState(totals);
+        this.setState(calculateGroupTotals(this.props.groups, this.props.appraisal[this.props.field]));
     }
 
     cleanNumericalValue(value)
     {
-        value = value.toString();
-        const cleanText = value.replace(/[^0-9.]/g, "");
-        const isNegative = value.indexOf("-") !== -1 || value.indexOf("(") !== -1 || value.indexOf(")") !== -1;
-
-        if (cleanText === "")
-        {
-            return 0;
-        }
-
-        try {
-            if (isNegative)
-            {
-                return -Number(cleanText);
-            }
-            else
-            {
-                return Number(cleanText);
-            }
-        }
-        catch(err) {
-            return 0;
-        }
+        return cleanNumericalValue(value);
     }
 
     changeIncomeItemValue(item, year, newValue, newReference)
@@ -930,9 +881,9 @@ class IncomeStatementEditor extends React.Component
         this.setState({selectedFileId: fileId});
         if (!this.state.file || this.state.file._id !== fileId)
         {
-            axios.get(`/appraisals/${this.props.appraisal._id}/files/${fileId}`).then((response) =>
+            filesApi.get(this.props.appraisal._id, fileId).then((file) =>
             {
-                this.setState({file: FileModel.create(response.data.file)});
+                this.setState({file: FileModel.create(file)});
             });
         }
     }

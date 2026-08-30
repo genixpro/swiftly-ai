@@ -1,7 +1,7 @@
 import React from 'react';
 import { mapSeries } from '@utils/promises';
 import {Row, Col, Card, CardBody} from 'reactstrap';
-import axios from '@api/client';
+import {filesApi} from '@api/resources';
 import Dropzone from '../components/Common/DropzoneCompat';
 import UploadedFileList from "./components/UploadedFileList"
 import AppraisalContentHeader from "./components/AppraisalContentHeader";
@@ -24,9 +24,9 @@ class UploadFiles extends React.Component {
 
     refreshFileList()
     {
-        axios.get(`/appraisals/${this.appraisalId}/files`).then((response) =>
+        filesApi.list(this.appraisalId).then((files) =>
         {
-            this.setState({files: response.data.files.map((file) => FileModel.create(file))})
+            this.setState({files: files.map((file) => FileModel.create(file))})
         });
     }
 
@@ -49,11 +49,7 @@ class UploadFiles extends React.Component {
             const data = new FormData();
             data.set("fileName", file.name);
             data.set("file", file);
-            return axios({
-                method: 'post',
-                url: "/appraisals/" + this.props.appraisalId + "/files",
-                data: data
-            });
+            return filesApi.upload(this.props.appraisalId, data);
         }).then(() => {
             this.refreshFileList();
             this.props.reloadAppraisal();

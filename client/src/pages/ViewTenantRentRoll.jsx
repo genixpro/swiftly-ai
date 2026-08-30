@@ -16,7 +16,7 @@ import IntegerFormat from "./components/IntegerFormat";
 import PercentFormat from "./components/PercentFormat";
 import AreaFormat from "./components/AreaFormat";
 import Moment from "@components/Common/MomentDisplay";
-import axios from '@api/client';
+import {appraisalsApi, filesApi} from '@api/resources';
 import FileModel from "../models/FileModel";
 import ActionButton from "./components/ActionButton";
 
@@ -97,20 +97,16 @@ class ViewTenantsRentRoll extends React.Component
 
         if (!this.state.file || this.state.file._id !== fileId)
         {
-            axios.get(`/appraisals/${this.props.appraisal._id}/files/${fileId}`).then((response) =>
+            filesApi.get(this.props.appraisal._id, fileId).then((file) =>
             {
-                this.setState({file: FileModel.create(response.data.file)});
+                this.setState({file: FileModel.create(file)});
             });
         }
     }
 
     createComparablesForTenancies()
     {
-        const promise = axios.post(`/appraisals/${this.props.appraisal._id}/comparable-leases/from-tenants`).then((response) =>
-        {
-
-        });
-        return promise;
+        return appraisalsApi.convertTenants(this.props.appraisal._id);
     }
 
     getDefaultFile()

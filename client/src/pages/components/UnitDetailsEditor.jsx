@@ -21,6 +21,11 @@ import MarketRentDifferentialForUnitCalculationPopoverWrapper from "./MarketRent
 import FreeRentLossForUnitCalculationPopoverWrapper from "./FreeRentLossForUnitCalculationPopoverWrapper";
 import ExpenseRecoveryForUnitCalculationPopoverWrapper from "./ExpenseRecoveryForUnitCalculationPopoverWrapper";
 import ManagementRecoveriesForUnitCalculationPopoverWrapper from "./ManagementRecoveriesForUnitCalculationPopoverWrapper";
+import {
+    findLeasingCostStructure,
+    findMarketRent,
+    nextLeasingStructureName,
+} from './unit-details/domain';
 
 class UnitDetailsEditor extends React.Component
 {
@@ -198,35 +203,17 @@ class UnitDetailsEditor extends React.Component
 
     getUnitLeasingCosts()
     {
-        for (let leasingCosts of this.props.appraisal.leasingCosts)
-        {
-            if (leasingCosts.name === this.props.unit.leasingCostStructure)
-            {
-                return leasingCosts;
-            }
-        }
-
-        for (let leasingCosts of this.props.appraisal.leasingCosts)
-        {
-            if (leasingCosts.name === LeasingCostStructureModel.defaultLeasingCostName)
-            {
-                return leasingCosts;
-            }
-        }
+        return findLeasingCostStructure(
+            this.props.appraisal,
+            this.props.unit,
+            LeasingCostStructureModel.defaultLeasingCostName,
+        );
     }
 
 
     getUnitMarketRent()
     {
-        for (let marketRent of this.props.appraisal.marketRents)
-        {
-            if (marketRent.name === this.props.unit.marketRent)
-            {
-                return marketRent;
-            }
-        }
-
-        return null;
+        return findMarketRent(this.props.appraisal, this.props.unit);
     }
 
     ensureUniqueMarketRent()
@@ -235,7 +222,7 @@ class UnitDetailsEditor extends React.Component
         if (currentMarketRent === null)
         {
             const marketRent = MarketRentModel.create({
-                name: "New Leasing Structure " + (this.props.appraisal.leasingCosts.length + 1).toString(),
+                name: nextLeasingStructureName(this.props.appraisal),
                 amountPSF: this.props.unit.currentTenancy.yearlyRent / this.props.unit.squareFootage
             }, this.props.appraisal.stabilizedStatement, 'marketRents');
 
@@ -280,7 +267,7 @@ class UnitDetailsEditor extends React.Component
         if (currentLeasingCosts.isDefault)
         {
             const newLeasingCosts = LeasingCostStructureModel.create({
-                name: "New Leasing Structure " + (this.props.appraisal.leasingCosts.length + 1).toString(),
+                name: nextLeasingStructureName(this.props.appraisal),
                 leasingCommissionPSF: currentLeasingCosts.leasingCommissionPSF,
                 tenantInducementsPSF: currentLeasingCosts.tenantInducementsPSF,
                 renewalPeriod: currentLeasingCosts.renewalPeriod,

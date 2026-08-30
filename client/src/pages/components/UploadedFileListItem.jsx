@@ -1,5 +1,5 @@
 import React from 'react';
-import axios from '@api/client';
+import {filesApi} from '@api/resources';
 import {Button} from 'reactstrap';
 
 
@@ -20,7 +20,7 @@ class UploadedFileListItem extends React.Component
         file.fileType = evt.target.value;
         this.setState({file: file});
 
-        axios.patch(`/appraisals/${this.props.appraisalId}/files/${this.state.file._id}`, {"fileType": evt.target.value}).then((response) =>
+        filesApi.update(this.props.appraisalId, this.state.file._id, {fileType: evt.target.value}).then(() =>
         {
 
         });
@@ -33,7 +33,7 @@ class UploadedFileListItem extends React.Component
         if (window.confirm(`Are you sure you want to remove “${this.state.file.fileName}”?`))
         {
             this.setState({deleting: true, deleteError: null});
-            axios.delete(`/appraisals/${this.props.appraisalId}/files/${this.state.file._id}`).then((response) =>
+            filesApi.remove(this.props.appraisalId, this.state.file._id).then(() =>
             {
                 this.props.handleDeletion(this.props.file);
             }).catch(() => {

@@ -2,7 +2,7 @@ import React from 'react';
 import { Button, Collapse, CardTitle, CardHeader, Row, Col} from 'reactstrap';
 import FieldDisplayEdit from "./FieldDisplayEdit";
 import _ from 'underscore';
-import axios from '@api/client';
+import {comparableLeasesApi} from '@api/resources';
 import CurrencyFormat from './CurrencyFormat';
 import IntegerFormat from './IntegerFormat';
 import UploadableImageSet from "./UploadableImageSet";
@@ -100,10 +100,7 @@ class ComparableLeaseListItem extends React.Component
 
     saveComparable(updatedComparable)
     {
-        axios.patch(`/comparable-leases/` + this.state.comparableLease._id, updatedComparable).then((response) => {
-            // console.log(response.data.comparableLeases);
-            // this.setState({comparableLeases: response.data.comparableLeases})
-        });
+        comparableLeasesApi.update(this.state.comparableLease._id, updatedComparable);
     }
 
 
@@ -164,11 +161,7 @@ class ComparableLeaseListItem extends React.Component
         {
             this.props.onDeleteComparable(this.state.comparableLease);
 
-            axios.delete(`/comparable-leases/` + this.state.comparableLease._id).then((response) =>
-            {
-                // console.log(response.data.comparableLeases);
-                // this.setState({comparableLeases: response.data.comparableLeases})
-            });
+            comparableLeasesApi.remove(this.state.comparableLease._id);
         }
     }
 

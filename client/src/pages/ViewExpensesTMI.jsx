@@ -1,6 +1,6 @@
 import React from 'react';
 import {Row, Col, Card, CardBody, Button} from 'reactstrap';
-import axios from '@api/client';
+import {comparableLeasesApi} from '@api/resources';
 import FieldDisplayEdit from './components/FieldDisplayEdit';
 import AppraisalContentHeader from './components/AppraisalContentHeader';
 import '@components/Common/datetime-compat.css'
@@ -25,9 +25,10 @@ class ViewExpensesTMI extends React.Component
 
     loadComparables()
     {
-        this.props.appraisal.loadComparableLeases().then((comparableLeases) =>
+        comparableLeasesApi.getMany(this.props.appraisal.comparableLeases).then((comparableLeases) =>
         {
-            this.setState({comparableLeases: ComparableLeaseModel.sortComparables(comparableLeases, this.state.sort)})
+            const models = comparableLeases.map((item) => ComparableLeaseModel.create(item));
+            this.setState({comparableLeases: ComparableLeaseModel.sortComparables(models, this.state.sort)})
         })
     }
 

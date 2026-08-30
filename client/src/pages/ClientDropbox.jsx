@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { mapSeries } from '@utils/promises';
 import { Col, Row} from 'reactstrap';
 import Dropzone from '../components/Common/DropzoneCompat';
-import axios from '@api/client';
+import {filesApi} from '@api/resources';
 
 // import FormValidator from '../Forms/FormValidator.js';
 
@@ -24,13 +24,7 @@ class ClientDropBox extends Component {
                 const data = new FormData();
                 data.set("fileName", file.name);
                 data.set("file", file);
-                const options = {
-                    method: 'post',
-                    url: "/appraisals/" + this.props.appraisalId + "/files",
-                    data: data
-                };
-
-                const uploadPromise = axios(options);
+                const uploadPromise = filesApi.upload(this.props.appraisalId, data);
 
                 uploadPromise.then((response) => {
                     resolve(null);

@@ -1,6 +1,6 @@
 import React from 'react';
 import {Row, Col} from 'reactstrap';
-import axios from '@api/client';
+import {comparableLeasesApi} from '@api/resources';
 import ComparableLeaseList from "./components/ComparableLeaseList";
 import _ from 'underscore';
 import ComparableLeaseSearch from "./components/ComparableLeaseSearch";
@@ -42,9 +42,8 @@ class ViewComparableLeasesDatabase extends React.Component {
 
         params['sort'] = this.state.sort;
 
-        axios.get(`/comparable-leases`, {params: params}).then((response) => {
-            // console.log(response.data.comparableLeases);
-            this.setState({comparableLeases: response.data.comparableLeases.map((lease) => ComparableLeaseModel.create(lease))})
+        comparableLeasesApi.list(params).then((comparableLeases) => {
+            this.setState({comparableLeases: comparableLeases.map((lease) => ComparableLeaseModel.create(lease))})
         });
     }
 

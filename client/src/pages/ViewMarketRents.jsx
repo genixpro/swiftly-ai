@@ -13,7 +13,7 @@ import {
     Dropdown,
     DropdownToggle, DropdownMenu, DropdownItem
 } from 'reactstrap';
-import axios from '@api/client';
+import {comparableLeasesApi} from '@api/resources';
 import FieldDisplayEdit from './components/FieldDisplayEdit';
 import '@components/Common/datetime-compat.css'
 import ComparableLeaseModel from "../models/ComparableLeaseModel";
@@ -292,9 +292,10 @@ class ViewMarketRents extends React.Component
 
     loadLeases()
     {
-        this.props.appraisal.loadComparableLeases().then((comparableLeases) =>
+        comparableLeasesApi.getMany(this.props.appraisal.comparableLeases).then((comparableLeases) =>
         {
-            this.setState({comparableLeases: ComparableLeaseModel.sortComparables(comparableLeases, this.state.sort)})
+            const models = comparableLeases.map((item) => ComparableLeaseModel.create(item));
+            this.setState({comparableLeases: ComparableLeaseModel.sortComparables(models, this.state.sort)})
         })
     }
 

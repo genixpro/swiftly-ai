@@ -1,5 +1,5 @@
 import React from 'react';
-import axios from '@api/client';
+import {filesApi} from '@api/resources';
 import FileModel from "../../models/FileModel";
 
 
@@ -16,14 +16,14 @@ class FileSelector extends React.Component
 
     refresh()
     {
-        axios.get(`/appraisals/${this.props.appraisalId}/files`).then((response) =>
+        filesApi.list(this.props.appraisalId).then((files) =>
         {
-            this.setState({files: response.data.files.map((file) => FileModel.create(file)) });
+            this.setState({files: files.map((file) => FileModel.create(file)) });
 
             let defaultSet = false;
             if (this.props.defaultFile)
             {
-                response.data.files.forEach((file) =>
+                files.forEach((file) =>
                 {
                     if (file._id === this.props.defaultFile)
                     {
@@ -33,10 +33,10 @@ class FileSelector extends React.Component
                 });
             }
 
-            if (!defaultSet && response.data.files.length > 0)
+            if (!defaultSet && files.length > 0)
             {
-                const previewableFile = response.data.files.find((file) => Number(file.pages) > 0);
-                this.onChangeValue((previewableFile || response.data.files[0])._id)
+                const previewableFile = files.find((file) => Number(file.pages) > 0);
+                this.onChangeValue((previewableFile || files[0])._id)
             }
         });
     }

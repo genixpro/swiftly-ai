@@ -1,5 +1,5 @@
 import React from 'react';
-import axios from '@api/client';
+import {imagesApi} from '@api/resources';
 import Dropzone from '@components/Common/DropzoneCompat'
 import {Button,
     Carousel,
@@ -38,19 +38,13 @@ class UploadableImageSet extends React.Component
         const data = new FormData();
         data.set("fileName", file.name);
         data.set("file", file);
-        const options = {
-            method: 'post',
-            url: "/images",
-            data: data
-        };
+        const uploadPromise = imagesApi.upload(data);
 
-        const uploadPromise = axios(options);
-
-        uploadPromise.then((response) => {
+        uploadPromise.then((url) => {
             if (this.props.onChange)
             {
                 const newUrls = this.props.value;
-                newUrls.push(response.data.url);
+                newUrls.push(url);
                 this.props.onChange(newUrls);
                 this.setState({loading: false});
             }

@@ -40,3 +40,17 @@ class ExtractionResult(BaseModel):
 
 class ExtractionPatch(BaseModel):
     extraction: ExtractionResult
+
+
+class FileMetadataPatch(BaseModel):
+    """Explicit allowlist of client-editable file review metadata."""
+
+    model_config = ConfigDict(extra="forbid")
+    fileType: str | None = Field(default=None, min_length=1, max_length=100)
+    extractedData: dict[str, Any] | None = None
+
+    @model_validator(mode="after")
+    def contains_an_update(self):
+        if self.fileType is None and self.extractedData is None:
+            raise ValueError("At least one editable file field is required")
+        return self
