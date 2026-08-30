@@ -19,7 +19,9 @@ FIXTURES = Path(__file__).parents[1] / "fixtures"
 def client(tmp_path, monkeypatch):
     """Exercise both API names against an isolated Mongo-compatible store."""
     monkeypatch.setenv("DATA_DIR", str(tmp_path / "data"))
-    monkeypatch.delenv("OPENAI_API_KEY", raising=False)
+    # An explicit empty value must override any developer key loaded from the
+    # repository-root .env file.
+    monkeypatch.setenv("OPENAI_API_KEY", "")
     settings.cache_clear()
     monkeypatch.setattr(main, "MongoClient", mongomock.MongoClient)
     with TestClient(main.app) as test_client:

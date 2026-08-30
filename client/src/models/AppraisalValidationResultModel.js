@@ -1,9 +1,13 @@
 import BaseModel from "../orm/BaseModel";
 import BoolField from "../orm/BoolField";
+import GenericField from "../orm/GenericField";
 
 
 class AppraisalValidationResultModel extends BaseModel
 {
+    static valid = new BoolField();
+    static errors = new GenericField();
+    static errorFields = new GenericField();
     static hasBuildingInformation = new BoolField();
     static hasRentRoll = new BoolField();
     static hasIncomeStatement = new BoolField();
@@ -29,5 +33,4 @@ class AppraisalValidationResultModel extends BaseModel
 
 
 export default AppraisalValidationResultModel;
-
 

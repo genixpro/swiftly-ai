@@ -13,6 +13,7 @@ class Logout extends React.Component
         if (window.confirm("Are you sure you want to logout?"))
         {
             Auth.logout();
+            this.props.history.replace('/appraisals');
         }
         else
         {

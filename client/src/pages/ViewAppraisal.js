@@ -68,12 +68,12 @@ class ViewAppraisal extends React.Component
     {
         this.setState({appraisal: newAppraisal});
 
-        const updates = this.state.appraisal.getUpdates();
+        const updates = newAppraisal.getUpdates();
         if (Object.keys(updates).length > 0)
         {
-            axios.post(`/appraisal/${this.props.match.params.id}`, this.state.appraisal.getUpdates()).then((response) =>
+            axios.post(`/appraisal/${this.props.match.params.id}`, updates).then((response) =>
             {
-                this.state.appraisal.clearUpdates();
+                newAppraisal.clearUpdates();
 
                 // newAppraisal.applyDiff(response.data);
 

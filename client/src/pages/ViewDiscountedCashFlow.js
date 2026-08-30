@@ -128,11 +128,11 @@ class ViewDiscountedCashFlow extends React.Component
                                                             <thead>
                                                                 <tr className={"header-row"}>
                                                                     <td />
-                                                                    {
-                                                                        this.state.rows && this.state.rows.length > 0 && this.state.rows[0].map((cashFlow) => <td className={"amount-column"}>
-                                                                            <span><NumberFormat value={cashFlow['year']} displayType={"text"} /></span>
-                                                                        </td>)
-                                                                    }
+                                                                    {this.props.appraisal.discountedCashFlow.cashFlowSummary.years.map((year) =>
+                                                                        <th className={"amount-column"} key={year} scope="col">
+                                                                            <NumberFormat value={year} displayType={"text"} />
+                                                                        </th>
+                                                                    )}
                                                                 </tr>
                                                             </thead>
                                                             <tbody>

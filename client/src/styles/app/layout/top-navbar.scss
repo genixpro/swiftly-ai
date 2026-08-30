@@ -116,6 +116,12 @@ $nav-top-item-desktop-active:   $nav-top-item-mobile-active;
         padding: 1.1rem .95rem;
         font-size: .85rem;
     }
+    .navbar-toggle-button {
+        border: 0;
+        border-radius: 0;
+        background: transparent;
+        cursor: pointer;
+    }
     .navbar-nav>.nav-item>.nav-link,
     .navbar-nav>.nav-item.show>.nav-link {
         color: $nav-top-item-desktop;

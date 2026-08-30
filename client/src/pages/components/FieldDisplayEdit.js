@@ -1,7 +1,6 @@
 import React from 'react';
 import { Button } from 'reactstrap';
 import _ from 'underscore';
-import Geosuggest from 'react-geosuggest';
 import Datetime from 'react-datetime';
 import PropertyTypeSelector from './PropertyTypeSelector';
 import RentTypeSelector from './RentTypeSelector';
@@ -619,17 +618,15 @@ class FieldDisplayEdit extends React.Component
                     }
                     {
                         this.props.type === "address" ?
-                            <Geosuggest
+                            <Input
                                 title={this.props.title || this.props.placeholder}
-                                types={["geocode"]}
                                 placeholder={this.props.placeholder}
                                 disabled={!this.props.edit}
-                                location={this.props.location}
-                                radius={this.props.location ? 20 : 0}
-                                initialValue={this.state.isEditing ? this.state.value : this.formatValue(this.props.value)}
-                                onSuggestSelect={(newValue) => this.addressInputUpdated(newValue)}
-                                inputClassName={"form-control"}
-                                onBlur={(evt) => this.finishEditing()}
+                                value={this.state.isEditing ? this.state.value : this.formatValue(this.props.value)}
+                                onChange={(evt) => this.inputUpdated(evt.target.value)}
+                                innerRef={(inputElem) => this.inputElem = inputElem}
+                                onKeyPress={(evt) => this.handleKeyPress(evt)}
+                                onBlur={() => this.finishEditing()}
                             /> : null
                     }
                 </InputGroup>
@@ -693,4 +690,3 @@ const SwitchingFieldDisplayEdit = (props) =>
 
 export default SwitchingFieldDisplayEdit;
 export {NonDroppableFieldDisplayEdit, DroppableFieldDisplayEdit};
-

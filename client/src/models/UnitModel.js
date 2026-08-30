@@ -45,6 +45,7 @@ class TenancyModel extends BaseModel
 
 class UnitModel extends BaseModel
 {
+    static ignoredServerFields = ["tenantName", "suite", "yearlyRent", "isVacantForStabilizedStatement"];
     constructor(data, parent, fieldName, check)
     {
         super(data, parent, fieldName, check);
@@ -318,4 +319,3 @@ class UnitModel extends BaseModel
 
 export default UnitModel;
 export {UnitModel, TenancyModel}
-

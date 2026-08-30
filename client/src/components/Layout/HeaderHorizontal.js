@@ -41,10 +41,10 @@ class HeaderHorizontal extends Component {
                     <div className="navbar-header">
                         <a className="navbar-brand" href="#/">
                             <div className="brand-logo">
-                                <img className="img-fluid" src="img/logo.png" alt="App Logo" />
+                                <img className="img-fluid" src="/img/logo.png" alt="Swiftly" />
                             </div>
                             <div className="brand-logo-collapsed">
-                                <img className="img-fluid" src="img/logo-single.png" alt="App Logo" />
+                                <img className="img-fluid" src="/img/logo-single.png" alt="Swiftly" />
                             </div>
                         </a>
                         <NavbarToggler onClick={this.toggle} />

@@ -28,7 +28,7 @@ class SidebarUserBlock extends Component {
                        {/* User picture */}
                        <div className="user-block-picture">
                           <div className="user-block-status">
-                             <img className="img-thumbnail rounded-circle" src="img/user/02.jpg" alt="Avatar" width="60" height="60" />
+                             <img className="img-thumbnail rounded-circle" src="/img/user/02.jpg" alt="Avatar" width="60" height="60" />
                              <div className="circle bg-success circle-lg"></div>
                           </div>
                        </div>

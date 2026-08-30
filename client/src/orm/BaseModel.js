@@ -14,6 +14,7 @@ class BaseModel extends Object
     static dirtyFieldsSymbol = Symbol("dirtyFields");
     
     static version = new IntField();
+    static ignoredServerFields = [];
 
     static create(data, parent, fieldName)
     {
@@ -59,11 +60,12 @@ class BaseModel extends Object
         try
         {
             const modelClass = this.constructor;
+            const ignoredServerFields = new Set(modelClass.ignoredServerFields || []);
 
             // First validate
             Object.keys(data).forEach((key) =>
             {
-                if (!modelClass[key])
+                if (!this.fieldNames.includes(key) && !ignoredServerFields.has(key))
                 {
                     const message = `Unexpected key ${key} on model ${modelClass.name} on the data received from the server.`;
                     console.error(message);

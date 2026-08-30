@@ -30,6 +30,10 @@ import ComparableAdjustmentChartModel from "./ComparableAdjustmentChartModel";
 
 class AppraisalModel extends BaseModel
 {
+    static ignoredServerFields = [
+        "createdAt", "updatedAt", "demoSeedVersion", "sizeOfBuilding",
+        "additionalIncomes", "expenses"
+    ];
     static _id = new IdField();
     static appraisalName = new StringField("name");
     static address = new StringField();
@@ -326,4 +330,3 @@ class AppraisalModel extends BaseModel
 }
 
 export default AppraisalModel;
-

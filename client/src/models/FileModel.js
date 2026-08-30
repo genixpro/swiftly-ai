@@ -64,6 +64,10 @@ class WordModel extends BaseModel
 
 class FileModel extends BaseModel
 {
+    static ignoredServerFields = [
+        "path", "extractedData", "annotations", "tenantLeaseRows",
+        "incomeExpenseRows", "comparableSales"
+    ];
     static _id = new IdField();
     static fileName = new GenericField();
     static owner = new StringField();

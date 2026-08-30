@@ -38,11 +38,11 @@ DEMO_DEFAULTS = {
     "discountedCashFlowInputs": {"projectionYears": 10, "discountRate": 0, "inflation": 0},
 }
 
-DEMO_SEED_VERSION = "2026.8"
+DEMO_SEED_VERSION = "2026.9"
 DEMO_APPRAISAL = {
     "_id": "demo-appraisal", "owner": "local-demo", "name": "Harbour Centre Demo",
-    "address": "100 Harbour Street, Toronto", "appraisalType": "Income Producing",
-    "propertyType": "Office", "sizeOfBuilding": 50_000, "effectiveDate": "2026-01-01",
+    "address": "100 Harbour Street, Toronto", "appraisalType": "detailed",
+    "propertyType": "office", "sizeOfBuilding": 50_000, "effectiveDate": "2026-01-01",
     "units": [
         {"tenantName": "Northstar Foods", "suite": "101", "unitNumber": "101", "squareFootage": 8_000,
          "yearlyRent": 192_000, "tenancies": [{"name": "Northstar Foods", "yearlyRent": 192_000}]},
@@ -64,8 +64,8 @@ DEMO_APPRAISAL = {
 
 DEMO_RETAIL_APPRAISAL = {
     "_id": "demo-market-hall", "owner": "local-demo", "name": "Market Hall Demo",
-    "address": "45 Wellington Street, Toronto", "appraisalType": "Income Producing",
-    "propertyType": "Retail", "sizeOfBuilding": 18_000, "effectiveDate": "2026-01-01",
+    "address": "45 Wellington Street, Toronto", "appraisalType": "detailed",
+    "propertyType": "retail", "sizeOfBuilding": 18_000, "effectiveDate": "2026-01-01",
     "units": [
         {"tenantName": "Harbour Bakery", "suite": "A", "unitNumber": "A", "squareFootage": 3_200,
          "yearlyRent": 128_000, "tenancies": [{"name": "Harbour Bakery", "yearlyRent": 128_000}]},
@@ -150,8 +150,25 @@ def seed_demo_files(app: FastAPI) -> None:
         ("demo-comparable-sale", "comparable-sale.txt", "comparable-sale.json", "comparable"),
         ("demo-scanned-rent-roll", "scanned-placeholder.pdf", "partial.json", "rentroll"),
     )
+
+    def word_records(values: list[object]) -> list[object]:
+        """Keep persisted early-demo string tokens compatible with the review UI."""
+        return [
+            {"word": value, "page": 1, "index": index, "lineNumber": 0, "documentLineNumber": 0,
+             "column": index, "documentColumn": index, "left": 0, "right": 0, "top": 0, "bottom": 0,
+             "groups": {}, "groupProbabilities": {}, "groupNumbers": {}, "classificationProbabilities": {},
+             "modifiers": [], "modifierProbabilities": {}, "textTypeProbabilities": {},
+             "lineNumberWithinGroup": {}, "reverseLineNumberWithinGroup": {}}
+            if isinstance(value, str) else value
+            for index, value in enumerate(values)
+        ]
+
     for file_id, source_name, extraction_name, legacy_type in documents:
-        if db.files.find_one({"_id": file_id}):
+        existing = db.files.find_one({"_id": file_id})
+        if existing:
+            words = existing.get("words") or []
+            if any(isinstance(word, str) for word in words):
+                db.files.update_one({"_id": file_id}, {"$set": {"words": word_records(words)}})
             continue
         source = fixture_directory() / source_name
         if not source.is_file():
@@ -168,7 +185,7 @@ def seed_demo_files(app: FastAPI) -> None:
             "_id": file_id, "appraisalId": "demo-appraisal", "owner": "local-demo", "fileName": source_name,
             "path": str(destination), "hash": hashlib.sha256(destination.read_bytes()).hexdigest(),
             "reviewStatus": "seeded", "pages": pages, "images": [str(image) for image in images],
-            "words": extracted_text.split(), **normalized,
+            "words": word_records(extracted_text.split()), **normalized,
         })
 
 
@@ -183,6 +200,12 @@ def seed_or_upgrade_demo(app: FastAPI) -> None:
     elif demo.get("demoSeedVersion") != DEMO_SEED_VERSION:
         # Upgrade the original minimal demo without replacing meaningful local edits.
         additions, merged = {}, dict(demo)
+        if demo.get("appraisalType") not in {"simple", "detailed"}:
+            additions["appraisalType"] = "detailed"
+            merged["appraisalType"] = "detailed"
+        if isinstance(demo.get("propertyType"), str) and demo["propertyType"].lower() in {"office", "industrial", "retail", "land", "residential"}:
+            additions["propertyType"] = demo["propertyType"].lower()
+            merged["propertyType"] = demo["propertyType"].lower()
         for key, value in DEMO_APPRAISAL.items():
             if key == "_id":
                 continue
