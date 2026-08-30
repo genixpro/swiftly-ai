@@ -1,4 +1,4 @@
 -r requirements.txt
-pytest==8.3.5
+pytest==9.1.1
 ruff==0.11.0
 mongomock==4.3.0
