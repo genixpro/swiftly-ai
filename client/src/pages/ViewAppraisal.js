@@ -50,7 +50,11 @@ class ViewAppraisal extends React.Component
 
                 setTimeout(() =>
                 {
-                    Sidebar.getGlobalSidebar().changeAppraisalType(appraisal.appraisalType);
+                    const sidebar = Sidebar.getGlobalSidebar();
+                    if (sidebar)
+                    {
+                        sidebar.changeAppraisalType(appraisal.appraisalType);
+                    }
                 });
             }
             catch(err)

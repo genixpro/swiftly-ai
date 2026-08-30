@@ -42,7 +42,11 @@ class StartAppraisal extends React.Component
         {
             const newId = response.data._id;
             
-            Sidebar.getGlobalSidebar().changeAppraisalType(this.state.newAppraisal.appraisalType);
+            const sidebar = Sidebar.getGlobalSidebar();
+            if (sidebar)
+            {
+                sidebar.changeAppraisalType(this.state.newAppraisal.appraisalType);
+            }
 
             this.props.history.push('/appraisal/' + newId + "/upload");
 

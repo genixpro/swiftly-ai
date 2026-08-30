@@ -17,7 +17,11 @@ class AppraisalListItem extends React.Component
     {
         console.log(this.props.appraisal)
 
-        Sidebar.getGlobalSidebar().changeAppraisalType(this.props.appraisal.appraisalType);
+        const sidebar = Sidebar.getGlobalSidebar();
+        if (sidebar)
+        {
+            sidebar.changeAppraisalType(this.props.appraisal.appraisalType);
+        }
 
         this.props.history.push("/appraisal/" + this.props.appraisal._id + "/upload");
     }
