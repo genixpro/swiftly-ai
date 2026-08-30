@@ -54,19 +54,45 @@ def unit_yearly_rent(appraisal: dict, unit: dict) -> float:
     return number(unit.get("marketRent"))
 
 
+def building_size(appraisal: dict) -> float:
+    """Match the React model, which derives building area from its unit rows."""
+    unit_area = sum(number(unit.get("squareFootage")) for unit in appraisal.get("units") or [])
+    return unit_area or number(appraisal.get("sizeOfBuilding"))
+
+
+def typed_statement_items(appraisal: dict, statement: str, item_types: set[str]) -> list[dict]:
+    return [item for item in (appraisal.get(statement) or {}).get("items") or []
+            if item.get("incomeStatementItemType") in item_types]
+
+
 def stabilized_statement(appraisal: dict) -> dict:
     inputs = appraisal.get("stabilizedStatementInputs") or {}
     units = appraisal.get("units") or []
     rental_income = sum(unit_yearly_rent(appraisal, unit) for unit in units)
-    additional_income = sum(number(item.get("amount") or item.get("yearlyAmount")) for item in appraisal.get("additionalIncomes", []))
+    typed_income = typed_statement_items(appraisal, "incomeStatement", {"additional_income"})
+    additional_rows = typed_income or list(appraisal.get("additionalIncomes", []))
+    additional_income = sum(_statement_amount(item, int(str(appraisal.get("effectiveDate") or date.today().year)[:4]))
+                            for item in additional_rows)
     potential_gross_income = rental_income + additional_income
     vacancy_deduction = potential_gross_income * number(inputs.get("vacancyRate"), 5) / 100
     effective_gross_income = potential_gross_income - vacancy_deduction
     expenses_mode = inputs.get("expensesMode", "income_statement")
-    operating_expenses = sum(number(item.get("amount") or item.get("yearlyAmount")) for item in appraisal.get("expenses", []))
-    taxes = number(appraisal.get("taxes"))
-    tmi_total = number(inputs.get("tmiRatePSF")) * number(appraisal.get("sizeOfBuilding")) if expenses_mode == "tmi" else 0
-    management_expenses = effective_gross_income * number((inputs.get("managementExpenseCalculationRule") or {}).get("percentage")) / 100
+    statement_expenses = typed_statement_items(
+        appraisal, "expenseStatement", {"operating_expense", "management_expense", "taxes"}
+    )
+    statement_year = int(str(appraisal.get("effectiveDate") or date.today().year)[:4])
+    operating_rows = [item for item in statement_expenses if item.get("incomeStatementItemType") == "operating_expense"]
+    operating_expenses = (sum(_statement_amount(item, statement_year) for item in operating_rows)
+                          if statement_expenses else
+                          sum(number(item.get("amount") or item.get("yearlyAmount")) for item in appraisal.get("expenses", [])))
+    tax_rows = [item for item in statement_expenses if item.get("incomeStatementItemType") == "taxes"]
+    taxes = sum(_statement_amount(item, statement_year) for item in tax_rows) if statement_expenses else number(appraisal.get("taxes"))
+    tmi_total = number(inputs.get("tmiRatePSF")) * building_size(appraisal) if expenses_mode == "tmi" else 0
+    management_rows = [item for item in statement_expenses if item.get("incomeStatementItemType") == "management_expense"]
+    if inputs.get("managementExpenseMode", "income_statement") == "income_statement" and statement_expenses:
+        management_expenses = sum(_statement_amount(item, statement_year) for item in management_rows)
+    else:
+        management_expenses = effective_gross_income * number((inputs.get("managementExpenseCalculationRule") or {}).get("percentage")) / 100
     structural_allowance = 0 if inputs.get("managementExpenseMode") == "combined_structural_rule" else potential_gross_income * number(inputs.get("structuralAllowancePercent"), 2) / 100
     total_expenses = (tmi_total if expenses_mode == "tmi" else operating_expenses + taxes) + management_expenses + structural_allowance
     noi = effective_gross_income - total_expenses
@@ -90,7 +116,9 @@ def direct_comparison(appraisal: dict, statement: dict) -> dict:
     elif metric == "psf_land": comparative = number(appraisal.get("sizeOfLand")) * 43_560 * number(inputs.get("pricePerSquareFootLand"))
     elif metric == "per_unit": comparative = len(appraisal.get("units") or []) * number(inputs.get("pricePerUnit"))
     elif metric in multipliers:
-        field, price = multipliers[metric]; comparative = number(appraisal.get(field)) * number(inputs.get(price))
+        field, price = multipliers[metric]
+        quantity = building_size(appraisal) if field == "sizeOfBuilding" else number(appraisal.get(field))
+        comparative = quantity * number(inputs.get(price))
     else: comparative = 0
     adjustments = {key: number(statement.get(key)) for key in ("marketRentDifferential", "freeRentRentLoss", "vacantUnitRentLoss", "vacantUnitLeasupCosts", "amortizedCapitalInvestment")}
     valuation = comparative + sum(value for name, value in adjustments.items() if inputs.get(f"apply{name[0].upper()}{name[1:]}", False)) + sum(number(modifier.get("amount")) for modifier in inputs.get("modifiers", []))
@@ -111,9 +139,14 @@ def discounted_cash_flow(appraisal: dict) -> dict:
     years = list(range(start_year, start_year + projection_years))
     inflation, discount_rate = number(inputs.get("inflation")) / 100, number(inputs.get("discountRate")) / 100
     income_rows = list((appraisal.get("incomeStatement") or {}).get("items") or [])
+    if appraisal.get("appraisalType") == "detailed" and appraisal.get("units"):
+        income_rows = [item for item in income_rows if item.get("incomeStatementItemType") == "additional_income"]
     income_rows += [{"name": unit_tenant_name(unit), "yearlyAmount": unit_yearly_rent(appraisal, unit)} for unit in appraisal.get("units", [])]
-    expense_rows = list((appraisal.get("expenseStatement") or {}).get("items") or [])
-    expense_rows += list(appraisal.get("expenses", []))
+    typed_expenses = typed_statement_items(
+        appraisal, "expenseStatement", {"operating_expense", "management_expense", "taxes"}
+    )
+    statement_expense_rows = list((appraisal.get("expenseStatement") or {}).get("items") or [])
+    expense_rows = typed_expenses or statement_expense_rows or list(appraisal.get("expenses", []))
 
     def project(rows: list[dict], cash_flow_type: str) -> tuple[list[dict], list[dict]]:
         yearly, summary = [], []
@@ -150,7 +183,43 @@ def validate_appraisal(appraisal: dict) -> dict:
     if cap_rate < 0 or cap_rate > 100: errors["stabilizedStatementInputs.capitalizationRate"] = "Capitalization rate must be between 0 and 100."
     for index, unit in enumerate(appraisal.get("units") or []):
         if number(unit.get("squareFootage")) < 0: errors[f"units.{index}.squareFootage"] = "Unit area cannot be negative."
-    return {"valid": not errors, "errors": errors, "errorFields": sorted(errors)}
+    units = appraisal.get("units") or []
+    occupied_units = [unit for unit in units if not unit_is_vacant(unit)]
+    tenant_names = [unit_tenant_name(unit).strip() for unit in occupied_units]
+    has_tenant_names = bool(occupied_units) and all(name and name.lower() != "vacant" for name in tenant_names)
+    has_unit_sizes = bool(units) and all(number(unit.get("squareFootage")) > 0 for unit in units)
+    has_rents = bool(occupied_units) and all(unit_yearly_rent(appraisal, unit) > 0 for unit in occupied_units)
+    has_lease_terms = bool(occupied_units) and all(
+        any(tenancy.get("startDate") and tenancy.get("endDate") for tenancy in unit.get("tenancies") or [])
+        for unit in occupied_units
+    )
+    expense_items = typed_statement_items(
+        appraisal, "expenseStatement", {"operating_expense", "management_expense", "taxes"}
+    )
+    has_expenses = bool(expense_items or appraisal.get("expenses"))
+    has_taxes = bool([item for item in expense_items if item.get("incomeStatementItemType") == "taxes"] or appraisal.get("taxes"))
+    has_additional_income = bool(
+        typed_statement_items(appraisal, "incomeStatement", {"additional_income"}) or appraisal.get("additionalIncomes")
+    )
+    has_amortizations = bool((appraisal.get("amortizationSchedule") or {}).get("items"))
+    has_address = bool(str(appraisal.get("address") or "").strip())
+    has_property_type = bool(str(appraisal.get("propertyType") or "").strip())
+    has_building_size = building_size(appraisal) > 0
+    has_lot_size = number(appraisal.get("sizeOfLand")) > 0
+    has_zoning = bool(str(appraisal.get("zoning") or "").strip())
+    return {
+        "valid": not errors, "errors": errors, "errorFields": sorted(errors),
+        "hasBuildingInformation": all((has_address, has_property_type, has_building_size, has_lot_size, has_zoning)),
+        "hasRentRoll": all((has_tenant_names, has_unit_sizes, has_rents, has_lease_terms)),
+        "hasIncomeStatement": bool((appraisal.get("incomeStatement") or {}).get("items")),
+        "hasEscalations": has_rents, "hasRents": has_rents, "hasTenantNames": has_tenant_names,
+        "hasUnitSizes": has_unit_sizes, "hasLeaseTerms": has_lease_terms,
+        "hasFinancialInfo": all((has_expenses, has_taxes, has_additional_income, has_amortizations)),
+        "hasExpenses": has_expenses, "hasTaxes": has_taxes,
+        "hasAdditionalIncome": has_additional_income, "hasAmortizations": has_amortizations,
+        "hasPropertyType": has_property_type, "hasBuildingSize": has_building_size,
+        "hasLotSize": has_lot_size, "hasZoning": has_zoning, "hasAddress": has_address,
+    }
 
 
 def refresh_valuations(appraisal: dict) -> dict:

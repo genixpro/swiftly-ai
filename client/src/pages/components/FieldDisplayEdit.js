@@ -25,7 +25,6 @@ import DirectComparisonMetricSelector from "./DirectComparisonMetricSelector";
 import TenancyTypeSelector from "./TenancyTypeSelector";
 import TenantNameSelector from "./TenantNameSelector";
 import {DropTarget} from "react-dnd/lib/index";
-import ReactDOM from 'react-dom';
 import AdjustmentTypeSelector from "./AdjustmentTypeSelector";
 
 class FieldDisplayEdit extends React.Component
@@ -677,16 +676,5 @@ const DroppableFieldDisplayEdit = DropTarget("Word", dragTarget, collect)(FieldD
 
 const NonDroppableFieldDisplayEdit = FieldDisplayEdit;
 
-const SwitchingFieldDisplayEdit = (props) =>
-{
-    const result = <DroppableFieldDisplayEdit {...props}/>;
-    const elem = document.createElement("div");
-    if (!ReactDOM.render(result, elem))
-    {
-        return <FieldDisplayEdit {...props}/>
-    }
-    return result;
-}
-
-export default SwitchingFieldDisplayEdit;
+export default DroppableFieldDisplayEdit;
 export {NonDroppableFieldDisplayEdit, DroppableFieldDisplayEdit};

@@ -491,7 +491,7 @@ class ComparableSaleListItem extends React.Component
 
         const headerConfigurations = {
             saleDate: {
-                render: (value) => <span>{new Date(value).getMonth() + 1} / {new Date(value).getFullYear().toString().substr(2)}</span>,
+                render: (value) => <span>{new Date(value).toLocaleDateString('en-CA', {month: 'short', year: 'numeric', timeZone: 'UTC'})}</span>,
                 noValueText: "No Sale Date",
                 size: 1
             },

@@ -16,6 +16,15 @@ def test_direct_comparison_calculates_price_per_square_foot():
     assert result["comparativeValue"] == 2_500_000
 
 
+def test_direct_comparison_uses_the_same_unit_area_shown_by_the_react_model():
+    result = direct_comparison({
+        "sizeOfBuilding": 50_000,
+        "units": [{"squareFootage": 8_000}, {"squareFootage": 7_000}],
+        "directComparisonInputs": {"directComparisonMetric": "psf", "pricePerSquareFoot": 260},
+    }, {"netOperatingIncome": 0})
+    assert result["comparativeValue"] == 3_900_000
+
+
 def test_discounted_cash_flow_returns_legacy_summary_shape():
     dcf = discounted_cash_flow({"effectiveDate": "2025-01-01", "discountedCashFlowInputs": {"projectionYears": 2, "discountRate": 10},
                                 "incomeStatement": {"items": [{"name": "Rent", "yearlyAmounts": {"2025": 100_000}}]},

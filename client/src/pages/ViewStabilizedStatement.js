@@ -218,7 +218,7 @@ class ViewStabilizedStatement extends React.Component
                             </Dropdown>
 
                             <Row>
-                                <Col xs={8}>
+                                <Col xs={12} lg={8}>
                                     <div className={"stabilized-statement-centered"}>
                                         <h3>Stabilized Income & Expense Statement</h3>
                                         <h4>{this.props.appraisal.address}</h4>
@@ -238,9 +238,10 @@ class ViewStabilizedStatement extends React.Component
                                 </Col>
                             </Row>
                             <Row>
-                                <Col xs={8}>
+                                <Col xs={12} lg={8}>
                                     <div className={"stabilized-statement-centered"}>
                                         <br/>
+                                        <div className="valuation-table-scroll">
                                         <Table className={"statement-table"}>
                                             <tbody>
                                             <tr className={"title-row"}>
@@ -556,14 +557,16 @@ class ViewStabilizedStatement extends React.Component
                                             </tr>
                                             </tbody>
                                         </Table>
+                                        </div>
                                     </div>
                                 </Col>
-                                <Col xs={4}>
+                                <Col xs={12} lg={4}>
                                     <Card className={"stabilized-statement-inputs"} outline>
                                         <CardBody>
                                             <h3>Inputs</h3>
 
                                             <Table>
+                                                <tbody>
                                                 <tr>
                                                     <td>Vacancy Rate</td>
                                                     <td>
@@ -697,6 +700,7 @@ class ViewStabilizedStatement extends React.Component
                                                             </td>
                                                         </tr> : null
                                                 }
+                                                </tbody>
                                             </Table>
 
                                         </CardBody>

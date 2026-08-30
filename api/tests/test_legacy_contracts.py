@@ -36,6 +36,15 @@ def test_legacy_appraisal_children_and_exports_keep_their_response_shapes(client
     seeded = client.get("/appraisal/demo-appraisal").json()["appraisal"]
     assert seeded["units"] and seeded["stabilizedStatement"]["valuation"] > 0
     assert seeded["directComparisonValuation"]["valuation"] > 0
+    assert seeded["directComparisonValuation"]["comparativeValue"] == 3_900_000
+    assert seeded["validationResult"]["hasBuildingInformation"] is True
+    assert seeded["validationResult"]["hasRentRoll"] is True
+    assert seeded["validationResult"]["hasFinancialInfo"] is True
+    assert client.get(f"/zone/{seeded['zoning']}").json()["zone"]["zoneName"] == "CR 3.0"
+    assert seeded["dataTypeReferences"]["EXPENSE_STATEMENT"][0] == {
+        "appraisalId": "demo-appraisal", "fileId": "demo-financial-statement",
+        "pageNumbers": [1], "wordIndexes": [],
+    }
     seeded_files = client.get("/appraisal/demo-appraisal/files").json()["files"]
     assert {item["_id"] for item in seeded_files} >= {"demo-financial-statement", "demo-lease", "demo-comparable-sale", "demo-scanned-rent-roll"}
 

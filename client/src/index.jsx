@@ -6,9 +6,15 @@ import 'raf/polyfill';
 
 import React from 'react';
 import { createRoot } from 'react-dom/client';
+import { DragDropContextProvider } from 'react-dnd';
+import HTML5Backend from 'react-dnd-html5-backend';
 
 import App from './App';
 
 import './i18n';
 
-createRoot(document.getElementById('app')).render(<App />);
+createRoot(document.getElementById('app')).render(
+    <DragDropContextProvider backend={HTML5Backend}>
+        <App />
+    </DragDropContextProvider>
+);

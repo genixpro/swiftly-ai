@@ -12,7 +12,7 @@ class AppraisalList extends React.Component
                 <tr>
                     <th>Name</th>
                     <th>Address</th>
-                    <th>Action</th>
+                    <th>Actions</th>
                 </tr>
                 </thead>
                 <tbody>

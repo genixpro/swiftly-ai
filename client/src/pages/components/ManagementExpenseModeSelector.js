@@ -54,12 +54,12 @@ class ManagementExpenseModeSelector extends React.Component
             >
                 {
                     this.allowOption("income_statement") ?
-                        <option value={"income_statement"}>Base on Expense Statement</option>
+                        <option value={"income_statement"}>Based on Expense Statement</option>
                         : null
                 }
                 {
                     this.allowOption("rule") ?
-                        <option value={"rule"}>Base on Industry Rate</option>
+                        <option value={"rule"}>Based on Industry Rate</option>
                         : null
                 }
                 {

@@ -27,6 +27,11 @@
     float: right;
   }
 
+  .valuation-table-scroll {
+    overflow-x: auto;
+    width: 100%;
+  }
+
   .title {
     font-weight: bold;
     font-size: 150%;
@@ -156,6 +161,56 @@
     td {
       padding: 2px;
       border: 0;
+    }
+  }
+
+  @media (max-width: 991.98px) {
+    .capitalization-valuation-inputs {
+      float: none;
+      margin-top: 1rem;
+    }
+  }
+
+  @media (max-width: 767.98px) {
+    .valuation-table-scroll .statement-table {
+      table-layout: fixed;
+      width: 100%;
+
+      td.label-column {
+        padding-left: 0;
+        padding-right: 0.5rem;
+        width: 55%;
+
+        span {
+          white-space: normal;
+        }
+      }
+
+      td.amount-column {
+        padding-left: 0.25rem;
+        width: 8%;
+      }
+
+      td.amount-total-column {
+        padding-left: 0.25rem;
+        white-space: nowrap;
+        width: 37%;
+      }
+
+      tr.modifier-row .amount-total-column {
+        left: 0 !important;
+      }
+
+      input {
+        min-width: 0;
+        width: 100%;
+      }
+    }
+
+    .final-valuation {
+      font-size: 1rem;
+      letter-spacing: -0.5px;
+      overflow-wrap: anywhere;
     }
   }
 }

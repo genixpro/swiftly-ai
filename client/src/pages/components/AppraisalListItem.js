@@ -15,8 +15,6 @@ class AppraisalListItem extends React.Component
 
     itemClicked()
     {
-        console.log(this.props.appraisal)
-
         const sidebar = Sidebar.getGlobalSidebar();
         if (sidebar)
         {
@@ -26,20 +24,35 @@ class AppraisalListItem extends React.Component
         this.props.history.push("/appraisal/" + this.props.appraisal._id + "/upload");
     }
 
+    openAppraisal(evt)
+    {
+        evt.stopPropagation();
+        this.itemClicked();
+    }
+
     render()
     {
         const appraisal = this.props.appraisal;
         return (
-            <tr onClick={(evt) => this.itemClicked()} className={"appraisal-list-item"}>
+            <tr onClick={(evt) => this.itemClicked()}
+                onKeyDown={(evt) => (evt.key === 'Enter' || evt.key === ' ') && this.itemClicked()}
+                tabIndex={0}
+                aria-label={`Open ${appraisal.name}`}
+                className={"appraisal-list-item"}>
                 <td>{appraisal.name}</td>
                 <td>{appraisal.address}</td>
 
                 <td className={"action-column"}>
+                    <Button color="primary" onClick={(evt) => this.openAppraisal(evt)} title="Open Appraisal">
+                        Open
+                    </Button>
+                    {' '}
                     <Button
-                        color="info"
+                        color="danger"
                         onClick={(evt) => this.deleteAppraisal(evt)}
                         title={"Delete Appraisal"}
                     >
+                        <span className="sr-only">Delete</span>
                         <i className="fa fa-trash-alt"></i>
                     </Button>
                 </td>

@@ -38,27 +38,56 @@ DEMO_DEFAULTS = {
     "discountedCashFlowInputs": {"projectionYears": 10, "discountRate": 0, "inflation": 0},
 }
 
-DEMO_SEED_VERSION = "2026.9"
+DEMO_SEED_VERSION = "2026.12"
 DEMO_APPRAISAL = {
     "_id": "demo-appraisal", "owner": "local-demo", "name": "Harbour Centre Demo",
     "address": "100 Harbour Street, Toronto", "appraisalType": "detailed",
-    "propertyType": "office", "sizeOfBuilding": 50_000, "effectiveDate": "2026-01-01",
+    "propertyType": "office", "sizeOfBuilding": 15_000, "sizeOfLand": 1.4,
+    "zoning": "CR 3.0", "effectiveDate": "2026-01-01",
     "units": [
         {"tenantName": "Northstar Foods", "suite": "101", "unitNumber": "101", "squareFootage": 8_000,
-         "yearlyRent": 192_000, "tenancies": [{"name": "Northstar Foods", "yearlyRent": 192_000}]},
+         "yearlyRent": 192_000, "tenancies": [{"name": "Northstar Foods", "yearlyRent": 192_000,
+                                                  "startDate": "2024-01-01", "endDate": "2029-12-31"}]},
         {"tenantName": "Cedar Advisory", "suite": "205", "unitNumber": "205", "squareFootage": 5_000,
-         "yearlyRent": 145_000, "tenancies": [{"name": "Cedar Advisory", "yearlyRent": 145_000}]},
+         "yearlyRent": 145_000, "tenancies": [{"name": "Cedar Advisory", "yearlyRent": 145_000,
+                                                 "startDate": "2025-07-01", "endDate": "2031-06-30"}]},
         {"tenantName": "Vacant", "suite": "310", "unitNumber": "310", "squareFootage": 2_000,
          "marketRent": "Office market rent", "isVacantForStabilizedStatement": True, "shouldTreatAsVacant": True,
          "shouldUseMarketRent": True, "tenancies": [{"name": "Vacant", "yearlyRent": 0}]},
     ],
+    "incomeStatement": {"years": [2026], "items": [
+        {"name": "Parking", "incomeStatementItemType": "additional_income",
+         "yearlyAmounts": {"2026": 42_000}, "yearlySourceTypes": {}, "extractionReferences": {}},
+    ], "incomes": [], "expenses": [], "yearlySourceTypes": {}},
+    "expenseStatement": {"years": [2026], "items": [
+        {"name": "Repairs and maintenance", "incomeStatementItemType": "operating_expense",
+         "yearlyAmounts": {"2026": 68_000}, "yearlySourceTypes": {}, "extractionReferences": {}},
+        {"name": "Utilities", "incomeStatementItemType": "operating_expense",
+         "yearlyAmounts": {"2026": 37_000}, "yearlySourceTypes": {}, "extractionReferences": {}},
+        {"name": "Property taxes", "incomeStatementItemType": "taxes",
+         "yearlyAmounts": {"2026": 82_000}, "yearlySourceTypes": {}, "extractionReferences": {}},
+        {"name": "Management fee", "incomeStatementItemType": "management_expense",
+         "yearlyAmounts": {"2026": 21_000}, "yearlySourceTypes": {}, "extractionReferences": {}},
+    ], "incomes": [], "expenses": [], "yearlySourceTypes": {}},
     "additionalIncomes": [{"name": "Parking", "amount": 42_000}],
     "expenses": [{"name": "Repairs and maintenance", "amount": 68_000}, {"name": "Utilities", "amount": 37_000}],
     "marketRents": [{"name": "Office market rent", "amountPSF": 24, "amount": 24}],
-    "amortizationSchedule": {"items": [{"name": "Tenant improvements", "amount": 18_000}]},
-    "stabilizedStatementInputs": {"vacancyRate": 5, "capitalizationRate": 5.25, "structuralAllowancePercent": 2, "modifiers": []},
+    "amortizationSchedule": {"items": [{"name": "Tenant improvements", "amount": 18_000,
+                                           "interest": 3, "discountRate": 7,
+                                           "startDate": "2026-01-01", "periodMonths": 60}]},
+    "stabilizedStatementInputs": {"vacancyRate": 5, "capitalizationRate": 5.25,
+                                    "structuralAllowancePercent": 2, "expensesMode": "income_statement",
+                                    "managementExpenseMode": "income_statement", "modifiers": []},
     "directComparisonInputs": {"directComparisonMetric": "psf", "pricePerSquareFoot": 260, "modifiers": []},
     "discountedCashFlowInputs": {"projectionYears": 10, "discountRate": 7, "inflation": 2},
+    "dataTypeReferences": {
+        "INCOME_STATEMENT": [{"appraisalId": "demo-appraisal", "fileId": "demo-financial-statement",
+                              "pageNumbers": [1], "wordIndexes": []}],
+        "EXPENSE_STATEMENT": [{"appraisalId": "demo-appraisal", "fileId": "demo-financial-statement",
+                               "pageNumbers": [1], "wordIndexes": []}],
+        "RENT_ROLL": [{"appraisalId": "demo-appraisal", "fileId": "demo-scanned-rent-roll",
+                       "pageNumbers": [1], "wordIndexes": []}],
+    },
     "comparableSalesCapRate": ["demo-sale"], "comparableSalesDCA": ["demo-sale"], "comparableLeases": ["demo-lease"],
 }
 
@@ -222,6 +251,7 @@ def seed_or_upgrade_demo(app: FastAPI) -> None:
         # Add the current React screen-model fields without replacing local values.
         if demo.get("units"):
             upgraded_units = []
+            default_units = {unit["unitNumber"]: unit for unit in DEMO_APPRAISAL["units"]}
             market_rents = merged.get("marketRents") or []
             default_market_rent = (market_rents[0] or {}).get("name") if market_rents else None
             for unit in demo["units"]:
@@ -229,18 +259,65 @@ def seed_or_upgrade_demo(app: FastAPI) -> None:
                 is_vacant = unit.get("isVacantForStabilizedStatement", unit.get("shouldTreatAsVacant", False))
                 upgraded = {**unit, "unitNumber": unit.get("unitNumber", unit.get("suite", "")),
                             "shouldTreatAsVacant": is_vacant}
+                default_unit = default_units.get(upgraded["unitNumber"], {})
                 if not unit.get("tenancies"):
-                    upgraded["tenancies"] = [{"name": unit.get("tenantName", "Vacant"), "yearlyRent": rent}]
+                    upgraded["tenancies"] = default_unit.get("tenancies") or [
+                        {"name": unit.get("tenantName", "Vacant"), "yearlyRent": rent}
+                    ]
+                elif default_unit.get("tenancies"):
+                    tenancy_defaults = default_unit["tenancies"]
+                    upgraded["tenancies"] = [
+                        {
+                            **tenancy,
+                            **{field: value for field, value in tenancy_defaults[min(index, len(tenancy_defaults) - 1)].items()
+                               if field not in tenancy or tenancy[field] in (None, "", [], {})},
+                        }
+                        for index, tenancy in enumerate(unit["tenancies"])
+                    ]
                 if is_vacant and isinstance(unit.get("marketRent"), (int, float)) and default_market_rent:
                     upgraded.update({"marketRent": default_market_rent, "shouldUseMarketRent": True})
                 upgraded_units.append(upgraded)
             merged["units"] = upgraded_units
             additions["units"] = upgraded_units
+            merged["sizeOfBuilding"] = sum(unit.get("squareFootage", 0) for unit in upgraded_units)
+            additions["sizeOfBuilding"] = merged["sizeOfBuilding"]
         if demo.get("marketRents"):
             upgraded_market_rents = [{**market_rent, "amountPSF": market_rent.get("amountPSF", market_rent.get("amount", 0))}
                                     for market_rent in demo["marketRents"]]
             merged["marketRents"] = upgraded_market_rents
             additions["marketRents"] = upgraded_market_rents
+        for statement_name in ("incomeStatement", "expenseStatement"):
+            for field_path in [key for key in additions if key.startswith(f"{statement_name}.")]:
+                del additions[field_path]
+            statement = dict(merged.get(statement_name) or {})
+            defaults = DEMO_APPRAISAL[statement_name]
+            items = list(statement.get("items") or [])
+            for default_item in defaults["items"]:
+                existing = next((item for item in items if item.get("name") == default_item["name"]), None)
+                if existing is None:
+                    items.append(default_item)
+                else:
+                    for field, value in default_item.items():
+                        if field not in existing or existing[field] in (None, "", [], {}):
+                            existing[field] = value
+            statement.update({**defaults, **statement, "years": statement.get("years") or defaults["years"], "items": items})
+            merged[statement_name] = statement
+            additions[statement_name] = statement
+        for field_path in [key for key in additions if key.startswith("amortizationSchedule.")]:
+            del additions[field_path]
+        schedule = dict(merged.get("amortizationSchedule") or {})
+        schedule_items = list(schedule.get("items") or [])
+        for default_item in DEMO_APPRAISAL["amortizationSchedule"]["items"]:
+            existing = next((item for item in schedule_items if item.get("name") == default_item["name"]), None)
+            if existing is None:
+                schedule_items.append(default_item)
+            else:
+                for field, value in default_item.items():
+                    if field not in existing or existing[field] in (None, "", [], {}):
+                        existing[field] = value
+        schedule["items"] = schedule_items
+        merged["amortizationSchedule"] = schedule
+        additions["amortizationSchedule"] = schedule
         additions.update(refresh_valuations(merged))
         additions["demoSeedVersion"] = DEMO_SEED_VERSION
         db.appraisals.update_one({"_id": "demo-appraisal"}, {"$set": additions})
@@ -272,6 +349,19 @@ def ensure_demo_comparables(db) -> None:
         db.comparable_leases.update_one({"_id": record["_id"]}, {"$setOnInsert": record}, upsert=True)
 
 
+def ensure_demo_zone(db) -> None:
+    """Keep the seeded appraisal's zoning reference resolvable in the editor."""
+    db.zones.update_one(
+        {"_id": "CR 3.0"},
+        {"$set": {
+            "owner": "local-demo",
+            "zoneName": "CR 3.0",
+            "description": "Commercial Residential zoning supporting a mixed-use office property.",
+        }},
+        upsert=True,
+    )
+
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     configure_logging()
@@ -282,6 +372,7 @@ async def lifespan(app: FastAPI):
     app.state.db.extractions.create_index("fileId")
     seed_or_upgrade_demo(app)
     ensure_demo_comparables(app.state.db)
+    ensure_demo_zone(app.state.db)
     log.info("api started", extra={"appraisalId": "local-demo"})
     yield
     app.state.mongo.close()

@@ -288,6 +288,7 @@ class ViewDirectComparisonValuation extends React.Component
                             <div className={"stabilized-statement-centered"}>
                                 <h3>Direct Comparison Approach</h3>
                                 <h4>{this.props.appraisal.address}</h4>
+                                <div className="comparable-list-scroll">
                                 <ComparableSaleList comparableSales={this.state.comparableSales}
                                                     statsTitle={""}
                                                     statsPosition={"below"}
@@ -303,6 +304,7 @@ class ViewDirectComparisonValuation extends React.Component
                                                     appraisalComparables={this.props.appraisal.comparableSales}
                                                     onChange={(comps) => this.onComparablesChanged(comps)}
                                 />
+                                </div>
                             </div>
                                 </Col>
                             </Row>
@@ -327,9 +329,10 @@ class ViewDirectComparisonValuation extends React.Component
                             }
 
                             <Row>
-                                <Col xs={8}>
+                                <Col xs={12} lg={8}>
                                     <div className={"stabilized-statement-centered"}>
                                 <h3>Valuation</h3>
+                                <div className="valuation-table-scroll">
                                 <Table className={"statement-table "}>
                                     <tbody>
                                     {/*<tr className={"data-row"}>*/}
@@ -571,18 +574,20 @@ class ViewDirectComparisonValuation extends React.Component
                                     </tr>
                                     </tbody>
                                 </Table>
+                                </div>
                                 <br/>
                                 <br/>
                                 <h4 className={"final-valuation"}>Final Value by Direct Comparison
                                     Approach <CurrencyFormat value={this.props.appraisal.directComparisonValuation.valuationRounded} cents={false}/></h4>
                             </div>
                                 </Col>
-                                <Col xs={4}>
+                                <Col xs={12} lg={4}>
                                     <Card className={"direct-comparison-valuation-inputs"} outline>
                                         <CardBody>
                                             <h3>Inputs</h3>
 
                                             <Table>
+                                                <tbody>
                                                 <tr>
                                                     <td>Show Adjustment Chart</td>
                                                     <td>
@@ -744,7 +749,7 @@ class ViewDirectComparisonValuation extends React.Component
                                                                     placeholder={"Apply Vacant Unit Rent Loss"}
                                                                     hideIcon={true}
                                                                     value={this.props.appraisal.directComparisonInputs ? this.props.appraisal.directComparisonInputs.applyVacantUnitRentLoss : null}
-                                                                    onChange={(newValue) => this.changeDirectComparisonInput("applyVacantUnitLeasingCosts", newValue)}
+                                                                    onChange={(newValue) => this.changeDirectComparisonInput("applyVacantUnitRentLoss", newValue)}
                                                                 />
                                                             </td>
                                                         </tr> : null
@@ -760,7 +765,7 @@ class ViewDirectComparisonValuation extends React.Component
                                                                     placeholder={"Apply Free Rent Loss"}
                                                                     hideIcon={true}
                                                                     value={this.props.appraisal.directComparisonInputs ? this.props.appraisal.directComparisonInputs.applyFreeRentLoss : null}
-                                                                    onChange={(newValue) => this.changeDirectComparisonInput("applyVacantUnitLeasingCosts", newValue)}
+                                                                    onChange={(newValue) => this.changeDirectComparisonInput("applyFreeRentLoss", newValue)}
                                                                 />
                                                             </td>
                                                         </tr> : null
@@ -775,12 +780,13 @@ class ViewDirectComparisonValuation extends React.Component
                                                                     placeholder={"Apply Amortization Adjustment"}
                                                                     hideIcon={true}
                                                                     value={this.props.appraisal.directComparisonInputs ? this.props.appraisal.directComparisonInputs.applyAmortization : null}
-                                                                    onChange={(newValue) => this.changeDirectComparisonInput("applyVacantUnitLeasingCosts", newValue)}
+                                                                    onChange={(newValue) => this.changeDirectComparisonInput("applyAmortization", newValue)}
                                                                 />
                                                             </td>
                                                         </tr> : null
                                                 }
 
+                                                </tbody>
                                             </Table>
 
                                         </CardBody>

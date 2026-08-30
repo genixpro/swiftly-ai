@@ -4,13 +4,11 @@
   cursor: pointer;
 
   .action-column {
-    opacity: 0;
+    white-space: nowrap;
   }
 }
 
-.appraisal-list-item:hover
-{
-  .action-column {
-    opacity: 1;
-  }
+.appraisal-list-item:focus-visible {
+  outline: 2px solid #5b9bd5;
+  outline-offset: -2px;
 }

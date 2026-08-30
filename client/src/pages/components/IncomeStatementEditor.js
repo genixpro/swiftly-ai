@@ -892,30 +892,14 @@ class IncomeStatementEditor extends React.Component
 
     getDefaultFile()
     {
-        let defaultFile = null;
-        let defaultPage = null;
+        const dataType = this.props.field === 'expenseStatement' ? 'EXPENSE_STATEMENT' : 'INCOME_STATEMENT';
+        const references = (this.props.appraisal.dataTypeReferences || {})[dataType] || [];
+        const reference = references[0];
 
-        Object.keys(this.props.appraisal.dataTypeReferences).forEach((dataType) =>
-        {
-            if (dataType === 'INCOME_STATEMENT')
-            {
-                if (this.props.appraisal.dataTypeReferences['INCOME_STATEMENT'].length > 0)
-                {
-                    defaultFile = this.props.appraisal.dataTypeReferences['INCOME_STATEMENT'][0].fileId;
-                    defaultPage = this.props.appraisal.dataTypeReferences['INCOME_STATEMENT'][0].pageNumbers[0];
-                }
-            }
-            else if (dataType === 'EXPENSE_STATEMENT' && defaultFile === null && this.props.field === 'expense')
-            {
-                if (this.props.appraisal.dataTypeReferences['EXPENSE_STATEMENT'].length > 0)
-                {
-                    defaultFile = this.props.appraisal.dataTypeReferences['EXPENSE_STATEMENT'][0].fileId;
-                    defaultPage = this.props.appraisal.dataTypeReferences['INCOME_STATEMENT'][0].pageNumbers[0];
-                }
-            }
-        });
-
-        return {fileId: defaultFile, page: defaultPage};
+        return {
+            fileId: reference ? reference.fileId : null,
+            page: reference && reference.pageNumbers.length > 0 ? reference.pageNumbers[0] : 1
+        };
     }
 
 
@@ -924,18 +908,20 @@ class IncomeStatementEditor extends React.Component
         return (
                 <div id={"income-statement-editor"} className={"income-statement-editor"}>
                     <Row>
-                        <Col xs={this.state.pinnedYear !== null ? 5 : 7} md={this.state.pinnedYear !== null ? 5 : 7} lg={this.state.pinnedYear !== null ? 4 : 7} xl={this.state.pinnedYear !== null ? 3 : 7}>
+                        <Col xs={12} md={this.state.pinnedYear !== null ? 5 : 7} lg={this.state.pinnedYear !== null ? 4 : 7} xl={this.state.pinnedYear !== null ? 3 : 7}>
 
                             {
                                 this.props.appraisal[this.props.field].items ?
+                                    <div className="income-statement-table-scroll">
                                     <this.SortableList
                                         useDragHandle={true}
                                         items={this.sortIncomeStatementItems(this.props.appraisal[this.props.field].items).sorted}
                                         onSortEnd={this.onSortEnd.bind(this)}/>
+                                    </div>
                                     : null
                             }
                         </Col>
-                        <Col  xs={this.state.pinnedYear !== null ? 7: 5} md={this.state.pinnedYear !== null ? 7 : 5} lg={this.state.pinnedYear !== null ? 8 : 5} xl={this.state.pinnedYear !== null ? 9 : 5}>
+                        <Col xs={12} md={this.state.pinnedYear !== null ? 7 : 5} lg={this.state.pinnedYear !== null ? 8 : 5} xl={this.state.pinnedYear !== null ? 9 : 5} className="income-statement-preview-column">
                             <Row className={"file-selector-row"}>
                                 <Col xs={12}>
                                     <FileSelector

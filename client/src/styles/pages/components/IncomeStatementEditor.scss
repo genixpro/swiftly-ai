@@ -9,6 +9,31 @@
     margin-bottom: 10px;
   }
 
+  @media (max-width: 767.98px) {
+    .income-statement-table-scroll {
+      overflow-x: auto;
+      width: 100%;
+
+      > ul.sortable {
+        min-width: 540px;
+      }
+    }
+
+    .income-statement-preview-column {
+      margin-top: 1rem;
+    }
+
+    .expense-row .action-column .btn {
+      opacity: 1;
+    }
+
+    .expense-row.expense-header-row .pin-column-button,
+    .expense-row.expense-header-row .add-column-button-year {
+      font-size: 0.75rem;
+      min-width: 1.75rem;
+    }
+  }
+
   .pin-column-button
   {
 
@@ -117,6 +142,12 @@
   }
 
   &:hover {
+    .action-column .btn {
+      opacity: 1;
+    }
+  }
+
+  &:focus-within {
     .action-column .btn {
       opacity: 1;
     }

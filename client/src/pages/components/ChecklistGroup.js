@@ -30,7 +30,11 @@ class ChecklistGroup extends React.Component {
     render() {
         return (
             <Card className="checklist-item">
-                <CardHeader onClick={() => this.toggleAccordion()}>
+                <CardHeader onClick={() => this.toggleAccordion()}
+                            onKeyDown={(evt) => (evt.key === 'Enter' || evt.key === ' ') && this.toggleAccordion()}
+                            role="button"
+                            tabIndex={0}
+                            aria-expanded={this.state.detailsOpen}>
                     <CardTitle tag="h4">
                         <span className={"checklist-group-title"}>{this.props.title}</span>
                         {
@@ -43,11 +47,11 @@ class ChecklistGroup extends React.Component {
                             {
                                 if (nameIndex < this.props.fileNames.length - 1)
                                 {
-                                    return <span className={"checklist-file-name"}>{name}, &nbsp;</span>;
+                                    return <span key={`${name}-${nameIndex}`} className={"checklist-file-name"}>{name}, &nbsp;</span>;
                                 }
                                 else
                                 {
-                                    return <span className={"checklist-file-name"}>{name}</span>;
+                                    return <span key={`${name}-${nameIndex}`} className={"checklist-file-name"}>{name}</span>;
                                 }
                             })
                         }

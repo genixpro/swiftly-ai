@@ -48,6 +48,7 @@ class FileViewer extends React.Component
                 pageTypes: []
             },
             imageZoom: 100,
+            previewError: false,
             hilightWords: [],
             innerScrollLeft: 0,
             innerScrollTop: 0
@@ -103,7 +104,11 @@ class FileViewer extends React.Component
         if (this.props.document._id !== this.documentId)
         {
             this.documentId = this.props.document._id;
-            this.setState({currentPage: this.props.defaultPage || 1, imageZoom: FileViewer.computeDefaultZoom(this.props.document)});
+            this.setState({
+                currentPage: this.props.defaultPage || 1,
+                imageZoom: FileViewer.computeDefaultZoom(this.props.document),
+                previewError: false
+            });
         }
     }
 
@@ -287,11 +292,14 @@ class FileViewer extends React.Component
 
 
     render() {
+        const pageCount = Number(this.props.document.pages || 0);
+        const previewAvailable = pageCount > 0 && !this.state.previewError;
+
         return (
             <div id={"file-viewer"} className={"file-viewer"} onMouseUp={this.onMouseUp.bind(this)} onMouseMove={this.onMouseMove.bind(this)}>
                 <Row>
                     <Col xs={12}>
-                        <div className={"extractions-toolbar"}>
+                        {pageCount > 0 ? <div className={"extractions-toolbar"}>
                             <div>
                                 <select
                                         value={this.state.currentPage}
@@ -299,7 +307,7 @@ class FileViewer extends React.Component
                                         onChange={(evt) => this.changePage(evt)}
                                         className="custom-select">
                                     {
-                                        _.range(1, Number(this.props.document.pages || 0) + 1).map((page) =>
+                                        _.range(1, pageCount + 1).map((page) =>
                                         {
                                             return <option key={page} value={page}>Page {page}</option>
                                         })
@@ -312,12 +320,12 @@ class FileViewer extends React.Component
                             <div>
                                 <em className="fa-2x icon-magnifier-remove mr-2" onClick={() => this.zoomOut()}></em>
                             </div>
-                        </div>
+                        </div> : null}
                         <div className={"file-viewer-image-outer-container"}
                              id={"file-viewer-image-outer-container"}
                              onWheel={this.onWheel.bind(this)}
                         >
-                            <div className={"file-viewer-image-inner-container " + (this.state.slowTransition ? " slow-transition" : "")}
+                            {previewAvailable ? <div className={"file-viewer-image-inner-container " + (this.state.slowTransition ? " slow-transition" : "")}
                                  id={"file-viewer-image-inner-container"}
                                  style={{
                                      "width": `${this.state.imageZoom}%`,
@@ -325,24 +333,12 @@ class FileViewer extends React.Component
                                      "top": -this.state.innerScrollTop,
                                  }}
                             >
-                                {
-                                    _.range(1, Number(this.props.document.pages || 0) + 1).map((page) =>
-                                    {
-                                        return <img
-                                            key={page}
-                                            alt="Document"
-                                            id={`file-viewer-image`}
-                                            src={`${process.env.VALUATE_ENVIRONMENT.REACT_APP_SERVER_URL}appraisal/${this.props.document.appraisalId}/files/${this.props.document._id}/rendered/${page}?access_token=${Auth.getAccessToken()}`}
-                                            className={`file-viewer-image ${page === this.state.currentPage ? 'active' : ''} ${this.state.slowTransition ? " slow-transition" : ""}`}
-                                            onMouseDown={this.startImageDrag.bind(this)}
-                                        />;
-                                    })
-                                }
                                 <img
-                                    alt="Document"
+                                    alt={`Document preview, page ${this.state.currentPage}`}
                                     id={`file-viewer-image`}
                                     src={`${process.env.VALUATE_ENVIRONMENT.REACT_APP_SERVER_URL}appraisal/${this.props.document.appraisalId}/files/${this.props.document._id}/rendered/${this.state.currentPage}?access_token=${Auth.getAccessToken()}`}
-                                    className={`file-viewer-image frame`}
+                                    className={`file-viewer-image frame active ${this.state.slowTransition ? "slow-transition" : ""}`}
+                                    onError={() => this.setState({previewError: true})}
                                     onMouseDown={this.startImageDrag.bind(this)}
                                 />
                                 {
@@ -358,7 +354,9 @@ class FileViewer extends React.Component
                                         }
                                     })
                                 }
-                            </div>
+                            </div> : <div className="file-viewer-empty" role="status">
+                                Document preview unavailable. This file has not been rendered yet.
+                            </div>}
                         </div>
                     </Col>
                 </Row>

@@ -29,8 +29,8 @@ class ViewVacancySchedule extends React.Component
         {
             if (tenancy.startDate && tenancy.endDate)
             {
-                const start = new Date(tenancy.startDate['$date']);
-                const end = new Date(tenancy.endDate['$date']);
+                const start = tenancy.startDate instanceof Date ? tenancy.startDate : new Date(tenancy.startDate['$date'] || tenancy.startDate);
+                const end = tenancy.endDate instanceof Date ? tenancy.endDate : new Date(tenancy.endDate['$date'] || tenancy.endDate);
 
                 if (year >= start.getFullYear() && year <= end.getFullYear())
                 {
@@ -127,7 +127,7 @@ class ViewVacancySchedule extends React.Component
                                         {
                                             this.getYears().map((year) =>
                                             {
-                                                return <td>
+                                                return <td key={year}>
                                                     {year}
                                                 </td>
                                             })
@@ -138,7 +138,7 @@ class ViewVacancySchedule extends React.Component
                                 {
                                     this.props.appraisal.units.map((unit) =>
                                     {
-                                        return <tr>
+                                        return <tr key={unit.unitNumber}>
                                             <td>{unit.unitNumber}</td>
                                             {
                                                 this.getSequentialOccupiedYears(unit).map((occupation) =>

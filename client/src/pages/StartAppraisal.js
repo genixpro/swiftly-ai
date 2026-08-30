@@ -5,6 +5,7 @@ import axios from 'axios';
 import FieldDisplayEdit from "./components/FieldDisplayEdit";
 import { Sidebar } from "../components/Layout/Sidebar";
 import mixpanel from "mixpanel-browser";
+import {Link} from "react-router-dom";
 
 class StartAppraisal extends React.Component
 {
@@ -96,8 +97,8 @@ class StartAppraisal extends React.Component
 
                             {/* Breadcrumb below title */}
                             <ol className="breadcrumb breadcrumb px-0 pb-0">
-                                <li className="breadcrumb-item"><a href="/">Home</a></li>
-                                <li className="breadcrumb-item"><a href="/appraisals/">Appraisals</a></li>
+                                <li className="breadcrumb-item"><Link to="/appraisals/">Home</Link></li>
+                                <li className="breadcrumb-item"><Link to="/appraisals/">Appraisals</Link></li>
                                 <li className="breadcrumb-item active">New Appraisal</li>
                             </ol>
                         </div>
@@ -107,13 +108,15 @@ class StartAppraisal extends React.Component
                             <div className={"appraisal-type-selector"}>
                                 {
                                     this.state.mode === 'type' || (this.state.mode === 'fields' && this.state.newAppraisal.appraisalType === 'simple') ?
-                                        <div onClick={() => this.appraisalTypeSelected("simple")}>
+                                        <div className="appraisal-type-option" role="button" tabIndex={0}
+                                             onClick={() => this.appraisalTypeSelected("simple")}
+                                             onKeyDown={(evt) => (evt.key === 'Enter' || evt.key === ' ') && this.appraisalTypeSelected("simple")}>
                                             <Card outline color={"primary"} className={"appraisal-type-button"}>
                                                 <em className="type-icon fa-2x icon-doc mr-2"></em>
 
                                                 <div className={"description-block"}>
                                                     <div className={"title-wrapper"}>
-                                                        <span className={"title"}>Start A Short Appraisal</span>
+                                                        <span className={"title"}>Start a Short Appraisal</span>
                                                     </div>
                                                     <div className={"features-list-wrapper"}>
                                                         <ul>
@@ -133,13 +136,15 @@ class StartAppraisal extends React.Component
                                 }
                                 {
                                     this.state.mode === 'type' || (this.state.mode === 'fields' && this.state.newAppraisal.appraisalType === 'detailed') ?
-                                        <div onClick={() => this.appraisalTypeSelected("detailed")}>
+                                        <div className="appraisal-type-option" role="button" tabIndex={0}
+                                             onClick={() => this.appraisalTypeSelected("detailed")}
+                                             onKeyDown={(evt) => (evt.key === 'Enter' || evt.key === ' ') && this.appraisalTypeSelected("detailed")}>
                                             <Card outline color={"primary"} className={"appraisal-type-button"}>
                                                 <em className="type-icon fa-2x icon-docs mr-2"></em>
 
                                                 <div className={"description-block"}>
                                                     <div className={"title-wrapper"}>
-                                                        <span className={"title"}>Start A Detailed Appraisal</span>
+                                                        <span className={"title"}>Start a Detailed Appraisal</span>
                                                     </div>
                                                     <div className={"features-list-wrapper"}>
                                                         <ul>

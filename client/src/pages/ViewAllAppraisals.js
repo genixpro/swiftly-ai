@@ -4,6 +4,7 @@ import { Row } from 'reactstrap';
 import axios from 'axios';
 import AppraisalList from './components/AppraisalList';
 import AppraisalModel from "../models/AppraisalModel";
+import {Link} from "react-router-dom";
 
 class ViewAllAppraisals extends React.Component {
 
@@ -43,13 +44,13 @@ class ViewAllAppraisals extends React.Component {
 
                         {/* Breadcrumb below title */}
                         <ol className="breadcrumb breadcrumb px-0 pb-0">
-                            <li className="breadcrumb-item"><a href="/">Home</a></li>
+                            <li className="breadcrumb-item"><Link to="/appraisals/">Home</Link></li>
                             <li className="breadcrumb-item active">Appraisals</li>
                         </ol>
                     </div>
                 </div>
                 <Row>
-                    <div className="col-md-6">
+                    <div className="col-12 col-xl-8">
                         <AppraisalList appraisals={this.state.appraisals} history={this.props.history} deleteAppraisal={(appraisal) => this.deleteAppraisal(appraisal)}/>
                     </div>
                 </Row>

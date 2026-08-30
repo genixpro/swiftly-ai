@@ -80,7 +80,8 @@ class ViewAmortization extends React.Component
                 <Button
                     color="secondary"
                     onClick={(evt) => this.removeAmortization(amortizationIndex)}
-                    title={"New Amortization"}
+                    title={"Delete Amortization Item"}
+                    aria-label={"Delete Amortization Item"}
                 >
                     <i className="fa fa-trash-alt"></i>
                 </Button>
@@ -106,7 +107,7 @@ class ViewAmortization extends React.Component
 
         if (_.isUndefined(newAmortization['name']))
         {
-            newAmortization['name'] = 'New Tenant';
+            newAmortization['name'] = 'New Amortization Item';
         }
 
         if (_.isUndefined(newAmortization['amount']))
@@ -184,7 +185,7 @@ class ViewAmortization extends React.Component
                     hideIcon={true}
                     value={""}
                     placeholder={"Date"}
-                    onChange={_.once((newValue) => this.createNewAmortization("date", newValue))}
+                    onChange={_.once((newValue) => this.createNewAmortization("startDate", newValue))}
                 />
             </td>
             <td>
@@ -200,6 +201,7 @@ class ViewAmortization extends React.Component
                     color="secondary"
                     onClick={(evt) => this.createNewAmortization()}
                     title={"New Amortization Item"}
+                    aria-label={"New Amortization Item"}
                 >
                     <i className="fa fa-plus-square"></i>
                 </Button>
@@ -258,6 +260,7 @@ class ViewAmortization extends React.Component
                                 </Row>
                                 <Row>
                                     <Col xs={12} md={12} lg={12} xl={12}>
+                                        <div className="table-responsive">
                                         <table className="table amortization-table">
                                             <thead>
                                                 <tr>
@@ -279,6 +282,7 @@ class ViewAmortization extends React.Component
                                             </tbody>
 
                                         </table>
+                                        </div>
                                     </Col>
                                 </Row>
                             </CardBody>

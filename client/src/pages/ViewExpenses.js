@@ -68,12 +68,14 @@ class ViewExpenses extends React.Component
                                 {/*{(this.props.appraisal && this.props.appraisal.incomeStatement) ?*/}
                                 <div id={"view-expenses-body"} className={"view-expenses-body"}>
                                     <Row>
-                                        <Col xs={9}>
+                                        <Col xs={12} md={6}>
                                             <h3>Expenses</h3>
                                         </Col>
-                                        <Col xs={3}>
-                                            <ButtonGroup style={{"float": "right"}}>
-                                                <Button color={"primary"} onClick={() => this.changeExpenseMode()}>Set Expenses Based on TMI</Button>
+                                        <Col xs={12} md={6} className="expense-actions">
+                                            <ButtonGroup>
+                                                {this.props.appraisal.validationResult.hasExpenses ?
+                                                    <Button color={"primary"} onClick={() => this.changeExpenseMode()}>Set Expenses Based on TMI</Button>
+                                                    : null}
                                                 &nbsp;
                                                 <Dropdown isOpen={this.state.downloadDropdownOpen} toggle={this.toggleDownload.bind(this)}>
                                                     <DropdownToggle caret color={"primary"} className={"download-dropdown-button"}>

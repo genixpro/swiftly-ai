@@ -29,7 +29,7 @@ class ViewAdditionalIncomes extends React.Component
     {
         return (
             <div className={"view-additional-incomes"}>
-                <AppraisalContentHeader appraisal={this.props.appraisal} title="Additional Incomes"/>
+                <AppraisalContentHeader appraisal={this.props.appraisal} title="Additional Income"/>
                 <Row>
                     <Col xs={12}>
                         <Card className="card-default">
@@ -38,7 +38,7 @@ class ViewAdditionalIncomes extends React.Component
                                 <div id={"view-additional-incomes-body"} className={"view-additional-incomes-body"}>
                                     <Row>
                                         <Col xs={10}>
-                                            <h3>Additional Incomes</h3>
+                                            <h3>Additional Income</h3>
                                         </Col>
                                         {/*<Col xs={2}>*/}
                                         {/*    <Dropdown isOpen={this.state.downloadDropdownOpen} toggle={this.toggleDownload.bind(this)}>*/}

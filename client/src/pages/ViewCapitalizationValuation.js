@@ -202,9 +202,10 @@ class ViewCapitalizationValuation extends React.Component
                                 </Col>
                             </Row>
                             <Row>
-                                <Col xs={8}>
+                                <Col xs={12} lg={8}>
                                     <div className={"stabilized-statement-centered"}>
                                         <h3>Valuation</h3>
+                                        <div className="valuation-table-scroll">
                                         <Table className={"statement-table "}>
                                             <tbody>
                                             <tr className={"title-row"}>
@@ -410,6 +411,7 @@ class ViewCapitalizationValuation extends React.Component
                                             </tr>
                                             </tbody>
                                         </Table>
+                                        </div>
                                         <br/>
                                         <br/>
                                         <h4 className={"final-valuation"}>Final Value By Capitalization Approach: <CurrencyFormat
@@ -419,12 +421,13 @@ class ViewCapitalizationValuation extends React.Component
                                         </h4>
                                     </div>
                                 </Col>
-                                <Col xs={4}>
+                                <Col xs={12} lg={4}>
                                     <Card className={"capitalization-valuation-inputs"} outline>
                                         <CardBody>
                                             <h3>Inputs</h3>
 
                                             <Table>
+                                                <tbody>
                                                 <tbody>
                                                 <tr>
                                                 </tr>
@@ -480,7 +483,7 @@ class ViewCapitalizationValuation extends React.Component
                                                                     placeholder={"Apply Vacant Unit Rent Loss"}
                                                                     hideIcon={true}
                                                                     value={this.props.appraisal.stabilizedStatementInputs ? this.props.appraisal.stabilizedStatementInputs.applyVacantUnitRentLoss : null}
-                                                                    onChange={(newValue) => this.changeStabilizedInput("applyVacantUnitLeasingCosts", newValue)}
+                                                                    onChange={(newValue) => this.changeStabilizedInput("applyVacantUnitRentLoss", newValue)}
                                                                 />
                                                             </td>
                                                         </tr> : null
@@ -496,7 +499,7 @@ class ViewCapitalizationValuation extends React.Component
                                                                     placeholder={"Apply Free Rent Loss"}
                                                                     hideIcon={true}
                                                                     value={this.props.appraisal.stabilizedStatementInputs ? this.props.appraisal.stabilizedStatementInputs.applyFreeRentLoss : null}
-                                                                    onChange={(newValue) => this.changeStabilizedInput("applyVacantUnitLeasingCosts", newValue)}
+                                                                    onChange={(newValue) => this.changeStabilizedInput("applyFreeRentLoss", newValue)}
                                                                 />
                                                             </td>
                                                         </tr> : null
@@ -511,11 +514,12 @@ class ViewCapitalizationValuation extends React.Component
                                                                     placeholder={"Apply Amortization Adjustment"}
                                                                     hideIcon={true}
                                                                     value={this.props.appraisal.stabilizedStatementInputs ? this.props.appraisal.stabilizedStatementInputs.applyAmortization : null}
-                                                                    onChange={(newValue) => this.changeStabilizedInput("applyVacantUnitLeasingCosts", newValue)}
+                                                                    onChange={(newValue) => this.changeStabilizedInput("applyAmortization", newValue)}
                                                                 />
                                                             </td>
                                                         </tr> : null
                                                 }
+                                                </tbody>
                                                 </tbody>
                                             </Table>
                                         </CardBody>

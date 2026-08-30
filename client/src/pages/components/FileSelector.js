@@ -35,7 +35,8 @@ class FileSelector extends React.Component
 
             if (!defaultSet && response.data.files.length > 0)
             {
-                this.onChangeValue(response.data.files[0]._id)
+                const previewableFile = response.data.files.find((file) => Number(file.pages) > 0);
+                this.onChangeValue((previewableFile || response.data.files[0])._id)
             }
         });
     }
