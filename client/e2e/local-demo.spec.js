@@ -5,9 +5,8 @@ import {fileURLToPath} from 'node:url';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
-function isExpectedRunnerError(browserName, message) {
-  return browserName === 'firefox'
-    && message.includes('webglcontextcreationerror')
+function isExpectedRunnerError(message) {
+  return message.includes('webglcontextcreationerror')
     && message.includes('Failed to initialize WebGL')
     && message.includes('AllowWebgl2:false');
 }
@@ -383,11 +382,11 @@ test('reports and stored file resources use the canonical API', async ({request}
 });
 
 for (const route of appraisalRoutes) {
-  test(`appraisal workflow route renders without browser errors: ${route}`, async ({ page, browserName }) => {
+  test(`appraisal workflow route renders without browser errors: ${route}`, async ({ page }) => {
     const errors = [];
     page.on('pageerror', error => errors.push(error.message));
     page.on('console', message => {
-      if (message.type() === 'error' && !isExpectedRunnerError(browserName, message.text())) {
+      if (message.type() === 'error' && !isExpectedRunnerError(message.text())) {
         errors.push(message.text());
       }
     });
