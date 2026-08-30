@@ -76,13 +76,11 @@ def provider_for(config: Settings) -> ExtractionProvider:
     return OpenAIResponsesProvider(config) if config.openai_api_key else UnconfiguredProvider()
 
 
-def normalize_for_legacy(result: ExtractionResult) -> dict[str, object]:
-    """Keep corrections editable in the legacy file shape while retaining the canonical result."""
-    annotations = []
+def normalize_extraction(result: ExtractionResult) -> dict[str, object]:
+    """Store the canonical extraction alongside fields consumed by appraisal workflows."""
     fields = {field.name: field.value for field in result.fields}
-    for field in result.fields:
-        annotations.append({"classification": field.name, "text": str(field.value), "citations": [c.model_dump() for c in field.citations]})
-    return {"fileType": LEGACY_FILE_TYPES.get(result.document_type, result.document_type), "extractedData": fields, "annotations": annotations,
+    return {"fileType": LEGACY_FILE_TYPES.get(result.document_type, result.document_type),
+            "extraction": result.model_dump(), "extractedData": fields,
             "tenantLeaseRows": [row.model_dump() for row in result.tenant_lease_rows],
             "incomeExpenseRows": [row.model_dump() for row in result.income_expense_rows],
             "comparableSales": [row.model_dump() for row in result.comparable_sales]}

@@ -6,20 +6,9 @@ import BaseModel from "../orm/BaseModel";
 import StringField from "../orm/StringField";
 import IntField from "../orm/IntField";
 import FloatField from "../orm/FloatField";
-import DictField from "../orm/DictField";
 
 class WordModel extends BaseModel
 {
-    constructor()
-    {
-        super(...arguments);
-
-        if (this.groups['undefined'])
-        {
-            delete this.groups['undefined'];
-        }
-    }
-
     static word = new StringField();
     static page = new IntField();
     static lineNumber = new IntField();
@@ -44,30 +33,12 @@ class WordModel extends BaseModel
         return this.right - this.left;
     }
 
-    static textType = new StringField();
-
-    static groups = new DictField(new StringField());
-    static groupProbabilities = new DictField(new DictField(new FloatField()));
-    static groupNumbers = new DictField(new IntField());
-
-    static classification = new StringField();
-    static classificationProbabilities = new DictField(new FloatField());
-    static modifiers = new ListField(new StringField());
-    static modifierProbabilities = new DictField(new FloatField());
-
-    static textTypeProbabilities = new DictField(new FloatField());
-
-    static lineNumberWithinGroup = new DictField(new IntField());
-    static reverseLineNumberWithinGroup = new DictField(new IntField());
 }
 
 
 class FileModel extends BaseModel
 {
-    static ignoredServerFields = [
-        "path", "extractedData", "annotations", "tenantLeaseRows",
-        "incomeExpenseRows", "comparableSales"
-    ];
+    static ignoredServerFields = ["path"];
     static _id = new IdField();
     static fileName = new GenericField();
     static owner = new StringField();
@@ -77,6 +48,11 @@ class FileModel extends BaseModel
     static appraisalId = new GenericField();
     static fileType = new GenericField();
     static hash = new StringField();
+    static extractedData = new GenericField();
+    static extraction = new GenericField();
+    static tenantLeaseRows = new GenericField();
+    static incomeExpenseRows = new GenericField();
+    static comparableSales = new GenericField();
 
     static images = new ListField(new GenericField());
     static words = new ListField(new ModelField(WordModel));

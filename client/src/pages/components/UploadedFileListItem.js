@@ -1,7 +1,6 @@
 import React from 'react';
 import axios from "axios";
 import {Button} from 'reactstrap';
-import Auth from "../../Auth";
 
 
 class UploadedFileListItem extends React.Component
@@ -40,15 +39,6 @@ class UploadedFileListItem extends React.Component
         }
     }
 
-    onFileClicked()
-    {
-        if (Auth.isAdmin)
-        {
-            this.props.history.push("/appraisal/" + this.props.appraisalId + "/files/" + this.state.file._id + "/annotate");
-        }
-    }
-
-
     render()
     {
         const file = this.state.file;
@@ -58,15 +48,8 @@ class UploadedFileListItem extends React.Component
             return <tr></tr>;
         }
 
-        let className = "";
-
-        if (Auth.isAdmin)
-        {
-            className = "clickable";
-        }
-
         return (
-            <tr className={`uploaded-file-list-item ${className}`} onClick={(evt) => this.onFileClicked()}>
+            <tr className="uploaded-file-list-item">
                 <td>{file.fileName}</td>
                 <td>
                     <span>{file.reviewStatus || "fresh"}</span>

@@ -1,4 +1,4 @@
-from app.main import app
+from app.main import app, public
 
 
 def test_extraction_contract_routes_are_registered():
@@ -26,3 +26,14 @@ def test_legacy_browser_contract_routes_are_registered():
 def test_specific_file_route_precedes_broad_legacy_export_route():
     paths = [route.path for route in app.routes]
     assert paths.index("/appraisal/{appraisal_id}/files/{file_id}") < paths.index("/appraisal/{appraisal_id}/{report}/{format}")
+
+
+def test_file_responses_hide_retired_token_annotation_metadata():
+    value = public({
+        "_id": "file-1",
+        "annotations": [{"classification": "tenant"}],
+        "words": [{"word": "Tenant", "page": 1, "index": 0, "classificationProbabilities": {"tenant": 0.9}}],
+    })
+
+    assert "annotations" not in value
+    assert value["words"] == [{"word": "Tenant", "page": 1, "index": 0}]

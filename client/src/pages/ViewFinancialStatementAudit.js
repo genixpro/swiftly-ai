@@ -3,7 +3,7 @@ import { Row, Col, Card, CardBody, CardHeader, Table } from 'reactstrap';
 import FinancialStatementFields from "./FinancialStatementFields";
 import _ from 'underscore';
 import NumberFormat from 'react-number-format';
-import AnnotationUtilities from './AnnotationUtilities';
+import FinancialStatementUtilities from './FinancialStatementUtilities';
 
 class ViewFinancialStatementAudit extends React.Component
 {
@@ -61,7 +61,7 @@ class ViewFinancialStatementAudit extends React.Component
             {
                 if (income.include)
                 {
-                    incomeTotal += AnnotationUtilities.cleanAmount(income.income_amount);
+                    incomeTotal += FinancialStatementUtilities.cleanAmount(income.income_amount);
                 }
             });
         }
@@ -72,7 +72,7 @@ class ViewFinancialStatementAudit extends React.Component
             {
                 if (expense.include)
                 {
-                    expenseTotal += AnnotationUtilities.cleanAmount(expense.expense_amount);
+                    expenseTotal += FinancialStatementUtilities.cleanAmount(expense.expense_amount);
                 }
             });
         }

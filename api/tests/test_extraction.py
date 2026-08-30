@@ -4,7 +4,7 @@ from types import SimpleNamespace
 import pytest
 from pydantic import ValidationError
 
-from app.extraction import OpenAIResponsesProvider, normalize_for_legacy, provider_for
+from app.extraction import OpenAIResponsesProvider, normalize_extraction, provider_for
 from app.schemas import ExtractionResult
 from app.settings import Settings
 
@@ -69,14 +69,14 @@ def test_malformed_provider_response_is_rejected_for_manual_reprocess():
         provider.extract(source, "", [])
 
 
-def test_normalized_results_remain_editable_by_legacy_file_review_screens():
-    normalized = normalize_for_legacy(ExtractionResult(**extraction_payload()))
+def test_normalized_results_retain_the_canonical_extraction():
+    normalized = normalize_extraction(ExtractionResult(**extraction_payload()))
     assert normalized["fileType"] == "lease"
     assert normalized["extractedData"] == {"tenantName": "Northstar"}
-    assert normalized["annotations"][0]["citations"] == [{"page": 1, "text": "Tenant: Northstar"}]
+    assert normalized["extraction"]["fields"][0]["citations"] == [{"page": 1, "text": "Tenant: Northstar"}]
     assert provider_for(Settings()).__class__.__name__ == "UnconfiguredProvider"
 
 
 def test_canonical_document_types_map_to_legacy_file_filters():
     result = ExtractionResult(**extraction_payload(document_type="financial_statement"))
-    assert normalize_for_legacy(result)["fileType"] == "financials"
+    assert normalize_extraction(result)["fileType"] == "financials"

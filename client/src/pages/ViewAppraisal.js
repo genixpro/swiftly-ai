@@ -18,13 +18,11 @@ import ViewComparableLeases from "./ViewComparableLeases";
 import ViewCapitalizationValuation from "./ViewCapitalizationValuation";
 import ViewAdditionalIncome from "./ViewAdditionalIncomes";
 import ViewAmortization from "./ViewAmortization";
-import AnnotateFile from "./AnnotateFile";
 import ViewExpensesTMI from "./ViewExpensesTMI";
 import Logout from "./Logout";
 import axios from "axios";
 import AppraisalModel from "../models/AppraisalModel";
 import { Sidebar } from "../components/Layout/Sidebar";
-import AnnotationEditor from "./components/AnnotationEditor";
 import mixpanel from "mixpanel-browser";
 
 class ViewAppraisal extends React.Component
@@ -102,8 +100,6 @@ class ViewAppraisal extends React.Component
 
                         <Route path={`${this.props.match.path}/stabilized_statement_valuation`} render={(props) => <ViewStabilizedStatement {...routeProps} {...props} />} />
                         <Route path={`${this.props.match.path}/comparable_sales`} render={(props) => <ViewComparableSales {...routeProps} {...props} />} />
-
-                        <Route path={`${this.props.match.path}/files/:fileId/annotate`} render={(props) => <AnnotateFile {...routeProps} {...props} />} />
 
                         <Route path={`${this.props.match.path}/discounted_cash_flow`} render={(props) => <ViewDiscountedCashFlow {...routeProps} {...props} />} />
                         <Route path={`${this.props.match.path}/tenants`} render={(props) => <ViewTenants {...routeProps} {...props} />} />

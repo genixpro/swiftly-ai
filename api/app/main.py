@@ -19,12 +19,16 @@ from pymongo import MongoClient, ReturnDocument
 from docx import Document
 from openpyxl import Workbook
 
-from .extraction import normalize_for_legacy, provider_for
+from .extraction import normalize_extraction, provider_for
 from .calculations import refresh_valuations, unit_is_vacant, unit_tenant_name, unit_yearly_rent
 from .schemas import ExtractionPatch, ExtractionResult
 from .settings import settings
 
 log = logging.getLogger("swiftly")
+PUBLIC_WORD_FIELDS = {
+    "word", "page", "lineNumber", "documentLineNumber", "column", "documentColumn",
+    "index", "left", "right", "top", "bottom",
+}
 
 DEMO_DEFAULTS = {
     "appraisalType": "detailed", "units": [], "imageUrls": [], "captions": [], "propertyTags": [],
@@ -148,6 +152,13 @@ def configure_logging() -> None:
 def public(document: dict) -> dict:
     document = dict(document)
     document["_id"] = str(document.pop("_id"))
+    document.pop("annotations", None)
+    if isinstance(document.get("words"), list):
+        document["words"] = [
+            {key: value for key, value in word.items() if key in PUBLIC_WORD_FIELDS}
+            if isinstance(word, dict) else word
+            for word in document["words"]
+        ]
     return document
 
 
@@ -181,13 +192,10 @@ def seed_demo_files(app: FastAPI) -> None:
     )
 
     def word_records(values: list[object]) -> list[object]:
-        """Keep persisted early-demo string tokens compatible with the review UI."""
+        """Keep persisted early-demo string tokens usable for source highlighting."""
         return [
             {"word": value, "page": 1, "index": index, "lineNumber": 0, "documentLineNumber": 0,
-             "column": index, "documentColumn": index, "left": 0, "right": 0, "top": 0, "bottom": 0,
-             "groups": {}, "groupProbabilities": {}, "groupNumbers": {}, "classificationProbabilities": {},
-             "modifiers": [], "modifierProbabilities": {}, "textTypeProbabilities": {},
-             "lineNumberWithinGroup": {}, "reverseLineNumberWithinGroup": {}}
+             "column": index, "documentColumn": index, "left": 0, "right": 0, "top": 0, "bottom": 0}
             if isinstance(value, str) else value
             for index, value in enumerate(values)
         ]
@@ -207,7 +215,7 @@ def seed_demo_files(app: FastAPI) -> None:
         shutil.copy2(source, destination)
         extracted_text, pages = extract_available_text(destination, source.name)
         result = ExtractionResult.model_validate_json((fixture_directory() / extraction_name).read_text())
-        normalized = normalize_for_legacy(result)
+        normalized = normalize_extraction(result)
         normalized["fileType"] = legacy_type
         images = render_document_pages(file_id, destination)
         db.files.insert_one({
@@ -903,9 +911,12 @@ def run_extraction(job_id: str, request: Request):
             "pages": file["pages"], "images": [str(image) for image in page_images],
         }})
         result = provider_for(settings()).extract(path, text, page_images)
-        normalized = normalize_for_legacy(result)
-        db.files.update_one({"_id": file["_id"]}, {"$set": {**normalized, "reviewStatus": "extracted", "extractionError": None,
-                                                               "pages": file["pages"], "images": [str(image) for image in page_images]}})
+        normalized = normalize_extraction(result)
+        db.files.update_one({"_id": file["_id"]}, {
+            "$set": {**normalized, "reviewStatus": "extracted", "extractionError": None,
+                     "pages": file["pages"], "images": [str(image) for image in page_images]},
+            "$unset": {"annotations": ""},
+        })
         db.extractions.update_one({"_id": job_id}, {"$set": {"status": "completed", "result": result.model_dump(), "completedAt": datetime.now(UTC)}})
     except Exception as exc:
         log.exception("extraction failed", extra={"jobId": job_id, "fileId": file["_id"], "appraisalId": job["appraisalId"]})
@@ -930,8 +941,12 @@ def get_extraction(job_id: str, request: Request):
 
 @app.patch("/appraisals/{appraisal_id}/files/{file_id}/extraction")
 def patch_extraction(appraisal_id: str, file_id: str, payload: ExtractionPatch, request: Request):
-    normalized = normalize_for_legacy(payload.extraction)
-    result = request.app.state.db.files.find_one_and_update({"_id": file_id, "appraisalId": appraisal_id}, {"$set": {**normalized, "reviewStatus": "corrected"}}, return_document=ReturnDocument.AFTER)
+    normalized = normalize_extraction(payload.extraction)
+    result = request.app.state.db.files.find_one_and_update(
+        {"_id": file_id, "appraisalId": appraisal_id},
+        {"$set": {**normalized, "reviewStatus": "corrected"}, "$unset": {"annotations": ""}},
+        return_document=ReturnDocument.AFTER,
+    )
     if not result: raise HTTPException(404, "File not found")
     return {"file": public(result)}
 

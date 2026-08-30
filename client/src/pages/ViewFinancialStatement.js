@@ -1,7 +1,6 @@
 import React from 'react';
 import {Row, Col, Card, CardBody, Nav, NavItem, NavLink} from 'reactstrap';
 import axios from 'axios';
-import ViewFinancialStatementExtractions from "./ViewFinancialStatementExtractions";
 import ViewFinancialStatementAudit from "./ViewFinancialStatementAudit";
 import {NavLink as RRNavLink} from 'react-router-dom';
 import {Switch, Route} from 'react-router-dom';
@@ -30,11 +29,6 @@ class ViewFinancialStatement extends React.Component {
         });
     }
 
-    reprocessFile()
-    {
-        return axios.post(`/appraisal/${this.props.match.params.id}/files/${this.props.match.params.financialStatementId}/reprocess`, {});
-    }
-
     render() {
         return (
             <Row>
@@ -45,16 +39,10 @@ class ViewFinancialStatement extends React.Component {
                                 <Row>
                                     <Col xs={12}>
                                         <Nav tabs>
-                                            {/*<NavItem>*/}
-                                            {/*<NavLink to={`${this.props.match.url}/summary`} activeClassName="active" tag={RRNavLink}>Summarized Data</NavLink>*/}
-                                            {/*</NavItem>*/}
                                             <NavItem>
-                                                <NavLink to={`${this.props.match.url}/raw`} activeClassName="active"
-                                                         tag={RRNavLink}>Raw Financial Statement</NavLink>
+                                                <NavLink to={`${this.props.match.url}/audit`} activeClassName="active"
+                                                         tag={RRNavLink}>Extracted Data</NavLink>
                                             </NavItem>
-                                            {/*<NavItem>*/}
-                                            {/*<NavLink to={`${this.props.match.url}/audit`} activeClassName="active" tag={RRNavLink}>Audit</NavLink>*/}
-                                            {/*</NavItem>*/}
                                         </Nav>
                                     </Col>
                                 </Row>
@@ -64,14 +52,6 @@ class ViewFinancialStatement extends React.Component {
                                             <Card className="card-default">
                                                 <CardBody>
                                                     <Switch>
-                                                        <Route path={`${this.props.match.url}/raw`}
-                                                               render={() => <ViewFinancialStatementExtractions
-                                                                   financialStatement={this.state.financialStatement}
-                                                                   saveFinancialStatementData={this.saveFinancialStatementData.bind(this)}
-                                                                   reprocessFile={() => this.reprocessFile()}
-                                                               />}
-
-                                                        />
                                                         <Route path={`${this.props.match.url}/audit`}
                                                                render={() => <ViewFinancialStatementAudit
                                                                    financialStatement={this.state.financialStatement}

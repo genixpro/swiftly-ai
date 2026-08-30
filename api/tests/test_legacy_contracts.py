@@ -199,7 +199,10 @@ def test_file_upload_reprocess_and_manual_extraction_correction_contracts(client
     }
     patched = client.patch(f"/appraisals/demo-appraisal/files/{file['_id']}/extraction", json=correction)
     assert patched.status_code == 200
-    assert patched.json()["file"]["reviewStatus"] == "corrected"
+    patched_file = patched.json()["file"]
+    assert patched_file["reviewStatus"] == "corrected"
+    assert patched_file["extraction"] == correction["extraction"]
+    assert "annotations" not in patched_file
     reprocess = client.post(f"/appraisal/demo-appraisal/files/{file['_id']}/reprocess")
     assert reprocess.status_code == 200
     reprocessed_file = client.get(f"/appraisal/demo-appraisal/files/{file['_id']}").json()["file"]

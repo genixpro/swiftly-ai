@@ -24,7 +24,6 @@ const appraisalRoutes = [
   '/appraisal/demo-appraisal/additional_income',
   '/appraisal/demo-appraisal/amortization',
   '/appraisal/demo-appraisal/discounted_cash_flow',
-  '/appraisal/demo-appraisal/files/demo-financial-statement/annotate',
 ];
 
 test('local no-login demo lists its seeded appraisal', async ({ page }) => {
