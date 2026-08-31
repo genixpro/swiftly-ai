@@ -39,7 +39,7 @@ describe('UploadableImageSet', () => {
         const onChange = vi.fn();
         const {container} = render(<UploadableImageSet value={images} captions={['One', 'Two']} onChange={onChange} />);
 
-        expect(screen.getAllByRole('img', {name: /Property thumbnail/})).toHaveLength(2);
+        expect(screen.getAllByRole('button', {name: /Show property image/})).toHaveLength(2);
         fireEvent.click(screen.getByRole('button', {name: 'Delete property image 2'}));
         expect(images).toEqual(['/one.png']);
         expect(onChange).toHaveBeenCalledWith(images);

@@ -22,9 +22,11 @@ export function viewerScrollPosition(
     containerX: number,
     containerY: number,
 ) {
+    const innerScrollLeft = imageX * image.width - container.width * containerX;
+    const innerScrollTop = imageY * image.height - container.height * containerY;
     return {
-        innerScrollLeft: imageX * image.width - container.width * containerX,
-        innerScrollTop: imageY * image.height - container.height * containerY,
+        innerScrollLeft: Number.isFinite(innerScrollLeft) ? innerScrollLeft : 0,
+        innerScrollTop: Number.isFinite(innerScrollTop) ? innerScrollTop : 0,
     };
 }
 

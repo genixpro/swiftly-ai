@@ -12,7 +12,7 @@ import {
     defaultComparableSaleHeaderFields,
     defaultComparableSaleStatsFields,
 } from './comparable-sale/ComparableSaleListHeader';
-import type {ComparableSaleCardRecord} from '../../domain/comparableSaleCard';
+import {newComparableSaleMarker, type ComparableSaleCardRecord} from '../../domain/comparableSaleCard';
 
 type SaleRecord = ComparableSaleCardRecord;
 
@@ -93,7 +93,7 @@ function ComparableSaleList(incomingProps: ComparableSaleListProps) {
             createComparableSale.mutateAsync(newComparable).then((comparableId) =>
             {
                 newComparable["_id"] = comparableId;
-                Reflect.set(newComparable, ComparableSaleListItem._newSale, true);
+                Reflect.set(newComparable, newComparableSaleMarker, true);
                 lastNewCompRef.current = null;
                 props.onNewComparable!(newComparable);
                 setListState({isCreatingNewItem: false, newComparableSale: createComparableSaleDraft({}).values as SaleRecord});

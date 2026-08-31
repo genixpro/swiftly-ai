@@ -53,11 +53,11 @@ function ExpenseRecoveryForUnitCalculationPopoverWrapper({appraisal, unit, incom
         }
 
         return (
-            [<button type="button" className="btn btn-link p-0" id={popoverId} onClick={() => setPopoverOpen(!popoverOpen)}>
+            [<button type="button" className="btn btn-link p-0" id={popoverId} onClick={() => setPopoverOpen(!popoverOpen)} key="trigger">
                 {children}
             </button>,
                 <Popover placement="bottom" isOpen={popoverOpen} target={popoverId}
-                         toggle={() => setPopoverOpen(!popoverOpen)}>
+                         toggle={() => setPopoverOpen(!popoverOpen)} key="popover">
                     <PopoverHeader>Expense Recoveries</PopoverHeader>
                     <PopoverBody>
                         <table className={"explanation-popover-table"}>

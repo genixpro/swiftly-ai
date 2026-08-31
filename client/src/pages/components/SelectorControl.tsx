@@ -1,4 +1,4 @@
-import type {FocusEventHandler, MouseEventHandler, ChangeEventHandler, Ref} from 'react';
+import {useRef, type ChangeEventHandler, type FocusEventHandler, type MouseEventHandler, type Ref} from 'react';
 
 export interface SelectorOption {
     value: string;
@@ -40,16 +40,27 @@ export default function SelectorControl({
     notifyUnchanged = false,
     mutedWhenEmpty = true,
 }: SelectorControlProps) {
+    const pointerSelectionChangedRef = useRef(false);
     const notify = (nextValue: string) => {
         if (onChange && (notifyUnchanged || nextValue !== value)) onChange(nextValue);
     };
-    const handleChange: ChangeEventHandler<HTMLSelectElement> = event => notify(event.target.value);
-    const handleClick: MouseEventHandler<HTMLSelectElement> = event => notify(event.currentTarget.value);
+    const handleChange: ChangeEventHandler<HTMLSelectElement> = event => {
+        pointerSelectionChangedRef.current = true;
+        notify(event.target.value);
+    };
+    const handleClick: MouseEventHandler<HTMLSelectElement> = event => {
+        if (pointerSelectionChangedRef.current) {
+            pointerSelectionChangedRef.current = false;
+            return;
+        }
+        notify(event.currentTarget.value);
+    };
     const handleBlur: FocusEventHandler<HTMLSelectElement> = () => onBlur?.();
 
     return <select
         className={className}
-        onChange={useClick ? undefined : handleChange}
+        onChange={handleChange}
+        onPointerDown={useClick ? () => { pointerSelectionChangedRef.current = false; } : undefined}
         onClick={useClick ? handleClick : undefined}
         onBlur={handleBlur}
         ref={innerRef}

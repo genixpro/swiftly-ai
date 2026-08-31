@@ -12,5 +12,7 @@ describe('file viewer geometry', () => {
         expect(viewerPointerPosition(250, 150, {left: 100, top: 50, width: 400, height: 200}, 10, 20)).toEqual({x: 0.35, y: 0.4});
         expect(viewerScrollPosition({width: 1_000, height: 800}, {width: 400, height: 300}, .5, .25, .5, .5))
             .toEqual({innerScrollLeft: 300, innerScrollTop: 50});
+        expect(viewerScrollPosition({width: 0, height: 0}, {width: 0, height: 0}, Number.NaN, Number.NaN, .5, .5))
+            .toEqual({innerScrollLeft: 0, innerScrollTop: 0});
     });
 });

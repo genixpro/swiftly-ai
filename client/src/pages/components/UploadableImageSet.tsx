@@ -174,8 +174,15 @@ function UploadableImageSet(props: UploadableImageSetProps)
                             {
                                 (props.value || []).map((item: string, itemIndex: number) =>
                                 {
-                                    return <div className={"image-wrapper"} key={item} onClick={() => updateState({activeIndex: itemIndex})} >
-                                            <img src={item} className={"uploadable-image-carousel-image"} alt={`Property thumbnail ${itemIndex + 1}`} />
+                                    return <div className={"image-wrapper"} key={item}>
+                                            <button
+                                                type="button"
+                                                className="uploadable-image-selection-button"
+                                                onClick={() => updateState({activeIndex: itemIndex})}
+                                                aria-label={`Show property image ${itemIndex + 1}`}
+                                            >
+                                                <img src={item} className={"uploadable-image-carousel-image"} alt="" />
+                                            </button>
                                             {
                                                 editable ?
                                                     <Button

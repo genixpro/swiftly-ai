@@ -54,7 +54,7 @@ describe('comparable map characterization', () => {
             onMapSearchChanged={onMapSearchChanged}
         />);
 
-        fireEvent.click(screen.getByAltText('Comparable Sale Icon'));
+        fireEvent.click(screen.getByRole('button', {name: 'Show comparable sale sale-1'}));
         expect(screen.getByTestId('map-popover')).toHaveTextContent('1 Main Street');
 
         fireEvent.click(screen.getByRole('button', {name: 'Map bounds changed'}));

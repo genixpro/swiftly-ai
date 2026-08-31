@@ -105,13 +105,13 @@ function MarketRentDifferentialForUnitCalculationPopoverWrapper({appraisal, chil
         return (
             [
                 <button type="button" className="btn btn-link p-0" id={popoverId}
-                   onClick={() => setState({marketRentDifferentialPopoverOpen: !state.marketRentDifferentialPopoverOpen})}>
+                   onClick={() => setState({marketRentDifferentialPopoverOpen: !state.marketRentDifferentialPopoverOpen})} key="trigger">
                     {
                         children
                     }
                 </button>,
                 <Popover placement="bottom" isOpen={state.marketRentDifferentialPopoverOpen} target={popoverId}
-                         toggle={() => setState({marketRentDifferentialPopoverOpen: !state.marketRentDifferentialPopoverOpen})}>
+                         toggle={() => setState({marketRentDifferentialPopoverOpen: !state.marketRentDifferentialPopoverOpen})} key="popover">
                     <PopoverHeader>Unit {unit.unitNumber} - Market Rent Differential</PopoverHeader>
                     <PopoverBody>
                         <table className={"explanation-popover-table"}>

@@ -40,6 +40,7 @@ function TotalLeasingCostsCalculationPopoverWrapper({appraisal, children}: Total
                     <PopoverHeader>Total Leasing Costs</PopoverHeader>
                     <PopoverBody>
                         <table className={"explanation-popover-table"}>
+                            <tbody>
                             {
                                 unitsForPopover.map((unit: UnitCalculationValues, unitIndex: number) =>
                                 {
@@ -181,6 +182,7 @@ function TotalLeasingCostsCalculationPopoverWrapper({appraisal, children}: Total
                                 <td></td>
                                 <td><CurrencyFormat value={appraisal.stabilizedStatement.vacantUnitLeasupCosts} /></td>
                             </tr>
+                            </tbody>
                         </table>
                     </PopoverBody>
                 </Popover>

@@ -32,6 +32,7 @@ function TotalVacantUnitRentLossCalculationPopoverWrapper({appraisal, children}:
                     <PopoverHeader>Total Vacant Unit Rent Loss</PopoverHeader>
                     <PopoverBody>
                         <table className={"explanation-popover-table"}>
+                            <tbody>
                             <tr className={"total-row"}>
                                 <td>Unit</td>
                                 <td></td>
@@ -67,6 +68,7 @@ function TotalVacantUnitRentLossCalculationPopoverWrapper({appraisal, children}:
                                 <td colSpan={2}><strong>Gross Rent Loss</strong></td>
                                 <td><CurrencyFormat value={appraisal.stabilizedStatement.vacantUnitRentLoss} cents={false} /></td>
                             </tr>
+                            </tbody>
                         </table>
                     </PopoverBody>
                 </Popover>

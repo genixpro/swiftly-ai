@@ -31,6 +31,7 @@ function ManagementExpenseRecoveryCalculationPopoverWrapper({appraisal, recovery
                     <PopoverHeader>Management Recovery</PopoverHeader>
                     <PopoverBody>
                         <table className={"explanation-popover-table"}>
+                            <tbody>
                             {
                                 appraisal.units!.map((unit, unitIndex) =>
                                 {
@@ -104,6 +105,7 @@ function ManagementExpenseRecoveryCalculationPopoverWrapper({appraisal, recovery
                                 <td></td>
                                 <td><CurrencyFormat value={recovery.calculatedManagementRecoveryTotal} /></td>
                             </tr>
+                            </tbody>
                         </table>
                     </PopoverBody>
                 </Popover>

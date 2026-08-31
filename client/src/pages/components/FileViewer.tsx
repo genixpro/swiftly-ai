@@ -22,7 +22,7 @@ export interface FileViewerDocument {
     words?: FileViewerWord[];
 }
 
-type ViewerPointerEvent = React.MouseEvent<HTMLElement> | React.WheelEvent<HTMLDivElement>;
+type ViewerPointerEvent = React.PointerEvent<HTMLElement> | React.WheelEvent<HTMLDivElement>;
 
 interface ViewerState {
     currentPage: number;
@@ -201,7 +201,7 @@ function FileViewer(props: FileViewerProps) {
 
         };
 
-        const startImageDrag = (evt: React.MouseEvent<HTMLImageElement>) => {
+        const startImageDrag = (evt: React.PointerEvent<HTMLImageElement>) => {
         dragRef.current.dragStartElementScrollX = state.innerScrollLeft;
         dragRef.current.dragStartElementScrollY = state.innerScrollTop;
 
@@ -213,7 +213,7 @@ function FileViewer(props: FileViewerProps) {
         evt.preventDefault();
         };
 
-        const onMouseMove = (evt: React.MouseEvent<HTMLDivElement>) => {
+        const onPointerMove = (evt: React.PointerEvent<HTMLDivElement>) => {
         if (dragRef.current.isDraggingImage)
         {
             const element = imageContainerRef.current;
@@ -252,7 +252,7 @@ function FileViewer(props: FileViewerProps) {
         const pageCount = Number(props.document.pages || 0);
         const previewAvailable = pageCount > 0 && !state.previewError;
 
-        return <div id="file-viewer" className="file-viewer" onMouseUp={onMouseUp} onMouseMove={onMouseMove}>
+        return <div id="file-viewer" className="file-viewer" onPointerUp={onMouseUp} onPointerMove={onPointerMove}>
             <FileViewerPreviewSurface
                 currentPage={state.currentPage}
                 document={props.document}
@@ -265,7 +265,7 @@ function FileViewer(props: FileViewerProps) {
                 innerScrollTop={state.innerScrollTop}
                 onChangePage={changePage}
                 onImageError={() => updateState({previewError: true})}
-                onImageMouseDown={startImageDrag}
+                onImagePointerDown={startImageDrag}
                 onWheel={onWheel}
                 onZoomIn={() => zoomIn()}
                 onZoomOut={() => zoomOut()}

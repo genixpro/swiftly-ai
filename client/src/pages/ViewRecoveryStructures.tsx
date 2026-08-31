@@ -200,7 +200,7 @@ function RecoveryStructureEditor(props: RecoveryStructureEditorProps)
                                 return null;
                             }
 
-                            return <tr className={"recovery-rule"} key={expenseIndex}>
+                            return <tr className={"recovery-rule"} key={`management-${expenseIndex}`}>
                                 <td className={"label-column"}>
                                 </td>
                                 <ExpensePercentageEditor
@@ -247,7 +247,7 @@ function RecoveryStructureEditor(props: RecoveryStructureEditorProps)
                                 return null;
                             }
 
-                            return <tr className={"recovery-rule"} key={expenseIndex}>
+                            return <tr className={"recovery-rule"} key={`operating-${expenseIndex}`}>
                                 <td className={"label-column"}>
                                 </td>
                                 <ExpensePercentageEditor
@@ -294,7 +294,7 @@ function RecoveryStructureEditor(props: RecoveryStructureEditorProps)
                                 return null;
                             }
 
-                            return <tr className={"recovery-rule"} key={expenseIndex}>
+                            return <tr className={"recovery-rule"} key={`tax-${expenseIndex}`}>
                                 <td className={"label-column"}>
                                 </td>
                                 <ExpensePercentageEditor
@@ -344,7 +344,7 @@ function RecoveryStructureEditor(props: RecoveryStructureEditorProps)
                                 return null;
                             }
 
-                            return <tr className={"recovery-rule"} key={unitIndex}>
+                            return <tr className={"recovery-rule"} key={`unit-${unitIndex}`}>
                                 <td className={"label-column"} />
                                 <TenantApplicableEditor unit={unit} recovery={recovery} onChange={() => editor.changeUnitRecoveryStructure(unit)}/>
                             </tr>
@@ -425,6 +425,7 @@ function ViewRecoveryStructures(props: ViewRecoveryStructuresProps)
                                 props.appraisal.recoveryStructures.map((recovery, recoveryIndex) =>
                                 {
                                     return <RecoveryStructureEditor
+                                        key={recovery.name || recoveryIndex}
                                         expenses={props.appraisal.expenseStatement.items}
                                         units={props.appraisal.units}
                                         recovery={recovery}

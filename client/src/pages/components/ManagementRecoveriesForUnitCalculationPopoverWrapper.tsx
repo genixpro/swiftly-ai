@@ -32,7 +32,7 @@ function ManagementRecoveriesForUnitCalculationPopoverWrapper({appraisal, unit, 
                 <Popover placement="bottom" isOpen={managementRecoveryPopoverOpen} target={popoverId} toggle={() => setManagementRecoveryPopoverOpen(open => !open)}>
                     <PopoverHeader>Management Recovery</PopoverHeader>
                     <PopoverBody>
-                        <table className={"explanation-popover-table"}><tr>
+                        <table className={"explanation-popover-table"}><tbody><tr>
                             <td>{tenancy.name}</td>
                             <td>
                                 <AreaFormat value={unit.squareFootage} />
@@ -67,7 +67,7 @@ function ManagementRecoveriesForUnitCalculationPopoverWrapper({appraisal, unit, 
                             <td className="true">
                                 <CurrencyFormat value={unit.calculatedManagementRecovery} />
                             </td>
-                        </tr>
+                        </tr></tbody>
                         </table>
                     </PopoverBody>
                 </Popover>

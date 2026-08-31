@@ -82,11 +82,11 @@ export function UnitRow(props: UnitRowProps) {
     React.useEffect(() => {
         const initialProps = initialPropsRef.current;
         if (initialProps.search == null || !initialProps.allowSelection) return;
-        let query = initialProps.search.substring(1);
-        let vars = query.split('&');
+        const query = initialProps.search.substring(1);
+        const vars = query.split('&');
         let selectedUnit = "";
         for (let i = 0; i < vars.length; i++) {
-            let pair = vars[i].split('=');
+            const pair = vars[i].split('=');
             if (decodeURIComponent(pair[0]) === "unit") {
                 selectedUnit = decodeURIComponent(pair[1]);
                 break;

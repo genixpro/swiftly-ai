@@ -1,4 +1,4 @@
-import React, {useReducer, useRef} from 'react';
+import {useReducer, useRef} from 'react';
 import { Popover, PopoverBody, Button} from 'reactstrap';
 import GoogleMapReact from 'google-map-react';
 import ComparableLeaseListItem from "./ComparableLeaseListItem"
@@ -156,14 +156,15 @@ function ComparableLeasesMap(props: ComparableLeasesMapProps) {
                                 lat={comp.location.coordinates[1]}
                                 lng={comp.location.coordinates[0]}
                             >
-                                <img
+                                <button
                                     id={id}
-                                    alt={"Comparable Lease Icon"}
-                                    className={"building-map-icon"}
-                                    src={"/img/building-icon.png"}
-                                    {...({text: comp.name} as unknown as React.ImgHTMLAttributes<HTMLImageElement>)}
+                                    type="button"
+                                    className="building-map-marker-button"
+                                    aria-label={`Show comparable lease ${comp.name || comp._id}`}
                                     onClick={() => toggleComparablePopover(comp)}
-                                />
+                                >
+                                    <img alt="" className="building-map-icon" src="/img/building-icon.png" />
+                                </button>
                                 <Popover placement="right" isOpen={comp.visible} target={id} toggle={() => toggleComparablePopover(comp)} container={"comparable-leases-map"}>
                                     <PopoverBody>
                                         <ComparableLeaseListItem
@@ -184,8 +185,10 @@ function ComparableLeasesMap(props: ComparableLeasesMapProps) {
                         })
                     }
                 </GoogleMapReact>
-                <div className={"full-screen-button"} onClick={() => toggleFullscreen()}>
-                    <Button color={"secondary"}><i className={"fa fa-expand"} /> </Button>
+                <div className={"full-screen-button"}>
+                    <Button color={"secondary"} onClick={() => toggleFullscreen()} aria-label="Toggle comparable leases map full screen">
+                        <i className={"fa fa-expand"} aria-hidden="true" />
+                    </Button>
                 </div>
             </div>
     ];

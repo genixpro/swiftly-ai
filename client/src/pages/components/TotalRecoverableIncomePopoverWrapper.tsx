@@ -53,6 +53,7 @@ function TotalRecoverableIncomePopoverWrapper({appraisal, recovery, children}: T
                     <PopoverHeader>Total Recoverable Income</PopoverHeader>
                     <PopoverBody>
                         <table className={"explanation-popover-table"}>
+                            <tbody>
                             {
                                 appraisal.units.map((unit, unitIndex) =>
                                 {
@@ -133,6 +134,7 @@ function TotalRecoverableIncomePopoverWrapper({appraisal, recovery, children}: T
                                     (Object.values(recovery.calculatedTaxRecoveries) as number[]).reduce((val, memo) => val + memo, 0)
                                 } /></td>
                             </tr>
+                            </tbody>
                         </table>
                     </PopoverBody>
                 </Popover>

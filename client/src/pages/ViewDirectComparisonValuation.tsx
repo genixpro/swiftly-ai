@@ -161,7 +161,7 @@ function ViewDirectComparisonValuation(props: ViewDirectComparisonValuationProps
                                     <div className={"stabilized-statement-centered"}>
                                 <h3>Valuation</h3>
                                 <div className="horizontal-scroll-hint">Scroll horizontally to review the complete valuation.</div>
-                                <div className="valuation-table-scroll" tabIndex={0} aria-label="Valuation table; scroll horizontally for more columns">
+                                <div className="valuation-table-scroll" role="region" tabIndex={0} aria-label="Valuation table; scroll horizontally for more columns">
                                 <Table className={"statement-table "}>
                                     <tbody>
                                     {/*<tr className={"data-row"}>*/}

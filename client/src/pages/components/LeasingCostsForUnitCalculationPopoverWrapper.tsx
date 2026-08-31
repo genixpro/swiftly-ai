@@ -32,11 +32,11 @@ function LeasingCostsForUnitCalculationPopoverWrapper({appraisal, unit, children
 
         return (
             [
-                <button type="button" className="btn btn-link p-0" id={popoverId} onClick={() => setLeasupCostPopoverOpen(!leasupCostPopoverOpen)}>
+                <button type="button" className="btn btn-link p-0" id={popoverId} onClick={() => setLeasupCostPopoverOpen(!leasupCostPopoverOpen)} key="trigger">
                     {children}
                 </button>,
                 <Popover placement="bottom" isOpen={leasupCostPopoverOpen} target={popoverId}
-                         toggle={() => setLeasupCostPopoverOpen(!leasupCostPopoverOpen)}>
+                         toggle={() => setLeasupCostPopoverOpen(!leasupCostPopoverOpen)} key="popover">
                     <PopoverHeader>Unit {unit.unitNumber} - Leasing Costs</PopoverHeader>
                     <PopoverBody>
                         <table className={"explanation-popover-table"}>

@@ -30,10 +30,10 @@ export default function RecoveryTenantApplicableEditor({onChange, recovery, unit
         /></td>,
         <td className="rule-calculated-amount-column" key={3}>
             {tenancy.rentType === 'gross' ? <span>Gross Rent</span> : [
-                <button type="button" className="btn btn-link p-0" id={popoverId} onClick={() => setPopoverOpen(!popoverOpen)} key={1}>
+                <button type="button" className="btn btn-link p-0" id={popoverId} onClick={() => setPopoverOpen(!popoverOpen)} key="trigger">
                     {tenancy.recoveryStructure === recovery.name ? <CurrencyFormat value={unitCalculatedTotalRecovery(unit as never)}/> : null}
                 </button>,
-                <Popover key={1} placement="bottom" isOpen={popoverOpen} target={popoverId} toggle={() => setPopoverOpen(!popoverOpen)}>
+                <Popover key="popover" placement="bottom" isOpen={popoverOpen} target={popoverId} toggle={() => setPopoverOpen(!popoverOpen)}>
                     <PopoverHeader>Unit {unit.unitNumber} - Tenant Recovery - {tenancy.name}</PopoverHeader>
                     <PopoverBody><table className="explanation-popover-table">
                         <tbody><tr><td>Operating Expense Recovery</td><td><CurrencyFormat value={unit.calculatedExpenseRecovery}/></td></tr>

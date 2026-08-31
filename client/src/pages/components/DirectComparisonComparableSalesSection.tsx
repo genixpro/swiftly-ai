@@ -34,7 +34,7 @@ function DirectComparisonComparableSalesSection({
                 <h3>Direct Comparison Approach</h3>
                 <h4>{appraisal.address}</h4>
                 <div className="horizontal-scroll-hint">Scroll horizontally to review every comparable field.</div>
-                <div className="comparable-list-scroll" tabIndex={0} aria-label="Comparable sales; scroll horizontally for more columns">
+                <div className="comparable-list-scroll" role="region" tabIndex={0} aria-label="Comparable sales; scroll horizontally for more columns">
                     <ComparableSaleList
                         comparableSales={comparableSales as never}
                         statsTitle={""}

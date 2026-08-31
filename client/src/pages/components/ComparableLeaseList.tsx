@@ -4,7 +4,7 @@ import {Row, CardHeader, CardTitle} from 'reactstrap';
 import {useComparableLeasesByIds, useCreateComparableLease} from '@api/hooks';
 import ComparableLeasesStatistics from "./ComparableLeasesStatistics";
 import { Button, Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
-import {createComparableLeaseDraft, type ComparableLeaseCardRecord} from '../../domain/comparableLeaseDraft';
+import {createComparableLeaseDraft, newComparableLeaseMarker, type ComparableLeaseCardRecord} from '../../domain/comparableLeaseDraft';
 import {
     comparableLeaseHeaderConfigurations,
     ComparableLeaseListHeaderColumn,
@@ -66,25 +66,6 @@ function ComparableLeaseList(incomingProps: ComparableLeaseListProps) {
     const setListState = (updates: Partial<ComparableLeaseListState>) => {
         setState((currentState) => ({...currentState, ...updates}));
     };
-    const updateComparables = () => {
-        if (props.comparableLeases)
-        {
-            if (props.comparableLeases !== state.comparableLeases)
-            {
-                setListState({comparableLeases: props.comparableLeases as LegacyRecord[]});
-            }
-        }
-        else if (props.comparableLeaseIds && comparableLeasesQuery.data)
-        {
-            if (props.comparableLeaseIds !== comparableLeaseIdsRef.current)
-            {
-                comparableLeaseIdsRef.current = props.comparableLeaseIds;
-                setListState({
-                    comparableLeases: comparableLeasesQuery.data.map((comparableLease: LegacyRecord) => createComparableLeaseDraft(comparableLease).values as LegacyRecord),
-                });
-            }
-        }
-    };
     const toggleNewItem = () => setListState({isCreatingNewItem: false});
     const addNewComparable = (newComparable: LegacyRecord) => {
         if (newComparable === lastNewCompRef.current)
@@ -95,7 +76,7 @@ function ComparableLeaseList(incomingProps: ComparableLeaseListProps) {
         createComparableLease.mutateAsync(newComparable).then((comparableId) =>
         {
             newComparable["_id"] = comparableId;
-            Reflect.set(newComparable, ComparableLeaseListItem._newLease, true);
+            Reflect.set(newComparable, newComparableLeaseMarker, true);
             lastNewCompRef.current = null;
             props.onNewComparable!(newComparable);
             setListState({isCreatingNewItem: false, newComparableLease: createComparableLeaseDraft({}).values as LegacyRecord});
@@ -127,8 +108,23 @@ function ComparableLeaseList(incomingProps: ComparableLeaseListProps) {
     const statsFields = props.stats || defaultComparableLeaseStatsFields;
 
     React.useEffect(() => {
-        updateComparables();
-    }, [props.comparableLeases, props.comparableLeaseIds, comparableLeasesQuery.data]);
+        if (incomingProps.comparableLeases) {
+            setState((currentState) => incomingProps.comparableLeases === currentState.comparableLeases
+                ? currentState
+                : {...currentState, comparableLeases: incomingProps.comparableLeases as LegacyRecord[]});
+            return;
+        }
+        if (incomingProps.comparableLeaseIds && comparableLeasesQuery.data
+            && incomingProps.comparableLeaseIds !== comparableLeaseIdsRef.current) {
+            comparableLeaseIdsRef.current = incomingProps.comparableLeaseIds;
+            setState((currentState) => ({
+                ...currentState,
+                comparableLeases: comparableLeasesQuery.data.map(
+                    (comparableLease: LegacyRecord) => createComparableLeaseDraft(comparableLease).values as LegacyRecord,
+                ),
+            }));
+        }
+    }, [incomingProps.comparableLeases, incomingProps.comparableLeaseIds, comparableLeasesQuery.data]);
 
     return (
             <div>

@@ -1,3 +1,5 @@
+export const newComparableLeaseMarker = Symbol('newLease');
+
 export interface ComparableLeaseRentEscalationDraft {
     startYear?: number | null;
     endYear?: number | null;

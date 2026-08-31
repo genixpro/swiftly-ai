@@ -23,7 +23,7 @@ export default function IncomeStatementWorkspaceLayout({editor}: IncomeStatement
             <Col xs={12} md={state.pinnedYear !== null ? 5 : 7} lg={state.pinnedYear !== null ? 4 : 7} xl={state.pinnedYear !== null ? 3 : 7}>
                 {items ? <div>
                     <div className="horizontal-scroll-hint">Scroll horizontally to review all years and amounts.</div>
-                    <div className="income-statement-table-scroll" tabIndex={0} aria-label="Income statement table; scroll horizontally for more columns">
+                    <div className="income-statement-table-scroll" role="region" tabIndex={0} aria-label="Income statement table; scroll horizontally for more columns">
                         <IncomeStatementSortableList
                             groups={editor.props.groups}
                             items={editor.sortIncomeStatementItems(items).sorted}

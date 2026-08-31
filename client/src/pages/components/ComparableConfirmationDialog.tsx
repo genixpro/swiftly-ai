@@ -5,7 +5,7 @@ import ActionButton from './ActionButton';
 import ComparableSaleListItem from './ComparableSaleListItem';
 import FileViewer from './FileViewer';
 import type {FileViewerDocument} from './FileViewer';
-import type {ComparableSaleCardRecord} from '../../domain/comparableSaleCard';
+import {newComparableSaleMarker, type ComparableSaleCardRecord} from '../../domain/comparableSaleCard';
 
 type UploadedComparable = ComparableSaleCardRecord & {_id?: string | null};
 
@@ -47,7 +47,7 @@ export default function ComparableConfirmationDialog({
         try {
             const comparableId = await createComparableSale.mutateAsync(comparable);
             comparable._id = comparableId;
-            Reflect.set(comparable, ComparableSaleListItem._newSale, true);
+            Reflect.set(comparable, newComparableSaleMarker, true);
             onChange(comparableSales);
         } catch {
             // Preserve the existing dialog behavior: save failures leave the review open.

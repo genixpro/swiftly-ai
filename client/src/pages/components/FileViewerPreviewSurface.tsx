@@ -29,7 +29,7 @@ interface FileViewerPreviewSurfaceProps {
     innerScrollTop: number;
     onChangePage(event: React.ChangeEvent<HTMLSelectElement>): void;
     onImageError(): void;
-    onImageMouseDown(event: React.MouseEvent<HTMLImageElement>): void;
+    onImagePointerDown(event: React.PointerEvent<HTMLImageElement>): void;
     onWheel(event: React.WheelEvent<HTMLDivElement>): void;
     onZoomIn(): void;
     onZoomOut(): void;
@@ -40,7 +40,7 @@ interface FileViewerPreviewSurfaceProps {
 /** Toolbar and document surface, with viewer state and interactions owned by FileViewer. */
 export default function FileViewerPreviewSurface({
     currentPage, document, hilightWords, imageContainerRef, imageRef, pageSelectRef, imageZoom, innerScrollLeft, innerScrollTop,
-    onChangePage, onImageError, onImageMouseDown, onWheel, onZoomIn, onZoomOut, previewAvailable, slowTransition,
+    onChangePage, onImageError, onImagePointerDown, onWheel, onZoomIn, onZoomOut, previewAvailable, slowTransition,
 }: FileViewerPreviewSurfaceProps) {
     const pageCount = Number(document.pages || 0);
     return <Row><Col xs={12}>
@@ -56,7 +56,7 @@ export default function FileViewerPreviewSurface({
                 <img alt={`Document preview, page ${currentPage}`} id="file-viewer-image" ref={imageRef}
                     src={renderedPageUrl(document.appraisalId!, document._id, currentPage)}
                     className={`file-viewer-image frame active ${slowTransition ? 'slow-transition' : ''}`}
-                    onError={onImageError} onMouseDown={onImageMouseDown}
+                    onError={onImageError} onPointerDown={onImagePointerDown}
                 />
                 {(document.words ?? []).map((word, wordIndex) => word.page === currentPage ? <DraggableWord key={wordIndex} word={word} wordIndex={wordIndex} hilightWords={hilightWords} /> : null)}
             </div> : <div className="file-viewer-empty" role="status">Document preview unavailable. This file has not been rendered yet.</div>}

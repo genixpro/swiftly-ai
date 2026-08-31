@@ -6,6 +6,7 @@ import ComparableLeaseFields from './ComparableLeaseFields';
 import {
     comparableLeaseDraftReducer,
     createComparableLeaseDraft,
+    newComparableLeaseMarker,
     preparedComparableLeaseValues,
     type ComparableLeaseCardRecord,
     type ComparableLeaseDraft,
@@ -43,7 +44,7 @@ interface ComparableLeaseListItemState {
 function ComparableLeaseListItem(incomingProps: ComparableLeaseListItemProps) {
     const props = {...incomingProps, edit: incomingProps.edit === undefined ? true : incomingProps.edit};
     const [state, setState] = React.useState<ComparableLeaseListItemState>(() => ({
-        openByDefault: Boolean(!props.comparableLease._id || props.openByDefault || (props.comparableLease as Record<PropertyKey, unknown>)[ComparableLeaseListItem._newLease]),
+        openByDefault: Boolean(!props.comparableLease._id || props.openByDefault || (props.comparableLease as Record<PropertyKey, unknown>)[newComparableLeaseMarker]),
     }));
     const [comparableLeaseDraft, dispatchComparableLeaseDraft] = React.useReducer(
         comparableLeaseDraftReducer,
@@ -138,7 +139,7 @@ function ComparableLeaseListItem(incomingProps: ComparableLeaseListItemProps) {
         dispatchComparableLeaseDraft({type: 'replace', values: props.comparableLease});
         setState((currentState) => ({
             ...currentState,
-            openByDefault: Boolean(!props.comparableLease._id || props.openByDefault || (props.comparableLease as Record<PropertyKey, unknown>)[ComparableLeaseListItem._newLease]),
+            openByDefault: Boolean(!props.comparableLease._id || props.openByDefault || (props.comparableLease as Record<PropertyKey, unknown>)[newComparableLeaseMarker]),
         }));
     }, [props.comparableLease, props.openByDefault]);
 
@@ -230,10 +231,5 @@ function ComparableLeaseListItem(incomingProps: ComparableLeaseListItemProps) {
             </div>
     );
 }
-
-namespace ComparableLeaseListItem {
-    export const _newLease = Symbol('newLease');
-}
-
 
 export default ComparableLeaseListItem;

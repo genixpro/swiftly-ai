@@ -2,6 +2,8 @@ import {createComparableSaleDraft, type ComparableSaleDraft} from './comparableS
 import type {ComparableSaleCalculationInput, ComparableSaleDescriptionInput, ComparableSaleMetrics} from './comparableSales';
 import type {ComparableSaleEquationValues} from './comparableSaleEquations';
 
+export const newComparableSaleMarker = Symbol('newSale');
+
 /** Persisted and draft fields shared by comparable-sale cards and portfolios. */
 export type ComparableSaleCardRecord = ComparableSaleEquationValues
     & ComparableSaleCalculationInput

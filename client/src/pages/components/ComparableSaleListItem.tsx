@@ -4,7 +4,7 @@ import {useComparableSalesByIds, useDeleteComparableSale, useSaveComparableSaleP
 import {comparableSaleView} from '../../domain/comparableSales';
 import {hasComparableSale, hasComparableSaleInCapRate, hasComparableSaleInDCA} from '../../domain/comparables';
 import {comparableSaleDraftReducer, createComparableSaleDraft} from '../../domain/comparableSaleDraft';
-import {addComparableSalePortfolioEntry, comparableSaleMapParams, removeComparableSalePortfolioEntry, selectComparableSalePortfolioEntry} from '../../domain/comparableSaleCard';
+import {addComparableSalePortfolioEntry, comparableSaleMapParams, newComparableSaleMarker, removeComparableSalePortfolioEntry, selectComparableSalePortfolioEntry} from '../../domain/comparableSaleCard';
 import ComparableSaleSelectionControls from './ComparableSaleSelectionControls';
 import ComparableSaleCardHeader from './ComparableSaleCardHeader';
 import ComparableSaleDetailContent from './ComparableSaleDetailContent';
@@ -66,7 +66,7 @@ function ComparableSaleListItem(incomingProps: ComparableSaleListItemProps) {
     const [state, setState] = React.useState<ComparableSaleListItemState>(() => ({
         comparableSale: {}, isDraggingPin: true, droppingPinX: 0, droppingPinY: 0, stabilizePopoverOpen: false,
         portfolioComps: [], portfolioDrafts: [], selectedPortfolioComp: -1,
-        openByDefault: Boolean(!props.comparableSale._id || props.openByDefault || (props.comparableSale as Record<PropertyKey, unknown>)[(ComparableSaleListItem as unknown as {_newLease: symbol})._newLease]),
+        openByDefault: Boolean(!props.comparableSale._id || props.openByDefault || (props.comparableSale as Record<PropertyKey, unknown>)[newComparableSaleMarker]),
     }));
     const comparableSaleSourceRef = React.useRef<SaleRecord>(props.comparableSale);
     const [comparableSaleDraft, dispatchComparableSaleDraft] = React.useReducer(comparableSaleDraftReducer, props.comparableSale, createComparableSaleDraft);
@@ -201,7 +201,4 @@ function ComparableSaleListItem(incomingProps: ComparableSaleListItemProps) {
     </div>;
 }
 
-namespace ComparableSaleListItem {
-    export const _newSale = Symbol('newSale');
-}
 export default ComparableSaleListItem;

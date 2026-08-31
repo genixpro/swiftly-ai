@@ -124,7 +124,7 @@ function ViewFinancialStatementAudit(props: ViewFinancialStatementAuditProps)
                                                     <td className={"include-column"}>
                                                         <input
                                                             checked={item['include']}
-                                                            onClick={() => changeInclude(item)}
+                                                            onChange={() => changeInclude(item)}
                                                             type={"checkbox"} />
                                                     </td>
                                                 </tr>
@@ -180,7 +180,7 @@ function ViewFinancialStatementAudit(props: ViewFinancialStatementAuditProps)
                                                     <td className={"include-column"}>
                                                         <input
                                                             checked={item['include']}
-                                                            onClick={() => changeInclude(item)}
+                                                            onChange={() => changeInclude(item)}
                                                             type={"checkbox"} />
                                                     </td>
                                                 </tr>

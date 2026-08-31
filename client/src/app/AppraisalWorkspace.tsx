@@ -119,7 +119,7 @@ export function AppraisalWorkspaceProvider({appraisalId, children}: PropsWithChi
             if (requestId !== saveRequestId.current) return;
             dispatch({type: 'save-error', error: 'Your changes could not be saved. They are still available on this page.'});
         }
-    }, [appraisalId, updateAppraisal]);
+    }, [updateAppraisal]);
 
     const update = useCallback((fields: AppraisalFieldUpdate) => {
         if (!state.appraisal) return;

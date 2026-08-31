@@ -14,7 +14,7 @@ vi.mock('@api/hooks', () => ({
     useUploadFile: () => hooks.upload,
 }));
 vi.mock('../components/Common/DropzoneCompat', () => ({
-    default: forwardRef(({children, onDrop, onKeyDown, ...props}, ref) => {
+    default: forwardRef(({children, onDrop, onKeyDown, disableClick: _disableClick, inputProps: _inputProps, ...props}, ref) => {
         useImperativeHandle(ref, () => ({open: dropzoneOpen}));
         return <div {...props} onKeyDown={onKeyDown}>{children}<button type="button" onClick={() => onDrop([new File(['one'], 'one.pdf')])}>Mock file drop</button></div>;
     }),
