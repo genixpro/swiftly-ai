@@ -14,8 +14,9 @@ export interface AppraisalDTO extends ResourceDTO {
     location?: GeoPointDTO | null;
     imageUrls?: string[] | null;
     captions?: string[] | null;
-    effectiveDate?: string | null;
-    propertyType?: string;
+    /** API DTOs use ISO strings; the editable workspace hydrates this to Date. */
+    effectiveDate?: Date | string | null;
+    propertyType?: string | null;
     industrialSubType?: string;
     landSubType?: string;
     sizeOfLand?: number | null;
@@ -43,39 +44,39 @@ export interface GeoPointDTO {
 }
 
 export interface TenancyDTO {
-    name?: string;
+    name?: string | null;
     monthlyRent?: number | null;
     yearlyRent?: number | null;
-    rentType?: string;
-    freeRentType?: string;
-    startDate?: string | null;
-    endDate?: string | null;
+    rentType?: string | null;
+    freeRentType?: string | null;
+    startDate?: Date | string | null;
+    endDate?: Date | string | null;
     freeRentMonths?: number | null;
-    recoveryStructure?: string;
+    recoveryStructure?: string | null;
     [field: string]: unknown;
 }
 
 export interface UnitDTO {
-    unitNumber?: string;
+    unitNumber?: string | number;
     floorNumber?: number | null;
     squareFootage?: number | null;
     tenancies?: TenancyDTO[];
-    marketRent?: string;
-    leasingCostStructure?: string;
+    marketRent?: string | null;
+    leasingCostStructure?: string | null;
     remarks?: string;
-    shouldApplyMarketRentDifferential?: boolean;
-    shouldUseMarketRent?: boolean;
+    shouldApplyMarketRentDifferential?: boolean | null;
+    shouldUseMarketRent?: boolean | null;
     shouldTreatAsVacant?: boolean | null;
     [field: string]: unknown;
 }
 
 export interface IncomeStatementItemDTO {
-    name?: string;
+    name?: string | null;
     yearlyAmounts?: Record<string, number | null>;
     yearlySourceTypes?: Record<string, string>;
     extractionReferences?: Record<string, Record<string, unknown>>;
-    cashFlowType?: string;
-    incomeStatementItemType?: string;
+    cashFlowType?: string | null;
+    incomeStatementItemType?: string | null;
     [field: string]: unknown;
 }
 
@@ -90,19 +91,27 @@ export interface IncomeStatementDTO {
 }
 
 export interface NamedAmountDTO {
-    name?: string;
+    name?: string | null;
     amountPSF?: number | null;
     [field: string]: unknown;
 }
 
 export interface RecoveryStructureDTO {
-    name?: string;
+    name?: string | null;
     isDefault?: boolean;
     [field: string]: unknown;
 }
 
 export interface LeasingCostStructureDTO {
-    name?: string;
+    name?: string | null;
+    isDefault?: boolean;
+    leasingCommissionMode?: 'psf' | 'percent_of_rent' | string;
+    leasingCommissionPSF?: number | null;
+    leasingCommissionPercentYearOne?: number | null;
+    leasingCommissionPercentRemainingYears?: number | null;
+    tenantInducementsPSF?: number | null;
+    renewalPeriod?: number | null;
+    leasingPeriod?: number | null;
     [field: string]: unknown;
 }
 

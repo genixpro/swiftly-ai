@@ -1,10 +1,33 @@
 import {expect, test, type Page} from '@playwright/test';
 import {appraisalRoutes, visualViewports} from './parity-contract';
 
+const visualMapStub = `<!doctype html><html><head><style>
+    html, body { height: 100%; margin: 0; }
+    body {
+        background-color: #e7e4dc;
+        background-image:
+            linear-gradient(30deg, transparent 49%, rgba(255, 255, 255, .5) 50%, transparent 51%),
+            linear-gradient(-30deg, transparent 49%, rgba(255, 255, 255, .5) 50%, transparent 51%);
+        background-size: 56px 56px;
+    }
+</style></head><body></body></html>`;
+
+async function stubExternalMaps(page: Page) {
+    // The product fallback remains a live OpenStreetMap embed. Visual parity
+    // checks exercise its container and controls against this local, stable
+    // map surface; functional tests cover the live fallback separately.
+    await page.route(/^https:\/\/www\.openstreetmap\.org\/export\/embed\.html/, route => route.fulfill({
+        contentType: 'text/html',
+        body: visualMapStub,
+    }));
+}
+
 async function settleVisualState(page: Page) {
     await expect(page.locator('#app')).not.toBeEmpty();
     await page.waitForLoadState('networkidle');
     await expect(page.getByText('Loading appraisal…')).toHaveCount(0, {timeout: 15_000});
+    await expect(page.getByText('Preparing the appraisal workspace.')).toHaveCount(0, {timeout: 15_000});
+    await expect(page.getByRole('heading', {name: 'Appraisal unavailable'})).toHaveCount(0, {timeout: 15_000});
     await expect(page.getByText('Saving changes…')).toHaveCount(0, {timeout: 15_000});
     await page.addStyleTag({content: `
         *, *::before, *::after {
@@ -32,6 +55,7 @@ test.describe('visual parity contract', () => {
     for (const [viewportName, viewport] of Object.entries(visualViewports)) {
         for (const route of appraisalRoutes) {
             test(`${viewportName}: ${route}`, async ({page}) => {
+                await stubExternalMaps(page);
                 await page.setViewportSize(viewport);
                 const response = await page.goto(route);
                 expect(response?.ok()).toBeTruthy();
@@ -43,6 +67,7 @@ test.describe('visual parity contract', () => {
     }
 
     test('mobile navigation open state', async ({page}) => {
+        await stubExternalMaps(page);
         await page.setViewportSize(visualViewports.mobile);
         await page.goto('/appraisals/');
         await settleVisualState(page);
@@ -52,6 +77,7 @@ test.describe('visual parity contract', () => {
     });
 
     test('comparable sale expanded state', async ({page}) => {
+        await stubExternalMaps(page);
         await page.setViewportSize(visualViewports.desktop);
         await page.goto('/appraisal/demo-appraisal/comparable_sales/appraisal_caprate');
         await settleVisualState(page);
@@ -61,6 +87,7 @@ test.describe('visual parity contract', () => {
     });
 
     test('calculation popover state', async ({page}) => {
+        await stubExternalMaps(page);
         await page.setViewportSize(visualViewports.desktop);
         await page.goto('/appraisal/demo-appraisal/stabilized_statement_valuation');
         await settleVisualState(page);

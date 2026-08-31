@@ -5,6 +5,7 @@ import {useCreateAppraisal} from '@api/hooks';
 import {useAppraisalNavigation} from '../app/AppraisalNavigation';
 import ContentWrapper from '../components/Layout/ContentWrapper';
 import FieldDisplayEdit from './components/FieldDisplayEdit';
+import {setBrowserTitle} from '../components/platform/browserActions';
 
 type AppraisalType = 'simple' | 'detailed';
 
@@ -34,7 +35,7 @@ export default function StartAppraisal({navigate, edit}: StartAppraisalProps) {
     const [createError, setCreateError] = useState<string | null>(null);
 
     useEffect(() => {
-        document.title = 'Start an Appraisal – Swiftly';
+        setBrowserTitle('Start an Appraisal – Swiftly');
         heading.current?.focus();
     }, []);
 
@@ -120,13 +121,13 @@ export default function StartAppraisal({navigate, edit}: StartAppraisalProps) {
                                     <Input id="new-appraisal-name" type="text" placeholder="Name" required onChange={event => updateValue('name', event.target.value)} value={newAppraisal.name} />
                                 </FormGroup>
                                 <AppraisalField label="Street Address"><FieldDisplayEdit
-                                    type="address" edit={edit} hideInput={false} hideIcon placeholder="Address" value={newAppraisal.address}
+                                    type="address" edit={edit ?? true} hideInput={false} hideIcon placeholder="Address" value={newAppraisal.address}
                                     onChange={(value: unknown) => updateValue('address', value)}
                                     onGeoChange={(value: {lng: number; lat: number}) => updateValue('location', {type: 'Point', coordinates: [value.lng, value.lat]})}
                                 /></AppraisalField>
-                                <AppraisalField label="Effective Date"><FieldDisplayEdit type="date" edit={edit} hideInput={false} hideIcon placeholder="Effective Date" value={newAppraisal.effectiveDate} onChange={(value: unknown) => updateValue('effectiveDate', value)} /></AppraisalField>
-                                <AppraisalField label="Property Type"><FieldDisplayEdit type="propertyType" edit={edit} hideInput={false} hideIcon placeholder="Property Type" value={newAppraisal.propertyType} onChange={(value: unknown) => updateValue('propertyType', value)} /></AppraisalField>
-                                <AppraisalField label="Sub Type"><FieldDisplayEdit type="tags" edit={edit} hideInput={false} hideIcon placeholder="Sub Type" value={newAppraisal.propertyTags} onChange={(value: unknown) => updateValue('propertyTags', value)} /></AppraisalField>
+                                <AppraisalField label="Effective Date"><FieldDisplayEdit type="date" edit={edit ?? true} hideInput={false} hideIcon placeholder="Effective Date" value={newAppraisal.effectiveDate} onChange={(value: unknown) => updateValue('effectiveDate', value)} /></AppraisalField>
+                                <AppraisalField label="Property Type"><FieldDisplayEdit type="propertyType" edit={edit ?? true} hideInput={false} hideIcon placeholder="Property Type" value={newAppraisal.propertyType} onChange={(value: unknown) => updateValue('propertyType', value)} /></AppraisalField>
+                                <AppraisalField label="Sub Type"><FieldDisplayEdit type="tags" edit={edit ?? true} hideInput={false} hideIcon placeholder="Sub Type" value={newAppraisal.propertyTags} onChange={(value: unknown) => updateValue('propertyTags', value)} /></AppraisalField>
                                 <button className="btn btn-sm btn-primary" type="submit" disabled={creating}>{creating ? 'Creating…' : 'Create'}</button>
                             </form>
                         </CardBody></Card>

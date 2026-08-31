@@ -1,20 +1,21 @@
 import type {PropsWithChildren} from 'react';
-import {createContext, useCallback, useContext, useEffect, useRef, useState} from 'react';
-import {appraisalsApi} from '@api/resources';
-import {useAppraisal} from '@api/hooks';
+import {createContext, useCallback, useContext, useEffect, useReducer, useRef} from 'react';
+import {useAppraisal, useUpdateAppraisal} from '@api/hooks';
 import type {AppraisalDTO} from '@api/types';
-import AppraisalModel from '../models/AppraisalModel';
-import {normalizeAppraisal} from '../domain/appraisal';
+import {buildAppraisalPatch, normalizeAppraisal, prepareEditableAppraisal} from '../domain/appraisal';
+import {initialWorkspaceState, workspaceReducer} from './workspaceState';
 
 export type SaveState = 'idle' | 'saving' | 'saved' | 'error';
 
-export interface EditableAppraisal {
-    _id: string;
-    name?: string;
-    appraisalType?: string;
-    getUpdates(): Record<string, unknown>;
-    clearUpdates(): void;
-    [field: string]: unknown;
+export type EditableAppraisal = AppraisalDTO;
+
+export type AppraisalFieldUpdate = Record<string, unknown>;
+
+function snapshot(value: unknown): string { return JSON.stringify(value); }
+
+function changedTopLevelFields(previousSnapshot: string, appraisal: EditableAppraisal): Record<string, unknown> {
+    const previous = JSON.parse(previousSnapshot) as Record<string, unknown>;
+    return Object.fromEntries(Object.entries(appraisal).filter(([field, value]) => snapshot(previous[field]) !== snapshot(value)));
 }
 
 interface AppraisalWorkspaceValue {
@@ -25,6 +26,7 @@ interface AppraisalWorkspaceValue {
     saveError: string | null;
     savedAt: Date | null;
     save(appraisal: EditableAppraisal): Promise<void>;
+    update(fields: AppraisalFieldUpdate): void;
     retry(): Promise<void>;
     reload(): Promise<void>;
 }
@@ -38,87 +40,113 @@ function loadMessage(error: unknown): string {
         : "We couldn't load this appraisal. Check that the local API is running and try again.";
 }
 
-function createEditableAppraisal(data: AppraisalDTO): EditableAppraisal {
-    return AppraisalModel.create(normalizeAppraisal(data)) as unknown as EditableAppraisal;
-}
-
 export function AppraisalWorkspaceProvider({appraisalId, children}: PropsWithChildren<{appraisalId: string}>) {
     const query = useAppraisal(appraisalId);
-    const [appraisal, setAppraisal] = useState<EditableAppraisal>();
-    const [loadError, setLoadError] = useState<string | null>(null);
-    const [saveState, setSaveState] = useState<SaveState>('idle');
-    const [saveError, setSaveError] = useState<string | null>(null);
-    const [savedAt, setSavedAt] = useState<Date | null>(null);
+    const updateAppraisal = useUpdateAppraisal(appraisalId, {updateCache: false});
+    const [state, dispatch] = useReducer(workspaceReducer, initialWorkspaceState);
     const appliedQueryAt = useRef(0);
     const saveRequestId = useRef(0);
+    const persistedAppraisal = useRef<AppraisalDTO | null>(null);
+    const pendingFieldValues = useRef<Record<string, unknown>>({});
+    const draftSnapshot = useRef('{}');
 
     useEffect(() => {
-        setAppraisal(undefined);
-        setLoadError(null);
-        setSaveState('idle');
-        setSaveError(null);
-        setSavedAt(null);
+        dispatch({type: 'reset'});
         appliedQueryAt.current = 0;
+        persistedAppraisal.current = null;
+        pendingFieldValues.current = {};
+        draftSnapshot.current = '{}';
     }, [appraisalId]);
 
     useEffect(() => {
         if (!query.data || query.dataUpdatedAt <= appliedQueryAt.current) return;
         try {
-            setAppraisal(createEditableAppraisal(query.data));
-            setLoadError(null);
+            const normalized = normalizeAppraisal(query.data);
+            const editable = prepareEditableAppraisal(normalized);
+            persistedAppraisal.current = normalized;
+            pendingFieldValues.current = {};
+            draftSnapshot.current = snapshot(editable);
+            dispatch({type: 'loaded', appraisal: editable});
             appliedQueryAt.current = query.dataUpdatedAt;
         } catch {
-            setLoadError('This appraisal could not be opened because its saved data is invalid.');
+            dispatch({type: 'load-error', error: 'This appraisal could not be opened because its saved data is invalid.'});
         }
     }, [query.data, query.dataUpdatedAt]);
 
     useEffect(() => {
-        if (query.error) setLoadError(loadMessage(query.error));
+        if (query.error) dispatch({type: 'load-error', error: loadMessage(query.error)});
     }, [query.error]);
 
     const save = useCallback(async (nextAppraisal: EditableAppraisal) => {
-        setAppraisal(nextAppraisal);
-        setSaveState('saving');
-        setSaveError(null);
-        const updates = nextAppraisal.getUpdates();
+        dispatch({type: 'saving', appraisal: nextAppraisal});
+        const persisted = persistedAppraisal.current;
+        if (!persisted) {
+            dispatch({type: 'idle'});
+            return;
+        }
+
+        // Existing feature views still mutate the editable draft in place.
+        // Compare it with the last server value instead of relying on dirty
+        // tracking, so every top-level editable change uses the typed PATCH
+        // contract.
+        const typedPatch = buildAppraisalPatch(persisted, nextAppraisal as AppraisalDTO);
+        const dirtyFields = changedTopLevelFields(draftSnapshot.current, nextAppraisal);
+        const editedFields = new Set([...Object.keys(dirtyFields), ...Object.keys(pendingFieldValues.current)]);
+        // Editable preparation materializes defaults for omitted fields. Only
+        // send one when it existed in the persisted DTO or an editor changed
+        // it, preserving the established top-level PATCH shape.
+        const updates = {
+            ...Object.fromEntries(Object.entries(typedPatch)
+                .filter(([field]) => field in persisted || editedFields.has(field))),
+            ...pendingFieldValues.current,
+        };
         if (Object.keys(updates).length === 0) {
-            setSaveState('idle');
+            dispatch({type: 'idle'});
             return;
         }
 
         const requestId = ++saveRequestId.current;
         try {
-            const data = await appraisalsApi.update(appraisalId, updates);
+            const data = await updateAppraisal.mutateAsync(updates);
             if (requestId !== saveRequestId.current) return;
-            nextAppraisal.clearUpdates();
-            setAppraisal(createEditableAppraisal(data));
-            setSaveState('saved');
-            setSavedAt(new Date());
+            const normalized = normalizeAppraisal(data);
+            const editable = prepareEditableAppraisal(normalized);
+            persistedAppraisal.current = normalized;
+            pendingFieldValues.current = {};
+            draftSnapshot.current = snapshot(editable);
+            dispatch({type: 'saved', appraisal: editable, savedAt: new Date()});
         } catch {
             if (requestId !== saveRequestId.current) return;
-            setSaveState('error');
-            setSaveError('Your changes could not be saved. They are still available on this page.');
+            dispatch({type: 'save-error', error: 'Your changes could not be saved. They are still available on this page.'});
         }
-    }, [appraisalId]);
+    }, [appraisalId, updateAppraisal]);
+
+    const update = useCallback((fields: AppraisalFieldUpdate) => {
+        if (!state.appraisal) return;
+        pendingFieldValues.current = {...pendingFieldValues.current, ...fields};
+        Object.assign(state.appraisal, fields);
+        void save(state.appraisal);
+    }, [state.appraisal, save]);
 
     const reload = useCallback(async () => {
-        setLoadError(null);
+        dispatch({type: 'clear-load-error'});
         const result = await query.refetch();
-        if (result.error) setLoadError(loadMessage(result.error));
+        if (result.error) dispatch({type: 'load-error', error: loadMessage(result.error)});
     }, [query]);
 
     const retry = useCallback(async () => {
-        if (appraisal) await save(appraisal);
-    }, [appraisal, save]);
+        if (state.appraisal) await save(state.appraisal);
+    }, [state.appraisal, save]);
 
     return <AppraisalWorkspaceContext.Provider value={{
-        appraisal,
-        loading: query.isLoading && !appraisal,
-        loadError,
-        saveState,
-        saveError,
-        savedAt,
+        appraisal: state.appraisal,
+        loading: query.isLoading && !state.appraisal,
+        loadError: state.loadError,
+        saveState: state.saveState,
+        saveError: state.saveError,
+        savedAt: state.savedAt,
         save,
+        update,
         retry,
         reload,
     }}>

@@ -2,6 +2,7 @@ import type {MouseEvent} from 'react';
 import {Button} from 'reactstrap';
 import {useAppraisalNavigation} from '../../app/AppraisalNavigation';
 import type {AppraisalDTO} from '../../api/types';
+import {confirmBrowserAction} from '../../components/platform/browserActions';
 
 interface AppraisalListItemProps {
     appraisal: AppraisalDTO;
@@ -25,7 +26,7 @@ export default function AppraisalListItem({appraisal, deleteAppraisal, navigate}
 
     const removeAppraisal = (event: MouseEvent<HTMLButtonElement>) => {
         event.stopPropagation();
-        if (window.confirm(`Are you sure you want to delete “${appraisal.name}”?`)) {
+        if (confirmBrowserAction(`Are you sure you want to delete “${appraisal.name}”?`)) {
             deleteAppraisal(appraisal);
         }
     };

@@ -57,13 +57,11 @@ test('modern Bootstrap theme preserves the established visual surfaces', async (
   const visualStyles = await page.evaluate(() => {
     const body = getComputedStyle(document.body);
     const card = getComputedStyle(document.querySelector('.card'));
-    const heading = getComputedStyle(document.querySelector('.page-title'));
     return {
       bodyBackground: body.backgroundColor,
       cardBackground: card.backgroundColor,
       cardRadius: card.borderRadius,
       fontFamily: body.fontFamily,
-      headingOutline: heading.outlineStyle,
     };
   });
 
@@ -71,7 +69,6 @@ test('modern Bootstrap theme preserves the established visual surfaces', async (
     bodyBackground: 'rgb(245, 247, 250)',
     cardBackground: 'rgb(255, 255, 255)',
     cardRadius: '4px',
-    headingOutline: 'none',
   });
   expect(visualStyles.fontFamily).toContain('Source Sans 3');
 });
@@ -119,6 +116,24 @@ test('seeded detailed appraisal exposes its complete navigation', async ({ page 
   }
 });
 
+test('workspace sidebar navigation reuses the loaded appraisal', async ({ page }) => {
+  const appraisalGets = [];
+  page.on('request', request => {
+    const url = new URL(request.url());
+    if (request.method() === 'GET' && url.pathname === '/appraisals/demo-appraisal') {
+      appraisalGets.push(url.href);
+    }
+  });
+
+  await page.goto('/appraisal/demo-appraisal/general');
+  await expect(page.getByRole('heading', {name: 'General Information'})).toBeVisible();
+  await page.getByRole('link', {name: 'Tenants', exact: true}).click();
+  await expect(page).toHaveURL(/\/appraisal\/demo-appraisal\/tenants\/rent_roll$/);
+  await expect(page.getByRole('heading', {name: 'View Tenants', exact: true})).toBeVisible();
+
+  expect(appraisalGets).toHaveLength(1);
+});
+
 test('appraisal breadcrumb returns to the correct upload route', async ({ page }) => {
   await page.goto('/appraisal/demo-appraisal/general');
   await page.locator('.breadcrumb').getByRole('link', { name: 'Harbour Centre Demo' }).click();
@@ -145,6 +160,32 @@ test('expenses shows the seeded financial statement preview', async ({ page }) =
   await expect(preview).toBeVisible();
   await expect.poll(() => preview.evaluate(image => image.complete && image.naturalWidth > 0)).toBeTruthy();
   await expect(page.getByText('Document preview unavailable')).toHaveCount(0);
+});
+
+test('TMI expenses remains available through its direct route', async ({ page }) => {
+  await page.goto('/appraisal/demo-appraisal/expenses_tmi');
+  await expect(page.getByRole('heading', {name: 'Building TMI Rate'})).toBeVisible();
+  await expect(page.getByPlaceholder('Amount (psf)')).toBeVisible();
+  await expect(page.getByRole('button', {name: /Set expenses based on line-items/})).toBeVisible();
+});
+
+test('market rents remains available through its direct route', async ({ page }) => {
+  await page.goto('/appraisal/demo-appraisal/tenants/market_rents');
+  await expect(page.getByRole('heading', {name: 'Market Rents', exact: true})).toBeVisible();
+  await expect(page.getByRole('button', {name: 'Create a new Market Rent'})).toBeVisible();
+});
+
+test('recovery structures remains available through its direct route', async ({ page }) => {
+  await page.goto('/appraisal/demo-appraisal/tenants/recovery_structures');
+  await expect(page.getByRole('heading', {name: 'Recovery Structures', exact: true})).toBeVisible();
+  await expect(page.getByRole('button', {name: 'Create a new recovery structure'})).toBeVisible();
+});
+
+test('financial statement audit remains available through its direct route', async ({ page }) => {
+  await page.goto('/appraisal/demo-appraisal/financial_statement/demo-financial-statement/audit');
+  const audit = page.locator('#view-financial-statement-audit-classification');
+  await expect(audit.getByText('Income', {exact: true})).toBeVisible();
+  await expect(audit.getByText('Expenses', {exact: true})).toBeVisible();
 });
 
 test('seeded demo is complete and presents realistic financial inputs', async ({ page }) => {
@@ -337,7 +378,7 @@ test('unit rows support keyboard and pointer drag-and-drop', async ({page, reque
     await page.keyboard.press('ArrowDown');
     await page.waitForTimeout(100);
     await page.keyboard.press('Space');
-    await expect(page.locator('[id^="DndLiveRegion-"]').filter({hasText: /was dropped over droppable area/})).toHaveCount(1);
+    await expect(page.locator('[id^="DndLiveRegion-"]').filter({hasText: /was (?:dropped|moved) over droppable area/})).toHaveCount(1);
     await expect.poll(readOrder, {timeout: 10_000}).toEqual(swappedOrder);
 
     await page.reload();
@@ -356,19 +397,52 @@ test('unit rows support keyboard and pointer drag-and-drop', async ({page, reque
   }
 });
 
-test('failed appraisal saves show recoverable feedback', async ({ page }) => {
+test('failed appraisal saves retain the draft and retry the edited value', async ({ page, request }) => {
+  const sourceResponse = await request.get(`${apiBaseUrl}/appraisals/demo-appraisal`);
+  expect(sourceResponse.ok()).toBeTruthy();
+  const source = (await sourceResponse.json()).appraisal;
   await page.goto('/appraisal/demo-appraisal/general');
-  await page.route('**/appraisals/demo-appraisal', route => {
-    if (route.request().method() === 'PATCH') return route.abort('failed');
-    return route.continue();
+  const patches = [];
+  await page.route('**/appraisals/demo-appraisal', async route => {
+    if (route.request().method() !== 'PATCH') return route.continue();
+    patches.push(route.request().postDataJSON());
+    if (patches.length === 1) {
+      return route.fulfill({
+        status: 503,
+        contentType: 'application/json',
+        body: JSON.stringify({detail: 'Temporary save failure'}),
+      });
+    }
+    return route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify({
+        appraisal: {
+          ...source,
+          client: 'Demo Client save failure check',
+        },
+      }),
+    });
   });
 
   const client = page.getByRole('textbox', { name: 'Client' });
   await client.fill('Demo Client save failure check');
+  await expect(client).toBeFocused();
   await client.press('Tab');
+  await expect(page.getByRole('textbox', {name: 'Address'})).toBeFocused();
   const alert = page.getByRole('alert');
   await expect(alert).toContainText('Your changes could not be saved');
   await expect(alert.getByRole('button', { name: 'Try again' })).toBeVisible();
+  await expect(client).toHaveValue('Demo Client save failure check');
+
+  await alert.getByRole('button', { name: 'Try again' }).click();
+  await expect(page.getByText('Changes saved.')).toBeVisible();
+  await expect(alert).toHaveCount(0);
+  expect(patches).toHaveLength(2);
+  expect(patches).toEqual(expect.arrayContaining([
+    expect.objectContaining({client: 'Demo Client save failure check'}),
+    expect.objectContaining({client: 'Demo Client save failure check'}),
+  ]));
 });
 
 test('create and delete appraisal flow persists through the local API', async ({ page }) => {

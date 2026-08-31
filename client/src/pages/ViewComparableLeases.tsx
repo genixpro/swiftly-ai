@@ -1,17 +1,18 @@
 import {Navigate, NavLink, Route, Routes} from 'react-router';
 import {Card, CardBody, Col, Nav, NavItem, Row} from 'reactstrap';
-import type {EditableAppraisal} from '../app/AppraisalWorkspace';
+import type {AppraisalFieldUpdate, EditableAppraisal} from '../app/AppraisalWorkspace';
 import RouteScreen from '../routing/RouteScreen';
 import AppraisalContentHeader from './components/AppraisalContentHeader';
 import ViewAppraisalComparableLeases from './ViewAppraisalComparableLeases';
 import ViewComparableLeasesDatabase from './ViewComparableLeasesDatabase';
 
-export default function ViewComparableLeases({appraisalId, appraisal, saveAppraisal}: {
+export default function ViewComparableLeases({appraisalId, appraisal, saveAppraisal, updateAppraisal}: {
     appraisalId: string;
     appraisal: EditableAppraisal;
     saveAppraisal(appraisal: EditableAppraisal): void;
+    updateAppraisal(fields: AppraisalFieldUpdate): void;
 }) {
-    const routeProps = {appraisalId, appraisal, saveAppraisal};
+    const routeProps = {appraisalId, appraisal, saveAppraisal, updateAppraisal};
     const basePath = `/appraisal/${appraisalId}/comparable_leases`;
     const tabClass = ({isActive}: {isActive: boolean}) => `nav-link${isActive ? ' active' : ''}`;
     return <>

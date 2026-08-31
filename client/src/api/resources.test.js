@@ -43,6 +43,7 @@ describe('typed resource services', () => {
         expect(await appraisalsApi.get('a')).toEqual({_id: 'a'});
         expect(await appraisalsApi.create({name: 'New'})).toBe('new');
         expect(await appraisalsApi.update('a', {name: 'Changed'})).toMatchObject({name: 'Changed'});
+        expect(apiClient.patch).toHaveBeenCalledWith('/appraisals/a', {name: 'Changed'});
         expect(await appraisalsApi.convertTenants('a')).toEqual(['lease']);
         await appraisalsApi.remove('a');
         expect(await filesApi.list('a', 'lease')).toHaveLength(1);

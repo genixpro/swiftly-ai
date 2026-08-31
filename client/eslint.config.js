@@ -17,7 +17,7 @@ export default [
         plugins: {'react-hooks': reactHooks, 'jsx-a11y': jsxA11y},
         rules: {
             ...js.configs.recommended.rules,
-            'no-unused-vars': 'off',
+            'no-unused-vars': 'error',
             'no-constant-condition': 'warn',
             'react-hooks/rules-of-hooks': 'error',
             'react-hooks/exhaustive-deps': 'warn',

@@ -1,13 +1,12 @@
 import {Navigate, NavLink, Route, Routes} from 'react-router';
 import {Card, CardBody, Col, Nav, NavItem, Row} from 'reactstrap';
 import {useFile, useUpdateFile} from '../api/hooks';
-import type {FileDTO} from '../api/types';
-import ViewFinancialStatementAudit from './ViewFinancialStatementAudit';
+import ViewFinancialStatementAudit, {type AuditFinancialStatement} from './ViewFinancialStatementAudit';
 
 export default function ViewFinancialStatement({appraisalId, financialStatementId}: {appraisalId: string; financialStatementId: string}) {
     const statement = useFile(appraisalId, financialStatementId);
     const updateStatement = useUpdateFile(appraisalId, financialStatementId);
-    const saveFinancialStatementData = async (nextStatement: FileDTO) => {
+    const saveFinancialStatementData = async (nextStatement: AuditFinancialStatement) => {
         await updateStatement.mutateAsync({extractedData: nextStatement.extractedData});
     };
     return <Row><Col xs={12}><Card className="card-default"><CardBody><div id="view-lease-page">
@@ -16,7 +15,7 @@ export default function ViewFinancialStatement({appraisalId, financialStatementI
         </NavItem></Nav></Col></Row>
         {statement.data ? <Row><Col xs={12}><Card className="card-default"><CardBody><Routes>
             <Route index element={<Navigate to="audit" replace />} />
-            {['audit', 'summary', 'report'].map(path => <Route key={path} path={path} element={<ViewFinancialStatementAudit financialStatement={statement.data} saveFinancialStatementData={saveFinancialStatementData} />} />)}
+            {['audit', 'summary', 'report'].map(path => <Route key={path} path={path} element={<ViewFinancialStatementAudit financialStatement={statement.data as unknown as AuditFinancialStatement} saveFinancialStatementData={saveFinancialStatementData} />} />)}
         </Routes></CardBody></Card></Col></Row> : null}
     </div></CardBody></Card></Col></Row>;
 }

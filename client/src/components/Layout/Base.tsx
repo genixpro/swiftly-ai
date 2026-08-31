@@ -5,6 +5,12 @@ import Header from './Header';
 import Sidebar from './Sidebar';
 import Footer from './Footer';
 import {AppraisalNavigationProvider} from '../../app/AppraisalNavigation';
+import {
+    clearLayoutBodyClass,
+    focusSidebarNavigation,
+    mobileNavigationMediaQuery,
+    setLayoutBodyClass,
+} from '../platform/layoutBrowser';
 
 interface BaseProps extends PropsWithChildren {
     pathname: string;
@@ -18,7 +24,7 @@ export default function Base({pathname, navigate, children}: BaseProps) {
     const [hasActiveAppraisal, setHasActiveAppraisal] = useState(false);
 
     useEffect(() => {
-        const query = window.matchMedia('(max-width: 767.98px)');
+        const query = mobileNavigationMediaQuery();
         const update = ({matches}: Pick<MediaQueryList, 'matches'>) => {
             setIsMobile(matches);
             if (!matches) setMobileNavigationOpen(false);
@@ -31,11 +37,11 @@ export default function Base({pathname, navigate, children}: BaseProps) {
     useEffect(() => setMobileNavigationOpen(false), [pathname]);
 
     useEffect(() => {
-        document.body.classList.toggle('aside-toggled', mobileNavigationOpen);
+        setLayoutBodyClass('aside-toggled', mobileNavigationOpen);
         if (mobileNavigationOpen) {
-            window.requestAnimationFrame(() => document.querySelector<HTMLElement>('#app-sidebar a, #app-sidebar button')?.focus());
+            focusSidebarNavigation();
         }
-        return () => document.body.classList.remove('aside-toggled');
+        return () => clearLayoutBodyClass('aside-toggled');
     }, [mobileNavigationOpen]);
 
     const closeMobileNavigation = useCallback(() => setMobileNavigationOpen(false), []);

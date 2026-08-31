@@ -27,9 +27,11 @@ jobs:
       - run: npm ci
       - run: npm run lint
       - run: npm run typecheck
+      - run: npm run check:boundaries
       - run: npm run test -- --passWithNoTests
       - run: npm run test:coverage
       - run: npm run build
+      - run: npm run check:bundle
   e2e:
     runs-on: ubuntu-latest
     defaults: { run: { working-directory: client } }
@@ -42,5 +44,6 @@ jobs:
       - run: API_PORT=8000 WEB_PORT=5173 docker compose -f ../docker-compose.yml up --build -d
       - run: curl --retry 20 --retry-connrefused --retry-delay 1 --fail http://localhost:8000/health
       - run: E2E_BASE_URL=http://localhost:5173 npm run test:e2e
+      - run: E2E_BASE_URL=http://localhost:5173 npm run test:visual
       - if: always()
         run: API_PORT=8000 WEB_PORT=5173 docker compose -f ../docker-compose.yml down -v

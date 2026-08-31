@@ -25,6 +25,8 @@ import {
     type EditableAppraisal,
     useAppraisalWorkspace,
 } from '../app/AppraisalWorkspace';
+import {setBrowserTitle} from '../components/platform/browserActions';
+import {clearBrowserTimer, setBrowserTimer} from '../components/platform/browserTimers';
 
 interface ViewAppraisalProps {
     appraisalId: string;
@@ -38,13 +40,13 @@ function AppraisalWorkspaceRoutes({appraisalId}: ViewAppraisalProps) {
     useEffect(() => {
         if (!appraisal) navigation.clearAppraisal();
         else {
-            const timer = window.setTimeout(() => navigation.changeAppraisalType(appraisal.appraisalType));
-            return () => window.clearTimeout(timer);
+            const timer = setBrowserTimer(() => navigation.changeAppraisalType(appraisal.appraisalType));
+            return () => clearBrowserTimer(timer);
         }
     }, [appraisal, navigation]);
 
     if (workspace.loading) {
-        document.title = 'Loading Appraisal – Swiftly';
+        setBrowserTitle('Loading Appraisal – Swiftly');
         return <ContentWrapper>
             <div className="content-heading"><h1 className="page-title">Loading appraisal…</h1></div>
             <div className="card card-default"><div className="card-body text-muted" role="status">Preparing the appraisal workspace.</div></div>
@@ -52,7 +54,7 @@ function AppraisalWorkspaceRoutes({appraisalId}: ViewAppraisalProps) {
     }
 
     if (workspace.loadError || !appraisal) {
-        document.title = 'Appraisal Unavailable – Swiftly';
+        setBrowserTitle('Appraisal Unavailable – Swiftly');
         return <ContentWrapper>
             <div className="content-heading"><h1 className="page-title">Appraisal unavailable</h1></div>
             <div className="alert alert-warning" role="alert">
@@ -66,6 +68,7 @@ function AppraisalWorkspaceRoutes({appraisalId}: ViewAppraisalProps) {
         appraisalId,
         appraisal,
         saveAppraisal: (next: EditableAppraisal) => void workspace.save(next),
+        updateAppraisal: workspace.update,
         reloadAppraisal: () => void workspace.reload(),
     };
 

@@ -1,6 +1,7 @@
 import type {ReactNode} from 'react';
 import {useEffect, useRef, useState} from 'react';
 import {Button, type ButtonProps} from 'reactstrap';
+import {clearBrowserTimer, setBrowserTimer} from '../../components/platform/browserTimers';
 
 interface ActionButtonProps extends Omit<ButtonProps, 'onClick'> {
     children?: ReactNode;
@@ -13,15 +14,15 @@ export default function ActionButton({children, onClick, ...buttonProps}: Action
     const [showingFailure, setShowingFailure] = useState(false);
     const timers = useRef<number[]>([]);
 
-    useEffect(() => () => timers.current.forEach(timer => window.clearTimeout(timer)), []);
+    useEffect(() => () => timers.current.forEach(clearBrowserTimer), []);
 
     const scheduleResult = (startedAt: number, success: boolean) => {
         const delay = Math.max(1, 500 - (Date.now() - startedAt));
-        timers.current.push(window.setTimeout(() => {
+        timers.current.push(setBrowserTimer(() => {
             setLoading(false);
             setShowingSuccess(success);
             setShowingFailure(!success);
-            timers.current.push(window.setTimeout(() => {
+            timers.current.push(setBrowserTimer(() => {
                 setLoading(false);
                 setShowingSuccess(false);
                 setShowingFailure(false);

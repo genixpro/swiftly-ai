@@ -4,25 +4,7 @@ import {Trans} from 'react-i18next';
 import {Link} from 'react-router';
 import type {NavigateFunction} from 'react-router';
 import {Badge, Collapse} from 'reactstrap';
-import Menu from '../../Menu.js';
-
-interface MenuLabel {
-    color: string;
-    value: string;
-}
-
-interface MenuItem {
-    heading?: string;
-    name?: string;
-    path?: string;
-    match?: string;
-    icon?: string;
-    translate?: string;
-    label?: MenuLabel;
-    appraisalType?: string | null;
-    openByDefault?: boolean;
-    submenu?: MenuItem[];
-}
+import Menu, {type MenuItem} from '../../Menu';
 
 interface SidebarProps {
     pathname: string;
@@ -76,7 +58,7 @@ function SidebarSubItem({item, isActive, isOpen, navigationDisabled, onToggle, c
     </li>;
 }
 
-const menu = Menu as MenuItem[];
+const menu = Menu;
 
 export default function Sidebar({
     pathname,

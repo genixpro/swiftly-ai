@@ -1,5 +1,6 @@
 import {useEffect, useRef} from 'react';
 import {Link} from 'react-router';
+import {setBrowserTitle} from '../../components/platform/browserActions';
 
 interface HeaderAppraisal {
     _id: string;
@@ -18,7 +19,7 @@ export default function AppraisalContentHeader({appraisal, title}: AppraisalCont
 
     useEffect(() => {
         if (!appraisal) return;
-        document.title = `${title} – ${appraisal.name} – Swiftly`;
+        setBrowserTitle(`${title} – ${appraisal.name} – Swiftly`);
         if (previousTitle.current !== title) heading.current?.focus();
         previousTitle.current = title;
     }, [appraisal, title]);

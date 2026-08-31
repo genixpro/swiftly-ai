@@ -6,6 +6,7 @@ import {useAppraisals, useDeleteAppraisal} from '../api/hooks';
 import type {AppraisalDTO} from '../api/types';
 import ContentWrapper from '../components/Layout/ContentWrapper';
 import AppraisalList from './components/AppraisalList';
+import {setBrowserTitle} from '../components/platform/browserActions';
 
 interface ViewAllAppraisalsProps {
     navigate: NavigateFunction;
@@ -18,7 +19,7 @@ export default function ViewAllAppraisals({navigate, search}: ViewAllAppraisalsP
     const removeAppraisal = useDeleteAppraisal();
 
     useEffect(() => {
-        document.title = 'Appraisals – Swiftly';
+        setBrowserTitle('Appraisals – Swiftly');
         heading.current?.focus();
     }, []);
 

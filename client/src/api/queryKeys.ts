@@ -3,6 +3,13 @@ export const queryKeys = {
     appraisal: (id: string) => ['appraisals', id] as const,
     files: (appraisalId: string, type?: string) => ['appraisals', appraisalId, 'file-list', type ?? 'all'] as const,
     file: (appraisalId: string, fileId: string) => ['appraisals', appraisalId, 'file', fileId] as const,
+    zone: (id: string) => ['zones', id] as const,
+    zones: (search: string) => ['zones', 'search', search] as const,
+    propertyTags: (filters: Record<string, unknown> = {}) => ['property-tags', filters] as const,
+    propertyTagSearch: (filters: Record<string, unknown>) => ['property-tags', 'search', filters] as const,
+    tenantNames: (search: string) => ['tenant-names', search] as const,
     comparableSales: (filters: Record<string, unknown> = {}) => ['comparable-sales', filters] as const,
     comparableLeases: (filters: Record<string, unknown> = {}) => ['comparable-leases', filters] as const,
+    comparableSalesByIds: (ids: readonly string[]) => ['comparable-sales', 'selected', ids] as const,
+    comparableLeasesByIds: (ids: readonly string[]) => ['comparable-leases', 'selected', ids] as const,
 };

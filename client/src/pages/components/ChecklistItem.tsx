@@ -1,5 +1,7 @@
 interface ChecklistItemProps {
     completed: boolean;
+    /** Retained because legacy callers supplied an unrendered description. */
+    description?: string;
     title: string;
 }
 

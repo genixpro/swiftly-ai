@@ -40,5 +40,10 @@ $jumbotron-padding:2rem;$jumbotron-bg:#fcfcfc;$table-accent-bg:#fafbfc;$table-ho
 @mixin alert-variant($background, $border, $color) { color:$color;background-color:$background;border-color:$border; }
 
 
-@import "legacy-template";
-@import "features";
+// Preserve this cascade order: layout and shared component hooks precede
+// feature-specific rules, which in turn precede responsive workflow rules.
+@import "layout";
+@import "common";
+@import "pages-general";
+@import "comparables";
+@import "workflows";

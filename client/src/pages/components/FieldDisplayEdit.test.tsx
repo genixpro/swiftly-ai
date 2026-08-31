@@ -1,6 +1,13 @@
 import {fireEvent, render, screen, waitFor} from '@testing-library/react';
-import {describe, expect, it, vi} from 'vitest';
-import {NonDroppableFieldDisplayEdit as FieldDisplayEdit} from './FieldDisplayEdit';
+import {beforeEach, describe, expect, it, vi} from 'vitest';
+import DroppableFieldDisplayEdit, {NonDroppableFieldDisplayEdit as FieldDisplayEdit} from './FieldDisplayEdit';
+
+const dnd = vi.hoisted(() => ({useDroppable: vi.fn()}));
+vi.mock('@dnd-kit/core', () => ({useDroppable: dnd.useDroppable}));
+
+beforeEach(() => {
+    dnd.useDroppable.mockReset().mockReturnValue({isOver: false, setNodeRef: vi.fn()});
+});
 
 describe('FieldDisplayEdit characterization', () => {
     it('preserves formatted display, immediate focus editing, blur cleaning, and single update delivery', async () => {
@@ -23,6 +30,47 @@ describe('FieldDisplayEdit characterization', () => {
         fireEvent.change(input, {target: {value: 'After'}});
         fireEvent.keyPress(input, {key: 'Enter', charCode: 13});
         await waitFor(() => expect(onChange).toHaveBeenCalledWith('After'));
+    });
+
+    it('keeps multiline blur editing and empty-number clearing behavior', async () => {
+        const onNotesChange = vi.fn();
+        const onAmountChange = vi.fn();
+        render(<>
+            <FieldDisplayEdit type="textbox" ariaLabel="Notes" value="Existing note" onChange={onNotesChange} />
+            <FieldDisplayEdit type="number" ariaLabel="Unit count" value={12} onChange={onAmountChange} />
+        </>);
+
+        const notes = screen.getByRole('textbox', {name: 'Notes'});
+        expect(notes).toHaveAttribute('rows', '1');
+        fireEvent.focus(notes);
+        fireEvent.change(notes, {target: {value: 'Updated\nnote'}});
+        fireEvent.blur(notes);
+        const amount = screen.getByRole('textbox', {name: 'Unit count'});
+        fireEvent.focus(amount);
+        fireEvent.change(amount, {target: {value: ''}});
+        fireEvent.blur(amount);
+
+        await waitFor(() => expect(onNotesChange).toHaveBeenCalledWith('Updated\nnote'));
+        await waitFor(() => expect(onAmountChange).toHaveBeenCalledWith(null));
+    });
+
+    it('commits selected and cleared dates through the existing Date envelope', async () => {
+        const onChange = vi.fn();
+        render(<FieldDisplayEdit type="date" ariaLabel="Lease start" value="2024-01-02T00:00:00.000Z" onChange={onChange} />);
+        const input = screen.getByLabelText('Lease start');
+
+        expect(input).toHaveValue('2024-01-02');
+        fireEvent.change(input, {target: {value: '2024-03-04'}});
+        await waitFor(() => expect(onChange).toHaveBeenCalledWith(new Date('2024-03-04T00:00:00.000Z')));
+
+        fireEvent.focus(input);
+        fireEvent.change(input, {target: {value: ''}});
+        await waitFor(() => expect(onChange).toHaveBeenLastCalledWith(null));
+    });
+
+    it('derives the current visual field label only when no explicit label is supplied', async () => {
+        render(<div className="form-group"><strong>Stabilized rent:</strong><FieldDisplayEdit type="currency" value={25} onChange={vi.fn()} /></div>);
+        await waitFor(() => expect(screen.getByRole('textbox', {name: 'Stabilized rent'})).toHaveValue('$25.00'));
     });
 
     it.each([
@@ -53,5 +101,16 @@ describe('FieldDisplayEdit characterization', () => {
         await waitFor(() => expect(onChange).toHaveBeenCalledWith(true));
         rerender(<FieldDisplayEdit type="boolean" ariaLabel="Vacant" value edit={false} onChange={onChange} />);
         expect(screen.getByRole('checkbox', {name: 'Vacant'})).toBeDisabled();
+    });
+
+    it('keeps document-word drops limited to legacy editable number fields and forwards the source index', () => {
+        const onChange = vi.fn();
+        render(<DroppableFieldDisplayEdit id="subject-noi" type="currency" value={0} onChange={onChange}/>);
+
+        const droppableConfig = dnd.useDroppable.mock.calls.at(-1)?.[0];
+        expect(droppableConfig.id).toBe('subject-noi');
+        droppableConfig.data.onDrop({type: 'Word', word: {index: 4, word: '($12.50)'}});
+
+        expect(onChange).toHaveBeenCalledWith(-12.5, [4]);
     });
 });

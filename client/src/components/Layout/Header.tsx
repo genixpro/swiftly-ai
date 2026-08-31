@@ -1,5 +1,6 @@
 import {useCallback, useEffect, useRef} from 'react';
 import {Link} from 'react-router';
+import {focusElement, onEscape, restoreCollapsedAside, toggleCollapsedAside} from '../platform/layoutBrowser';
 
 interface HeaderProps {
     mobileNavigationOpen: boolean;
@@ -11,26 +12,19 @@ export default function Header({mobileNavigationOpen, onMobileNavigationToggle, 
     const mobileToggle = useRef<HTMLButtonElement>(null);
 
     useEffect(() => {
-        if (window.localStorage.getItem('swiftly-aside-collapsed') === 'true') {
-            document.body.classList.add('aside-collapsed');
-        }
+        restoreCollapsedAside();
     }, []);
 
     useEffect(() => {
         if (!mobileNavigationOpen) return;
-        const closeOnEscape = (event: KeyboardEvent) => {
-            if (event.key !== 'Escape') return;
+        return onEscape(() => {
             onMobileNavigationClose();
-            window.requestAnimationFrame(() => mobileToggle.current?.focus());
-        };
-        document.addEventListener('keydown', closeOnEscape);
-        return () => document.removeEventListener('keydown', closeOnEscape);
+            focusElement(mobileToggle.current);
+        });
     }, [mobileNavigationOpen, onMobileNavigationClose]);
 
     const toggleDesktopNavigation = useCallback(() => {
-        const collapsed = document.body.classList.toggle('aside-collapsed');
-        window.localStorage.setItem('swiftly-aside-collapsed', String(collapsed));
-        window.dispatchEvent(new Event('resize'));
+        toggleCollapsedAside();
     }, []);
 
     return <header className="topnavbar-wrapper">
